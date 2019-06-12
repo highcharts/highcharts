@@ -663,7 +663,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
 
             // Force recreation of point instances in series.translate, #5699
             series.isDirty = true;
-            series.points = null; // #6709
+            series.points = null as any; // #6709
 
             var extremes = xAxis.getExtremes(),
                 xMin = extremes.min,

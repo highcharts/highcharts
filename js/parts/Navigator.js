@@ -1409,7 +1409,8 @@ Navigator.prototype = {
                 // Find the first non-navigator series (#8430)
                 H.find(chart.series, function (s) {
                     return !s.options.isInternal;
-                }).index : 0));
+                }).index :
+                0));
         // Iterate through series and add the ones that should be shown in
         // navigator.
         (chart.series || []).forEach(function (series, i) {

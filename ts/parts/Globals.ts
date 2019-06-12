@@ -88,7 +88,6 @@ declare global {
             tooltip?: any; // @todo
             getStacks: Function; // @todo
             isReadyToRender: Function; // @todo
-            setResponsive: Function; // @todo
         }
         interface ChartOptions {
             forExport?: any; // @todo
@@ -162,7 +161,7 @@ declare global {
             options?: any; // @todo
             parallelArrays?: any; // @todo
             pointArrayMap?: any; // @todo
-            points?: any; // @todo
+            points: Array<Point>; // @todo
             pointValKey?: any; // @todo
             processedXData?: any; // @todo
             processedYData?: any; // @todo

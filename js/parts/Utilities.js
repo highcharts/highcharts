@@ -1802,23 +1802,25 @@ H.getStyle = function (el, prop, toInt) {
 H.inArray = function (item, arr, fromIndex) {
     return arr.indexOf(item, fromIndex);
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
  *
- * @function Highcharts.find
+ * @function Highcharts.find<T>
  *
- * @param {Array<*>} arr
+ * @param {Array<T>} arr
  *        The array to test.
  *
  * @param {Function} callback
  *        The callback function. The function receives the item as the first
  *        argument. Return `true` if this item satisfies the condition.
  *
- * @return {*}
+ * @return {T|undefined}
  *         The value of the element.
  */
 H.find = Array.prototype.find ?
+    /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
     } :

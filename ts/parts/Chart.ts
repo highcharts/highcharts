@@ -863,7 +863,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         id: string
     ): (Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined) {
 
-        var ret,
+        var ret: (Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined),
             series = this.series,
             i;
 
