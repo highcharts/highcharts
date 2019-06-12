@@ -4254,7 +4254,7 @@ H.Series = H.seriesType(
                         if (graphic) { // update
                             // Since the marker group isn't clipped, each
                             // individual marker must be toggled
-                            graphic[isInside ? 'show' : 'hide'](true)
+                            graphic[isInside ? 'show' : 'hide'](isInside)
                                 .animate(markerAttribs);
 
                         } else if (

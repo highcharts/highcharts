@@ -19,6 +19,7 @@ QUnit.test('3D columns stackLabels render', function (assert) {
                 animation: false,
                 stacking: 'normal',
                 dataLabels: {
+                    allowOverlap: true,
                     enabled: true,
                     inside: false
                 }

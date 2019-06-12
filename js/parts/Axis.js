@@ -4828,7 +4828,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             });
         }
         // hide or show the title depending on whether showEmpty is set
-        axis.axisTitle[display ? 'show' : 'hide'](true);
+        axis.axisTitle[display ? 'show' : 'hide'](display);
     },
     /**
      * Generates a tick for initial positioning.
@@ -5230,7 +5230,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             });
             axisLine.isPlaced = true;
             // Show or hide the line depending on options.showEmpty
-            axisLine[showAxis ? 'show' : 'hide'](true);
+            axisLine[showAxis ? 'show' : 'hide'](showAxis);
         }
         if (axisTitle && showAxis) {
             var titleXy = axis.getTitlePosition();
