@@ -99,8 +99,6 @@ var eventEmitterMixin = {
             return;
         }
 
-        e.stopPropagation();
-
         e = pointer.normalize(e);
         prevChartX = e.chartX;
         prevChartY = e.chartY;
