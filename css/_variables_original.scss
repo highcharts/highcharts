@@ -1,0 +1,124 @@
+/**
+ * @license Highcharts
+ *
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * Converting original variables to new names
+ */
+
+// Colors for data series and points.
+$colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1 !default;
+$highcharts-colors: $colors !default;
+
+// Chart background, point stroke for markers and columns etc
+$background-color: #ffffff !default;
+$highcharts-background-color: $background-color !default;
+
+// Neutral colors, grayscale by default. The default colors are defined by mixing the
+// background-color with neutral, with a weight corresponding to the number in the name.
+$neutral-color-100: #000000 !default; // Strong text.
+$highcharts-neutral-color-100: $neutral-color-100 !default;
+
+$neutral-color-80: #333333 !default; // Main text and some strokes.
+$highcharts-neutral-color-80: $neutral-color-80 !default;
+
+$neutral-color-60: #666666 !default; // Axis labels, axis title, connector fallback.
+$highcharts-neutral-color-60: $neutral-color-60 !default;
+
+$neutral-color-40: #999999 !default; // Credits text, export menu stroke.
+$highcharts-neutral-color-40: $neutral-color-40 !default;
+
+$neutral-color-20: #cccccc !default; // Disabled texts, button strokes, crosshair etc.
+$highcharts-neutral-color-20: $neutral-color-20 !default;
+
+$neutral-color-10: #e6e6e6 !default; // Grid lines etc.
+$highcharts-neutral-color-10: $neutral-color-10 !default;
+
+$neutral-color-5: #f2f2f2 !default; // Minor grid lines etc.
+$highcharts-neutral-color-5: $neutral-color-5 !default;
+
+$neutral-color-3: #f7f7f7 !default; // Tooltip backgroud, button fills, map null points.
+$highcharts-neutral-color-3: $neutral-color-3 !default;
+
+// Colored, shades of blue by default
+$highlight-color-100: #003399 !default; // Drilldown clickable labels, color axis max color.
+$highcharts-highlight-color-100: $highlight-color-100 !default;
+
+$highlight-color-80: #335cad !default; // Selection marker, menu hover, button hover, chart border, navigator series.
+$highcharts-highlight-color-80: $highlight-color-80 !default;
+
+$highlight-color-60: #6685c2 !default; // Navigator mask fill.
+$highcharts-highlight-color-60: $highlight-color-60 !default;
+
+$highlight-color-20: #ccd6eb !default; // Ticks and axis line.
+$highcharts-highlight-color-20: $highlight-color-20 !default;
+
+$highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
+$highcharts-highlight-color-10: $highlight-color-10 !default;
+
+// Fonts
+$font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !default;
+$highcharts-font-family: $font-family !default;
+
+$title-font-size: 1.5em !default;
+$highcharts-title-font-size: $title-font-size !default;
+
+$subtitle-font-size: 1em !default;
+$highcharts-subtitle-font-size: $subtitle-font-size !default;
+
+$legend-font-size: 1em !default;
+$highcharts-legend-font-size: $legend-font-size !default;
+
+$axis-labels-font-size: 0.9em !default;
+$highcharts-axis-labels-font-size: $axis-labels-font-size !default;
+
+// Tooltip
+$tooltip-border: 1px !default;
+$highcharts-tooltip-border: $tooltip-border !default;
+
+$tooltip-background: $neutral-color-3 !default;
+$highcharts-tooltip-background: $tooltip-background !default;
+
+// Axes
+$xaxis-grid-line: 0px !default;
+$highcharts-xaxis-grid-line: $xaxis-grid-line !default;
+
+// Range-selector
+$range-selector-button-border: 0px !default;
+$highcharts-range-selector-button-border: $range-selector-button-border !default;
+
+$range-selector-input-text: $neutral-color-80 !default;
+$highcharts-range-selector-input-text: $range-selector-input-text !default;
+
+$range-selector-input-border: $neutral-color-20 !default;
+$highcharts-range-selector-input-border: $range-selector-input-border !default;
+
+// Data-labels
+$data-label-color: $neutral-color-80 !default;
+$highcharts-data-label-color: $data-label-color !default;
+
+// Buttons
+$context-button-background: $background-color !default;
+$highcharts-context-button-background: $context-button-background !default;
+
+// Navigator
+$navigator-series-fill  : $highlight-color-80 !default;
+$highcharts-navigator-series-fill  : $navigator-series-fill   !default;
+
+$navigator-series-border: $highlight-color-80 !default;
+$highcharts-navigator-series-border: $navigator-series-border !default;
+
+// Scrollbar
+$scrollbar-track-background: $neutral-color-5 !default;
+$highcharts-scrollbar-track-background: $scrollbar-track-background !default;
+
+$scrollbar-track-border    : $neutral-color-5 !default;
+$highcharts-scrollbar-track-border    : $scrollbar-track-border     !default;
+
+// Indicators
+$indicator-positive-line: #06B535;
+$highcharts-indicator-positive-line: $indicator-positive-line !default;
+
+$indicator-negative-line: #F21313;
+$highcharts-indicator-negative-line: $indicator-negative-line !default;

@@ -1,0 +1,273 @@
+/**
+ * @license Highcharts
+ *
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+// Colors for data series and points.
+$highcharts-colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1 !default;
+
+// Chart background, point stroke for markers and columns etc
+$highcharts-background-color: #ffffff !default;
+
+// Neutral colors, grayscale by default. The default colors are defined by mixing the
+// background-color with neutral, with a weight corresponding to the number in the name.
+$highcharts-neutral-color-100: #000000 !default; // Strong text.
+$highcharts-neutral-color-80 : #333333 !default; // Main text and some strokes.
+$highcharts-neutral-color-60 : #666666 !default; // Axis labels, axis title, connector fallback.
+$highcharts-neutral-color-40 : #999999 !default; // Credits text, export menu stroke.
+$highcharts-neutral-color-20 : #cccccc !default; // Disabled texts, button strokes, crosshair etc.
+$highcharts-neutral-color-10 : #e6e6e6 !default; // Grid lines etc.
+$highcharts-neutral-color-5  : #f2f2f2 !default; // Minor grid lines etc.
+$highcharts-neutral-color-3  : #f7f7f7 !default; // Tooltip backgroud, button fills, map null points.
+
+// Colored, shades of blue by default
+$highcharts-highlight-color-100: #003399 !default; // Drilldown clickable labels, color axis max color.
+$highcharts-highlight-color-80 : #335cad !default; // Selection marker, menu hover, button hover, chart border, navigator series.
+$highcharts-highlight-color-60 : #6685c2 !default; // Navigator mask fill.
+$highcharts-highlight-color-20 : #ccd6eb !default; // Ticks and axis line.
+$highcharts-highlight-color-10 : #e6ebf5 !default; // Pressed button, color axis min color.
+
+//FONTS
+$highcharts-font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !default;
+
+//FONT-SIZE
+$highcharts-container-font-size: 12px !default;
+
+$highcharts-font-size-base: 1em !default;
+
+$highcharts-font-size-xxs: $highcharts-font-size-base * 0.70 !default;
+$highcharts-font-size-xs : $highcharts-font-size-base * 0.85 !default;
+$highcharts-font-size-sm : $highcharts-font-size-base * 0.90 !default;
+
+$highcharts-font-size-lg : $highcharts-font-size-base * 1.10 !default;
+$highcharts-font-size-xl : $highcharts-font-size-base * 1.30 !default;
+$highcharts-font-size-xxl: $highcharts-font-size-base * 1.50 !default;
+
+$highcharts-labels-font-size-sm: $highcharts-font-size-sm !default;
+$highcharts-labels-font-size-lg: $highcharts-font-size-lg !default;
+
+/* OPACITY */
+$highcharts-selection-opacity: 0.25 !default;
+
+/* LINE AND BORDER WIDTH AND COLOR */
+
+// Border-width for tooltips, labels, thumbs
+$highcharts-box-border-width: 1px !default;
+$highcharts-box-border      : $highcharts-neutral-color-20 !default;
+
+// Border-width for input, menus etc.
+$highcharts-input-border-width: 1px !default;
+
+// Width/thickness of graph-lines
+$highcharts-graph-line-width      : 2px !default;
+$highcharts-graph-line-width-hover: 3px !default;
+
+// Crosshair line
+$highcharts-crosshair-line-width: 1px !default;
+$highcharts-crosshair-line-color: $highcharts-neutral-color-20 !default;
+
+$highcharts-crosshair-category-border: $highcharts-highlight-color-20 !default;
+
+$highcharts-crosshair-label-text-color: $highcharts-background-color !default;
+
+/* BUTTONS, RANGE-SELECTOR */
+$highcharts-button-border-width: $highcharts-input-border-width !default;
+$highcharts-button-background  : $highcharts-neutral-color-3 !default;
+$highcharts-button-border      : $highcharts-box-border !default;
+$highcharts-button-text        : $highcharts-neutral-color-80 !default;
+
+$highcharts-button-pressed-background: $highcharts-highlight-color-10 !default;
+$highcharts-button-pressed-border    : $highcharts-box-border !default;
+$highcharts-button-pressed-text      : $highcharts-button-text !default;
+
+$highcharts-button-hover-background: $highcharts-neutral-color-10 !default;
+$highcharts-button-hover-border    : $highcharts-button-border !default;
+$highcharts-button-hover-text      : $highcharts-button-text !default;
+
+$highcharts-range-selector-button-border-width: 0px !default;
+$highcharts-range-selector-input-border       : $highcharts-button-border !default;
+$highcharts-range-selector-input-text         : $highcharts-button-text !default;
+
+// Context-button
+$highcharts-context-button-background: $highcharts-background-color !default;
+$highcharts-context-button-border    : none !default;
+
+$highcharts-contextbutton-background-hover: $highcharts-neutral-color-10 !default;
+$highcharts-contextbutton-border-hover    : $highcharts-neutral-color-10 !default;
+
+$highcharts-button-symbol-border      : $highcharts-neutral-color-60 !default;
+$highcharts-button-symbol-border-width: 3px !default;
+
+
+/* SCROLLBAR AND HANDLES */
+$highcharts-scrollbar-border-width: 1px !default;
+$highcharts-scrollbar-border      : $highcharts-box-border !default;
+
+$highcharts-scrollbar-button-background: $highcharts-neutral-color-10 !default;
+
+$highcharts-scrollbar-arrow-background: $highcharts-neutral-color-60;
+$highcharts-scrollbar-rifles-color    : $highcharts-scrollbar-arrow-background !default;
+
+$highcharts-scrollbar-track-background: $highcharts-neutral-color-5 !default;
+$highcharts-scrollbar-track-border    : $highcharts-scrollbar-track-background !default;
+
+$highcharts-scrollbar-thumb-background: $highcharts-scrollbar-border !default;
+
+$highcharts-navigator-handle-border    : $highcharts-scrollbar-border !default;
+$highcharts-navigator-handle-background: $highcharts-scrollbar-track-background !default;
+
+/* TITLE */
+$highcharts-title-font-size    : $highcharts-font-size-xxl !default;
+$highcharts-subtitle-font-size : $highcharts-font-size-base !default;
+$highcharts-title-background   : $highcharts-neutral-color-80 !default;
+$highcharts-subtitle-background: $highcharts-neutral-color-60 !default;
+
+
+/* GRAPH */
+// Axes
+$highcharts-axis-line-width: 1px !default;
+$highcharts-axis-line-color: $highcharts-highlight-color-20 !default;
+
+$highcharts-axis-title-text-color : $highcharts-neutral-color-60 !default;
+
+$highcharts-axis-labels-font-size : $highcharts-labels-font-size-sm !default;
+$highcharts-axis-labels-text-color: $highcharts-axis-title-text-color !default;
+
+$highcharts-axis-resizer-border      : black !default;
+$highcharts-axis-resizer-border-width: 2px !default;
+
+// Grid-line
+$highcharts-grid-line-width      : 1px !default;
+$highcharts-grid-line-color      : $highcharts-neutral-color-10 !default;
+$highcharts-minor-grid-line-color: $highcharts-neutral-color-5 !default;
+
+
+// Indicators
+$highcharts-indicator-positive-line: #06B535 !default;
+$highcharts-indicator-negative-line: #F21313 !default;
+
+// Data-labels
+$highcharts-data-label-color: $highcharts-neutral-color-80 !default;
+
+//Dimention of points on graph
+$highcharts-point-width: 1px !default;
+
+/* Legend */
+$highcharts-legend-font-size        : $highcharts-font-size-base !default;
+$highcharts-legend-text-color       : $highcharts-neutral-color-80 !default;
+$highcharts-legend-text-color-hover : $highcharts-neutral-color-100 !default;
+$highcharts-legend-text-color-hidden: $highcharts-neutral-color-20 !default;
+
+$highcharts-legend-background-active: $highcharts-highlight-color-100 !default;
+
+$highcharts-bubble-legend-labels-background: $highcharts-neutral-color-80 !default;
+
+$highcharts-legend-active-opacity: 0.2 !default;
+
+/* Credits */
+$highcharts-credits-background     : $highcharts-neutral-color-40 !default;
+$highcharts-credits-font-size      : $highcharts-font-size-xxs !default;
+$highcharts-credits-font-size-hover: 1em !default;
+
+/* Tooltip */
+$highcharts-tooltip-text-color        : $highcharts-neutral-color-80 !default;
+$highcharts-tooltip-header-font-size  : $highcharts-font-size-xs !default;
+$highcharts-tooltip-background        : $highcharts-neutral-color-3 !default;
+$highcharts-tooltip-background-opacity: 0.85 !default;
+
+/* Menu */
+$highcharts-menu-border: $highcharts-neutral-color-40 !default;
+
+$highcharts-menu-background      : $highcharts-background-color !default;
+$highcharts-menu-background-hover: $highcharts-highlight-color-80 !default;
+
+$highcharts-menu-box-shadow  : 3px 3px 10px #888 !default;
+
+$highcharts-menu-text-color      : $highcharts-neutral-color-80 !default;
+$highcharts-menu-text-color-hover: $highcharts-background-color !default;
+
+$highcharts-menu-padding-y: 5px !default;
+$highcharts-menu-padding-x: 0 !default;
+
+$highcharts-menu-item-padding-y: 0.5em !default;
+$highcharts-menu-item-padding-x: 1em !default;
+
+/* No-data module */
+$highcharts-no-data-font-size: 12px !default;
+$highcharts-no-data-text     : $highcharts-neutral-color-60 !default;
+
+//Flags on line (stockcharts)
+$highcharts-flags-text-color: $highcharts-neutral-color-100 !default;
+
+$highcharts-flags-box-border    : $highcharts-neutral-color-40 !default;
+$highcharts-flags-box-background: $highcharts-background-color !default;
+
+$highcharts-flags-box-border-hover    : $highcharts-neutral-color-100 !default;
+$highcharts-flags-box-background-hover: $highcharts-highlight-color-20 !default;
+
+/* Graph and Series options */
+
+// Plot line
+$highcharts-plot-line-color: $highcharts-neutral-color-40 !default;
+$highcharts-plot-line-width: 1px !default;
+
+// Point select
+$highcharts-point-select-background: $highcharts-neutral-color-20 !default;
+$highcharts-point-select-border    : $highcharts-neutral-color-100 !default;
+
+// Column series
+$highcharts-column-point-opacity-hover: 0.75 !default;
+
+// Tree-map
+$highcharts-treemap-point-border      : $highcharts-neutral-color-10 !default;
+$highcharts-treemap-point-border-hover: $highcharts-neutral-color-40 !default;
+
+// Selection
+$highcharts-selection-marker-background: $highcharts-highlight-color-80 !default;
+
+// Highstock - navigation
+$highcharts-navigator-series-fill  : $highcharts-selection-marker-background !default;
+$highcharts-navigator-series-border: $highcharts-selection-marker-background !default;
+
+$highcharts-navigator-mask-inside-background : $highcharts-highlight-color-60 !default; /* navigator.maskFill option */
+$highcharts-navigator-outline-border         : $highcharts-box-border !default;
+
+$highcharts-navigator-axis-labels-text-color : $highcharts-neutral-color-40 !default;
+
+$highcharts-range-label-text-color: $highcharts-neutral-color-60 !default;
+
+// Plot bands and polar pane backgrounds
+$highcharts-plot-band-pane-background: $highcharts-neutral-color-100 !default;
+
+// Error-bar and candlestick
+$highcharts-bar-border: $highcharts-neutral-color-100 !default;
+
+//Gauge (speedometer)
+$highcharts-gauge-dial-background: $highcharts-neutral-color-100 !default;
+
+//Waterfall
+$highcharts-waterfall-line-color: $highcharts-neutral-color-80 !default;
+
+// Highmaps
+$highcharts-map-point-border-width-hover: 2px !default;
+$highcharts-map-navigation-font-size    : $highcharts-font-size-xl !default;
+
+$highcharts-coloraxis-marker-color: $highcharts-neutral-color-40 !default;
+$highcharts-null-point-background : $highcharts-neutral-color-3 !default;
+
+// Drilldown module
+$highcharts-drilldown-label-text-color: $highcharts-highlight-color-100 !default;
+
+// Lineargauge type series
+$highcharts-lineargauge-target-border    : $highcharts-neutral-color-80 !default;
+$highcharts-lineargauge-target-line-width: 1px !default;
+$highcharts-lineargauge-target-line-color: $highcharts-neutral-color-80 !default;
+
+// Annotations module
+$highcharts-annotation-label-box-border    : $highcharts-neutral-color-100 !default;
+$highcharts-annotation-label-box-background: $highcharts-neutral-color-100 !default;
+$highcharts-annotation-label-text-color    : $highcharts-neutral-color-10 !default;
+

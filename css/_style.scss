@@ -1,0 +1,721 @@
+/**
+ * @license Highcharts
+ *
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+
+
+.highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    line-height: normal;
+    z-index: 0; /* #1072 */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    font-family: $highcharts-font-family;
+    font-size: $highcharts-container-font-size;
+}
+.highcharts-root {
+    display: block;
+}
+.highcharts-root text {
+    stroke-width: 0;
+}
+.highcharts-strong {
+    font-weight: bold;
+}
+.highcharts-emphasized {
+    font-style: italic;
+}
+.highcharts-anchor {
+    cursor: pointer;
+}
+.highcharts-background {
+    fill: $highcharts-background-color;
+}
+.highcharts-plot-border, .highcharts-plot-background {
+    fill: none;
+}
+.highcharts-label-box {
+    fill: none;
+}
+.highcharts-button-box {
+    fill: inherit;
+}
+.highcharts-tracker-line {
+    stroke-linejoin: round;
+    stroke: rgba(192, 192, 192, 0.0001);
+    stroke-width: 22;
+    fill: none;
+}
+.highcharts-tracker-area {
+    fill: rgba(192, 192, 192, 0.0001);
+    stroke-width: 0;
+}
+
+/* Titles */
+.highcharts-title {
+    fill: $highcharts-title-background;
+    font-size: $highcharts-title-font-size;
+}
+.highcharts-subtitle {
+    fill: $highcharts-subtitle-background;
+}
+
+/* Axes */
+.highcharts-axis-line {
+    fill: none;
+    stroke: $highcharts-axis-line-color;
+}
+.highcharts-yaxis .highcharts-axis-line {
+    stroke-width: 0;
+}
+.highcharts-axis-title {
+    fill: $highcharts-axis-title-text-color;
+}
+
+.highcharts-axis-labels {
+    fill: $highcharts-axis-labels-text-color;
+    cursor: default;
+    font-size: $highcharts-labels-font-size-sm;
+}
+.highcharts-grid-line {
+    fill: none;
+    stroke: $highcharts-grid-line-color;
+}
+.highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 0;
+}
+.highcharts-tick {
+    stroke: $highcharts-axis-line-color;
+}
+.highcharts-yaxis .highcharts-tick {
+    stroke-width: 0;
+}
+.highcharts-minor-grid-line {
+    stroke: $highcharts-minor-grid-line-color;
+}
+.highcharts-crosshair-thin {
+    stroke-width: $highcharts-crosshair-line-width;
+    stroke: $highcharts-crosshair-line-color;
+}
+.highcharts-crosshair-category {
+    stroke: $highcharts-crosshair-category-border;
+    stroke-opacity: $highcharts-selection-opacity;
+}
+
+
+/* Credits */
+.highcharts-credits {
+    cursor: pointer;
+    fill: $highcharts-credits-background;
+    font-size: $highcharts-credits-font-size;
+    transition: fill 250ms, font-size 250ms;
+}
+.highcharts-credits:hover {
+    fill: black;
+    font-size: $highcharts-credits-font-size-hover;
+}
+
+/* Tooltip */
+.highcharts-tooltip {
+    cursor: default;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: stroke 150ms;
+}
+.highcharts-tooltip text {
+    fill: $highcharts-tooltip-text-color;
+}
+.highcharts-tooltip .highcharts-header {
+    font-size: $highcharts-tooltip-header-font-size;
+}
+.highcharts-tooltip-box {
+    stroke-width: $highcharts-box-border-width;
+    fill: $highcharts-tooltip-background;
+    fill-opacity: $highcharts-tooltip-background-opacity;
+}
+.highcharts-tooltip-box .highcharts-label-box {
+    fill: $highcharts-tooltip-background;
+    fill-opacity: $highcharts-tooltip-background-opacity;
+}
+
+.highcharts-selection-marker {
+    fill        : $highcharts-selection-marker-background;
+    fill-opacity: $highcharts-selection-opacity;
+}
+
+.highcharts-graph {
+    fill: none;
+    stroke-width: $highcharts-graph-line-width;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.highcharts-state-hover .highcharts-graph {
+    stroke-width: $highcharts-graph-line-width-hover;
+}
+.highcharts-state-hover path {
+    transition: stroke-width 50; /* quick in */
+}
+.highcharts-state-normal path {
+    transition: stroke-width 250ms; /* slow out */
+}
+
+/* Legend hover affects points and series */
+g.highcharts-series,
+.highcharts-point,
+.highcharts-markers,
+.highcharts-data-labels {
+    transition: opacity 250ms;
+}
+.highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+    opacity: $highcharts-legend-active-opacity;
+}
+
+/* Series options */
+
+/* Default colors */
+@for $highcharts-i from 1 through length($highcharts-colors) {
+  $highcharts-color: nth($highcharts-colors, $highcharts-i);
+  .highcharts-color-#{$highcharts-i - 1} {
+    fill: $highcharts-color;
+    stroke: $highcharts-color;
+  }
+}
+
+.highcharts-area {
+    fill-opacity: 0.75;
+    stroke-width: 0;
+}
+.highcharts-markers {
+    stroke-width: 1px;
+    stroke: $highcharts-background-color;
+}
+.highcharts-point {
+    stroke-width: $highcharts-point-width;
+}
+.highcharts-dense-data .highcharts-point {
+    stroke-width: 0;
+}
+
+.highcharts-data-label {
+    font-size: $highcharts-labels-font-size-sm;
+    font-weight: bold;
+}
+.highcharts-data-label-box {
+    fill: none;
+    stroke-width: 0;
+}
+.highcharts-data-label text, text.highcharts-data-label {
+    fill: $highcharts-data-label-color;
+}
+.highcharts-data-label-connector {
+    fill: none;
+}
+.highcharts-halo {
+    fill-opacity: $highcharts-selection-opacity;
+    stroke-width: 0;
+}
+.highcharts-series:not(.highcharts-pie-series) .highcharts-point-select,
+.highcharts-markers .highcharts-point-select {
+    fill  : $highcharts-point-select-background;
+    stroke: $highcharts-point-select-border;
+}
+.highcharts-column-series rect.highcharts-point {
+    // rect to prevent stroke on 3D columns
+    stroke: $highcharts-background-color;
+}
+.highcharts-column-series .highcharts-point {
+    transition: fill-opacity 250ms;
+}
+.highcharts-column-series .highcharts-point-hover {
+    fill-opacity: $highcharts-column-point-opacity-hover;
+    transition: fill-opacity 50ms;
+}
+.highcharts-pie-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: $highcharts-background-color;
+}
+.highcharts-pie-series .highcharts-point-hover {
+    fill-opacity: $highcharts-column-point-opacity-hover;
+    transition: fill-opacity 50ms;
+}
+.highcharts-funnel-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: $highcharts-background-color;
+}
+.highcharts-funnel-series .highcharts-point-hover {
+    fill-opacity: $highcharts-column-point-opacity-hover;
+    transition: fill-opacity 50ms;
+}
+.highcharts-funnel-series .highcharts-point-select {
+    fill: inherit;
+    stroke: inherit;
+}
+.highcharts-pyramid-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: $highcharts-background-color;
+}
+.highcharts-pyramid-series .highcharts-point-hover {
+    fill-opacity: $highcharts-column-point-opacity-hover;
+    transition: fill-opacity 50ms;
+}
+.highcharts-pyramid-series .highcharts-point-select {
+    fill: inherit;
+    stroke: inherit;
+}
+.highcharts-solidgauge-series .highcharts-point {
+    stroke-width: 0;
+}
+.highcharts-treemap-series .highcharts-point {
+    stroke-width: $highcharts-point-width;
+    stroke: $highcharts-treemap-point-border;
+    transition: stroke 250ms, fill 250ms, fill-opacity 250ms;
+}
+.highcharts-treemap-series .highcharts-point-hover {
+    stroke: $highcharts-treemap-point-border-hover;
+    transition: stroke 25ms, fill 25ms, fill-opacity 25ms;
+}
+
+.highcharts-treemap-series .highcharts-above-level {
+    display: none;
+}
+.highcharts-treemap-series .highcharts-internal-node {
+    fill: none;
+}
+.highcharts-treemap-series .highcharts-internal-node-interactive {
+    fill-opacity: 0.15;
+    cursor: pointer;
+}
+.highcharts-treemap-series .highcharts-internal-node-interactive:hover {
+    fill-opacity: $highcharts-column-point-opacity-hover;
+}
+
+
+
+/* Legend */
+.highcharts-legend-box {
+    fill: none;
+    stroke-width: 0;
+}
+.highcharts-legend-item > text {
+    fill: $highcharts-legend-text-color;
+    font-weight: bold;
+    font-size: $highcharts-legend-font-size;
+    cursor: pointer;
+    stroke-width: 0;
+}
+.highcharts-legend-item:hover text {
+    fill: $highcharts-legend-text-color-hover;
+}
+.highcharts-legend-item-hidden * {
+    fill: $highcharts-legend-text-color-hidden !important;
+    stroke: $highcharts-legend-text-color-hidden !important;
+    transition: fill 250ms;
+}
+.highcharts-legend-nav-active {
+    fill: $highcharts-legend-background-active;
+    cursor: pointer;
+}
+.highcharts-legend-nav-inactive {
+    fill: $highcharts-legend-text-color-hidden;
+}
+circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* tracker */
+    fill: rgba(192, 192, 192, 0.0001);
+}
+.highcharts-legend-title-box {
+    fill: none;
+    stroke-width: 0;
+}
+
+/* Bubble legend */
+.highcharts-bubble-legend-symbol {
+    stroke-width: 2;
+    fill-opacity: 0.5;
+}
+.highcharts-bubble-legend-connectors {
+    stroke-width: 1;
+}
+.highcharts-bubble-legend-labels {
+    fill: $highcharts-bubble-legend-labels-background;
+}
+
+/* Loading */
+.highcharts-loading {
+    position: absolute;
+    background-color: $highcharts-background-color;
+    opacity: 0.5;
+    text-align: center;
+    z-index: 10;
+    transition: opacity 250ms;
+}
+.highcharts-loading-hidden {
+    height: 0 !important;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 250ms, height 250ms step-end;
+}
+.highcharts-loading-inner {
+    font-weight: bold;
+    position: relative;
+    top: 45%;
+}
+
+/* Plot bands and polar pane backgrounds */
+.highcharts-plot-band, .highcharts-pane {
+    fill: $highcharts-plot-band-pane-background;
+    fill-opacity: 0.05;
+}
+.highcharts-plot-line {
+    fill: none;
+    stroke      : $highcharts-plot-line-color;
+    stroke-width: $highcharts-plot-line-width;
+}
+
+/* Highcharts More and modules */
+.highcharts-boxplot-box {
+    fill: $highcharts-background-color;
+}
+.highcharts-boxplot-median {
+    stroke-width: 2px;
+}
+.highcharts-bubble-series .highcharts-point {
+    fill-opacity: 0.5;
+}
+.highcharts-errorbar-series .highcharts-point {
+    stroke: $highcharts-bar-border;
+}
+.highcharts-gauge-series .highcharts-data-label-box {
+    stroke      : $highcharts-box-border;
+    stroke-width: $highcharts-box-border-width;
+}
+.highcharts-gauge-series .highcharts-dial {
+    fill: $highcharts-gauge-dial-background;
+    stroke-width: 0;
+}
+.highcharts-polygon-series .highcharts-graph {
+    fill: inherit;
+    stroke-width: 0;
+}
+.highcharts-waterfall-series .highcharts-graph {
+    stroke: $highcharts-waterfall-line-color;
+    stroke-dasharray: 1, 3;
+}
+.highcharts-sankey-series .highcharts-point {
+    stroke-width: 0;
+}
+.highcharts-sankey-series .highcharts-link {
+    transition: fill 250ms, fill-opacity 250ms;
+    fill-opacity: 0.5;
+}
+.highcharts-sankey-series .highcharts-point-hover.highcharts-link {
+    transition: fill 50ms, fill-opacity 50ms;
+    fill-opacity: 1;
+}
+.highcharts-venn-series .highcharts-point {
+    fill-opacity: 0.75;
+    stroke: $highcharts-box-border;
+    transition: stroke 250ms, fill-opacity 250ms;
+}
+.highcharts-venn-series .highcharts-point-hover {
+    fill-opacity: 1;
+    stroke: $highcharts-box-border;
+}
+
+/* Highstock */
+.highcharts-navigator-mask-outside {
+    fill-opacity: 0;
+}
+.highcharts-navigator-mask-inside {
+    fill: $highcharts-navigator-mask-inside-background; /* navigator.maskFill option */
+    fill-opacity: $highcharts-selection-opacity;
+    cursor: ew-resize;
+}
+.highcharts-navigator-outline {
+    stroke: $highcharts-navigator-outline-border;
+    fill: none;
+}
+.highcharts-navigator-handle {
+    stroke: $highcharts-navigator-handle-border;
+    fill: $highcharts-navigator-handle-background;
+    cursor: ew-resize;
+}
+.highcharts-navigator-series {
+    fill: $highcharts-navigator-series-fill;
+    stroke: $highcharts-navigator-series-border;
+}
+.highcharts-navigator-series .highcharts-graph {
+    stroke-width: $highcharts-plot-line-width;
+}
+.highcharts-navigator-series .highcharts-area {
+    fill-opacity: 0.05;
+}
+.highcharts-navigator-xaxis .highcharts-axis-line {
+    stroke-width: 0;
+}
+.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke-width: $highcharts-grid-line-width;
+    stroke      : $highcharts-grid-line-color;
+}
+.highcharts-navigator-xaxis.highcharts-axis-labels {
+    fill: $highcharts-navigator-axis-labels-text-color;
+}
+.highcharts-navigator-yaxis .highcharts-grid-line {
+    stroke-width: 0;
+}
+.highcharts-scrollbar-thumb {
+    fill  : $highcharts-scrollbar-thumb-background;
+    stroke: $highcharts-scrollbar-thumb-background;
+    stroke-width: $highcharts-scrollbar-border-width;
+}
+.highcharts-scrollbar-button {
+    fill: $highcharts-scrollbar-button-background;
+    stroke: $highcharts-scrollbar-border;
+    stroke-width: $highcharts-scrollbar-border-width;
+}
+.highcharts-scrollbar-arrow {
+    fill: $highcharts-scrollbar-arrow-background;
+}
+.highcharts-scrollbar-rifles {
+    stroke: $highcharts-scrollbar-rifles-color;
+    stroke-width: 1px;
+}
+.highcharts-scrollbar-track {
+    fill: $highcharts-scrollbar-track-background;
+    stroke: $highcharts-scrollbar-track-border;
+    stroke-width: $highcharts-scrollbar-border-width;
+}
+.highcharts-button {
+    fill: $highcharts-button-background;
+    stroke: $highcharts-button-border;
+    cursor: default;
+    stroke-width: $highcharts-button-border-width;
+    transition: fill 250ms;
+}
+.highcharts-button text {
+    fill: $highcharts-button-text;
+}
+.highcharts-button-hover {
+    transition: fill 0ms;
+    fill: $highcharts-button-hover-background;
+    stroke: $highcharts-button-hover-border;
+}
+.highcharts-button-hover text {
+    fill: $highcharts-button-hover-text;
+}
+.highcharts-button-pressed {
+    font-weight: bold;
+    fill: $highcharts-button-pressed-background;
+    stroke: $highcharts-button-pressed-border;
+}
+.highcharts-button-pressed text {
+    fill: $highcharts-button-pressed-text;
+    font-weight: bold;
+}
+.highcharts-button-disabled text {
+    fill: $highcharts-button-text;
+}
+.highcharts-range-selector-buttons .highcharts-button {
+    stroke-width: $highcharts-range-selector-button-border-width;
+}
+.highcharts-range-label rect {
+    fill: none;
+}
+.highcharts-range-label text {
+    fill: $highcharts-range-label-text-color;
+}
+.highcharts-range-input rect {
+    fill: none;
+}
+.highcharts-range-input text {
+    fill: $highcharts-range-selector-input-text;
+}
+.highcharts-range-input {
+    stroke-width: $highcharts-input-border-width;
+    stroke      : $highcharts-range-selector-input-border;
+}
+input.highcharts-range-selector {
+    position: absolute;
+    border: 0;
+    width: 1px; /* Chrome needs a pixel to see it */
+    height: 1px;
+    padding: 0;
+    text-align: center;
+    left: -9em; /* #4798 */
+}
+.highcharts-crosshair-label text {
+    fill: $highcharts-crosshair-label-text-color;
+    font-size: $highcharts-labels-font-size-lg;
+}
+.highcharts-crosshair-label .highcharts-label-box {
+    fill: inherit;
+}
+
+
+.highcharts-candlestick-series .highcharts-point {
+    stroke      : $highcharts-bar-border;
+    stroke-width: $highcharts-plot-line-width;
+}
+.highcharts-candlestick-series .highcharts-point-up {
+    fill: $highcharts-background-color;
+}
+.highcharts-ohlc-series .highcharts-point-hover {
+    stroke-width: $highcharts-graph-line-width-hover;
+}
+.highcharts-flags-series .highcharts-point .highcharts-label-box {
+    stroke: $highcharts-flags-box-border;
+    fill  : $highcharts-flags-box-background;
+    transition: fill 250ms;
+}
+.highcharts-flags-series .highcharts-point-hover .highcharts-label-box {
+    stroke: $highcharts-flags-box-border-hover;
+    fill  : $highcharts-flags-box-background-hover;
+}
+.highcharts-flags-series .highcharts-point text {
+    fill       : $highcharts-flags-text-color;
+    font-size  : $highcharts-labels-font-size-sm;
+    font-weight: bold;
+}
+
+/* Highmaps */
+.highcharts-map-series .highcharts-point {
+    transition: fill 500ms, fill-opacity 500ms, stroke-width 250ms;
+    stroke: $highcharts-box-border;
+}
+.highcharts-map-series .highcharts-point-hover {
+    transition: fill 0ms, fill-opacity 0ms;
+    fill-opacity: 0.5;
+    stroke-width: $highcharts-map-point-border-width-hover;
+}
+.highcharts-mapline-series .highcharts-point {
+    fill: none;
+}
+.highcharts-heatmap-series .highcharts-point {
+    stroke-width: 0;
+}
+.highcharts-map-navigation {
+    font-size: $highcharts-map-navigation-font-size;
+    font-weight: bold;
+    text-align: center;
+}
+.highcharts-coloraxis {
+    stroke-width: 0;
+}
+.highcharts-coloraxis-marker {
+    fill: $highcharts-coloraxis-marker-color;
+}
+.highcharts-null-point {
+    fill: $highcharts-null-point-background;
+}
+
+/* 3d charts */
+.highcharts-3d-frame {
+    fill: transparent;
+}
+
+/* Exporting module */
+.highcharts-contextbutton {
+    fill  : $highcharts-context-button-background; /* needed to capture hover */
+    stroke: $highcharts-context-button-border;
+    stroke-linecap: round;
+}
+.highcharts-contextbutton:hover {
+    fill  : $highcharts-contextbutton-background-hover;
+    stroke: $highcharts-contextbutton-border-hover;
+}
+.highcharts-button-symbol {
+    stroke      : $highcharts-button-symbol-border;
+    stroke-width: $highcharts-button-symbol-border-width;
+}
+.highcharts-menu {
+    border: $highcharts-input-border-width solid $highcharts-menu-border;
+    background: $highcharts-menu-background;
+    padding: $highcharts-menu-padding-y $highcharts-menu-padding-x;
+    box-shadow: $highcharts-menu-box-shadow;
+}
+.highcharts-menu-item {
+    padding: $highcharts-menu-item-padding-y $highcharts-menu-item-padding-x;
+    background: none;
+    color: $highcharts-menu-text-color;
+    cursor: pointer;
+    transition: background 250ms, color 250ms;
+}
+.highcharts-menu-item:hover {
+    background: $highcharts-menu-background-hover;
+    color     : $highcharts-menu-text-color-hover;
+}
+
+/* Drilldown module */
+.highcharts-drilldown-point {
+    cursor: pointer;
+}
+.highcharts-drilldown-data-label text,
+text.highcharts-drilldown-data-label,
+.highcharts-drilldown-axis-label {
+    cursor: pointer;
+    fill: $highcharts-drilldown-label-text-color;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* No-data module */
+.highcharts-no-data text {
+    font-weight: bold;
+    font-size: $highcharts-no-data-font-size;
+    fill: $highcharts-no-data-text;
+}
+
+/* Drag-panes module */
+.highcharts-axis-resizer {
+    cursor: ns-resize;
+    stroke      : $highcharts-axis-resizer-border;
+    stroke-width: $highcharts-axis-resizer-border-width;
+}
+
+/* Bullet type series */
+.highcharts-bullet-target {
+    stroke-width: 0;
+}
+
+/* Lineargauge type series */
+.highcharts-lineargauge-target {
+	stroke-width: $highcharts-input-border-width;
+	stroke      : $highcharts-lineargauge-target-border;
+}
+.highcharts-lineargauge-target-line {
+	stroke-width: $highcharts-lineargauge-target-line-width;
+    stroke      : $highcharts-lineargauge-target-line-color;
+}
+
+/* Annotations module */
+.highcharts-annotation-label-box {
+    stroke-width: $highcharts-box-border-width;
+    stroke      : $highcharts-annotation-label-box-border;
+    fill        : $highcharts-annotation-label-box-background;
+    fill-opacity: 0.75;
+}
+.highcharts-annotation-label text {
+    fill: $highcharts-annotation-label-text-color;
+}
+
+/* Gantt */
+.highcharts-treegrid-node-collapsed, .highcharts-treegrid-node-expanded {
+    cursor: pointer;
+}
+.highcharts-point-connecting-path {
+    fill: none;
+}
+.highcharts-grid-axis .highcharts-tick {
+    stroke-width: $highcharts-axis-line-width;
+}
+.highcharts-grid-axis .highcharts-axis-line {
+    stroke-width: $highcharts-axis-line-width;
+}
