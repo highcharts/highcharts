@@ -377,7 +377,7 @@ declare global {
             public label(
                 str: string,
                 x: number,
-                y: number,
+                y?: number,
                 shape?: SymbolKeyValue,
                 anchorX?: number,
                 anchorY?: number,
@@ -3652,13 +3652,18 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * @param {Highcharts.SVGElement} [parent] - parent node
          */
         function recurse(
-            config: Highcharts.SVGDefinitionObject,
+            config: (
+                Highcharts.SVGDefinitionObject|
+                Array<Highcharts.SVGDefinitionObject>
+            ),
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var ret: any;
 
-            splat(config).forEach(function (item): void {
-                var node = ren.createElement(item.tagName),
+            splat(config).forEach(function (
+                item: Highcharts.SVGDefinitionObject
+            ): void {
+                var node = ren.createElement(item.tagName as any),
                     attr = {} as Highcharts.SVGAttributes;
 
                 // Set attributes
@@ -5855,7 +5860,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} x
      *        The x position of the label's left side.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
      *
@@ -5890,7 +5895,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         this: Highcharts.SVGRenderer,
         str: string,
         x: number,
-        y: number,
+        y?: number,
         shape?: Highcharts.SymbolKeyValue,
         anchorX?: number,
         anchorY?: number,

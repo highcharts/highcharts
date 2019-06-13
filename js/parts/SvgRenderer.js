@@ -4060,7 +4060,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} x
      *        The x position of the label's left side.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
      *
