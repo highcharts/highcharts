@@ -35,7 +35,13 @@ function requires(globPatterns, taskNames) {
                     glob(globPattern, { allowEmpty: true }).length === 0)
             ) {
                 taskNames.forEach(taskName => require('../' + taskName));
-                gulp.series(...taskNames)(resolve);
+                gulp.series(...taskNames)(error => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                });
             } else {
                 resolve();
             }
