@@ -138,8 +138,8 @@ function readConfig() {
     if (FS.existsSync(CONFIG_FILE)) {
         try {
             config = JSON.parse(FS.readFileSync(CONFIG_FILE).toString());
-        } catch (error) {
-            LogLib.warn(error);
+        } catch (catchedError) {
+            LogLib.warn(catchedError);
         }
     }
 

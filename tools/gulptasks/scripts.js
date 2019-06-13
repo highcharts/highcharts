@@ -143,7 +143,7 @@ function task() {
         }
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
 
         if (shouldRun() ||
             argv.force ||
@@ -153,13 +153,17 @@ function task() {
             processLib.isRunning('scripts_incomplete', true, true);
 
             gulp.series('scripts-ts', 'scripts-css', 'scripts-js')(
-                () => {
+                err => {
 
                     processLib.isRunning('scripts_incomplete', false, true);
 
                     saveRun();
 
-                    resolve();
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
                 }
             );
         } else {
