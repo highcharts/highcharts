@@ -61,7 +61,6 @@ declare global {
             tickPositionInfo?: any; // @todo
         }
         interface Chart {
-            extraBottomMargin?: any; // @todo
             fixedRange?: any; // @todo
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
@@ -93,9 +92,8 @@ declare global {
         }
         interface Options {
             exporting?: any; // @todo
-            isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
-            rangeSelector?: any; // @todo
+            navigation?: any; // @todo
         }
         interface Point {
             dist?: any; // @todo

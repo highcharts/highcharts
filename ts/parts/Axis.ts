@@ -421,7 +421,6 @@ declare global {
             public pointRangePadding: number;
             public pos?: number;
             public positiveValuesOnly: boolean;
-            public range?: (null|number);
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
             public right: number;

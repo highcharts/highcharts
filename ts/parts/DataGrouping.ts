@@ -23,7 +23,10 @@ declare global {
         );
         interface Axis {
             getGroupPixelWidth(): number;
-            setDataGrouping(): void;
+            setDataGrouping(
+                dataGrouping?: (boolean|PlotSeriesDataGroupingOptions),
+                redraw?: boolean
+            ): void;
         }
         interface DataGrounpingApproximationsArray extends Array<number> {
             hasNulls?: boolean;

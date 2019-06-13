@@ -17,6 +17,7 @@ js/parts/OrdinalAxis.js
 js/parts/PlotLineOrBand.js
 js/parts/Point.js
 js/parts/Pointer.js
+js/parts/RangeSelector.js
 js/parts/Responsive.js
 js/parts/Scrollbar.js
 js/parts/SvgRenderer.js
