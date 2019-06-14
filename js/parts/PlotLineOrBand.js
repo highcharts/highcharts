@@ -308,8 +308,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Mouse events demonstrated
      *
      * @since     1.2
-     * @context   PlotLineOrBand
      * @apioption xAxis.plotBands.events
+     */
+    /**
+     * Click event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotBands.events.click
+     */
+    /**
+     * Mouse move event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotBands.events.mousemove
+     */
+    /**
+     * Mouse out event on the corner of a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotBands.events.mouseout
+     */
+    /**
+     * Mouse over event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotBands.events.mouseover
      */
     /**
      * The start position of the plot band in axis units.
@@ -541,10 +564,32 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-events/
      *         Mouse events demonstrated
      *
-     * @type      {*}
      * @since     1.2
-     * @context   PlotLineOrBand
      * @apioption xAxis.plotLines.events
+     */
+    /**
+     * Click event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.events.click
+     */
+    /**
+     * Mouse move event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.events.mousemove
+     */
+    /**
+     * Mouse out event on the corner of a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.events.mouseout
+     */
+    /**
+     * Mouse over event on a plot band.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.events.mouseover
      */
     /**
      * An id used for identifying the plot line in Axis.removePlotLine.

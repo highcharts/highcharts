@@ -96,7 +96,7 @@ H.seriesType(
          */
         layout: 'vertical',
         /**
-         * @extends   plotOptions.line.marker
+         * @extends plotOptions.series.marker
          */
         marker: merge(
             H.defaultOptions.plotOptions.line.marker,
