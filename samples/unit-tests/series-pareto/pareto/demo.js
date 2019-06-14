@@ -110,3 +110,26 @@ QUnit.test('Pareto wasnt working with baseSeries set to 0 - #10471', function (a
         'Number of points in pareto series should be equal amount of point in assigned series'
     );
 });
+
+QUnit.test('Pareto was not refreshing the data, when baseSeries data was updated with less than two points.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            type: "pareto",
+            baseSeries: 'col'
+        },
+        {
+            type: "column",
+            id: 'col',
+            data: [1, 2, 3]
+        }
+        ]
+    });
+
+    chart.series[1].setData([1]);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        chart.series[1].points.length,
+        "Pareto have the same amount of points like its baseSeries after update."
+    );
+});
