@@ -144,7 +144,7 @@ jobs:
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run: echo -e "Push changelog to highcharts repo not yet implemented.." #TODO
+      - run: echo -e "Push changelog to highcharts repo not yet implemented.."
       - <<: *persist_workspace
 
   deploy:
