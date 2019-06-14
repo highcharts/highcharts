@@ -85,11 +85,8 @@ jobs:
       - run: node --version && npm --version
       - run: npm install --quiet
       - run:
-          name: Install highcharts-declarations-generator
-          command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
-      - run:
           name: Generate highcharts ts declarations
-          command: cd /home/circleci/repo/highcharts && npx gulp jsdoc-dts && npx gulp lint-dts
+          command: npx gulp jsdoc-dts && npx gulp lint-dts
       - <<: *persist_workspace
 
   test:
@@ -142,7 +139,7 @@ jobs:
       #- is_master_branch
       - <<: *load_workspace
       - run:
-          name: Upload to S3
+          name: Compile build
           command: npm run build
       - run:
           name: Generate changelog since last tag
