@@ -111,7 +111,7 @@ QUnit.test('Pareto wasnt working with baseSeries set to 0 - #10471', function (a
     );
 });
 
-QUnit.test('Pareto was not refreshing the data, when baseSeries data was updated with less than two points.', function (assert) {
+QUnit.test('Pareto did not refreshing the data, when baseSeries data was updated with less than two points.', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
             type: "pareto",
