@@ -37,6 +37,6 @@ Gulp.task(
         'dist-productsjs',
         'jsdoc-dts',
         'lint-dts',
-        'dist-ant'
+        'dist-compress'
     )
 );
