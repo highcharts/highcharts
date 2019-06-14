@@ -274,7 +274,8 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + this.idCounter;
+        id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
+            this.idCounter;
         ++this.idCounter;
     }
 
@@ -473,8 +474,8 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
         if (forceHashId || !pattern.id) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
-            pattern.id = 'highcharts-pattern-' + hashFromObject(pattern) +
-                hashFromObject(pattern, true);
+            pattern.id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
+                hashFromObject(pattern) + hashFromObject(pattern, true);
         }
 
         // Add it. This function does nothing if an element with this ID
@@ -582,7 +583,8 @@ H.addEvent(H.Chart, 'redraw', function () {
 
 // Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart) {
-    var colors = H.getOptions().colors;
+    var colors = H.getOptions().colors,
+        index = chart.index;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
@@ -597,7 +599,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         'M 0 0 L 5 10 L 10 0'
     ].forEach(function (pattern, i) {
         chart.renderer.addPattern({
-            id: 'highcharts-default-pattern-' + i,
+            id: 'highcharts-default-pattern-' + (index ? index + '-' : '') + i,
             path: pattern,
             color: colors[i],
             width: 10,
