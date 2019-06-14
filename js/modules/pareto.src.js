@@ -64,16 +64,14 @@ seriesType('pareto', 'line'
          *         Returns array of points [x,y]
          */
         setDerivedData: function () {
-            if (this.baseSeries.yData.length > 1) {
-                var xValues = this.baseSeries.xData,
-                    yValues = this.baseSeries.yData,
-                    sum = this.sumPointsPercents(yValues, xValues, null, true);
+            var xValues = this.baseSeries.xData,
+                yValues = this.baseSeries.yData,
+                sum = this.sumPointsPercents(yValues, xValues, null, true);
 
-                this.setData(
-                    this.sumPointsPercents(yValues, xValues, sum, false),
-                    false
-                );
-            }
+            this.setData(
+                this.sumPointsPercents(yValues, xValues, sum, false),
+                false
+            );
         },
         /**
          * Calculate y sum and each percent point.
