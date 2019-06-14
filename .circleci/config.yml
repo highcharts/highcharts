@@ -55,7 +55,7 @@ commands:
       - run:
           name: Fail if not master branch
           command: |
-            if [ "${CIRCLE_BRANCH}" != "feature/circleci-integration" ]; then
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
               echo "Not master branch, aborting.."; exit 1;
             else
               echo "Proceeding from branch ${CIRCLE_BRANCH}..."
@@ -139,30 +139,26 @@ jobs:
   build_dist:
     <<: *defaults
     steps:
-      - is_master_branch
+      #- is_master_branch
       - <<: *load_workspace
       - run:
-          name: Generate highcharts packages
+          name: Upload to S3
           command: npm run build
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
       - run: echo -e "Push changelog to highcharts repo not yet implemented.." #TODO
-      #- store_artifacts:
-      #    path: /home/circleci/repo/highcharts/build
-      #- store_artifacts:
-      #    path: /home/circleci/repo/highcharts/code
       - <<: *persist_workspace
 
   deploy:
     <<: *defaults
     steps:
-      - is_master_branch
+      #- is_master_branch
       - <<: *load_workspace
       - run:
-          name: Install s3cmd
-          command: sudo apt-get install -y -qq s3cmd
-      - run: echo -e "Upload via s3cmd not yet implemented.." #TODO
+          name: Upload to S3
+          command: npx gulp dist-upload
+      - <<: *persist_workspace
 
 workflows:
   version: 2
@@ -189,16 +185,21 @@ workflows:
           requires:
             - "test-Mac.Safari"
           browsers: "Mac.Firefox"
-      - hold_for_approval:
-          type: approval
-          filters:
-            branches:
-              only:
-                - not-a-branch
       - build_dist:
           requires:
-            - hold_for_approval
+            - "test-Mac.Firefox"
+            - "test-Mac.Safari"
           filters:
             branches:
               only:
-                - feature/circleci-integration
+                - feature/ci-deploy
+      - deploy:
+          requires:
+            - build_dist
+          context: core-developers
+          filters:
+            branches:
+              # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
+              ignore: /.*/
+            tags:
+              only: /^test-v\d+(?:\.\d+)+?$/
