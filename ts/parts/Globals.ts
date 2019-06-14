@@ -37,7 +37,6 @@ declare global {
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
-        type StackItemObject = any; // @todo
         type XAxisScrollbarOptions = any; // @todo
         type YAxisStackLabelsOptions = any; // @todo
         interface Axis {
@@ -45,16 +44,9 @@ declare global {
             id?: any; // @todo
             labelLeft?: any; // @todo
             labelRight?: any; // @todo
-            oldStacks?: any; // @todo
             sector?: any; // @todo
-            stacks?: any; // @todo
-            usePercentage?: any; // @todo
             beforePadding: Function; // @todo
-            buildStacks: Function; // @todo
-            cleanStacks: Function; // @todo
             getMaxLabelDimensions: Function; // @todo
-            renderStackTotals: Function; // @todo
-            resetStacks: Function; // @todo
             toFixedRange: Function; // @todo
         }
         interface AxisLabelsFormatterContextObject {
@@ -78,10 +70,7 @@ declare global {
             runTrackerClick?: any; // @todo
             scrollablePixelsX?: any; // @todo
             scrollablePixelsY?: any; // @todo
-            scrollbar?: any; // @todo
-            scroller?: any; // @todo
             tooltip?: any; // @todo
-            getStacks: Function; // @todo
             isReadyToRender: Function; // @todo
         }
         interface ChartOptions {

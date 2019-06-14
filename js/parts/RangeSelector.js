@@ -740,7 +740,8 @@ RangeSelector.prototype = {
                 rangeOptions._offsetMin, isSelected = i === selected, 
             // Disable buttons where the range exceeds what is allowed in
             // the current view
-            isTooGreatRange = range > dataMax - dataMin, 
+            isTooGreatRange = range >
+                dataMax - dataMin, 
             // Disable buttons where the range is smaller than the minimum
             // range
             isTooSmallRange = range < baseAxis.minRange, 

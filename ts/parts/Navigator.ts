@@ -22,6 +22,10 @@ declare global {
             fake?: boolean;
             previousZoom?: [(null|number), (null|number)];
         }
+        interface Chart {
+            scrollbar?: Scrollbar;
+            scroller?: Navigator;
+        }
         interface NavigatorHandlesOptions {
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: ColorString;

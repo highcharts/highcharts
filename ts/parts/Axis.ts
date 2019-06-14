@@ -7104,15 +7104,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Destroy each stack total
-        objectEach(stacks, function (stack: any, stackKey: string): void {
+        objectEach(stacks, function (
+            stack: Highcharts.Dictionary<Highcharts.StackItem>,
+            stackKey: string
+        ): void {
             destroyObjectProperties(stack);
 
-            stacks[stackKey] = null;
+            stacks[stackKey] = null as any;
         });
 
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
-            function (coll): void {
+            function (
+                coll: (
+                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
+                    Highcharts.Dictionary<Highcharts.Tick>
+                )
+            ): void {
                 destroyObjectProperties(coll);
             }
         );

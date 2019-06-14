@@ -1146,10 +1146,10 @@ Scrollbar.prototype = {
 
         // #6421, chart may have more scrollbars
         if (scroller && this === scroller.scrollbar) {
-            scroller.scrollbar = null;
+            scroller.scrollbar = null as any;
 
             // Destroy elements in collection
-            destroyObjectProperties(scroller.scrollbarButtons);
+            destroyObjectProperties((scroller as any).scrollbarButtons);
         }
     }
 };

@@ -20,6 +20,7 @@ js/parts/Pointer.js
 js/parts/RangeSelector.js
 js/parts/Responsive.js
 js/parts/Scrollbar.js
+js/parts/Stacking.js
 js/parts/SvgRenderer.js
 js/parts/Tick.js
 js/parts/Time.js
