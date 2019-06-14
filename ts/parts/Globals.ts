@@ -75,6 +75,7 @@ declare global {
             openMenu?: any; // @todo
             polar?: any; // @todo
             rangeSelector?: any; // @todo
+            redrawTrigger?: any; // @todo
             runTrackerClick?: any; // @todo
             scrollablePixelsX?: any; // @todo
             scrollablePixelsY?: any; // @todo
