@@ -197,6 +197,7 @@ workflows:
           filters:
             branches:
               # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
-              ignore: /.*/
+              only:
+                - feature/ci-deploy
             tags:
               only: /^test-v\d+(?:\.\d+)+?$/
