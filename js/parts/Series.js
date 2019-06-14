@@ -1209,7 +1209,7 @@ H.Series = H.seriesType(
          *
          * @type       {string}
          * @product    highcharts highstock
-         * @validvalue ["normal", "percent"]
+         * @validvalue ["normal", "overlap", "percent", "stream"]
          * @apioption  plotOptions.series.stacking
          */
 

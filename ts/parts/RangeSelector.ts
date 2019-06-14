@@ -818,8 +818,8 @@ RangeSelector.prototype = {
 
         // Fixed times like minutes, hours, days
         } else if (range) {
-            newMin = Math.max(newMax - range, dataMin);
-            newMax = Math.min(newMin + range, dataMax);
+            newMin = Math.max(newMax - range, dataMin as any);
+            newMax = Math.min(newMin + range, dataMax as any);
 
         } else if (type === 'ytd') {
 
@@ -840,16 +840,17 @@ RangeSelector.prototype = {
                         // reassign it to the last item
                         var xData = series.xData;
 
-                        dataMin = Math.min((xData as any)[0], dataMin);
+                        dataMin = Math.min((xData as any)[0], dataMin as any);
                         dataMax = Math.max(
-                            (xData as any)[(xData as any).length - 1], dataMax
+                            (xData as any)[(xData as any).length - 1],
+                            dataMax as any
                         );
                     });
                     redraw = false;
                 }
                 ytdExtremes = rangeSelector.getYTDExtremes(
                     dataMax,
-                    dataMin,
+                    dataMin as any,
                     chart.time.useUTC
                 );
                 newMin = rangeMin = ytdExtremes.min;
@@ -864,7 +865,7 @@ RangeSelector.prototype = {
             }
         } else if (type === 'all' && baseAxis) {
             newMin = dataMin;
-            newMax = dataMax;
+            newMax = dataMax as any;
         }
 
         newMin += rangeOptions._offsetMin as any;
@@ -1039,8 +1040,8 @@ RangeSelector.prototype = {
             dataMin = unionExtremes.dataMin,
             dataMax = unionExtremes.dataMax,
             ytdExtremes = rangeSelector.getYTDExtremes(
-                dataMax,
-                dataMin,
+                dataMax as any,
+                dataMin as any,
                 chart.time.useUTC
             ),
             ytdMin = ytdExtremes.min,
@@ -1067,7 +1068,8 @@ RangeSelector.prototype = {
                 isSelected = i === selected,
                 // Disable buttons where the range exceeds what is allowed in
                 // the current view
-                isTooGreatRange = (range as any) > dataMax - dataMin,
+                isTooGreatRange = (range as any) >
+                    (dataMax as any) - (dataMin as any),
                 // Disable buttons where the range is smaller than the minimum
                 // range
                 isTooSmallRange = (range as any) < (baseAxis.minRange as any),
@@ -1096,7 +1098,7 @@ RangeSelector.prototype = {
             } else if (type === 'all') {
                 isSameRange = (
                     (baseAxis.max as any) - (baseAxis.min as any) >=
-                    dataMax - dataMin
+                    (dataMax as any) - (dataMin as any)
                 );
                 isAllButAlreadyShowingAll = (
                     !isSelected &&
@@ -1319,14 +1321,14 @@ RangeSelector.prototype = {
                     if (isMin) {
                         if (value > (rangeSelector as any).maxInput.HCTime) {
                             value = undefined as any;
-                        } else if (value < dataMin) {
-                            value = dataMin;
+                        } else if (value < (dataMin as any)) {
+                            value = dataMin as any;
                         }
                     } else {
                         if (value < (rangeSelector as any).minInput.HCTime) {
                             value = undefined as any;
-                        } else if (value > dataMax) {
-                            value = dataMax;
+                        } else if (value > (dataMax as any)) {
+                            value = dataMax as any;
                         }
                     }
 
