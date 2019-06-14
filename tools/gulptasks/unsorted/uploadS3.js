@@ -18,7 +18,6 @@ function addDays(date, days) {
 }
 
 const DIST_DIR = 'build/dist';
-const S3_BUCKET_NAME = process.env.HIGHCHARTS_S3_BUCKET; // TODO: support git-ignore-me.properties?
 
 const HTTP_MAX_AGE = {
     oneDay: 86400,
@@ -33,6 +32,35 @@ const HTTP_EXPIRES = {
     fiveYears: addDays(TODAY, 365 * 5)
 };
 
+/**
+ * Returns the s3 bucket to use. Either defined
+ * in HIGHCHARTS_S3_BUCKET env var or in git-ignore-me.properties file.
+ * @return {string} the s3bucket to upload to.
+ */
+function getS3BucketConfig() {
+    if (process.env.HIGHCHARTS_S3_BUCKET) {
+        return process.env.HIGHCHARTS_S3_BUCKET.replace('s3://', '');
+    }
+    log.message('No HIGHCHARTS_S3_BUCKET env var found. Checking git-ignore-me.properties file.');
+
+    const properties = {};
+    const lines = fs.readFileSync(
+        './git-ignore-me.properties', 'utf8'
+    );
+    lines.split('\n').forEach(function (line) {
+        line = line.split('=');
+        if (line[0]) {
+            properties[line[0]] = line[1];
+        }
+    });
+
+    const s3Bucket = properties['amazon.s3.bucketname'];
+    if (!s3Bucket) {
+        throw new Error('No env var HIGHCHARTS_S3_BUCKET defined and no amazon.s3.bucketname property in git-ignore-me.properties.');
+    }
+    return s3Bucket.replace('s3://', '');
+
+}
 
 /**
  * Checks if source is a directory or system file.
@@ -59,8 +87,6 @@ function toS3FilePath(filePath, localPath, cdnPath, version = false) {
     } else {
         toPath = toPath.replace('js-gzip/', '');
     }
-    log.message(`${filePath} --> ${S3_BUCKET_NAME}/${toPath}`);
-
     return {
         from: filePath.trim(),
         to: toPath
@@ -91,12 +117,13 @@ function getVersionPaths(version = pkgJsonVersion) {
  */
 function uploadFiles(params) {
     const { files, name } = params;
+    const s3Bucket = getS3BucketConfig();
 
-    log.starting(`Uploading ${files.length} files for ${name} to bucket ${S3_BUCKET_NAME}:\n`);
+    log.starting(`Uploading ${files.length} files for ${name} to bucket ${s3Bucket}:\n`);
 
     const defaultParams = {
         batchSize: 40,
-        bucket: S3_BUCKET_NAME.replace('s3://', ''),
+        bucket: s3Bucket,
         onError: err => {
             log.failure(`File(s) errored:\n${err && err.message} ${err.from ? ' - ' + err.from : ''}`);
         },
@@ -133,7 +160,7 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
     const zipFile = {
         from: zipFilePaths[0],
-        to: '/'
+        to: 'zips/' + zipFilePaths[0].substring(zipFilePaths[0].lastIndexOf('/') + 1)
     };
 
     const gfxFromDir = `${fromDir}/gfx`;
@@ -160,7 +187,6 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
         gfxFilesToVersionedDir = [...gfxFilesToVersionedDir, ...gfxFiles.map(file => toS3FilePath(file, localPath, cdnPath, versionPath))];
     });
 
-    // TODO: need to set charset to UTF-8?
     promises.push(uploadFiles({
         files: [zipFile],
         name: prettyName
