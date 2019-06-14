@@ -46,32 +46,8 @@ const distUpload = products => {
 };
 
 
-gulp.task('dist-upload',
-    gulp.series(
-        'dist-compress',
-        () => distUpload(['highcharts', 'highstock', 'highmaps', 'gantt'])
-    ));
-
-gulp.task('dist-upload-highcharts',
-    gulp.series(
-        'dist-compress',
-        () => distUpload(['highcharts'])
-    ));
-
-gulp.task('dist-upload-highstock',
-    gulp.series(
-        'dist-compress',
-        () => distUpload(['highstock'])
-    ));
-
-gulp.task('dist-upload-highmaps',
-    gulp.series(
-        'dist-compress',
-        () => distUpload(['highmaps'])
-    ));
-
-gulp.task('dist-upload-gantt',
-    gulp.series(
-        'dist-compress',
-        () => distUpload(['gantt'])
-    ));
+gulp.task('dist-upload', () => distUpload(['highcharts', 'highstock', 'highmaps', 'gantt']));
+gulp.task('dist-upload-highcharts', () => distUpload(['highcharts']));
+gulp.task('dist-upload-highstock', () => distUpload(['highstock']));
+gulp.task('dist-upload-highmaps', () => distUpload(['highmaps']));
+gulp.task('dist-upload-gantt', () => distUpload(['gantt']));
