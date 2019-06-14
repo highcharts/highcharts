@@ -510,7 +510,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 // resize, as the bounding boxes are not available until then.
 H.addEvent(H.Chart, 'endResize', function () {
     if (
-        (this.renderer.defIds || []).filter(function (id) {
+        (this.renderer && this.renderer.defIds || []).filter(function (id) {
             return id && id.indexOf && id.indexOf('highcharts-pattern-') === 0;
         }).length
     ) {
