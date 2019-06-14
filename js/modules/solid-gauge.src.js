@@ -281,6 +281,7 @@ var solidGaugeOptions = {
     colorByPoint: true,
 
     dataLabels: {
+        /** @ignore-option */
         y: 0
     }
 
