@@ -85,6 +85,36 @@
  * In addition to the global `boost` option, each series has a
  * [boostThreshold](#plotOptions.series.boostThreshold) that defines when the
  * boost should kick in.
+ *
+ * Requires the `modules/boost.js` module.
+ *
+ * @sample {highstock} highcharts/boost/line-series-heavy-stock
+ *         Stock chart
+ * @sample {highstock} highcharts/boost/line-series-heavy-dynamic
+ *         Dynamic stock chart
+ * @sample highcharts/boost/line
+ *         Line chart
+ * @sample highcharts/boost/line-series-heavy
+ *         Line chart with hundreds of series
+ * @sample highcharts/boost/scatter
+ *         Scatter chart
+ * @sample highcharts/boost/area
+ *         Area chart
+ * @sample highcharts/boost/arearange
+ *         Area range chart
+ * @sample highcharts/boost/column
+ *         Column chart
+ * @sample highcharts/boost/columnrange
+ *         Column range chart
+ * @sample highcharts/boost/bubble
+ *         Bubble chart
+ * @sample highcharts/boost/heatmap
+ *         Heat map
+ * @sample highcharts/boost/treemap
+ *         Tree map
+ *
+ * @product   highcharts highstock
+ * @apioption boost
  * */
 
 'use strict';
