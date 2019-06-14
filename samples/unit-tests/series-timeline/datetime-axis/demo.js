@@ -202,4 +202,17 @@ QUnit.test('Timeline: General tests.', function (assert) {
         connector.opacity,
         "Connector is visible together with data label, after setting extremes."
     );
+
+    chart.update({
+        chart: {
+            marginLeft: 100
+        }
+    });
+
+    chart.xAxis[0].setExtremes(Date.UTC(1959, 3, 1), Date.UTC(1961, 0, 4));
+    assert.strictEqual(
+        timeline.points[2].isInside,
+        false,
+        "The third point is hidden, when it's outside of plot area."
+    );
 });
