@@ -281,7 +281,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
         // Normalize each touch
         [].map.call(touches, function (
-            e: Event
+            e: TouchEvent
         ): Highcharts.PointerEventObject {
             return self.normalize(e);
         });

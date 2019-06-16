@@ -185,7 +185,7 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#normalize
      *
-     * @param {global.Event} e
+     * @param {PointerEvent|TouchEvent} e
      *        Event object in standard browsers.
      *
      * @param {Highcharts.OffsetObject} [chartPosition]

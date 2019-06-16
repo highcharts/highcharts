@@ -49,7 +49,7 @@ import H from './Globals.js';
 * applied. The second item is the color for each stop. This color can also be
 * given in the rgba format.
 * @name Highcharts.GradientColorObject#stops
-* @type {Array<Array<number,Highcharts.ColorString>>|undefined}
+* @type {Array<Array<number,Highcharts.ColorString>>}
 */
 /**
  * Defines the start position and the end position for a gradient relative
