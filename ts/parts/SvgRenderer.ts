@@ -50,25 +50,9 @@ declare global {
             f: number;
             h: number;
         }
-        interface GradientColorObject {
-            linearGradient?: LinearGradientColorObject;
-            radialGradient?: RadialGradientColorObject;
-            stops?: Array<[number, ColorString]>;
-        }
-        interface LinearGradientColorObject {
-            x1: number;
-            x2: number;
-            y1: number;
-            y2: number;
-        }
         interface PositionObject {
             x: number;
             y: number;
-        }
-        interface RadialGradientColorObject {
-            cx: number;
-            cy: number;
-            r: number;
         }
         interface RectangleObject extends PositionObject {
             height: number;
@@ -81,7 +65,7 @@ declare global {
             color?: ColorString;
             offsetX?: number;
             offsetY?: number;
-            opcaity?: number;
+            opacity?: number;
             width?: number;
         }
         interface SizeObject {
@@ -140,7 +124,9 @@ declare global {
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
             public parentGroup?: SVGElement;
+            public r?: number;
             public renderer: SVGRenderer;
+            public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
@@ -423,7 +409,7 @@ declare global {
             ): SVGElement;
             public truncate(
                 wrapper: SVGElement,
-                tspan: SVGDOMElement,
+                tspan: HTMLDOMElement,
                 text: (string|undefined),
                 words: (Array<string>|undefined),
                 startAt: number,
@@ -3864,7 +3850,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {Highcharts.SVGElement} wrapper
      *
-     * @param {Highcharts.SVGDOMElement} tspan
+     * @param {Highcharts.HTMLDOMElement} tspan
      *
      * @param {string|undefined} text
      *
@@ -3882,7 +3868,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     truncate: function (
         this: Highcharts.SVGRenderer,
         wrapper: Highcharts.SVGElement,
-        tspan: Highcharts.SVGDOMElement,
+        tspan: Highcharts.HTMLDOMElement,
         text: (string|undefined),
         words: (Array<string>|undefined),
         startAt: number,
@@ -3937,7 +3923,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     } else if ((renderer as any).getSpanWidth) { // #9058 jsdom
                         updateTSpan(getString(text || words, charEnd));
                         lengths[end] = startAt +
-                            (renderer as any).getSpanWidth(wrapper, tspan);
+                            renderer.getSpanWidth(wrapper, tspan);
                     }
                 }
                 return lengths[end];
@@ -4953,7 +4939,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             });
         };
         wrapper.rGetter = function (): number {
-            return wrapper.r;
+            return wrapper.r as any;
         };
 
         return wrapper.attr(attribs as any) as any;

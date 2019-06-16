@@ -570,7 +570,7 @@ H.Tick.prototype = {
                 yOffset = rotCorr.y + 8;
             } else {
                 // #3140, #3140
-                yOffset = Math.cos(label.rotation * deg2rad) *
+                yOffset = Math.cos((label.rotation as any) * deg2rad) *
                     (rotCorr.y - label.getBBox(false, 0).height / 2);
             }
         }

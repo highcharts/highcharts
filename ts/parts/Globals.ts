@@ -72,7 +72,6 @@ declare global {
             scrollablePixelsX?: any; // @todo
             scrollablePixelsY?: any; // @todo
             tooltip?: any; // @todo
-            isReadyToRender: Function; // @todo
         }
         interface ChartOptions {
             forExport?: any; // @todo
@@ -198,7 +197,6 @@ declare global {
         }
         const Series: any; // @todo
         const SVG_NS: string;
-        const addEventListenerPolyfill: any; // @todo
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
         const deg2rad: number;
@@ -213,7 +211,6 @@ declare global {
         const isWebKit: boolean;
         const marginNames: Array<string>;
         const noop: Function;
-        const removeEventListenerPolyfill: any; // @todo
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;

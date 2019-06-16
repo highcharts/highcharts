@@ -2660,7 +2660,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {Highcharts.SVGElement} wrapper
      *
-     * @param {Highcharts.SVGDOMElement} tspan
+     * @param {Highcharts.HTMLDOMElement} tspan
      *
      * @param {string|undefined} text
      *
