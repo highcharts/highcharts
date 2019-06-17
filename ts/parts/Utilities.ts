@@ -53,7 +53,7 @@ declare global {
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
         }
-        interface Dictionary<T> {
+        interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
         }
         interface EventCallbackFunction<T> {
