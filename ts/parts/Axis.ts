@@ -260,7 +260,7 @@ declare global {
             showEmpty?: boolean;
             showFirstLabel?: boolean;
             showLastLabel?: boolean;
-            side?: undefined;
+            side?: number;
             softMax?: number;
             softMin?: number;
             stackLabels?: undefined;
@@ -352,7 +352,7 @@ declare global {
             public categories: (boolean|Array<string>);
             public chart: Chart;
             public closestPointRange: number;
-            public coll: AxisCollValue;
+            public coll: string;
             public cross?: SVGElement;
             public crosshair: (boolean|AxisCrosshairOptions);
             public dataMax?: (null|number);
@@ -3947,7 +3947,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 this.defaultLeftAxisOptions
             ][this.side],
             merge(
-                defaultOptions[this.coll], // if set in setOptions (#1053)
+                // if set in setOptions (#1053):
+                (defaultOptions as any)[this.coll],
                 userOptions
             )
         );
@@ -4962,8 +4963,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // Linked axis gets the extremes from the parent axis
         if (isLinked) {
-            axis.linkedParent = chart[axis.coll][options.linkedTo as any];
-            linkedParentExtremes = axis.linkedParent.getExtremes();
+            axis.linkedParent = (chart as any)[axis.coll][
+                options.linkedTo as any
+            ];
+            linkedParentExtremes = (axis.linkedParent as any).getExtremes();
             axis.min = pick(
                 linkedParentExtremes.min,
                 linkedParentExtremes.dataMin
@@ -4972,7 +4975,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== axis.linkedParent.options.type) {
+            if (options.type !== (axis.linkedParent as any).options.type) {
                 // Can't link axes of different type
                 H.error(11, 1 as any, chart);
             }
@@ -5442,7 +5445,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // spaced (#6021)
             !this.isLog
         ) {
-            this.chart[this.coll].forEach(function (
+            (this.chart as any)[this.coll].forEach(function (
                 axis: Highcharts.Axis
             ): void {
                 var otherOptions = axis.options,

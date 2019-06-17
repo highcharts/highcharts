@@ -30,7 +30,12 @@ declare global {
         interface GradientColorObject {
             linearGradient?: LinearGradientColorObject;
             radialGradient?: RadialGradientColorObject;
-            stops: Array<[number, ColorString]>;
+            stops: Array<GradientColorStopObject>;
+        }
+        interface GradientColorStopObject {
+            0: number;
+            1: ColorString;
+            color?: Highcharts.Color;
         }
         interface LinearGradientColorObject {
             x1: number;
@@ -101,7 +106,24 @@ declare global {
  * applied. The second item is the color for each stop. This color can also be
  * given in the rgba format.
  * @name Highcharts.GradientColorObject#stops
- * @type {Array<Array<number,Highcharts.ColorString>>}
+ * @type {Array<Highcharts.GradientColorStopObject>}
+ */
+
+/**
+ * Color stop tuple.
+ *
+ * @see Highcharts.GradientColorObject
+ *
+ * @interface Highcharts.GradientColorStopObject
+ *//**
+ * @name Highcharts.GradientColorStopObject#0
+ * @type {number}
+ *//**
+ * @name Highcharts.GradientColorStopObject#1
+ * @type {Highcharts.ColorString}
+ *//**
+ * @name Highcharts.GradoentColorStopObject#color
+ * @type {Highcharts.Color|undefined}
  */
 
 /**

@@ -1016,7 +1016,7 @@ extend((
             radAttr: Highcharts.SVGAttributes,
             gradients: Highcharts.Dictionary<Highcharts.SVGElement>,
             gradientObject: Highcharts.SVGElement,
-            stops: (Array<[number, Highcharts.ColorString]>|undefined),
+            stops: (Array<Highcharts.GradientColorStopObject>|undefined),
             stopColor: Highcharts.ColorString,
             stopOpacity,
             radialReference: Array<number>,

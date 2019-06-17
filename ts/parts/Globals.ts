@@ -79,6 +79,9 @@ declare global {
             renderer?: any; // @todo
             skipClone?: any; // @todo
         }
+        interface ColorAxis {
+            legendItem?: any; // @todo
+        }
         interface Options {
             exporting?: any; // @todo
             isStock?: boolean; // @todo
@@ -106,6 +109,7 @@ declare global {
             color?: any; // @todo
             colorCounter?: any; // @todo
             colorIndex?: any; // @todo
+            colorKey?: any; // @todo
             currentDataGrouping?: any; // @todo
             data?: any; // @todo
             dataMax?: any; // @todo
@@ -161,6 +165,8 @@ declare global {
             updateTotals?: any; // @todo
             useCommonDataGrouping?: any; // @todo
             userOptions?: any; // @todo
+            valueMax?: any; // @todo
+            valueMin?: any; // @todo
             visible?: any; // @todo
             xAxis: Axis; // @todo
             xIncrement?: any; // @todo

@@ -3130,8 +3130,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             this.defaultRightAxisOptions,
             this.defaultBottomAxisOptions,
             this.defaultLeftAxisOptions
-        ][this.side], merge(defaultOptions[this.coll], // if set in setOptions (#1053)
-        userOptions));
+        ][this.side], merge(
+        // if set in setOptions (#1053):
+        defaultOptions[this.coll], userOptions));
         fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
     },
     /**
