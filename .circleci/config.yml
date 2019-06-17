@@ -72,18 +72,21 @@ jobs:
      - run:
          name: Clone GitHub highcharts repository
          command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-     - run:
-         name: Clone Github highcharts-declarations-generator repository
-         command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
      - <<: *persist_workspace
 
-  build_dependencies:
+  install_dependencies:
     <<: *defaults
     steps:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
       - run: node --version && npm --version
       - run: npm install --quiet
+      - <<: *persist_workspace
+
+  generate_ts_declarations:
+    <<: *defaults
+    steps:
+      - << : *load_workspace
       - run:
           name: Generate highcharts ts declarations
           command: npx gulp jsdoc-dts && npx gulp lint-dts
@@ -161,40 +164,67 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
-      - build_dependencies:
+      - checkout_code:
+          filters:
+            tags:
+              only: /.*/
+      - install_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /.*/
+      - generate_ts_declarations:
+          requires:
+            - install_dependencies
+          filters:
+            tags:
+              only: /.*/
       - test:
           requires:
-            - build_dependencies
+            - install_dependencies
           filters:
             branches:
               only:
                 - feature/circleci-integration
+            tags:
+              only: /.*/
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - build_dependencies
+            - install_dependencies
           browsers: "Mac.Safari"
+          filters:
+            tags:
+              only: /.*/
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
             - "test-Mac.Safari"
           browsers: "Mac.Firefox"
+          filters:
+            tags:
+              only: /.*/
       - test_browsers:
           name: "test-Win.IE8"
           requires:
             - "test-Mac.Firefox"
           browsers: "Win.IE8 --oldie"
+          filters:
+            tags:
+              only: /.*/
       - build_dist:
           requires:
             - "test-Mac.Firefox"
             - "test-Mac.Safari"
+            - generate_ts_declarations
           filters:
             branches:
               only:
                 - feature/ci-deploy
+                - master
+            tags:
+              only: /.*/
       - deploy:
           requires:
             - build_dist
@@ -202,7 +232,7 @@ workflows:
           filters:
             branches:
               # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
-              only:
-                - feature/ci-deploy
+              # https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
+              ignore: /.*/
             tags:
               only: /^test-v\d+(?:\.\d+)+?$/
