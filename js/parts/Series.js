@@ -3832,7 +3832,6 @@ H.Series = H.seriesType(
                 if (
                     stacking &&
                     series.visible &&
-                    !point.isNull &&
                     stack &&
                     stack[xValue]
                 ) {
@@ -3841,8 +3840,11 @@ H.Series = H.seriesType(
                         xValue,
                         series.index
                     );
-                    pointStack = stack[xValue];
-                    stackValues = pointStack.points[stackIndicator.key];
+
+                    if (!point.isNull) {
+                        pointStack = stack[xValue];
+                        stackValues = pointStack.points[stackIndicator.key];
+                    }
                 }
 
                 if (isArray(stackValues)) {
