@@ -206,7 +206,7 @@ workflows:
               # https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
               ignore: /.*/
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
       - deploy:
           requires:
             - build_dist
@@ -215,4 +215,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
