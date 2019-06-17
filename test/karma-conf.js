@@ -212,11 +212,17 @@ module.exports = function (config) {
 
     let frameworks = ['qunit'];
 
+    if (argv.oldie) {
+        frameworks = []; // Custom framework in test file
+    }
+
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         ['ChromeHeadless'];
-    if (argv.browsers === 'all') {
+    if (argv.oldie) {
+        browsers = ['Win.IE8'];
+    } else if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
 
@@ -239,14 +245,34 @@ module.exports = function (config) {
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
     // The tests to run by default
-    const defaultTests = ['unit-tests/*/*'];
+    const defaultTests = argv.oldie ?
+        ['unit-tests/oldie/*'] :
+        ['unit-tests/*/*'];
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .filter(path => !!path)
         .map(path => `samples/${path}/demo.js`);
 
-    // let files = getFiles();
+    // Get the files
     let files = require('./karma-files.json');
+    if (argv.oldie) {
+        files = files.filter(f =>
+            f.indexOf('vendor/jquery') !== 0 &&
+            f.indexOf('vendor/moment') !== 0 &&
+            f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('node_modules/lolex') !== 0 &&
+
+            f.indexOf('code/modules/gantt.src.js') !== 0 &&
+            f.indexOf('code/modules/accessibility.src.js') !== 0 &&
+            f.indexOf('code/modules/annotations-advanced.src.js') !== 0 &&
+            f.indexOf('code/modules/draggable-points.src.js') !== 0 &&
+            f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
+            f.indexOf('code/modules/stock-tools.src.js') !== 0 &&
+            f.indexOf('code/modules/debugger.src.js') !== 0
+        );
+        files.splice(0, 0, 'code/modules/oldie-polyfills.src.js');
+        files.splice(2, 0, 'code/modules/oldie.src.js');
+    }
 
     let options = {
         basePath: '../', // Root relative to this file
@@ -342,7 +368,9 @@ module.exports = function (config) {
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
 
             // Failing on Edge only
-            'samples/unit-tests/pointer/members/demo.js'
+            'samples/unit-tests/pointer/members/demo.js',
+
+            !argv.oldie && 'samples/unit-tests/oldie/*/demo.js'
         ],
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
@@ -582,7 +610,7 @@ module.exports = function (config) {
     };
 
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
         const randomString = Math.random().toString(36).substring(7);
 
@@ -596,7 +624,17 @@ module.exports = function (config) {
             video: false,
             retryLimit: 1,
         };
-        options.customLaunchers = browserStackBrowsers;
+        options.customLaunchers = argv.oldie ?
+            {
+                'Win.IE8': {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '8.0',
+                    os: 'Windows',
+                    os_version: 'XP'
+                }
+            } :
+            browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
@@ -608,10 +646,12 @@ module.exports = function (config) {
 
         options.plugins = [
             'karma-browserstack-launcher',
-            'karma-qunit',
             'karma-sharding',
             'karma-generic-preprocessor'
         ];
+        if (!argv.oldie) {
+            options.plugins.push('karma-qunit');
+        }
 
         options.reporters = ['progress'];
 
