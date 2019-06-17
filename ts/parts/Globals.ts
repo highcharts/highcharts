@@ -37,7 +37,6 @@ declare global {
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
-        type StackItemObject = any; // @todo
         type XAxisScrollbarOptions = any; // @todo
         type YAxisStackLabelsOptions = any; // @todo
         interface Axis {
@@ -45,23 +44,15 @@ declare global {
             id?: any; // @todo
             labelLeft?: any; // @todo
             labelRight?: any; // @todo
-            oldStacks?: any; // @todo
             sector?: any; // @todo
-            stacks?: any; // @todo
-            usePercentage?: any; // @todo
             beforePadding: Function; // @todo
-            buildStacks: Function; // @todo
-            cleanStacks: Function; // @todo
             getMaxLabelDimensions: Function; // @todo
-            renderStackTotals: Function; // @todo
-            resetStacks: Function; // @todo
             toFixedRange: Function; // @todo
         }
         interface AxisLabelsFormatterContextObject {
             tickPositionInfo?: any; // @todo
         }
         interface Chart {
-            extraBottomMargin?: any; // @todo
             fixedRange?: any; // @todo
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
@@ -76,14 +67,11 @@ declare global {
             openMenu?: any; // @todo
             polar?: any; // @todo
             rangeSelector?: any; // @todo
+            redrawTrigger?: any; // @todo
             runTrackerClick?: any; // @todo
             scrollablePixelsX?: any; // @todo
             scrollablePixelsY?: any; // @todo
-            scrollbar?: any; // @todo
-            scroller?: any; // @todo
             tooltip?: any; // @todo
-            getStacks: Function; // @todo
-            isReadyToRender: Function; // @todo
         }
         interface ChartOptions {
             forExport?: any; // @todo
@@ -93,9 +81,8 @@ declare global {
         }
         interface Options {
             exporting?: any; // @todo
-            isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
-            rangeSelector?: any; // @todo
+            navigation?: any; // @todo
         }
         interface Point {
             dist?: any; // @todo
@@ -210,7 +197,6 @@ declare global {
         }
         const Series: any; // @todo
         const SVG_NS: string;
-        const addEventListenerPolyfill: any; // @todo
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
         const deg2rad: number;
@@ -225,7 +211,6 @@ declare global {
         const isWebKit: boolean;
         const marginNames: Array<string>;
         const noop: Function;
-        const removeEventListenerPolyfill: any; // @todo
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;

@@ -50,25 +50,9 @@ declare global {
             f: number;
             h: number;
         }
-        interface GradientColorObject {
-            linearGradient?: LinearGradientColorObject;
-            radialGradient?: RadialGradientColorObject;
-            stops?: Array<[number, ColorString]>;
-        }
-        interface LinearGradientColorObject {
-            x1: number;
-            x2: number;
-            y1: number;
-            y2: number;
-        }
         interface PositionObject {
             x: number;
             y: number;
-        }
-        interface RadialGradientColorObject {
-            cx: number;
-            cy: number;
-            r: number;
         }
         interface RectangleObject extends PositionObject {
             height: number;
@@ -81,7 +65,7 @@ declare global {
             color?: ColorString;
             offsetX?: number;
             offsetY?: number;
-            opcaity?: number;
+            opacity?: number;
             width?: number;
         }
         interface SizeObject {
@@ -140,7 +124,9 @@ declare global {
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
             public parentGroup?: SVGElement;
+            public r?: number;
             public renderer: SVGRenderer;
+            public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
@@ -204,7 +190,7 @@ declare global {
             public getBBox(reload?: boolean, rot?: number): BBoxObject;
             public getStyle(prop: string): string;
             public hasClass(className: string): boolean;
-            public hide(): SVGElement;
+            public hide(hideByTranslation?: boolean): SVGElement;
             public init(renderer: SVGRenderer, nodeName: string): void;
             public invert(inverted: boolean): SVGElement
             public matrixSetter(value: any, key: string): void;
@@ -377,7 +363,7 @@ declare global {
             public label(
                 str: string,
                 x: number,
-                y: number,
+                y?: number,
                 shape?: SymbolKeyValue,
                 anchorX?: number,
                 anchorY?: number,
@@ -423,7 +409,7 @@ declare global {
             ): SVGElement;
             public truncate(
                 wrapper: SVGElement,
-                tspan: SVGDOMElement,
+                tspan: HTMLDOMElement,
                 text: (string|undefined),
                 words: (Array<string>|undefined),
                 startAt: number,
@@ -2439,16 +2425,30 @@ extend((
     },
 
     /**
-     * Hide the element, equivalent to setting the `visibility` attribute to
+     * Hide the element, similar to setting the `visibility` attribute to
      * `hidden`.
      *
      * @function Highcharts.SVGElement#hide
      *
+     * @param {boolean} [hideByTranslation=false]
+     *        The flag to determine if element should be hidden by moving out
+     *        of the viewport. Used for example for dataLabels.
+     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    hide: function (this: Highcharts.SVGElement): Highcharts.SVGElement {
-        return this.attr({ visibility: 'hidden' }) as any;
+    hide: function (
+        this: Highcharts.SVGElement,
+        hideByTranslation?: boolean
+    ): Highcharts.SVGElement {
+
+        if (hideByTranslation) {
+            this.attr({ y: -9999 });
+        } else {
+            this.attr({ visibility: 'hidden' });
+        }
+
+        return this as any;
     },
 
     /**
@@ -3652,13 +3652,18 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          * @param {Highcharts.SVGElement} [parent] - parent node
          */
         function recurse(
-            config: Highcharts.SVGDefinitionObject,
+            config: (
+                Highcharts.SVGDefinitionObject|
+                Array<Highcharts.SVGDefinitionObject>
+            ),
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var ret: any;
 
-            splat(config).forEach(function (item): void {
-                var node = ren.createElement(item.tagName),
+            splat(config).forEach(function (
+                item: Highcharts.SVGDefinitionObject
+            ): void {
+                var node = ren.createElement(item.tagName as any),
                     attr = {} as Highcharts.SVGAttributes;
 
                 // Set attributes
@@ -3859,7 +3864,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {Highcharts.SVGElement} wrapper
      *
-     * @param {Highcharts.SVGDOMElement} tspan
+     * @param {Highcharts.HTMLDOMElement} tspan
      *
      * @param {string|undefined} text
      *
@@ -3877,7 +3882,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     truncate: function (
         this: Highcharts.SVGRenderer,
         wrapper: Highcharts.SVGElement,
-        tspan: Highcharts.SVGDOMElement,
+        tspan: Highcharts.HTMLDOMElement,
         text: (string|undefined),
         words: (Array<string>|undefined),
         startAt: number,
@@ -3932,7 +3937,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     } else if ((renderer as any).getSpanWidth) { // #9058 jsdom
                         updateTSpan(getString(text || words, charEnd));
                         lengths[end] = startAt +
-                            (renderer as any).getSpanWidth(wrapper, tspan);
+                            renderer.getSpanWidth(wrapper, tspan);
                     }
                 }
                 return lengths[end];
@@ -4948,7 +4953,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             });
         };
         wrapper.rGetter = function (): number {
-            return wrapper.r;
+            return wrapper.r as any;
         };
 
         return wrapper.attr(attribs as any) as any;
@@ -5855,7 +5860,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} x
      *        The x position of the label's left side.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
      *
@@ -5890,7 +5895,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         this: Highcharts.SVGRenderer,
         str: string,
         x: number,
-        y: number,
+        y?: number,
         shape?: Highcharts.SymbolKeyValue,
         anchorX?: number,
         anchorY?: number,

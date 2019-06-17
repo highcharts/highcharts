@@ -58,10 +58,28 @@ QUnit.test('Annotations events - general', function (assert) {
             '`annotation.update()`.'
     );
 
+    var mouseDown = false,
+        unbindMouseDownEvent = Highcharts.addEvent(
+            document.getElementById('container'),
+            'mousedown',
+            function () {
+                mouseDown = true;
+            }
+        );
+
     controller.mouseDown(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY - 20
     );
+
+    assert.strictEqual(
+        mouseDown,
+        true,
+        'Default mouseDown event called (#10961).'
+    );
+
+    unbindMouseDownEvent();
+
     controller.mouseMove(
         chart.plotLeft + point.plotX + 50,
         chart.plotTop + point.plotY - 20

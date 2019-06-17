@@ -421,7 +421,6 @@ declare global {
             public pointRangePadding: number;
             public pos?: number;
             public positiveValuesOnly: boolean;
-            public range?: (null|number);
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
             public right: number;
@@ -6423,7 +6422,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // hide or show the title depending on whether showEmpty is set
-        axis.axisTitle[display ? 'show' : 'hide'](true);
+        axis.axisTitle[display ? 'show' : 'hide'](display);
     },
 
     /**
@@ -7025,7 +7024,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axisLine.isPlaced = true;
 
             // Show or hide the line depending on options.showEmpty
-            axisLine[showAxis ? 'show' : 'hide'](true);
+            axisLine[showAxis ? 'show' : 'hide'](showAxis);
         }
 
         if (axisTitle && showAxis) {
@@ -7105,15 +7104,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Destroy each stack total
-        objectEach(stacks, function (stack: any, stackKey: string): void {
+        objectEach(stacks, function (
+            stack: Highcharts.Dictionary<Highcharts.StackItem>,
+            stackKey: string
+        ): void {
             destroyObjectProperties(stack);
 
-            stacks[stackKey] = null;
+            stacks[stackKey] = null as any;
         });
 
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
-            function (coll): void {
+            function (
+                coll: (
+                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
+                    Highcharts.Dictionary<Highcharts.Tick>
+                )
+            ): void {
                 destroyObjectProperties(coll);
             }
         );

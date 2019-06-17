@@ -27,6 +27,22 @@ declare global {
                 result: RegExpExecArray
             ) => ColorRGBA;
         }
+        interface GradientColorObject {
+            linearGradient?: LinearGradientColorObject;
+            radialGradient?: RadialGradientColorObject;
+            stops: Array<[number, ColorString]>;
+        }
+        interface LinearGradientColorObject {
+            x1: number;
+            x2: number;
+            y1: number;
+            y2: number;
+        }
+        interface RadialGradientColorObject {
+            cx: number;
+            cy: number;
+            r: number;
+        }
         class Color {
             public constructor(input: (ColorString|GradientColorObject));
             public input: (ColorString|GradientColorObject);
@@ -85,7 +101,7 @@ declare global {
  * applied. The second item is the color for each stop. This color can also be
  * given in the rgba format.
  * @name Highcharts.GradientColorObject#stops
- * @type {Array<Array<number,Highcharts.ColorString>>|undefined}
+ * @type {Array<Array<number,Highcharts.ColorString>>}
  */
 
 /**

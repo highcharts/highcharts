@@ -225,7 +225,8 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         label.show(true);
                     } else {
                         complete = function () {
-                            label.hide();
+                            label.hide(true);
+                            label.placed = false; // avoid animation from top
                         };
                     }
 

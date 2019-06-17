@@ -96,7 +96,7 @@ declare global {
             ): (boolean|undefined);
             public init(chart: Chart, options: Options): void;
             public normalize(
-                e: Event,
+                e: (PointerEvent|TouchEvent),
                 chartPosition?: OffsetObject
             ): PointerEventObject;
             public onContainerClick(e: PointerEventObject): void
@@ -350,7 +350,7 @@ Highcharts.Pointer.prototype = {
      *
      * @function Highcharts.Pointer#normalize
      *
-     * @param {global.Event} e
+     * @param {PointerEvent|TouchEvent} e
      *        Event object in standard browsers.
      *
      * @param {Highcharts.OffsetObject} [chartPosition]
@@ -361,7 +361,7 @@ Highcharts.Pointer.prototype = {
      */
     normalize: function (
         this: Highcharts.Pointer,
-        e: Event,
+        e: (PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): Highcharts.PointerEventObject {
         var ePos;

@@ -47,6 +47,7 @@ declare global {
         }
         interface HTMLRenderer extends SVGRenderer {
             getTransformKey(): string;
+            html(str: string, x: number, y: number): Highcharts.HTMLElement;
         }
     }
 }
@@ -275,7 +276,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                     )
                 ) {
                     wrapper.setSpanRotation(
-                        rotation,
+                        rotation as any,
                         alignCorrection,
                         baseline
                     );

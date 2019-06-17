@@ -1571,16 +1571,26 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         return this.attr({ visibility: inherit ? 'inherit' : 'visible' });
     },
     /**
-     * Hide the element, equivalent to setting the `visibility` attribute to
+     * Hide the element, similar to setting the `visibility` attribute to
      * `hidden`.
      *
      * @function Highcharts.SVGElement#hide
      *
+     * @param {boolean} [hideByTranslation=false]
+     *        The flag to determine if element should be hidden by moving out
+     *        of the viewport. Used for example for dataLabels.
+     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    hide: function () {
-        return this.attr({ visibility: 'hidden' });
+    hide: function (hideByTranslation) {
+        if (hideByTranslation) {
+            this.attr({ y: -9999 });
+        }
+        else {
+            this.attr({ visibility: 'hidden' });
+        }
+        return this;
     },
     /**
      * Fade out an element by animating its opacity down to 0, and hide it on
@@ -2660,7 +2670,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {Highcharts.SVGElement} wrapper
      *
-     * @param {Highcharts.SVGDOMElement} tspan
+     * @param {Highcharts.HTMLDOMElement} tspan
      *
      * @param {string|undefined} text
      *
@@ -4060,7 +4070,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} x
      *        The x position of the label's left side.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
      *

@@ -28,6 +28,7 @@ declare global {
             setResponsive(redraw?: boolean, reset?: boolean): void;
         }
         interface Options {
+            isResponsiveOptions?: boolean;
             responsive?: ResponsiveOptions;
         }
         interface ResponsiveCallbackFunction {
