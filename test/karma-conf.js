@@ -226,20 +226,23 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    if (argv.splitbrowsers) {
+    if (argv.browsercount && !isNaN(argv.browsercount)  && argv.browsercount > 1) {
         // Sharding / splitting tests across multiple browser instances
         if (argv.browsers) {
-            console.log(`Note: --browsers has been added as a cli argument and will override karma-sharding browser config.`)
+            console.warn(`Note: --browsers has been added as a cli argument and will override karma-sharding browser config.`)
         }
-        const browserCount = !isNaN(argv.browsercount) ? argv.browsercount : 2;
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
         browsers = argv.splitbrowsers.split(',').reduce((browserInstances, current) => {
-            for (let i = 0; i < browserCount; i++) {
+            for (let i = 0; i < argv.browsercount; i++) {
                 browserInstances.push(current);
             }
             return browserInstances;
         }, []);
+    } else {
+        if (argv.splitbrowsers) {
+            browsers = argv.splitbrowsers.split(',');
+        }
     }
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');

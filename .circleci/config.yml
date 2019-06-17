@@ -48,18 +48,6 @@ commands:
               echo "Nothing to do for forked PRs, so marking this step successful"
               circleci step halt
             fi
-  is_master_branch:
-    description: >-
-      Check to avoid certain steps/jobs being run from other branch than master.
-    steps:
-      - run:
-          name: Fail if not master branch
-          command: |
-            if [ "${CIRCLE_BRANCH}" != "master" ]; then
-              echo "Not master branch, aborting.."; exit 1;
-            else
-              echo "Proceeding from branch ${CIRCLE_BRANCH}..."
-            fi
 
 jobs:
   checkout_code:
@@ -144,7 +132,6 @@ jobs:
   build_dist:
     <<: *defaults
     steps:
-      #- is_master_branch
       - <<: *load_workspace
       - run:
           name: Compile build
@@ -158,7 +145,6 @@ jobs:
   deploy:
     <<: *defaults
     steps:
-      #- is_master_branch
       - <<: *load_workspace
       - run:
           name: Upload to S3
@@ -183,15 +169,6 @@ workflows:
           requires:
             - install_dependencies
           filters:
-            tags:
-              only: /.*/
-      - test:
-          requires:
-            - install_dependencies
-          filters:
-            branches:
-              only:
-                - feature/circleci-integration
             tags:
               only: /.*/
       - test_browsers:
@@ -225,19 +202,17 @@ workflows:
             - generate_ts_declarations
           filters:
             branches:
-              only:
-                - feature/ci-deploy
-                - master
+              # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
+              # https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
+              ignore: /.*/
             tags:
-              only: /.*/
+              only: /^test-v\d+(?:\.\d+)+?$/
       - deploy:
           requires:
             - build_dist
           context: core-developers
           filters:
             branches:
-              # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
-              # https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
               ignore: /.*/
             tags:
               only: /^test-v\d+(?:\.\d+)+?$/
