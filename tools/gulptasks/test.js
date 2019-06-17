@@ -301,7 +301,7 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        const forceRun = (argv.force || argv.length > 2);
+        const forceRun = !!(argv.browsers || argv.force || argv.tests);
 
         if (forceRun || shouldRun()) {
 
