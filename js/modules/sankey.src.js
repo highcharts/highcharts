@@ -382,6 +382,7 @@ seriesType('sankey', 'column',
         invertable: true,
         forceDL: true,
         orderNodes: true,
+        pointArrayMap: ['from', 'to'],
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,

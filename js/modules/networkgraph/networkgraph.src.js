@@ -454,6 +454,7 @@ seriesType(
         requireSorting: false,
         directTouch: true,
         noSharedTooltip: true,
+        pointArrayMap: ['from', 'to'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.

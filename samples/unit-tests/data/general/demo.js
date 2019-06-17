@@ -59,4 +59,36 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         ['column', 'errorbar', 'line', 'errorbar'],
         'Alternating series types should eat different numbers of columns (#8438)'
     );
+
+    chart = Highcharts.chart('container', {
+        data: {
+            csv: [
+                'From,To,Weight,From,To',
+                'A,B,1,A,B',
+                'A,C,1,A,C',
+                'A,D,1,B,C'
+            ].join('\n'),
+            seriesMapping: [{
+                from: 0,
+                to: 1,
+                weight: 2
+            }, {
+                from: 3,
+                to: 4
+            }]
+        },
+        series: [{
+            type: 'sankey'
+        }, {
+            type: 'networkgraph'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series.map(function (s) {
+            return s.data.length;
+        }),
+        [3, 3],
+        'Non-cartesian series should pick columns without X-column (#10984)'
+    );
 });
