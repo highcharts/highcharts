@@ -252,6 +252,19 @@ QUnit.test('Updating to null value (#7493)', function (assert) {
 
     assert.ok(true, 'Stacking the same column series with null values (#10160)');
 
+    chart.series[1].setData([
+        [0, null],
+        [0, 1],
+        [0, 1]
+    ]);
+
+    assert.strictEqual(
+        chart.series[1].points[1].shapeArgs.y,
+        chart.series[1].points[2].shapeArgs.y +
+            chart.series[1].points[2].shapeArgs.height,
+        'Stacking the same points starting from null value' +
+            'should not overlap other points (#10941)'
+    );
 });
 
 QUnit.test("StackLabels position with multiple yAxis (#7798)", function (assert) {
