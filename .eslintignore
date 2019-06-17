@@ -30,6 +30,7 @@ js/parts/Time.js
 js/parts/Tooltip.js
 js/parts/TouchPointer.js
 js/parts/Utilities.js
+js/parts-map/ColorAxis.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/cloud/**/**/*.js
