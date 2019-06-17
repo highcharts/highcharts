@@ -26,7 +26,7 @@ document.body.appendChild(demoHTML);
 var canvas = document.createElement('canvas');
 canvas.setAttribute('width', 300);
 canvas.setAttribute('height', 200);
-var ctx = canvas.getContext('2d');
+var ctx = canvas.getContext && canvas.getContext('2d');
 
 var currentTests = [];
 
@@ -73,89 +73,90 @@ Highcharts.setOptions({
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+if (window.QUnit) {
+    /*
+     * Compare numbers taking in account an error.
+     * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {Float} error    Optional
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.close = function (number, expected, error, message) {
+        if (error === void 0 || error === null) {
+            error = 0.00001; // default error
+        }
 
-/*
- * Compare numbers taking in account an error.
- * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
- *
- * @param  {Float} number
- * @param  {Float} expected
- * @param  {Float} error    Optional
- * @param  {String} message  Optional
- */
-QUnit.assert.close = function (number, expected, error, message) {
-    if (error === void 0 || error === null) {
-        error = 0.00001; // default error
-    }
+        var result = number === expected || (number <= expected + error && number >= expected - error) || false;
 
-    var result = number === expected || (number <= expected + error && number >= expected - error) || false;
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
 
-    this.pushResult({
-        result: result,
-        actual: number,
-        expected: expected,
-        message: message
+    QUnit.module('Highcharts', {
+        beforeEach: function (test) {
+            if (VERBOSE) {
+                console.log('Start "' + test.test.testName + '"');
+            }
+            currentTests.push(test.test.testName);
+
+            // Reset container size that some tests may have modified
+            var containerStyle = document.getElementById('container').style;
+            containerStyle.width = 'auto';
+            containerStyle.height = 'auto';
+            containerStyle.position = 'absolute';
+            containerStyle.left = '8';
+            containerStyle.top = '8';
+            containerStyle.zIndex = '9999';
+
+            // Reset randomizer
+            Math.randomCursor = 0;
+        },
+
+        afterEach: function (test) {
+            if (VERBOSE) {
+                console.log('- end "' + test.test.testName + '"');
+            }
+            currentTests.splice(
+                currentTests.indexOf(test.test.testName),
+                1
+            );
+
+            var containerStyle = document.getElementById('container').style;
+            containerStyle.width = '';
+            containerStyle.height = '';
+            containerStyle.position = '';
+            containerStyle.left = '';
+            containerStyle.top = '';
+            containerStyle.zIndex = '';
+
+            var currentChart = null,
+                charts = Highcharts.charts,
+                templateCharts = [];
+
+            // Destroy all charts, except template charts
+            for (var i = 0, ie = charts.length; i < ie; ++i) {
+                currentChart = charts[i];
+                if (!currentChart) {
+                    continue;
+                }
+                if (currentChart.template) {
+                    templateCharts.push(currentChart);
+                } else if (currentChart.destroy && currentChart.renderer) {
+                    currentChart.destroy();
+                }
+            }
+
+            Highcharts.charts.length = 0;
+            Array.prototype.push.apply(Highcharts.charts, templateCharts);
+        }
     });
-};
-
-QUnit.module('Highcharts', {
-    beforeEach: function (test) {
-        if (VERBOSE) {
-            console.log('Start "' + test.test.testName + '"');
-        }
-        currentTests.push(test.test.testName);
-
-        // Reset container size that some tests may have modified
-        var containerStyle = document.getElementById('container').style;
-        containerStyle.width = 'auto';
-        containerStyle.height = 'auto';
-        containerStyle.position = 'absolute';
-        containerStyle.left = '8';
-        containerStyle.top = '8';
-        containerStyle.zIndex = '9999';
-
-        // Reset randomizer
-        Math.randomCursor = 0;
-    },
-
-    afterEach: function (test) {
-        if (VERBOSE) {
-            console.log('- end "' + test.test.testName + '"');
-        }
-        currentTests.splice(
-            currentTests.indexOf(test.test.testName),
-            1
-        );
-
-        var containerStyle = document.getElementById('container').style;
-        containerStyle.width = '';
-        containerStyle.height = '';
-        containerStyle.position = '';
-        containerStyle.left = '';
-        containerStyle.top = '';
-        containerStyle.zIndex = '';
-
-        var currentChart = null,
-            charts = Highcharts.charts,
-            templateCharts = [];
-
-        // Destroy all charts, except template charts
-        for (var i = 0, ie = charts.length; i < ie; ++i) {
-            currentChart = charts[i];
-            if (!currentChart) {
-                continue;
-            }
-            if (currentChart.template) {
-                templateCharts.push(currentChart);
-            } else if (currentChart.destroy && currentChart.renderer) {
-                currentChart.destroy();
-            }
-        }
-
-        Highcharts.charts.length = 0;
-        Array.prototype.push.apply(Highcharts.charts, templateCharts);
-    }
-});
+}
 
 /*
  * Display the tooltip so it gets part of the comparison
@@ -355,13 +356,16 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
 // Override getJSON
 window.JSONSources = {};
-$.getJSON = function (url, callback) { // eslint-disable-line no-undef
-    callback(window.JSONSources[url]);
-};
-
+if (window.$) {
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+}
+/*
 window.onbeforeunload = function () {
     console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
     if (currentTests.length) {
         return false;
     }
 };
+*/
