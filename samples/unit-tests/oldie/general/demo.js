@@ -6,6 +6,9 @@
  *
  * Usage:
  * gulp test --oldie
+ *
+ * Debugging in utils:
+ * http://192.168.15.208:3030/samples/view?path=unit-tests/oldie/general&mobile=true
  */
 
 
@@ -19,6 +22,7 @@ function ok(description, success) {
 }
 
 
+//----------------------------------------------------------------------------//
 // Start of actual tests
 
 //var types = Highcharts.seriesTypes;
@@ -28,50 +32,71 @@ var types = {
     pie: 1,
     area: 1
 };
+
+Highcharts.Chart.prototype.isReadyToRender = function () {
+    return true;
+};
 for (var type in types) {
     if (types.hasOwnProperty(type)) {
 
-        var chart = Highcharts.chart('container', {
-            series: [{
-                type: type,
-                data: [1, 3, 2, 4]
-            }]
-        });
+        try {
 
-        ok(
-            'The container should be generated for series type ' + type,
-            chart.container.tagName === 'DIV'
-        );
+            var chart = Highcharts.chart('container', {
+                series: [{
+                    type: type,
+                    data: [1, 3, 2, 4]
+                }]
+            });
 
-        /*
-        chart.series[0].points[0].onMouseOver();
-        ok(
-            'The tooltip should be displayed',
-            chart.tooltip.getLabel().element.innerHTML.indexOf('<div') === 0
-        );
-        */
-        chart.destroy();
+            ok(
+                'The container should be generated for series type ' + type,
+                chart.container.tagName === 'DIV'
+            );
+
+            chart.series[0].points[0].onMouseOver();
+            ok(
+                'The tooltip should be displayed',
+                chart.tooltip.getLabel().element.innerHTML
+                    .indexOf('<SPAN') !== -1
+            );
+            chart.destroy();
+
+        } catch (e) {
+            console.log('ERROR ', e);
+            ok(e, false);
+        }
     }
 }
 
 
 // End of actual tests
+//----------------------------------------------------------------------------//
 
-window.__karma__.start = function () { // eslint-disable-line no-underscore-dangle
+if (window.__karma__) { // eslint-disable-line no-underscore-dangle
+    window.__karma__.start = function () { // eslint-disable-line no-underscore-dangle
 
-    this.info({
-        total: results.length
-    });
+        this.info({
+            total: results.length
+        });
 
+        for (var i = 0; i < results.length; i++) {
+            var result = results[i];
+            this.result({
+                id: 'Test ' + i,
+                description: result.description,
+                success: result.success,
+                log: [result.description],
+                suite: ['oldie'],
+                skipped: false
+            });
+        }
+        this.complete();
+    };
+} else {
     for (var i = 0; i < results.length; i++) {
         var result = results[i];
-        this.result({
-            id: 'Test ' + i,
-            description: result.description,
-            success: result.success
-        });
+        console.log(
+            result.success ? 'SUCCESS: ' : 'FAILED: ', result.description
+        );
     }
-    this.complete();
-
-
-};
+}
