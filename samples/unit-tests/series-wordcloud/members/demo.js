@@ -105,7 +105,7 @@ QUnit.test('getRotation', function (assert) {
     assert.strictEqual(
         getRotation(-1, 2, -60, 60),
         false,
-        'should return false if orientations is negative.'
+        'should return false if orientations is zero or negative.'
     );
     assert.strictEqual(
         getRotation(3, undefined, -60, 60),
@@ -146,6 +146,11 @@ QUnit.test('getRotation', function (assert) {
         getRotation(3, 2, -60, 60),
         60,
         'should return 60 which is the 3rd of 3 orientations between -60 to 60.'
+    );
+    assert.strictEqual(
+        getRotation(1, 0, 0, 90),
+        0,
+        'should return from when orientations equal 1. #10518'
     );
 });
 
