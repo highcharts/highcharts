@@ -16,7 +16,7 @@ const DIST_DIR = 'build/dist';
  *
  * @param {string} productName from build properties, e.g 'highstock'.
  * @param {object} productProps containing product name and version (build.properties).
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadPackage(productName, productProps) {
     const { name, version, cdnpath } = productProps;
@@ -27,7 +27,7 @@ function uploadPackage(productName, productProps) {
  * Upload a distribution version for all products.
  *
  * @param {Array<string>} products (product names) to initiate an upload for.
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distUpload() {
     const argv = require('yargs').argv;

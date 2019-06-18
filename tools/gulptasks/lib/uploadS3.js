@@ -113,7 +113,7 @@ function getVersionPaths(version = pkgJsonVersion) {
  * Upload w/progress bar.
  *
  * @param {object} params containing batchSize, bucket, files, onError callback and callback per processed file.
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadFiles(params) {
     const { files, name } = params;
@@ -152,7 +152,7 @@ function uploadFiles(params) {
  * @param {string} cdnPath where the files should be uploaded. E.g 'stock'.
  * @param {string} prettyName of the product, e.g "Highcharts Gantt"
  * @param {string} version for the distribution/release
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     const promises = [];
