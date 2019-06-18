@@ -268,7 +268,9 @@ Accessibility.prototype = {
         });
 
         // Kill keyboard nav
-        this.keyboardNavigation.destroy();
+        if (this.keyboardNavigation) {
+            this.keyboardNavigation.destroy();
+        }
 
         // Hide container from screen readers if it exists
         if (chart.renderTo) {

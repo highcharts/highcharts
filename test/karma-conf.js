@@ -262,13 +262,10 @@ module.exports = function (config) {
             f.indexOf('vendor/proj4') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
 
-            f.indexOf('code/modules/gantt.src.js') !== 0 &&
-            f.indexOf('code/modules/accessibility.src.js') !== 0 &&
-            f.indexOf('code/modules/annotations-advanced.src.js') !== 0 &&
-            f.indexOf('code/modules/draggable-points.src.js') !== 0 &&
+            // Complains on chart.renderer.addPattern
             f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
-            f.indexOf('code/modules/stock-tools.src.js') !== 0 &&
-            f.indexOf('code/modules/debugger.src.js') !== 0
+            // Uses classList extensively
+            f.indexOf('code/modules/stock-tools.src.js') !== 0
         );
         files.splice(0, 0, 'code/modules/oldie-polyfills.src.js');
         files.splice(2, 0, 'code/modules/oldie.src.js');
