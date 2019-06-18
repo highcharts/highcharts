@@ -112,7 +112,7 @@ QUnit.test('Annotations events - general', function (assert) {
 
     controller.click(
         chart.plotLeft + point.plotX,
-        chart.plotTop + point.plotY - 20, {}, true
+        chart.plotTop + point.plotY - 20
     );
 
     assert.ok(
