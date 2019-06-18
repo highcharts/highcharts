@@ -189,6 +189,11 @@ workflows:
           requires:
             - "test-Mac.Safari"
           browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
       - hold_for_approval:
           type: approval
           filters:
