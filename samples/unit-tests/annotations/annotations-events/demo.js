@@ -2,23 +2,26 @@ QUnit.test('Annotations events - general', function (assert) {
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
+        getShapes = function () {
+            return [{
+                strokeWidth: 3,
+                type: 'path',
+                points: [{
+                    x: 2,
+                    y: 10,
+                    xAxis: 0,
+                    yAxis: 0
+                }, {
+                    x: 2,
+                    y: 15,
+                    xAxis: 0,
+                    yAxis: 0
+                }]
+            }];
+        },
         chart = Highcharts.chart('container', {
             annotations: [{
-                shapes: [{
-                    strokeWidth: 3,
-                    type: 'path',
-                    points: [{
-                        x: 2,
-                        y: 10,
-                        xAxis: 0,
-                        yAxis: 0
-                    }, {
-                        x: 2,
-                        y: 15,
-                        xAxis: 0,
-                        yAxis: 0
-                    }]
-                }],
+                shapes: getShapes(),
                 draggable: true,
                 events: {
                     add: function () {
@@ -92,10 +95,28 @@ QUnit.test('Annotations events - general', function (assert) {
         'annotations.events.afterUpdate called just once - after drag&drop'
     );
 
+    controller.click(
+        chart.plotLeft + point.plotX + 50,
+        chart.plotTop + point.plotY - 20
+    );
+
     chart.removeAnnotation(annotation);
+
     assert.strictEqual(
         removeEventCalled,
         1,
         'annotations.events.remove called just once.'
+    );
+
+    chart.addAnnotation({ shapes: getShapes() });
+
+    controller.click(
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY - 20, {}, true
+    );
+
+    assert.ok(
+        true,
+        'No errors after removing selected annotation and selecting a new one (#11015)'
     );
 });

@@ -805,6 +805,12 @@ addEvent(H.NavigationBindings, 'deselectButton', function () {
     this.selectedButtonElement = null;
 });
 
+addEvent(H.Annotation, 'remove', function () {
+    if (this.chart.navigationBindings) {
+        this.chart.navigationBindings.deselectAnnotation();
+    }
+});
+
 
 // Show edit-annotation form:
 function selectableAnnotation(annotationType) {
