@@ -20,7 +20,7 @@ const DIST_DIR = 'build/dist';
 /**
  * Creates zip files for highcharts, highstock, highmaps, highcharts-gantt.
  *
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distZip() {
     const properties = build.getBuildProperties();
@@ -55,7 +55,7 @@ function distZip() {
  * Creates gzipped version of files in build/dist/{productname}/code and stores them
  * in build/dist/{productname}/js-gzip. E.g. build/dist/highcharts/code --> gzip and store in build/dist/highcharts/code/js-gzip
  *
- * @return {Promise<any> | Promise | Promise} Promise to keep
+ * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distGZip() {
     const properties = build.getBuildProperties();
@@ -94,7 +94,7 @@ function distGZip() {
         });
     });
 
-    return Promise.all(streams).then(() => log.success('Done gzipping files.'));
+    return Promise.all(streams);
 
 
 }
