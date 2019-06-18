@@ -309,7 +309,7 @@ module.exports = function (config) {
         ], tests),
 
         // These ones fail
-        exclude: [
+        exclude: argv.oldie ? [] : [
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',
@@ -370,7 +370,8 @@ module.exports = function (config) {
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
 
-            !argv.oldie && 'samples/unit-tests/oldie/*/demo.js'
+            // Skip the special oldie tests (which don't run QUnit)
+            'samples/unit-tests/oldie/*/demo.js'
         ],
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
