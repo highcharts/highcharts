@@ -32,7 +32,7 @@ function distZip() {
 
         const dirToZip = `${DIST_DIR}/${key}`;
         if (!fs.existsSync(dirToZip)) {
-            return Promise.reject(new Error(`Missing folder: ${dirToZip}`));
+            return Promise.reject(new Error(`Missing folder: ${dirToZip}. Has the other dist tasks been run in advance?`));
         }
 
         const zipFileName = `${name.replace(/ /g, '-')}-${version}.zip`;
