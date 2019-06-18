@@ -2,7 +2,7 @@ const semver = require('semver');
 const fs = require('fs-extra');
 const glob = require('glob');
 const upload = require('../../upload');
-const log = require('../lib/log');
+const log = require('./log');
 const pkgJsonVersion = require(('../../../package.json')).version;
 
 /**
@@ -158,6 +158,11 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     const promises = [];
     const fromDir = `${DIST_DIR}/${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
+
+    if (zipFilePaths.length < 1) {
+        throw new Error('No zip files found. Did you forget to run gulp dist-compress?');
+    }
+
     const zipFile = {
         from: zipFilePaths[0],
         to: 'zips/' + zipFilePaths[0].substring(zipFilePaths[0].lastIndexOf('/') + 1)
@@ -166,7 +171,6 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     const gfxFromDir = `${fromDir}/gfx`;
     const gfxFiles = glob.sync(`${gfxFromDir}/**/*.*`);
     const gfxFilesToRootDir = gfxFiles.map(file => toS3FilePath(file, localPath, cdnPath));
-    log.starting(`Preparing ${gfxFilesToRootDir.length} files in ', ${gfxFromDir}`);
 
     const gzippedFileDir = `${fromDir}/js-gzip`;
     if (!fs.existsSync(gzippedFileDir)) {
@@ -175,8 +179,6 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
 
     const gzippedFiles = glob.sync(`${gzippedFileDir}/**/*`);
     const gzippedFilesToRootDir = gzippedFiles.map(file => toS3FilePath(file, localPath, cdnPath));
-
-    log.starting(`Preparing ${gzippedFilesToRootDir.length} files in ', ${gzippedFileDir}`);
 
     const versionPaths = getVersionPaths(version);
     let gzippedFilesToVersionDir = [];
