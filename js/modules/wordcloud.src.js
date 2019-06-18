@@ -380,12 +380,12 @@ function getRotation(orientations, index, from, to) {
         isNumber(index) &&
         isNumber(from) &&
         isNumber(to) &&
-        orientations > -1 &&
+        orientations > 0 &&
         index > -1 &&
         to > from
     ) {
         range = to - from;
-        intervals = range / (orientations - 1);
+        intervals = range / (orientations - 1 || 1);
         orientation = index % orientations;
         result = from + (orientation * intervals);
     }
@@ -667,7 +667,7 @@ var wordCloudOptions = {
         from: 0,
         /**
          * The number of possible orientations for a word, within the range of
-         * `rotation.from` and `rotation.to`.
+         * `rotation.from` and `rotation.to`. Must be a number larger than 0.
          */
         orientations: 2,
         /**
