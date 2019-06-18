@@ -10,7 +10,7 @@
  *
  * License: www.highcharts.com/license
  *
- * This is a Highcharts module that draws long data series on a cannvas in order
+ * This is a Highcharts module that draws long data series on a canvas in order
  * to increase performance of the initial load time and tooltip responsiveness.
  *
  * Compatible with WebGL compatible browsers (not IE < 11).
@@ -78,7 +78,7 @@
  * thousands of data points to be rendered in milliseconds. In addition to the
  * WebGL rendering it saves time by skipping processing and inspection of the
  * data wherever possible. This introduces some limitations to what features are
- * available in Boost mode. See [the docs](
+ * available in boost mode. See [the docs](
  * https://www.highcharts.com/docs/advanced-chart-features/boost-module) for
  * details.
  *
