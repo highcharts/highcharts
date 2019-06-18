@@ -919,41 +919,52 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
 addEvent(Series, 'render', function () {
-    var clipHeight;
+    var chart = this.chart,
+        clipHeight;
 
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
-        !(this.chart.is3d && this.chart.is3d()) &&
-        !this.chart.polar &&
+        !(chart.is3d && chart.is3d()) &&
+        !chart.polar &&
         this.xAxis &&
         !this.xAxis.isRadial // Gauge, #6192
     ) {
-        // Include xAxis line width, #8031
-        clipHeight = this.yAxis.len - (this.xAxis.axisLine ?
-            Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
-            0);
+
+        clipHeight = this.yAxis.len;
+
+        // Include xAxis line width (#8031) but only if the Y axis ends on the
+        // edge of the X axis (#11005).
+        if (this.xAxis.axisLine) {
+            var dist = chart.plotTop + chart.plotHeight -
+                    this.yAxis.pos - this.yAxis.len,
+                lineHeightCorrection = Math.floor(
+                    this.xAxis.axisLine.strokeWidth() / 2
+                );
+
+            if (dist >= 0) {
+                clipHeight -= Math.max(lineHeightCorrection - dist, 0);
+            }
+        }
 
         // First render, initial clip box
         if (!this.clipBox && this.animate) {
-            this.clipBox = merge(this.chart.clipBox);
+            this.clipBox = merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
 
         // On redrawing, resizing etc, update the clip rectangle
-        } else if (this.chart[this.sharedClipKey]) {
+        } else if (chart[this.sharedClipKey]) {
             // animate in case resize is done during initial animation
-            this.chart[this.sharedClipKey].animate({
+            chart[this.sharedClipKey].animate({
                 width: this.xAxis.len,
                 height: clipHeight
             });
 
             // also change markers clip animation for consistency
             // (marker clip rects should exist only on chart init)
-            if (
-                this.chart[this.sharedClipKey + 'm']
-            ) {
-                this.chart[this.sharedClipKey + 'm'].animate({
+            if (chart[this.sharedClipKey + 'm']) {
+                chart[this.sharedClipKey + 'm'].animate({
                     width: this.xAxis.len
                 });
             }
