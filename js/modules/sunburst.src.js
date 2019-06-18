@@ -412,8 +412,9 @@ var cbSetTreeValuesBefore = function before(node, options) {
         chart = series.chart,
         points = series.points,
         point = points[node.i],
+        colors = (series.options.colors || chart && chart.options.colors),
         colorInfo = getColor(node, {
-            colors: chart && chart.options && chart.options.colors,
+            colors: colors,
             colorIndex: series.colorIndex,
             index: options.index,
             mapOptionsToLevel: options.mapOptionsToLevel,
