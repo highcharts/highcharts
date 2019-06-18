@@ -1750,13 +1750,20 @@ H.getStyle = function (el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
+        var offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
+        // In flex boxes, we need to use getBoundingClientRect and floor it,
+        // because scrollWidth doesn't support subpixel precision (#6427) ...
+        var boundingClientRectWidth = el.getBoundingClientRect &&
+            el.getBoundingClientRect().width;
+        // ...unless if the containing div or its parents are transform-scaled
+        // down, in which case the boundingClientRect can't be used as it is
+        // also scaled down (#9871, #10498).
+        if (boundingClientRectWidth < offsetWidth &&
+            boundingClientRectWidth >= offsetWidth - 1) {
+            offsetWidth = Math.floor(boundingClientRectWidth);
+        }
         return Math.max(0, // #8377
-        (Math.min(el.offsetWidth, el.scrollWidth, (el.getBoundingClientRect &&
-            // #9871, getBoundingClientRect doesn't handle
-            // transforms, so avoid that
-            H.getStyle(el, 'transform', false) === 'none') ?
-            Math.floor(el.getBoundingClientRect().width) : // #6427
-            Infinity) -
+        (offsetWidth -
             H.getStyle(el, 'padding-left') -
             H.getStyle(el, 'padding-right')));
     }
