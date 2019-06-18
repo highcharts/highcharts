@@ -1846,7 +1846,10 @@ function dragMove(e, point) {
 H.Chart.prototype.setGuideBoxState = function (state, options) {
     var guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
-        stateOptions = merge(guideBoxOptions.default, guideBoxOptions[state]);
+        stateOptions = merge(
+            guideBoxOptions['default'], // eslint-disable-line dot-notation
+            guideBoxOptions[state]
+        );
 
     return guideBox
         .attr({

@@ -11,6 +11,7 @@
  * http://192.168.15.208:3030/samples/view?path=unit-tests/oldie/general&mobile=true
  */
 
+/* eslint no-underscore-dangle: 0 */
 
 var results = [];
 
@@ -39,32 +40,25 @@ Highcharts.Chart.prototype.isReadyToRender = function () {
 for (var type in types) {
     if (types.hasOwnProperty(type)) {
 
-        try {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                type: type,
+                data: [1, 3, 2, 4]
+            }]
+        });
 
-            var chart = Highcharts.chart('container', {
-                series: [{
-                    type: type,
-                    data: [1, 3, 2, 4]
-                }]
-            });
+        ok(
+            'The container should be generated for series type ' + type,
+            chart.container.tagName === 'DIV'
+        );
 
-            ok(
-                'The container should be generated for series type ' + type,
-                chart.container.tagName === 'DIV'
-            );
-
-            chart.series[0].points[0].onMouseOver();
-            ok(
-                'The tooltip should be displayed',
-                chart.tooltip.getLabel().element.innerHTML
-                    .indexOf('<SPAN') !== -1
-            );
-            chart.destroy();
-
-        } catch (e) {
-            console.log('ERROR ', e);
-            ok(e, false);
-        }
+        chart.series[0].points[0].onMouseOver();
+        ok(
+            'The tooltip should be displayed',
+            chart.tooltip.getLabel().element.innerHTML
+                .indexOf('<SPAN') !== -1
+        );
+        chart.destroy();
     }
 }
 
@@ -72,8 +66,8 @@ for (var type in types) {
 // End of actual tests
 //----------------------------------------------------------------------------//
 
-if (window.__karma__) { // eslint-disable-line no-underscore-dangle
-    window.__karma__.start = function () { // eslint-disable-line no-underscore-dangle
+if (window.__karma__) {
+    window.__karma__.start = function () {
 
         this.info({
             total: results.length
