@@ -320,6 +320,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
 QUnit.test('Series.update and events', assert => {
     const clicks = {
         option: 0,
+        updatedOption: 0,
         added: 0
     };
     let updated = false;
@@ -387,6 +388,29 @@ QUnit.test('Series.update and events', assert => {
     assert.ok(
         updated,
         'The afterUpdate handler has run'
+    );
+
+
+    chart.series[0].update({
+        events: {
+            click: () => clicks.updatedOption++
+        }
+    });
+
+    // Bug in test-controller? The second click won't fire
+    const controller2 = new TestController(chart);
+    controller2.moveTo(100, 130);
+    controller2.click(100, 130, undefined, true);
+
+    assert.strictEqual(
+        clicks.option,
+        2,
+        'The old click event option should be inactive'
+    );
+    assert.strictEqual(
+        clicks.updatedOption,
+        1,
+        'The new click event option should take over'
     );
 });
 

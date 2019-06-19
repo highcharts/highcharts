@@ -1345,6 +1345,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'transformGroup'
             ],
             preserve = [
+                'eventOptions',
                 'navigatorSeries',
                 'baseSeries'
             ],

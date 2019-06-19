@@ -960,6 +960,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             'dataLabelsGroup',
             'transformGroup'
         ], preserve = [
+            'eventOptions',
             'navigatorSeries',
             'baseSeries'
         ], 
