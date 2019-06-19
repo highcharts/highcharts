@@ -5,6 +5,17 @@
  */
 
 /**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Individual point events
+ * @name Highcharts.PointOptionsObject#events
+ * @type {Highcharts.SeriesLineDataEventsOptions}
+ *//**
+ * @name Highcharts.PointOptionsObject#marker
+ * @type {Highcharts.SeriesLineDataMarkerOptions}
+ */
+
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -245,52 +256,6 @@
  *
  * @param {global.Event} event
  *        Event that occured.
- */
-
-/**
- * Gets fired when the point is selected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.SeriesPointSelectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.SeriesPointSelectEventObject} event
- *        Event that occured.
- */
-
-/**
- * Information about the select event.
- *
- * @interface Highcharts.SeriesPointSelectEventObject
- * @extends global.Event
- *//**
- * @name Highcharts.SeriesPointSelectEventObject#accumulate
- * @type {boolean}
- */
-
-/**
- * Fires when the point is unselected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.SeriesPointUnselectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.SeriesPointUnselectEventObject} event
- *        Event that occured.
- */
-
-/**
- * Information about the unselect event.
- *
- * @interface Highcharts.SeriesPointUnselectEventObject
- * @extends global.Event
- *//**
- * @name Highcharts.SeriesPointUnselectEventObject#accumulate
- * @type {boolean}
  */
 
 /**
@@ -1799,7 +1764,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Highcharts.SeriesPointSelectCallbackFunction}
+             * @type      {Highcharts.PointSelectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.select
@@ -1816,7 +1781,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Highcharts.SeriesPointUnselectCallbackFunction}
+             * @type      {Highcharts.PointUnselectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.unselect

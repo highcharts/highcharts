@@ -86,6 +86,13 @@ declare global {
             dataLabels: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
         }
+        interface PointOptionsObject {
+            dataLabels?: (
+                DataLabelsOptionsObject|
+                Array<DataLabelsOptionsObject>
+            );
+            labelrank?: number;
+        }
         interface Series {
             dataLabelPositioners: SeriesDataLabelPositionersObject;
             alignDataLabel(
@@ -619,6 +626,19 @@ declare global {
  * @name Highcharts.DataLabelsTextPath#enabled
  * @type {boolean|undefined}
  * @since 7.1.0
+ */
+
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Individual data labels for each point.
+ * @name Highcharts.PointOptionsObject#dataLabels
+ * @type {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>|undefined}
+ *//**
+ * The rank for this point's data label in case of collision. If two data labels
+ * are about to overlap, only the one with the highest labelrank will be drawn.
+ * @name Highcharts.PointOptionsObject#labelrank
+ * @type {number|undefined}
  */
 
 import './Utilities.js';
@@ -1593,12 +1613,11 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    if (
-                        !defined(options.style.width) &&
+                    if (!defined(options.style.width) &&
                         !defined(
                             point.options.dataLabels &&
-                            point.options.dataLabels.style &&
-                            point.options.dataLabels.style.width
+                            (point.options.dataLabels as any).style &&
+                            (point.options.dataLabels as any).style.width
                         )
                     ) {
                         if (point.dataLabel.getBBox().width > maxWidth) {

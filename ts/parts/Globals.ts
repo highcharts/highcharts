@@ -97,6 +97,9 @@ declare global {
             tooltipDateKeys?: any; // @todo
             zone?: any; // @todo
         }
+        interface PointOptionsObject {
+            events?: PointEventsOptionsObject; // @todo
+        }
         interface Series {
             _hasPointLabels?: any; // @todo
             _hasPointMarkers?: any; // @todo

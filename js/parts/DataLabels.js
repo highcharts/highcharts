@@ -482,6 +482,18 @@ import H from './Globals.js';
 * @type {boolean|undefined}
 * @since 7.1.0
 */
+/**
+ * @interface Highcharts.PointOptionsObject
+ */ /**
+* Individual data labels for each point.
+* @name Highcharts.PointOptionsObject#dataLabels
+* @type {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>|undefined}
+*/ /**
+* The rank for this point's data label in case of collision. If two data labels
+* are about to overlap, only the one with the highest labelrank will be drawn.
+* @name Highcharts.PointOptionsObject#labelrank
+* @type {number|undefined}
+*/
 import './Utilities.js';
 import './Series.js';
 var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;

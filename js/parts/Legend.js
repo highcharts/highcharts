@@ -44,6 +44,13 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 /**
+ * @interface Highcharts.PointOptionsObject
+ */ /**
+* The sequential index of the data point in the legend.
+* @name Highcharts.PointOptionsObject#legendIndex
+* @type {number|undefined}
+*/
+/**
  * Gets fired when the legend item belonging to a series is clicked. The default
  * action is to toggle the visibility of the series. This can be prevented by
  * returning `false` or calling `event.preventDefault()`.

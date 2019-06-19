@@ -5,6 +5,14 @@
  */
 
 /**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Pie series only. Whether to display a slice offset from the center.
+ * @name Highcharts.PointOptionsObject#sliced
+ * @type {boolean|undefined}
+ */
+
+/**
  * Options for the series data labels, appearing next to each data point.
  *
  * Since v6.2.0, multiple data labels can be applied to each single point by
@@ -1163,6 +1171,12 @@ seriesType(
             // redraw is true by default
             redraw = pick(redraw, true);
 
+            /**
+             * Pie series only. Whether to display a slice offset from the
+             * center.
+             * @name Highcharts.Point#sliced
+             * @type {boolean|undefined}
+             */
             // if called without an argument, toggle
             point.sliced = point.options.sliced = sliced =
             defined(sliced) ? sliced : !point.sliced;
