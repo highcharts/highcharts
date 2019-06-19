@@ -226,19 +226,23 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    if (argv.browsercount && !isNaN(argv.browsercount)  && argv.browsercount > 1) {
+    const browserCount = argv.browsercount || 2;
+
+    if (browserCount && !isNaN(browserCount)  && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         if (argv.browsers) {
-            console.warn(`Note: --browsers has been added as a cli argument and will override karma-sharding browser config.`)
+            console.warn(`Note: --browsers has been added as a cli argument and may override karma-sharding browser config.\n
+            Use --splitbrowsers to define which browsers to shard the tests across.`);
         }
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
-        browsers = argv.splitbrowsers.split(',').reduce((browserInstances, current) => {
-            for (let i = 0; i < argv.browsercount; i++) {
+        browsers = argv.splitbrowsers ? argv.splitbrowsers.split(',').reduce((browserInstances, current) => {
+            for (let i = 0; i < browserCount; i++) {
                 browserInstances.push(current);
             }
             return browserInstances;
-        }, []);
+        }, [])
+        : new Array(browserCount).fill('ChromeHeadless');
     } else {
         if (argv.splitbrowsers) {
             browsers = argv.splitbrowsers.split(',');
