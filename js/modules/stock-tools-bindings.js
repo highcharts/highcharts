@@ -1953,6 +1953,11 @@ var stockToolsBindings = {
     /**
      * Indicators bindings. Includes `init` event to show a popup.
      *
+     * Note: In order to show base series from the chart in the popup's
+     * dropdown each series requires
+     * [series.id](https://api.highcharts.com/highstock/series.line.id) to be
+     * defined.
+     *
      * @type    {Highcharts.StockToolsBindingsObject}
      * @product highstock
      * @default {"className": "highcharts-indicators", "init": function() {}, "annotationOptions": {}}
