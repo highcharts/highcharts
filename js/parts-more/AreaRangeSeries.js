@@ -7,6 +7,18 @@
  * */
 
 /**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Range series only. The high or maximum value for each data point.
+ * @name Highcharts.PointOptionsObject#high
+ * @type {number|undefined}
+ *//**
+ * Range series only. The low or minimum value for each data point.
+ * @name Highcharts.PointOptionsObject#low
+ * @type {number|undefined}
+ */
+
+/**
  * Extended data labels for range series types. Range series data labels use no
  * `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and `yHigh`
  * options to allow the higher and lower data label sets individually.
@@ -552,6 +564,18 @@ seriesType('arearange', 'area', {
 
     setStackedPoints: noop
 }, {
+    /**
+     * Range series only. The high or maximum value for each data point.
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
+
     setState: function () {
         var prevState = this.state,
             series = this.series,

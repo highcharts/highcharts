@@ -6,6 +6,19 @@
  *
  * */
 
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Heatmap series only. Point padding for a single point.
+ * @name Highcharts.PointOptionsObject#pointPadding
+ * @type {number|undefined}
+ *//**
+ * Heatmap series only. The value of the point, resulting in a color controled
+ * by options as set in the colorAxis configuration.
+ * @name Highcharts.PointOptionsObject#value
+ * @type {number|undefined}
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -346,6 +359,19 @@ seriesType(
         }
 
     }), H.extend({
+
+        /**
+         * Heatmap series only. Padding between the points in the heatmap.
+         * @name Highcharts.Point#pointPadding
+         * @type {number|undefined}
+         */
+
+        /**
+         * Heatmap series only. The value of the point, resulting in a color
+         * controled by options as set in the colorAxis configuration.
+         * @name Highcharts.Point#value
+         * @type {number|undefined}
+         */
 
         /**
          * @private

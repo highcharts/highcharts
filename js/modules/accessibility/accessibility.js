@@ -8,6 +8,32 @@
  *
  * */
 
+/**
+ * @interface Highcharts.PointAccessibilityOptionsObject
+ *//**
+ * Provide a description of the data point, announced to screen readers.
+ * @name Highcharts.PointAccessibilityOptionsObject#description
+ * @type {string|undefined}
+ * @requires modules/accessibility
+ * @since 7.1.0
+ */
+
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * @name Highcharts.PointOptionsObject#accessibility
+ * @type {Highcharts.PointAccessibilityOptionsObject|undefined}
+ * @requires modules/accessibility
+ * @since 7.1.0
+ *//**
+ * A description of the point to add to the screen reader information about the
+ * point. Requires the Accessibility module.
+ * @name Highcharts.PointOptionsObject#description
+ * @type {string|undefined}
+ * @requires modules/accessibility
+ * @since 5.0.0
+ */
+
 'use strict';
 
 import H from '../../parts/Globals.js';

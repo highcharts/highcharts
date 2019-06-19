@@ -6,6 +6,15 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * The ending X value of the range point.
+ * @name Highcharts.PointOptionsObject#x2
+ * @type {number|undefined}
+ * @requires modules/xrange
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -592,6 +601,14 @@ seriesType('xrange', 'column'
         //*/
 
     }, { // Point class properties
+
+        /**
+         * The ending X value of the range point.
+         * @name Highcharts.Point#x2
+         * @type {number|undefined}
+         * @requires modules/xrange
+         */
+
         /**
          * Extend applyOptions so that `colorByPoint` for x-range means that one
          * color is applied per Y axis category.

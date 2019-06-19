@@ -11,7 +11,7 @@ import HighchartsMore from 'highcharts/highcharts-more';
 
 HighchartsMore(Highcharts);
 
-test_AreaRange();
+test_seriesAreaRange();
 
 /**
  * Tests Highcharts.seriesTypes.arearange in a complex use case.
@@ -19,7 +19,7 @@ test_AreaRange();
  * @todo
  *  - Make it more complex.
  */
-function test_AreaRange() {
+function test_seriesAreaRange() {
     Highcharts.chart('container', {
         title: {
             text: 'Temperature variation by day'
@@ -53,6 +53,10 @@ function test_AreaRange() {
         }],
         tooltip: {
             crosshairs: true,
+            formatter: function() {
+                const high = this.point.options.high;
+                return '' + high;
+            },
             shared: true,
             valueSuffix: '°C'
         },
