@@ -47,6 +47,8 @@ import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
 import InfoRegionComponent from './components/InfoRegionComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
+import whcm from './high-contrast-mode.js';
+import highContrastTheme from './high-contrast-theme.js';
 import defaultOptions from './options.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
@@ -59,7 +61,11 @@ var addEvent = H.addEvent,
 
 
 // Add default options
-merge(true, H.defaultOptions, defaultOptions);
+merge(true, H.defaultOptions, defaultOptions, {
+    accessibility: {
+        highContrastTheme: highContrastTheme
+    }
+});
 
 // Expose classes on Highcharts namespace
 H.KeyboardNavigationHandler = KeyboardNavigationHandler;
@@ -264,10 +270,11 @@ Accessibility.prototype = {
      */
     update: function () {
         var components = this.components,
-            a11yOptions = this.chart.options.accessibility;
+            chart = this.chart,
+            a11yOptions = chart.options.accessibility;
 
         // Update the chart type list as this is used by multiple modules
-        this.chart.types = this.getChartTypes();
+        chart.types = this.getChartTypes();
 
         // Update markup
         Object.keys(components).forEach(function (componentName) {
@@ -278,6 +285,14 @@ Accessibility.prototype = {
         this.keyboardNavigation.update(
             a11yOptions.keyboardNavigation.order
         );
+
+        // Handle high contrast mode
+        if (
+            !chart.highContrastModeActive && // Only do this once
+            whcm.isHighContrastModeActive(chart)
+        ) {
+            whcm.setHighContrastTheme(chart);
+        }
     },
 
 

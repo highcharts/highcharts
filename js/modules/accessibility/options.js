@@ -122,6 +122,15 @@ var options = {
          */
 
         /**
+         * Theme to apply to the chart when Windows High Contrast Mode is
+         * detected.
+         *
+         * @since next
+         * @type {object}
+         * @apioption accessibility.highContrastTheme
+         */
+
+        /**
          * A text description of the chart.
          *
          * If the Accessibility module is loaded, this is included by default
