@@ -20,8 +20,6 @@ Highcharts.chart('container', {
             name: 'Point 3.'
         }],
         lineWidth: 5,
-        emptySeries: {
-            stroke: '#c0ffee'
-        }
+        color: '#c0ffee'
     }]
 });

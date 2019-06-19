@@ -280,6 +280,34 @@ seriesType(
         center: [null, null],
 
         /**
+         * The main color of the series. The default value is pulled from the
+         * `options.colors` array. Pie series is represented as an empty circle
+         * if total sum of its values is 0. Use this property to define the
+         * color of its border.
+         * In styled mode, the color can be defined by the
+         * [colorIndex](#plotOptions.series.colorIndex) option. Also, the series
+         * color can be set with the `.highcharts-series`,
+         * `.highcharts-color-{n}`, `.highcharts-{type}-series` or
+         * `.highcharts-series-{n}` class, or individual classes given by the
+         * `className` option.
+         *
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-color-general/
+         *         General plot option
+         * @sample {highcharts} highcharts/plotoptions/series-color-specific/
+         *         One specific series
+         * @sample {highcharts} highcharts/plotoptions/series-color-area/
+         *         Area color
+         * @sample {highcharts} highcharts/series/infographic/
+         *         Pattern fill
+         * @sample {highmaps} maps/demo/category-map/
+         *         Category map by multiple series
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.pie.color
+         */
+
+        /**
          * @product highcharts
          *
          * @private
@@ -336,24 +364,19 @@ seriesType(
         },
 
         /**
-         * The chart is represented as an empty circle if total sum of all
-         * points values is 0. Use properties like `stroke` and `fill` to
-         * maniupulate its look. [pie.lineWidth](#plotOptions.pie.lineWidth)
-         * property defines the thickness of the circle.
+         * The series is represented as an empty circle if total sum of its
+         * values is 0. `fillColor` defines the color of that circle.
+         * Use [pie.lineWidth](#plotOptions.pie.lineWidth) to manipulate the
+         * border thickness.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
          *         Empty pie styled
          *
-         * @type      {Highcharts.SVGAttributes}
-         * @default {stroke: '#aaa', fill: 'none'}
+         * @type {Highcharts.ColorString}
+         * @default undefined
          * @private
          */
-        emptySeries: {
-            /** @ignore-option */
-            stroke: '#aaa',
-            /** @ignore-option */
-            fill: 'none'
-        },
+        fillColor: undefined,
 
         /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
@@ -425,8 +448,9 @@ seriesType(
         legendType: 'point',
 
         /**
-         * Pixel thickness of a circle that represents an empty series
-         * ([pie.emptySeries](#plotOptions.pie.emptySeries)).
+         * The series is represented as an empty circle if total sum of its
+         * values is 0. `lineWidth` defines thickness of that circle. Use
+         * [pie.fillColor](#plotOptions.pie.fillColor) to manipulate its color.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
          *         Empty pie styled
@@ -915,20 +939,12 @@ seriesType(
         drawGraph: function () {
             var centerX,
                 centerY,
-                options = this.options,
-                graphicOptions;
-
+                options = this.options;
 
             // Draw auxiliary graph if there're no visible points.
             if (this.total === 0) {
                 centerX = this.center[0];
                 centerY = this.center[1];
-                graphicOptions = merge(options.emptySeries, {
-                    'stroke-width': options.lineWidth,
-                    cx: centerX,
-                    cy: centerY,
-                    r: this.center[2] / 2 - options.dataLabels.distance
-                });
 
                 if (!this.graph) { // Auxiliary graph doesn't exist yet.
                     this.graph = this.chart.renderer.circle(centerX,
@@ -936,7 +952,15 @@ seriesType(
                         .addClass('highcharts-graph')
                         .add(this.group);
                 }
-                this.graph.animate(graphicOptions);
+
+                this.graph.animate({
+                    'stroke-width': options.lineWidth,
+                    cx: centerX,
+                    cy: centerY,
+                    r: this.center[2] / 2 - options.dataLabels.distance,
+                    fill: options.fillColor || 'none',
+                    stroke: options.color || options.supportingColor
+                });
 
 
             } else if (this.graph) { // Destroy the graph object.
