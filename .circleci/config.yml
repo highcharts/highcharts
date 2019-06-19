@@ -210,7 +210,7 @@ workflows:
       - deploy:
           requires:
             - build_dist
-          context: core-developers
+          context: highcharts-prod
           filters:
             branches:
               ignore: /.*/
