@@ -1178,7 +1178,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (title) {
 
-                if (!(this as any).styledMode) {
+                if (!this.styledMode) {
                     titleSize = titleOptions.style.fontSize;
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
@@ -1192,7 +1192,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 height = title.getBBox(titleOptions.useHTML).height;
 
                 title.align(extend({
-                    y: bottomAlign ? 0 : offset + titleSize,
+                    y: bottomAlign ? titleSize : offset + titleSize,
                     height
                 }, titleOptions), false, 'spacingBox');
 
@@ -1553,8 +1553,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
         }
 
-        if (titleOffsetBottom && !margin[2]) {
-            this.marginBottom += titleOffsetBottom;
+        if (titleOffsetBottom && !defined(margin[2])) {
+            this.marginBottom = Math.max(
+                this.marginBottom,
+                titleOffsetBottom + (this.options.title as any).margin +
+                    spacing[2]
+            );
         }
 
         // Adjust for legend
