@@ -1,7 +1,8 @@
 #container {
     max-width: 800px;
+    min-width: 320px;
     height: 400px;
-    margin: 3em auto;
+    margin: 1em auto;
 }
 
 caption {
@@ -31,5 +32,6 @@ table tr:nth-child(even) {
 
 th {
 	font-weight: 600;
+    vertical-align: middle;
     padding: 10px;
 }
