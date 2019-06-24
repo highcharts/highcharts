@@ -65,7 +65,8 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/get-filesizes',
     'unsorted/nightly',
     'unsorted/update-vendor',
-    'unsorted/upload-api'
+    'unsorted/upload-api',
+    'unsorted/upload-files'
 ]));
 
 /* *

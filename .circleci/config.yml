@@ -147,9 +147,28 @@ jobs:
     steps:
       - <<: *load_workspace
       - run:
-          name: Upload to S3
+          name: Upload code to S3
           command: npx gulp dist-upload
-      - <<: *persist_workspace
+      - run:
+          name: Generate changelog since last tag
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+      - run:
+          name: Changelog - Create git-sha named folder and copy changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git rev-parse --verify HEAD --short)/"
+      - run:
+          name: Changelog - Upload changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+
+  deploy_api_docs:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate api docs
+          command: npx gulp jsdoc
+      - run:
+          name: Upload api docs to S3
+          command: npx gulp upload-api
 
 workflows:
   version: 2
@@ -193,7 +212,6 @@ workflows:
           filters:
             branches:
               only:
-                - master
                 - feature/ci-nightly
     jobs:
       - checkout_code
@@ -203,8 +221,26 @@ workflows:
       - generate_ts_declarations:
           requires:
             - install_dependencies
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
       - build_dist:
           requires:
+            - "test-Mac.Firefox"
+            - "test-Mac.Safari"
+            - "test-Win.IE8"
             - generate_ts_declarations
       - deploy:
           requires:
@@ -213,6 +249,13 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - feature/ci-nightly
+      - deploy_api_docs:
+          requires:
+            - build_dist
+          context: highcharts-prod
+          filters:
+            branches:
+              only:
                 - feature/ci-nightly
 
