@@ -143,6 +143,9 @@ declare global {
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
  *        Context to format
+
+ * @param {Highcharts.Tooltip} tooltip
+ *        The tooltip instance
  *
  * @return {false|string|Array<string>}
  *         Formatted text or false
