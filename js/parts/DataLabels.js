@@ -727,7 +727,7 @@ Series.prototype.drawDataLabels = function () {
                     (!point.isNull || point.dataLabelOnNull) &&
                     applyFilter(point, labelOptions)), labelConfig, formatString, labelText, style, rotation, attr, dataLabel = point.dataLabels ? point.dataLabels[i] :
                     point.dataLabel, connector = point.connectors ? point.connectors[i] :
-                    point.connector, isNew = !dataLabel;
+                    point.connector, labelDistance = pick(labelOptions.distance, point.labelDistance), isNew = !dataLabel;
                 if (labelEnabled) {
                     // Create individual options structure that can be extended
                     // without affecting others
@@ -745,8 +745,9 @@ Series.prototype.drawDataLabels = function () {
                         // Get automated contrast color
                         if (style.color === 'contrast') {
                             point.contrastColor = renderer.getContrast(point.color || series.color);
-                            style.color = labelOptions.inside ||
-                                pick(labelOptions.distance, point.labelDistance) < 0 ||
+                            style.color = (!defined(labelDistance) &&
+                                labelOptions.inside) ||
+                                labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';

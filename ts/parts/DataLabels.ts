@@ -1033,6 +1033,10 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         point.dataLabel,
                     connector = point.connectors ? point.connectors[i] :
                         point.connector,
+                    labelDistance = pick(
+                        (labelOptions as any).distance,
+                        point.labelDistance
+                    ),
                     isNew = !dataLabel;
 
                 if (labelEnabled) {
@@ -1070,11 +1074,11 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                             point.contrastColor = renderer.getContrast(
                                 point.color || series.color
                             );
-                            (style as any).color = labelOptions.inside ||
-                                pick(
-                                    (labelOptions as any).distance,
-                                    point.labelDistance
-                                ) < 0 ||
+                            (style as any).color = (
+                                !defined(labelDistance) &&
+                                    labelOptions.inside
+                            ) ||
+                                labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
