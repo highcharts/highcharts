@@ -496,7 +496,7 @@ import H from './Globals.js';
 */
 import './Utilities.js';
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
+var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, intersectRect = H.intersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -1509,7 +1509,9 @@ if (seriesTypes.column) {
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         // If label was justified and we have contrast, set it:
-        if (point.isLabelJustified && point.contrastColor) {
+        if (point.contrastColor &&
+            point.shapeArgs &&
+            intersectRect(dataLabel.x, dataLabel.y, dataLabel.width - dataLabel.padding, dataLabel.height - dataLabel.padding, point.shapeArgs.x, point.shapeArgs.y, point.shapeArgs.width, point.shapeArgs.height)) {
             dataLabel.css({
                 color: point.contrastColor
             });
