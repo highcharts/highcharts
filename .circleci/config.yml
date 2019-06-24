@@ -139,7 +139,6 @@ jobs:
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run: echo -e "Push changelog to highcharts repo not yet implemented.."
       - <<: *persist_workspace
 
   deploy:
@@ -158,6 +157,7 @@ jobs:
       - run:
           name: Changelog - Upload changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
 
   deploy_api_docs:
     <<: *defaults
@@ -169,6 +169,7 @@ jobs:
       - run:
           name: Upload api docs to S3
           command: npx gulp upload-api
+      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
 
 workflows:
   version: 2
