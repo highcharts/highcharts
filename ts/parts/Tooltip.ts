@@ -23,7 +23,10 @@ declare global {
             tt?: SVGElement;
         }
         interface TooltipFormatterCallbackFunction {
-            (this: TooltipFormatterContextObject): (false|string|Array<string>);
+            (
+                this: TooltipFormatterContextObject,
+                tooltip?: Tooltip
+            ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
             color: ColorString;
