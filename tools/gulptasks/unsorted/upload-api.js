@@ -16,15 +16,19 @@ const uploadAPIDocs = () => {
         asyncForeach,
         uploadFiles
     } = require('../../upload.js');
-    const argv = process.argv;
+    const argv = require('yargs').argv;
     const sourceFolder = './build/api/';
-    const bucket = 'api-docs-bucket.highcharts.com';
+    const bucket = argv.bucket || process.env.HIGHCHARTS_APIDOCS_BUCKET;
     const batchSize = 30000;
     const files = (
         isString(argv.files) ?
             argv.files.split(',') :
             getFilesInFolder(sourceFolder, true, '')
     );
+    if (!bucket) {
+        throw new Error('No --bucket argument specified or env. variable HIGHCHARTS_APIDOCS_BUCKET is empty or unset.');
+    }
+
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = tag => {
         const errors = [];
