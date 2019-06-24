@@ -2,19 +2,23 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
     var chart = Highcharts.chart('container', {
             chart: {
                 width: 600,
-                height: 400
+                height: 400,
+                type: 'column'
             },
-            series: [{
-                data: [15, 14.5, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4],
-                type: 'column',
-                colorByPoint: true,
-                dataLabels: {
-                    enabled: true,
-                    inside: false,
-                    style: {
-                        textOutline: null
+            plotOptions: {
+                column: {
+                    colorByPoint: true,
+                    dataLabels: {
+                        enabled: true,
+                        inside: false,
+                        style: {
+                            textOutline: null
+                        }
                     }
                 }
+            },
+            series: [{
+                data: [15, 14.5, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4]
             }],
             yAxis: {
                 endOnTick: false,
@@ -30,7 +34,21 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
         Highcharts.Color(
             chart.renderer.getContrast(point.color)
         ).get(),
-        'Correct color for justified label on a column.'
+        'Contrast color should be used for a justified label on a column.'
+    );
+
+    chart.yAxis[0].setExtremes(null, 20000000, false, false);
+    chart.addSeries({
+        data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10000000]
+    });
+
+    assert.strictEqual(
+        Highcharts.Color(
+            point.dataLabel.element.childNodes[0].style.color
+        ).get(),
+        'rgb(0,0,0)',
+        `Contrast color should not be used when dataLabel does not collide  
+            with column (#6657).`
     );
 });
 

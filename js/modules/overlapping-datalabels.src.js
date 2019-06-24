@@ -17,6 +17,7 @@ var Chart = H.Chart,
     isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
+    intersectRect = H.intersectRect,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent;
 
@@ -102,14 +103,6 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
         isIntersecting,
         box1,
         box2,
-        intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
-            return !(
-                x2 > x1 + w1 ||
-                x2 + w2 < x1 ||
-                y2 > y1 + h1 ||
-                y2 + h2 < y1
-            );
-        },
 
         // Get the box with its position inside the chart, as opposed to getBBox
         // that only reports the position relative to the parent.

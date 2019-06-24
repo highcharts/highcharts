@@ -170,6 +170,16 @@ declare global {
         function format(str: string, ctx: any, time: Time): string;
         function formatSingle(format: string, val: any, time: Time): string;
         function getMagnitude(num: number): number;
+        function intersectRect(
+            x1: number,
+            y1: number,
+            w1: number,
+            h1: number,
+            x2: number,
+            y2: number,
+            w2: number,
+            h2: number
+        ): boolean;
         function getStyle(
             el: HTMLDOMElement,
             prop: string,
@@ -1873,6 +1883,49 @@ H.format = function (str: string, ctx: any, time: Highcharts.Time): string {
  */
 H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
+};
+
+/**
+ * Get the magnitude of a number.
+ *
+ * @function Highcharts.intersectRect
+ *
+ * @param {number} x1
+ *        x-position of the first box
+ * @param {number} y1
+ *        y-position of the first box
+ * @param {number} w1
+ *        width of the first box
+ * @param {number} h1
+ *        height of the first box
+ * @param {number} x2
+ *        x-position of the second box
+ * @param {number} y2
+ *        y-position of the second box
+ * @param {number} w2
+ *        width of the second box
+ * @param {number} h2
+ *        height of the second box
+ *
+ * @return {boolean}
+ *         Boolean wheater rects are intersecting.
+ */
+H.intersectRect = function (
+    x1: number,
+    y1: number,
+    w1: number,
+    h1: number,
+    x2: number,
+    y2: number,
+    w2: number,
+    h2: number
+): boolean {
+    return !(
+        x2 > x1 + w1 ||
+        x2 + w2 < x1 ||
+        y2 > y1 + h1 ||
+        y2 + h2 < y1
+    );
 };
 
 /**

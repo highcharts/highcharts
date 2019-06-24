@@ -651,6 +651,7 @@ var arrayMax = H.arrayMax,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
+    intersectRect = H.intersectRect,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -2184,7 +2185,20 @@ if (seriesTypes.column) {
         );
 
         // If label was justified and we have contrast, set it:
-        if (point.isLabelJustified && point.contrastColor) {
+        if (
+            point.contrastColor &&
+            point.shapeArgs &&
+            intersectRect(
+                dataLabel.x,
+                dataLabel.y,
+                dataLabel.width - dataLabel.padding,
+                dataLabel.height - dataLabel.padding,
+                point.shapeArgs.x,
+                point.shapeArgs.y,
+                point.shapeArgs.width,
+                point.shapeArgs.height
+            )
+        ) {
             dataLabel.css({
                 color: point.contrastColor
             });
