@@ -203,26 +203,8 @@ workflows:
       - generate_ts_declarations:
           requires:
             - install_dependencies
-#      - test_browsers:
-#          name: "test-Mac.Safari"
-#          requires:
-#            - install_dependencies
-#          browsers: "Mac.Safari"
-#      - test_browsers:
-#          name: "test-Mac.Firefox"
-#          requires:
-#            - "test-Mac.Safari"
-#          browsers: "Mac.Firefox"
-#      - test_browsers:
-#          name: "test-Win.IE8"
-#          requires:
-#            - "test-Mac.Firefox"
-#          browsers: "Win.IE8 --oldie"
       - build_dist:
           requires:
-            #- "test-Mac.Firefox"
-            #- "test-Mac.Safari"
-            #- "test-Win.IE8"
             - generate_ts_declarations
       - deploy:
           requires:
