@@ -166,6 +166,13 @@ var eventEmitterMixin = {
         ) {
             var translation = this.mouseMoveToTranslation(e);
 
+            if (this.chart.inverted) {
+                translation = {
+                    x: translation.y,
+                    y: translation.x
+                };
+            }
+
             if (this.options.draggable === 'x') {
                 translation.y = 0;
             }
