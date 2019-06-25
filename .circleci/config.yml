@@ -138,24 +138,13 @@ jobs:
           command: npm run build
       - <<: *persist_workspace
 
-  deploy:
+  deploy_code:
     <<: *defaults
     steps:
       - <<: *load_workspace
       - run:
           name: Upload code to S3
           command: npx gulp dist-upload
-      - run:
-          name: Generate changelog since last tag
-          command: |
-          (git ls-remote --tags --sort="v:refname" ${CIRCLE_REPOSITORY_URL} | tail -n1 | sed 's/.*\///; s/\^{}//' | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run:
-          name: Changelog - Create git-sha named folder and copy changelog
-          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
-      - run:
-          name: Changelog - Upload changelog
-          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
-      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
 
   deploy_api_docs:
     <<: *defaults
@@ -169,6 +158,37 @@ jobs:
           command: npx gulp upload-api
       - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
 
+  deploy_changelog:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate changelog since last tag
+          command: (git ls-remote --tags --sort="v:refname" ${CIRCLE_REPOSITORY_URL} | tail -n1 | sed 's/.*\///; s/\^{}//' | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
+      - run:
+          name: Changelog - Create git-describe named folder and copy changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
+      - run:
+          name: Changelog - Upload changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+
+  deploy_to_highcharts_dist:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Clone highcharts-dist repository
+          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-dist.git --depth=1 /home/circleci/repo/highcharts-dist
+      - run:
+          name: Delete remote nightly branch
+          command: cd ../highcharts-dist && git push origin --delete nightly || true
+      - run:
+          name: Run copy-release
+          command: cd ../highcharts && node copy-release
+      - run:
+          name: Push to highcharts-dist nightly branch
+          command: cd ../highcharts-dist && git checkout -b nightly && git add . && git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}" && git push -u origin nightly
 workflows:
   version: 2
   build_and_test:
@@ -190,13 +210,10 @@ workflows:
           requires:
             - "test-Mac.Safari"
           browsers: "Win.Chrome"
-          filters:
-            tags:
-              only: /.*/
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
-              - "test-Win.Chrome"
+            - "test-Win.Chrome"
           browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.IE8"
@@ -226,9 +243,13 @@ workflows:
             - install_dependencies
           browsers: "Mac.Safari"
       - test_browsers:
-          name: "test-Mac.Firefox"
+          name: "test-Win.Chrome"
           requires:
             - "test-Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
           browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.IE8"
@@ -241,7 +262,7 @@ workflows:
             - "test-Mac.Safari"
             - "test-Win.IE8"
             - generate_ts_declarations
-      - deploy:
+      - deploy_code:
           requires:
             - build_dist
           context: highcharts-prod
@@ -250,6 +271,22 @@ workflows:
               only:
                 - feature/ci-nightly
       - deploy_api_docs:
+          requires:
+            - build_dist
+          context: highcharts-prod
+          filters:
+            branches:
+              only:
+                - feature/ci-nightly
+      - deploy_changelog:
+          requires:
+            - build_dist
+          context: highcharts-prod
+          filters:
+            branches:
+              only:
+                - feature/ci-nightly
+      - deploy_to_highcharts_dist:
           requires:
             - build_dist
           context: highcharts-prod
