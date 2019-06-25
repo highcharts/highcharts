@@ -136,9 +136,6 @@ jobs:
       - run:
           name: Compile build
           command: npm run build
-      - run:
-          name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
       - <<: *persist_workspace
 
   deploy:
@@ -150,10 +147,11 @@ jobs:
           command: npx gulp dist-upload
       - run:
           name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+          command: |
+          (git ls-remote --tags --sort="v:refname" ${CIRCLE_REPOSITORY_URL} | tail -n1 | sed 's/.*\///; s/\^{}//' | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
       - run:
           name: Changelog - Create git-sha named folder and copy changelog
-          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git rev-parse --verify HEAD --short)/"
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
       - run:
           name: Changelog - Upload changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
