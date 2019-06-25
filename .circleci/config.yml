@@ -195,6 +195,14 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Win.Chrome"
+          filters:
+            tags:
+              only: /.*/
       - build_dist:
           requires:
             - "test-Mac.Firefox"
