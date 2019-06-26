@@ -229,6 +229,7 @@ declare global {
 import './Utilities.js';
 
 var doc = H.doc,
+    defined = H.defined,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
@@ -456,6 +457,8 @@ H.Tooltip.prototype = {
             renderer = this.chart.renderer as Highcharts.Renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
+            className: string = 'tooltip' +
+                (defined(options.className) ? ' ' + options.className : ''),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>;
 
@@ -478,7 +481,7 @@ H.Tooltip.prototype = {
 
             // Create the label
             if (this.split) {
-                this.label = renderer.g('tooltip');
+                this.label = renderer.g(className);
             } else {
                 this.label = renderer
                     .label(
@@ -490,7 +493,7 @@ H.Tooltip.prototype = {
                         null as any,
                         options.useHTML,
                         null as any,
-                        'tooltip'
+                        className
                     )
                     .attr({
                         padding: options.padding,

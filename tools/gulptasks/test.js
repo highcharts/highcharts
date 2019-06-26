@@ -274,7 +274,12 @@ Available arguments for 'gulp test':
     'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
     Win.IE'.
 
-    A shorthand option, '--browsers all', runs all BroserStack machines.
+    A shorthand option, '--browsers all', runs all BrowserStack machines.
+    
+--browsercount
+    Number of browserinstances to spread/shard the tests across. Default value is 2.
+    Will default use ChromeHeadless browser. For other browsers specify 
+    argument --splitbrowsers (same usage as above --browsers argument).
 
 --debug
     Print some debugging info.
@@ -301,7 +306,7 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        const forceRun = (argv.force || argv.length > 2);
+        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests);
 
         if (forceRun || shouldRun()) {
 

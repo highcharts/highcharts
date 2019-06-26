@@ -1551,7 +1551,7 @@ if (!svg) {
 
                 // Compute the stops
                 stops.forEach(function (
-                    stop: [number, Highcharts.ColorString],
+                    stop: Highcharts.GradientColorStopObject,
                     i: number
                 ): void {
                     if (regexRgba.test(stop[1])) {

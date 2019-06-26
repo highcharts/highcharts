@@ -238,6 +238,7 @@ function distCopy() {
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
                 FsLib.copyAllFiles(CSS_DIRECTORY, directory, true);
+                FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'lib');

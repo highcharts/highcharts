@@ -9,6 +9,54 @@
  * */
 'use strict';
 import H from './Globals.js';
+/**
+ * @interface Highcharts.PointEventsOptionsObject
+ */ /**
+* Fires when the point is selected either programmatically or following a click
+* on the point. One parameter, `event`, is passed to the function. Returning
+* `false` cancels the operation.
+* @name Highcharts.PointEventsOptionsObject#select
+* @type {Highcharts.PointSelectCallbackFunction}
+*/ /**
+* Fires when the point is unselected either programmatically or following a
+* click on the point. One parameter, `event`, is passed to the function.
+* Returning `false` cancels the operation.
+* @name Highcharts.PointEventsOptionsObject#unselect
+* @type {Highcharts.PointUnselectCallbackFunction}
+*/
+/**
+ * Information about the select/unselect event.
+ *
+ * @interface Highcharts.PointInteractionEventObject
+ * @extends global.Event
+ */ /**
+* @name Highcharts.PointInteractionEventObject#accumulate
+* @type {boolean}
+*/
+/**
+ * Gets fired when the point is selected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointSelectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
+/**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointUnselectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
 import './Utilities.js';
 import './Chart.js';
 import './Options.js';

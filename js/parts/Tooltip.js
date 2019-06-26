@@ -103,7 +103,7 @@ import H from './Globals.js';
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 import './Utilities.js';
-var doc = H.doc, extend = H.extend, format = H.format, isNumber = H.isNumber, merge = H.merge, pick = H.pick, splat = H.splat, syncTimeout = H.syncTimeout, timeUnits = H.timeUnits;
+var doc = H.doc, defined = H.defined, extend = H.extend, format = H.format, isNumber = H.isNumber, merge = H.merge, pick = H.pick, splat = H.splat, syncTimeout = H.syncTimeout, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -291,7 +291,8 @@ H.Tooltip.prototype = {
      * @return {Highcharts.SVGElement}
      */
     getLabel: function () {
-        var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, container, set;
+        var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
+            (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
             if (this.outside) {
                 this.container = container = H.doc.createElement('div');
@@ -307,11 +308,11 @@ H.Tooltip.prototype = {
             }
             // Create the label
             if (this.split) {
-                this.label = renderer.g('tooltip');
+                this.label = renderer.g(className);
             }
             else {
                 this.label = renderer
-                    .label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
+                    .label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, className)
                     .attr({
                     padding: options.padding,
                     r: options.borderRadius

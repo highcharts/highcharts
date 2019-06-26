@@ -271,6 +271,8 @@ extend(defaultOptions, {
          *         Using a separate data set for the navigator
          * @sample {highstock} stock/navigator/series/
          *         A green navigator series
+         *
+         * @type {*|Highcharts.SeriesOptionsType}
          */
         series: {
             /**

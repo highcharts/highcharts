@@ -454,6 +454,7 @@ seriesType(
         requireSorting: false,
         directTouch: true,
         noSharedTooltip: true,
+        pointArrayMap: ['from', 'to'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
@@ -1138,14 +1139,6 @@ seriesType(
  * @type      {string}
  * @product   highcharts
  * @apioption series.networkgraph.data.to
- */
-
-/**
- * The weight of the link.
- *
- * @type      {number}
- * @product   highcharts
- * @apioption series.networkgraph.data.weight
  */
 
 /**

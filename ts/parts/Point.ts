@@ -29,6 +29,19 @@ declare global {
             percentage?: number;
             total: number;
         }
+        interface PointOptionsObject {
+            className?: string;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            drilldown?: string;
+            id?: string;
+            labelrank?: number;
+            legendIndex?: number;
+            name?: string;
+            selected?: boolean;
+            x?: number;
+            y?: (null|number);
+        }
         class Point {
             public constructor();
             [property: string]: any;
@@ -40,7 +53,7 @@ declare global {
             public nonZonedColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
-            public options: Dictionary<any>;
+            public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
             public state?: string;
@@ -123,11 +136,69 @@ declare global {
  */
 
 /**
- * @interface Highcharts.PointObject
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
  *//**
- * Custom properties set by custom data options.
- * @name Highcharts.Point#[property:string]
- * @type {*}
+ * An additional, individual class name for the data point's graphic
+ * representation.
+ * @name Highcharts.PointOptionsObject#className
+ * @type {string|undefined}
+ *//**
+ * Individual color for the point. By default the color is pulled from the
+ * global colors array. In styled mode, the color option doesn't take effect.
+ * Instead, use colorIndex.
+ * @name Highcharts.PointOptionsObject#color
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ *//**
+ * A specific color index to use for the point, so its graphic representations
+ * are given the class name highcharts-color-{n}. In styled mode this will
+ * change the color of the graphic. In non-styled mode, the color by is set by
+ * the fill attribute, so the change in class name won't have a visual effect by
+ * default.
+ * @name Highcharts.PointOptionsObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * The id of a series in the drilldown.series array to use for a drilldown for
+ * this point.
+ * @name Highcharts.PointOptionsObject#drilldown
+ * @type {string|undefined}
+ *//**
+ * The id of a series in the drilldown.series array to use for a drilldown for
+ * this point.
+ * @name Highcharts.PointOptionsObject#events
+ * @type {Highcharts.PointEventsOptionsObject}
+ *//**
+ * An id for the point. This can be used after render time to get a pointer to
+ * the point object through `chart.get()`.
+ * @name Highcharts.PointOptionsObject#id
+ * @type {string|undefined}
+ *//**
+ * The name of the point as shown in the legend, tooltip, dataLabels etc.
+ * @name Highcharts.PointOptionsObject#name
+ * @type {string|undefined}
+ *//**
+ * Whether the data point is selected initially.
+ * @name Highcharts.PointOptionsObject#selected
+ * @type {boolean|undefined}
+ *//**
+ * The x value of the point. For datetime axes, the X value is the timestamp in
+ * milliseconds since 1970.
+ * @name Highcharts.PointOptionsObject#x
+ * @type {number|undefined}
+ *//**
+ * The y value of the point.
+ * @name Highcharts.PointOptionsObject#y
+ * @type {number|null|undefined}
  */
 
 import './Utilities.js';
@@ -155,7 +226,6 @@ var Point: typeof Highcharts.Point,
  *
  * @class
  * @name Highcharts.Point
- * @implements {Highcharts.PointObject}
  */
 Highcharts.Point = Point = function (): any {} as any;
 Highcharts.Point.prototype = {
@@ -294,8 +364,18 @@ Highcharts.Point.prototype = {
         /**
          * The point's options as applied in the initial configuration, or
          * extended through `Point.update`.
+         *
+         * In TypeScript you have to extend `PointOptionsObject` via an
+         * additional interface to allow custom data options:
+         *
+         * ```
+         * declare interface PointOptionsObject {
+         *     customProperty: string;
+         * }
+         * ```
+         *
          * @name Highcharts.Point#options
-         * @type {object}
+         * @type {Highcharts.PointOptionsObject}
          */
         point.options = point.options ?
             extend(point.options, options as any) :
@@ -739,7 +819,7 @@ Highcharts.Point.prototype = {
             (
                 point.options &&
                 point.options.events &&
-                point.options.events[eventType]
+                (point.options.events as any)[eventType]
             )
         ) {
             this.importEvents();

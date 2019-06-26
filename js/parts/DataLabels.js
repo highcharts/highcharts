@@ -482,9 +482,21 @@ import H from './Globals.js';
 * @type {boolean|undefined}
 * @since 7.1.0
 */
+/**
+ * @interface Highcharts.PointOptionsObject
+ */ /**
+* Individual data labels for each point.
+* @name Highcharts.PointOptionsObject#dataLabels
+* @type {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>|undefined}
+*/ /**
+* The rank for this point's data label in case of collision. If two data labels
+* are about to overlap, only the one with the highest labelrank will be drawn.
+* @name Highcharts.PointOptionsObject#labelrank
+* @type {number|undefined}
+*/
 import './Utilities.js';
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
+var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -715,7 +727,7 @@ Series.prototype.drawDataLabels = function () {
                     (!point.isNull || point.dataLabelOnNull) &&
                     applyFilter(point, labelOptions)), labelConfig, formatString, labelText, style, rotation, attr, dataLabel = point.dataLabels ? point.dataLabels[i] :
                     point.dataLabel, connector = point.connectors ? point.connectors[i] :
-                    point.connector, isNew = !dataLabel;
+                    point.connector, labelDistance = pick(labelOptions.distance, point.labelDistance), isNew = !dataLabel;
                 if (labelEnabled) {
                     // Create individual options structure that can be extended
                     // without affecting others
@@ -733,8 +745,9 @@ Series.prototype.drawDataLabels = function () {
                         // Get automated contrast color
                         if (style.color === 'contrast') {
                             point.contrastColor = renderer.getContrast(point.color || series.color);
-                            style.color = labelOptions.inside ||
-                                pick(labelOptions.distance, point.labelDistance) < 0 ||
+                            style.color = (!defined(labelDistance) &&
+                                labelOptions.inside) ||
+                                labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
@@ -1497,7 +1510,14 @@ if (seriesTypes.column) {
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         // If label was justified and we have contrast, set it:
-        if (point.isLabelJustified && point.contrastColor) {
+        if (point.contrastColor &&
+            point.shapeArgs &&
+            isIntersectRect({
+                x: dataLabel.x,
+                y: dataLabel.y,
+                width: dataLabel.width - dataLabel.padding,
+                height: dataLabel.height - dataLabel.padding
+            }, point.shapeArgs)) {
             dataLabel.css({
                 color: point.contrastColor
             });

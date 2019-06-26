@@ -1345,6 +1345,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'transformGroup'
             ],
             preserve = [
+                'eventOptions',
                 'navigatorSeries',
                 'baseSeries'
             ],
@@ -1603,15 +1604,18 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
         // Remove the axis
         erase(chart.axes, this);
-        erase(chart[key], this);
+        erase((chart as any)[key], this);
 
-        if (isArray(chart.options[key])) {
+        if (isArray((chart.options as any)[key])) {
             (chart.options as any)[key].splice(this.options.index, 1);
         } else { // color axis, #6488
-            delete chart.options[key];
+            delete (chart.options as any)[key];
         }
 
-        chart[key].forEach(function (axis: Highcharts.Axis, i: number): void {
+        (chart as any)[key].forEach(function (
+            axis: Highcharts.Axis,
+            i: number
+        ): void {
             // Re-index, #1706, #8075
             axis.options.index = axis.userOptions.index = i;
         });

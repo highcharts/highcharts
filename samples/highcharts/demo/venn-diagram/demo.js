@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    accessibility: {
+        description: 'A Venn diagram constructed from three intersecting circles illustrates the Unattainable Triangle. The three circles are labeled, in a clockwise direction, Fast, Cheap and Good. The intersections are as follows: Fast and Cheap equals Not the Best Quality. Cheap and Good equals Will Take Time to Deliver. Good and Fast equals More Expensive. Fast, Cheap and Good equals They’re Dreaming.'
+    },
     series: [{
         type: 'venn',
         name: 'The Unattainable Triangle',

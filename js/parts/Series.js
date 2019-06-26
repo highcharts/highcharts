@@ -5,6 +5,17 @@
  */
 
 /**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Individual point events
+ * @name Highcharts.PointOptionsObject#events
+ * @type {Highcharts.SeriesLineDataEventsOptions}
+ *//**
+ * @name Highcharts.PointOptionsObject#marker
+ * @type {Highcharts.SeriesLineDataMarkerOptions}
+ */
+
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -245,52 +256,6 @@
  *
  * @param {global.Event} event
  *        Event that occured.
- */
-
-/**
- * Gets fired when the point is selected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.SeriesPointSelectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.SeriesPointSelectEventObject} event
- *        Event that occured.
- */
-
-/**
- * Information about the select event.
- *
- * @interface Highcharts.SeriesPointSelectEventObject
- * @extends global.Event
- *//**
- * @name Highcharts.SeriesPointSelectEventObject#accumulate
- * @type {boolean}
- */
-
-/**
- * Fires when the point is unselected either programmatically or following a
- * click on the point.
- *
- * @callback Highcharts.SeriesPointUnselectCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.SeriesPointUnselectEventObject} event
- *        Event that occured.
- */
-
-/**
- * Information about the unselect event.
- *
- * @interface Highcharts.SeriesPointUnselectEventObject
- * @extends global.Event
- *//**
- * @name Highcharts.SeriesPointUnselectEventObject#accumulate
- * @type {boolean}
  */
 
 /**
@@ -1799,7 +1764,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Highcharts.SeriesPointSelectCallbackFunction}
+             * @type      {Highcharts.PointSelectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.select
@@ -1816,7 +1781,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Highcharts.SeriesPointUnselectCallbackFunction}
+             * @type      {Highcharts.PointUnselectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.unselect
@@ -2336,6 +2301,11 @@ H.Series = H.seriesType(
                 chartSeries = chart.series,
                 lastSeries;
 
+            // A lookup over those events that are added by _options_ (not
+            // programmatically). These are updated through Series.update()
+            // (#10861).
+            this.eventOptions = this.eventOptions || {};
+
             /**
              * Read only. The chart that the series belongs to.
              *
@@ -2395,23 +2365,26 @@ H.Series = H.seriesType(
                 selected: options.selected === true // false by default
             });
 
-            // register event listeners
+            // Register event listeners
             events = options.events;
-
             objectEach(events, function (event, eventType) {
-                if (
-                    H.isFunction(event) &&
-                    (
-                        // In case we're doing Series.update(), first check if
-                        // the event already exists.
-                        !series.hcEvents ||
-                        !series.hcEvents[eventType] ||
-                        !series.hcEvents[eventType].some(function (obj) {
-                            return obj.fn === event;
-                        })
-                    )
-                ) {
-                    addEvent(series, eventType, event);
+                if (H.isFunction(event)) {
+
+                    // If event does not exist, or is changed by Series.update
+                    if (series.eventOptions[eventType] !== event) {
+
+                        // Remove existing if set by option
+                        if (H.isFunction(series.eventOptions[eventType])) {
+                            removeEvent(
+                                series,
+                                eventType,
+                                series.eventOptions[eventType]
+                            );
+                        }
+
+                        series.eventOptions[eventType] = event;
+                        addEvent(series, eventType, event);
+                    }
                 }
             });
             if (
@@ -3832,7 +3805,6 @@ H.Series = H.seriesType(
                 if (
                     stacking &&
                     series.visible &&
-                    !point.isNull &&
                     stack &&
                     stack[xValue]
                 ) {
@@ -3841,8 +3813,11 @@ H.Series = H.seriesType(
                         xValue,
                         series.index
                     );
-                    pointStack = stack[xValue];
-                    stackValues = pointStack.points[stackIndicator.key];
+
+                    if (!point.isNull) {
+                        pointStack = stack[xValue];
+                        stackValues = pointStack.points[stackIndicator.key];
+                    }
                 }
 
                 if (isArray(stackValues)) {

@@ -752,7 +752,8 @@ Connection.prototype = {
             }
         }
 
-        attribs.class = 'highcharts-point-connecting-path ' +
+        attribs['class'] = // eslint-disable-line dot-notation
+            'highcharts-point-connecting-path ' +
             'highcharts-color-' + fromPoint.colorIndex;
         options = merge(attribs, options);
 

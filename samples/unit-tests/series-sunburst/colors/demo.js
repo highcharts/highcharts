@@ -20,35 +20,30 @@ QUnit.test('series.colors: default to colors.', function (assert) {
     );
 });
 
-QUnit.test('series.colors: custom colors.', function (assert) {
-    var H = Highcharts,
-        colors = ['#ff0000', '#00ff00', '#0000ff'],
-        chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                colors: colors,
-                data: [1, 2, 3]
-            }]
-        }),
-        series = chart.series[0];
-        //result;
+QUnit.test('series.colors: custom colors.', assert => {
+    const chartColors = ['#00ffff', '#ff00ff', '#ffff00'];
+    const seriesColors = ['#ff0000', '#00ff00', '#0000ff'];
+    const { series: [series] } = Highcharts.chart('container', {
+        colors: chartColors,
+        series: [{
+            colorByPoint: true,
+            type: 'sunburst',
+            data: [1, 2, 3]
+        }]
+    });
     assert.deepEqual(
-        series.options.colors,
-        colors,
-        'series.colors equals custom set colors.'
+        series.points.map(point => point.color),
+        chartColors,
+        'series.points[].colors equals chart.colors when series.colors not set.'
     );
-    // TODO series.colors does not affect series.color
-    // assert.strictEqual(
-    //     series.color,
-    //     colors[0],
-    //     'series.color equals series.colors[0].'
-    // );
-    // result = !H.find(series.points, function (p) {
-    //     return p.color !== colors[0];
-    // });
-    // assert.strictEqual(
-    //     result,
-    //     true,
-    //     'All points in the series has property color with the value of series.colors[0].'
-    // );
+
+    // Set series.colors
+    series.update({
+        colors: seriesColors
+    });
+    assert.deepEqual(
+        series.points.map(point => point.color),
+        seriesColors,
+        'series.points[].colors equals series.colors.'
+    );
 });

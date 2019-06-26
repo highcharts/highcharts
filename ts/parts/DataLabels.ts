@@ -86,6 +86,13 @@ declare global {
             dataLabels: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
         }
+        interface PointOptionsObject {
+            dataLabels?: (
+                DataLabelsOptionsObject|
+                Array<DataLabelsOptionsObject>
+            );
+            labelrank?: number;
+        }
         interface Series {
             dataLabelPositioners: SeriesDataLabelPositionersObject;
             alignDataLabel(
@@ -621,6 +628,19 @@ declare global {
  * @since 7.1.0
  */
 
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * Individual data labels for each point.
+ * @name Highcharts.PointOptionsObject#dataLabels
+ * @type {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>|undefined}
+ *//**
+ * The rank for this point's data label in case of collision. If two data labels
+ * are about to overlap, only the one with the highest labelrank will be drawn.
+ * @name Highcharts.PointOptionsObject#labelrank
+ * @type {number|undefined}
+ */
+
 import './Utilities.js';
 import './Series.js';
 
@@ -631,6 +651,7 @@ var arrayMax = H.arrayMax,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
+    isIntersectRect = H.isIntersectRect,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -1013,6 +1034,10 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         point.dataLabel,
                     connector = point.connectors ? point.connectors[i] :
                         point.connector,
+                    labelDistance = pick(
+                        (labelOptions as any).distance,
+                        point.labelDistance
+                    ),
                     isNew = !dataLabel;
 
                 if (labelEnabled) {
@@ -1050,11 +1075,11 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                             point.contrastColor = renderer.getContrast(
                                 point.color || series.color
                             );
-                            (style as any).color = labelOptions.inside ||
-                                pick(
-                                    (labelOptions as any).distance,
-                                    point.labelDistance
-                                ) < 0 ||
+                            (style as any).color = (
+                                !defined(labelDistance) &&
+                                    labelOptions.inside
+                            ) ||
+                                labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
@@ -1593,12 +1618,11 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    if (
-                        !defined(options.style.width) &&
+                    if (!defined(options.style.width) &&
                         !defined(
                             point.options.dataLabels &&
-                            point.options.dataLabels.style &&
-                            point.options.dataLabels.style.width
+                            (point.options.dataLabels as any).style &&
+                            (point.options.dataLabels as any).style.width
                         )
                     ) {
                         if (point.dataLabel.getBBox().width > maxWidth) {
@@ -2161,7 +2185,19 @@ if (seriesTypes.column) {
         );
 
         // If label was justified and we have contrast, set it:
-        if (point.isLabelJustified && point.contrastColor) {
+        if (
+            point.contrastColor &&
+            point.shapeArgs &&
+            isIntersectRect(
+                {
+                    x: dataLabel.x,
+                    y: dataLabel.y,
+                    width: dataLabel.width - dataLabel.padding,
+                    height: dataLabel.height - dataLabel.padding
+                },
+                point.shapeArgs
+            )
+        ) {
             dataLabel.css({
                 color: point.contrastColor
             });

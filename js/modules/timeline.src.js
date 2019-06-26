@@ -194,10 +194,10 @@ seriesType('timeline', 'line',
                     closestPointRangePx = Number.MAX_VALUE;
 
                 series.points.forEach(function (point) {
-                    // Set the isInside parameter basing on the real point
+                    // Set the isInside parameter basing also on the real point
                     // visibility, in order to avoid showing hidden points
                     // in drawPoints method.
-                    point.isInside = point.visible;
+                    point.isInside = point.isInside && point.visible;
 
                     // New way of calculating closestPointRangePx value, which
                     // respects the real point visibility is needed.

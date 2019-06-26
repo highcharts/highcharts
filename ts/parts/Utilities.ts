@@ -53,7 +53,7 @@ declare global {
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
         }
-        interface Dictionary<T> {
+        interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
         }
         interface EventCallbackFunction<T> {
@@ -170,6 +170,10 @@ declare global {
         function format(str: string, ctx: any, time: Time): string;
         function formatSingle(format: string, val: any, time: Time): string;
         function getMagnitude(num: number): number;
+        function isIntersectRect(
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean;
         function getStyle(
             el: HTMLDOMElement,
             prop: string,
@@ -1876,6 +1880,31 @@ H.getMagnitude = function (num: number): number {
 };
 
 /**
+ * Check if two boxes are intersecting.
+ *
+ * @function Highcharts.isIntersectRect
+ *
+ * @param {Highcharts.BBoxObject} box1
+ *        First box
+ * @param {Highcharts.BBoxObject} box2
+ *        Second box
+ *
+ * @return {boolean}
+ *         Boolean whether rects overlap.
+ */
+H.isIntersectRect = function (
+    box1: Highcharts.BBoxObject,
+    box2: Highcharts.BBoxObject
+): boolean {
+    return !(
+        box2.x > box1.x + box1.width ||
+        box2.x + box2.width < box1.x ||
+        box2.y > box1.y + box1.height ||
+        box2.y + box2.height < box1.y
+    );
+};
+
+/**
  * Take an interval and normalize it to multiples of round numbers.
  *
  * @deprecated
@@ -2366,21 +2395,27 @@ H.getStyle = function (
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
+
+        let offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
+
+        // In flex boxes, we need to use getBoundingClientRect and floor it,
+        // because scrollWidth doesn't support subpixel precision (#6427) ...
+        const boundingClientRectWidth = el.getBoundingClientRect &&
+            el.getBoundingClientRect().width;
+        // ...unless if the containing div or its parents are transform-scaled
+        // down, in which case the boundingClientRect can't be used as it is
+        // also scaled down (#9871, #10498).
+        if (
+            boundingClientRectWidth < offsetWidth &&
+            boundingClientRectWidth >= offsetWidth - 1
+        ) {
+            offsetWidth = Math.floor(boundingClientRectWidth);
+        }
+
         return Math.max(
             0, // #8377
             (
-                Math.min(
-                    el.offsetWidth,
-                    el.scrollWidth,
-                    (
-                        el.getBoundingClientRect &&
-                        // #9871, getBoundingClientRect doesn't handle
-                        // transforms, so avoid that
-                        H.getStyle(el, 'transform', false) as any === 'none'
-                    ) ?
-                        Math.floor(el.getBoundingClientRect().width) : // #6427
-                        Infinity
-                ) -
+                offsetWidth -
                 (H as any).getStyle(el, 'padding-left') -
                 (H as any).getStyle(el, 'padding-right')
             )

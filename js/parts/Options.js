@@ -2689,6 +2689,13 @@ H.defaultOptions = {
          * @apioption tooltip.borderColor
          */
         /**
+         * A CSS class name to apply to the tooltip's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption tooltip.className
+         */
+        /**
          * Since 4.1, the crosshair definitions are moved to the Axis object
          * in order for a better separation from the tooltip. See
          * [xAxis.crosshair](#xAxis.crosshair)<a>.</a>
