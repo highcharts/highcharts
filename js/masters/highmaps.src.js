@@ -33,4 +33,6 @@ import '../modules/overlapping-datalabels.src.js';
 import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 import './modules/map.src.js';
+
+Highcharts.product = 'Highmaps';
 export default Highcharts;
