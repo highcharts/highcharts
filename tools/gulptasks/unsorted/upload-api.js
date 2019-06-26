@@ -35,7 +35,7 @@ const uploadAPIDocs = () => {
         const bar = new ProgressBar({
             error: '',
             total: files.length,
-            message: `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error`
+            message: !argv.silent ? `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error` : ''
         });
         const doTick = () => {
             bar.tick();
@@ -49,7 +49,7 @@ const uploadAPIDocs = () => {
         const params = {
             batchSize,
             bucket,
-            callback: doTick,
+            callback: argv.silent ? false : doTick,
             onError
         };
         const getMapOfFromTo = fileName => {
