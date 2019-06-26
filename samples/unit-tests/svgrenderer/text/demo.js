@@ -1,3 +1,31 @@
+QUnit.test('Hide label with useHTML (#4938)', function (assert) {
+    var chart = Highcharts.chart('container', {}),
+        renderer = chart.renderer,
+        g = renderer.g().add(),
+        text = renderer.text('Label', 140, 140, true).add(g);
+    assert.strictEqual(
+        text.attr('visibility'),
+        0,
+        'Text element is visible'
+    );
+    assert.strictEqual(
+        g.attr('visibility'),
+        0,
+        'Group element is visible'
+    );
+    text.hide();
+    assert.strictEqual(
+        text.attr('visibility'),
+        'hidden',
+        'Text element is hidden'
+    );
+    g.hide();
+    assert.strictEqual(
+        g.attr('visibility'),
+        'hidden',
+        'Group element is hidden'
+    );
+});
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
 QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
