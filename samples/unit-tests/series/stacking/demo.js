@@ -1,3 +1,38 @@
+QUnit.test("Errors on stacked area with log axis and odd series length(#4594)", function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'area'
+        },
+
+        plotOptions: {
+            area: {
+                stacking: 'normal'
+            }
+        },
+
+        yAxis: {
+            type: 'logarithmic'
+        },
+
+        series: [
+            {
+                data: [1, 1, 1]
+            },
+            {
+                data: [1, 1]
+            }
+        ]
+
+    }).highcharts();
+
+    assert.strictEqual(
+        chart.series[1].area.attr('d').indexOf('Infinity'),
+        -1,
+        'Valid path'
+    );
+
+});
+
 // Highcharts 3.0.10, Issue #2813
 // stack's labels lives their own lives when you dynamically change type of stack normal <=> percent
 QUnit.test('stacklabels update #2813', function (assert) {

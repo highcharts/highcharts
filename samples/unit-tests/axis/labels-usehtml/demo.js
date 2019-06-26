@@ -1,4 +1,4 @@
-QUnit.test('Auto rotation and useHTML(#4443)', function (assert) {
+QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
 
     $('#container').highcharts({
 
