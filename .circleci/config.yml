@@ -17,7 +17,7 @@ load_workspace: &load_workspace
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
       fingerprints:
-        - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
+        - "e9:b9:c3:77:e0:60:4f:a9:44:54:3f:f0:85:67:cc:2f"
 add_to_ssh_config: &add_to_ssh_config
   - run:
       name: Avoid hosts unknown for github
