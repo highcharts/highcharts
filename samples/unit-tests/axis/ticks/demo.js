@@ -21,6 +21,53 @@ QUnit.test("tickInterval option should take precedence over data range(#4184)", 
         'Actual tick interval is as option'
     );
 });
+QUnit.test('Clip tickPositions when axis extremes are set(#4086)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            minRange: 8,
+            tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+            min: 5,
+            max: 15
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.join(','),
+        '5,6,7,8,9,10,11,12,13,14,15',
+        'Tick positions are trimmed'
+    );
+});
+QUnit.test('Step=1 should preserve ticks(#4411)', function (assert) {
+    var data = [107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2];
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        xAxis: {
+            labels: {
+                step: 1
+            },
+            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania']
+        },
+        series: [{
+            name: 'Year 1800',
+            data: data
+        }]
+    }).highcharts();
+
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        data.length,
+        'Tick amount'
+    );
+
+});
 
 QUnit.test('Ticks for a single point.', function (assert) {
     var chart = Highcharts.chart('container', {

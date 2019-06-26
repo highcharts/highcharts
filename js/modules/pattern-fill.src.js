@@ -584,7 +584,8 @@ H.addEvent(H.Chart, 'redraw', function () {
 // Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart) {
     var colors = H.getOptions().colors,
-        index = chart.index;
+        index = chart.index,
+        forExport = chart.options.chart.forExport;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
@@ -599,7 +600,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
         'M 0 0 L 5 10 L 10 0'
     ].forEach(function (pattern, i) {
         chart.renderer.addPattern({
-            id: 'highcharts-default-pattern-' + (index ? index + '-' : '') + i,
+            id: 'highcharts-default-pattern-' +
+                (index && !forExport ? index + '-' : '') + i,
             path: pattern,
             color: colors[i],
             width: 10,
