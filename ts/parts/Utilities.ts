@@ -170,6 +170,10 @@ declare global {
         function format(str: string, ctx: any, time: Time): string;
         function formatSingle(format: string, val: any, time: Time): string;
         function getMagnitude(num: number): number;
+        function isIntersectRect(
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean;
         function getStyle(
             el: HTMLDOMElement,
             prop: string,
@@ -1873,6 +1877,31 @@ H.format = function (str: string, ctx: any, time: Highcharts.Time): string {
  */
 H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
+};
+
+/**
+ * Check if two boxes are intersecting.
+ *
+ * @function Highcharts.isIntersectRect
+ *
+ * @param {Highcharts.BBoxObject} box1
+ *        First box
+ * @param {Highcharts.BBoxObject} box2
+ *        Second box
+ *
+ * @return {boolean}
+ *         Boolean whether rects overlap.
+ */
+H.isIntersectRect = function (
+    box1: Highcharts.BBoxObject,
+    box2: Highcharts.BBoxObject
+): boolean {
+    return !(
+        box2.x > box1.x + box1.width ||
+        box2.x + box2.width < box1.x ||
+        box2.y > box1.y + box1.height ||
+        box2.y + box2.height < box1.y
+    );
 };
 
 /**
