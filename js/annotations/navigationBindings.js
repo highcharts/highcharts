@@ -1279,13 +1279,9 @@ H.setOptions({
                                 // ANCHOR
                                 events: {
                                     drag: function (e, target) {
-                                        var xy = this.mouseMoveToTranslation(e),
-                                            inverted = this.chart.inverted;
+                                        var xy = this.mouseMoveToTranslation(e);
 
-                                        target.translate(
-                                            inverted ? xy.y : xy.x,
-                                            inverted ? xy.x : xy.y
-                                        );
+                                        target.translate(xy.x, xy.y);
 
                                         target.annotation.labels[0].options =
                                             target.options;
