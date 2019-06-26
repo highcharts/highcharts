@@ -1355,35 +1355,23 @@ H.getMagnitude = function (num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 /**
- * Get the magnitude of a number.
+ * Check if two boxes are intersecting.
  *
- * @function Highcharts.intersectRect
+ * @function Highcharts.isIntersectRect
  *
- * @param {number} x1
- *        x-position of the first box
- * @param {number} y1
- *        y-position of the first box
- * @param {number} w1
- *        width of the first box
- * @param {number} h1
- *        height of the first box
- * @param {number} x2
- *        x-position of the second box
- * @param {number} y2
- *        y-position of the second box
- * @param {number} w2
- *        width of the second box
- * @param {number} h2
- *        height of the second box
+ * @param {Highcharts.BBoxObject} box1
+ *        First box
+ * @param {Highcharts.BBoxObject} box2
+ *        Second box
  *
  * @return {boolean}
- *         Boolean wheater rects are intersecting.
+ *         Boolean whether rects overlap.
  */
-H.intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
-    return !(x2 > x1 + w1 ||
-        x2 + w2 < x1 ||
-        y2 > y1 + h1 ||
-        y2 + h2 < y1);
+H.isIntersectRect = function (box1, box2) {
+    return !(box2.x > box1.x + box1.width ||
+        box2.x + box2.width < box1.x ||
+        box2.y > box1.y + box1.height ||
+        box2.y + box2.height < box1.y);
 };
 /**
  * Take an interval and normalize it to multiples of round numbers.

@@ -651,7 +651,7 @@ var arrayMax = H.arrayMax,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    intersectRect = H.intersectRect,
+    isIntersectRect = H.isIntersectRect,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -2184,15 +2184,14 @@ if (seriesTypes.column) {
         if (
             point.contrastColor &&
             point.shapeArgs &&
-            intersectRect(
-                dataLabel.x,
-                dataLabel.y,
-                dataLabel.width - dataLabel.padding,
-                dataLabel.height - dataLabel.padding,
-                point.shapeArgs.x,
-                point.shapeArgs.y,
-                point.shapeArgs.width,
-                point.shapeArgs.height
+            isIntersectRect(
+                {
+                    x: dataLabel.x,
+                    y: dataLabel.y,
+                    width: dataLabel.width - dataLabel.padding,
+                    height: dataLabel.height - dataLabel.padding
+                },
+                point.shapeArgs
             )
         ) {
             dataLabel.css({
