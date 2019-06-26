@@ -50,7 +50,9 @@ H.addEvent(H.Series, 'render', function () {
             ) !== false &&
             (
                 dataLength < a11yOptions.pointDescriptionThreshold ||
-                a11yOptions.pointDescriptionThreshold === false
+                a11yOptions.pointDescriptionThreshold === false ||
+                dataLength < a11yOptions.pointNavigationThreshold ||
+                a11yOptions.pointNavigationThreshold === false
             );
 
     if (forceMarkers) {
@@ -186,10 +188,10 @@ function isSkipSeries(series) {
         seriesA11yOptions.enabled === false ||
         series.options.enableMouseTracking === false || // #8440
         !series.visible ||
-        // Skip all points in a series where pointDescriptionThreshold is
+        // Skip all points in a series where pointNavigationThreshold is
         // reached
-        (a11yOptions.pointDescriptionThreshold &&
-        a11yOptions.pointDescriptionThreshold <= series.points.length);
+        (a11yOptions.pointNavigationThreshold &&
+        a11yOptions.pointNavigationThreshold <= series.points.length);
 }
 
 
@@ -474,7 +476,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         return false;
     }
     this.series.forEach(function (series) {
-        if (series === curPoint.series || isSkipSeries(series)) {
+        if (isSkipSeries(series)) {
             return;
         }
         series.points.forEach(function (point) {
@@ -631,6 +633,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
+            inverted = chart.inverted,
             a11yOptions = chart.options.accessibility,
             // Function that attempts to highlight next/prev point, returns
             // the response number. Handles wrap around.
@@ -650,23 +653,25 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             keyCodeMap: [
                 // Arrow sideways
                 [[
-                    keys.left, keys.right
+                    inverted ? keys.up : keys.left,
+                    inverted ? keys.down : keys.right
                 ], function (keyCode) {
-                    return attemptNextPoint.call(this, keyCode === keys.right);
+                    return attemptNextPoint.call(
+                        this, keyCode === keys.right || keyCode === keys.down
+                    );
                 }],
 
                 // Arrow vertical
                 [[
-                    keys.up, keys.down
+                    inverted ? keys.left : keys.up,
+                    inverted ? keys.right : keys.down
                 ], function (keyCode) {
-                    var down = keyCode === keys.down,
+                    var down = keyCode === keys.down || keyCode === keys.right,
                         navOptions = a11yOptions.keyboardNavigation;
 
                     // Handle serialized mode, act like left/right
                     if (navOptions.mode && navOptions.mode === 'serialize') {
-                        return attemptNextPoint.call(
-                            this, keyCode === keys.down
-                        );
+                        return attemptNextPoint.call(this, down);
                     }
 
                     // Normal mode, move between series
@@ -1069,12 +1074,19 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             a11yOptions = chart.options.accessibility,
             seriesA11yOptions = series.options.accessibility || {},
             firstPointEl = component.getSeriesFirstPointElement(series),
-            seriesEl = component.getSeriesElement(series);
+            seriesEl = component.getSeriesElement(series),
+            setScreenReaderProps = series.points && (
+                series.points.length <
+                    a11yOptions.pointDescriptionThreshold ||
+                    a11yOptions.pointDescriptionThreshold === false
+            ) && !seriesA11yOptions.exposeAsGroupOnly,
+            setKeyboardProps = series.points && (
+                series.points.length <
+                    a11yOptions.pointNavigationThreshold ||
+                    a11yOptions.pointNavigationThreshold === false
+            );
 
         if (seriesEl) {
-            // Unhide series
-            this.unhideElementFromScreenReaders(seriesEl);
-
             // For some series types the order of elements do not match the
             // order of points in series. In that case we have to reverse them
             // in order for AT to read them out in an understandable order
@@ -1082,32 +1094,36 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 component.reverseChildNodes(seriesEl);
             }
 
-            // Make individual point elements accessible if possible. Note: If
-            // markers are disabled there might not be any elements there to
-            // make accessible.
-            if (
-                series.points && (
-                    series.points.length <
-                        a11yOptions.pointDescriptionThreshold ||
-                    a11yOptions.pointDescriptionThreshold === false
-                ) &&
-                !seriesA11yOptions.exposeAsGroupOnly
-            ) {
+            // Unhide series element
+            component.unhideElementFromScreenReaders(seriesEl);
+
+            // Make individual point elements accessible if possible
+            if (setScreenReaderProps || setKeyboardProps) {
                 series.points.forEach(function (point) {
                     var pointEl = point.graphic && point.graphic.element;
                     if (pointEl) {
-                        pointEl.setAttribute('role', 'img');
+                        // We always set tabindex, as long as we are setting
+                        // props.
                         pointEl.setAttribute('tabindex', '-1');
-                        pointEl.setAttribute('aria-label',
-                            component.stripTags(
-                                seriesA11yOptions.pointDescriptionFormatter &&
-                                seriesA11yOptions
-                                    .pointDescriptionFormatter(point) ||
-                                a11yOptions.pointDescriptionFormatter &&
-                                a11yOptions.pointDescriptionFormatter(point) ||
-                                component
-                                    .defaultPointDescriptionFormatter(point)
-                            ));
+
+                        if (setScreenReaderProps) {
+                            // Set screen reader specific props
+                            pointEl.setAttribute('role', 'img');
+                            pointEl.setAttribute('aria-label',
+                                component.stripTags(
+                                    seriesA11yOptions
+                                        .pointDescriptionFormatter &&
+                                    seriesA11yOptions
+                                        .pointDescriptionFormatter(point) ||
+                                    a11yOptions.pointDescriptionFormatter &&
+                                    a11yOptions
+                                        .pointDescriptionFormatter(point) ||
+                                    component
+                                        .defaultPointDescriptionFormatter(point)
+                                ));
+                        } else {
+                            pointEl.setAttribute('aria-hidden', true);
+                        }
                     }
                 });
             }
@@ -1130,6 +1146,8 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                         component.defaultSeriesDescriptionFormatter(series)
                     )
                 );
+            } else {
+                seriesEl.setAttribute('aria-label', '');
             }
         }
     },

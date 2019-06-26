@@ -180,9 +180,17 @@ workflows:
             tags:
               only: /.*/
       - test_browsers:
-          name: "test-Mac.Firefox"
+          name: "test-Win.Chrome"
           requires:
             - "test-Mac.Safari"
+          browsers: "Win.Chrome"
+          filters:
+            tags:
+              only: /.*/
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+              - "test-Win.Chrome"
           browsers: "Mac.Firefox"
           filters:
             tags:
@@ -190,7 +198,7 @@ workflows:
       - test_browsers:
           name: "test-Win.IE8"
           requires:
-            - "test-Mac.Firefox"
+              - "test-Mac.Firefox"
           browsers: "Win.IE8 --oldie"
           filters:
             tags:

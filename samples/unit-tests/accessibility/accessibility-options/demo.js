@@ -60,7 +60,8 @@ QUnit.test('No data', function (assert) {
 QUnit.test('pointDescriptionThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionThreshold: 7
+                pointDescriptionThreshold: 7,
+                describeSingleSeries: true
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -72,12 +73,59 @@ QUnit.test('pointDescriptionThreshold', function (assert) {
         point.graphic.element.getAttribute('aria-label'),
         'There be ARIA on point'
     );
+    assert.ok(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        'There be ARIA on series'
+    );
 
     point.series.addPoint(4);
 
     assert.notOk(
         point.series.points[6].graphic.element.getAttribute('aria-label'),
         'There be no ARIA on point'
+    );
+    assert.ok(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        'There be ARIA on series'
+    );
+});
+
+QUnit.test('pointNavigationThreshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+            accessibility: {
+                pointNavigationThreshold: 7
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    assert.ok(
+        point.graphic.element.getAttribute('aria-label'),
+        'There be ARIA on point'
+    );
+    assert.strictEqual(
+        point.graphic.element.getAttribute('tabindex'),
+        '-1',
+        'There be tabindex on point'
+    );
+    assert.strictEqual(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        '',
+        'There be empty ARIA on series'
+    );
+
+    point.series.addPoint(4);
+
+    assert.ok(
+        point.series.points[6].graphic.element.getAttribute('aria-label'),
+        'There still be ARIA on point'
+    );
+    assert.strictEqual(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        '',
+        'There still be ARIA on series'
     );
 });
 
