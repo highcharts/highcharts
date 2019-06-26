@@ -1,4 +1,4 @@
-QUnit.test('Axis extremes after zooming or drillToNode in Treemap', function (assert) {
+QUnit.test('Axis extremes after zooming or drillToNode in Treemap (#4856)', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 zoomType: "xy"
