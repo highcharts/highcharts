@@ -496,7 +496,7 @@ import H from './Globals.js';
 */
 import './Utilities.js';
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, intersectRect = H.intersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
+var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -1512,7 +1512,12 @@ if (seriesTypes.column) {
         // If label was justified and we have contrast, set it:
         if (point.contrastColor &&
             point.shapeArgs &&
-            intersectRect(dataLabel.x, dataLabel.y, dataLabel.width - dataLabel.padding, dataLabel.height - dataLabel.padding, point.shapeArgs.x, point.shapeArgs.y, point.shapeArgs.width, point.shapeArgs.height)) {
+            isIntersectRect({
+                x: dataLabel.x,
+                y: dataLabel.y,
+                width: dataLabel.width - dataLabel.padding,
+                height: dataLabel.height - dataLabel.padding
+            }, point.shapeArgs)) {
             dataLabel.css({
                 color: point.contrastColor
             });

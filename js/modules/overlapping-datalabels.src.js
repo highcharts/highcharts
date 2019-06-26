@@ -17,7 +17,7 @@ var Chart = H.Chart,
     isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
-    intersectRect = H.intersectRect,
+    isIntersectRect = H.isIntersectRect,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent;
 
@@ -100,7 +100,6 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
         j,
         label1,
         label2,
-        isIntersecting,
         box1,
         box2,
 
@@ -181,19 +180,8 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 label1.newOpacity !== 0 &&
                 label2.newOpacity !== 0
             ) {
-                isIntersecting = intersectRect(
-                    box1.x,
-                    box1.y,
-                    box1.width,
-                    box1.height,
-                    box2.x,
-                    box2.y,
-                    box2.width,
-                    box2.height
-                );
 
-
-                if (isIntersecting) {
+                if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }
