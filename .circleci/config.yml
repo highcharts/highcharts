@@ -222,13 +222,13 @@ workflows:
           browsers: "Win.IE8 --oldie"
 
   nightly:
-    triggers:
-      - schedule:
-          cron: "0 2 * * *" # 2 am every night
-          filters:
-            branches:
-              only:
-                - feature/ci-nightly
+    #triggers:
+    #  - schedule:
+    #      cron: "0 2 * * *" # 2 am every night
+    #      filters:
+    #        branches:
+    #          only:
+    #            - feature/ci-nightly
     jobs:
       - checkout_code
       - install_dependencies:
@@ -265,7 +265,7 @@ workflows:
       - deploy_code:
           requires:
             - build_dist
-          context: highcharts-prod
+          context: highcharts-staging
           filters:
             branches:
               only:
@@ -273,7 +273,7 @@ workflows:
       - deploy_api_docs:
           requires:
             - build_dist
-          context: highcharts-prod
+          context: highcharts-staging
           filters:
             branches:
               only:
@@ -281,7 +281,7 @@ workflows:
       - deploy_changelog:
           requires:
             - build_dist
-          context: highcharts-prod
+          context: highcharts-staging
           filters:
             branches:
               only:
@@ -289,7 +289,7 @@ workflows:
       - deploy_to_highcharts_dist:
           requires:
             - build_dist
-          context: highcharts-prod
+          context: highcharts-staging
           filters:
             branches:
               only:
