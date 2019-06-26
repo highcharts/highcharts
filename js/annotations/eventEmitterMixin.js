@@ -177,12 +177,6 @@ var eventEmitterMixin = {
             if (this.points.length) {
                 this.translate(translation.x, translation.y);
             } else {
-                if (this.chart.inverted) {
-                    translation = {
-                        x: translation.y,
-                        y: translation.x
-                    };
-                }
                 this.shapes.forEach(function (shape) {
                     shape.translate(translation.x, translation.y);
                 });
