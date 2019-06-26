@@ -1,3 +1,17 @@
+QUnit.test('Polar chart with no data (#5226)', function (assert) {
+    assert.expect(0);
+    Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+
+        series: [{
+            type: 'line',
+            name: 'Line',
+            data: []
+        }]
+    });
+});
 QUnit.test("Polar and categorized chart should not render extra alternate band.(#2248)", function (assert) {
     var chart = $('#container').highcharts({
             chart: {
