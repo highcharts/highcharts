@@ -62,6 +62,7 @@ H.dragNodesMixin = {
                 if (chart.isInsidePlot(newPlotX, newPlotY)) {
                     point.plotX = newPlotX;
                     point.plotY = newPlotY;
+                    point.hasDragged = true;
 
                     this.redrawHalo(point);
 
@@ -98,13 +99,13 @@ H.dragNodesMixin = {
      * @return {void}
      */
     onMouseUp: function (point) {
-        if (point.fixedPosition) {
+        if (point.fixedPosition && point.hasDragged) {
             if (this.layout.enableSimulation) {
                 this.layout.start();
             } else {
                 this.chart.redraw();
             }
-            point.inDragMode = false;
+            point.inDragMode = point.hasDragged = false;
             if (!this.options.fixedDraggable) {
                 delete point.fixedPosition;
             }
