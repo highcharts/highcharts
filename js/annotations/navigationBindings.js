@@ -65,17 +65,17 @@ var bindingsUtils = {
      *        Annotation to be updated
      */
     updateRectSize: function (event, annotation) {
-        var options = annotation.options.typeOptions,
-            x = this.chart.xAxis[0].toValue(event.chartX),
-            y = this.chart.yAxis[0].toValue(event.chartY),
-            width = x - options.point.x,
-            height = options.point.y - y;
+        var chart = annotation.chart,
+            options = annotation.options.typeOptions,
+            coords = chart.pointer.getCoordinates(event),
+            width = coords.xAxis[0].value - options.point.x,
+            height = options.point.y - coords.yAxis[0].value;
 
         annotation.update({
             typeOptions: {
                 background: {
-                    width: width,
-                    height: height
+                    width: chart.inverted ? height : width,
+                    height: chart.inverted ? width : height
                 }
             }
         });
