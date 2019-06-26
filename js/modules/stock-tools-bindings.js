@@ -1203,8 +1203,7 @@ var stockToolsBindings = {
                             width: 0,
                             height: 0,
                             strokeWidth: 0,
-                            stroke: '#ffffff',
-                            fill: 'red'
+                            stroke: '#ffffff'
                         }
                     },
                     labelOptions: {
