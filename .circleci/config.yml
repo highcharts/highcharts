@@ -208,78 +208,78 @@ jobs:
             git push -u origin nightly
 workflows:
   version: 2
-#  build_and_test:
-#    jobs:
-#      - checkout_code
-#      - install_dependencies:
-#          requires:
-#            - checkout_code
-#      - generate_ts_declarations:
-#          requires:
-#            - install_dependencies
-#      - test_browsers:
-#          name: "test-Mac.Safari"
-#          requires:
-#            - install_dependencies
-#          browsers: "Mac.Safari"
-#      - test_browsers:
-#          name: "test-Win.Chrome"
-#          requires:
-#            - "test-Mac.Safari"
-#          browsers: "Win.Chrome"
-#      - test_browsers:
-#          name: "test-Mac.Firefox"
-#          requires:
-#            - "test-Win.Chrome"
-#          browsers: "Mac.Firefox"
-#      - test_browsers:
-#          name: "test-Win.IE8"
-#          requires:
-#            - "test-Mac.Firefox"
-#          browsers: "Win.IE8 --oldie"
-
-  nightly:
-    #triggers:
-    #  - schedule:
-    #      cron: "0 2 * * *" # 2 am every night
-    #      filters:
-    #        branches:
-    #          only:
-    #            - feature/ci-nightly
+  build_and_test:
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
-#      - generate_ts_declarations:
-#          requires:
-#            - install_dependencies
-#      - test_browsers:
-#          name: "test-Mac.Safari"
-#          requires:
-#            - install_dependencies
-#          browsers: "Mac.Safari"
-#      - test_browsers:
-#          name: "test-Win.Chrome"
-#          requires:
-#            - "test-Mac.Safari"
-#      - test_browsers:
-#          name: "test-Mac.Firefox"
-#          requires:
-#            - "test-Win.Chrome"
-#          browsers: "Mac.Firefox"
-#      - test_browsers:
-#          name: "test-Win.IE8"
-#          requires:
-#            - "test-Mac.Firefox"
-#          browsers: "Win.IE8 --oldie"
+      - generate_ts_declarations:
+          requires:
+            - install_dependencies
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Win.Chrome"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 2 * * *" # 2 am every night
+          filters:
+            branches:
+              only:
+                - feature/ci-nightly
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - generate_ts_declarations:
+          requires:
+            - install_dependencies
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
       - build_dist:
           requires:
             - install_dependencies
-#            - "test-Mac.Firefox"
-#            - "test-Mac.Safari"
-#            - "test-Win.IE8"
-#            - generate_ts_declarations
+            - "test-Mac.Firefox"
+            - "test-Mac.Safari"
+            - "test-Win.IE8"
+            - generate_ts_declarations
       - deploy_code:
           requires:
             - build_dist
