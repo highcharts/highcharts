@@ -236,7 +236,14 @@ H.merge(
                 // Chart.options.annotations
                 annotationIndex = chart.annotations.indexOf(this.annotation),
                 chartAnnotations = chart.options.annotations,
-                chartOptions = chartAnnotations[annotationIndex];
+                chartOptions = chartAnnotations[annotationIndex],
+                temp;
+
+            if (chart.inverted) {
+                temp = dx;
+                dx = dy;
+                dy = temp;
+            }
 
             // Local options:
             this.options.x += dx;
