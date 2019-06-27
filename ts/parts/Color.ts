@@ -82,12 +82,11 @@ declare global {
  * // Linear gradient used as a color option
  * color: {
  *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
- *         stops: [
- *             [0, '#003399'], // start
- *             [0.5, '#ffffff'], // middle
- *             [1, '#3366AA'] // end
- *         ]
- *     }
+ *     stops: [
+ *         [0, '#003399'], // start
+ *         [0.5, '#ffffff'], // middle
+ *         [1, '#3366AA'] // end
+ *     ]
  * }
  *
  * @interface Highcharts.GradientColorObject

@@ -207,7 +207,7 @@ H.Tick.prototype = {
                     pos
             ),
             label = tick.label,
-            tickPositionInfo = (tickPositions as any).info,
+            tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,

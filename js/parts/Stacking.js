@@ -152,8 +152,8 @@ H.StackItem.prototype = {
      * @function Highcarts.StackItem#setOffset
      * @param {number} xOffset
      * @param {number} xWidth
-     * @param {number} boxBottom
-     * @param {number} boxTop
+     * @param {number} [boxBottom]
+     * @param {number} [boxTop]
      * @return {void}
      */
     setOffset: function (xOffset, xWidth, boxBottom, boxTop) {

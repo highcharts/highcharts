@@ -143,6 +143,10 @@ import H from './Globals.js';
  * @return {Array<number>}
  */
 /**
+ * @interface Highcharts.AxisTickPositionsArray
+ * @augments Array<number>
+ */
+/**
  * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
  */
 /**
@@ -3230,8 +3234,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                             seriesDataMin = xExtremes.min;
                             seriesDataMax = xExtremes.max;
                             if (!isNumber(seriesDataMin) &&
-                                !(seriesDataMin instanceof Date) // #5010
-                            ) {
+                                // #5010:
+                                !(seriesDataMin instanceof Date)) {
                                 xData = xData.filter(isNumber);
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
@@ -4272,7 +4276,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             return (series.isDirtyData ||
                 series.isDirty ||
                 // When x axis is dirty, we need new data extremes for y as
-                // well
+                // well:
                 series.xAxis.isDirty);
         }), isDirtyAxisLength;
         axis.oldMin = axis.min;
@@ -5188,7 +5192,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
-                ((options.plotLines || []).concat(options.plotBands || [])).forEach(function (plotLineOptions) {
+                (options.plotLines || [])
+                    .concat(options.plotBands || [])
+                    .forEach(function (plotLineOptions) {
                     axis.addPlotBandOrLine(plotLineOptions);
                 });
                 axis._addedPlotLB = true;

@@ -52,7 +52,6 @@ function test_seriesAreaRange() {
             color: '#C00'
         }],
         tooltip: {
-            crosshairs: true,
             formatter: function() {
                 const high = this.point.options.high;
                 return '' + high;
@@ -64,6 +63,7 @@ function test_seriesAreaRange() {
             type: 'datetime'
         },
         yAxis: {
+            crosshair: true,
             title: {
                 text: undefined
             }

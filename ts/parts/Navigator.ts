@@ -1094,7 +1094,7 @@ Navigator.prototype = {
                 navigator.shades[index]
                     .attr({
                         fill: hasMask ?
-                            navigatorOptions.maskFill :
+                            (navigatorOptions.maskFill as any) :
                             'rgba(0,0,0,0)'
                     })
                     .css(((index === 1) as any) && mouseCursor);
@@ -1901,7 +1901,7 @@ Navigator.prototype = {
             ));
 
             // If we have a base series, initialize the navigator series
-            if (baseSeries || navigatorOptions.series.data) {
+            if (baseSeries || (navigatorOptions.series as any).data) {
                 navigator.updateNavigatorSeries(false);
 
             // If not, set up an event to listen for added series
@@ -2245,47 +2245,46 @@ Navigator.prototype = {
         // If user has defined data (and no base series) or explicitly defined
         // navigator.series as an array, we create these series on top of any
         // base series.
-        if (
-            chartNavigatorSeriesOptions.data &&
+        if ((chartNavigatorSeriesOptions as any).data &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
-            chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
-            chartNavigatorSeriesOptions
-                .forEach(function (
-                    userSeriesOptions: Highcharts.SeriesOptionsType,
-                    i: number
-                ): void {
-                    navSeriesMixin.name =
-                        'Navigator ' + (navigatorSeries.length + 1);
-                    mergedNavSeriesOptions = merge(
-                        (defaultOptions.navigator as any).series,
-                        {
+            chartNavigatorSeriesOptions =
+                (H.splat(chartNavigatorSeriesOptions) as any);
+            (chartNavigatorSeriesOptions as any).forEach(function (
+                userSeriesOptions: Highcharts.SeriesOptionsType,
+                i: number
+            ): void {
+                navSeriesMixin.name =
+                    'Navigator ' + (navigatorSeries.length + 1);
+                mergedNavSeriesOptions = merge(
+                    (defaultOptions.navigator as any).series,
+                    {
                         // Since we don't have a base series to pull color from,
                         // try to fake it by using color from series with same
                         // index. Otherwise pull from the colors array. We need
                         // an explicit color as otherwise updates will increment
                         // color counter and we'll get a new color for each
                         // update of the nav series.
-                            color: chart.series[i] &&
-                            !chart.series[i].options.isInternal &&
-                            chart.series[i].color ||
-                            (chart.options.colors as any)[i] ||
-                            (chart.options.colors as any)[0]
-                        },
-                        navSeriesMixin,
-                        userSeriesOptions
+                        color: chart.series[i] &&
+                        !chart.series[i].options.isInternal &&
+                        chart.series[i].color ||
+                        (chart.options.colors as any)[i] ||
+                        (chart.options.colors as any)[0]
+                    },
+                    navSeriesMixin,
+                    userSeriesOptions
+                );
+                mergedNavSeriesOptions.data = userSeriesOptions.data;
+                if (mergedNavSeriesOptions.data) {
+                    navigator.hasNavigatorData = true;
+                    navigatorSeries.push(
+                        chart.initSeries(mergedNavSeriesOptions)
                     );
-                    mergedNavSeriesOptions.data = userSeriesOptions.data;
-                    if (mergedNavSeriesOptions.data) {
-                        navigator.hasNavigatorData = true;
-                        navigatorSeries.push(
-                            chart.initSeries(mergedNavSeriesOptions)
-                        );
-                    }
-                });
+                }
+            });
         }
 
         if (addEvents) {
@@ -2503,9 +2502,9 @@ Navigator.prototype = {
         if (navigatorSeries && !navigator.hasNavigatorData) {
             navigatorSeries.options.pointStart = (baseSeries.xData as any)[0];
             navigatorSeries.setData(
-                baseSeries.options.data,
+                baseSeries.options.data as any,
                 false,
-                null,
+                null as any,
                 false
             ); // #5414
         }
@@ -2814,7 +2813,7 @@ if (!H.Navigator) {
     ): void {
         if (this.navigator) {
             // Recompute which series should be shown in navigator, and add them
-            this.navigator.setBaseSeries(null, false);
+            this.navigator.setBaseSeries(null as any, false);
         }
     });
 
@@ -2823,7 +2822,7 @@ if (!H.Navigator) {
         this: Highcharts.Series
     ): void {
         if (this.chart.navigator && !this.options.isInternal) {
-            this.chart.navigator.setBaseSeries(null, false);
+            this.chart.navigator.setBaseSeries(null as any, false);
         }
     });
 

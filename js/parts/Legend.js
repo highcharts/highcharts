@@ -686,7 +686,9 @@ Highcharts.Legend.prototype = {
                 height = item.legendGroup.getBBox().height;
                 top = item.yAxis.top - chart.plotTop;
                 if (item.visible) {
-                    target = lastPoint ? lastPoint.plotY : item.yAxis.height;
+                    target = lastPoint ?
+                        lastPoint.plotY :
+                        item.yAxis.height;
                     target += top - 0.3 * height;
                 }
                 else {

@@ -340,10 +340,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Series#orderSeries
-     *
-     * @param {number} fromIndex
+     * @param {number} [fromIndex]
      *        If this is given, only the series above this index are handled.
-     *
      * @return {void}
      */
     orderSeries: function (fromIndex) {
@@ -1457,8 +1455,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 optionsChart.defaultSeriesType)];
             // Get the value from available chart-wide properties
             value =
-                optionsChart[key] || // It is set in the options
-                    (klass && klass.prototype[key]); // The default series class
+                // It is set in the options:
+                optionsChart[key] ||
+                    // The default series class:
+                    (klass && klass.prototype[key]);
             // requires it
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
