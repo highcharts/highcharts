@@ -173,7 +173,7 @@ jobs:
           command: git fetch --unshallow
       - run:
           name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
       - run:
           name: Changelog - Create git-describe named folder and copy changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
