@@ -73,7 +73,7 @@ declare global {
             public tooltipTimeout?: number;
             public tt?: SVGElement;
             public applyFilter(): void;
-            public bodyFormatter(items: Array<Point>): Array<string>;
+            public bodyFormatter(items: Array<(Point|Series)>): Array<string>;
             public cleanSplit(force?: boolean): void;
             public defaultFormatter(
                 this: TooltipFormatterContextObject,
@@ -503,7 +503,7 @@ H.Tooltip.prototype = {
                 if (!styledMode) {
                     this.label
                         .attr({
-                            'fill': options.backgroundColor,
+                            'fill': options.backgroundColor as any,
                             'stroke-width': options.borderWidth
                         })
                         // #2301, #2657
@@ -730,15 +730,13 @@ H.Tooltip.prototype = {
             points.forEach(function (point: Highcharts.Point): void {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += point.plotX +
+                plotX += (point.plotX as any) +
                     (!inverted && xAxis ? xAxis.left - plotLeft : 0);
-                plotY +=
-                    (
-                        point.plotLow ?
-                            (point.plotLow + point.plotHigh) / 2 :
-                            point.plotY
-                    ) +
-                    (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                plotY += (
+                    point.plotLow ?
+                        ((point.plotLow as any) + point.plotHigh) / 2 :
+                        (point.plotY as any)
+                ) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
             });
 
             plotX /= points.length;
@@ -781,8 +779,8 @@ H.Tooltip.prototype = {
         var chart = this.chart,
             distance = this.distance,
             ret = {} as Highcharts.Dictionary<number>,
-            // Don't use h if chart isn't inverted (#7242)
-            h = (chart.inverted && point.h) || 0, // #4117
+            // Don't use h if chart isn't inverted (#7242) ???
+            h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             swapped: (boolean|undefined),
             outside = this.outside,
             outerWidth = outside ?
@@ -804,7 +802,7 @@ H.Tooltip.prototype = {
                 outerHeight,
                 boxHeight,
                 (outside ? chartPosition.top - distance : 0) +
-                    point.plotY + chart.plotTop,
+                    (point.plotY as any) + chart.plotTop,
                 outside ? 0 : chart.plotTop,
                 outside ? outerHeight : chart.plotTop + chart.plotHeight
             ],
@@ -813,7 +811,7 @@ H.Tooltip.prototype = {
                 outerWidth,
                 boxWidth,
                 (outside ? chartPosition.left - distance : 0) +
-                    point.plotX + chart.plotLeft,
+                    (point.plotX as any) + chart.plotLeft,
                 outside ? 0 : chart.plotLeft,
                 outside ? outerWidth : chart.plotLeft + chart.plotWidth
             ],
@@ -1032,9 +1030,8 @@ H.Tooltip.prototype = {
             });
 
             // Now set hover state for the choosen ones:
-            point.forEach(function (item: Highcharts.Point): void {
+            (point as any).forEach(function (item: Highcharts.Point): void {
                 item.setState('hover');
-
                 pointConfig.push(item.getLabelConfig());
             });
 
@@ -1193,7 +1190,7 @@ H.Tooltip.prototype = {
                     };
 
                     if (!chart.styledMode) {
-                        attribs.fill = options.backgroundColor;
+                        attribs.fill = options.backgroundColor as any;
                         attribs['stroke-width'] = options.borderWidth;
                     }
 
@@ -1203,7 +1200,8 @@ H.Tooltip.prototype = {
                             null as any,
                             null as any,
                             (
-                                point.isHeader ? options.headerShape :
+                                (point as any).isHeader ?
+                                    options.headerShape :
                                     options.shape
                             ) || 'callout',
                             null as any,
@@ -1225,8 +1223,8 @@ H.Tooltip.prototype = {
                         .attr({
                             stroke: (
                                 options.borderColor ||
-                                point.color ||
-                                series.color ||
+                                (point.color as any) ||
+                                (series.color as any) ||
                                 '${palette.neutralColor80}'
                             )
                         });
@@ -1236,7 +1234,7 @@ H.Tooltip.prototype = {
                 // case of overflow
                 bBox = tt.getBBox();
                 boxWidth = bBox.width + tt.strokeWidth();
-                if (point.isHeader) {
+                if ((point as any).isHeader) {
                     headerHeight = bBox.height;
                     if (chart.xAxis[0].opposite) {
                         headerTop = true;
@@ -1245,7 +1243,9 @@ H.Tooltip.prototype = {
                     x = Math.max(
                         0, // No left overflow
                         Math.min(
-                            point.plotX + chart.plotLeft - boxWidth / 2,
+                            (point.plotX as any) +
+                            chart.plotLeft -
+                            boxWidth / 2,
                             // No right overflow (#5794)
                             (chart.chartWidth as any) +
                             (
@@ -1259,7 +1259,7 @@ H.Tooltip.prototype = {
                         )
                     );
                 } else {
-                    x = point.plotX + chart.plotLeft -
+                    x = (point.plotX as any) + chart.plotLeft -
                         pick(options.distance, 16) - boxWidth;
                 }
 
@@ -1271,17 +1271,17 @@ H.Tooltip.prototype = {
 
                 // Prepare for distribution
                 target = (point.series && point.series.yAxis &&
-                    point.series.yAxis.pos) + (point.plotY || 0);
+                    (point.series.yAxis.pos as any)) + (point.plotY || 0);
                 target -= distributionBoxTop;
 
-                if (point.isHeader) {
+                if ((point as any).isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         chart.plotHeight + headerHeight;
                 }
                 boxes.push({
                     target: target,
-                    rank: point.isHeader ? 1 : 0,
+                    rank: (point as any).isHeader ? 1 : 0,
                     size: (owner.tt as any).getBBox().height + 1,
                     point: point,
                     x: x,
@@ -1352,8 +1352,8 @@ H.Tooltip.prototype = {
                 label.height,
                 point
             ),
-            anchorX = point.plotX + chart.plotLeft,
-            anchorY = point.plotY + chart.plotTop,
+            anchorX = (point.plotX as any) + chart.plotLeft,
+            anchorY = (point.plotY as any) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
@@ -1525,7 +1525,7 @@ H.Tooltip.prototype = {
                 xAxis.options.type === 'datetime' &&
                 isNumber(labelConfig.key)
             ),
-            formatString = tooltipOptions[footOrHead + 'Format'],
+            formatString = (tooltipOptions as any)[footOrHead + 'Format'],
             evt = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
@@ -1580,27 +1580,27 @@ H.Tooltip.prototype = {
      *
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
-     *
-     * @param {Array<Highcharts.Point>} items
-     *
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
      * @return {Array<string>}
      */
     bodyFormatter: function (
         this: Highcharts.Tooltip,
         items: Array<Highcharts.Point>
     ): Array<string> {
-        return items.map(function (item: Highcharts.Point): string {
-            var tooltipOptions = item.series.tooltipOptions;
+        return items.map(function (
+            item: (Highcharts.Point|Highcharts.Series)
+        ): string {
+            var tooltipOptions = (item as any).series.tooltipOptions;
 
             return (
-                tooltipOptions[
-                    (item.point.formatPrefix || 'point') + 'Formatter'
+                (tooltipOptions as any)[
+                    ((item as any).point.formatPrefix || 'point') + 'Formatter'
                 ] ||
-                item.point.tooltipFormatter
+                (item as any).point.tooltipFormatter
             ).call(
-                item.point,
+                (item as any).point,
                 tooltipOptions[
-                    (item.point.formatPrefix || 'point') + 'Format'
+                    ((item as any).point.formatPrefix || 'point') + 'Format'
                 ] || ''
             );
         });

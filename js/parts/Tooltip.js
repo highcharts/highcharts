@@ -502,11 +502,9 @@ H.Tooltip.prototype = {
                 xAxis = point.series.xAxis;
                 plotX += point.plotX +
                     (!inverted && xAxis ? xAxis.left - plotLeft : 0);
-                plotY +=
-                    (point.plotLow ?
-                        (point.plotLow + point.plotHigh) / 2 :
-                        point.plotY) +
-                        (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                plotY += (point.plotLow ?
+                    (point.plotLow + point.plotHigh) / 2 :
+                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
             });
             plotX /= points.length;
             plotY /= points.length;
@@ -537,8 +535,8 @@ H.Tooltip.prototype = {
      */
     getPosition: function (boxWidth, boxHeight, point) {
         var chart = this.chart, distance = this.distance, ret = {}, 
-        // Don't use h if chart isn't inverted (#7242)
-        h = (chart.inverted && point.h) || 0, // #4117
+        // Don't use h if chart isn't inverted (#7242) ???
+        h = (chart.inverted && point.h) || 0, // #4117 ???
         swapped, outside = this.outside, outerWidth = outside ?
             // substract distance to prevent scrollbars
             doc.documentElement.clientWidth - 2 * distance :
@@ -821,7 +819,8 @@ H.Tooltip.prototype = {
                         attribs['stroke-width'] = options.borderWidth;
                     }
                     owner.tt = tt = ren
-                        .label(null, null, null, (point.isHeader ? options.headerShape :
+                        .label(null, null, null, (point.isHeader ?
+                        options.headerShape :
                         options.shape) || 'callout', null, null, options.useHTML)
                         .addClass('highcharts-tooltip-box ' + colorClass)
                         .attr(attribs)
@@ -852,7 +851,9 @@ H.Tooltip.prototype = {
                         distributionBoxTop -= headerHeight;
                     }
                     x = Math.max(0, // No left overflow
-                    Math.min(point.plotX + chart.plotLeft - boxWidth / 2, 
+                    Math.min(point.plotX +
+                        chart.plotLeft -
+                        boxWidth / 2, 
                     // No right overflow (#5794)
                     chart.chartWidth +
                         (
@@ -1075,9 +1076,7 @@ H.Tooltip.prototype = {
      *
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
-     *
-     * @param {Array<Highcharts.Point>} items
-     *
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
      * @return {Array<string>}
      */
     bodyFormatter: function (items) {

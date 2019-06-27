@@ -45,16 +45,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface RangeSelectorButtonsDataGroupingOptions {
-            approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: object;
-            enabled?: boolean;
-            forced?: boolean;
-            groupAll?: boolean;
-            groupPixelWidth?: number;
-            smoothed?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
-        }
         interface RangeSelectorButtonsEventsOptions {
             click?: RangeSelectorClickCallbackFunction;
         }
@@ -63,7 +53,7 @@ declare global {
             _offsetMin?: number;
             _range?: number;
             count?: number;
-            dataGrouping?: RangeSelectorButtonsDataGroupingOptions;
+            dataGrouping?: PlotSeriesDataGroupingOptions;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;

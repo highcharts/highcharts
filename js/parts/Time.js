@@ -12,16 +12,16 @@ import Highcharts from './Globals.js';
 /**
  * Normalized interval.
  *
- * @interface Highcharts.NormalizedIntervalObject
+ * @interface Highcharts.TimeNormalizedObject
  */ /**
 * The count.
 *
-* @name Highcharts.NormalizedIntervalObject#count
+* @name Highcharts.TimeNormalizedObject#count
 * @type {number}
 */ /**
 * The interval in axis values (ms).
 *
-* @name Highcharts.NormalizedIntervalObject#unitRange
+* @name Highcharts.TimeNormalizedObject#unitRange
 * @type {number}
 */
 /**
@@ -39,7 +39,7 @@ import Highcharts from './Globals.js';
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.NormalizedIntervalObject
+ * @augments Highcharts.TimeNormalizedObject
  */ /**
 * @name Highcharts.TimeTicksInfoObject#higherRanks
 * @type {Array<string>}
@@ -50,10 +50,9 @@ import Highcharts from './Globals.js';
 /**
  * Time ticks.
  *
- * @interface Highcharts.TimeTicksArray
- * @augments Array<number>
+ * @interface Highcharts.AxisTickPositionsArray
  */ /**
-* @name Highcharts.TimeTicksArray#info
+* @name Highcharts.AxisTickPositionsArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
 var H = Highcharts, defined = H.defined, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
@@ -542,7 +541,7 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#getTimeTicks
      *
-     * @param {Highcharts.NormalizedIntervalObject} normalizedInterval
+     * @param {Highcharts.TimeNormalizedObject} normalizedInterval
      *        The interval in axis values (ms) and the count
      *
      * @param {number} [min]
@@ -553,7 +552,7 @@ Highcharts.Time.prototype = {
      *
      * @param {number} [startOfWeek=1]
      *
-     * @return {Highcharts.TimeTicksArray}
+     * @return {Highcharts.AxisTickPositionsArray}
      */
     getTimeTicks: function (normalizedInterval, min, max, startOfWeek) {
         var time = this, Date = time.Date, tickPositions = [], i, higherRanks = {}, minYear, // used in months and years as a basis for Date.UTC()

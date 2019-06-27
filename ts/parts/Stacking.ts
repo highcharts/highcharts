@@ -32,6 +32,10 @@ declare global {
         interface Chart {
             getStacks(): void;
         }
+        interface Point {
+            leftCliff?: number;
+            rightCliff?: number;
+        }
         interface Series {
             negStacks?: any; // @todo
             singleStacks?: any; // @todo
@@ -103,8 +107,8 @@ declare global {
             public setOffset(
                 xOffset: number,
                 xWidth: number,
-                boxBottom: number,
-                boxTop: number
+                boxBottom?: number,
+                boxTop?: number
             ): void;
         }
     }
@@ -294,16 +298,16 @@ H.StackItem.prototype = {
      * @function Highcarts.StackItem#setOffset
      * @param {number} xOffset
      * @param {number} xWidth
-     * @param {number} boxBottom
-     * @param {number} boxTop
+     * @param {number} [boxBottom]
+     * @param {number} [boxTop]
      * @return {void}
      */
     setOffset: function (
         this: Highcharts.StackItem,
         xOffset: number,
         xWidth: number,
-        boxBottom: number,
-        boxTop: number
+        boxBottom?: number,
+        boxTop?: number
     ): void {
         var stackItem = this,
             axis = stackItem.axis,
@@ -577,7 +581,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         xData = series.processedXData,
         yData = series.processedYData,
         stackedYData = [],
-        yDataLength = yData.length,
+        yDataLength = (yData as any).length,
         seriesOptions = series.options,
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
@@ -604,18 +608,18 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
 
     // loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
-        x = xData[i];
-        y = yData[i];
+        x = (xData as any)[i];
+        y = (yData as any)[i];
         stackIndicator = series.getStackIndicator(
             stackIndicator,
             x,
-            series.index
+            series.index as any
         );
         pointKey = stackIndicator.key;
         // Read stacked values into a stack based on the x value,
         // the sign of y and the stack key. Stacking is also handled for null
         // values (#739)
-        isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
+        isNegative = negStacks && y < (stackThreshold ? 0 : (threshold as any));
         key = isNegative ? negKey : stackKey;
 
         // Create empty object for this stack if it doesn't exist yet
@@ -637,7 +641,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
                     yAxis.options.stackLabels,
                     isNegative,
                     x,
-                    stackOption
+                    stackOption as any
                 );
             }
         }
@@ -645,7 +649,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         // If the StackItem doesn't exist, create it first
         stack = stacks[key as any][x];
         if (y !== null) {
-            stack.points[pointKey as any] = stack.points[series.index] =
+            stack.points[pointKey as any] = stack.points[series.index as any] =
                 [pick(stack.cumulative, stackThreshold)] as any;
 
             // Record the base of the stack
@@ -658,13 +662,13 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
-                stack.points[pointKey as any][0] =
-                    stack.points[series.index + ',' + x + ',0'][0];
+                (stack.points as any)[pointKey as any][0] =
+                    (stack.points as any)[series.index + ',' + x + ',0'][0];
             }
 
         // When updating to null, reset the point stack (#7493)
         } else {
-            stack.points[pointKey as any] = stack.points[series.index] =
+            stack.points[pointKey as any] = stack.points[series.index as any] =
                 null as any;
         }
 
@@ -693,7 +697,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
 
         if (y !== null) {
-            stack.points[pointKey as any].push(stack.cumulative);
+            (stack.points[pointKey as any] as any).push(stack.cumulative);
             stackedYData[i] = stack.cumulative;
         }
 
@@ -728,17 +732,17 @@ Series.prototype.modifyStacks = function (this: Highcharts.Series): void {
         [stackKey, '-' + stackKey].forEach(function (
             key: (string|undefined)
         ): void {
-            var i = processedXData.length,
+            var i = (processedXData as any).length,
                 x,
                 stack,
                 pointExtremes;
 
             while (i--) {
-                x = processedXData[i];
+                x = (processedXData as any)[i];
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
                     x,
-                    series.index,
+                    series.index as any,
                     key
                 );
                 stack = stacks[key as any] && stacks[key as any][x];
