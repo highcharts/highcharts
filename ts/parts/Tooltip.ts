@@ -25,7 +25,7 @@ declare global {
         interface TooltipFormatterCallbackFunction {
             (
                 this: TooltipFormatterContextObject,
-                tooltip?: Tooltip
+                tooltip: Tooltip
             ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
@@ -70,7 +70,7 @@ declare global {
             public now: Dictionary<number>;
             public options: TooltipOptions;
             public outside: (boolean|undefined);
-            public renderer: Renderer;
+            public renderer?: Renderer;
             public shared: (boolean|undefined);
             public split: (boolean|undefined);
             public tooltipTimeout?: number;
@@ -324,6 +324,7 @@ H.Tooltip.prototype = {
         /**
          * Tooltips are initially hidden.
          *
+         * @private
          * @readonly
          * @name Highcharts.Tooltip#isHidden
          * @type {boolean}
@@ -471,7 +472,16 @@ H.Tooltip.prototype = {
         if (!this.label) {
 
             if (this.outside) {
+                /**
+                 * Reference to the tooltip's container, when
+                 * [Highcharts.Tooltip#outside] is set to true, otherwise
+                 * it's undefined.
+                 *
+                 * @name Highcharts.Tooltip#container
+                 * @type {Highcharts.HTMLDOMElement|undefined}
+                 */
                 this.container = container = H.doc.createElement('div');
+
                 container.className = 'highcharts-tooltip-container';
                 H.css(container, {
                     position: 'absolute',
@@ -481,6 +491,14 @@ H.Tooltip.prototype = {
                 });
                 H.doc.body.appendChild(container);
 
+                /**
+                 * Reference to the tooltip's renderer, when
+                 * [Highcharts.Tooltip#outside] is set to true, otherwise
+                 * it's undefined.
+                 *
+                 * @name Highcharts.Tooltip#renderer
+                 * @type {Highcharts.SVGRenderer|undefined}
+                 */
                 this.renderer = renderer = new H.Renderer(container, 0, 0);
             }
 
@@ -600,6 +618,7 @@ H.Tooltip.prototype = {
     /**
      * Moves the tooltip with a soft animation to a new position.
      *
+     * @private
      * @function Highcharts.Tooltip#move
      *
      * @param {number} x
@@ -943,7 +962,6 @@ H.Tooltip.prototype = {
      * In case no user defined formatter is given, this will be used. Note that
      * the context here is an object holding point, series, x, y etc.
      *
-     * @private
      * @function Highcharts.Tooltip#defaultFormatter
      *
      * @param {Highcharts.Tooltip} tooltip
