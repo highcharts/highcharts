@@ -246,14 +246,12 @@ workflows:
             branches:
               only:
                 - feature/ci-nightly
+                - master
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
-      - generate_ts_declarations:
-          requires:
-            - install_dependencies
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
@@ -279,37 +277,21 @@ workflows:
             - "test-Mac.Firefox"
             - "test-Mac.Safari"
             - "test-Win.IE8"
-            - generate_ts_declarations
+            - "test-Win.Chrome"
       - deploy_code:
           requires:
             - build_dist
           context: highcharts-staging
-          filters:
-            branches:
-              only:
-                - feature/ci-nightly
       - deploy_api_docs:
           requires:
             - build_dist
           context: highcharts-staging
-          filters:
-            branches:
-              only:
-                - feature/ci-nightly
       - deploy_changelog:
           requires:
             - build_dist
           context: highcharts-staging
-          filters:
-            branches:
-              only:
-                - feature/ci-nightly
       - deploy_to_highcharts_dist:
           requires:
             - build_dist
           context: highcharts-staging
-          filters:
-            branches:
-              only:
-                - feature/ci-nightly
 
