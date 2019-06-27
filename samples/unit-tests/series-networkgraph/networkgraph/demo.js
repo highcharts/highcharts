@@ -153,4 +153,14 @@ QUnit.test('Network Graph', function (assert) {
         1,
         'points are visible on small resolutions'
     );
+
+    rSeries.update({
+        data: [],
+        nodes: []
+    });
+
+    assert.ok(
+        true,
+        'Clearing nodes and links in `series.update()` should not throw errors (#11176)'
+    );
 });
