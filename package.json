@@ -106,7 +106,6 @@
     "rimraf": "^2.6.3",
     "safe-regex": "^2.0.2",
     "semver": "^5.7.0",
-    "semver-sort": "0.0.4",
     "taffydb": "^2.7.3",
     "typescript": "3.4.5",
     "undertaker-forward-reference": "^1.0.2",
