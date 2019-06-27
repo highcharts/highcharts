@@ -1383,7 +1383,7 @@ H.Tooltip.prototype = {
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
             pad = (this.options.borderWidth || 0) + 2 * this.distance;
-            this.renderer.setSize(
+            (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
                 false
