@@ -1,4 +1,4 @@
-QUnit.test('Area range with trackByArea:false', function (assert) {
+QUnit.test('Area range with trackByArea:false (#5348)', function (assert) {
 
     var chart = Highcharts.chart('container', {
 
