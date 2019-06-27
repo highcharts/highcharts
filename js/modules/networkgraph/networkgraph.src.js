@@ -1053,9 +1053,13 @@ seriesType(
          */
         destroy: function () {
             if (this.isNode) {
-                this.linksFrom.forEach(
-                    function (linkFrom) {
-                        linkFrom.destroyElements();
+                this.linksFrom.concat(this.linksTo).forEach(
+                    function (link) {
+                        // Removing multiple nodes at the same time
+                        // will try to remove link between nodes twice
+                        if (link.destroyElements) {
+                            link.destroyElements();
+                        }
                     }
                 );
                 this.series.layout.removeNode(this);
