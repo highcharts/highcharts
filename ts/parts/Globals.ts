@@ -24,6 +24,7 @@ declare global {
     interface Window {
         Image: typeof Image;
         opera?: any;
+        TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
@@ -239,7 +240,7 @@ var H: GlobalHighcharts = {
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
+    hasTouch: !!win.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,

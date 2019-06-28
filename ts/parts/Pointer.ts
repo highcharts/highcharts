@@ -1629,12 +1629,20 @@ Highcharts.Pointer.prototype = {
             );
         }
         if (H.hasTouch) {
-            container.ontouchstart = function (e: TouchEvent): void {
-                pointer.onContainerTouchStart(e as any);
-            };
-            container.ontouchmove = function (e: TouchEvent): void {
-                pointer.onContainerTouchMove(e as any);
-            };
+            addEvent(
+                container,
+                'touchstart',
+                function (e: TouchEvent): void {
+                    pointer.onContainerTouchStart(e as any);
+                }
+            );
+            addEvent(
+                container,
+                'touchmove',
+                function (e: TouchEvent): void {
+                    pointer.onContainerTouchMove(e as any);
+                }
+            );
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
