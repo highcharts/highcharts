@@ -22,7 +22,10 @@ declare global {
         Date: any;
     }
     namespace Highcharts {
-        interface NormalizedIntervalObject {
+        interface AxisTickPositionsArray {
+            info?: TimeTicksInfoObject;
+        }
+        interface TimeNormalizedObject {
             count: number;
             unitRange: number;
         }
@@ -36,12 +39,9 @@ declare global {
         interface TimeFormatCallbackFunction {
             (timestamp: number): string;
         }
-        interface TimeTicksInfoObject {
+        interface TimeTicksInfoObject extends TimeNormalizedObject {
             higherRanks: Array<string>;
             totalRange: number;
-        }
-        interface TimeTicksArray extends Array<number> {
-            info: TimeTicksInfoObject;
         }
         class Time {
             public constructor(options: TimeOptions);
@@ -59,11 +59,11 @@ declare global {
             ): string;
             public get(unit: string, date: Date): number;
             public getTimeTicks(
-                normalizedInterval: Highcharts.NormalizedIntervalObject,
+                normalizedInterval: TimeNormalizedObject,
                 min?: number,
                 max?: number,
                 startOfWeek?: number
-            ): Highcharts.TimeTicksArray;
+            ): AxisTickPositionsArray;
             public getTimezoneOffset(timestamp: (number|Date)): number;
             public makeTime(
                 year: number,
@@ -90,16 +90,16 @@ declare global {
 /**
  * Normalized interval.
  *
- * @interface Highcharts.NormalizedIntervalObject
+ * @interface Highcharts.TimeNormalizedObject
  *//**
  * The count.
  *
- * @name Highcharts.NormalizedIntervalObject#count
+ * @name Highcharts.TimeNormalizedObject#count
  * @type {number}
  *//**
  * The interval in axis values (ms).
  *
- * @name Highcharts.NormalizedIntervalObject#unitRange
+ * @name Highcharts.TimeNormalizedObject#unitRange
  * @type {number}
  */
 
@@ -119,7 +119,7 @@ declare global {
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.NormalizedIntervalObject
+ * @augments Highcharts.TimeNormalizedObject
  *//**
  * @name Highcharts.TimeTicksInfoObject#higherRanks
  * @type {Array<string>}
@@ -131,10 +131,9 @@ declare global {
 /**
  * Time ticks.
  *
- * @interface Highcharts.TimeTicksArray
- * @augments Array<number>
+ * @interface Highcharts.AxisTickPositionsArray
  *//**
- * @name Highcharts.TimeTicksArray#info
+ * @name Highcharts.AxisTickPositionsArray#info
  * @type {Highcharts.TimeTicksInfoObject}
  */
 
@@ -756,7 +755,7 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#getTimeTicks
      *
-     * @param {Highcharts.NormalizedIntervalObject} normalizedInterval
+     * @param {Highcharts.TimeNormalizedObject} normalizedInterval
      *        The interval in axis values (ms) and the count
      *
      * @param {number} [min]
@@ -767,18 +766,18 @@ Highcharts.Time.prototype = {
      *
      * @param {number} [startOfWeek=1]
      *
-     * @return {Highcharts.TimeTicksArray}
+     * @return {Highcharts.AxisTickPositionsArray}
      */
     getTimeTicks: function (
         this: Highcharts.Time,
-        normalizedInterval: Highcharts.NormalizedIntervalObject,
+        normalizedInterval: Highcharts.TimeNormalizedObject,
         min?: number,
         max?: number,
         startOfWeek?: number
-    ): Highcharts.TimeTicksArray {
+    ): Highcharts.AxisTickPositionsArray {
         var time = this,
             Date = time.Date,
-            tickPositions = ([] as any) as Highcharts.TimeTicksArray,
+            tickPositions = [] as Highcharts.AxisTickPositionsArray,
             i,
             higherRanks = {} as Highcharts.Dictionary<string>,
             minYear: any, // used in months and years as a basis for Date.UTC()

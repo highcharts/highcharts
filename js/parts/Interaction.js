@@ -651,7 +651,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (state, move) {
         var point = this, plotX = Math.floor(point.plotX), // #4586
-        plotY = point.plotY, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] || {}), markerOptions = (defaultPlotOptions[series.type].marker &&
+        plotY = point.plotY, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
+            {}), markerOptions = (defaultPlotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
             markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;
@@ -665,7 +666,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             (stateOptions.enabled === false) ||
             // general point marker's state options is disabled
             (state && (stateDisabled ||
-                (normalDisabled && markerStateOptions.enabled === false))) ||
+                (normalDisabled &&
+                    markerStateOptions.enabled === false))) ||
             // individual point marker's state options is disabled
             (state &&
                 pointMarker.states &&
@@ -750,7 +752,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
             }
             if (stateMarkerGraphic) {
-                stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ?
+                stateMarkerGraphic[state &&
+                    chart.isInsidePlot(plotX, plotY, chart.inverted) ?
                     'show' :
                     'hide'](); // #2450
                 stateMarkerGraphic.element.point = point; // #4310

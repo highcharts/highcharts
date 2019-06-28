@@ -476,7 +476,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         return false;
     }
     this.series.forEach(function (series) {
-        if (series === curPoint.series || isSkipSeries(series)) {
+        if (isSkipSeries(series)) {
             return;
         }
         series.points.forEach(function (point) {
@@ -633,6 +633,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
+            inverted = chart.inverted,
             a11yOptions = chart.options.accessibility,
             // Function that attempts to highlight next/prev point, returns
             // the response number. Handles wrap around.
@@ -652,23 +653,25 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             keyCodeMap: [
                 // Arrow sideways
                 [[
-                    keys.left, keys.right
+                    inverted ? keys.up : keys.left,
+                    inverted ? keys.down : keys.right
                 ], function (keyCode) {
-                    return attemptNextPoint.call(this, keyCode === keys.right);
+                    return attemptNextPoint.call(
+                        this, keyCode === keys.right || keyCode === keys.down
+                    );
                 }],
 
                 // Arrow vertical
                 [[
-                    keys.up, keys.down
+                    inverted ? keys.left : keys.up,
+                    inverted ? keys.right : keys.down
                 ], function (keyCode) {
-                    var down = keyCode === keys.down,
+                    var down = keyCode === keys.down || keyCode === keys.right,
                         navOptions = a11yOptions.keyboardNavigation;
 
                     // Handle serialized mode, act like left/right
                     if (navOptions.mode && navOptions.mode === 'serialize') {
-                        return attemptNextPoint.call(
-                            this, keyCode === keys.down
-                        );
+                        return attemptNextPoint.call(this, down);
                     }
 
                     // Normal mode, move between series
