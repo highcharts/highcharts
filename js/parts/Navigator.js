@@ -1528,9 +1528,9 @@ Navigator.prototype = {
             isArray(chartNavigatorSeriesOptions)) {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
-            chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
-            chartNavigatorSeriesOptions
-                .forEach(function (userSeriesOptions, i) {
+            chartNavigatorSeriesOptions =
+                H.splat(chartNavigatorSeriesOptions);
+            chartNavigatorSeriesOptions.forEach(function (userSeriesOptions, i) {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
                 mergedNavSeriesOptions = merge(defaultOptions.navigator.series, {

@@ -55,6 +55,9 @@ declare global {
         interface Options {
             colorAxis?: ColorAxisOptions;
         }
+        interface Point {
+            dataClass?: number;
+        }
         class ColorAxis extends Axis { // eslint-disable-line no-undef
             public constructor(chart: Chart, userOptions: ColorAxisOptions);
             public added?: boolean;
@@ -757,7 +760,7 @@ extend(ColorAxis.prototype, {
     ): void {
         Axis.prototype.setOptions.call(this, userOptions);
 
-        this.options.crosshair = this.options.marker;
+        this.options.crosshair = this.options.marker as any;
     },
 
     /**
@@ -838,12 +841,11 @@ extend(ColorAxis.prototype, {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if (
-                    (from === undefined || value >= from) &&
+                if ((from === undefined || value >= from) &&
                     (to === undefined || value <= to)
                 ) {
 
-                    color = dataClass.color;
+                    color = dataClass.color as any;
 
                     if (point) {
                         point.dataClass = i;
@@ -1042,7 +1044,7 @@ extend(ColorAxis.prototype, {
             axisLen = this.len;
 
         if (point) {
-            crossPos = this.toPixels(point[point.series.colorKey]);
+            crossPos = this.toPixels((point as any)[point.series.colorKey]);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {
@@ -1251,8 +1253,8 @@ extend(ColorAxis.prototype, {
  * @function Highcharts.Fx#strokeSetter
  */
 ['fill', 'stroke'].forEach(function (prop: string): void {
-    H.Fx.prototype[prop + 'Setter'] = function (this: Highcharts.Point): void {
-        this.elem.attr(
+    H.Fx.prototype[prop + 'Setter'] = function (this: Highcharts.Fx): void {
+        (this.elem as any).attr(
             prop,
             color(this.start).tweenTo(
                 color(this.end),

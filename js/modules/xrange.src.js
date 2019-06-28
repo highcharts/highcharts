@@ -178,7 +178,7 @@ seriesType('xrange', 'column'
          * free access to features like groupPadding, grouping, pointWidth etc.
          *
          * @private
-         * @function Higcharts.Series#getColumnMetrics
+         * @function Highcharts.Series#getColumnMetrics
          *
          * @return {Highcharts.ColumnMetricsObject}
          */
