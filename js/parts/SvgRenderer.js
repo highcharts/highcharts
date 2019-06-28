@@ -1771,31 +1771,51 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     shadow: function (shadowOptions, group, cutOff) {
-        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, 
+        var shadows = [], i, j, shadow, element = this.element, elemBBox = this.getBBox(), strokeWidth, shadowWidth, shadowElementOpacity, offsetX, offsetY, shadowOpacity, inside, opacity, translate, 
         // compensate for inverted plot area
         transform;
         if (!shadowOptions) {
             this.destroyShadows();
         }
         else if (!this.shadows) {
+            inside = shadowOptions.inside;
             shadowWidth = pick(shadowOptions.width, 3);
-            shadowElementOpacity = (shadowOptions.opacity || 0.15) /
-                shadowWidth;
-            transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick(shadowOptions.offsetX, 1) + ', ' +
-                    pick(shadowOptions.offsetY, 1) + ')';
+            opacity = defined(shadowOptions.opacity) ?
+                shadowOptions.opacity : 0.15;
+            shadowElementOpacity = opacity / shadowWidth;
+            offsetX = this.parentInverted ?
+                pick(shadowOptions.offsetY, inside ? 0 : 1) * -1 :
+                pick(shadowOptions.offsetX, inside ? 0 : 1);
+            offsetY = this.parentInverted ?
+                pick(shadowOptions.offsetX, inside ? 0 : 1) * -1 :
+                pick(shadowOptions.offsetY, inside ? 0 : 1);
+            transform = '(' + offsetX + ', ' + offsetY + ')';
             for (i = 1; i <= shadowWidth; i++) {
+                j = !inside ? i : (shadowWidth - i + 1);
+                translate = !inside ?
+                    'translate' + transform :
+                    'translate(' + (j / 2 + offsetX) +
+                        ',' + (j / 2 + offsetY) + ')';
                 shadow = element.cloneNode(0);
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                strokeWidth = !inside ?
+                    (shadowWidth * 2) + 1 - (2 * j) : j;
+                shadowOpacity = !inside ?
+                    shadowElementOpacity * j :
+                    shadowElementOpacity * (shadowWidth - j + 1);
                 attr(shadow, {
                     stroke: (shadowOptions.color ||
                         '${palette.neutralColor100}'),
-                    'stroke-opacity': shadowElementOpacity * i,
+                    'stroke-opacity': shadowOpacity,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform: translate,
                     fill: 'none'
                 });
+                if (inside) {
+                    css(shadow, {
+                        width: elemBBox.width - j,
+                        height: elemBBox.height - j,
+                    });
+                }
                 shadow.setAttribute('class', (shadow.getAttribute('class') || '') + ' highcharts-shadow');
                 if (cutOff) {
                     attr(shadow, 'height', Math.max(attr(shadow, 'height') - strokeWidth, 0));
@@ -1803,9 +1823,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 if (group) {
                     group.element.appendChild(shadow);
+                    if (inside &&
+                        group.parentGroup.element.nextSibling) {
+                        group.parentGroup.parentGroup
+                            .element.appendChild(group.parentGroup.element);
+                    }
                 }
                 else if (element.parentNode) {
-                    element.parentNode.insertBefore(shadow, element);
+                    element.parentNode.insertBefore(shadow, inside ? element.nextSibling : element);
                 }
                 shadows.push(shadow);
             }
@@ -2845,7 +2870,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 }
             }
         };
-        var regexMatchBreaks = /<br.*?>/g;
+        const regexMatchBreaks = /<br.*?>/g;
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
         textCache = [

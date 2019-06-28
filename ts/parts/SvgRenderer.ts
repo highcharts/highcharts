@@ -67,6 +67,7 @@ declare global {
             offsetY?: number;
             opacity?: number;
             width?: number;
+            inside?: boolean;
         }
         interface SizeObject {
             height: number;
@@ -2688,11 +2689,19 @@ extend((
     ): Highcharts.SVGElement {
         var shadows = [],
             i,
+            j,
             shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
             element = this.element,
+            elemBBox = this.getBBox(),
             strokeWidth,
             shadowWidth,
             shadowElementOpacity,
+            offsetX,
+            offsetY,
+            shadowOpacity,
+            inside,
+            opacity,
+            translate,
 
             // compensate for inverted plot area
             transform;
@@ -2701,26 +2710,50 @@ extend((
             this.destroyShadows();
 
         } else if (!this.shadows) {
+            inside = (shadowOptions as any).inside;
             shadowWidth = pick((shadowOptions as any).width, 3);
-            shadowElementOpacity = ((shadowOptions as any).opacity || 0.15) /
-                shadowWidth;
-            transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick((shadowOptions as any).offsetX, 1) + ', ' +
-                pick((shadowOptions as any).offsetY, 1) + ')';
+            opacity = defined((shadowOptions as any).opacity) ?
+                (shadowOptions as any).opacity : 0.15;
+            shadowElementOpacity = opacity / shadowWidth;
+            offsetX = this.parentInverted ?
+                pick((shadowOptions as any).offsetY, inside ? 0 : 1) * -1 :
+                pick((shadowOptions as any).offsetX, inside ? 0 : 1);
+            offsetY = this.parentInverted ?
+                pick((shadowOptions as any).offsetX, inside ? 0 : 1) * -1 :
+                pick((shadowOptions as any).offsetY, inside ? 0 : 1);
+            transform = '(' + offsetX + ', ' + offsetY + ')';
+
             for (i = 1; i <= shadowWidth; i++) {
+                j = !inside ? i : (shadowWidth - i + 1);
+                translate = !inside ?
+                    'translate' + transform :
+                    'translate(' + (j / 2 + offsetX) +
+                    ',' + (j / 2 + offsetY) + ')';
                 shadow = element.cloneNode(0 as any) as any;
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                strokeWidth = !inside ?
+                    (shadowWidth * 2) + 1 - (2 * j) : j;
+                shadowOpacity = !inside ?
+                    shadowElementOpacity * j :
+                    shadowElementOpacity * (shadowWidth - j + 1);
+
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
                         '${palette.neutralColor100}'
                     ),
-                    'stroke-opacity': shadowElementOpacity * i,
+                    'stroke-opacity': shadowOpacity,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform: translate,
                     fill: 'none'
                 });
+
+                if (inside) {
+                    css(shadow, {
+                        width: elemBBox.width - j,
+                        height: elemBBox.height - j
+                    });
+                }
+
                 shadow.setAttribute(
                     'class',
                     (shadow.getAttribute('class') || '') + ' highcharts-shadow'
@@ -2736,8 +2769,21 @@ extend((
 
                 if (group) {
                     group.element.appendChild(shadow);
+
+                    if (
+                        inside &&
+                        (group as any).parentGroup.element.nextSibling
+                    ) {
+                        (group as any).parentGroup.parentGroup
+                            .element.appendChild(
+                                (group as any).parentGroup.element
+                            );
+                    }
                 } else if (element.parentNode) {
-                    element.parentNode.insertBefore(shadow, element);
+                    element.parentNode.insertBefore(
+                        shadow,
+                        inside ? element.nextSibling : element
+                    );
                 }
 
                 shadows.push(shadow);
