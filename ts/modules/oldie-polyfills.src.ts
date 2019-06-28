@@ -15,33 +15,49 @@
 
 'use strict';
 
+import H from '../parts/Globals';
+
 /**
  * Internal types
  * @private
  */
-declare interface ArrayFilterCallbackFunction<T> {
-    (value: T, index: number, array: Array<T>): boolean;
-}
-/** @private */
-declare interface ArrayForEachCallbackFunction<T> {
-    (value: T, index: number, array: Array<T>): void;
-}
-/** @private */
-declare interface ArrayMapCallbackFunction<TInput, TOutput> {
-    (value: TInput, index: number, array: Array<TInput>): TOutput;
-}
-/** @private */
-declare interface ArrayReduceCallbackFunction<T> {
-    (
-        previousValue: T,
-        currentValue: T,
-        currentIndex: number,
-        array: Array<T>
-    ): T;
-}
-/** @private */
-declare interface ArraySomeCallbackFunction<T> {
-    (value: T, index: number, array: Array<T>): boolean;
+declare global {
+    interface Array<T> {
+        filter(callbackfn: ArrayFilterCallbackFunction<T>): Array<T>;
+        some(
+            callbackfn: ArraySomeCallbackFunction<T>,
+            thisArg?: unknown
+        ): boolean;
+        forEach(
+            callbackfn: ArrayForEachCallbackFunction<T>,
+            thisArg?: unknown
+        ): void;
+        indexOf(searchElement: T, fromIndex?: number): number;
+        map<TOutput>(
+            callbackfn: ArrayMapCallbackFunction<T, TOutput>
+        ): Array<TOutput>;
+        reduce(callbackfn: ArrayReduceCallbackFunction<T>, initialValue?: T): T;
+    }
+    interface ArrayFilterCallbackFunction<T> {
+        (value: T, index: number, array: Array<T>): boolean;
+    }
+    interface ArrayForEachCallbackFunction<T> {
+        (value: T, index: number, array: Array<T>): void;
+    }
+    interface ArrayMapCallbackFunction<TInput, TOutput> {
+        (value: TInput, index: number, array: Array<TInput>): TOutput;
+    }
+    interface ArrayReduceCallbackFunction<T> {
+        (
+            previousValue: T,
+            currentValue: T,
+            currentIndex: number,
+            array: Array<T>
+        ): T;
+    }
+    interface ArraySomeCallbackFunction<T> {
+        (value: T, index: number, array: Array<T>): boolean;
+    }
 }
 
 /* eslint-disable no-extend-native */
