@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Gantt JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/xrange
  * @requires highcharts
  *
