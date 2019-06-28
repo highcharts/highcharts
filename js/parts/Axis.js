@@ -1107,14 +1107,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Red X axis labels
              *
              * @type      {Highcharts.CSSObject}
-             * @default   {"color": "#666666", "cursor": "default", "fontSize": "11px"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}',
-                /** @ignore-option */
+                /** @internal */
                 cursor: 'default',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px'
             }
         },
@@ -1932,10 +1931,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Styled mode
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}'
             }
         },
@@ -2853,18 +2851,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Red stack total labels
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast"}
              * @since   2.1.5
              * @product highcharts
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor100}',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px',
-                /** @ignore-option */
+                /** @internal */
                 fontWeight: 'bold',
-                /** @ignore-option */
+                /** @internal */
                 textOutline: '1px contrast'
             }
         },
