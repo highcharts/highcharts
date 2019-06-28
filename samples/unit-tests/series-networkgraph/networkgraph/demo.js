@@ -49,6 +49,17 @@ QUnit.test('Network Graph', function (assert) {
         'No-data label should NOT display when there is data (#9801)'
     );
 
+    chart.series[0].nodes[0].update({
+        marker: {
+            fillColor: 'red'
+        }
+    });
+
+    assert.ok(
+        true,
+        'No errors on node.update() (#11211)'
+    );
+
     chart.addSeries({
         keys: ['from', 'to', 'width', 'color', 'dashStyle'],
         data: [
