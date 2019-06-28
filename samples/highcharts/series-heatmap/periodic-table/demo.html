@@ -1,0 +1,26 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<label>
+    Color by:
+    <select id="dataset">
+        <option value="mass" selected> Atomic mass </option>
+        <option value="boil"> Boiling point </option>
+        <option value="melt"> Melting point </option>
+        <option value="density"> Density </option>
+        <option value="shells"> Number of shells </option>
+    </select>
+</label>
+
+<label>
+    Shape:
+    <select id="seriestype">
+        <option value="bubble">Bubble</option>
+        <option value="heatmap" selected>Cell</option>
+    </select>
+</label>
+
+<div id="container"></div>
