@@ -1,3 +1,33 @@
+QUnit.test('Prevent dense ticks(#4477)', function (assert) {
+
+
+    $('#container').highcharts({
+        chart: {
+            type: "bar"
+        },
+        title: {
+            text: 'Only first and last axis label should be kept'
+        },
+        yAxis: [{
+            labels: {
+                staggerLines: 1
+            },
+            tickInterval: 1
+        }],
+        series: [{
+            data: [100000],
+            type: "column"
+        }]
+    });
+
+    var chart = $('#container').highcharts();
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.length < chart.yAxis[0].len,
+        true,
+        'Not too many tick positions'
+    );
+});
 QUnit.test('Clip tickPositions when axis extremes are set(#4086)', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {
