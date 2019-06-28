@@ -255,6 +255,19 @@ import H from './Globals.js';
 * @type {number}
 */
 /**
+ * Describes a range.
+ *
+ * @interface Highcharts.RangeObject
+ */ /**
+* Maximum number of the range.
+* @name Highcharts.RangeObject#max
+* @type {number}
+*/ /**
+* Minimum number of the range.
+* @name Highcharts.RangeObject#min
+* @type {number}
+*/
+/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.

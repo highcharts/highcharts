@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            index?: number;
+        }
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
         }
@@ -26,7 +29,11 @@ declare global {
             spacingBox: BBoxObject;
         }
         interface Options {
-            series?: Dictionary<SeriesOptions>;
+            series?: Array<SeriesOptionsType>;
+        }
+        interface Series {
+            index?: number;
+            linkedParent?: Series;
         }
         interface SubtitleObject extends SVGElement {
             update(titleOptions: SubtitleOptions, redraw?: boolean): void;
@@ -121,7 +128,7 @@ declare global {
             ): boolean;
             public layOutTitles(redraw?: boolean): void;
             public onload(): void;
-            public orderSeries(fromIndex: number): void;
+            public orderSeries(fromIndex?: number): void;
             public propFromSeries(): void;
             public redraw(animation?: (boolean|AnimationOptionsObject)): void;
             public reflow(e?: Event): void;
@@ -559,7 +566,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     initSeries: function (
         this: Highcharts.Chart,
         options: Highcharts.SeriesOptions
-    ): void {
+    ): Highcharts.Series {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -587,13 +594,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Series#orderSeries
-     *
-     * @param {number} fromIndex
+     * @param {number} [fromIndex]
      *        If this is given, only the series above this index are handled.
-     *
      * @return {void}
      */
-    orderSeries: function (this: Highcharts.Chart, fromIndex: number): void {
+    orderSeries: function (this: Highcharts.Chart, fromIndex?: number): void {
         var series = this.series,
             i = fromIndex || 0;
 
@@ -1987,7 +1992,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
             bgAttr = {
-                fill: chartBackgroundColor || 'none'
+                fill: (chartBackgroundColor as any) || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2024,7 +2029,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Presentational attributes for the background
             plotBackground
                 .attr({
-                    fill: plotBackgroundColor || 'none'
+                    fill: (plotBackgroundColor as any) || 'none'
                 })
                 .shadow(optionsChart.plotShadow);
 
@@ -2101,7 +2106,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             klass,
-            seriesOptions = chart.options.series as Highcharts.SeriesOptions,
+            seriesOptions =
+                chart.options.series as Array<Highcharts.SeriesOptions>,
             i,
             value;
 
@@ -2119,15 +2125,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Get the value from available chart-wide properties
             value =
-                (optionsChart as any)[key] || // It is set in the options
-                (klass && klass.prototype[key]); // The default series class
+                // It is set in the options:
+                (optionsChart as any)[key] ||
+                // The default series class:
+                (klass && (klass.prototype as any)[key]);
             // requires it
 
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = seriesTypes[seriesOptions[i].type];
-                if (klass && klass.prototype[key]) {
+                klass = seriesTypes[seriesOptions[i].type as any];
+                if (klass && (klass.prototype as any)[key]) {
                     value = true;
                 }
             }
@@ -2163,17 +2171,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (isString(linkedTo)) {
                 if (linkedTo === ':previous') {
-                    linkedTo = chart.series[series.index - 1];
+                    linkedTo = chart.series[(series.index as any) - 1] as any;
                 } else {
-                    linkedTo = chart.get(linkedTo);
+                    linkedTo = chart.get(linkedTo as any) as any;
                 }
                 // #3341 avoid mutual linking
-                if (linkedTo && linkedTo.linkedParent !== series) {
-                    linkedTo.linkedSeries.push(series);
-                    series.linkedParent = linkedTo;
+                if (linkedTo && (linkedTo as any).linkedParent !== series) {
+                    (linkedTo as any).linkedSeries.push(series);
+                    series.linkedParent = linkedTo as any;
                     series.visible = pick(
                         series.options.visible,
-                        linkedTo.options.visible,
+                        (linkedTo as any).options.visible,
                         series.visible
                     ); // #3879
                 }
@@ -2475,7 +2483,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy each series
         i = series.length;
         while (i--) {
-            series[i] = series[i].destroy();
+            series[i] = series[i].destroy() as any;
         }
 
         // ==== Destroy chart properties:

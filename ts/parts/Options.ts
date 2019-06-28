@@ -252,9 +252,6 @@ declare global {
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }
-        interface PlotOptions {
-            [key: string]: Dictionary<any>;
-        }
         interface SubtitleOptions {
             align?: AlignValue;
             floating?: boolean;

@@ -1,42 +1,52 @@
-QUnit.test("Use HTML in color axis data labels caused misposition.(#4615)", function (assert) {
-    var chart = $('#container').highcharts({
+QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
+
+    $('#container').highcharts({
 
         chart: {
-            type: 'heatmap'
+            width: 1000,
+            height: 300
         },
 
-        colorAxis: {
-            min: 0,
-            minColor: '#FFFFFF',
-            maxColor: '#663366',
+        xAxis: {
             labels: {
-                useHTML: true
-            }
+                useHTML: true,
+                autoRotation: [-25]
+            },
+            categories: [
+                'Jan sad asd asd asd sa',
+                'Feb asd asd sad as as',
+                'Mar sad asd asd asd as'
+            ]
         },
         series: [{
-            name: 'Sales per employee',
-            borderWidth: 1,
-            data: [
-                [0, 0, 10],
-                [0, 1, 19],
-                [1, 0, 8],
-                [1, 1, 24]
-            ]
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 7.0, 6.9, 9.5]
         }]
+    });
 
-    }).highcharts();
+    var chart = $('#container').highcharts(),
+        xAxis = chart.xAxis[0];
 
-    var top = $(chart.colorAxis[0].ticks[0].label.element).offset().top;
     assert.strictEqual(
-        typeof top,
-        'number',
-        "Test is working."
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        0,
+        'Initially not rotated'
     );
+
+    chart.setSize(400, 300);
     assert.strictEqual(
-        top > 200,
-        true,
-        "Label is below 200 px."
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        -25,
+        'Rotated'
     );
+
+    chart.setSize(1000, 300);
+    assert.strictEqual(
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        0,
+        'Not rotated in the end'
+    );
+
 });
 
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {

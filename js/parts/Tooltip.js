@@ -21,6 +21,9 @@ import H from './Globals.js';
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
  *        Context to format
+
+ * @param {Highcharts.Tooltip} tooltip
+ *        The tooltip instance
  *
  * @return {false|string|Array<string>}
  *         Formatted text or false
@@ -171,6 +174,7 @@ H.Tooltip.prototype = {
         /**
          * Tooltips are initially hidden.
          *
+         * @private
          * @readonly
          * @name Highcharts.Tooltip#isHidden
          * @type {boolean}
@@ -295,6 +299,14 @@ H.Tooltip.prototype = {
             (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
             if (this.outside) {
+                /**
+                 * Reference to the tooltip's container, when
+                 * [Highcharts.Tooltip#outside] is set to true, otherwise
+                 * it's undefined.
+                 *
+                 * @name Highcharts.Tooltip#container
+                 * @type {Highcharts.HTMLDOMElement|undefined}
+                 */
                 this.container = container = H.doc.createElement('div');
                 container.className = 'highcharts-tooltip-container';
                 H.css(container, {
@@ -304,6 +316,14 @@ H.Tooltip.prototype = {
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
+                /**
+                 * Reference to the tooltip's renderer, when
+                 * [Highcharts.Tooltip#outside] is set to true, otherwise
+                 * it's undefined.
+                 *
+                 * @name Highcharts.Tooltip#renderer
+                 * @type {Highcharts.SVGRenderer|undefined}
+                 */
                 this.renderer = renderer = new H.Renderer(container, 0, 0);
             }
             // Create the label
@@ -396,6 +416,7 @@ H.Tooltip.prototype = {
     /**
      * Moves the tooltip with a soft animation to a new position.
      *
+     * @private
      * @function Highcharts.Tooltip#move
      *
      * @param {number} x
@@ -502,11 +523,9 @@ H.Tooltip.prototype = {
                 xAxis = point.series.xAxis;
                 plotX += point.plotX +
                     (!inverted && xAxis ? xAxis.left - plotLeft : 0);
-                plotY +=
-                    (point.plotLow ?
-                        (point.plotLow + point.plotHigh) / 2 :
-                        point.plotY) +
-                        (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                plotY += (point.plotLow ?
+                    (point.plotLow + point.plotHigh) / 2 :
+                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
             });
             plotX /= points.length;
             plotY /= points.length;
@@ -537,8 +556,8 @@ H.Tooltip.prototype = {
      */
     getPosition: function (boxWidth, boxHeight, point) {
         var chart = this.chart, distance = this.distance, ret = {}, 
-        // Don't use h if chart isn't inverted (#7242)
-        h = (chart.inverted && point.h) || 0, // #4117
+        // Don't use h if chart isn't inverted (#7242) ???
+        h = (chart.inverted && point.h) || 0, // #4117 ???
         swapped, outside = this.outside, outerWidth = outside ?
             // substract distance to prevent scrollbars
             doc.documentElement.clientWidth - 2 * distance :
@@ -653,7 +672,6 @@ H.Tooltip.prototype = {
      * In case no user defined formatter is given, this will be used. Note that
      * the context here is an object holding point, series, x, y etc.
      *
-     * @private
      * @function Highcharts.Tooltip#defaultFormatter
      *
      * @param {Highcharts.Tooltip} tooltip
@@ -821,7 +839,8 @@ H.Tooltip.prototype = {
                         attribs['stroke-width'] = options.borderWidth;
                     }
                     owner.tt = tt = ren
-                        .label(null, null, null, (point.isHeader ? options.headerShape :
+                        .label(null, null, null, (point.isHeader ?
+                        options.headerShape :
                         options.shape) || 'callout', null, null, options.useHTML)
                         .addClass('highcharts-tooltip-box ' + colorClass)
                         .attr(attribs)
@@ -852,7 +871,9 @@ H.Tooltip.prototype = {
                         distributionBoxTop -= headerHeight;
                     }
                     x = Math.max(0, // No left overflow
-                    Math.min(point.plotX + chart.plotLeft - boxWidth / 2, 
+                    Math.min(point.plotX +
+                        chart.plotLeft -
+                        boxWidth / 2, 
                     // No right overflow (#5794)
                     chart.chartWidth +
                         (
@@ -1075,9 +1096,7 @@ H.Tooltip.prototype = {
      *
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
-     *
-     * @param {Array<Highcharts.Point>} items
-     *
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
      * @return {Array<string>}
      */
     bodyFormatter: function (items) {

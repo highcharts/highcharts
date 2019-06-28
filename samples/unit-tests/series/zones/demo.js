@@ -1,3 +1,4 @@
+
 QUnit.test('Point markers fills should be taken from zones on hover.(#4670)', function (assert) {
     var chart = $('#container').highcharts({
         series: [{
@@ -68,6 +69,34 @@ QUnit.test('Point markers fills should be taken from zones on hover.(#4670)', fu
         'Proper color for a marker - point.states.hover.'
     );
 });
+
+QUnit.test('Point colors within color zones(#4430)', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'area'
+        },
+        series: [{
+            color: '#00FFFF',
+            negativeColor: '#FF0000',
+            data: [-1, -1, 1]
+        }]
+    }).highcharts();
+
+
+    assert.strictEqual(
+        chart.series[0].points[0].color,
+        '#FF0000',
+        'Negative color'
+    );
+    assert.strictEqual(
+        chart.series[0].points[2].color,
+        '#00FFFF',
+        'Positive color'
+    );
+
+});
+
+
 // Highcharts 4.1.1, Issue #3898
 // negativeColor not rendered correctly when threshold is out of range
 QUnit.test('Spline zones out of range', function (assert) {

@@ -791,7 +791,8 @@ Series.prototype.drawDataLabels = function () {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        point.connector = point.connector.destroy();
+                        point.connector =
+                            point.connector.destroy();
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {
@@ -945,8 +946,12 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
         // arrow pointing to thie point
         if (options.shape && !rotation) {
             dataLabel[isNew ? 'attr' : 'animate']({
-                anchorX: inverted ? chart.plotWidth - point.plotY : point.plotX,
-                anchorY: inverted ? chart.plotHeight - point.plotX : point.plotY
+                anchorX: inverted ?
+                    chart.plotWidth - point.plotY :
+                    point.plotX,
+                anchorY: inverted ?
+                    chart.plotHeight - point.plotX :
+                    point.plotY
             });
         }
     }
@@ -1085,7 +1090,9 @@ if (seriesTypes.pie) {
         ], x, y, visibility, j, overflow = [0, 0, 0, 0], // top, right, bottom, left
         dataLabelPositioners = series.dataLabelPositioners, pointDataLabelsOptions;
         // get out if not enabled
-        if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
+        if (!series.visible ||
+            (!options.enabled &&
+                !series._hasPointLabels)) {
             return;
         }
         // Reset all labels that have been shortened
@@ -1190,12 +1197,13 @@ if (seriesTypes.pie) {
                     else {
                         labelHeight = point.distributeBox.size;
                         // Find label's y position
-                        y = dataLabelPositioners.radialDistributionY(point);
+                        y = dataLabelPositioners
+                            .radialDistributionY(point);
                     }
                 }
                 // It is needed to delete point.positionIndex for
                 // dynamically added points etc.
-                delete point.positionIndex;
+                delete point.positionIndex; // @todo unused
                 // Find label's x position
                 // justify is undocumented in the API - preserve support for it
                 if (options.justify) {
@@ -1272,7 +1280,8 @@ if (seriesTypes.pie) {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                     merge(options, point.options.dataLabels);
-                connectorWidth = pick(pointDataLabelsOptions.connectorWidth, 1);
+                connectorWidth =
+                    pick(pointDataLabelsOptions.connectorWidth, 1);
                 // Draw the connector
                 if (connectorWidth) {
                     var isNew;
@@ -1285,7 +1294,8 @@ if (seriesTypes.pie) {
                         visibility = dataLabel._attr.visibility;
                         isNew = !connector;
                         if (isNew) {
-                            point.connector = connector = chart.renderer.path()
+                            point.connector = connector = chart.renderer
+                                .path()
                                 .addClass('highcharts-data-label-connector ' +
                                 ' highcharts-color-' + point.colorIndex +
                                 (point.className ?
@@ -1469,7 +1479,8 @@ if (seriesTypes.column) {
         var inverted = this.chart.inverted, series = point.series, 
         // data label box for alignment
         dlBox = point.dlBox || point.shapeArgs, below = pick(point.below, // range series
-        point.plotY > pick(this.translatedThreshold, series.yAxis.len)), 
+        point.plotY >
+            pick(this.translatedThreshold, series.yAxis.len)), 
         // draw it inside the box?
         inside = pick(options.inside, !!this.options.stacking), overshoot;
         // Align to the column itself, or the top of it
