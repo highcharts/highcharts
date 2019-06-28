@@ -2,6 +2,17 @@ QUnit.test('Network Graph', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'networkgraph'
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    states: {
+                        select: {
+                            fillColor: 'orange'
+                        }
+                    }
+                }
+            }
         }
     });
     var point;
@@ -86,6 +97,16 @@ QUnit.test('Network Graph', function (assert) {
         point.graphic.element.getAttribute('stroke-dasharray').replace(/[ px]/g, ''),
         '2,6',
         'Custom series.data.dashStyle (#9798)'
+    );
+
+    chart.series[0].nodes[0].setState('select');
+
+    assert.strictEqual(
+        chart.series[0].nodes.filter(
+            node => node.graphic.element.getAttribute('fill') === 'orange'
+        ).length,
+        1,
+        'Only one node has selected attributes (#11212)'
     );
 
     chart.series[1].setData([['XX', 'XY']]);
