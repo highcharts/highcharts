@@ -952,7 +952,9 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
-            pick(options, this.renderer.globalAnimation, true)
+            pick<(boolean|Highcharts.AnimationOptionsObject)>(
+                options, this.renderer.globalAnimation, true
+            )
         );
 
         // When the page is hidden save resources in the background by not
@@ -2136,7 +2138,7 @@ extend((
             x,
             y,
             attribs = {} as Highcharts.SVGAttributes,
-            alignTo,
+            alignTo: (string|undefined),
             renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             alignFactor,
@@ -2161,7 +2163,7 @@ extend((
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo], renderer);
+        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
 
         // Assign variables
         align = (alignOptions as any).align;

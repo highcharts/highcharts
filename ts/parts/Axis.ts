@@ -485,7 +485,7 @@ declare global {
             public hideCrosshair(): void;
             public init(chart: Chart, userOptions: AxisOptions): void;
             public labelMetrics(): FontMetricsObject;
-            public minFromRange(): number;
+            public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
             public redraw(): void;
             public render(): void;
@@ -4593,8 +4593,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             distance,
             xData,
             loopLength,
-            minArgs,
-            maxArgs,
+            minArgs: Array<(number|null|undefined)>,
+            maxArgs: Array<(number|null|undefined)>,
             minRange;
 
         // Set the automatic minimum range based on the closest point distance
@@ -5035,7 +5035,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (axis.range && defined(axis.max)) {
             // #618, #6773:
             axis.userMin = axis.min = hardMin =
-                Math.max(axis.dataMin as any, axis.minFromRange());
+                Math.max(axis.dataMin as any, axis.minFromRange() as any);
             axis.userMax = hardMax = axis.max as any;
 
             axis.range = null; // don't use it when running setExtremes
@@ -5203,7 +5203,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            axis.isDatetimeAxis && axis.closestPointRange
+            (axis.isDatetimeAxis && axis.closestPointRange) as number
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
@@ -7246,7 +7246,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         value: point && (this.isXAxis ?
                             point.x :
                             pick(point.stackY, point.y)
-                        ),
+                        ) as any,
                         translatedValue: pos
                     }
                 ) || null; // #3189

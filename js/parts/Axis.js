@@ -3993,7 +3993,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
+        minTickInterval = pick(options.minTickInterval, (axis.isDatetimeAxis && axis.closestPointRange));
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }

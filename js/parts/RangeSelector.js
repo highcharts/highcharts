@@ -1414,7 +1414,7 @@ RangeSelector.prototype = {
  *
  * @private
  * @function Highcharts.Axis#minFromRange
- * @return {number}
+ * @return {number|undefined}
  *         The new minimum value.
  */
 Axis.prototype.minFromRange = function () {

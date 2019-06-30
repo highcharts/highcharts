@@ -3141,7 +3141,7 @@ null,
                 if (yBottom === stackThreshold &&
                     stackIndicator.key ===
                         stack[xValue].base) {
-                    yBottom = (pick(isNumber(threshold) && threshold, yAxis.min));
+                    yBottom = (pick((isNumber(threshold) && threshold), yAxis.min));
                 }
                 // #1200, #1232
                 if (yAxis.positiveValuesOnly && yBottom <= 0) {
