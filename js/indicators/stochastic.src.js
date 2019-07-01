@@ -7,12 +7,14 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var merge = H.merge,
-    isArray = H.isArray,
     SMA = H.seriesTypes.sma,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 

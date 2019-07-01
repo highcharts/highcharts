@@ -8,6 +8,10 @@
  */
 'use strict';
 import Highcharts from '../parts/Globals.js';
+var extend = Highcharts.extend;
+
+import U from '../parts/Utilities.js';
+
 import '../parts/SvgRenderer.js';
 import '../parts/Html.js';
 import '../parts/Axis.js';
@@ -34,4 +38,9 @@ import '../parts/DataLabels.js';
 import '../modules/overlapping-datalabels.src.js';
 import '../parts/Interaction.js';
 import '../parts/Responsive.js';
+
+extend(Highcharts, {
+    isArray: U.isArray
+});
+
 export default Highcharts;

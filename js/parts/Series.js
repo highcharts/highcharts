@@ -201,12 +201,13 @@ import H from './Globals.js';
  * @param {global.Event} event
  *        Event that occured.
  */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isArray = H.isArray, isNumber = H.isNumber, isString = H.isString, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, isString = H.isString, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, splat = H.splat, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**

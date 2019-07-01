@@ -494,9 +494,10 @@ import H from './Globals.js';
 * @name Highcharts.PointOptionsObject#labelrank
 * @type {number|undefined}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
+var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size

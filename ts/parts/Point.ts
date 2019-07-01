@@ -635,7 +635,8 @@ declare global {
  * @type {Highcharts.PointOptionsType}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
@@ -643,7 +644,6 @@ var Point: typeof Highcharts.Point,
     erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
     uniqueKey = H.uniqueKey,

@@ -824,10 +824,11 @@ H.isString = function (s) {
  * @return {boolean}
  *         True if the argument is an array.
  */
-H.isArray = function (obj) {
+function isArray(obj) {
     var str = Object.prototype.toString.call(obj);
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
+;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -843,7 +844,7 @@ H.isArray = function (obj) {
  *         True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
-    return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -983,7 +984,7 @@ H.attr = function (elem, prop, value) {
  *         The produced or original array.
  */
 H.splat = function (obj) {
-    return H.isArray(obj) ? obj : [obj];
+    return isArray(obj) ? obj : [obj];
 };
 /**
  * Set a timeout if the delay is given, otherwise perform the function
@@ -1251,7 +1252,7 @@ H.datePropsToTimestamps = function (object) {
         if (H.isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
         }
-        else if (H.isObject(val) || H.isArray(val)) {
+        else if (H.isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -2484,3 +2485,8 @@ if (win.jQuery) {
         }
     };
 }
+// TODO use named exports when supported.
+var utils = {
+    isArray: isArray
+};
+export default utils;

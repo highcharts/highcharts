@@ -7,6 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
@@ -17,7 +21,6 @@ var doc = H.doc,
     extend = H.extend,
     isNumber = H.isNumber,
     fireEvent = H.fireEvent,
-    isArray = H.isArray,
     isObject = H.isObject,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';

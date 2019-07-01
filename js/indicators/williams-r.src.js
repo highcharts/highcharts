@@ -7,11 +7,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import reduceArrayMixin from '../mixins/reduce-array.js';
 
-var isArray = H.isArray,
-    getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
  * The Williams %R series type.

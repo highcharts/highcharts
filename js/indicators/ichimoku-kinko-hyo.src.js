@@ -7,13 +7,14 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 var UNDEFINED,
     seriesType = H.seriesType,
     merge = H.merge,
     color = H.color,
-    isArray = H.isArray,
     defined = H.defined,
     SMA = H.seriesTypes.sma;
 

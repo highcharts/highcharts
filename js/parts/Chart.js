@@ -56,7 +56,8 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -1777,7 +1778,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // get axes
         chart.getAxes();
         // Initialize the series
-        (H.isArray(options.series) ? options.series : []).forEach(
+        (isArray(options.series) ? options.series : []).forEach(
         // #9680
         function (serieOptions) {
             chart.initSeries(serieOptions);
