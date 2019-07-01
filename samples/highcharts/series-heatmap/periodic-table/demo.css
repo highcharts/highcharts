@@ -1,0 +1,11 @@
+#outer-container {
+    max-width: 800px;
+    min-width: 300px;
+    margin: 0 auto;
+}
+#outer-container select {
+    height: 2em;
+}
+#container {
+    height: 500px;
+}
