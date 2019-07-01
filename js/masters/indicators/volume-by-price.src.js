@@ -1,5 +1,5 @@
 /**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/volume-by-price
  * @requires highcharts
  * @requires highcharts/modules/stock

@@ -11,7 +11,9 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 // Utils
 function arrayExtremesOHLC(data) {
@@ -433,7 +435,7 @@ seriesType(
             }
 
             // Checks if series data fits the OHLC format
-            isOHLC = H.isArray(yValues[0]);
+            isOHLC = isArray(yValues[0]);
 
             if (isOHLC && yValues[0].length !== 4) {
                 return H.error(

@@ -8,6 +8,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import 'GanttSeries.js';
 
 var merge = H.merge,
@@ -56,7 +60,7 @@ H.ganttChart = function (renderTo, options, callback) {
 
     // If user hasn't defined axes as array, make it into an array and add a
     // second axis by default.
-    if (!H.isArray(options.xAxis)) {
+    if (!isArray(options.xAxis)) {
         options.xAxis = [options.xAxis || {}, {}];
     }
 

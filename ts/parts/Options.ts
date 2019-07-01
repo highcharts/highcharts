@@ -252,9 +252,6 @@ declare global {
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }
-        interface PlotOptions {
-            [key: string]: Dictionary<any>;
-        }
         interface SubtitleOptions {
             align?: AlignValue;
             floating?: boolean;
@@ -1413,11 +1410,10 @@ H.defaultOptions = {
              *         Theming the button
              *
              * @type {Highcharts.SVGAttributes}
-             * @default {"zIndex":6}
              * @since 2.2
              */
             theme: {
-                /** @ignore-option */
+                /** @internal */
                 zIndex: 6
             },
 
@@ -3929,17 +3925,16 @@ H.defaultOptions = {
          *         Left aligned
          *
          * @type    {Highcharts.AlignObject}
-         * @default {"align": "right", "verticalAlign": "bottom", "x": -10, "y": -5}
          * @since   2.1
          */
         position: {
-            /** @ignore-option */
+            /** @internal */
             align: 'right',
-            /** @ignore-option */
+            /** @internal */
             x: -10,
-            /** @ignore-option */
+            /** @internal */
             verticalAlign: 'bottom',
-            /** @ignore-option */
+            /** @internal */
             y: -5
         },
 

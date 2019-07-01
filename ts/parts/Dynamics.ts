@@ -19,6 +19,7 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         interface Axis {
+            touched?: boolean;
             remove(redraw?: boolean): void;
             setCategories(categories: Array<string>, redraw?: boolean): void;
             setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
@@ -60,20 +61,23 @@ declare global {
             redraw: boolean;
         }
         interface Point {
+            touched?: boolean;
             remove(
                 redraw?: boolean,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
             update(
-                options: (null|number|object|Array<number|string>),
+                options: PointOptionsType,
                 redraw?: boolean,
                 animation?: (boolean|AnimationOptionsObject),
                 runEvent?: boolean
             ): void;
         }
         interface Series {
+            initialType?: string;
+            touched?: boolean;
             addPoint(
-                options: (null|number|object|Array<number|string>),
+                options: PointOptionsType,
                 redraw?: boolean,
                 shift?: boolean,
                 animation?: (boolean|AnimationOptionsObject),
@@ -101,7 +105,12 @@ declare global {
 }
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString
+} = U;
+
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
@@ -119,7 +128,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isArray = H.isArray,
     merge = H.merge,
     objectEach = H.objectEach,
     pick = H.pick,
@@ -773,7 +781,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if (H.isString(newHeight)) {
+        if (isString(newHeight)) {
             newHeight = H.relativeLength(
                 newHeight as string,
                 (newWidth as string) || (chart.chartWidth as any)
@@ -854,7 +862,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#update
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The point options. Point options are handled as described under
      *        the `series.type.data` item for each series type. For example
      *        for a line series, if options is a single number, the point will
@@ -877,7 +885,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     update: function (
         this: Highcharts.Point,
-        options: (null|number|object|Array<number|string>),
+        options: Highcharts.PointOptionsType,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject),
         runEvent?: boolean
@@ -885,7 +893,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         var point = this,
             series = point.series,
             graphic = point.graphic,
-            i,
+            i: number,
             chart = series.chart,
             seriesOptions = series.options;
 
@@ -923,18 +931,18 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             }
 
             // record changes in the parallel arrays
-            i = point.index;
+            i = point.index as any;
             series.updateParallelArrays(point, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
-            seriesOptions.data[i] = (
-                isObject(seriesOptions.data[i], true) ||
+            (seriesOptions.data as any)[i] = (
+                isObject((seriesOptions.data as any)[i], true) ||
                     isObject(options, true)
             ) ?
                 point.options :
-                pick(options, seriesOptions.data[i]);
+                pick(options, (seriesOptions.data as any)[i]);
 
             // redraw
             series.isDirty = series.isDirtyData = true;
@@ -1019,7 +1027,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#addPoint
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The point options. If options is a single number, a point with
      *        that y value is appended to the series. If it is an array, it will
      *        be interpreted as x and y values respectively. If it is an
@@ -1050,7 +1058,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     addPoint: function (
         this: Highcharts.Series,
-        options: (null|number|object|Array<number|string>),
+        options: Highcharts.PointOptionsType,
         redraw?: boolean,
         shift?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject),
@@ -1089,17 +1097,17 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         }
 
         // Insert undefined item
-        series.updateParallelArrays(point, 'splice', i, 0, 0);
+        (series.updateParallelArrays as any)(point, 'splice', i, 0, 0);
         // Update it
-        series.updateParallelArrays(point, i);
+        series.updateParallelArrays(point as any, i);
 
         if (names && point.name) {
             names[x] = point.name;
         }
-        dataOptions.splice(i, 0, options);
+        (dataOptions as any).splice(i, 0, options);
 
         if (isInTheMiddle) {
-            series.data.splice(i, 0, null);
+            series.data.splice(i, 0, null as any);
             series.processData();
         }
 
@@ -1114,9 +1122,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point, 'shift');
+                series.updateParallelArrays(point as any, 'shift');
 
-                dataOptions.shift();
+                (dataOptions as any).shift();
             }
         }
 
@@ -1181,8 +1189,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     points.splice(i, 1);
                 }
                 data.splice(i, 1);
-                series.options.data.splice(i, 1);
-                series.updateParallelArrays(
+                (series.options.data as any).splice(i, 1);
+                (series.updateParallelArrays as any)(
                     point || { series: series },
                     'splice',
                     i,
@@ -1206,7 +1214,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         // Fire the event with a default handler of removing the point
         if (point) {
-            point.firePointEvent('remove', null, remove);
+            point.firePointEvent('remove', null as any, remove);
         } else {
             remove();
         }
@@ -1390,7 +1398,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         }
 
         // Do the merge, with some forced options
-        options = merge(oldOptions, animation, {
+        options = merge(oldOptions, animation as any, {
             // When oldOptions.index is null it should't be cleared.
             // Otherwise navigator series will have wrong indexes (#10193).
             index: oldOptions.index === undefined ?
@@ -1451,7 +1459,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 }
                 if (
                     dataLabels &&
-                    dataLabels.enabled === false
+                    (dataLabels as any).enabled === false
                 ) {
                     kinds.dataLabel = 1;
                 }

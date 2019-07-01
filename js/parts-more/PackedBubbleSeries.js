@@ -109,7 +109,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -653,7 +656,7 @@ seriesType(
             // when enabled allowOverlap.
             if (!series.options.dataLabels.allowOverlap) {
                 series.data.forEach(function (point) {
-                    if (H.isArray(point.dataLabels)) {
+                    if (isArray(point.dataLabels)) {
                         point.dataLabels.forEach(function (dataLabel) {
                             dataLabels.push(dataLabel);
                         });

@@ -506,7 +506,7 @@ Scrollbar.prototype = {
 
         if (!styledMode) {
             scroller.track.attr({
-                fill: options.trackBackgroundColor,
+                fill: options.trackBackgroundColor as any,
                 stroke: options.trackBorderColor,
                 'stroke-width': options.trackBorderWidth
             });
@@ -549,12 +549,12 @@ Scrollbar.prototype = {
 
         if (!styledMode) {
             scroller.scrollbar.attr({
-                fill: options.barBackgroundColor,
+                fill: options.barBackgroundColor as any,
                 stroke: options.barBorderColor,
                 'stroke-width': options.barBorderWidth
             });
             scroller.scrollbarRifles.attr({
-                stroke: options.rifleColor,
+                stroke: options.rifleColor as any,
                 'stroke-width': 1
             });
         }
@@ -673,7 +673,7 @@ Scrollbar.prototype = {
             tempElem.attr({
                 stroke: options.buttonBorderColor,
                 'stroke-width': options.buttonBorderWidth,
-                fill: options.buttonBackgroundColor
+                fill: options.buttonBackgroundColor as any
             });
         }
 
@@ -704,7 +704,7 @@ Scrollbar.prototype = {
 
         if (!this.chart.styledMode) {
             tempElem.attr({
-                fill: options.buttonArrowColor
+                fill: options.buttonArrowColor as any
             });
         }
     },

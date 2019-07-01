@@ -62,6 +62,10 @@ declare global {
         interface EventOptionsObject {
             order?: number;
         }
+        interface EventWrapperObject<T> {
+            fn: Highcharts.EventCallbackFunction<T>;
+            order: number;
+        }
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
@@ -186,13 +190,13 @@ declare global {
             arr: Array<any>,
             fromIndex?: number
         ): number;
-        function isArray(obj: any): boolean;
+        function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: any): boolean;
         function isDOMElement(obj: any): boolean;
         function isFunction(obj: any): boolean;
-        function isNumber(n: any): boolean;
+        function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
-        function isString(s: any): boolean;
+        function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
         /** @deprecated */
@@ -223,7 +227,7 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick(...args: any): any;
+        function pick<T>(...args: Array<T|null|undefined>): T;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce(arr: Array<any>, fn: Function, initialValue: any): any;
@@ -240,10 +244,10 @@ declare global {
         function seriesType(
             type: string,
             parent: string,
-            options: any,
-            props: any,
-            pointProps?: any
-        ): Series;
+            options: SeriesOptionsType,
+            props: Dictionary<any>,
+            pointProps?: Dictionary<any>
+        ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
             chart: Chart
@@ -265,15 +269,6 @@ declare global {
             func: WrapProceedFunction
         ): void;
     }
-}
-
-/**
- * Internal event type
- * @private
- */
-interface EventObject<T> {
-    fn: Highcharts.EventCallbackFunction<T>;
-    order: number;
 }
 
 /**
@@ -531,6 +526,20 @@ interface EventObject<T> {
  *//**
  * Top distance to the page border.
  * @name Highcharts.OffsetObject#top
+ * @type {number}
+ */
+
+/**
+ * Describes a range.
+ *
+ * @interface Highcharts.RangeObject
+ *//**
+ * Maximum number of the range.
+ * @name Highcharts.RangeObject#max
+ * @type {number}
+ *//**
+ * Minimum number of the range.
+ * @name Highcharts.RangeObject#min
  * @type {number}
  */
 
@@ -1219,9 +1228,9 @@ H.pInt = function (s: any, mag?: number): number {
  * @return {boolean}
  *         True if the argument is a string.
  */
-H.isString = function (s: any): (boolean) {
+function isString(s: unknown): s is string {
     return typeof s === 'string';
-};
+}
 
 /**
  * Utility function to check if an item is an array.
@@ -1234,11 +1243,11 @@ H.isString = function (s: any): (boolean) {
  * @return {boolean}
  *         True if the argument is an array.
  */
-H.isArray = function (obj: any): boolean {
+function isArray(obj: unknown): obj is Array<unknown> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
 
 /**
  * Utility function to check if an item is of type object.
@@ -1255,7 +1264,7 @@ H.isArray = function (obj: any): boolean {
  *         True if the argument is an object.
  */
 H.isObject = function (obj: any, strict?: boolean): boolean {
-    return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 
 /**
@@ -1306,7 +1315,7 @@ H.isClass = function (obj: any): boolean {
  * @return {boolean}
  *         True if the item is a finite number
  */
-H.isNumber = function (n: any): boolean {
+H.isNumber = function (n: unknown): n is number {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 };
 
@@ -1376,7 +1385,7 @@ H.attr = function (
     var ret;
 
     // if the prop is a string
-    if (H.isString(prop)) {
+    if (isString(prop)) {
         // set the value
         if (H.defined(value)) {
             elem.setAttribute(prop as string, value as string);
@@ -1412,7 +1421,7 @@ H.attr = function (
  *         The produced or original array.
  */
 H.splat = function (obj: any): Array<any> {
-    return H.isArray(obj) ? obj : [obj];
+    return isArray(obj) ? obj : [obj];
 };
 
 /**
@@ -1492,18 +1501,20 @@ H.extend = function<T> (a: T, b: object): T {
 };
 
 
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
- * @function Highcharts.pick
+ * @function Highcharts.pick<T>
  *
- * @param {...*} items
+ * @param {...Array<T|null|undefined>} items
  *        Variable number of arguments to inspect.
  *
- * @return {*}
+ * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
 H.pick = function (): any {
+    /* eslint-enable valid-jsdoc */
     var args = arguments,
         i,
         arg,
@@ -1729,7 +1740,7 @@ H.datePropsToTimestamps = function (object: any): void {
     H.objectEach(object, function (val: any, key: string): void {
         if (H.isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
-        } else if (H.isObject(val) || H.isArray(val)) {
+        } else if (H.isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -2789,8 +2800,8 @@ H.addEvent = function<T> (
 
     // Order the calls
     events[type].sort(function (
-        a: EventObject<T>,
-        b: EventObject<T>
+        a: Highcharts.EventWrapperObject<T>,
+        b: Highcharts.EventWrapperObject<T>
     ): number {
         return a.order - b.order;
     });
@@ -2886,7 +2897,7 @@ H.removeEvent = function<T> (
             if (type) {
                 events = (
                     eventCollection[type] || []
-                ) as EventObject<T>[];
+                ) as Highcharts.EventWrapperObject<T>[];
 
                 if (fn) {
                     eventCollection[type] = events.filter(
@@ -2983,8 +2994,8 @@ H.fireEvent = function<T> (
         }
 
         const fireInOrder = (
-            protoEvents: EventObject<any>[] = [],
-            hcEvents: EventObject<any>[] = []
+            protoEvents: Highcharts.EventWrapperObject<any>[] = [],
+            hcEvents: Highcharts.EventWrapperObject<any>[] = []
         ): void => {
             let iA = 0;
             let iB = 0;
@@ -3133,10 +3144,10 @@ H.animate = function (
 H.seriesType = function (
     type: string,
     parent: string,
-    options: any,
-    props: any,
-    pointProps?: any
-): Highcharts.Series {
+    options: Highcharts.SeriesOptionsType,
+    props: Highcharts.Dictionary<any>,
+    pointProps?: Highcharts.Dictionary<any>
+): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;
 
@@ -3234,7 +3245,7 @@ if ((win as any).jQuery) {
             if (args[0]) {
                 new (H as any)[ // eslint-disable-line no-new
                     // Constructor defaults to Chart
-                    H.isString(args[0]) ? args.shift() : 'Chart'
+                    isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
                 return this;
             }
@@ -3245,3 +3256,11 @@ if ((win as any).jQuery) {
         }
     };
 }
+
+// TODO use named exports when supported.
+const utils = {
+    isArray,
+    isString
+};
+
+export default utils;

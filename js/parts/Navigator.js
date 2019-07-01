@@ -9,14 +9,15 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, extend = H.extend, hasTouch = H.hasTouch, isArray = H.isArray, isNumber = H.isNumber, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, extend = H.extend, hasTouch = H.hasTouch, isNumber = H.isNumber, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -332,9 +333,9 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @ignore-option */
+                /** @internal */
                 enabled: false,
-                /** @ignore-option */
+                /** @internal */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',
@@ -1528,9 +1529,9 @@ Navigator.prototype = {
             isArray(chartNavigatorSeriesOptions)) {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
-            chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
-            chartNavigatorSeriesOptions
-                .forEach(function (userSeriesOptions, i) {
+            chartNavigatorSeriesOptions =
+                H.splat(chartNavigatorSeriesOptions);
+            chartNavigatorSeriesOptions.forEach(function (userSeriesOptions, i) {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
                 mergedNavSeriesOptions = merge(defaultOptions.navigator.series, {

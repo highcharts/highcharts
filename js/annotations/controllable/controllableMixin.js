@@ -1,6 +1,9 @@
 'use strict';
 import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
+
+import U from './../../parts/Utilities.js';
+var isString = U.isString;
+
 import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
@@ -163,7 +166,7 @@ var controllableMixin = {
                     this,
                     pointOptions
                 );
-            } else if (H.isString(pointOptions)) {
+            } else if (isString(pointOptions)) {
                 point = this.chart.get(pointOptions) || null;
             } else if (typeof pointOptions === 'function') {
                 var pointConfig = pointOptions.call(point, this);

@@ -1,9 +1,10 @@
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 var deg2rad = H.deg2rad,
     find = H.find,
-    isArray = H.isArray,
     isNumber = H.isNumber;
 
 /**

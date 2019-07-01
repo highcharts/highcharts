@@ -255,6 +255,19 @@ import H from './Globals.js';
 * @type {number}
 */
 /**
+ * Describes a range.
+ *
+ * @interface Highcharts.RangeObject
+ */ /**
+* Maximum number of the range.
+* @name Highcharts.RangeObject#max
+* @type {number}
+*/ /**
+* Minimum number of the range.
+* @name Highcharts.RangeObject#min
+* @type {number}
+*/
+/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.
@@ -797,9 +810,9 @@ H.pInt = function (s, mag) {
  * @return {boolean}
  *         True if the argument is a string.
  */
-H.isString = function (s) {
+function isString(s) {
     return typeof s === 'string';
-};
+}
 /**
  * Utility function to check if an item is an array.
  *
@@ -811,10 +824,10 @@ H.isString = function (s) {
  * @return {boolean}
  *         True if the argument is an array.
  */
-H.isArray = function (obj) {
+function isArray(obj) {
     var str = Object.prototype.toString.call(obj);
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
 /**
  * Utility function to check if an item is of type object.
  *
@@ -830,7 +843,7 @@ H.isArray = function (obj) {
  *         True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
-    return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -936,7 +949,7 @@ H.defined = function (obj) {
 H.attr = function (elem, prop, value) {
     var ret;
     // if the prop is a string
-    if (H.isString(prop)) {
+    if (isString(prop)) {
         // set the value
         if (H.defined(value)) {
             elem.setAttribute(prop, value);
@@ -970,7 +983,7 @@ H.attr = function (elem, prop, value) {
  *         The produced or original array.
  */
 H.splat = function (obj) {
-    return H.isArray(obj) ? obj : [obj];
+    return isArray(obj) ? obj : [obj];
 };
 /**
  * Set a timeout if the delay is given, otherwise perform the function
@@ -1040,18 +1053,20 @@ H.extend = function (a, b) {
     }
     return a;
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
- * @function Highcharts.pick
+ * @function Highcharts.pick<T>
  *
- * @param {...*} items
+ * @param {...Array<T|null|undefined>} items
  *        Variable number of arguments to inspect.
  *
- * @return {*}
+ * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
 H.pick = function () {
+    /* eslint-enable valid-jsdoc */
     var args = arguments, i, arg, length = args.length;
     for (i = 0; i < length; i++) {
         arg = args[i];
@@ -1236,7 +1251,7 @@ H.datePropsToTimestamps = function (object) {
         if (H.isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
         }
-        else if (H.isObject(val) || H.isArray(val)) {
+        else if (H.isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -2460,7 +2475,7 @@ if (win.jQuery) {
             if (args[0]) {
                 new H[ // eslint-disable-line no-new
                 // Constructor defaults to Chart
-                H.isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
+                isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
                 return this;
             }
             // When called without parameters or with the return argument,
@@ -2469,3 +2484,9 @@ if (win.jQuery) {
         }
     };
 }
+// TODO use named exports when supported.
+var utils = {
+    isArray: isArray,
+    isString: isString
+};
+export default utils;

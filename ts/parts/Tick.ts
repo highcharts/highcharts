@@ -207,7 +207,7 @@ H.Tick.prototype = {
                     pos
             ),
             label = tick.label,
-            tickPositionInfo = (tickPositions as any).info,
+            tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
@@ -824,12 +824,12 @@ H.Tick.prototype = {
                 (
                     tick.isFirst &&
                     !tick.isLast &&
-                    !pick(options.showFirstLabel, 1)
+                    !pick(options.showFirstLabel, 1 as any)
                 ) ||
                 (
                     tick.isLast &&
                     !tick.isFirst &&
-                    !pick(options.showLastLabel, 1)
+                    !pick(options.showLastLabel, 1 as any)
                 )
             ) {
                 show = false;

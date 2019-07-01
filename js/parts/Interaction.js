@@ -57,13 +57,14 @@ import H from './Globals.js';
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, hasTouch = H.hasTouch, isObject = H.isObject, isArray = H.isArray, Legend = H.Legend, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, hasTouch = H.hasTouch, isObject = H.isObject, Legend = H.Legend, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -651,7 +652,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (state, move) {
         var point = this, plotX = Math.floor(point.plotX), // #4586
-        plotY = point.plotY, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] || {}), markerOptions = (defaultPlotOptions[series.type].marker &&
+        plotY = point.plotY, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
+            {}), markerOptions = (defaultPlotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
             markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;
@@ -665,7 +667,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             (stateOptions.enabled === false) ||
             // general point marker's state options is disabled
             (state && (stateDisabled ||
-                (normalDisabled && markerStateOptions.enabled === false))) ||
+                (normalDisabled &&
+                    markerStateOptions.enabled === false))) ||
             // individual point marker's state options is disabled
             (state &&
                 pointMarker.states &&
@@ -750,7 +753,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
             }
             if (stateMarkerGraphic) {
-                stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ?
+                stateMarkerGraphic[state &&
+                    chart.isInsidePlot(plotX, plotY, chart.inverted) ?
                     'show' :
                     'hide'](); // #2450
                 stateMarkerGraphic.element.point = point; // #4310

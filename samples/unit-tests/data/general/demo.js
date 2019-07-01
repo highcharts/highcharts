@@ -92,3 +92,42 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         'Non-cartesian series should pick columns without X-column (#10984)'
     );
 });
+
+QUnit.test('Data config on updates', function (assert) {
+    var chart = Highcharts.chart('container', {
+            data: {
+                csv: [
+                    'X values,First,Second,Third,Fourth,Fifth,Sixth',
+                    'Oak,10,9,11,20,19,21',
+                    'Pine,11,10,12,21,20,22',
+                    'Birch,12,11,13,22,21,23'
+                ].join('\n'),
+                switchRowsAndColumns: true
+            }
+        }),
+        oldDataLength = chart.series.length;
+
+    chart.update({
+        data: {
+            switchRowsAndColumns: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.series.length,
+        6,
+        'switchRowsAndColumns should change number of series (#11095).'
+    );
+
+    chart.update({
+        data: {
+            switchRowsAndColumns: true
+        }
+    });
+
+    assert.strictEqual(
+        chart.series.length,
+        oldDataLength,
+        'Switching back switchRowsAndColumns should restore number of series (#11095).'
+    );
+});

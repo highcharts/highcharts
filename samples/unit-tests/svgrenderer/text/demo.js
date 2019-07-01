@@ -1,3 +1,67 @@
+QUnit.test('Hide label with useHTML (#4938)', function (assert) {
+    var chart = Highcharts.chart('container', {}),
+        renderer = chart.renderer,
+        g = renderer.g().add(),
+        text = renderer.text('Label', 140, 140, true).add(g);
+    assert.strictEqual(
+        text.attr('visibility'),
+        0,
+        'Text element is visible'
+    );
+    assert.strictEqual(
+        g.attr('visibility'),
+        0,
+        'Group element is visible'
+    );
+    text.hide();
+    assert.strictEqual(
+        text.attr('visibility'),
+        'hidden',
+        'Text element is hidden'
+    );
+    g.hide();
+    assert.strictEqual(
+        g.attr('visibility'),
+        'hidden',
+        'Group element is hidden'
+    );
+});
+
+QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    // Reference point
+    ren.circle(100, 100, 3)
+        .attr({
+            fill: 'red'
+        })
+        .add();
+
+    // Add an empty text with useHTML, align it to the right
+    var text = ren.text('', 100, 100, true)
+        .attr({
+            align: 'right'
+        })
+        .add();
+
+    // Update the text
+    text.attr({
+        text: 'Hello World'
+    });
+
+
+    assert.strictEqual(
+        text.element.offsetLeft + text.element.offsetWidth,
+        100,
+        'Text is right aligned'
+    );
+
+});
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
 QUnit.test('Text word wrap with a long word (#3158)', function (assert) {

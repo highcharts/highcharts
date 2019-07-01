@@ -9,17 +9,13 @@ const {
     sep
 } = require('path');
 const {
-    readFileSync
-} = require('fs');
-const {
     buildModules,
     buildDistFromModules,
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
     getOrderedDependencies,
-    getRequires,
-    regexGetCapture
+    getRequires
 } = require('highcharts-assembler/src/dependencies.js');
 const {
     exists,
@@ -28,20 +24,17 @@ const {
 const {
     checkDependency
 } = require('./filesystem.js');
-const build = require('highcharts-assembler');
+const build = require('highcharts-assembler/index.js');
 
 // TODO move to a utils file
 const isArray = x => Array.isArray(x);
 
 /**
- * Get the product version from build.properties.
+ * Get the product version from package.json.
  * The product version is used in license headers and in package names.
  * @return {string|null} Returns version number or null if not found.
  */
-const getProductVersion = () => {
-    const properties = readFileSync('./build.properties', 'utf8');
-    return regexGetCapture(/product\.version=(.+)/, properties);
-};
+const getProductVersion = () => require('../package.json').version;
 
 const getBuildOptions = input => {
     const {
@@ -106,7 +99,7 @@ const getListOfDependencies = (files, pathSource) => {
 
 const getTime = () => (new Date()).toTimeString().substr(0, 8);
 
-const watchSourceFiles = (event, types) => {
+const watchSourceFiles = (event, { type: types, version }) => {
     const pathFile = event.path;
     const base = './js/';
     const output = './code/';
@@ -126,7 +119,8 @@ const watchSourceFiles = (event, types) => {
         base,
         files: [pathRelative.split(sep).join('/')],
         output,
-        type: types
+        type: types,
+        version
     });
 };
 
@@ -184,7 +178,8 @@ const fnFirstBuild = options => {
     buildModules({
         base: pathJSParts,
         output: pathESModules,
-        type: types
+        type: types,
+        version
     });
     const promises = [];
     promises.push(require('./error-messages')());
@@ -215,7 +210,7 @@ const getBuildScripts = params => {
     const result = {
         fnFirstBuild: () => fnFirstBuild(options),
         mapOfWatchFn: {
-            'js/**/*.js': event => watchSourceFiles(event, types)
+            'js/**/*.js': event => watchSourceFiles(event, options)
         }
     };
     types.forEach(type => {

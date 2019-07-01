@@ -372,9 +372,10 @@ import H from './Globals.js';
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray, isString = U.isString;
 import './Color.js';
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, erase = H.erase, hasTouch = H.hasTouch, isArray = H.isArray, isFirefox = H.isFirefox, isMS = H.isMS, isObject = H.isObject, isString = H.isString, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, pInt = H.pInt, removeEvent = H.removeEvent, splat = H.splat, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, erase = H.erase, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isObject = H.isObject, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, pInt = H.pInt, removeEvent = H.removeEvent, splat = H.splat, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link

@@ -11,9 +11,9 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
 
-var isArray = H.isArray;
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 // Utils:
 function sumArray(array) {

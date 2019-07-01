@@ -423,7 +423,9 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * @return {Array<number>}
      */
     getExtendedPositions: function () {
-        var axis = this, chart = axis.chart, grouping = axis.series[0].currentDataGrouping, ordinalIndex = axis.ordinalIndex, key = grouping ? grouping.count + grouping.unitName : 'raw', overscroll = axis.options.overscroll, extremes = axis.getExtremes(), fakeAxis, fakeSeries;
+        var axis = this, chart = axis.chart, grouping = axis.series[0].currentDataGrouping, ordinalIndex = axis.ordinalIndex, key = grouping ?
+            grouping.count + grouping.unitName :
+            'raw', overscroll = axis.options.overscroll, extremes = axis.getExtremes(), fakeAxis, fakeSeries;
         // If this is the first time, or the ordinal index is deleted by
         // updatedData,
         // create it.
@@ -464,7 +466,10 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                         forced: true,
                         // doesn't matter which, use the fastest
                         approximation: 'open',
-                        units: [[grouping.unitName, [grouping.count]]]
+                        units: [[
+                                grouping.unitName,
+                                [grouping.count]
+                            ]]
                     } : {
                         enabled: false
                     }
@@ -543,7 +548,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         if (!groupIntervalFactor) {
             // Register all the distances in an array
             for (i = 0; i < len - 1; i++) {
-                distances[i] = processedXData[i + 1] - processedXData[i];
+                distances[i] =
+                    processedXData[i + 1] - processedXData[i];
             }
             // Sort them and find the median
             distances.sort(function (a, b) {

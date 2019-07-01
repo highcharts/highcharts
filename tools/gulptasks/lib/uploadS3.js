@@ -35,6 +35,7 @@ const HTTP_EXPIRES = {
 /**
  * Returns the s3 bucket to use. Either defined
  * in HIGHCHARTS_S3_BUCKET env var or in git-ignore-me.properties file.
+ * in HIGHCHARTS_S3_BUCKET env var or in git-ignore-me.properties file.
  * @return {string} the s3bucket to upload to.
  */
 function getS3BucketConfig() {
@@ -122,7 +123,7 @@ function uploadFiles(params) {
     log.starting(`Uploading ${files.length} files for ${name} to bucket ${s3Bucket}:\n`);
 
     const defaultParams = {
-        batchSize: 40,
+        batchSize: 400,
         bucket: s3Bucket,
         onError: err => {
             log.failure(`File(s) errored:\n${err && err.message} ${err.from ? ' - ' + err.from : ''}`);
