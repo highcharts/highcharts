@@ -4,6 +4,10 @@ QUnit.test("pointBreak callback wasn't called for xAxis and different series tha
         iteratorAB = 0;
 
     $('#container').highcharts({
+        chart: {
+            width: 500,
+            height: 400
+        },
         yAxis: {
             breaks: [{
                 from: 5,
