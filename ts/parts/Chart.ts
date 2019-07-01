@@ -90,8 +90,7 @@ declare global {
             public symbolCounter: number;
             public time: Time;
             public title?: SVGElement;
-            public titleOffset: number;
-            public titleOffsetBottom: number;
+            public titleOffset: Array<number>;
             public unbindReflow?: Function;
             public userOptions: Options;
             public xAxis: Array<Axis>;
@@ -1146,8 +1145,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.Chart,
         redraw?: boolean
     ): void {
-        var titleOffset = 0,
-            titleOffsetBottom = 0,
+        var titleOffset = [0, 0, 0],
             requiresDirtyBox,
             renderer = this.renderer,
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
@@ -1161,7 +1159,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 titleOptions = (this as any).options[key],
                 offset = key === 'title' ? -3 :
                     // Floating subtitle (#6574)
-                    titleOptions.verticalAlign ? 0 : titleOffset + 2,
+                    titleOptions.verticalAlign ? 0 : titleOffset[0] + 2,
                 bottomAlign = (
                     key === 'subtitle' &&
                     titleOptions.verticalAlign === 'bottom'
@@ -1190,8 +1188,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }, titleOptions), false, 'spacingBox');
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                    titleOffset = Math.ceil(
-                        titleOffset +
+                    titleOffset[0] = Math.ceil(
+                        titleOffset[0] +
                         height
                     );
                 }
@@ -1199,19 +1197,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     key === 'subtitle' &&
                     titleOptions.verticalAlign === 'bottom'
                 ) {
-                    titleOffsetBottom = height;
+                    titleOffset[2] = height;
                 }
             }
         }, this);
 
         requiresDirtyBox = (
-            this.titleOffset !== titleOffset ||
-            this.titleOffsetBottom !== titleOffsetBottom
+            !this.titleOffset ||
+            this.titleOffset.join(',') !== titleOffset.join(',')
         );
 
         // Used in getMargins
         this.titleOffset = titleOffset;
-        this.titleOffsetBottom = titleOffsetBottom;
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1534,23 +1531,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (this: Highcharts.Chart, skipAxes?: boolean): void {
-        const { spacing, margin, titleOffset, titleOffsetBottom } = this;
+        const { spacing, margin, titleOffset } = this;
 
         this.resetMargins();
 
         // Adjust for title and subtitle
-        if (titleOffset && !defined(margin[0])) {
+        if (titleOffset[0] && !defined(margin[0])) {
             this.plotTop = Math.max(
                 this.plotTop,
-                titleOffset + (this.options.title as any).margin + spacing[0]
+                titleOffset[0] + (this.options.title as any).margin + spacing[0]
             );
         }
 
-        if (titleOffsetBottom && !defined(margin[2])) {
+        if (titleOffset[2] && !defined(margin[2])) {
             this.marginBottom = Math.max(
                 this.marginBottom,
-                titleOffsetBottom + (this.options.title as any).margin +
-                    spacing[2]
+                titleOffset[2] + (this.options.title as any).margin + spacing[2]
             );
         }
 

@@ -641,9 +641,9 @@ Highcharts.Legend.prototype = {
      */
     adjustMargins: function (margin, spacing) {
         var chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
-            chart.titleOffset + titleMarginOption :
+            chart.titleOffset[0] + titleMarginOption :
             0, titleMarginBottom = titleMarginOption !== undefined ?
-            chart.titleOffsetBottom + titleMarginOption :
+            chart.titleOffset[2] + titleMarginOption :
             0;
         if (alignment) {
             ([
@@ -660,10 +660,10 @@ Highcharts.Legend.prototype = {
                         pick(options.margin, 12) +
                         spacing[side] +
                         (side === 0 &&
-                            (chart.titleOffset === 0 ?
+                            (chart.titleOffset[0] === 0 ?
                                 0 : titleMargin)) + // #7428, #7894
                         (side === 2 &&
-                            (chart.titleOffsetBottom === 0 ?
+                            (chart.titleOffset[2] === 0 ?
                                 0 : titleMarginBottom))));
                 }
             });
@@ -838,11 +838,11 @@ Highcharts.Legend.prototype = {
             var vAlign = legend.getAlignment().charAt(1);
             var alignTo = chart.spacingBox;
             var y = alignTo.y;
-            if (vAlign === 't' && chart.titleOffset > 0) {
-                y += chart.titleOffset + margin;
+            if (vAlign === 't' && chart.titleOffset[0] > 0) {
+                y += chart.titleOffset[0] + margin;
             }
-            else if (vAlign === 'b' && chart.titleOffsetBottom > 0) {
-                y -= chart.titleOffsetBottom + margin;
+            else if (vAlign === 'b' && chart.titleOffset[2] > 0) {
+                y -= chart.titleOffset[2] + margin;
             }
             if (y !== alignTo.y) {
                 alignTo = merge(alignTo, { y: y });
