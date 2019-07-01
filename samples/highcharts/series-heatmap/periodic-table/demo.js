@@ -49,7 +49,8 @@ Highcharts.ajax({
 
             tooltip: {
                 headerFormat: '<b>{point.point.number}. {point.point.name}</b><br>',
-                pointFormat: 'Value: {point.value}'
+                pointFormat: '{series.name}: {point.value}',
+                valueSuffix: 'u'
             },
 
             plotOptions: {
@@ -65,6 +66,7 @@ Highcharts.ajax({
             },
 
             series: [{
+                name: 'Atomic mass',
                 type: 'heatmap',
                 borderWidth: 1,
                 data: setPointsValue('mass', true),
@@ -81,14 +83,20 @@ Highcharts.ajax({
             document.getElementById('dataset'),
             'change',
             function () {
-                chart.setTitle(
-                    null,
-                    { text: this.options[this.selectedIndex].text },
-                    false
-                );
-                chart.series[0].setData(
-                    setPointsValue(this.value, false)
-                );
+                var selectedOption = this.options[this.selectedIndex];
+
+                chart.update({
+                    subtitle: {
+                        text: selectedOption.text
+                    },
+                    tooltip: {
+                        valueSuffix: selectedOption.getAttribute('data-suffix')
+                    },
+                    series: [{
+                        name: selectedOption.text,
+                        data: setPointsValue(this.value, false)
+                    }]
+                });
             }
         );
 
