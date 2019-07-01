@@ -24,6 +24,7 @@ declare global {
     interface Window {
         Image: typeof Image;
         opera?: any;
+        TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
@@ -97,7 +98,9 @@ declare global {
             trackByArea?: any; // @todo
         }
         interface Point {
+            allowShadow?: unknown; // @todo
             below?: any; // @todo
+            dashStyle?: unknown; // @todo
             dataLabelOnNull?: any; // @todo
             dist?: any; // @todo
             distX?: any; // @todo
@@ -122,6 +125,9 @@ declare global {
             isValid: Function; // @todo
             setVisible: Function; // @todo
         }
+        interface PointOptionsObject {
+            states?: any; // @todo
+        }
         interface Series {
             allowDG?: any; // @todo
             areaPath?: any; // @todo
@@ -143,6 +149,7 @@ declare global {
             modifyValue?: any; // @todo
             noSharedTooltip?: any; // @todo
             pointArrayMap?: any; // @todo
+            pointAttrToOptions?: any; // @todo
             pointXOffset?: any; // @todo
             resetZones?: any; // @todo
             showLine?: any; // @todo
@@ -161,6 +168,10 @@ declare global {
             translate(position?: number): void; // @todo
             toYData: Function; // @todo
             updateTotals: Function; // @todo
+        }
+        interface SeriesStatesHoverOptions {
+            dashStyle?: unknown; // @todo
+            opacity?: unknown; // @todo
         }
         interface SVGRenderer {
             invertChild: Function; // @todo
@@ -224,12 +235,12 @@ var glob = typeof win === 'undefined' ?
     );
 
 var H: GlobalHighcharts = {
-    product: '@product.name@',
+    product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
+    hasTouch: !!win.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,

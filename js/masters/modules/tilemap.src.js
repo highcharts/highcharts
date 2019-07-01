@@ -1,5 +1,5 @@
 /**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highmaps JS v@product.version@ (@product.date@)
  * @module highcharts/modules/tilemap
  * @requires highcharts
  * @requires highcharts/modules/map

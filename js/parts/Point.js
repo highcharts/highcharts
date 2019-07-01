@@ -142,7 +142,7 @@ import Highcharts from './Globals.js';
 * The appearance of the point marker when selected. In order to allow a point
 * to be selected, set the `series.allowPointSelect` option to true.
 * @name Highcharts.PointMarkerStatesOptionsObject#select
-* @type {Highcharts.PointStatesSelectOptionObject}
+* @type {Highcharts.PointStatesSelectOptionsObject}
 */
 /**
  * @interface Highcharts.PointMarkerOptionsObject
@@ -388,34 +388,34 @@ import Highcharts from './Globals.js';
 */ /**
 * The hover state for a single point marker.
 * @name Highcharts.PointStatesOptionsObject#select
-* @type {Highcharts.PointStatesSelectOptionObject|undefined}
+* @type {Highcharts.PointStatesSelectOptionsObject|undefined}
 */
 /**
  * The appearance of the point marker when selected. In order to allow a point
  * to be selected, set the `series.allowPointSelect` option to true.
  *
- * @interface Highcharts.PointStatesSelectOptionObject
+ * @interface Highcharts.PointStatesSelectOptionsObject
  */ /**
 * Enable or disable visible feedback for selection.
-* @name Highcharts.PointStatesSelectOptionObject#enabled
+* @name Highcharts.PointStatesSelectOptionsObject#enabled
 * @type {boolean|undefined}
 */ /**
 * The fill color of the point marker.
-* @name Highcharts.PointStatesSelectOptionObject#fillColor
+* @name Highcharts.PointStatesSelectOptionsObject#fillColor
 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The color of the point marker's outline. When `undefined`, the series' or
 * point's color is used.
-* @name Highcharts.PointStatesSelectOptionObject#lineColor
+* @name Highcharts.PointStatesSelectOptionsObject#lineColor
 * @type {Highcharts.ColorString|undefined}
 */ /**
 * The width of the point marker's outline.
-* @name Highcharts.PointStatesSelectOptionObject#lineWidth
+* @name Highcharts.PointStatesSelectOptionsObject#lineWidth
 * @type {number|undefined}
 */ /**
 * The radius of the point marker. In hover state, it defaults to the normal
 * state's radius + 2.
-* @name Highcharts.PointStatesSelectOptionObject#radius
+* @name Highcharts.PointStatesSelectOptionsObject#radius
 * @type {number|undefined}
 */
 /**

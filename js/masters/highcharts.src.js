@@ -1,5 +1,5 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
  * (c) 2009-2018 Torstein Honsi

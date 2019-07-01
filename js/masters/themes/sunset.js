@@ -1,5 +1,5 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v@product.version@ (@product.date@)
  *
  * (c) 2009-2019 Highsoft AS
  *
