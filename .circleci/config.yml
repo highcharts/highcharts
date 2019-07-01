@@ -156,7 +156,7 @@ jobs:
           command: npx gulp jsdoc
       - run:
           name: Upload api docs to S3
-          command: npx gulp upload-api --silent
+          command: npx gulp upload-api --silent --noextensions
       - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
 
   deploy_changelog:
