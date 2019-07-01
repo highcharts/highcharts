@@ -1243,7 +1243,7 @@ H.isString = function (s: unknown): s is string {
  * @return {boolean}
  *         True if the argument is an array.
  */
-function isArray<T>(obj: unknown): obj is Array<T> {
+function isArray(obj: unknown): obj is Array<unknown> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
