@@ -25,6 +25,7 @@ declare global {
     namespace Highcharts {
         type TooltipShapeValue = ('callout'|'circle'|'square');
         interface Series {
+            noSharedTooltip?: boolean;
             tt?: SVGElement;
         }
         interface TooltipFormatterCallbackFunction {

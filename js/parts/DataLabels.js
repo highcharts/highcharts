@@ -59,7 +59,7 @@ import H from './Globals.js';
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string}
+ * @return {string|undefined}
  *         Formatted data label text
  */
 /**

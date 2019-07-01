@@ -157,6 +157,8 @@ declare global {
             public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
+            public shapeArgs?: (BBoxObject|Dictionary<number>);
+            public shapeType?: string;
             public state?: string;
             public total?: number;
             public visible: boolean;
