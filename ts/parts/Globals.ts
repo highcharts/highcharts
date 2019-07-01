@@ -171,7 +171,7 @@ declare global {
         }
         interface SeriesStatesHoverOptions {
             dashStyle?: unknown; // @todo
-            opacity?: unknown; // @todo
+            opacity?: any; // @todo
         }
         interface SVGRenderer {
             invertChild: Function; // @todo
