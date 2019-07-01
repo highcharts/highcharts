@@ -190,7 +190,7 @@ declare global {
             arr: Array<any>,
             fromIndex?: number
         ): number;
-        function isArray<T>(obj: unknown): obj is Array<T>;
+        function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: any): boolean;
         function isDOMElement(obj: any): boolean;
         function isFunction(obj: any): boolean;
