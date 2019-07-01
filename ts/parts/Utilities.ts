@@ -1247,7 +1247,7 @@ function isArray(obj: unknown): obj is Array<unknown> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
 
 /**
  * Utility function to check if an item is of type object.
