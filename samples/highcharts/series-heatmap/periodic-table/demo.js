@@ -5,7 +5,6 @@ Highcharts.ajax({
         function setPointsValue(prop, init) {
             return periodicTable.map(function (element) {
                 var point;
-
                 if (init) {
                     // On init, provide all data
                     element.value = element.z = element[prop];
@@ -18,38 +17,39 @@ Highcharts.ajax({
                     };
                 }
 
+                point.id = 'i' + element.number; // Used for matching on update
                 return point;
             });
         }
 
         var chart = Highcharts.chart('container', {
 
-            chart: {
-                plotBorderWidth: 1
-            },
-
             title: {
-                text: 'Periodic Table'
+                text: 'Periodic Table',
+                floating: true
             },
 
             subtitle: {
-                text: "Atomic mass"
+                text: 'Atomic mass',
+                floating: true,
+                y: 30
             },
 
             xAxis: {
                 visible: false
             },
 
-            colorAxis: { },
+            colorAxis: {
+                stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']]
+            },
 
             legend: {
                 enabled: true
             },
 
             tooltip: {
-                formatter: function () {
-                    return this.point.options.name + ': ' + this.point.options.value;
-                }
+                headerFormat: '<b>{point.point.number}. {point.point.name}</b><br>',
+                pointFormat: 'Value: {point.value}'
             },
 
             plotOptions: {
@@ -70,9 +70,9 @@ Highcharts.ajax({
                 data: setPointsValue('mass', true),
                 dataLabels: {
                     enabled: true,
-                    color: '#000000',
                     format: '{point.options.symbol}'
-                }
+                },
+                borderColor: '#FFFFFF'
             }]
         });
 
