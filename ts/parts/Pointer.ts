@@ -542,7 +542,7 @@ Highcharts.Pointer.prototype = {
                 chartX: xAxis.len + (xAxis.pos as any) - plotX,
                 chartY: yAxis.len + (yAxis.pos as any) - (point.plotY as any)
             } : {
-                chartX: plotX + xAxis.pos,
+                chartX: plotX + (xAxis.pos as any),
                 chartY: (point.plotY as any) + (yAxis.pos as any)
             };
         }

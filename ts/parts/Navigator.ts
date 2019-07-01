@@ -800,7 +800,7 @@ Axis.prototype.toFixedRange = function (
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined;
+        newMin = newMax = undefined as any;
     }
 
     return {
@@ -1341,7 +1341,7 @@ Navigator.prototype = {
             navigator.scrollbar.position(
                 scrollbarLeft,
                 scrollbarTop,
-                navigatorWidth,
+                navigatorWidth as any,
                 scrollbarHeight as any
             );
             // Keep scale 0-1

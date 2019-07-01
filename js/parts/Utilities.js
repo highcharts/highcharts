@@ -1053,18 +1053,20 @@ H.extend = function (a, b) {
     }
     return a;
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
- * @function Highcharts.pick
+ * @function Highcharts.pick<T>
  *
- * @param {...*} items
+ * @param {...Array<T|null|undefined>} items
  *        Variable number of arguments to inspect.
  *
- * @return {*}
+ * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
 H.pick = function () {
+    /* eslint-enable valid-jsdoc */
     var args = arguments, i, arg, length = args.length;
     for (i = 0; i < length; i++) {
         arg = args[i];

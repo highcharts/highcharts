@@ -1194,10 +1194,8 @@ H.Tooltip.prototype = {
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick(
-                        point.colorIndex,
-                        series.colorIndex,
-                        'none'
+                    colorClass = 'highcharts-color-' + pick<(number|string)>(
+                        point.colorIndex, series.colorIndex, 'none'
                     ),
                     target,
                     x,

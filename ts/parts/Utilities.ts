@@ -227,7 +227,7 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick(...args: any): any;
+        function pick<T>(...args: Array<T|null|undefined>): T;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce(arr: Array<any>, fn: Function, initialValue: any): any;
@@ -1501,18 +1501,20 @@ H.extend = function<T> (a: T, b: object): T {
 };
 
 
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
- * @function Highcharts.pick
+ * @function Highcharts.pick<T>
  *
- * @param {...*} items
+ * @param {...Array<T|null|undefined>} items
  *        Variable number of arguments to inspect.
  *
- * @return {*}
+ * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
 H.pick = function (): any {
+    /* eslint-enable valid-jsdoc */
     var args = arguments,
         i,
         arg,

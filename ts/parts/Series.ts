@@ -4198,7 +4198,10 @@ H.Series = H.seriesType(
                             (stack as any)[xValue as any].base
                     ) {
                         yBottom = (
-                            pick(isNumber(threshold) && threshold, yAxis.min)
+                            pick<number>(
+                                (isNumber(threshold) && threshold) as any,
+                                yAxis.min
+                            )
                         );
                     }
 
