@@ -276,8 +276,8 @@ seriesType(
                 point.shapeArgs = {
                     x: Math.min(x1, x2) + pointPadding,
                     y: Math.min(y1, y2) + pointPadding,
-                    width: Math.abs(x2 - x1) - pointPadding * 2,
-                    height: Math.abs(y2 - y1) - pointPadding * 2
+                    width: Math.max(Math.abs(x2 - x1) - pointPadding * 2, 0),
+                    height: Math.max(Math.abs(y2 - y1) - pointPadding * 2, 0)
                 };
             });
 
