@@ -106,7 +106,10 @@ declare global {
 
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isString
+} = U;
 
 import './Axis.js';
 import './Chart.js';
@@ -778,7 +781,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if (H.isString(newHeight)) {
+        if (isString(newHeight)) {
             newHeight = H.relativeLength(
                 newHeight as string,
                 (newWidth as string) || (chart.chartWidth as any)

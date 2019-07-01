@@ -214,7 +214,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isString
+} = U;
 
 import './Axis.js';
 import './Legend.js';
@@ -238,7 +241,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,

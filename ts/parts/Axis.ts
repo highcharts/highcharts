@@ -742,7 +742,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isString
+} = U;
 
 import './Color.js';
 import './Options.js';
@@ -763,7 +766,6 @@ var addEvent = H.addEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
     isNumber = H.isNumber,
-    isString = H.isString,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     objectEach = H.objectEach,

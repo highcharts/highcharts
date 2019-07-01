@@ -24,7 +24,8 @@ var nelderMead = NelderMeadModule.nelderMead;
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isString = U.isString;
 
 import '../parts/Series.js';
 
@@ -44,7 +45,6 @@ var addEvent = H.addEvent,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
     isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
-    isString = H.isString,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;

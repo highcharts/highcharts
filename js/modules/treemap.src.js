@@ -13,7 +13,8 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isString = U.isString;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -35,7 +36,6 @@ var seriesType = H.seriesType,
     },
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     pick = H.pick,
     Series = H.Series,
     stableSort = H.stableSort,
