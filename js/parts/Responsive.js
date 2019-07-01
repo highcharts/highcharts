@@ -244,8 +244,11 @@ Chart.prototype.currentOptions = function (options) {
                 ret[key] = isArray(val) ? [] : {};
                 getCurrent(val, curr[key] || {}, ret[key], depth + 1);
             }
+            else if (curr[key] === undefined) { // #10286
+                ret[key] = null;
+            }
             else {
-                ret[key] = pick(curr[key], null);
+                ret[key] = curr[key];
             }
         });
     }

@@ -255,6 +255,19 @@ import H from './Globals.js';
 * @type {number}
 */
 /**
+ * Describes a range.
+ *
+ * @interface Highcharts.RangeObject
+ */ /**
+* Maximum number of the range.
+* @name Highcharts.RangeObject#max
+* @type {number}
+*/ /**
+* Minimum number of the range.
+* @name Highcharts.RangeObject#min
+* @type {number}
+*/
+/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.
@@ -1353,6 +1366,25 @@ H.format = function (str, ctx, time) {
  */
 H.getMagnitude = function (num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
+};
+/**
+ * Check if two boxes are intersecting.
+ *
+ * @function Highcharts.isIntersectRect
+ *
+ * @param {Highcharts.BBoxObject} box1
+ *        First box
+ * @param {Highcharts.BBoxObject} box2
+ *        Second box
+ *
+ * @return {boolean}
+ *         Boolean whether rects overlap.
+ */
+H.isIntersectRect = function (box1, box2) {
+    return !(box2.x > box1.x + box1.width ||
+        box2.x + box2.width < box1.x ||
+        box2.y > box1.y + box1.height ||
+        box2.y + box2.height < box1.y);
 };
 /**
  * Take an interval and normalize it to multiples of round numbers.

@@ -2199,8 +2199,8 @@ Highcharts.extend(Data.prototype, {
                 }
             };
             // Apply it
-            merge(true, this.options, options);
-            this.init(this.options);
+            merge(true, chart.options.data, options);
+            this.init(chart.options.data);
         }
     }
 });

@@ -82,7 +82,7 @@ declare global {
         }
         interface PlotSeriesDataGroupingOptions {
             approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: object;
+            dateTimeLabelFormats?: Dictionary<Array<string>>;
             enabled?: boolean;
             forced?: boolean;
             groupAll?: boolean;
@@ -92,9 +92,14 @@ declare global {
         }
         interface Series {
             cropStart?: number;
+            currentDataGrouping?: TimeTicksInfoObject;
             dataGroupInfo?: DataGroupingInfoObject;
+            forceCrop?: boolean;
             groupedData?: (Array<Point>|null);
             groupMap?: Array<DataGroupingInfoObject>;
+            groupPixelWidth?: number;
+            hasGroupedData?: boolean;
+            hasProcessed?: boolean;
             preventGraphAnimation?: boolean;
             xData?: Array<number>;
             yData?: Array<number>;
@@ -119,6 +124,19 @@ declare global {
 
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ */
+
+/**
+ * @interface Highcharts.DataGroupingInfoObject
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#length
+ * @type {number}
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#options
+ * @type {Highcharts.SeriesOptionsType|undefined}
+ *//**
+ * @name Highcharts.DataGroupingInfoObject#start
+ * @type {number}
  */
 
 import './Utilities.js';
@@ -373,7 +391,7 @@ var groupData = function (
                     series.pointClass.prototype
                         .optionsToObject.call(
                             { series: series },
-                            series.options.data[
+                            (series.options.data as any)[
                                 (series.cropStart as any) + start
                             ]
                         )
@@ -381,7 +399,7 @@ var groupData = function (
 
                 // Make sure the raw data (x, y, open, high etc) is not copied
                 // over and overwriting approximated data.
-                extendedPointArrayMap.forEach(function (key) { // eslint-disable-line
+                extendedPointArrayMap.forEach(function (key: string): void {
                     delete ((series.dataGroupInfo as any).options as any)[key];
                 });
             }
@@ -422,11 +440,11 @@ var groupData = function (
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
-                    }, [dataOptions[index]]),
+                    }, [(dataOptions as any)[index]]),
                 val;
 
             for (j = 0; j < pointArrayMapLength; j++) {
-                val = point[pointArrayMap[j]];
+                val = (point as any)[pointArrayMap[j]];
                 if (isNumber(val)) {
                     values[j].push(val);
                 } else if (val === null) {
@@ -606,7 +624,7 @@ seriesProto.groupData = groupData;
 
 // Extend the basic processData method, that crops the data to the current zoom
 // range, with data grouping logic.
-seriesProto.processData = function (this: Highcharts.Series): void {
+seriesProto.processData = function (this: Highcharts.Series): any {
     var series = this,
         chart = series.chart,
         options = series.options,
@@ -625,7 +643,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
 
     // Run base method
     series.forceCrop = groupingEnabled; // #334
-    series.groupPixelWidth = null; // #2110
+    series.groupPixelWidth = null as any; // #2110
     series.hasProcessed = true; // #2692
 
     // Data needs to be sorted for dataGrouping
@@ -636,7 +654,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
     // Skip if processData returns false or if grouping is disabled (in that
     // order)
     skip = (
-        baseProcessData.apply(series, arguments) === false ||
+        baseProcessData.apply(series, arguments as any) === false ||
         !groupingEnabled
     );
 
@@ -649,9 +667,11 @@ seriesProto.processData = function (this: Highcharts.Series): void {
         series.destroyGroupedData();
 
         var i,
-            processedXData = dataGroupingOptions.groupAll ? series.xData :
+            processedXData = (dataGroupingOptions as any).groupAll ?
+                series.xData :
                 series.processedXData,
-            processedYData = dataGroupingOptions.groupAll ? series.yData :
+            processedYData = (dataGroupingOptions as any).groupAll ?
+                series.yData :
                 series.processedYData,
             plotSizeX = chart.plotSizeX,
             xAxis = series.xAxis,
@@ -681,22 +701,28 @@ seriesProto.processData = function (this: Highcharts.Series): void {
                 groupPositions = xAxis.getTimeTicks(
                     xAxis.normalizeTimeTickInterval(
                         interval,
-                        dataGroupingOptions.units || defaultDataGroupingUnits
+                        (dataGroupingOptions as any).units ||
+                        defaultDataGroupingUnits
                     ),
                     // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, processedXData[0]),
-                    Math.max(xMax, processedXData[processedXData.length - 1]),
+                    Math.min(xMin, (processedXData as any)[0]),
+                    Math.max(
+                        xMax,
+                        (processedXData as any)[
+                            (processedXData as any).length - 1
+                        ]
+                    ),
                     xAxis.options.startOfWeek as any,
-                    processedXData,
+                    processedXData as any,
                     series.closestPointRange as any
                 ),
                 groupedData = seriesProto.groupData.apply(
                     series,
                     [
-                        processedXData,
-                        processedYData,
+                        processedXData as any,
+                        processedYData as any,
                         groupPositions,
-                        dataGroupingOptions.approximation
+                        (dataGroupingOptions as any).approximation
                     ]
                 ),
                 groupedXData = groupedData.groupedXData,
@@ -705,7 +731,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
 
             // Prevent the smoothed data to spill out left and right, and make
             // sure data is not shifted to the left
-            if (dataGroupingOptions.smoothed && groupedXData.length) {
+            if ((dataGroupingOptions as any).smoothed && groupedXData.length) {
                 i = groupedXData.length - 1;
                 groupedXData[i] = Math.min(groupedXData[i], xMax);
                 while (i-- && i > 0) {
@@ -720,9 +746,8 @@ seriesProto.processData = function (this: Highcharts.Series): void {
                 // the group to capture varying group sizes like months or DST
                 // crossing (#10000). Also check that the gap is not at the
                 // start of a segment.
-                if (
-                    !groupPositions.info.segmentStarts ||
-                    groupPositions.info.segmentStarts.indexOf(i) === -1
+                if (!(groupPositions.info as any).segmentStarts ||
+                    (groupPositions.info as any).segmentStarts.indexOf(i) === -1
                 ) {
                     gapSize = Math.max(
                         groupPositions[i] - groupPositions[i - 1],
@@ -731,8 +756,8 @@ seriesProto.processData = function (this: Highcharts.Series): void {
                 }
             }
             currentDataGrouping = groupPositions.info;
-            currentDataGrouping.gapSize = gapSize;
-            series.closestPointRange = groupPositions.info.totalRange;
+            (currentDataGrouping as any).gapSize = gapSize;
+            series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
 
             // Make sure the X axis extends to show the first group (#2533)
@@ -756,12 +781,12 @@ seriesProto.processData = function (this: Highcharts.Series): void {
 
             // We calculated all group positions but we should render
             // only the ones within the visible range
-            if (dataGroupingOptions.groupAll) {
+            if ((dataGroupingOptions as any).groupAll) {
                 croppedData = series.cropData(
                     groupedXData,
-                    groupedYData,
-                    xAxis.min,
-                    xAxis.max,
+                    groupedYData as any,
+                    xAxis.min as any,
+                    xAxis.max as any,
                     1 // Ordinal xAxis will remove left-most points otherwise
                 );
                 groupedXData = croppedData.xData;
@@ -769,7 +794,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
             }
             // Set series props
             series.processedXData = groupedXData;
-            series.processedYData = groupedYData;
+            series.processedYData = groupedYData as any;
         } else {
             series.groupMap = null as any;
         }
@@ -825,23 +850,23 @@ addEvent(Point as any, 'update', function (
 // range.
 addEvent(Tooltip as any, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Highcharts.Point
+    e: Highcharts.Dictionary<any>
 ): void {
     var tooltip = this,
         time = this.chart.time,
         labelConfig = e.labelConfig,
-        series = labelConfig.series,
+        series = labelConfig.series as Highcharts.Series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
         xDateFormat = tooltipOptions.xDateFormat,
         xDateFormatEnd,
         xAxis = series.xAxis,
-        currentDataGrouping,
+        currentDataGrouping: (Highcharts.TimeTicksInfoObject|undefined),
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
-        formatString = tooltipOptions[
+        formatString = (tooltipOptions as any)[
             (e.isFooter ? 'footer' : 'header') + 'Format'
         ];
 
@@ -862,8 +887,9 @@ addEvent(Tooltip as any, 'headerFormatter', function (
         // if we have grouped data, use the grouping information to get the
         // right format
         if (currentDataGrouping) {
-            labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName];
-            if (currentDataGrouping.count === 1) {
+            labelFormats =
+                dateTimeLabelFormats[(currentDataGrouping as any).unitName];
+            if ((currentDataGrouping as any).count === 1) {
                 xDateFormat = labelFormats[0];
             } else {
                 xDateFormat = labelFormats[1];
@@ -881,11 +907,11 @@ addEvent(Tooltip as any, 'headerFormatter', function (
         }
 
         // now format the key
-        formattedKey = time.dateFormat(xDateFormat, labelConfig.key);
+        formattedKey = time.dateFormat(xDateFormat as any, labelConfig.key);
         if (xDateFormatEnd) {
             formattedKey += time.dateFormat(
                 xDateFormatEnd,
-                labelConfig.key + currentDataGrouping.totalRange - 1
+                labelConfig.key + (currentDataGrouping as any).totalRange - 1
             );
         }
 
@@ -914,9 +940,9 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(Series, 'afterSetOptions', function (
+addEvent(Series as any, 'afterSetOptions', function (
     this: Highcharts.Series,
-    e: Highcharts.PlotSeriesOptions
+    e: { options: Highcharts.PlotSeriesOptions }
 ): void {
 
     var options = e.options,
@@ -1041,7 +1067,7 @@ Axis.prototype.setDataGrouping = function (
         i = this.series.length;
         while (i--) {
             this.series[i].update({
-                dataGrouping: dataGrouping
+                dataGrouping: dataGrouping as any
             }, false);
         }
 

@@ -3,6 +3,7 @@ js/modules/oldie-polyfills.src.js
 js/parts/Axis.js
 js/parts/Chart.js
 js/parts/Color.js
+js/parts/ColumnSeries.js
 js/parts/DataGrouping.js
 js/parts/DataLabels.js
 js/parts/DateTimeAxis.js
@@ -23,6 +24,7 @@ js/parts/RangeSelector.js
 js/parts/Responsive.js
 js/parts/ScrollablePlotArea.js
 js/parts/Scrollbar.js
+js/parts/Series.js
 js/parts/Stacking.js
 js/parts/SvgRenderer.js
 js/parts/Tick.js

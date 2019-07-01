@@ -38,6 +38,7 @@ function test_beforeParse() {
         },
 
         yAxis: [{ // left y axis
+            crosshair: true,
             title: {
                 text: undefined
             },
@@ -71,8 +72,7 @@ function test_beforeParse() {
         },
 
         tooltip: {
-            shared: true,
-            crosshairs: true
+            shared: true
         },
 
         plotOptions: {

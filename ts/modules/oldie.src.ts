@@ -45,6 +45,8 @@ declare global {
         }
         interface SVGRenderer {
             /** @requires highcharts/modules/oldies */
+            isVML?: boolean;
+            /** @requires highcharts/modules/oldies */
             getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
             /** @requires highcharts/modules/oldies */
             measureSpanWidth(text: string, style: CSSObject): number;
@@ -1181,16 +1183,16 @@ if (!svg) {
         },
         'stroke-widthSetter': function (
             this: Highcharts.VMLElement,
-            value: string,
+            value: (number|string),
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
             element.stroked = !!value; // VML "stroked" attribute
             (this as any)[key] = value; // used in getter, issue #113
             if (isNumber(value)) {
-                value += 'px';
+                value += 'px' as any;
             }
-            this.setAttr('strokeweight', value);
+            this.setAttr('strokeweight', value as any);
         },
         titleSetter: function (
             this: Highcharts.VMLElement,

@@ -22,11 +22,12 @@ add_to_ssh_config: &add_to_ssh_config
   - run:
       name: Avoid hosts unknown for github
       command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+add_gh_user_config: &add_gh_user_config
   - run:
       name: Github user config
       command: |
-        git config --global user.name CircleCI
-        git config --global user.email technical+circleci_mu@highsoft.com
+        git config --global user.name "CircleCI"
+        git config --global user.email "technical+circleci_mu@highsoft.com"
 
 #######################################
 
@@ -136,83 +137,161 @@ jobs:
       - run:
           name: Compile build
           command: npm run build
-      - run:
-          name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run: echo -e "Push changelog to highcharts repo not yet implemented.."
       - <<: *persist_workspace
 
-  deploy:
+  deploy_code:
     <<: *defaults
     steps:
       - <<: *load_workspace
       - run:
-          name: Upload to S3
+          name: Upload code to S3
           command: npx gulp dist-upload
-      - <<: *persist_workspace
 
+  deploy_api_docs:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate api docs
+          command: npx gulp jsdoc
+      - run:
+          name: Upload api docs to S3
+          command: npx gulp upload-api --silent
+      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
+
+  deploy_changelog:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - run:
+          name: install pre dependencies
+          command: sudo apt-get install cpio
+      - run:
+          name: Fetch full highcharts/master branch
+          command: git fetch --unshallow
+      - run:
+          name: Generate changelog since last tag
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+      - run:
+          name: Changelog - Create git-describe named folder and copy changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
+      - run:
+          name: Changelog - Upload changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+
+  deploy_to_highcharts_dist:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run:
+          name: Clone highcharts-dist repository
+          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-dist.git --depth=1 /home/circleci/repo/highcharts-dist
+      - run:
+          name: Delete remote nightly branch
+          command: cd ../highcharts-dist && git push origin --delete nightly || true
+      - run:
+          name: Run copy-release
+          command: cd ../highcharts && node copy-release
+      - run:
+          name: Push to highcharts-dist nightly branch
+          command: |
+            cd ../highcharts-dist
+            git checkout -b nightly
+            git add .
+            git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
+            git push -u origin nightly
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code:
-          filters:
-            tags:
-              only: /.*/
+      - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
-          filters:
-            tags:
-              only: /.*/
       - generate_ts_declarations:
           requires:
             - install_dependencies
-          filters:
-            tags:
-              only: /.*/
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
             - install_dependencies
           browsers: "Mac.Safari"
-          filters:
-            tags:
-              only: /.*/
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
-            - "test-Mac.Safari"
+            - "test-Win.Chrome"
           browsers: "Mac.Firefox"
-          filters:
-            tags:
-              only: /.*/
       - test_browsers:
           name: "test-Win.IE8"
           requires:
             - "test-Mac.Firefox"
           browsers: "Win.IE8 --oldie"
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 2 * * *" # 2 am every night
           filters:
-            tags:
-              only: /.*/
-      - build_dist:
+            branches:
+              only:
+                - feature/ci-nightly
+                - master
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
           requires:
             - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
+      - build_dist:
+          requires:
+            - install_dependencies
+            - "test-Mac.Firefox"
             - "test-Mac.Safari"
-            - generate_ts_declarations
-          filters:
-            branches:
-              # ignore all branches as it otherwise will always be triggered as per CircleCI docs.
-              # https://circleci.com/docs/2.0/workflows/#executing-workflows-for-a-git-tag
-              ignore: /.*/
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-      - deploy:
+            - "test-Win.IE8"
+            - "test-Win.Chrome"
+      - deploy_code:
           requires:
             - build_dist
-          context: highcharts-prod
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-staging
+      - deploy_api_docs:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_changelog:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_to_highcharts_dist:
+          requires:
+            - build_dist
+          context: highcharts-staging
+

@@ -365,7 +365,7 @@ seriesType(
     {
         /**
          * Minimum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height, divided by the square
          * root of total number of points.
@@ -380,7 +380,7 @@ seriesType(
         minSize: '10%',
         /**
          * Maximum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height, divided by the square
          * root of total number of points.
@@ -1550,7 +1550,7 @@ addEvent(Chart, 'beforeRedraw', function () {
  *
  * @type      {Array<Object|Array>}
  * @extends   series.line.data
- * @excluding marker
+ * @excluding marker, x, y
  * @sample    {highcharts} highcharts/series/data-array-of-objects/
  *            Config objects
  * @product   highcharts

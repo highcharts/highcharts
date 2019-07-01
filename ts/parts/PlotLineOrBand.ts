@@ -229,7 +229,7 @@ H.PlotLineOrBand.prototype = {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color;
+                attribs.stroke = color as any;
                 attribs['stroke-width'] =
                     (options as Highcharts.AxisPlotLinesOptions).width;
                 if ((options as Highcharts.AxisPlotLinesOptions).dashStyle) {
@@ -239,7 +239,7 @@ H.PlotLineOrBand.prototype = {
 
             } else if (isBand) { // plot band
                 if (color) {
-                    attribs.fill = color;
+                    attribs.fill = color as any;
                 }
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (

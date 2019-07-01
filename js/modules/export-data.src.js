@@ -241,7 +241,8 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
     if (
         this.options &&
         this.options.exporting &&
-        this.options.exporting.showTable
+        this.options.exporting.showTable &&
+        !this.options.chart.forExport
     ) {
         this.viewData();
     }

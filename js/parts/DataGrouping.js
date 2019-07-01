@@ -12,6 +12,18 @@ import H from './Globals.js';
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
  */
+/**
+ * @interface Highcharts.DataGroupingInfoObject
+ */ /**
+* @name Highcharts.DataGroupingInfoObject#length
+* @type {number}
+*/ /**
+* @name Highcharts.DataGroupingInfoObject#options
+* @type {Highcharts.SeriesOptionsType|undefined}
+*/ /**
+* @name Highcharts.DataGroupingInfoObject#start
+* @type {number}
+*/
 import './Utilities.js';
 import './Axis.js';
 import './Series.js';
@@ -398,8 +410,10 @@ seriesProto.processData = function () {
     }
     if (!skip) {
         series.destroyGroupedData();
-        var i, processedXData = dataGroupingOptions.groupAll ? series.xData :
-            series.processedXData, processedYData = dataGroupingOptions.groupAll ? series.yData :
+        var i, processedXData = dataGroupingOptions.groupAll ?
+            series.xData :
+            series.processedXData, processedYData = dataGroupingOptions.groupAll ?
+            series.yData :
             series.processedYData, plotSizeX = chart.plotSizeX, xAxis = series.xAxis, ordinal = xAxis.options.ordinal, groupPixelWidth = series.groupPixelWidth =
             xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
         // Execute grouping if the amount of points is greater than the limit
@@ -411,7 +425,8 @@ seriesProto.processData = function () {
             series.points = null; // #6709
             var extremes = xAxis.getExtremes(), xMin = extremes.min, xMax = extremes.max, groupIntervalFactor = (ordinal &&
                 xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits), 
+                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
+                defaultDataGroupingUnits), 
             // Processed data may extend beyond axis (#4907)
             Math.min(xMin, processedXData[0]), Math.max(xMax, processedXData[processedXData.length - 1]), xAxis.options.startOfWeek, processedXData, series.closestPointRange), groupedData = seriesProto.groupData.apply(series, [
                 processedXData,
@@ -522,7 +537,8 @@ addEvent(Tooltip, 'headerFormatter', function (e) {
         // if we have grouped data, use the grouping information to get the
         // right format
         if (currentDataGrouping) {
-            labelFormats = dateTimeLabelFormats[currentDataGrouping.unitName];
+            labelFormats =
+                dateTimeLabelFormats[currentDataGrouping.unitName];
             if (currentDataGrouping.count === 1) {
                 xDateFormat = labelFormats[0];
             }

@@ -31,12 +31,7 @@ declare global {
         type LabelFormatterCallbackFunction = any; // @todo
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PatternObject = any; // @todo
-        type PlotSeriesOptions = any; // @todo
-        type PlotSeriesZonesOptions = any; // @todo
-        type SeriesOptions = any; // @todo
-        type SeriesOptionsType = any; // @todo
-        type SeriesPlotBoxObject = any; // @todo
+        type PatternObject = object; // @todo
         type XAxisScrollbarOptions = any; // @todo
         type YAxisStackLabelsOptions = any; // @todo
         interface Axis {
@@ -87,116 +82,95 @@ declare global {
             isStock?: boolean; // @todo
             navigation?: any; // @todo
         }
+        interface PlotSeriesOptions {
+            accessibility?: any; // @todo
+            center?: any; // @todo
+            colorByPoint?: any; // @todo
+            inactiveOtherPoints?: any; // @todo
+            innerSize?: any; // @todo
+            lineColor?: any; // @todo
+            minSize?: any; // @todo
+            negativeFillColor?: any; // @todo
+            size?: any; // @todo
+            startFromThreshold?: any; // @todo
+            tooltip?: any; // @todo
+            trackByArea?: any; // @todo
+        }
         interface Point {
+            allowShadow?: unknown; // @todo
+            below?: any; // @todo
+            dashStyle?: unknown; // @todo
+            dataLabelOnNull?: any; // @todo
             dist?: any; // @todo
             distX?: any; // @todo
+            dlBox?: any; // @todo
+            dlOptions?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
-            negative?: any; // @todo
+            half?: any; // @todo
+            labelDistance?: any; // @todo
+            labelPosition?: any; // @todo
+            name?: any; // @todo
+            plotHigh?: any; // @todo
+            plotLow?: any; // @todo
             selected?: any; // @todo
+            shapeArgs?: any; // @todo
             tooltipDateKeys?: any; // @todo
+            tooltipPos?: any; // @todo
+            ttBelow?: any; // @todo
             zone?: any; // @todo
+            getConnectorPath: Function; // @todo
+            getDataLabelPath: Function; // @todo
+            isValid: Function; // @todo
+            setVisible: Function; // @todo
         }
         interface PointOptionsObject {
-            events?: PointEventsOptionsObject; // @todo
+            states?: any; // @todo
         }
         interface Series {
-            _hasPointLabels?: any; // @todo
-            _hasPointMarkers?: any; // @todo
             allowDG?: any; // @todo
             areaPath?: any; // @todo
-            autoIncrement?: any; // @todo
+            barW?: any; // @todo
             center?: any; // @todo
-            chart: Chart; // @todo
-            closestPointRange?: number; // @todo
-            color?: any; // @todo
-            colorCounter?: any; // @todo
-            colorIndex?: any; // @todo
+            clipBox?: any; // @todo
             colorKey?: any; // @todo
-            currentDataGrouping?: any; // @todo
-            data?: any; // @todo
-            dataMax?: any; // @todo
-            dataMin?: any; // @todo
-            dataLabelsGroup?: any; // @todo
-            directTouch?: any; // @todo
-            finishedAnimating?: any; // @todo
+            fillColor?: any; // @todo
+            fillGraph?: any; // @todo
             fixedBox?: any; // @todo
-            forceCrop?: any; // @todo
             forceDL?: any; // @todo
-            graph?: any; // @todo
-            graphPath?: any; // @todo
+            gappedPath?: any; // @todo
             group?: any; // @todo
-            groupPixelWidth?: any; // @todo
-            hasCartesianSeries?: any; // @todo
             hasDerivedData?: any; // @todo
-            hasGroupedData?: any; // @todo
-            hasProcessed?: any; // @todo
-            hasRendered?: any; // @todo
-            id?: any; // @todo
-            index?: any; // @todo
-            initialType?: any; // @todo
-            isCartesian?: any; // @todo
-            isDirty?: any; // @todo
-            isDirtyData?: any; // @todo
+            invertable?: any; // @todo
             isSeriesBoosting?: any; // @todo
-            kdTree?: any; // @todo
             labelBySeries?: any; // @todo
-            linkedParent?: any; // @todo
-            linkedSeries?: any; // @todo
-            marker?: any; // @todo
-            markerGroup?: any; // @todo
             maxLabelDistance?: any; // @todo
-            name?: any; // @todo
+            modifyValue?: any; // @todo
             noSharedTooltip?: any; // @todo
-            options?: any; // @todo
-            parallelArrays?: any; // @todo
             pointArrayMap?: any; // @todo
-            points: Array<Point>; // @todo
-            pointValKey?: any; // @todo
-            processedXData?: any; // @todo
-            processedYData?: any; // @todo
-            redraw?: any; // @todo
-            requireSorting?: any; // @todo
-            selected?: any; // @todo
-            stickyTracking?: any; // @todo
+            pointAttrToOptions?: any; // @todo
+            pointXOffset?: any; // @todo
+            resetZones?: any; // @todo
+            showLine?: any; // @todo
+            specialGroup?: any; // @todo
             symbol?: any; // @todo
             takeOrdinalPosition?: any; // @todo
-            tooltipOptions?: any; // @todo
-            trackerGroups?: any; // @todo
             translatedThreshold?: any; // @todo
-            type?: any; // @todo
-            updateTotals?: any; // @todo
             useCommonDataGrouping?: any; // @todo
-            userOptions?: any; // @todo
             valueMax?: any; // @todo
             valueMin?: any; // @todo
-            visible?: any; // @todo
-            xAxis: Axis; // @todo
-            xIncrement?: any; // @todo
-            yAxis: Axis; // @todo
-            zoneAxis?: any; // @todo
-            zones?: any; // @todo
-            cropData: Function; // @todo
-            destroy: Function; // @todo
-            getExtremes: Function; // @todo
-            getXExtremes: Function; // @todo
-            getName: Function; // @todo
-            getPlotBox: Function; // @todo
             getPoint: Function; // @todo
+            getPointSpline: Function; // @todo
             getX: Function; // @todo
-            hasData: Function; // @todo
-            init: Function; // @todo
-            markerAttribs: Function; // @todo
-            plotGroup: Function; // @todo
-            pointAttribs: Function; // @todo
-            pointClass: Function; // @todo
-            processData: Function; // @todo
-            render: Function; // @todo
-            searchPoint: Function; // @todo
-            setData: Function; // @todo
+            redrawPoints: Function; // @todo
             sortByAngle: Function; // @todo
-            translate: Function; // @todo
-            updateParallelArrays: Function; // @todo
+            translate(position?: number): void; // @todo
+            toYData: Function; // @todo
+            updateTotals: Function; // @todo
+        }
+        interface SeriesStatesHoverOptions {
+            dashStyle?: unknown; // @todo
+            opacity?: unknown; // @todo
         }
         interface SVGRenderer {
             invertChild: Function; // @todo
@@ -204,7 +178,6 @@ declare global {
         interface Tick {
             slotWidth?: any; // @todo
         }
-        const Series: any; // @todo
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;

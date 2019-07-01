@@ -272,18 +272,21 @@ Highcharts.Pointer.prototype = {
                 // The same zIndex, sort by array index:
             }
             else {
-                result = p1.series.index > p2.series.index ? -1 : 1;
+                result =
+                    p1.series.index > p2.series.index ?
+                        -1 :
+                        1;
             }
             return result;
         };
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
-            if (
-            // Check that we actually found a point on the series.
+            if ( // Check that we actually found a point on the series.
             isObject(point, true) &&
                 // Use the new point if it is closer.
-                (!isObject(closest, true) || (sort(closest, point) > 0))) {
+                (!isObject(closest, true) ||
+                    (sort(closest, point) > 0))) {
                 closest = point;
             }
         });

@@ -143,6 +143,10 @@ import H from './Globals.js';
  * @return {Array<number>}
  */
 /**
+ * @interface Highcharts.AxisTickPositionsArray
+ * @augments Array<number>
+ */
+/**
  * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
  */
 /**
@@ -2390,6 +2394,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * Also the `softThreshold` option takes precedence over `maxPadding`,
+         * so if the data is tangent to the threshold, `maxPadding` may not
+         * apply unless `softThreshold` is set to false.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding-02/
          *         Max padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2405,6 +2413,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * when you don't want the lowest data value to appear on the edge
          * of the plot area. When the axis' `min` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
+         *
+         * Also the `softThreshold` option takes precedence over `minPadding`,
+         * so if the data is tangent to the threshold, `minPadding` may not
+         * apply unless `softThreshold` is set to false.
          *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
@@ -3230,8 +3242,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                             seriesDataMin = xExtremes.min;
                             seriesDataMax = xExtremes.max;
                             if (!isNumber(seriesDataMin) &&
-                                !(seriesDataMin instanceof Date) // #5010
-                            ) {
+                                // #5010:
+                                !(seriesDataMin instanceof Date)) {
                                 xData = xData.filter(isNumber);
                                 xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
@@ -4272,7 +4284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             return (series.isDirtyData ||
                 series.isDirty ||
                 // When x axis is dirty, we need new data extremes for y as
-                // well
+                // well:
                 series.xAxis.isDirty);
         }), isDirtyAxisLength;
         axis.oldMin = axis.min;
@@ -5188,7 +5200,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
-                ((options.plotLines || []).concat(options.plotBands || [])).forEach(function (plotLineOptions) {
+                (options.plotLines || [])
+                    .concat(options.plotBands || [])
+                    .forEach(function (plotLineOptions) {
                     axis.addPlotBandOrLine(plotLineOptions);
                 });
                 axis._addedPlotLB = true;

@@ -24,16 +24,14 @@ declare global {
                 min: number,
                 max: number,
                 startOfWeek: number
-            ): TimeTicksArray;
+            ): AxisTickPositionsArray;
             normalizeTimeTickInterval(
                 tickInterval: number,
                 unitsOption?: Array<[string, (Array<number>|null)]>
             ): DateTimeAxisNormalizedObject;
         }
-        interface DateTimeAxisNormalizedObject {
-            count: number;
+        interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
             unitName: string;
-            unitRange: number;
         }
     }
 }
@@ -67,11 +65,11 @@ var Axis = H.Axis,
  *
  * @param {number} startOfWeek
  *
- * @return {Highcharts.TimeTicksArray}
+ * @return {Highcharts.AxisTickPositionsArray}
  */
 Axis.prototype.getTimeTicks = function (
     this: Highcharts.Axis
-): Highcharts.TimeTicksArray {
+): Highcharts.AxisTickPositionsArray {
     return this.chart.time.getTimeTicks.apply(
         this.chart.time, arguments as any
     );

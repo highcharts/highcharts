@@ -74,6 +74,8 @@ declare global {
             trigger: (AxisExtremesTriggerValue|string);
             type: 'setExtremes';
         }
+        interface AxisTickPositionsArray extends Array<number> {
+        }
         interface AxisTickPositionerCallbackFunction {
             (this: Axis): Array<number>;
         }
@@ -274,7 +276,7 @@ declare global {
             tickPixelInterval?: number;
             tickPosition?: AxisTickPositionValue;
             tickPositioner?: AxisTickPositionerCallbackFunction;
-            tickPositions?: Array<number>;
+            tickPositions?: AxisTickPositionsArray;
             tickWidth?: (number|undefined);
             title?: XAxisTitleOptions;
             top?: (number|string);
@@ -432,11 +434,11 @@ declare global {
             public stacksTouched: number;
             public staggerLines?: number;
             public staticScale?: number;
-            public threshold?: null;
+            public threshold?: number;
             public tickAmount: number;
             public tickInterval: number;
             public tickmarkOffset: number;
-            public tickPositions: Array<number>;
+            public tickPositions: AxisTickPositionsArray;
             public tickRotCorr: PositionObject;
             public ticks: Dictionary<Tick>;
             public titleOffset?: number;
@@ -516,7 +518,7 @@ declare global {
                 pointPlacement?: number
             ): (number|undefined);
             public trimTicks(
-                tickPositions: Array<number>,
+                tickPositions: AxisTickPositionsArray,
                 startOnTick?: boolean,
                 endOnTick?: boolean
             ): void;
@@ -669,6 +671,11 @@ declare global {
  * @param {Highcharts.Axis} this
  *
  * @return {Array<number>}
+ */
+
+/**
+ * @interface Highcharts.AxisTickPositionsArray
+ * @augments Array<number>
  */
 
 /**
@@ -3100,6 +3107,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * Also the `softThreshold` option takes precedence over `maxPadding`,
+         * so if the data is tangent to the threshold, `maxPadding` may not
+         * apply unless `softThreshold` is set to false.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding-02/
          *         Max padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -3116,6 +3127,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * when you don't want the lowest data value to appear on the edge
          * of the plot area. When the axis' `min` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
+         *
+         * Also the `softThreshold` option takes precedence over `minPadding`,
+         * so if the data is tangent to the threshold, `minPadding` may not
+         * apply unless `softThreshold` is set to false.
          *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
@@ -4048,7 +4063,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axis.hasVisibleSeries = false;
 
             // Reset properties in case we're redrawing (#3353)
-            axis.dataMin = axis.dataMax = axis.threshold = null;
+            axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
             if (axis.buildStacks) {
@@ -4071,8 +4086,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     axis.hasVisibleSeries = true;
 
                     // Validate threshold in logarithmic axes
-                    if (axis.positiveValuesOnly && threshold <= 0) {
-                        threshold = null;
+                    if (axis.positiveValuesOnly && (threshold as any) <= 0) {
+                        threshold = null as any;
                     }
 
                     // Get dataMin and dataMax for X axes
@@ -4090,7 +4105,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                             if (
                                 !isNumber(seriesDataMin) &&
-                                !(seriesDataMin instanceof Date) // #5010
+                                // #5010:
+                                !((seriesDataMin as any) instanceof Date)
                             ) {
                                 xData = xData.filter(isNumber);
                                 xExtremes = series.getXExtremes(xData);
@@ -5604,8 +5620,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.isDirtyData ||
                     series.isDirty ||
                     // When x axis is dirty, we need new data extremes for y as
-                    // well
-                    series.xAxis.isDirty
+                    // well:
+                    series.xAxis.isDirty as any
                 );
             }),
             isDirtyAxisLength;
@@ -6957,13 +6973,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
-                (
-                    (options.plotLines || []).concat(options.plotBands || [])
-                ).forEach(
-                    function (plotLineOptions: any): void {
-                        axis.addPlotBandOrLine(plotLineOptions);
-                    }
-                );
+                (options.plotLines || [])
+                    .concat((options.plotBands as any) || [])
+                    .forEach(
+                        function (plotLineOptions: any): void {
+                            axis.addPlotBandOrLine(plotLineOptions);
+                        }
+                    );
                 axis._addedPlotLB = true;
             }
 
