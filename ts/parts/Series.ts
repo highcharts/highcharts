@@ -2110,42 +2110,47 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
-         * @default {"align": "center", "formatter": function () { return H.numberFormat(this.y, -1); }, "padding": 5, "style": {"fontSize": "11px", "fontWeight": "bold", "color": "contrast", "textOutline": "1px contrast"}, "verticalAlign": "bottom", "x":0, "y": 0}
          *
          * @private
          */
         dataLabels: {
-            /** @ignore-option */
+            /** @internal */
             align: 'center',
             /* eslint-disable valid-jsdoc */
-            /** @ignore-option */
+            /**
+             * @internal
+             * @default function () { return H.numberFormat(this.y, -1); }
+             */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
                 /* eslint-enable valid-jsdoc */
             },
-            /** @ignore-option */
+            /** @internal */
             padding: 5,
-            /** @ignore-option */
+            /**
+             * @internal
+             * @type {Highcharts.CSSObject}
+             */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px',
-                /** @ignore-option */
+                /** @internal */
                 fontWeight: 'bold',
-                /** @ignore-option */
+                /** @internal */
                 color: 'contrast',
-                /** @ignore-option */
+                /** @internal */
                 textOutline: '1px contrast'
             },
             /**
              * above singular point
-             * @ignore-option
+             * @internal
              */
             verticalAlign: 'bottom',
-            /** @ignore-option */
+            /** @internal */
             x: 0,
-            /** @ignore-option */
+            /** @internal */
             y: 0
         } as Highcharts.DataLabelsOptionsObject,
 

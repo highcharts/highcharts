@@ -332,9 +332,9 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @ignore-option */
+                /** @internal */
                 enabled: false,
-                /** @ignore-option */
+                /** @internal */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',
