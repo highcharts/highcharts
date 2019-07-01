@@ -553,11 +553,11 @@ QUnit.test('Date objects as X values, column', function (assert) {
             }]
         });
 
-        var labelPos = chart.yAxis[0].stacks.bar[0].label.getBBox(true);
+        var labelPos = chart.yAxis[0].stacks.bar[0].label;
         assert.close(
             chart.xAxis[0].toPixels(0, true),
-            labelPos.y + (labelPos.height / 2),
-            1.2,
+            labelPos.alignAttr.y + (labelPos.getBBox().height / 2),
+            1,
             'Stack labels should be properly positioned'
         );
     });

@@ -60,15 +60,16 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
         }
     });
 
-    assert.strictEqual(
+    assert.close(
         chart.container.querySelector('.highcharts-stack-labels text')
-            .getAttribute('y'),
-        '0',
+            .getBBox().y,
+        0,
+        0.5,
         'The y attribute is equal to 0.'
     );
 
     assert.strictEqual(
-        chart.container.querySelector('.highcharts-stack-labels text')
+        chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
         'Stack label is hidden.'
