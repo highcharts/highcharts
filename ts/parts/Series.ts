@@ -604,7 +604,9 @@ declare global {
  *        Event that occured.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -621,7 +623,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement

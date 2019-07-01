@@ -213,7 +213,9 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -2549,7 +2551,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (H.isArray(options.series) ? (options.series as any) : []).forEach(
+        (isArray(options.series) ? (options.series as any) : []).forEach(
             // #9680
             function (serieOptions: Highcharts.SeriesOptions): void {
                 chart.initSeries(serieOptions);

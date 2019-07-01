@@ -741,7 +741,9 @@ declare global {
  * @return {string}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Color.js';
 import './Options.js';
 import './Tick.js';
@@ -760,7 +762,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
     merge = H.merge,

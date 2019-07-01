@@ -294,7 +294,9 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const isArray = U.isArray;
+
 import '../parts/SvgRenderer.js';
 
 var VMLRenderer,
@@ -310,7 +312,6 @@ var VMLRenderer,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,

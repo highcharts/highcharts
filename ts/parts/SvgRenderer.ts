@@ -803,7 +803,9 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Color.js';
 
 var SVGElement: Highcharts.SVGElement,
@@ -823,7 +825,6 @@ var SVGElement: Highcharts.SVGElement,
     extend = H.extend,
     erase = H.erase,
     hasTouch = H.hasTouch,
-    isArray = H.isArray,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isObject = H.isObject,

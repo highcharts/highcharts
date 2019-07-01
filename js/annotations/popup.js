@@ -10,6 +10,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 var addEvent = H.addEvent,
     createElement = H.createElement,
     objectEach = H.objectEach,
@@ -17,7 +20,6 @@ var addEvent = H.addEvent,
     wrap = H.wrap,
     isString = H.isString,
     isObject = H.isObject,
-    isArray = H.isArray,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',

@@ -1243,7 +1243,7 @@ H.isString = function (s: unknown): s is string {
  * @return {boolean}
  *         True if the argument is an array.
  */
-H.isArray = function<T> (obj: unknown): obj is Array<T> {
+function isArray<T>(obj: unknown): obj is Array<T> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
@@ -1264,7 +1264,7 @@ H.isArray = function<T> (obj: unknown): obj is Array<T> {
  *         True if the argument is an object.
  */
 H.isObject = function (obj: any, strict?: boolean): boolean {
-    return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 
 /**
@@ -1421,7 +1421,7 @@ H.attr = function (
  *         The produced or original array.
  */
 H.splat = function (obj: any): Array<any> {
-    return H.isArray(obj) ? obj : [obj];
+    return isArray(obj) ? obj : [obj];
 };
 
 /**
@@ -1738,7 +1738,7 @@ H.datePropsToTimestamps = function (object: any): void {
     H.objectEach(object, function (val: any, key: string): void {
         if (H.isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
-        } else if (H.isObject(val) || H.isArray(val)) {
+        } else if (H.isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -3254,3 +3254,10 @@ if ((win as any).jQuery) {
         }
     };
 }
+
+// TODO use named exports when supported.
+const utils = {
+    isArray
+};
+
+export default utils;

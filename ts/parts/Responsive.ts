@@ -71,10 +71,11 @@ declare global {
  */
 
 import './Chart.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+const isArray = U.isArray;
 
 var Chart = H.Chart,
-    isArray = H.isArray,
     isObject = H.isObject,
     pick = H.pick,
     splat = H.splat;

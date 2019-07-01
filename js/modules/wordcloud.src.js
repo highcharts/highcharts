@@ -11,12 +11,15 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
 var extend = H.extend,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,

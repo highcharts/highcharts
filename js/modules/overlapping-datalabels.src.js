@@ -10,11 +10,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
     isIntersectRect = H.isIntersectRect,

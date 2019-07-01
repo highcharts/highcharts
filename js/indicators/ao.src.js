@@ -7,10 +7,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 var correctFloat = H.correctFloat,
-    isArray = H.isArray,
     noop = H.noop;
 
 /**

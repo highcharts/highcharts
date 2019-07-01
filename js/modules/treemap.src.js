@@ -11,7 +11,10 @@
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
@@ -27,7 +30,6 @@ var seriesType = H.seriesType,
     fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },

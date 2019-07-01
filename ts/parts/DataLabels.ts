@@ -651,7 +651,9 @@ declare global {
  * @type {number|undefined}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Series.js';
 
 var arrayMax = H.arrayMax,
@@ -666,7 +668,6 @@ var arrayMax = H.arrayMax,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort,
-    isArray = H.isArray,
     splat = H.splat;
 
 /* eslint-disable valid-jsdoc */
