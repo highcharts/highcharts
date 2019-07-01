@@ -2744,15 +2744,12 @@ extend((
                     'stroke-opacity': shadowOpacity,
                     'stroke-width': strokeWidth,
                     transform: translate,
-                    fill: 'none'
+                    fill: 'none',
+                    width: inside ?
+                        (elemBBox.width - j) + 'px' : elemBBox.width + 'px',
+                    height: inside ?
+                        (elemBBox.height - j) + 'px' : elemBBox.height + 'px'
                 });
-
-                if (inside) {
-                    css(shadow, {
-                        width: elemBBox.width - j,
-                        height: elemBBox.height - j
-                    });
-                }
 
                 shadow.setAttribute(
                     'class',

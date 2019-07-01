@@ -107,12 +107,12 @@ QUnit.test('Series shadow', function (assert) {
         [
             shadows[3].getAttribute('transform'),
             +shadows[3].getAttribute('stroke-opacity'),
-            +shadows[3].style.width.slice(0, 2)
+            shadows[3].getAttribute('width')
         ],
         [
             'translate(0.5,0.5)',
             chart.userOptions.plotOptions.series.shadow.opacity,
-            +point.graphic.element.getAttribute('width') - 1
+            (+point.graphic.element.getAttribute('width') - 1) + 'px'
         ],
         'Shadows should have appropriate attribute values'
     );
