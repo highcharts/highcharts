@@ -1,5 +1,5 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highmaps JS v@product.version@ (@product.date@)
  * @module highcharts/modules/heatmap
  * @requires highcharts
  *

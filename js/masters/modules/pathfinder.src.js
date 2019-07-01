@@ -1,5 +1,5 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/modules/pathfinder
  * @requires highcharts
  *

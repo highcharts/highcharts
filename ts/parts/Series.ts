@@ -34,9 +34,6 @@ declare global {
             clientX: number;
             plotY: number;
         }
-        interface PlotLineOptions extends PlotSeriesOptions {
-            // nothing as it is the base series
-        }
         interface PlotOptions {
             [key: string]: PlotSeriesOptions;
         }
@@ -88,7 +85,7 @@ declare global {
             pointInterval?: number;
             pointIntervalUnit?: SeriesPointIntervalUnitValue;
             pointPlacement?: (number|string);
-            pointRange?: number;
+            pointRange?: (number|null);
             pointStart?: number;
             pointValKey?: string;
             selected?: boolean;
@@ -99,7 +96,7 @@ declare global {
             skipKeyboardNavigation?: boolean;
             softThreshold?: boolean;
             stacking?: OptionsStackingValue;
-            states?: SeriesStatesOptionsObject;
+            states?: SeriesStatesOptions;
             step?: SeriesStepValue;
             stickyTracking?: boolean;
             threshold?: number;
@@ -181,9 +178,6 @@ declare global {
             target: Series;
             type: 'checkboxClick';
         }
-        interface SeriesLineOptions extends SeriesOptions {
-            type?: 'line';
-        }
         interface SeriesMouseOutCallbackFunction {
             (this: Series, event: PointerEvent): void;
         }
@@ -191,6 +185,7 @@ declare global {
             (this: Series, event: PointerEvent): void;
         }
         interface SeriesOptions extends PlotSeriesOptions {
+            data?: Array<PointOptionsType>;
             id?: string;
             index?: number;
             kdNow?: boolean;
@@ -213,34 +208,34 @@ declare global {
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
         }
-        interface SeriesStatesHoverHaloOptionsObject {
+        interface SeriesStatesHoverHaloOptions {
             attributes?: SVGAttributes;
             opacity?: number;
             size?: number;
         }
-        interface SeriesStatesHoverOptionsObject {
+        interface SeriesStatesHoverOptions {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
-            halo?: SeriesStatesHoverHaloOptionsObject;
+            halo?: (boolean|SeriesStatesHoverHaloOptions);
             lineWidth?: number;
             lineWidthPlus?: number;
         }
-        interface SeriesStatesInactiveOptionsObject {
+        interface SeriesStatesInactiveOptions {
             opacity?: number;
         }
-        interface SeriesStatesNormalOptionsObject {
+        interface SeriesStatesNormalOptions {
             animation?: (boolean|AnimationOptionsObject);
         }
-        interface SeriesStatesOptionsObject {
+        interface SeriesStatesOptions {
             [key: string]: (
-                SeriesStatesHoverOptionsObject |
-                SeriesStatesInactiveOptionsObject |
-                SeriesStatesNormalOptionsObject |
+                SeriesStatesHoverOptions |
+                SeriesStatesInactiveOptions |
+                SeriesStatesNormalOptions |
                 undefined
             );
-            hover?: SeriesStatesHoverOptionsObject;
-            inactive?: SeriesStatesInactiveOptionsObject;
-            normal?: SeriesStatesNormalOptionsObject;
+            hover?: SeriesStatesHoverOptions;
+            inactive?: SeriesStatesInactiveOptions;
+            normal?: SeriesStatesNormalOptions;
         }
         class Series {
             public constructor(chart?: Chart, options?: SeriesOptionsType);
@@ -263,6 +258,7 @@ declare global {
             public dataMax: number;
             public dataMin: number;
             public directTouch: boolean;
+            public drawLegendSymbol: LegendSymbolMixin['drawLineMarker'];
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;

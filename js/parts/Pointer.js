@@ -1087,12 +1087,12 @@ Highcharts.Pointer.prototype = {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
         }
         if (H.hasTouch) {
-            container.ontouchstart = function (e) {
+            addEvent(container, 'touchstart', function (e) {
                 pointer.onContainerTouchStart(e);
-            };
-            container.ontouchmove = function (e) {
+            });
+            addEvent(container, 'touchmove', function (e) {
                 pointer.onContainerTouchMove(e);
-            };
+            });
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
             }
