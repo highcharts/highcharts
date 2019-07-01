@@ -15,6 +15,7 @@ var isArray = U.isArray;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
+    defined = H.defined,
     objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
@@ -703,8 +704,16 @@ H.Popup.prototype = {
          * @param {String} - type of select i.e series or volume.
          * @param {Chart} - chart
          * @param {HTMLDOMElement} - element where created HTML list is added
+         * @param {String} selectedOption
+         *         optional param for default value in dropdown
          */
-        listAllSeries: function (type, optionName, chart, parentDiv) {
+        listAllSeries: function (
+            type,
+            optionName,
+            chart,
+            parentDiv,
+            selectedOption
+        ) {
             var selectName = PREFIX + optionName + '-type-' + type,
                 lang = this.lang,
                 selectBox,
@@ -753,6 +762,10 @@ H.Popup.prototype = {
                     );
                 }
             });
+
+            if (defined(selectedOption)) {
+                selectBox.value = selectedOption;
+            }
         },
         /**
          * Create typical inputs for chosen indicator. Fields are extracted from
@@ -802,7 +815,8 @@ H.Popup.prototype = {
                 seriesType,
                 'series',
                 chart,
-                rhsColWrapper
+                rhsColWrapper,
+                series.linkedParent && fields.volumeSeriesID
             );
 
             if (fields.volumeSeriesID) {
@@ -811,7 +825,8 @@ H.Popup.prototype = {
                     seriesType,
                     'volume',
                     chart,
-                    rhsColWrapper
+                    rhsColWrapper,
+                    series.linkedParent && series.linkedParent.options.id
                 );
             }
 
