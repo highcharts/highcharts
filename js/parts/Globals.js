@@ -27,7 +27,7 @@ var glob = typeof win === 'undefined' ?
     parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
 );
 var H = {
-    product: '@product.name@',
+    product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,

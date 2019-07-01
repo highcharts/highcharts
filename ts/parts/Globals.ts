@@ -234,7 +234,7 @@ var glob = typeof win === 'undefined' ?
     );
 
 var H: GlobalHighcharts = {
-    product: '@product.name@',
+    product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
