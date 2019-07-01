@@ -11,14 +11,14 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isString = U.isString;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
     objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
-    isString = H.isString,
     isObject = H.isObject,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',

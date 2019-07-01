@@ -810,9 +810,9 @@ H.pInt = function (s, mag) {
  * @return {boolean}
  *         True if the argument is a string.
  */
-H.isString = function (s) {
+function isString(s) {
     return typeof s === 'string';
-};
+}
 /**
  * Utility function to check if an item is an array.
  *
@@ -828,7 +828,6 @@ function isArray(obj) {
     var str = Object.prototype.toString.call(obj);
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
-;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -950,7 +949,7 @@ H.defined = function (obj) {
 H.attr = function (elem, prop, value) {
     var ret;
     // if the prop is a string
-    if (H.isString(prop)) {
+    if (isString(prop)) {
         // set the value
         if (H.defined(value)) {
             elem.setAttribute(prop, value);
@@ -2476,7 +2475,7 @@ if (win.jQuery) {
             if (args[0]) {
                 new H[ // eslint-disable-line no-new
                 // Constructor defaults to Chart
-                H.isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
+                isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
                 return this;
             }
             // When called without parameters or with the return argument,
@@ -2487,6 +2486,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
-    isArray: isArray
+    isArray: isArray,
+    isString: isString
 };
 export default utils;

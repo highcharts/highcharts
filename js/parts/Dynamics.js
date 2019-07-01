@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray, isString = U.isString;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
@@ -518,7 +518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if (H.isString(newHeight)) {
+        if (isString(newHeight)) {
             newHeight = H.relativeLength(newHeight, newWidth || chart.chartWidth);
         }
         if (

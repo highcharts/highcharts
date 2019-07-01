@@ -9,6 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
+import U from './Utilities.js';
+var isString = U.isString;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -814,7 +816,7 @@ H.Tooltip.prototype = {
     renderSplit: function (labels, points) {
         var tooltip = this, boxes = [], chart = this.chart, ren = chart.renderer, rightAligned = true, options = this.options, headerHeight = 0, headerTop, tooltipLabel = this.getLabel(), distributionBoxTop = chart.plotTop;
         // Graceful degradation for legacy formatters
-        if (H.isString(labels)) {
+        if (isString(labels)) {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer

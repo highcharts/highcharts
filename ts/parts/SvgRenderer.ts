@@ -804,7 +804,10 @@ declare global {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isString
+} = U;
 
 import './Color.js';
 
@@ -828,7 +831,6 @@ var SVGElement: Highcharts.SVGElement,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isObject = H.isObject,
-    isString = H.isString,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,

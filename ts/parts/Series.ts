@@ -601,7 +601,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isString
+} = U;
 
 import './Options.js';
 import './Legend.js';
@@ -620,7 +623,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
-    isString = H.isString,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     objectEach = H.objectEach,

@@ -1228,9 +1228,9 @@ H.pInt = function (s: any, mag?: number): number {
  * @return {boolean}
  *         True if the argument is a string.
  */
-H.isString = function (s: unknown): s is string {
+function isString(s: unknown): s is string {
     return typeof s === 'string';
-};
+}
 
 /**
  * Utility function to check if an item is an array.
@@ -1385,7 +1385,7 @@ H.attr = function (
     var ret;
 
     // if the prop is a string
-    if (H.isString(prop)) {
+    if (isString(prop)) {
         // set the value
         if (H.defined(value)) {
             elem.setAttribute(prop as string, value as string);
@@ -3245,7 +3245,7 @@ if ((win as any).jQuery) {
             if (args[0]) {
                 new (H as any)[ // eslint-disable-line no-new
                     // Constructor defaults to Chart
-                    H.isString(args[0]) ? args.shift() : 'Chart'
+                    isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
                 return this;
             }
@@ -3259,7 +3259,8 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
-    isArray
+    isArray,
+    isString
 };
 
 export default utils;
