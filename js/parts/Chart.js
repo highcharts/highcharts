@@ -741,12 +741,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     layOutTitles: function (redraw) {
-        var titleOffset = 0, titleOffsetBottom = 0, requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
+        var titleOffset = [0, 0, 0], requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle'].forEach(function (key) {
             var title = this[key], titleOptions = this.options[key], offset = key === 'title' ? -3 :
                 // Floating subtitle (#6574)
-                titleOptions.verticalAlign ? 0 : titleOffset + 2, bottomAlign = (key === 'subtitle' &&
+                titleOptions.verticalAlign ? 0 : titleOffset[0] + 2, bottomAlign = (key === 'subtitle' &&
                 titleOptions.verticalAlign === 'bottom'), titleSize, height;
             if (title) {
                 if (!this.styledMode) {
@@ -765,20 +765,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     height: height
                 }, titleOptions), false, 'spacingBox');
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                    titleOffset = Math.ceil(titleOffset +
+                    titleOffset[0] = Math.ceil(titleOffset[0] +
                         height);
                 }
                 if (key === 'subtitle' &&
                     titleOptions.verticalAlign === 'bottom') {
-                    titleOffsetBottom = height;
+                    titleOffset[2] = height;
                 }
             }
         }, this);
-        requiresDirtyBox = (this.titleOffset !== titleOffset ||
-            this.titleOffsetBottom !== titleOffsetBottom);
+        requiresDirtyBox = (!this.titleOffset ||
+            this.titleOffset.join(',') !== titleOffset.join(','));
         // Used in getMargins
         this.titleOffset = titleOffset;
-        this.titleOffsetBottom = titleOffsetBottom;
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)
@@ -1026,15 +1025,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (skipAxes) {
-        var _a = this, spacing = _a.spacing, margin = _a.margin, titleOffset = _a.titleOffset, titleOffsetBottom = _a.titleOffsetBottom;
+        var _a = this, spacing = _a.spacing, margin = _a.margin, titleOffset = _a.titleOffset;
         this.resetMargins();
         // Adjust for title and subtitle
-        if (titleOffset && !defined(margin[0])) {
-            this.plotTop = Math.max(this.plotTop, titleOffset + this.options.title.margin + spacing[0]);
+        if (titleOffset[0] && !defined(margin[0])) {
+            this.plotTop = Math.max(this.plotTop, titleOffset[0] + this.options.title.margin + spacing[0]);
         }
-        if (titleOffsetBottom && !defined(margin[2])) {
-            this.marginBottom = Math.max(this.marginBottom, titleOffsetBottom + this.options.title.margin +
-                spacing[2]);
+        if (titleOffset[2] && !defined(margin[2])) {
+            this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + this.options.title.margin + spacing[2]);
         }
         // Adjust for legend
         if (this.legend && this.legend.display) {

@@ -1834,9 +1834,9 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
 
-            if (chart.titleOffset) {
+            if (chart.titleOffset && chart.titleOffset[0]) {
                 translateY =
-                    chart.titleOffset + (chart.options.title as any).margin;
+                    chart.titleOffset[0] + (chart.options.title as any).margin;
             }
 
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
