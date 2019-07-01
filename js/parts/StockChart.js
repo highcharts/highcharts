@@ -9,7 +9,10 @@
 'use strict';
 
 import H from './Globals.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+var isString = U.isString;
+
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -35,7 +38,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
-    isString = H.isString,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,

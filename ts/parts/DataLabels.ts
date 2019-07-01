@@ -48,7 +48,7 @@ declare global {
             y: (number|null);
         }
         interface DataLabelsOptionsObject {
-            align?: AlignValue;
+            align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: ColorString;
@@ -72,9 +72,9 @@ declare global {
             style?: CSSObject;
             textPath?: DataLabelsTextPath;
             useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
+            verticalAlign?: (VerticalAlignValue|null);
             x?: number;
-            y?: number;
+            y?: (number|null);
             zIndex?: number;
         }
         interface DataLabelsTextPath {
@@ -276,7 +276,7 @@ declare global {
  *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#align
- * @type {Highcharts.AlignValue|undefined}
+ * @type {Highcharts.AlignValue|null|undefined}
  * @default center
  *//**
  * Whether to allow data labels to overlap. To make the labels less sensitive
@@ -581,7 +581,7 @@ declare global {
  * chart, the label is above positive values and below negative values.
  *
  * @name Highcharts.DataLabelsOptionsObject#verticalAlign
- * @type {Highcharts.VerticalAlignValue|undefined}
+ * @type {Highcharts.VerticalAlignValue|null|undefined}
  * @since 2.3.3
  *//**
  * The x position offset of the label relative to the point in pixels.
@@ -651,7 +651,9 @@ declare global {
  * @type {number|undefined}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Series.js';
 
 var arrayMax = H.arrayMax,
@@ -666,7 +668,6 @@ var arrayMax = H.arrayMax,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort,
-    isArray = H.isArray,
     splat = H.splat;
 
 /* eslint-disable valid-jsdoc */
@@ -1349,7 +1350,7 @@ Series.prototype.alignDataLabel = function (
             dataLabel.alignAttr = alignAttr;
 
         } else {
-            dataLabel.align(options, null as any, alignTo);
+            dataLabel.align(options as any, null as any, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 
@@ -1475,7 +1476,7 @@ Series.prototype.justifyDataLabel = function (
 
     if (justified) {
         dataLabel.placed = !isNew;
-        dataLabel.align(options, null as any, alignTo);
+        dataLabel.align(options as any, null as any, alignTo);
     }
 
     return justified;

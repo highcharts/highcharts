@@ -56,8 +56,13 @@ QUnit.test('Touch event test on popup', function (assert) {
         inputGroup = rangeSelector.inputGroup;
 
     // click on the first button
-    testController.triggerEvent('touchstart', inputGroup.translateX +
-            rangeSelector.minDateBox.x + 80, chart.plotTop + inputGroup.translateY, {}, true);
+    testController.touchStart(
+        inputGroup.translateX + rangeSelector.minDateBox.x + 80,
+        chart.plotTop + inputGroup.translateY,
+        undefined,
+        undefined,
+        true
+    );
 
     assert.strictEqual(
         chart.navigationBindings.popup.container.className.indexOf('highcharts-annotation-toolbar'),

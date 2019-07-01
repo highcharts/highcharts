@@ -22,6 +22,11 @@ import NelderMeadModule from '../mixins/nelder-mead.js';
 var nelderMead = NelderMeadModule.nelderMead;
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray,
+    isString = U.isString;
+
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
@@ -35,13 +40,11 @@ var addEvent = H.addEvent,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
     isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
-    isString = H.isString,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;

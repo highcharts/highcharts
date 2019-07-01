@@ -527,6 +527,20 @@ seriesType(
             this.data.forEach(function (link) {
                 link.formatPrefix = 'link';
             });
+
+            this.indexateNodes();
+        },
+
+        /**
+         * Set index for each node. Required for proper `node.update()`.
+         * Note that links are indexated out of the box in `generatePoints()`.
+         *
+         * @private
+         */
+        indexateNodes: function () {
+            this.nodes.forEach(function (node, index) {
+                node.index = index;
+            });
         },
 
         /**
@@ -1053,9 +1067,13 @@ seriesType(
          */
         destroy: function () {
             if (this.isNode) {
-                this.linksFrom.forEach(
-                    function (linkFrom) {
-                        linkFrom.destroyElements();
+                this.linksFrom.concat(this.linksTo).forEach(
+                    function (link) {
+                        // Removing multiple nodes at the same time
+                        // will try to remove link between nodes twice
+                        if (link.destroyElements) {
+                            link.destroyElements();
+                        }
                     }
                 );
                 this.series.layout.removeNode(this);

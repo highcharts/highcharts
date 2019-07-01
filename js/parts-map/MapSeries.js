@@ -27,7 +27,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Color.js';
 import '../parts/Options.js';
 import '../parts/Legend.js';
@@ -43,7 +46,6 @@ var colorPointMixin = H.colorPointMixin,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    isArray = H.isArray,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

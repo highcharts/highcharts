@@ -1033,9 +1033,12 @@ Highcharts.Legend.prototype = {
         var chart = this.chart,
             options = this.options,
             alignment = this.getAlignment(),
-            titleMargin = (chart.options.title as any).margin !== undefined ?
-                (chart.titleOffset as any) +
-                (chart.options.title as any).margin :
+            titleMarginOption: number = (chart.options.title as any).margin,
+            titleMargin: number = titleMarginOption !== undefined ?
+                chart.titleOffset[0] + titleMarginOption :
+                0,
+            titleMarginBottom: number = titleMarginOption !== undefined ?
+                chart.titleOffset[2] + titleMarginOption :
                 0;
 
         if (alignment) {
@@ -1063,8 +1066,14 @@ Highcharts.Legend.prototype = {
                             spacing[side] +
                             (
                                 side === 0 &&
-                                (chart.titleOffset === 0 ? 0 : titleMargin)
-                            ) // #7428, #7894
+                                (chart.titleOffset[0] === 0 ?
+                                    0 : titleMargin)
+                            ) + // #7428, #7894
+                            (
+                                side === 2 &&
+                                (chart.titleOffset[2] === 0 ?
+                                    0 : titleMarginBottom)
+                            )
                         )
                     );
                 }
@@ -1153,9 +1162,7 @@ Highcharts.Legend.prototype = {
             box = legend.box,
             options = legend.options,
             padding = legend.padding,
-            alignTo,
-            allowedWidth: number,
-            y;
+            allowedWidth: number;
 
         legend.itemX = padding;
         legend.itemY = legend.initialItemY;
@@ -1294,15 +1301,20 @@ Highcharts.Legend.prototype = {
         if (display) {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
-            alignTo = chart.spacingBox;
-            if (/(lth|ct|rth)/.test(legend.getAlignment())) {
+            const margin: number = (chart.options.title as any).margin;
+            const vAlign = legend.getAlignment().charAt(1);
+            let alignTo = chart.spacingBox;
+            let y = alignTo.y;
 
-                y = alignTo.y + chart.titleOffset;
+            if (vAlign === 't' && chart.titleOffset[0] > 0) {
+                y += chart.titleOffset[0] + margin;
 
-                alignTo = merge(alignTo, {
-                    y: chart.titleOffset > 0 ?
-                        y += (chart.options.title as any).margin : y
-                });
+            } else if (vAlign === 'b' && chart.titleOffset[2] > 0) {
+                y -= chart.titleOffset[2] + margin;
+            }
+
+            if (y !== alignTo.y) {
+                alignTo = merge(alignTo, { y });
             }
 
             legendGroup.align(merge(options, {

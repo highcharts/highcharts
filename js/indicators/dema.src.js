@@ -7,11 +7,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var isArray = H.isArray,
-    EMAindicator = H.seriesTypes.ema,
+var EMAindicator = H.seriesTypes.ema,
     requiredIndicator = requiredIndicatorMixin,
     correctFloat = H.correctFloat;
 

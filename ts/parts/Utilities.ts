@@ -190,7 +190,7 @@ declare global {
             arr: Array<any>,
             fromIndex?: number
         ): number;
-        function isArray<T>(obj: unknown): obj is Array<T>;
+        function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: any): boolean;
         function isDOMElement(obj: any): boolean;
         function isFunction(obj: any): boolean;
@@ -227,7 +227,7 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick(...args: any): any;
+        function pick<T>(...args: Array<T|null|undefined>): T;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce(arr: Array<any>, fn: Function, initialValue: any): any;
@@ -1228,9 +1228,9 @@ H.pInt = function (s: any, mag?: number): number {
  * @return {boolean}
  *         True if the argument is a string.
  */
-H.isString = function (s: unknown): s is string {
+function isString(s: unknown): s is string {
     return typeof s === 'string';
-};
+}
 
 /**
  * Utility function to check if an item is an array.
@@ -1243,11 +1243,11 @@ H.isString = function (s: unknown): s is string {
  * @return {boolean}
  *         True if the argument is an array.
  */
-H.isArray = function<T> (obj: unknown): obj is Array<T> {
+function isArray(obj: unknown): obj is Array<unknown> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
 
 /**
  * Utility function to check if an item is of type object.
@@ -1264,7 +1264,7 @@ H.isArray = function<T> (obj: unknown): obj is Array<T> {
  *         True if the argument is an object.
  */
 H.isObject = function (obj: any, strict?: boolean): boolean {
-    return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 
 /**
@@ -1385,7 +1385,7 @@ H.attr = function (
     var ret;
 
     // if the prop is a string
-    if (H.isString(prop)) {
+    if (isString(prop)) {
         // set the value
         if (H.defined(value)) {
             elem.setAttribute(prop as string, value as string);
@@ -1421,7 +1421,7 @@ H.attr = function (
  *         The produced or original array.
  */
 H.splat = function (obj: any): Array<any> {
-    return H.isArray(obj) ? obj : [obj];
+    return isArray(obj) ? obj : [obj];
 };
 
 /**
@@ -1501,18 +1501,20 @@ H.extend = function<T> (a: T, b: object): T {
 };
 
 
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
- * @function Highcharts.pick
+ * @function Highcharts.pick<T>
  *
- * @param {...*} items
+ * @param {...Array<T|null|undefined>} items
  *        Variable number of arguments to inspect.
  *
- * @return {*}
+ * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
 H.pick = function (): any {
+    /* eslint-enable valid-jsdoc */
     var args = arguments,
         i,
         arg,
@@ -1738,7 +1740,7 @@ H.datePropsToTimestamps = function (object: any): void {
     H.objectEach(object, function (val: any, key: string): void {
         if (H.isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
-        } else if (H.isObject(val) || H.isArray(val)) {
+        } else if (H.isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -3243,7 +3245,7 @@ if ((win as any).jQuery) {
             if (args[0]) {
                 new (H as any)[ // eslint-disable-line no-new
                     // Constructor defaults to Chart
-                    H.isString(args[0]) ? args.shift() : 'Chart'
+                    isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
                 return this;
             }
@@ -3254,3 +3256,11 @@ if ((win as any).jQuery) {
         }
     };
 }
+
+// TODO use named exports when supported.
+const utils = {
+    isArray,
+    isString
+};
+
+export default utils;

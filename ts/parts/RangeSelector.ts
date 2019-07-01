@@ -25,7 +25,6 @@ declare global {
         interface Axis {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
-            minFromRange(): number;
         }
         interface Chart {
             extraBottomMargin?: boolean;
@@ -881,7 +880,7 @@ RangeSelector.prototype = {
             baseAxis.setExtremes(
                 newMin,
                 newMax,
-                pick(redraw, 1),
+                pick(redraw, 1 as any),
                 null as any, // auto animation
                 {
                     trigger: 'rangeSelectorButton',
@@ -1835,9 +1834,9 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
 
-            if (chart.titleOffset) {
+            if (chart.titleOffset && chart.titleOffset[0]) {
                 translateY =
-                    chart.titleOffset + (chart.options.title as any).margin;
+                    chart.titleOffset[0] + (chart.options.title as any).margin;
             }
 
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
@@ -2018,10 +2017,12 @@ RangeSelector.prototype = {
  *
  * @private
  * @function Highcharts.Axis#minFromRange
- * @return {number}
+ * @return {number|undefined}
  *         The new minimum value.
  */
-Axis.prototype.minFromRange = function (this: Highcharts.Axis): number {
+Axis.prototype.minFromRange = function (
+    this: Highcharts.Axis
+): (number|undefined) {
     var rangeOptions = this.range,
         type = (rangeOptions as any).type,
         timeName = ({

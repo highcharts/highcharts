@@ -204,11 +204,12 @@ import H from './Globals.js';
  *
  * @return {string}
  */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray, isString = U.isString;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, isArray = H.isArray, isNumber = H.isNumber, isString = H.isString, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, splat = H.splat, syncTimeout = H.syncTimeout, Tick = H.Tick;
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, isNumber = H.isNumber, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, splat = H.splat, syncTimeout = H.syncTimeout, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -1107,14 +1108,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Red X axis labels
              *
              * @type      {Highcharts.CSSObject}
-             * @default   {"color": "#666666", "cursor": "default", "fontSize": "11px"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}',
-                /** @ignore-option */
+                /** @internal */
                 cursor: 'default',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px'
             }
         },
@@ -1932,10 +1932,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Styled mode
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}'
             }
         },
@@ -2394,6 +2393,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * Also the `softThreshold` option takes precedence over `maxPadding`,
+         * so if the data is tangent to the threshold, `maxPadding` may not
+         * apply unless `softThreshold` is set to false.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding-02/
          *         Max padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -2409,6 +2412,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * when you don't want the lowest data value to appear on the edge
          * of the plot area. When the axis' `min` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
+         *
+         * Also the `softThreshold` option takes precedence over `minPadding`,
+         * so if the data is tangent to the threshold, `minPadding` may not
+         * apply unless `softThreshold` is set to false.
          *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
@@ -2845,18 +2852,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              *         Red stack total labels
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast"}
              * @since   2.1.5
              * @product highcharts
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor100}',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px',
-                /** @ignore-option */
+                /** @internal */
                 fontWeight: 'bold',
-                /** @ignore-option */
+                /** @internal */
                 textOutline: '1px contrast'
             }
         },
@@ -3985,7 +3991,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
+        minTickInterval = pick(options.minTickInterval, (axis.isDatetimeAxis && axis.closestPointRange));
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
