@@ -23,6 +23,21 @@ import H from './Globals.js';
 * @name Highcharts.ColumnMetricsObject#offset
 * @type {number}
 */
+/**
+ * @interface Highcharts.PointOptionsObject
+ */ /**
+* A name for the dash style to use for the points in column-based series. In
+* styled mode, the stroke dash-array can be set with the same classes as listed
+* under {@link Highcharts.PointOptionsObject#color}.
+* @name Highcharts.PointOptionsObject#dashStyle
+* @type {Highcharts.DashStyleValue|undefined}
+*/ /**
+* A pixel value specifying a fixed width for the column or bar. Overrides
+* pointWidth on the series.
+* @see [series.pointWidth](#plotOptions.column.pointWidth)
+* @name Highcharts.PointOptionsObject#pointWidth
+* @type {number|undefined}
+*/
 import './Utilities.js';
 import './Color.js';
 import './Legend.js';
@@ -658,7 +673,7 @@ seriesType('column', 'line',
             this.color ||
             fill), strokeWidth = (point && point[strokeWidthOption]) ||
             options[strokeWidthOption] ||
-            this[strokeWidthOption] || 0, dashstyle = (point && point.dashStyle) || options.dashStyle, opacity = pick(options.opacity, 1), zone, brightness;
+            this[strokeWidthOption] || 0, dashstyle = (point && point.options.dashStyle) || options.dashStyle, opacity = pick(options.opacity, 1), zone, brightness;
         // Handle zone colors
         if (point && this.zones.length) {
             zone = point.getZone();
