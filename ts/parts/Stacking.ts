@@ -89,7 +89,7 @@ declare global {
             public label?: SVGElement;
             public leftCliff: number;
             public options: YAxisStackLabelsOptions;
-            public points: Dictionary<Point>;
+            public points: Dictionary<Array<number>>;
             public rightCliff: number;
             public stack: OptionsStackingValue;
             public textAlign: AlignValue;
@@ -695,7 +695,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         stack = stacks[key as any][x];
         if (y !== null) {
             stack.points[pointKey as any] = stack.points[series.index as any] =
-                [pick(stack.cumulative, stackThreshold)] as any;
+                [pick(stack.cumulative, stackThreshold)];
 
             // Record the base of the stack
             if (!defined(stack.cumulative)) {
@@ -707,8 +707,8 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
-                (stack.points as any)[pointKey as any][0] =
-                    (stack.points as any)[series.index + ',' + x + ',0'][0];
+                stack.points[pointKey as any][0] =
+                    stack.points[series.index + ',' + x + ',0'][0];
             }
 
         // When updating to null, reset the point stack (#7493)

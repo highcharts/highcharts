@@ -263,6 +263,7 @@ declare global {
                 LegendSymbolMixin['drawRectangle']
             );
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
+            public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;

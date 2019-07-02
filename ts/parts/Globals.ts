@@ -105,6 +105,7 @@ declare global {
             distX?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
+            doCurve?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
@@ -112,6 +113,7 @@ declare global {
             name?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
+            rectPlotX?: any; // @todo
             selected?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
@@ -130,7 +132,6 @@ declare global {
             center?: any; // @todo
             clipBox?: any; // @todo
             colorKey?: any; // @todo
-            fillColor?: any; // @todo
             fillGraph?: any; // @todo
             fixedBox?: any; // @todo
             forceDL?: any; // @todo
