@@ -292,7 +292,7 @@ seriesType(
 
             // In styled mode, use CSS, otherwise the fill used in the style
             // sheet will take precedence over the fill attribute.
-            var func = this.chart.styledMode ? 'css' : 'attr';
+            var func = this.chart.styledMode ? 'css' : 'animate';
 
             seriesTypes.column.prototype.drawPoints.call(this);
 
