@@ -645,31 +645,55 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /**
+             * @type {string|*}
+             */
             millisecond: {
                 main: '%H:%M:%S.%L',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             second: {
                 main: '%H:%M:%S',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             minute: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             hour: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             day: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             week: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             month: {
                 main: '%b \'%y'
             },
+            /**
+             * @type {string|*}
+             */
             year: {
                 main: '%Y'
             }
