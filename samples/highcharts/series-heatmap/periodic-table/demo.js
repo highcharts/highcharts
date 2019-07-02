@@ -121,6 +121,10 @@ Highcharts.ajax({
                         }
                     }]
                 });
+
+                document
+                    .getElementById('dataset-title')
+                    .textContent = isHeatmap ? 'Color by:' : 'Size by:';
             }
         );
     }
