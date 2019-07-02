@@ -3061,7 +3061,7 @@ null,
             y = yData[i];
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
-            validValue = ((isNumber(y, true) || isArray(y)) &&
+            validValue = ((isNumber(y) || isArray(y)) &&
                 (!yAxis.positiveValuesOnly || (y.length || y > 0)));
             withinRange = (this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||

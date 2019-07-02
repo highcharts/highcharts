@@ -4060,7 +4060,7 @@ H.Series = H.seriesType(
                 // For points within the visible range, including the first
                 // point outside the visible range (#7061), consider y extremes.
                 validValue = (
-                    ((isNumber as any)(y, true) || isArray(y)) &&
+                    (isNumber(y) || isArray(y)) &&
                     (!yAxis.positiveValuesOnly || ((y as any).length || y > 0))
                 );
                 withinRange = (

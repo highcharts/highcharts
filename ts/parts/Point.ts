@@ -838,7 +838,7 @@ Highcharts.Point.prototype = {
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
-            point.x === null || !(isNumber as any)(point.y, true)
+            point.x === null || !isNumber(point.y)
         ); // #3571, check for NaN
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874

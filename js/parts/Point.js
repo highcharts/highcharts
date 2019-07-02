@@ -590,7 +590,7 @@ Highcharts.Point.prototype = {
         if (pointValKey) {
             point.y = point[pointValKey];
         }
-        point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y, true)); // #3571, check for NaN
+        point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y)); // #3571, check for NaN
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
         // The point is initially selected by options (#5777)
         if (point.selected) {
