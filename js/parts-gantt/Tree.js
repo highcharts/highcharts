@@ -13,10 +13,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
 
 var extend = H.extend,
-    isNumber = H.isNumber,
     pick = H.pick,
     isFunction = function (x) {
         return typeof x === 'function';

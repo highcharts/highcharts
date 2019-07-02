@@ -297,6 +297,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isArray,
+    isNumber,
     pInt
 } = U;
 
@@ -315,7 +316,6 @@ var VMLRenderer,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,

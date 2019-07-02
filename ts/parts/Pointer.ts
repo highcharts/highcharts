@@ -212,7 +212,11 @@ declare global {
  * @type {Array<Highcharts.SelectDataObject>}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isNumber
+} = U;
+
 import './Tooltip.js';
 import './Color.js';
 
@@ -226,7 +230,6 @@ var H = Highcharts,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     offset = H.offset,
     pick = H.pick,

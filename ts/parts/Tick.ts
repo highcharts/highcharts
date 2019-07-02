@@ -118,13 +118,15 @@ declare global {
  */
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isNumber
+} = U;
 
 var correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     deg2rad = H.deg2rad;

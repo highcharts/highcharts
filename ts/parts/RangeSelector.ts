@@ -173,6 +173,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    isNumber,
     pInt
 } = U;
 
@@ -190,7 +191,6 @@ var addEvent = H.addEvent,
     discardElement = H.discardElement,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     splat = H.splat;

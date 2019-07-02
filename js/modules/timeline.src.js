@@ -14,12 +14,14 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 var addEvent = H.addEvent,
     defined = H.defined,
     LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     merge = H.merge,
-    isNumber = H.isNumber,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,

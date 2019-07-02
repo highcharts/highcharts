@@ -255,7 +255,11 @@ declare global {
  * @product highcharts
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isNumber
+} = U;
+
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
@@ -1203,7 +1207,7 @@ seriesType(
          * @return {boolean}
          */
         isValid: function (this: Highcharts.Point): boolean {
-            return (H.isNumber as any)(this.y, true) && this.y >= 0;
+            return isNumber(this.y) && this.y >= 0;
         },
 
         /**

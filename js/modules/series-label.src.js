@@ -39,14 +39,16 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
     addEvent = H.addEvent,
     extend = H.extend,
-    isNumber = H.isNumber,
     pick = H.pick,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,

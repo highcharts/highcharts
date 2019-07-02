@@ -14,13 +14,16 @@ import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
 
 import H from '../../parts/Globals.js';
+
+import U from '../../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../../parts/Color.js';
 
 var win = H.win,
     doc = win.document,
     merge = H.merge,
     objEach = H.objEach,
-    isNumber = H.isNumber,
     some = H.some,
     Color = H.Color,
     pick = H.pick;

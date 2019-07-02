@@ -41,6 +41,7 @@ import '../parts/Responsive.js';
 
 extend(Highcharts, {
     isArray: U.isArray,
+    isNumber: U.isNumber,
     isString: U.isString,
     pInt: U.pInt
 });

@@ -638,7 +638,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isNumber
+} = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
@@ -646,7 +649,6 @@ var Point: typeof Highcharts.Point,
     erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
-    isNumber = H.isNumber,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
     defined = H.defined,

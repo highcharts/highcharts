@@ -9,12 +9,15 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var objectEach = H.objectEach,
     seriesType = H.seriesType,
     correctFloat = H.correctFloat,
-    isNumber = H.isNumber,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     merge = H.merge;
