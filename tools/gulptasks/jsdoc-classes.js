@@ -17,6 +17,7 @@ const SOURCE_GLOBS = [
     'js/parts/Axis.js',
     'js/parts/Chart.js',
     'js/parts/Color.js',
+    'js/parts/ColumnSeries.js',
     'js/parts/DataGrouping.js',
     'js/parts/DataLabels.js',
     'js/parts/Dynamics.js',
