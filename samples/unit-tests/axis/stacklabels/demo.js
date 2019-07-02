@@ -37,7 +37,7 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
     );
 });
 
-QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
+QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
@@ -72,13 +72,13 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         firstStackLabel.alignAttr.x -
         (firstStackLabel.getBBox().width / 2) >= 0,
         true,
-        'Stack label should be inside plot area'
+        'Stack label should be inside plot area left'
     );
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
         (lastStackLabel.getBBox().width / 2) <= chart.plotWidth,
         true,
-        'Stack label should be inside plot area'
+        'Stack label should be inside plot area right'
     );
 
     chart.update({
@@ -194,12 +194,12 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         firstStackLabel.alignAttr.x -
         (firstStackLabel.getBBox().width / 2) >= 0,
         true,
-        'Stack label should be inside plot area'
+        'Stack label should be inside plot area left'
     );
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
         (lastStackLabel.getBBox().width / 2) <= chart.plotWidth,
         true,
-        'Stack label should be inside plot area'
+        'Stack label should be inside plot area right'
     );
 });
