@@ -5007,7 +5007,8 @@ H.Series = H.seriesType(
                 var plotX = point.plotX,
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
-                    pathToPoint; // the path to this point from the previous
+                    // the path to this point from the previous
+                    pathToPoint: Highcharts.SVGPathArray;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -5027,7 +5028,11 @@ H.Series = H.seriesType(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = ['M', point.plotX, point.plotY];
+                        pathToPoint = [
+                            'M',
+                            point.plotX as any,
+                            point.plotY as any
+                        ];
 
                     // Generate the spline as defined in the SplineSeries object
                     } else if (series.getPointSpline) {
@@ -5039,35 +5044,39 @@ H.Series = H.seriesType(
                         if (step === 1) { // right
                             pathToPoint = [
                                 'L',
-                                lastPoint.plotX,
-                                plotY
+                                lastPoint.plotX as any,
+                                plotY as any
                             ];
 
                         } else if (step === 2) { // center
                             pathToPoint = [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY,
+                                lastPoint.plotY as any,
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                plotY
+                                plotY as any
                             ];
 
                         } else {
                             pathToPoint = [
                                 'L',
-                                plotX,
-                                lastPoint.plotY
+                                plotX as any,
+                                lastPoint.plotY as any
                             ];
                         }
-                        pathToPoint.push('L', plotX, plotY);
+                        pathToPoint.push(
+                            'L',
+                            plotX as any,
+                            plotY as any
+                        );
 
                     } else {
                         // normal line to next point
                         pathToPoint = [
                             'L',
-                            plotX,
-                            plotY
+                            plotX as any,
+                            plotY as any
                         ];
                     }
 

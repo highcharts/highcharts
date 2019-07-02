@@ -108,6 +108,7 @@ declare global {
             graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
+            isCliff?: any; // @todo
             labelDistance?: any; // @todo
             name?: any; // @todo
             plotHigh?: any; // @todo
@@ -156,7 +157,6 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo
-            getPointSpline: Function; // @todo
             toYData: Function; // @todo
         }
         interface SeriesOptions {
