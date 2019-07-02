@@ -951,17 +951,17 @@ seriesType('column', 'line',
  * @apioption series.column.data.borderWidth
  */
 /**
-* A name for the dash style to use for the column or bar. Overrides
-* dashStyle on the series.
-*
-* In styled mode, the stroke dash-array can be set with the same classes as
-* listed under [data.color](#series.column.data.color).
-*
-* @see [series.pointWidth](#plotOptions.column.dashStyle)
-*
-* @type      {Highcharts.DashStyleValue}
-* @apioption series.column.data.dashStyle
-*/
+ * A name for the dash style to use for the column or bar. Overrides
+ * dashStyle on the series.
+ *
+ * In styled mode, the stroke dash-array can be set with the same classes as
+ * listed under [data.color](#series.column.data.color).
+ *
+ * @see [series.pointWidth](#plotOptions.column.dashStyle)
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @apioption series.column.data.dashStyle
+ */
 /**
  * A pixel value specifying a fixed width for the column or bar. Overrides
  * pointWidth on the series.
