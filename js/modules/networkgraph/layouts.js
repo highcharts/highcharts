@@ -8,8 +8,8 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import 'integrations.js';
-import 'QuadTree.js';
+import './integrations.js';
+import './QuadTree.js';
 
 var pick = H.pick,
     defined = H.defined,
