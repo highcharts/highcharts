@@ -1,5 +1,4 @@
-jQuery(function () {
-
+(function () {
     function checkY(chart, assert) {
 
         assert.strictEqual(
@@ -14,7 +13,7 @@ jQuery(function () {
         );
     }
 
-    QUnit.test('Positive', function (assert) {
+    QUnit.test('Positive (#5280)', function (assert) {
 
         var chart = Highcharts.chart('container', {
             chart: {
@@ -107,5 +106,4 @@ jQuery(function () {
 
         checkY(chart, assert);
     });
-
-});
+}());
