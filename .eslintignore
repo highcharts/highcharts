@@ -1,6 +1,7 @@
 js/mixins/centered-series.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
+js/parts/AreaSeries.js
 js/parts/Axis.js
 js/parts/BarSeries.js
 js/parts/Chart.js
