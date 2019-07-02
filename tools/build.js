@@ -73,7 +73,10 @@ const scripts = params => {
 // Copy from assembler. TODO: Load from assembler when it has been updated.
 const getExcludedFilenames = (requires, base) => requires
     .reduce((arr, name) => {
-        const filePath = join(base, `${name.replace('highcharts/', '')}.src.js`)
+        const filePath = join(
+            base,
+            `${name.replace('highcharts/', '')}.src.js`
+        );
         const dependencies = exists(filePath) ?
             getOrderedDependencies(filePath).map(str => resolve(str)) :
             [];
