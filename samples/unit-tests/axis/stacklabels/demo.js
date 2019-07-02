@@ -37,11 +37,11 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
     );
 });
 
-QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
+QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            width: 300,
+            width: 280,
             height: 260
         },
 

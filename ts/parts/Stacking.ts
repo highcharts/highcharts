@@ -407,7 +407,7 @@ H.StackItem.prototype = {
                     label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-
+            label.alignAttr = alignAttr;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
