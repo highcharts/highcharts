@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,11 +11,11 @@ const Path = require('path');
  *
  * */
 
-const LINT_DIRECTORY = Path.join('test', 'typescript-lint');
+const LINT_DIRECTORY = path.join('test', 'typescript-lint');
 
 const TREE_FILE = 'tree-namespace.json';
 
-const TSCONFIG_FILE = Path.join(LINT_DIRECTORY, 'tsconfig.json');
+const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 
 const TARGET_DIRECTORIES = [
     'gantt',
@@ -23,9 +23,8 @@ const TARGET_DIRECTORIES = [
     'highstock',
     'highmaps'
 ].map(
-    directoryName => Path.join('build', 'api', directoryName)
+    directoryName => path.join('build', 'api', directoryName)
 );
-
 
 /* *
  *
@@ -42,17 +41,18 @@ const TARGET_DIRECTORIES = [
  */
 function jsDocNamespace() {
 
-    const FileSystem = require('../filesystem');
-    const FS = require('fs');
-    const jsdoc3 = require('gulp-jsdoc3');
-    const LogLib = require('./lib/log');
+    const fs = require('fs');
+    const fsLib = require('./lib/fs');
+    const gulpLib = require('./lib/gulp');
+    const jsdoc = require('gulp-jsdoc3');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
         const codeFiles = JSON
-            .parse(FS.readFileSync(TSCONFIG_FILE)).files
-            .map(file => Path.normalize(
-                Path.join(Path.dirname(TSCONFIG_FILE), file)
+            .parse(fs.readFileSync(TSCONFIG_FILE)).files
+            .map(file => path.normalize(
+                path.join(path.dirname(TSCONFIG_FILE), file)
             ))
             .filter(file => (
                 file.indexOf('global.d.ts') === -1 &&
@@ -65,7 +65,7 @@ function jsDocNamespace() {
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {
                 plugins: [
-                    Path.join(
+                    path.posix.join(
                         'node_modules', 'highcharts-documentation-generators',
                         'jsdoc', 'plugins', 'highcharts.namespace'
                     )
@@ -77,34 +77,37 @@ function jsDocNamespace() {
             return;
         }
 
-        LogLib.message('Generating', TREE_FILE + '...');
+        gulpLib
+            .requires(['code/highcharts.src.js'], ['scripts'])
+            .then(() => logLib.message('Generating', TREE_FILE + '...'))
+            .then(() => gulp.src(...gulpOptions).pipe(
+                jsdoc(jsdoc3Options, error => {
 
-        Gulp
-            .src(...gulpOptions)
-            .pipe(jsdoc3(jsdoc3Options, error => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
 
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                Promise
-                    .all(
-                        TARGET_DIRECTORIES.map(
-                            targetDirectory => FileSystem.copyFile(
-                                TREE_FILE,
-                                Path.join(
-                                    targetDirectory,
-                                    Path.basename(TREE_FILE)
-                                )
-                            )
-                        )
-                    )
-                    .then(() => LogLib.success('Created', TREE_FILE))
-                    .then(resolve)
-                    .catch(reject);
-            }));
+                    Promise
+                        .all(TARGET_DIRECTORIES.map(
+                            targetDirectory => new Promise(done => {
+                                fsLib.copyFile(
+                                    TREE_FILE,
+                                    path.join(
+                                        targetDirectory,
+                                        path.basename(TREE_FILE)
+                                    )
+                                );
+                                done();
+                            })
+                        ))
+                        .then(() => logLib.success('Created', TREE_FILE))
+                        .then(resolve)
+                        .catch(reject);
+                })
+            ))
+            .catch(reject);
     });
 }
 
-Gulp.task('jsdoc-namespace', Gulp.series('scripts-js', jsDocNamespace));
+gulp.task('jsdoc-namespace', jsDocNamespace);

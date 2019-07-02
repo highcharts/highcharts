@@ -6,6 +6,15 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * The ending X value of the range point.
+ * @name Highcharts.PointOptionsObject#x2
+ * @type {number|undefined}
+ * @requires modules/xrange
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -169,7 +178,7 @@ seriesType('xrange', 'column'
          * free access to features like groupPadding, grouping, pointWidth etc.
          *
          * @private
-         * @function Higcharts.Series#getColumnMetrics
+         * @function Highcharts.Series#getColumnMetrics
          *
          * @return {Highcharts.ColumnMetricsObject}
          */
@@ -297,7 +306,8 @@ seriesType('xrange', 'column'
                 pointHeight = Math.round(metrics.width),
                 dlLeft,
                 dlRight,
-                dlWidth;
+                dlWidth,
+                clipRectWidth;
 
             if (minPointLength) {
                 widthDifference = minPointLength - length;
@@ -398,16 +408,17 @@ seriesType('xrange', 'column'
                     height: shapeArgs.height,
                     r: series.options.borderRadius
                 };
+
+                clipRectWidth = Math.max(
+                    Math.round(length * partialFill + point.plotX - plotX),
+                    0
+                );
                 point.clipRectArgs = {
-                    x: shapeArgs.x,
+                    x: xAxis.reversed ? // #10717
+                        shapeArgs.x + length - clipRectWidth :
+                        shapeArgs.x,
                     y: shapeArgs.y,
-                    width: Math.max(
-                        Math.round(
-                            length * partialFill +
-                        (point.plotX - plotX)
-                        ),
-                        0
-                    ),
+                    width: clipRectWidth,
                     height: shapeArgs.height
                 };
             }
@@ -452,7 +463,7 @@ seriesType('xrange', 'column'
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
                 pointState = point.state,
                 stateOpts = seriesOpts.states[pointState || 'normal'] || {},
-                attrOrAnim = pointState === undefined ? 'attr' : 'animate',
+                pointStateVerb = pointState === undefined ? 'attr' : verb,
                 pointAttr = series.pointAttribs(point, pointState),
                 animation = pick(
                     series.chart.options.chart.animation,
@@ -464,13 +475,13 @@ seriesType('xrange', 'column'
 
                 // Original graphic
                 if (graphic) { // update
-                    point.graphicOriginal[verb](shapeArgs);
+                    graphic.rect[verb](shapeArgs);
                 } else {
                     point.graphic = graphic = renderer.g('point')
                         .addClass(point.getClassName())
                         .add(point.group || series.group);
 
-                    point.graphicOriginal = renderer[type](merge(shapeArgs))
+                    graphic.rect = renderer[type](merge(shapeArgs))
                         .addClass(point.getClassName())
                         .addClass('highcharts-partfill-original')
                         .add(graphic);
@@ -478,35 +489,38 @@ seriesType('xrange', 'column'
 
                 // Partial fill graphic
                 if (partShapeArgs) {
-                    if (point.graphicOverlay) {
-                        point.graphicOverlay[verb](
+                    if (graphic.partRect) {
+                        graphic.partRect[verb](
                             merge(partShapeArgs)
                         );
-                        point.clipRect.animate(
+                        graphic.partialClipRect[verb](
                             merge(clipRectArgs)
                         );
 
                     } else {
 
-                        point.clipRect = renderer.clipRect(
+                        graphic.partialClipRect = renderer.clipRect(
                             clipRectArgs.x,
                             clipRectArgs.y,
                             clipRectArgs.width,
                             clipRectArgs.height
                         );
 
-                        point.graphicOverlay = renderer[type](partShapeArgs)
+                        graphic.partRect = renderer[type](partShapeArgs)
                             .addClass('highcharts-partfill-overlay')
                             .add(graphic)
-                            .clip(point.clipRect);
+                            .clip(graphic.partialClipRect);
                     }
                 }
 
 
                 // Presentational
                 if (!series.chart.styledMode) {
-                    point.graphicOriginal
-                        .animate(pointAttr, animation)
+                    graphic
+                        .rect[verb](
+                            pointAttr,
+                            animation
+                        )
                         .shadow(seriesOpts.shadow, null, cutOff);
 
                     if (partShapeArgs) {
@@ -528,7 +542,11 @@ seriesType('xrange', 'column'
                         );
 
                         pointAttr.fill = fill;
-                        point.graphicOverlay[attrOrAnim](pointAttr, animation)
+                        graphic
+                            .partRect[pointStateVerb](
+                                pointAttr,
+                                animation
+                            )
                             .shadow(seriesOpts.shadow, null, cutOff);
                     }
                 }
@@ -583,6 +601,14 @@ seriesType('xrange', 'column'
         //*/
 
     }, { // Point class properties
+
+        /**
+         * The ending X value of the range point.
+         * @name Highcharts.Point#x2
+         * @type {number|undefined}
+         * @requires modules/xrange
+         */
+
         /**
          * Extend applyOptions so that `colorByPoint` for x-range means that one
          * color is applied per Y axis category.

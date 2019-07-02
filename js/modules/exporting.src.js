@@ -1135,6 +1135,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Copy the options and add extra options
             options = merge(chart.options, chartOptions);
 
+        // Use userOptions to make the options chain in series right (#3881)
+        options.plotOptions = merge(
+            chart.userOptions.plotOptions,
+            chartOptions && chartOptions.plotOptions
+        );
+
         // create a sandbox where a new chart will be generated
         sandbox = createElement('div', null, {
             position: 'absolute',
@@ -1518,6 +1524,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     button.setState(0);
                 }
                 chart.openMenu = false;
+                css(chart.renderTo, { overflow: 'hidden' }); // #10361
                 H.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
@@ -1622,6 +1629,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         css(menu, menuStyle);
+        css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
     },
 

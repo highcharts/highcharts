@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -31,19 +31,19 @@ const SOURCE_FILES = [
  */
 function task() {
 
-    const Compile = require('../compile.js');
-    const LogLib = require('./lib/log');
+    const compile = require('../compile.js');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        LogLib.message('Compiling', SOURCE_DIRECTORY + '...');
+        log.message('Compiling', SOURCE_DIRECTORY + '...');
 
-        Compile
+        compile
             .compile(SOURCE_FILES, SOURCE_DIRECTORY)
-            .then(() => LogLib.success('Compiled', SOURCE_DIRECTORY))
+            .then(() => log.success('Compiled', SOURCE_DIRECTORY))
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('scripts-vendor', task);
+gulp.task('scripts-vendor', task);

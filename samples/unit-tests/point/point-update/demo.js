@@ -1,3 +1,129 @@
+QUnit.test('Line series markers should be updated on redraw.(#4759)', function (assert) {
+    var chart = $('#container').highcharts({
+        series: [{
+            data: [{
+                y: 55,
+                name: 'Item 1',
+                color: 'blue'
+            }, {
+                y: 45,
+                name: 'Item 1',
+                color: 'green'
+            }]
+        }]
+    }).highcharts();
+
+    chart.series[0].points[0].update({
+        marker: {
+            fillColor: "red"
+        }
+    });
+
+    chart.series[0].points[1].update({
+        color: "orange"
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.attr("fill"),
+        "red",
+        'Proper color for a marker.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphic.attr("fill"),
+        "orange",
+        'Proper color for a marker.'
+    );
+});
+
+QUnit.test('Column series point should be updated on redraw.', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            data: [{
+                y: 55,
+                name: 'Item 1',
+                color: 'blue'
+            }, {
+                y: 45,
+                name: 'Item 1',
+                color: 'green'
+            }]
+        }]
+    }).highcharts();
+
+    chart.series[0].points[0].update({
+        color: 'red'
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.attr("fill"),
+        "red",
+        'Proper color for a marker.'
+    );
+});
+
+QUnit.test('Pie series point should be updated on redraw.', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        series: [{
+            data: [{
+                y: 55,
+                name: 'Item 1',
+                color: 'blue'
+            }, {
+                y: 45,
+                name: 'Item 1',
+                color: 'green'
+            }]
+        }]
+    }).highcharts();
+
+    chart.series[0].points[0].update({
+        color: 'red'
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.attr("fill"),
+        "red",
+        'Proper color for a marker.'
+    );
+});
+
+QUnit.test('Column update(#4284)', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            animation: false
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+
+        series: [{
+            type: 'column',
+            animation: false,
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+
+    }).highcharts();
+
+    var point = chart.series[0].points[0];
+    point.update({ y: 100 });
+
+
+    assert.notEqual(
+        point.graphic.element.getAttribute('visibility'),
+        'hidden',
+        'Point is visible'
+    );
+
+});
 QUnit.test(
     'Preserve point config initial number type in options.data',
     function (assert) {
@@ -76,7 +202,9 @@ QUnit.test(
     'Preserve point config initial array type in options.data',
     function (assert) {
         var chart = $('#container').highcharts({
-
+            accessibility: {
+                enabled: false // Forces markers
+            },
             series: [{
                 data: [[0, 1], [1, 2], [2, 3]],
                 turboThreshold: 2
@@ -132,6 +260,9 @@ QUnit.test(
     'Preserve data values when updating from array to object config (#4916)',
     function (assert) {
         var chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: false // Forces markers
+            },
             xAxis: {
                 type: 'datetime'
             },
@@ -174,6 +305,9 @@ QUnit.test(
     'marker.symbol=null should be accepted in point.update() (#6792)',
     function (assert) {
         var chart = Highcharts.chart('container', {
+                accessibility: {
+                    enabled: false // Forces markers
+                },
                 series: [{
                     data: [{
                         y: 10,

@@ -83,6 +83,7 @@ Highcharts.theme = {
         }
     },
     legend: {
+        backgroundColor: 'rgba(48, 48, 48, 0.8)',
         itemStyle: {
             color: '#CCC'
         },
@@ -91,6 +92,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#333'
+        },
+        title: {
+            style: {
+                color: '#E0E0E0'
+            }
         }
     },
     labels: {
@@ -115,6 +121,9 @@ Highcharts.theme = {
 
     plotOptions: {
         series: {
+            dataLabels: {
+                color: '#444'
+            },
             nullColor: '#444444'
         },
         line: {
@@ -256,14 +265,7 @@ Highcharts.theme = {
             ]
         },
         trackBorderColor: '#666'
-    },
-
-    // special colors for some of the demo examples
-    legendBackgroundColor: 'rgba(48, 48, 48, 0.8)',
-    background2: 'rgb(70, 70, 70)',
-    dataLabelsColor: '#444',
-    textColor: '#E0E0E0',
-    maskColor: 'rgba(255,255,255,0.3)'
+    }
 };
 
 // Apply the theme

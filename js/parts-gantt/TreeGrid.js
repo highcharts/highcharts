@@ -10,7 +10,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import './GridAxis.js';
 import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -34,7 +37,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return H.isObject(x, true);
     },
-    isString = H.isString,
     pick = H.pick,
     wrap = H.wrap,
     GridAxis = H.Axis,
@@ -485,6 +487,23 @@ var onBeforeRender = function (e) {
                 removeFoundExtremesEvent,
                 uniqueNames = options.uniqueNames,
                 numberOfSeries = 0,
+                isDirty,
+                data,
+                treeGrid;
+            // Check whether any of series is rendering for the first time,
+            // visibility has changed, or its data is dirty,
+            // and only then update. #10570, #10580
+            // Also check if mapOfPosToGridNode exists. #10887
+            isDirty = (
+                !axis.mapOfPosToGridNode ||
+                axis.series.some(function (series) {
+                    return !series.hasRendered ||
+                        series.isDirtyData ||
+                        series.isDirty;
+                })
+            );
+
+            if (isDirty) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s) {
                     if (s.visible) {
@@ -504,7 +523,7 @@ var onBeforeRender = function (e) {
                         }
                     }
                     return arr;
-                }, []),
+                }, []);
                 // setScale is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
@@ -513,47 +532,51 @@ var onBeforeRender = function (e) {
                     (uniqueNames === true) ? numberOfSeries : 1
                 );
 
-            // Assign values to the axis.
-            axis.categories = treeGrid.categories;
-            axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
-            axis.hasNames = true;
-            axis.tree = treeGrid.tree;
+                // Assign values to the axis.
+                axis.categories = treeGrid.categories;
+                axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+                axis.hasNames = true;
+                axis.tree = treeGrid.tree;
 
-            // Update yData now that we have calculated the y values
-            axis.series.forEach(function (series) {
-                var data = series.options.data.map(function (d) {
-                    return isObject(d) ? merge(d) : d;
-                });
-
-                // Avoid destroying points when series is not visible
-                if (series.visible) {
-                    series.setData(data, false);
-                }
-            });
-
-            // Calculate the label options for each level in the tree.
-            axis.mapOptionsToLevel = getLevelOptions({
-                defaults: labelOptions,
-                from: 1,
-                levels: labelOptions.levels,
-                to: axis.tree.height
-            });
-
-            // Collapse all the nodes belonging to a point where collapsed
-            // equals true.
-            // Can be called from beforeRender, if getBreakFromNode removes
-            // its dependency on axis.max.
-            removeFoundExtremesEvent =
-                H.addEvent(axis, 'foundExtremes', function () {
-                    treeGrid.collapsedNodes.forEach(function (node) {
-                        var breaks = collapse(axis, node);
-
-                        axis.setBreaks(breaks, false);
+                // Update yData now that we have calculated the y values
+                axis.series.forEach(function (series) {
+                    var data = series.options.data.map(function (d) {
+                        return isObject(d) ? merge(d) : d;
                     });
-                    removeFoundExtremesEvent();
+
+                    // Avoid destroying points when series is not visible
+                    if (series.visible) {
+                        series.setData(data, false);
+                    }
                 });
+
+                // Calculate the label options for each level in the tree.
+                axis.mapOptionsToLevel = getLevelOptions({
+                    defaults: labelOptions,
+                    from: 1,
+                    levels: labelOptions.levels,
+                    to: axis.tree.height
+                });
+
+                // Collapse all the nodes belonging to a point where collapsed
+                // equals true. Only do this on init.
+                // Can be called from beforeRender, if getBreakFromNode removes
+                // its dependency on axis.max.
+                if (e.type === 'beforeRender') {
+                    removeFoundExtremesEvent =
+                        H.addEvent(axis, 'foundExtremes', function () {
+                            treeGrid.collapsedNodes.forEach(function (node) {
+                                var breaks = collapse(axis, node);
+
+                                axis.setBreaks(breaks, false);
+                            });
+                            removeFoundExtremesEvent();
+                        });
+                }
+            }
         });
 };
+
 
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
@@ -594,8 +617,6 @@ override(GridAxis.prototype, {
                         /**
                         * Specify the level which the options within this object
                         * applies to.
-                        *
-                        * @sample {gantt} gantt/treegrid-axis/labels-levels
                         *
                         * @type      {number}
                         * @product   gantt

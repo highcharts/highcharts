@@ -63,7 +63,18 @@ var options = {
          * @type  {boolean|number}
          * @since 5.0.0
          */
-        pointDescriptionThreshold: 500, // set to false to disable
+        pointDescriptionThreshold: 200,
+
+        /**
+         * When a series contains more points than this, we no longer allow
+         * keyboard navigation for it.
+         *
+         * Set to `false` to disable.
+         *
+         * @type  {boolean|number}
+         * @since next
+         */
+        pointNavigationThreshold: false,
 
         /**
          * Whether or not to add a shortcut button in the screen reader
@@ -119,6 +130,15 @@ var options = {
          * @sample highcharts/accessibility/custom-component
          *         Custom accessibility component
          * @apioption accessibility.customComponents
+         */
+
+        /**
+         * Theme to apply to the chart when Windows High Contrast Mode is
+         * detected.
+         *
+         * @since next
+         * @type {object}
+         * @apioption accessibility.highContrastTheme
          */
 
         /**

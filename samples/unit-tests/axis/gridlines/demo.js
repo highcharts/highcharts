@@ -32,7 +32,7 @@ QUnit.test('Guard too dense minor grid lines', function (assert) {
 QUnit.test('Animation of grid lines and tick marks', function (assert) {
 
     var clock = TestUtilities.lolexInstall();
-    var chart = Highcharts.chart('container', {
+    var chart = Highcharts.stockChart('container', {
         chart: {
             animation: {
                 duration: 500,

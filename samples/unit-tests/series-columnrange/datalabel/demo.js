@@ -11,6 +11,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
             dataLabels: {
                 enabled: true,
                 inside: true,
+                allowOverlap: true,
                 align: 'center'
             }
         }]

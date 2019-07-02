@@ -12,7 +12,7 @@ const Path = require('path');
  * */
 
 const SOURCE_GLOBS = [
-    'README.md',
+    'readme.md',
     'js/parts/Utilities.js',
     'js/parts/Axis.js',
     'js/parts/Chart.js',
@@ -30,9 +30,10 @@ const SOURCE_GLOBS = [
     'js/parts/PlotLineOrBand.js',
     'js/parts/Series.js',
     'js/parts/StockChart.js',
-    'js/parts/SVGRenderer.js',
+    'js/parts/SvgRenderer.js',
     'js/parts/Tick.js',
     'js/parts/Time.js',
+    'js/parts/Tooltip.js',
     'js/parts-gantt/GanttChart.js',
     'js/parts-gantt/TreeGrid.js',
     'js/parts-map/ColorAxis.js',

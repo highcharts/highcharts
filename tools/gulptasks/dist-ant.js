@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -18,15 +18,15 @@ const Gulp = require('gulp');
  */
 function distAnt() {
 
-    const ProcessLib = require('./lib/process');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
-        ProcessLib
+        processLib
             .exec('npx ant dist')
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('dist-ant', distAnt);
+gulp.task('dist-ant', distAnt);

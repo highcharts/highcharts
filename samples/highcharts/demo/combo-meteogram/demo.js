@@ -209,7 +209,7 @@ Meteogram.prototype.getChartOptions = function () {
             minorTickInterval: 36e5, // one hour
             tickLength: 0,
             gridLineWidth: 1,
-            gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0',
+            gridLineColor: 'rgba(128, 128, 128, 0.1)',
             startOnTick: false,
             endOnTick: false,
             minPadding: 0,
@@ -255,7 +255,7 @@ Meteogram.prototype.getChartOptions = function () {
             maxPadding: 0.3,
             minRange: 8,
             tickInterval: 1,
-            gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0'
+            gridLineColor: 'rgba(128, 128, 128, 0.1)'
 
         }, { // precipitation axis
             title: {

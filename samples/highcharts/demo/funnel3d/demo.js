@@ -17,7 +17,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
-                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                 allowOverlap: true,
                 y: 10
             },

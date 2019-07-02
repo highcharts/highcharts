@@ -9,7 +9,10 @@
 'use strict';
 
 import H from './Globals.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+var isString = U.isString;
+
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -35,7 +38,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
-    isString = H.isString,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,
@@ -160,20 +162,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         disableStartOnTick = navigatorEnabled ? {
             startOnTick: false,
             endOnTick: false
-        } : null,
-
-        lineOptions = {
-
-            marker: {
-                enabled: false,
-                radius: 2
-            }
-            // gapSize: 0
-        },
-        columnOptions = {
-            shadow: false,
-            borderWidth: 0
-        };
+        } : null;
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
@@ -263,19 +252,6 @@ H.StockChart = H.stockChart = function (a, b, c) {
             },
             legend: {
                 enabled: false
-            },
-
-            plotOptions: {
-                line: lineOptions,
-                spline: lineOptions,
-                area: lineOptions,
-                areaspline: lineOptions,
-                arearange: lineOptions,
-                areasplinerange: lineOptions,
-                column: columnOptions,
-                columnrange: columnOptions,
-                candlestick: columnOptions,
-                ohlc: columnOptions
             }
 
         },
@@ -293,6 +269,40 @@ H.StockChart = H.stockChart = function (a, b, c) {
         new Chart(a, options, c) :
         new Chart(options, b);
 };
+
+// Handle som Stock-specific series defaults, override the plotOptions before
+// series options are handled.
+addEvent(Series, 'setOptions', function (e) {
+    var series = this,
+        overrides;
+
+    function is(type) {
+        return H.seriesTypes[type] && series instanceof H.seriesTypes[type];
+    }
+    if (this.chart.options.isStock) {
+
+        if (is('column') || is('columnrange')) {
+            overrides = {
+                borderWidth: 0,
+                shadow: false
+            };
+
+        } else if (is('line') && !is('scatter') && !is('sma')) {
+            overrides = {
+                marker: {
+                    enabled: false,
+                    radius: 2
+                }
+            };
+        }
+        if (overrides) {
+            e.plotOptions[this.type] = merge(
+                e.plotOptions[this.type],
+                overrides
+            );
+        }
+    }
+});
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
@@ -378,8 +388,13 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
         });
     }
 
-    // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-    if (axis.coll === 'xAxis' || axis.coll === 'yAxis') {
+    if (
+        // For stock chart, by default render paths across the panes
+        // except the case when `acrossPanes` is disabled by user (#6644)
+        (chart.options.isStock && e.acrossPanes !== false) &&
+        // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
+        axis.coll === 'xAxis' || axis.coll === 'yAxis'
+    ) {
 
         e.preventDefault();
 
@@ -906,41 +921,52 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
 addEvent(Series, 'render', function () {
-    var clipHeight;
+    var chart = this.chart,
+        clipHeight;
 
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
-        !(this.chart.is3d && this.chart.is3d()) &&
-        !this.chart.polar &&
+        !(chart.is3d && chart.is3d()) &&
+        !chart.polar &&
         this.xAxis &&
         !this.xAxis.isRadial // Gauge, #6192
     ) {
-        // Include xAxis line width, #8031
-        clipHeight = this.yAxis.len - (this.xAxis.axisLine ?
-            Math.floor(this.xAxis.axisLine.strokeWidth() / 2) :
-            0);
+
+        clipHeight = this.yAxis.len;
+
+        // Include xAxis line width (#8031) but only if the Y axis ends on the
+        // edge of the X axis (#11005).
+        if (this.xAxis.axisLine) {
+            var dist = chart.plotTop + chart.plotHeight -
+                    this.yAxis.pos - this.yAxis.len,
+                lineHeightCorrection = Math.floor(
+                    this.xAxis.axisLine.strokeWidth() / 2
+                );
+
+            if (dist >= 0) {
+                clipHeight -= Math.max(lineHeightCorrection - dist, 0);
+            }
+        }
 
         // First render, initial clip box
         if (!this.clipBox && this.animate) {
-            this.clipBox = merge(this.chart.clipBox);
+            this.clipBox = merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
 
         // On redrawing, resizing etc, update the clip rectangle
-        } else if (this.chart[this.sharedClipKey]) {
+        } else if (chart[this.sharedClipKey]) {
             // animate in case resize is done during initial animation
-            this.chart[this.sharedClipKey].animate({
+            chart[this.sharedClipKey].animate({
                 width: this.xAxis.len,
                 height: clipHeight
             });
 
             // also change markers clip animation for consistency
             // (marker clip rects should exist only on chart init)
-            if (
-                this.chart[this.sharedClipKey + 'm']
-            ) {
-                this.chart[this.sharedClipKey + 'm'].animate({
+            if (chart[this.sharedClipKey + 'm']) {
+                chart[this.sharedClipKey + 'm'].animate({
                     width: this.xAxis.len
                 });
             }

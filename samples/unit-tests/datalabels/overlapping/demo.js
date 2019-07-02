@@ -128,8 +128,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.series[0].points[0].dataLabel.visibility,
-            'hidden',
+            chart.series[0].points[0].dataLabel.attr('y') < 0,
+            true,
             'Overlapping dataLabel is hidden (#9119).'
         );
     }

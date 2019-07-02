@@ -241,6 +241,16 @@ QUnit.test(
                         }],
                         annotations: [{
                             visible: false
+                        }, {
+                            labels: [{
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: 1,
+                                    y: 1
+                                },
+                                text: 'Label v2'
+                            }]
                         }]
                     }
                 }]
@@ -280,7 +290,19 @@ QUnit.test(
             'hidden',
             'Initial annotation hidden'
         );
+        assert.strictEqual(
+            chart.annotations.length,
+            2,
+            'New annotation added (#10713)'
+        );
 
+        chart.setSize(600);
+
+        assert.strictEqual(
+            chart.annotations.length,
+            1,
+            'Old annotation removed (#10713)'
+        );
     }
 );
 
@@ -621,5 +643,153 @@ QUnit.test('Falsy default', assert => {
         chart.container.querySelectorAll('.highcharts-legend-item').length,
         0,
         'Legend items should be removed as per default showInLegend'
+    );
+});
+
+QUnit.test('Responsive spacing options', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie',
+            borderWidth: 1,
+            plotBorderWidth: 1,
+            width: 600
+        },
+        series: [{
+            data: [
+                ['Apples', 40],
+                ['Oranges', 60]
+            ]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minWidth: 321
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [10, 10, 25, 10]
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 320
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [18, 0, 0, 0]
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.deepEqual(
+        chart.spacing,
+        [10, 10, 25, 10],
+        'The initial spacing should correpond to responsive option'
+    );
+
+    chart.setSize(300);
+
+    assert.deepEqual(
+        chart.spacing,
+        [18, 0, 0, 0],
+        'The updated spacing should correpond to responsive option'
+    );
+});
+
+QUnit.test('Restoring to undefined settings (#10286)', assert => {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column',
+            width: 600,
+            height: 300
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'middle',
+            layout: 'vertical'
+        },
+
+        xAxis: {
+            categories: ['Apples', 'Oranges', 'Bananas'],
+            labels: {
+                x: -10
+            }
+        },
+
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Amount'
+            }
+        },
+
+        series: [{
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        }, {
+            name: 'Christmas Day before dinner',
+            data: [6, 4, 2]
+        }, {
+            name: 'Christmas Day after dinner',
+            data: [8, 4, 3]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal'
+                    },
+                    yAxis: {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -5
+                        },
+                        title: {
+                            text: null
+                        }
+                    },
+                    subtitle: {
+                        text: null
+                    },
+                    credits: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
+    });
+
+    const textY = chart.container
+        .querySelector('.highcharts-yaxis-labels text')
+        .getAttribute('y');
+
+    chart.setSize(400);
+    assert.notEqual(
+        chart.container
+            .querySelector('.highcharts-yaxis-labels text')
+            .getAttribute('y'),
+        textY,
+        'Y axis label position should be changed'
+    );
+
+    chart.setSize(600);
+    assert.strictEqual(
+        chart.container
+            .querySelector('.highcharts-yaxis-labels text')
+            .getAttribute('y'),
+        textY,
+        'Y axis label position should be restored'
     );
 });

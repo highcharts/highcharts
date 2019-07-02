@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -32,20 +32,20 @@ const DEFAULT_GLOBS = [
  */
 function task() {
 
-    const ESLint = require('eslint');
-    const LogLib = require('./lib/log');
+    const eslint = require('eslint');
+    const log = require('./lib/log');
 
     return new Promise(resolve => {
 
         const argv = process.argv;
-        const cli = new ESLint.CLIEngine({ fix: argv.fix });
+        const cli = new eslint.CLIEngine({ fix: argv.fix });
         const glob = (
             (argv.p || argv.path) ?
                 (argv.p || argv.path).split(',') :
                 DEFAULT_GLOBS
         );
 
-        LogLib.message('Linting [', glob.join(', '), '] ...');
+        log.message('Linting [', glob.join(', '), '] ...');
 
         const report = cli.executeOnFiles(glob);
 
@@ -53,11 +53,11 @@ function task() {
             cli.outputFixes(report);
         }
 
-        LogLib.success('Finished linting');
-        LogLib.message(cli.getFormatter()(report.results));
+        log.success('Finished linting');
+        log.message(cli.getFormatter()(report.results));
 
         resolve();
     });
 }
 
-Gulp.task('lint-js', task);
+gulp.task('lint-js', task);

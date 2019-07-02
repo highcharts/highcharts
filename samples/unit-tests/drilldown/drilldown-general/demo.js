@@ -172,6 +172,52 @@ QUnit.test('Drilldown methods', function (assert) {
 
 });
 
+QUnit.test('Chart type update after drilldown', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            data: [{
+                y: 62,
+                drilldown: "Chrome"
+            }, {
+                y: 10,
+                drilldown: "Firefox"
+            }, {
+                y: 30,
+                drilldown: "IE"
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: "Chrome",
+                data: [4, 3, 5]
+            }, {
+                id: "Firefox",
+                data: [1, 1, 5]
+            }, {
+                id: "IE",
+                data: [18, 1, 5]
+            }]
+        }
+    });
+
+    chart.series[0].points[0].doDrilldown();
+    chart.drillUp();
+
+    chart.update({
+        chart: {
+            type: 'scatter'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.lineWidth,
+        0,
+        'Scatter line width should be 0 (#10597).'
+    );
+});
 
 QUnit.test('activeDataLabelStyle', function (assert) {
     function getDataLabelFill(point) {

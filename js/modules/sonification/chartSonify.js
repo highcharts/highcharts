@@ -96,6 +96,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+
+import U from '../../parts/Utilities.js';
+var isArray = U.isArray;
+
 import utilities from 'utilities.js';
 
 
@@ -400,7 +404,7 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
             earcons: chartSonifyOptions.earcons
         },
         // Merge in the specific series options by ID
-        H.isArray(seriesOptions) ? (
+        isArray(seriesOptions) ? (
             H.find(seriesOptions, function (optEntry) {
                 return optEntry.id === H.pick(series.id, series.options.id);
             }) || {}

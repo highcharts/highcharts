@@ -156,6 +156,64 @@ QUnit.test('Tree.getNode', function (assert) {
     );
 });
 
+QUnit.test('Axis.update', assert => {
+    const { getStyle } = Highcharts;
+    const { yAxis: [axis] } = Highcharts.chart('container', {
+        series: [{
+            data: [{
+                name: 'Point 1',
+                y: 1
+            }]
+        }],
+        yAxis: {
+            type: 'treegrid',
+            labels: {
+                style: {
+                    color: '#000000'
+                }
+            }
+        }
+    });
+    let { ticks: { 0: { label: { element } } } } = axis;
+
+
+    assert.deepEqual(
+        axis.tickPositions,
+        [0],
+        'Should have tickPositions equal [0] after render.'
+    );
+    assert.strictEqual(
+        getStyle(element, 'color', false),
+        'rgb(0, 0, 0)',
+        'Should have color equal rgb(0, 0, 0) after render.'
+    );
+
+
+    // Update the axis
+    axis.update({
+        labels: {
+            style: {
+                color: '#ff0000'
+            }
+        }
+    });
+
+    // Update reference to label element
+    ({ ticks: { 0: { label: { element } } } } = axis);
+
+
+    assert.deepEqual(
+        axis.tickPositions,
+        [0],
+        'Should still have tickPositions equal [0] after update.'
+    );
+    assert.strictEqual(
+        getStyle(element, 'color', false),
+        'rgb(255, 0, 0)',
+        'Should have color equal rgb(255, 0, 0) after update.'
+    );
+});
+
 QUnit.test('Chart.addSeries', assert => {
     const chart = Highcharts.chart('container', {
         yAxis: [{
@@ -290,5 +348,60 @@ QUnit.test('Series.setVisible', assert => {
         [axis.min, axis.max],
         [0, 2],
         'should have axis [min, max] equal [0, 2] when "Series 2" is visible again.'
+    );
+});
+
+QUnit.test('series.data[].collapsed', assert => {
+    const { fireEvent } = Highcharts;
+    const chart = Highcharts.chart('container', {
+        yAxis: [{
+            type: 'treegrid'
+        }],
+        series: [{
+            type: 'scatter',
+            data: [{
+                collapsed: true,
+                id: '1',
+                name: 'Node 1',
+                x: 1
+            }, {
+                id: '2',
+                parent: '1',
+                name: 'Node 2',
+                x: 2
+            }, {
+                id: '3',
+                parent: '2',
+                name: 'Node 3',
+                x: 3
+            }]
+        }]
+    });
+    const {
+        yAxis: [axis]
+    } = chart;
+    const label = axis.ticks[0].label;
+
+    assert.strictEqual(
+        axis.min,
+        0,
+        'should have axis.min equal 0 when "Node 1" is collapsed.'
+    );
+    assert.strictEqual(
+        axis.max,
+        0,
+        'should have axis.max equal 0 when "Node 1" is collapsed.'
+    );
+
+    fireEvent(label.element, 'click');
+    assert.strictEqual(
+        axis.min,
+        0,
+        'should have axis.min equal 0 when "Node 1" is expanded.'
+    );
+    assert.strictEqual(
+        axis.max,
+        2,
+        'should have axis.max equal 2 when "Node 1" is expanded.'
     );
 });

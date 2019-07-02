@@ -27,7 +27,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Color.js';
 import '../parts/Options.js';
 import '../parts/Legend.js';
@@ -43,7 +46,6 @@ var colorPointMixin = H.colorPointMixin,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    isArray = H.isArray,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -821,17 +823,19 @@ seriesType(
                 // Add class names
                 series.points.forEach(function (point) {
                     if (point.graphic) {
+                        var className = '';
                         if (point.name) {
-                            point.graphic.addClass(
+                            className +=
                                 'highcharts-name-' +
-                                point.name.replace(/ /g, '-').toLowerCase()
-                            );
+                                point.name.replace(/ /g, '-').toLowerCase();
                         }
                         if (point.properties && point.properties['hc-key']) {
-                            point.graphic.addClass(
-                                'highcharts-key-' +
-                                point.properties['hc-key'].toLowerCase()
-                            );
+                            className +=
+                                ' highcharts-key-' +
+                                point.properties['hc-key'].toLowerCase();
+                        }
+                        if (className) {
+                            point.graphic.addClass(className);
                         }
 
                         // In styled mode, apply point colors by CSS

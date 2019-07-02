@@ -22,11 +22,12 @@ add_to_ssh_config: &add_to_ssh_config
   - run:
       name: Avoid hosts unknown for github
       command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+add_gh_user_config: &add_gh_user_config
   - run:
       name: Github user config
       command: |
-        git config --global user.name CircleCI
-        git config --global user.email technical+circleci_mu@highsoft.com
+        git config --global user.name "CircleCI"
+        git config --global user.email "technical+circleci_mu@highsoft.com"
 
 #######################################
 
@@ -48,18 +49,6 @@ commands:
               echo "Nothing to do for forked PRs, so marking this step successful"
               circleci step halt
             fi
-  is_master_branch:
-    description: >-
-      Check to avoid certain steps/jobs being run from other branch than master.
-    steps:
-      - run:
-          name: Fail if not master branch
-          command: |
-            if [ "${CIRCLE_BRANCH}" != "feature/circleci-integration" ]; then
-              echo "Not master branch, aborting.."; exit 1;
-            else
-              echo "Proceeding from branch ${CIRCLE_BRANCH}..."
-            fi
 
 jobs:
   checkout_code:
@@ -71,25 +60,30 @@ jobs:
      - <<: *add_to_ssh_config
      - run:
          name: Clone GitHub highcharts repository
-         command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-     - run:
-         name: Clone Github highcharts-declarations-generator repository
-         command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
+         command: |
+           if [ -n "$CIRCLE_TAG" ]; then
+            git clone --branch "${CIRCLE_TAG}" ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+           else
+            git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+           fi
      - <<: *persist_workspace
 
-  build_dependencies:
+  install_dependencies:
     <<: *defaults
     steps:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
       - run: node --version && npm --version
       - run: npm install --quiet
-      - run:
-          name: Install highcharts-declarations-generator
-          command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
+      - <<: *persist_workspace
+
+  generate_ts_declarations:
+    <<: *defaults
+    steps:
+      - << : *load_workspace
       - run:
           name: Generate highcharts ts declarations
-          command: cd /home/circleci/repo/highcharts && npx gulp jsdoc-dts && npx gulp lint-dts
+          command: npx gulp jsdoc-dts && npx gulp lint-dts
       - <<: *persist_workspace
 
   test:
@@ -116,11 +110,15 @@ jobs:
         description: "Which browser to test?"
         type: string
         default: "Mac.Safari"
+      browsercount:
+        description: "Number of browser instances"
+        type: integer
+        default: 1
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - << : *load_workspace
       - run: npm run gulp scripts
-      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --browsers << parameters.browsers >>"
+      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
       - run: mkdir ../test-results
       - run:
           name: Save test results
@@ -135,66 +133,165 @@ jobs:
   build_dist:
     <<: *defaults
     steps:
-      - is_master_branch
       - <<: *load_workspace
       - run:
-          name: Generate highcharts packages
+          name: Compile build
           command: npm run build
-      - run:
-          name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run: echo -e "Push changelog to highcharts repo not yet implemented.." #TODO
-      #- store_artifacts:
-      #    path: /home/circleci/repo/highcharts/build
-      #- store_artifacts:
-      #    path: /home/circleci/repo/highcharts/code
       - <<: *persist_workspace
 
-  deploy:
+  deploy_code:
     <<: *defaults
     steps:
-      - is_master_branch
       - <<: *load_workspace
       - run:
-          name: Install s3cmd
-          command: sudo apt-get install -y -qq s3cmd
-      - run: echo -e "Upload via s3cmd not yet implemented.." #TODO
+          name: Upload code to S3
+          command: npx gulp dist-upload
 
+  deploy_api_docs:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate api docs
+          command: npx gulp jsdoc
+      - run:
+          name: Upload api docs to S3
+          command: npx gulp upload-api --silent --noextensions
+      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
+
+  deploy_changelog:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - run:
+          name: install pre dependencies
+          command: sudo apt-get install cpio
+      - run:
+          name: Fetch full highcharts/master branch
+          command: git fetch --unshallow
+      - run:
+          name: Generate changelog since last tag
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+      - run:
+          name: Changelog - Create git-describe named folder and copy changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
+      - run:
+          name: Changelog - Upload changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+
+  deploy_to_highcharts_dist:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run:
+          name: Clone highcharts-dist repository
+          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-dist.git --depth=1 /home/circleci/repo/highcharts-dist
+      - run:
+          name: Delete remote nightly branch
+          command: cd ../highcharts-dist && git push origin --delete nightly || true
+      - run:
+          name: Run copy-release
+          command: cd ../highcharts && node copy-release
+      - run:
+          name: Push to highcharts-dist nightly branch
+          command: |
+            cd ../highcharts-dist
+            git checkout -b nightly
+            git add .
+            git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
+            git push -u origin nightly
 workflows:
   version: 2
   build_and_test:
     jobs:
       - checkout_code
-      - build_dependencies:
+      - install_dependencies:
           requires:
             - checkout_code
-      - test:
+      - generate_ts_declarations:
           requires:
-            - build_dependencies
-          filters:
-            branches:
-              only:
-                - feature/circleci-integration
+            - install_dependencies
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - build_dependencies
+            - install_dependencies
           browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
-            - build_dependencies
+            - "test-Win.Chrome"
           browsers: "Mac.Firefox"
-      - hold_for_approval:
-          type: approval
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 2 * * *" # 2 am every night
           filters:
             branches:
               only:
-                - not-a-branch
+                - feature/ci-nightly
+                - master
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
       - build_dist:
           requires:
-            - hold_for_approval
-          filters:
-            branches:
-              only:
-                - feature/circleci-integration
+            - install_dependencies
+            - "test-Mac.Firefox"
+            - "test-Mac.Safari"
+            - "test-Win.IE8"
+            - "test-Win.Chrome"
+      - deploy_code:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_api_docs:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_changelog:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_to_highcharts_dist:
+          requires:
+            - build_dist
+          context: highcharts-staging
+

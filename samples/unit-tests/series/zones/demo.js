@@ -1,3 +1,29 @@
+QUnit.test('Point colors within color zones(#4430)', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'area'
+        },
+        series: [{
+            color: '#00FFFF',
+            negativeColor: '#FF0000',
+            data: [-1, -1, 1]
+        }]
+    }).highcharts();
+
+
+    assert.strictEqual(
+        chart.series[0].points[0].color,
+        '#FF0000',
+        'Negative color'
+    );
+    assert.strictEqual(
+        chart.series[0].points[2].color,
+        '#00FFFF',
+        'Positive color'
+    );
+
+});
+
 // Highcharts 4.1.1, Issue #3898
 // negativeColor not rendered correctly when threshold is out of range
 QUnit.test('Spline zones out of range', function (assert) {
@@ -177,5 +203,31 @@ QUnit.test('Adding and removing zones', function (assert) {
         chart.series[0].graph.attr('visibility'),
         'hidden',
         'Series line is hidden after adding zones back (#10569).'
+    );
+});
+
+QUnit.test('#9198 setData and zones', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 500,
+            width: 800
+        },
+        yAxis: {
+            min: -3,
+            max: 3
+        },
+        series: [{
+            type: 'area',
+            negativeColor: 'green',
+            data: []
+        }]
+    });
+
+    chart.series[0].setData([4, 3, 4, -3, -3, 10]);
+
+    assert.strictEqual(
+        chart.series[0]['zone-graph-1'].attr('clip-path') !== 0,
+        true,
+        'Negative color is applied on the line and area.'
     );
 });

@@ -1,3 +1,41 @@
+QUnit.test('False detection of overlapping labels in different panes (#4911)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: [{
+            height: "50%",
+            top: "50%"
+        }, {
+            height: "50%",
+            top: "0%"
+        }],
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            yAxis: 1,
+            data: [1, 2, 3]
+        }],
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    allowOverlap: false
+                }
+            }
+        }
+    });
+
+    chart.series.forEach(function (series) {
+        series.points.forEach(function (point) {
+            assert.strictEqual(
+                point.dataLabel.attr('opacity'),
+                1,
+                'Data label is visible'
+            );
+        });
+    });
+});
 QUnit.test('Bottom -90', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -233,20 +271,20 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            6,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') < 0
+            ),
+            true,
             'All six labels of the second series should be hidden.'
         );
 
         chart.series[0].hide();
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            0,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') >= 0
+            ),
+            true,
             'All six labels of the second series should be visible.'
         );
 

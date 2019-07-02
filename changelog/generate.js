@@ -1,15 +1,21 @@
 /* eslint-env node, es6 */
-/* eslint valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
+/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
  * This node script copies commit messages since the last release and
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String The tag to start from
- * --after String The start date.
+ * --since String  The tag to start from. This is not used when --pr.
+ * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
+ * --pr            Use Pull Request descriptions as source for the log.
+ * --review        Create a review page with edit links and a list of all PRs
+ *                 that are not used in the changelog.
  */
+
+const prLog = require('./pr-log');
+const params = require('yargs').argv;
 
 (function () {
     'use strict';
@@ -19,25 +25,10 @@
         path = require('path'),
         tree = require('../tree.json');
 
-    var params;
-
-    /**
-     * Get parameters listed by -- notation
-     */
-    function getParams() {
-        var p = {};
-        process.argv.forEach(function (arg, j) {
-            if (arg.substr(0, 2) === '--') {
-                p[arg.substr(2)] = process.argv[j + 1];
-            }
-        });
-        return p;
-    }
-
     /**
      * Get the log from Git
      */
-    function getLog(callback) {
+    async function getLog(callback) {
         var command;
 
         function puts(err, stdout) {
@@ -45,6 +36,14 @@
                 throw err;
             }
             callback(stdout);
+        }
+
+        if (params.pr) {
+            var log = await prLog().catch(e => console.error(e));
+
+            callback(log);
+            return;
+
         }
 
         command = 'git log --format="%s<br>" ';
@@ -123,6 +122,13 @@
         return washed;
     }
 
+    function washPRLog(name, log) {
+        const washed = log[name].features.concat(log[name].bugfixes);
+        washed.startFixes = log[name].features.length;
+
+        return washed;
+    }
+
     /**
      * Build the output
      */
@@ -140,7 +146,11 @@
                 'Highcharts Gantt': 'gantt'
             }[name];
 
-        log = washLog(name, log);
+        if (params.pr) {
+            log = washPRLog(name, log);
+        } else {
+            log = washLog(name, log);
+        }
 
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
@@ -148,12 +158,14 @@
         if (name !== 'Highcharts') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
         }
-        log.forEach((li, i) => {
+        log.forEach((change, i) => {
+
+            let desc = change.description || change;
 
             optionKeys.forEach(key => {
                 const replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
 
-                li = li
+                desc = desc
                     .replace(
                         ` \`${key}\` `,
                         replacement
@@ -167,7 +179,7 @@
                 if (key.indexOf('plotOptions.') === 0) {
                     const shortKey = key.replace('plotOptions.', '');
                     if (shortKey.indexOf('.') !== -1) {
-                        li = li
+                        desc = desc
                             .replace(
                                 ` \`${shortKey}\` `,
                                 replacement
@@ -185,7 +197,7 @@
                 outputString += '\n## Bug fixes\n';
             }
             // All items
-            outputString += '- ' + addMissingDotToCommitMessage(li) + '\n';
+            outputString += '- ' + addMissingDotToCommitMessage(desc) + '\n';
 
         });
 
@@ -220,17 +232,74 @@
         return keys;
     }
 
-    params = getParams();
+    function pad(number, length, padder) {
+        return new Array(
+            (length || 2) +
+            1 -
+            String(number)
+                .replace('-', '')
+                .length
+        ).join(padder || 0) + number;
+    }
 
+    function buildReview(log, products) {
+
+        const filename = path.join(__dirname, 'review.html');
+
+        const formatItem = p => {
+
+            const labels = p.labels
+                .map(l => `<span style="background: #${l.color}; padding: 0 0.2em; border-radius: 0.2em">${l.name}</span>`)
+                .join(' ');
+            return `
+            <li>
+                ${p.description}
+                ${labels}
+                [<a href="https://github.com/highcharts/highcharts/pull/${p.number}">Edit</a>]
+            </li>`;
+        };
+
+        let html = '<style>body { font-family: sans-serif }</style>';
+
+        Object.keys(products).forEach(product => {
+            html += `<h2>${product}</h2>`;
+
+            log[product].features.forEach(p => {
+                html += formatItem(p);
+            });
+
+            html += '<h4>Bug Fixes</h4>';
+            log[product].bugfixes.forEach(p => {
+                html += formatItem(p);
+            });
+        });
+
+        html += '<h2>Excluded</h2>';
+        log.excluded.forEach(p => {
+            html += formatItem(p);
+        });
+
+        fs.writeFileSync(
+            filename,
+            html,
+            'utf8'
+        );
+
+        console.log(`Review: ${filename}`);
+    }
 
     // Get the Git log
     getLog(function (log) {
 
-        // Split the log into an array
-        log = log.split('<br>\n');
-        log.pop();
-
         const optionKeys = getOptionKeys(tree);
+        const pack = require(path.join(__dirname, '/../package.json'));
+        const d = new Date();
+
+        // Split the log into an array
+        if (!params.pr) {
+            log = log.split('<br>\n');
+            log.pop();
+        }
 
         // Load the current products and versions, and create one log each
         fs.readFile(
@@ -248,9 +317,29 @@
                     products = JSON.parse(products);
                 }
 
+                if (params.review && params.pr) {
+                    buildReview(log, products);
+                }
+
                 for (name in products) {
+
                     if (products.hasOwnProperty(name)) {
-                        buildMarkdown(name, products[name].nr, products[name].date, log, products, optionKeys);
+                        if (params.pr) {
+                            products[name].nr = pack.version;
+                            products[name].date =
+                                d.getFullYear() + '-' +
+                                pad(d.getMonth() + 1, 2) + '-' +
+                                pad(d.getDate(), 2);
+                        }
+
+                        buildMarkdown(
+                            name,
+                            products[name].nr,
+                            products[name].date,
+                            log,
+                            products,
+                            optionKeys
+                        );
                     }
                 }
             }

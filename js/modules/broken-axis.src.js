@@ -7,14 +7,16 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     pick = H.pick,
     extend = H.extend,
-    isArray = H.isArray,
     find = H.find,
     fireEvent = H.fireEvent,
     Axis = H.Axis,

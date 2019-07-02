@@ -7,11 +7,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var isArray = H.isArray,
-    EMAindicator = H.seriesTypes.ema,
+var EMAindicator = H.seriesTypes.ema,
     requiredIndicator = requiredIndicatorMixin,
     correctFloat = H.correctFloat;
 
@@ -28,7 +30,7 @@ H.seriesType(
     'tema',
     'ema',
     /**
-     * Normalized average true range indicator (NATR). This series requires
+     * Triple exponential moving average (TEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
@@ -82,7 +84,7 @@ H.seriesType(
                 SMA
             );
         },
-        getPoint: function (
+        getTemaPoint: function (
             xVal,
             tripledPeriod,
             EMAlevels,
@@ -207,7 +209,7 @@ H.seriesType(
                             EMAlevels.prevLevel3,
                             SMA
                         )[1];
-                        TEMAPoint = this.getPoint(
+                        TEMAPoint = this.getTemaPoint(
                             xVal,
                             tripledPeriod,
                             EMAlevels,

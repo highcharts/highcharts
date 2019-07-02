@@ -23,7 +23,7 @@ Highcharts.chart('container', {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            backgroundColor: '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'

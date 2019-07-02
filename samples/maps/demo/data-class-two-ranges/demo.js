@@ -77,7 +77,11 @@ Highcharts.data({
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)'
+                    backgroundColor: ( // theme
+                        Highcharts.defaultOptions &&
+                        Highcharts.defaultOptions.legend &&
+                        Highcharts.defaultOptions.legend.backgroundColor
+                    ) || 'rgba(255, 255, 255, 0.85)'
                 },
 
                 mapNavigation: {

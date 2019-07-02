@@ -54,8 +54,20 @@
         "../../code/modules/current-date-indicator.d.ts",
         "../../code/modules/current-date-indicator.src.d.ts",
 
+        "../../code/modules/cylinder.d.ts",
+        "../../code/modules/cylinder.src.d.ts",
+
         "../../code/modules/data.d.ts",
         "../../code/modules/data.src.d.ts",
+
+        "../../code/modules/datagrouping.d.ts",
+        "../../code/modules/datagrouping.src.d.ts",
+
+        "../../code/modules/debugger.d.ts",
+        "../../code/modules/debugger.src.d.ts",
+
+        "../../code/modules/dependency-wheel.d.ts",
+        "../../code/modules/dependency-wheel.src.d.ts",
 
         "../../code/modules/dotplot.d.ts",
         "../../code/modules/dotplot.src.d.ts",
@@ -75,8 +87,14 @@
         "../../code/modules/exporting.d.ts",
         "../../code/modules/exporting.src.d.ts",
 
+        "../../code/modules/full-screen.d.ts",
+        "../../code/modules/full-screen.src.d.ts",
+
         "../../code/modules/funnel.d.ts",
         "../../code/modules/funnel.src.d.ts",
+
+        "../../code/modules/funnel3d.d.ts",
+        "../../code/modules/funnel3d.src.d.ts",
 
         "../../code/modules/gantt.d.ts",
         "../../code/modules/gantt.src.d.ts",
@@ -111,6 +129,9 @@
         "../../code/modules/oldie.d.ts",
         "../../code/modules/oldie.src.d.ts",
 
+        "../../code/modules/oldie-polyfills.d.ts",
+        "../../code/modules/oldie-polyfills.src.d.ts",
+
         "../../code/modules/organization.d.ts",
         "../../code/modules/organization.src.d.ts",
 
@@ -129,6 +150,12 @@
         "../../code/modules/pattern-fill.d.ts",
         "../../code/modules/pattern-fill.src.d.ts",
 
+        "../../code/modules/price-indicator.d.ts",
+        "../../code/modules/price-indicator.src.d.ts",
+
+        "../../code/modules/pyramid3d.d.ts",
+        "../../code/modules/pyramid3d.src.d.ts",
+
         "../../code/modules/sankey.d.ts",
         "../../code/modules/sankey.src.d.ts",
 
@@ -137,6 +164,9 @@
 
         "../../code/modules/solid-gauge.d.ts",
         "../../code/modules/solid-gauge.src.d.ts",
+
+        "../../code/modules/sonification.d.ts",
+        "../../code/modules/sonification.src.d.ts",
 
         "../../code/modules/static-scale.d.ts",
         "../../code/modules/static-scale.src.d.ts",
@@ -156,6 +186,9 @@
         "../../code/modules/tilemap.d.ts",
         "../../code/modules/tilemap.src.d.ts",
 
+        "../../code/modules/timeline.d.ts",
+        "../../code/modules/timeline.src.d.ts",
+
         "../../code/modules/treegrid.d.ts",
         "../../code/modules/treegrid.src.d.ts",
 
@@ -171,11 +204,17 @@
         "../../code/modules/vector.d.ts",
         "../../code/modules/vector.src.d.ts",
 
+        "../../code/modules/venn.d.ts",
+        "../../code/modules/venn.src.d.ts",
+
         "../../code/modules/windbarb.d.ts",
         "../../code/modules/windbarb.src.d.ts",
 
         "../../code/modules/wordcloud.d.ts",
         "../../code/modules/wordcloud.src.d.ts",
+
+        "../../code/modules/xrange.d.ts",
+        "../../code/modules/xrange.src.d.ts",
 
         "../../code/indicators/indicators.d.ts",
         "../../code/indicators/indicators.src.d.ts",

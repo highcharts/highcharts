@@ -85,36 +85,7 @@
  * true will disable this option.
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkTextPath
- * @type {Highcharts.SeriesNetworkDataLabelsTextPath}
- * @since 7.1.0
- *//**
- * Options for a _node_ label text which should follow marker's shape. Border
- * and background are disabled for a label that follows a path.
- * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
- * true will disable this option.
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
- * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#textPath
- * @type {Highcharts.SeriesNetworkDataLabelsTextPath}
- * @since 7.1.0
- */
-
-/**
- * **Note:** Only SVG-based renderer supports this option.
- *
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
- *
- * @interface Highcharts.SeriesNetworkDataLabelsTextPath
- * @since 7.1.0
- *//**
- * Presentation attributes for the text path.
- * @name Highcharts.SeriesNetworkDataLabelsTextPath#attributes
- * @type {Highcharts.SVGAttributes}
- * @since 7.1.0
- *//**
- * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.SeriesNetworkDataLabelsTextPath#enabled
- * @type {boolean|undefined}
+ * @type {Highcharts.DataLabelsTextPath|undefined}
  * @since 7.1.0
  */
 
@@ -337,7 +308,7 @@ seriesType(
              *         Numerical values
              *
              * @type      {number}
-             * @apioption series.networkgraph.layoutAlgorithm.linkLength
+             * @apioption plotOptions.networkgraph.layoutAlgorithm.linkLength
              */
 
             /**
@@ -483,6 +454,7 @@ seriesType(
         requireSorting: false,
         directTouch: true,
         noSharedTooltip: true,
+        pointArrayMap: ['from', 'to'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
@@ -555,6 +527,20 @@ seriesType(
             this.data.forEach(function (link) {
                 link.formatPrefix = 'link';
             });
+
+            this.indexateNodes();
+        },
+
+        /**
+         * Set index for each node. Required for proper `node.update()`.
+         * Note that links are indexated out of the box in `generatePoints()`.
+         *
+         * @private
+         */
+        indexateNodes: function () {
+            this.nodes.forEach(function (node, index) {
+                node.index = index;
+            });
         },
 
         /**
@@ -567,7 +553,13 @@ seriesType(
             var attribs = Series.prototype.markerAttribs
                 .call(this, point, state);
 
-            attribs.x = point.plotX - (attribs.width / 2 || 0);
+            // series.render() is called before initial positions are set:
+            if (!defined(point.plotY)) {
+                attribs.y = 0;
+            }
+
+            attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+
             return attribs;
         },
 
@@ -1075,9 +1067,13 @@ seriesType(
          */
         destroy: function () {
             if (this.isNode) {
-                this.linksFrom.forEach(
-                    function (linkFrom) {
-                        linkFrom.destroyElements();
+                this.linksFrom.concat(this.linksTo).forEach(
+                    function (link) {
+                        // Removing multiple nodes at the same time
+                        // will try to remove link between nodes twice
+                        if (link.destroyElements) {
+                            link.destroyElements();
+                        }
                     }
                 );
                 this.series.layout.removeNode(this);
@@ -1161,14 +1157,6 @@ seriesType(
  * @type      {string}
  * @product   highcharts
  * @apioption series.networkgraph.data.to
- */
-
-/**
- * The weight of the link.
- *
- * @type      {number}
- * @product   highcharts
- * @apioption series.networkgraph.data.weight
  */
 
 /**

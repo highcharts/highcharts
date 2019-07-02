@@ -26,7 +26,7 @@ H.seriesType(
     'trix',
     'tema',
     /**
-     * Normalized average true range indicator (NATR). This series requires
+     * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
      *
      * Requires https://code.highcharts.com/stock/indicators/ema.js
@@ -62,7 +62,8 @@ H.seriesType(
                 }
             );
         },
-        getPoint: function (
+        // TRIX is calculated using TEMA so we just extend getTemaPoint method.
+        getTemaPoint: function (
             xVal,
             tripledPeriod,
             EMAlevels,

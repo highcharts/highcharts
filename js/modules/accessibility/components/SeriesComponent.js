@@ -31,6 +31,115 @@ H.Series.prototype.keyboardMoveVertical = true;
 
 
 /**
+ * Keep track of forcing markers.
+ * @private
+ */
+H.addEvent(H.Series, 'render', function () {
+    var series = this,
+        chart = series.chart,
+        options = series.options,
+        a11yOptions = chart.options.accessibility || {},
+        points = series.points || [],
+        dataLength = points.length,
+        resetMarkerOptions = series.resetA11yMarkerOptions,
+        // We need markers for a11y
+        forceMarkers = a11yOptions.enabled &&
+            (
+                options.accessibility &&
+                options.accessibility.enabled
+            ) !== false &&
+            (
+                dataLength < a11yOptions.pointDescriptionThreshold ||
+                a11yOptions.pointDescriptionThreshold === false ||
+                dataLength < a11yOptions.pointNavigationThreshold ||
+                a11yOptions.pointNavigationThreshold === false
+            );
+
+    if (forceMarkers) {
+        // If markers are explicitly disabled on series, replace with markers
+        // that have zero opacity.
+        if (options.marker && options.marker.enabled === false) {
+            series.a11yMarkersForced = true;
+            merge(true, series.options, {
+                marker: {
+                    enabled: true,
+                    states: {
+                        normal: {
+                            opacity: 0
+                        }
+                    }
+                }
+            });
+        }
+
+        // If we have point markers, we need to handle them
+        if (series._hasPointMarkers && series.points && series.points.length) {
+            var i = dataLength,
+                pointOptions;
+            while (i--) {
+                pointOptions = points[i].options;
+                if (pointOptions.marker) {
+                    if (pointOptions.marker.enabled) {
+                        // Make sure opacity is overridden to show enabled
+                        // markers
+                        merge(true, pointOptions.marker, {
+                            states: {
+                                normal: {
+                                    opacity: pointOptions.marker.states &&
+                                        pointOptions.marker.states.normal &&
+                                        pointOptions.marker.states.normal
+                                            .opacity || 1
+                                }
+                            }
+                        });
+                    } else {
+                        // Make sure hidden markers are enabled instead, and
+                        // opacity is out.
+                        merge(true, pointOptions.marker, {
+                            enabled: true,
+                            states: {
+                                normal: {
+                                    opacity: 0
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+    } else if (series.a11yMarkersForced && resetMarkerOptions) {
+        // Series markers should not be forced, and we should reset to old
+        // options.
+        delete series.a11yMarkersForced;
+        merge(true, series.options, {
+            marker: {
+                enabled: resetMarkerOptions.enabled,
+                states: {
+                    normal: {
+                        opacity: resetMarkerOptions.states &&
+                            resetMarkerOptions.states.normal &&
+                            resetMarkerOptions.states.normal.opacity
+                    }
+                }
+            }
+        });
+    }
+});
+
+
+/**
+ * Keep track of options to reset markers to if no longer forced.
+ * @private
+ */
+H.addEvent(H.Series, 'afterSetOptions', function (e) {
+    this.resetA11yMarkerOptions = merge(
+        e.options.marker || {}, this.userOptions.marker || {}
+    );
+});
+
+
+/**
  * Get the index of a point in a series. This is needed when using e.g. data
  * grouping.
  *
@@ -79,10 +188,10 @@ function isSkipSeries(series) {
         seriesA11yOptions.enabled === false ||
         series.options.enableMouseTracking === false || // #8440
         !series.visible ||
-        // Skip all points in a series where pointDescriptionThreshold is
+        // Skip all points in a series where pointNavigationThreshold is
         // reached
-        (a11yOptions.pointDescriptionThreshold &&
-        a11yOptions.pointDescriptionThreshold <= series.points.length);
+        (a11yOptions.pointNavigationThreshold &&
+        a11yOptions.pointNavigationThreshold <= series.points.length);
 }
 
 
@@ -367,7 +476,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         return false;
     }
     this.series.forEach(function (series) {
-        if (series === curPoint.series || isSkipSeries(series)) {
+        if (isSkipSeries(series)) {
             return;
         }
         series.points.forEach(function (point) {
@@ -501,9 +610,10 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on chart render. It is necessary to do this for render in case
+     * markers change on zoom/pixel density.
      */
-    onChartUpdate: function () {
+    onChartRender: function () {
         var component = this,
             chart = this.chart;
         chart.series.forEach(function (series) {
@@ -523,6 +633,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
+            inverted = chart.inverted,
             a11yOptions = chart.options.accessibility,
             // Function that attempts to highlight next/prev point, returns
             // the response number. Handles wrap around.
@@ -542,23 +653,25 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             keyCodeMap: [
                 // Arrow sideways
                 [[
-                    keys.left, keys.right
+                    inverted ? keys.up : keys.left,
+                    inverted ? keys.down : keys.right
                 ], function (keyCode) {
-                    return attemptNextPoint.call(this, keyCode === keys.right);
+                    return attemptNextPoint.call(
+                        this, keyCode === keys.right || keyCode === keys.down
+                    );
                 }],
 
                 // Arrow vertical
                 [[
-                    keys.up, keys.down
+                    inverted ? keys.left : keys.up,
+                    inverted ? keys.right : keys.down
                 ], function (keyCode) {
-                    var down = keyCode === keys.down,
+                    var down = keyCode === keys.down || keyCode === keys.right,
                         navOptions = a11yOptions.keyboardNavigation;
 
                     // Handle serialized mode, act like left/right
                     if (navOptions.mode && navOptions.mode === 'serialize') {
-                        return attemptNextPoint.call(
-                            this, keyCode === keys.down
-                        );
+                        return attemptNextPoint.call(this, down);
                     }
 
                     // Normal mode, move between series
@@ -961,12 +1074,19 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             a11yOptions = chart.options.accessibility,
             seriesA11yOptions = series.options.accessibility || {},
             firstPointEl = component.getSeriesFirstPointElement(series),
-            seriesEl = component.getSeriesElement(series);
+            seriesEl = component.getSeriesElement(series),
+            setScreenReaderProps = series.points && (
+                series.points.length <
+                    a11yOptions.pointDescriptionThreshold ||
+                    a11yOptions.pointDescriptionThreshold === false
+            ) && !seriesA11yOptions.exposeAsGroupOnly,
+            setKeyboardProps = series.points && (
+                series.points.length <
+                    a11yOptions.pointNavigationThreshold ||
+                    a11yOptions.pointNavigationThreshold === false
+            );
 
         if (seriesEl) {
-            // Unhide series
-            this.unhideElementFromScreenReaders(seriesEl);
-
             // For some series types the order of elements do not match the
             // order of points in series. In that case we have to reverse them
             // in order for AT to read them out in an understandable order
@@ -974,32 +1094,36 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 component.reverseChildNodes(seriesEl);
             }
 
-            // Make individual point elements accessible if possible. Note: If
-            // markers are disabled there might not be any elements there to
-            // make accessible.
-            if (
-                series.points && (
-                    series.points.length <
-                        a11yOptions.pointDescriptionThreshold ||
-                    a11yOptions.pointDescriptionThreshold === false
-                ) &&
-                !seriesA11yOptions.exposeAsGroupOnly
-            ) {
+            // Unhide series element
+            component.unhideElementFromScreenReaders(seriesEl);
+
+            // Make individual point elements accessible if possible
+            if (setScreenReaderProps || setKeyboardProps) {
                 series.points.forEach(function (point) {
                     var pointEl = point.graphic && point.graphic.element;
                     if (pointEl) {
-                        pointEl.setAttribute('role', 'img');
+                        // We always set tabindex, as long as we are setting
+                        // props.
                         pointEl.setAttribute('tabindex', '-1');
-                        pointEl.setAttribute('aria-label',
-                            component.stripTags(
-                                seriesA11yOptions.pointDescriptionFormatter &&
-                                seriesA11yOptions
-                                    .pointDescriptionFormatter(point) ||
-                                a11yOptions.pointDescriptionFormatter &&
-                                a11yOptions.pointDescriptionFormatter(point) ||
-                                component
-                                    .defaultPointDescriptionFormatter(point)
-                            ));
+
+                        if (setScreenReaderProps) {
+                            // Set screen reader specific props
+                            pointEl.setAttribute('role', 'img');
+                            pointEl.setAttribute('aria-label',
+                                component.stripTags(
+                                    seriesA11yOptions
+                                        .pointDescriptionFormatter &&
+                                    seriesA11yOptions
+                                        .pointDescriptionFormatter(point) ||
+                                    a11yOptions.pointDescriptionFormatter &&
+                                    a11yOptions
+                                        .pointDescriptionFormatter(point) ||
+                                    component
+                                        .defaultPointDescriptionFormatter(point)
+                                ));
+                        } else {
+                            pointEl.setAttribute('aria-hidden', true);
+                        }
                     }
                 });
             }
@@ -1022,6 +1146,8 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                         component.defaultSeriesDescriptionFormatter(series)
                     )
                 );
+            } else {
+                seriesEl.setAttribute('aria-label', '');
             }
         }
     },

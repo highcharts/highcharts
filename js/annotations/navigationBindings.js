@@ -7,6 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
@@ -17,7 +21,6 @@ var doc = H.doc,
     extend = H.extend,
     isNumber = H.isNumber,
     fireEvent = H.fireEvent,
-    isArray = H.isArray,
     isObject = H.isObject,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
@@ -65,17 +68,17 @@ var bindingsUtils = {
      *        Annotation to be updated
      */
     updateRectSize: function (event, annotation) {
-        var options = annotation.options.typeOptions,
-            x = this.chart.xAxis[0].toValue(event.chartX),
-            y = this.chart.yAxis[0].toValue(event.chartY),
-            width = x - options.point.x,
-            height = options.point.y - y;
+        var chart = annotation.chart,
+            options = annotation.options.typeOptions,
+            coords = chart.pointer.getCoordinates(event),
+            width = coords.xAxis[0].value - options.point.x,
+            height = options.point.y - coords.yAxis[0].value;
 
         annotation.update({
             typeOptions: {
                 background: {
-                    width: width,
-                    height: height
+                    width: chart.inverted ? height : width,
+                    height: chart.inverted ? width : height
                 }
             }
         });
@@ -220,13 +223,15 @@ extend(H.NavigationBindings.prototype, {
         });
 
         objectEach(options.events || {}, function (callback, eventName) {
-            navigation.eventsToUnbind.push(
-                addEvent(
-                    navigation,
-                    eventName,
-                    callback
-                )
-            );
+            if (H.isFunction(callback)) {
+                navigation.eventsToUnbind.push(
+                    addEvent(
+                        navigation,
+                        eventName,
+                        callback
+                    )
+                );
+            }
         });
 
         navigation.eventsToUnbind.push(
@@ -803,6 +808,12 @@ addEvent(H.NavigationBindings, 'deselectButton', function () {
     this.selectedButtonElement = null;
 });
 
+addEvent(H.Annotation, 'remove', function () {
+    if (this.chart.navigationBindings) {
+        this.chart.navigationBindings.deselectAnnotation();
+    }
+});
+
 
 // Show edit-annotation form:
 function selectableAnnotation(annotationType) {
@@ -989,8 +1000,7 @@ H.setOptions({
                 className: 'highcharts-circle-annotation',
                 /** @ignore */
                 start: function (e) {
-                    var x = this.chart.xAxis[0].toValue(e.chartX),
-                        y = this.chart.yAxis[0].toValue(e.chartY),
+                    var coords = this.chart.pointer.getCoordinates(e),
                         type = 'circle',
                         navigation = this.chart.options.navigation,
                         bindings = navigation && navigation.bindings,
@@ -1003,8 +1013,8 @@ H.setOptions({
                             point: {
                                 xAxis: 0,
                                 yAxis: 0,
-                                x: x,
-                                y: y
+                                x: coords.xAxis[0].value,
+                                y: coords.yAxis[0].value
                             },
                             r: 5,
                             controlPoints: [{
@@ -1060,10 +1070,17 @@ H.setOptions({
                         var point = annotation.options.shapes[0].point,
                             x = this.chart.xAxis[0].toPixels(point.x),
                             y = this.chart.yAxis[0].toPixels(point.y),
+                            inverted = this.chart.inverted,
                             distance = Math.max(
                                 Math.sqrt(
-                                    Math.pow(x - e.chartX, 2) +
-                                    Math.pow(y - e.chartY, 2)
+                                    Math.pow(
+                                        inverted ? y - e.chartX : x - e.chartX,
+                                        2
+                                    ) +
+                                    Math.pow(
+                                        inverted ? x - e.chartY : y - e.chartY,
+                                        2
+                                    )
                                 ),
                                 5
                             );
@@ -1088,8 +1105,7 @@ H.setOptions({
                 className: 'highcharts-rectangle-annotation',
                 /** @ignore */
                 start: function (e) {
-                    var x = this.chart.xAxis[0].toValue(e.chartX),
-                        y = this.chart.yAxis[0].toValue(e.chartY),
+                    var coords = this.chart.pointer.getCoordinates(e),
                         type = 'rect',
                         navigation = this.chart.options.navigation,
                         bindings = navigation && navigation.bindings;
@@ -1099,10 +1115,10 @@ H.setOptions({
                         shapes: [{
                             type: type,
                             point: {
-                                x: x,
-                                y: y,
                                 xAxis: 0,
-                                yAxis: 0
+                                yAxis: 0,
+                                x: coords.xAxis[0].value,
+                                y: coords.yAxis[0].value
                             },
                             width: 5,
                             height: 5,
@@ -1122,15 +1138,18 @@ H.setOptions({
                                 events: {
                                     drag: function (e, target) {
                                         var annotation = target.annotation,
+                                            inverted = this.chart.inverted,
                                             xy = this
                                                 .mouseMoveToTranslation(e);
 
                                         target.options.width = Math.max(
-                                            target.options.width + xy.x,
+                                            target.options.width +
+                                                (inverted ? xy.y : xy.x),
                                             5
                                         );
                                         target.options.height = Math.max(
-                                            target.options.height + xy.y,
+                                            target.options.height +
+                                                (inverted ? xy.x : xy.y),
                                             5
                                         );
 
@@ -1153,11 +1172,18 @@ H.setOptions({
                     function (e, annotation) {
                         var xAxis = this.chart.xAxis[0],
                             yAxis = this.chart.yAxis[0],
+                            inverted = this.chart.inverted,
                             point = annotation.options.shapes[0].point,
                             x = xAxis.toPixels(point.x),
                             y = yAxis.toPixels(point.y),
-                            width = Math.max(e.chartX - x, 5),
-                            height = Math.max(e.chartY - y, 5);
+                            width = Math.max(
+                                inverted ? e.chartX - y : e.chartX - x,
+                                5
+                            ),
+                            height = Math.max(
+                                inverted ? e.chartY - x : e.chartY - y,
+                                5
+                            );
 
                         annotation.update({
                             shapes: [{
@@ -1183,8 +1209,7 @@ H.setOptions({
                 className: 'highcharts-label-annotation',
                 /** @ignore */
                 start: function (e) {
-                    var x = this.chart.xAxis[0].toValue(e.chartX),
-                        y = this.chart.yAxis[0].toValue(e.chartY),
+                    var coords = this.chart.pointer.getCoordinates(e),
                         type = 'label',
                         navigation = this.chart.options.navigation,
                         bindings = navigation && navigation.bindings;
@@ -1196,10 +1221,10 @@ H.setOptions({
                         },
                         labels: [{
                             point: {
-                                x: x,
-                                y: y,
                                 xAxis: 0,
-                                yAxis: 0
+                                yAxis: 0,
+                                x: coords.xAxis[0].value,
+                                y: coords.yAxis[0].value
                             },
                             controlPoints: [{
                                 symbol: 'triangle-down',

@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-/* globals window */
+/* globals Image, window */
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
@@ -26,13 +26,13 @@ var glob = typeof win === 'undefined' ?
     !!doc.createElementNS(SVG_NS, 'svg').createSVGRect), isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera, isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1, hasBidiBug = (isFirefox &&
     parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
 );
-var Highcharts = {
-    product: '@product.name@',
+var H = {
+    product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
+    hasTouch: !!win.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,
@@ -53,7 +53,7 @@ var Highcharts = {
      * a chart is destroyed, the array item becomes `undefined`.
      *
      * @name Highcharts.charts
-     * @type {Array<Highcharts.Chart>}
+     * @type {Array<Highcharts.Chart|undefined>}
      */
     charts: [],
     /**
@@ -71,4 +71,4 @@ var Highcharts = {
      */
     dateFormats: {}
 };
-export default Highcharts;
+export default H;

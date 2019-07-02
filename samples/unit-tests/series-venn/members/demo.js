@@ -21,7 +21,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
 
     addOverlapToSets(data);
 
-    set = data.find(isSetWithId('A'));
+    set = Highcharts.find(data, isSetWithId('A'));
     assert.strictEqual(
         set.totalOverlap,
         3,
@@ -36,7 +36,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
         'should set the property overlapping on set A to include a map from id of overlapping set to the amount of overlap.'
     );
 
-    set = data.find(isSetWithId('B'));
+    set = Highcharts.find(data, isSetWithId('B'));
     assert.strictEqual(
         set.totalOverlap,
         4,
@@ -51,7 +51,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
         'should set the property overlapping on set B to include a map from id of overlapping set to the amount of overlap.'
     );
 
-    set = data.find(isSetWithId('C'));
+    set = Highcharts.find(data, isSetWithId('C'));
     assert.strictEqual(
         set.totalOverlap,
         5,
@@ -155,6 +155,46 @@ QUnit.test('getCenterOfPoints', function (assert) {
         ]),
         { x: -1, y: 2 },
         'should return center (-1, 2) when points are [(-2, 1), (-2, 3), (0, 3), (0, 1).'
+    );
+});
+
+QUnit.test('getLabelWidth', assert => {
+    const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
+
+    // Start with an internal circle, and no external circles.
+    const internal = [{ x: 0, y: 0, r: 100 }];
+    const external = [];
+
+    assert.strictEqual(
+        Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
+        200,
+        'Should return width of approximately 200 when distance to closest internal circle border is 100.'
+    );
+
+    // Add another internal circle that is completely overlapped by the other
+    // internal circle.
+    internal.push({ x: 0, y: 0, r: 50 });
+
+    assert.strictEqual(
+        Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
+        100,
+        'Should return width of approximately 100 when distance to closest internal circle border is 50.'
+    );
+
+    // Add an external circle that overlaps on the right side of the smallest
+    // internal circle
+    external.push({ x: 60, y: 0, r: 20 });
+
+    assert.strictEqual(
+        Math.round(getLabelWidth({ x: -10, y: 0 }, internal, external)),
+        80,
+        'Should return width of approximately 80 when distance to closest internal circle border is 40.'
+    );
+
+    assert.strictEqual(
+        Math.round(getLabelWidth({ x: 10, y: 0 }, internal, external)),
+        60,
+        'Should return width of approximately 60 when distance to closest external circle border is 30.'
     );
 });
 
@@ -667,4 +707,40 @@ QUnit.test('sortByTotalOverlap', function (assert) {
         0,
         'should return 0 when a is equal to b.'
     );
+});
+
+QUnit.module('nelder-mead', () => {
+    const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
+    const NelderMeadModule = vennUtils.nelderMead;
+
+    QUnit.test('getCentroid', assert => {
+        const { getCentroid } = NelderMeadModule;
+        assert.deepEqual(
+            getCentroid([
+                [184.16021264966827, 99.75],
+                [184.16021264966827, 95],
+                [193.3682232821517, 95]
+            ]),
+            [184.16021264966827, 97.375],
+            'Should calculate the center point between all the coordinates, except the last'
+        );
+    });
+
+    QUnit.test('nelderMead', assert => {
+        const { nelderMead } = NelderMeadModule;
+        const { getMarginFromCircles } = vennUtils;
+        const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
+        const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
+        const fn = ([x, y]) => -(
+            getMarginFromCircles({ x, y }, internal, external)
+        );
+        assert.deepEqual(
+            nelderMead(
+                fn,
+                [184.16021264966827, 95]
+            ),
+            [140.0000000000064, 174.99997672224276],
+            'Should optimize position into the one with the best margin.'
+        );
+    });
 });

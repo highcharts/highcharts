@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,19 +11,19 @@ const Path = require('path');
  *
  * */
 
-const BASE = Path.join(__dirname, '..', '..');
+const BASE = path.join(__dirname, '..', '..');
 
-const CODE_DIRECTORY = Path.join(BASE, 'code');
+const CODE_DIRECTORY = path.join(BASE, 'code');
 
-const CONFIGURATION_FILE = Path.join(
+const CONFIGURATION_FILE = path.join(
     BASE, 'node_modules', '_gulptasks_test.json'
 );
 
-const JS_DIRECTORY = Path.join(BASE, 'js');
+const JS_DIRECTORY = path.join(BASE, 'js');
 
-const KARMA_CONFIG_FILE = Path.join(BASE, 'test', 'karma-conf.js');
+const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'karma-conf.js');
 
-const TESTS_DIRECTORY = Path.join(BASE, 'samples', 'unit-tests');
+const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
 
 /* *
  *
@@ -39,29 +39,29 @@ const TESTS_DIRECTORY = Path.join(BASE, 'samples', 'unit-tests');
  */
 function checkJSWrap() {
 
-    const FS = require('fs');
-    const Glob = require('glob');
-    const LogLib = require('./lib/log');
-    const YAML = require('js-yaml');
+    const fs = require('fs');
+    const glob = require('glob');
+    const logLib = require('./lib/log');
+    const yaml = require('js-yaml');
 
     let errors = 0;
 
-    Glob.sync(
+    glob.sync(
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
     ).forEach(f => {
 
         const detailsFile = f.replace(/\.html$/, '.details');
 
         try {
-            const details = YAML.safeLoad(
-                FS.readFileSync(detailsFile, 'utf-8')
+            const details = yaml.safeLoad(
+                fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                LogLib.failure('js_wrap not found:', detailsFile);
+                logLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            LogLib.failure('File not found:', detailsFile);
+            logLib.failure('File not found:', detailsFile);
             errors++;
         }
     });
@@ -96,7 +96,7 @@ function checkSamplesConsistency() {
         ({ product, ignore = [] }) => {
             const index = FS
                 .readFileSync(
-                    Path.join('samples', product, 'demo', 'index.htm')
+                    path.join('samples', product, 'demo', 'index.htm')
                 )
                 .toString()
                 // Remove comments from the html in index
@@ -181,10 +181,10 @@ function saveRun() {
  */
 function shouldRun() {
 
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
-    const StringLib = require('./lib/string');
+    const fs = require('fs');
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
+    const stringLib = require('./lib/string');
 
     let configuration = {
         latestCodeHash: '',
@@ -192,27 +192,27 @@ function shouldRun() {
         latestTestsHash: ''
     };
 
-    if (FS.existsSync(CONFIGURATION_FILE)) {
+    if (fs.existsSync(CONFIGURATION_FILE)) {
         configuration = JSON.parse(
-            FS.readFileSync(CONFIGURATION_FILE).toString()
+            fs.readFileSync(CONFIGURATION_FILE).toString()
         );
     }
 
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+    const latestCodeHash = fsLib.getDirectoryHash(
+        CODE_DIRECTORY, true, stringLib.removeComments
     );
-    const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+    const latestJsHash = fsLib.getDirectoryHash(
+        JS_DIRECTORY, true, stringLib.removeComments
     );
-    const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
+    const latestTestsHash = fsLib.getDirectoryHash(
+        TESTS_DIRECTORY, true, stringLib.removeComments
     );
 
     if (latestCodeHash === configuration.latestCodeHash &&
         latestJsHash !== configuration.latestJsHash
     ) {
 
-        LogLib.failure(
+        logLib.failure(
             '✖ The files have not been built' +
             ' since the last source code changes.' +
             ' Run `npx gulp` and try again.'
@@ -225,7 +225,7 @@ function shouldRun() {
         latestTestsHash === configuration.latestTestsHash
     ) {
 
-        LogLib.success(
+        logLib.success(
             '✓ Source code and unit tests have been not modified' +
             ' since the last successful test run.'
         );
@@ -274,7 +274,12 @@ Available arguments for 'gulp test':
     'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
     Win.IE'.
 
-    A shorthand option, '--browsers all', runs all BroserStack machines.
+    A shorthand option, '--browsers all', runs all BrowserStack machines.
+    
+--browsercount
+    Number of browserinstances to spread/shard the tests across. Default value is 2.
+    Will default use ChromeHeadless browser. For other browsers specify 
+    argument --splitbrowsers (same usage as above --browsers argument).
 
 --debug
     Print some debugging info.
@@ -301,7 +306,7 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        const forceRun = (argv.force || argv.length > 2);
+        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests);
 
         if (forceRun || shouldRun()) {
 
@@ -330,12 +335,10 @@ Available arguments for 'gulp test':
                         return;
                     }
 
-                    if (!forceRun) {
-                        try {
-                            saveRun();
-                        } catch (cathedError) {
-                            LogLib.warn(cathedError);
-                        }
+                    try {
+                        saveRun();
+                    } catch (catchedError) {
+                        LogLib.warn(catchedError);
                     }
 
                     if (argv.speak) {
@@ -352,4 +355,4 @@ Available arguments for 'gulp test':
     });
 }
 
-Gulp.task('test', Gulp.series('scripts', test));
+gulp.task('test', gulp.series('scripts', test));

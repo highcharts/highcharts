@@ -9,7 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -27,11 +30,11 @@ var merge = H.merge,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
-    isString = H.isString,
     pick = H.pick,
     reduce = H.reduce,
     splat = H.splat,
-    destroyObjectProperties = H.destroyObjectProperties;
+    destroyObjectProperties = H.destroyObjectProperties,
+    chartProto = H.Chart.prototype;
 
 /* *********************************************************************
  *
@@ -986,10 +989,11 @@ merge(
         },
 
         /**
-         * See {@link Highcharts.Annotation#destroy}.
+         * See {@link Highcharts.Chart#removeAnnotation}.
          */
         remove: function () {
-            return this.destroy();
+            // Let chart.update() remove annoations on demand
+            return this.chart.removeAnnotation(this);
         },
 
         update: function (userOptions) {
@@ -1194,10 +1198,7 @@ H.extendAnnotation = function (
  *
  ******************************************************************** */
 
-// Let chart.update() work with annotations
-H.Chart.prototype.collectionsWithUpdate.push('annotations');
-
-H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
+H.extend(chartProto, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
         var Constructor =
             Annotation.types[userOptions.type] || Annotation,
@@ -1265,8 +1266,13 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     }
 });
 
+// Let chart.update() update annotations
+chartProto.collectionsWithUpdate.push('annotations');
 
-H.Chart.prototype.callbacks.push(function (chart) {
+// Let chart.update() create annoations on demand
+chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
+
+chartProto.callbacks.push(function (chart) {
     chart.annotations = [];
 
     if (!chart.options.annotations) {

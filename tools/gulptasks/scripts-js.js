@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -27,18 +27,12 @@ const Gulp = require('gulp');
 function task() {
 
     const argv = require('yargs').argv;
-    const Build = require('../build.js');
-    const LogLib = require('./lib/log');
-    const ProcessLib = require('./lib/process');
-
-    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
-        LogLib.warn('Running watch process detected. Skipping task...');
-        return Promise.resolve();
-    }
+    const buildTool = require('../build');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        const BuildScripts = Build.getBuildScripts({
+        const BuildScripts = buildTool.getBuildScripts({
             debug: (argv.d || argv.debug || false),
             files: (
                 (argv.file) ?
@@ -48,14 +42,14 @@ function task() {
             type: (argv.type || null)
         });
 
-        LogLib.message('Generating code...');
+        logLib.message('Generating code...');
 
         BuildScripts
             .fnFirstBuild()
-            .then(() => LogLib.success('Created code'))
+            .then(() => logLib.success('Created code'))
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('scripts-js', task);
+gulp.task('scripts-js', task);

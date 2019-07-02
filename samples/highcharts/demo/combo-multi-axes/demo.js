@@ -71,7 +71,9 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 55,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255,255,255,0.25)'
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || // theme
+            'rgba(255,255,255,0.25)'
     },
     series: [{
         name: 'Rainfall',

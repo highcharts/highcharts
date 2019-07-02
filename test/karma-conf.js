@@ -23,13 +23,26 @@ function getProperties() {
         properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
         properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
 
+        if (!process.env.BROWSERSTACK_USER) {
+            // fallback to good old property file
+            let lines = fs.readFileSync(
+                './git-ignore-me.properties', 'utf8'
+            );
+            lines.split('\n').forEach(function (line) {
+                line = line.split('=');
+                if (line[0]) {
+                    properties[line[0]] = line[1];
+                }
+            });
+        }
+
         if (!properties['browserstack.username']) {
             throw new Error();
         }
     } catch (e) {
         throw new Error(
             'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables.'
+            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
         );
     }
     return properties;
@@ -150,9 +163,9 @@ const browserStackBrowsers = {
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '43.0',
+        browser_version: 'insider preview',
         os: 'Windows',
-        os_version: '10'
+        os_version: '10',
     },
     'Win.Firefox': {
         base: 'BrowserStack',
@@ -197,31 +210,73 @@ module.exports = function (config) {
         }
     }
 
-    // The tests to run by default
-    const defaultTests = [
-        'unit-tests/*/*'
-    ];
+    let frameworks = ['qunit'];
+
+    if (argv.oldie) {
+        frameworks = []; // Custom framework in test file
+    }
 
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         ['ChromeHeadless'];
-    if (argv.browsers === 'all') {
+    if (argv.oldie) {
+        browsers = ['Win.IE8'];
+    } else if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
 
+    const browserCount = argv.browsercount || 2;
+
+    if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
+        // Sharding / splitting tests across multiple browser instances
+        frameworks = [...frameworks, 'sharding'];
+        // create a duplicate of the added browsers ${numberOfInstances} times.
+        browsers = argv.splitbrowsers ? argv.splitbrowsers.split(',').reduce((browserInstances, current) => {
+            for (let i = 0; i < browserCount; i++) {
+                browserInstances.push(current);
+            }
+            return browserInstances;
+        }, [])
+        : new Array(browserCount).fill('ChromeHeadless');
+    } else {
+        if (argv.splitbrowsers) {
+            browsers = argv.splitbrowsers.split(',');
+        }
+    }
+
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+
+    // The tests to run by default
+    const defaultTests = argv.oldie ?
+        ['unit-tests/oldie/*'] :
+        ['unit-tests/*/*'];
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .filter(path => !!path)
         .map(path => `samples/${path}/demo.js`);
 
-    // let files = getFiles();
+    // Get the files
     let files = require('./karma-files.json');
+    if (argv.oldie) {
+        files = files.filter(f =>
+            f.indexOf('vendor/jquery') !== 0 &&
+            f.indexOf('vendor/moment') !== 0 &&
+            f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('node_modules/lolex') !== 0 &&
+
+            // Complains on chart.renderer.addPattern
+            f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
+            // Uses classList extensively
+            f.indexOf('code/modules/stock-tools.src.js') !== 0
+        );
+        files.splice(0, 0, 'code/modules/oldie-polyfills.src.js');
+        files.splice(2, 0, 'code/modules/oldie.src.js');
+    }
 
     let options = {
         basePath: '../', // Root relative to this file
-        frameworks: ['qunit'],
+        frameworks: frameworks,
         files: files.concat([
             {
                 pattern: 'test/*.png', // testimage.png
@@ -254,7 +309,7 @@ module.exports = function (config) {
         ], tests),
 
         // These ones fail
-        exclude: [
+        exclude: argv.oldie ? [] : [
             // The configuration currently loads classic mode only. Styled mode
             // needs to be a separate instance.
             'samples/unit-tests/series-pie/styled-mode/demo.js',
@@ -310,12 +365,18 @@ module.exports = function (config) {
             'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
-            'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
+            'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
+
+            // Failing on Edge only
+            'samples/unit-tests/pointer/members/demo.js',
+
+            // Skip the special oldie tests (which don't run QUnit)
+            'samples/unit-tests/oldie/*/demo.js'
         ],
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
         colors: true,
-        logLevel: config.LOG_WARN,
+        logLevel: config.LOG_INFO,
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
@@ -324,6 +385,9 @@ module.exports = function (config) {
             'karma-*',
             require('./karma-imagecapture-reporter.js')
         ],
+        sharding: {
+          specMatcher: /(spec|test|demo)s?\.js/i
+        },
 
         formatError: function (s) {
             let ret = s.replace(
@@ -547,7 +611,7 @@ module.exports = function (config) {
     };
 
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
         const randomString = Math.random().toString(36).substring(7);
 
@@ -559,17 +623,43 @@ module.exports = function (config) {
             name: `circle-ci-karma-highcharts-${randomString}`,
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
+            retryLimit: 1,
         };
-        options.customLaunchers = browserStackBrowsers;
+        options.customLaunchers = argv.oldie ?
+            {
+                'Win.IE8': {
+                    base: 'BrowserStack',
+                    browser: 'ie',
+                    browser_version: '8.0',
+                    os: 'Windows',
+                    os_version: 'XP'
+                }
+            } :
+            browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
-
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 20000; // default 2000
+        options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
-        options.captureTimeout = 4 * 60 * 1000; // default 60000
+        options.browserSocketTimeout = 20000;
+
+        options.plugins = [
+            'karma-browserstack-launcher',
+            'karma-sharding',
+            'karma-generic-preprocessor'
+        ];
+        if (!argv.oldie) {
+            options.plugins.push('karma-qunit');
+        }
+
+        options.reporters = ['progress'];
+
+        if (browsers.some(browser => /(Edge)/.test(browser))) {
+            // fallback to polling for Edge browsers as websockets disconnects a lot.
+            options.transports = ['polling'];
+        }
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +

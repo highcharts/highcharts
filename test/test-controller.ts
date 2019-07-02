@@ -10,6 +10,9 @@
  *
  * */
 
+/**
+ * DOM elements
+ */
 type HighchartsElement = (
     Highcharts.HTMLDOMElement |
     Highcharts.SVGDOMElement
@@ -26,15 +29,32 @@ type TestControllerPoint = [number, number];
  *
  * */
 
+/**
+ * SVG clip paths
+ */
+interface ClipPaths {
+    elements: Array<HighchartsElement>;
+    values: Array<string>;
+}
+
+/**
+ * Chart position of a controller instance
+ */
 interface TestControllerPosition extends Highcharts.PositionObject {
     relatedTarget: (HighchartsElement | null);
 }
 
+/**
+ * Page coordinates of a controller instance
+ */
 interface TestControllerTouchPosition {
     pageX: number;
     pageY: number;
 }
 
+/**
+ * Touch coordinates
+ */
 interface TestControllerTouchPositions
     extends Array<TestControllerTouchPosition>
 {
@@ -223,30 +243,17 @@ class TestController {
      */
     public elementFromPoint (
         chartX: number = this.positionX,
-        chartY: number = this.positionY
+        chartY: number = this.positionY,
+        useMSWorkaround: boolean = true
     ): (HighchartsElement | null) {
 
         const chartOffset = Highcharts.offset(this.chart.container);
-        const clipPaths = {
-            elements: [] as Array<HighchartsElement>,
-            values: [] as Array<string>
-        };
-
-        // Edge and IE are unable to get elementFromPoint when the group has a
-        // clip path. It reports the first underlying element with no clip path.
-        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
-            [].slice
-                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
-                .forEach(
-                    function (elemCP: HighchartsElement) {
-                        clipPaths.elements.push(elemCP);
-                        clipPaths.values.push(
-                            elemCP.getAttribute('clip-path')!
-                        );
-                        elemCP.removeAttribute('clip-path');
-                    }
-                );
+        let clipPaths;
+        
+        if (useMSWorkaround) {
+            clipPaths = this.setUpMSWorkaround()
         }
+        
 
         const element = document.elementFromPoint(
             (chartOffset.left + chartX),
@@ -254,9 +261,9 @@ class TestController {
         ) as HighchartsElement;
 
         // Reset clip paths for Edge and IE
-        clipPaths.elements.forEach(function (elemCP, i) {
-            elemCP.setAttribute('clip-path', clipPaths.values[i]);
-        });
+        if (clipPaths) {
+            this.tearDownMSWorkaround(clipPaths);
+        }
 
         return element;
     }
@@ -456,13 +463,15 @@ class TestController {
             x1,
             y1;
 
+        let clipPaths = this.setUpMSWorkaround();
+
         for (let i = 0, ie = points.length; i < ie; ++i) {
 
             point = points[i];
 
             x1 = point[0];
             y1 = point[1];
-            target = this.elementFromPoint(x1, y1);
+            target = this.elementFromPoint(x1, y1, false);
 
             if (target !== relatedTarget) {
                 // First trigger a mouseout on the old target.
@@ -494,6 +503,8 @@ class TestController {
                 relatedTarget = target;
             }
         }
+
+        this.tearDownMSWorkaround(clipPaths);
 
         // Update controller positions and relatedTarget.
         this.setPosition(chartX, chartY);
@@ -614,6 +625,33 @@ class TestController {
     }
 
     /**
+     * Edge and IE are unable to get elementFromPoint when the group has a
+     * clip path. It reports the first underlying element with no clip path.
+     */
+    private setUpMSWorkaround () {
+        const clipPaths: ClipPaths = {
+            elements: [],
+            values: []
+        };
+
+        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
+            [].slice
+                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
+                .forEach(
+                    function (elemCP: HighchartsElement) {
+                        clipPaths.elements.push(elemCP);
+                        clipPaths.values.push(
+                            elemCP.getAttribute('clip-path')!
+                        );
+                        elemCP.removeAttribute('clip-path');
+                    }
+                );
+        }
+        return clipPaths;
+        
+    }
+
+    /**
      * Move the cursor position to a new position, without firing events.
      *
      * @param chartX
@@ -705,6 +743,24 @@ class TestController {
     ) {
         this.touchStart(chartX, chartY, twoFingers, undefined, debug);
         this.touchEnd(chartX, chartY, twoFingers, undefined, debug);
+    }
+
+    /**
+     * Undo the workaround for Edge and IE.
+     * 
+     * @param clipPaths
+     *        The clip paths that were returned from the `setUpMSWorkaround`
+     *        function
+     */
+    private tearDownMSWorkaround (
+        clipPaths: ClipPaths
+    ) {
+        // Reset clip paths for Edge and IE
+        if (clipPaths) {
+            clipPaths.elements.forEach(function (elemCP, i) {
+                elemCP.setAttribute('clip-path', clipPaths.values[i]);
+            });
+        }
     }
 
     /**

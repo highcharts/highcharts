@@ -238,8 +238,8 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
         from = args[1],
         to = args[2],
         path = [],
-        fromPath = this.getPlotLinePath(from),
-        toPath = this.getPlotLinePath(to);
+        fromPath = this.getPlotLinePath({ value: from }),
+        toPath = this.getPlotLinePath({ value: to });
 
     if (fromPath && toPath) {
         for (var i = 0; i < fromPath.length; i += 6) {

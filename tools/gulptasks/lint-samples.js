@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 const argv = require('yargs').argv;
 
 /* *
@@ -42,12 +42,12 @@ const IGNORE_GLOBS = [
  */
 function task() {
 
-    const ESLint = require('eslint');
-    const LogLib = require('./lib/log');
+    const eslint = require('eslint');
+    const log = require('./lib/log');
 
     return new Promise(resolve => {
 
-        const cli = new ESLint.CLIEngine({
+        const cli = new eslint.CLIEngine({
             fix: argv.fix,
             ignorePattern: IGNORE_GLOBS
         });
@@ -57,15 +57,15 @@ function task() {
                 DEFAULT_GLOBS
         );
 
-        LogLib.message('Linting [', globs.join(', '), ']...');
+        log.message('Linting [', globs.join(', '), ']...');
 
         const report = cli.executeOnFiles(globs);
 
         if (argv.fix) {
-            ESLint.CLIEngine.outputFixes(report);
+            eslint.CLIEngine.outputFixes(report);
         }
 
-        LogLib.message(
+        log.message(
             'Finished linting...\n',
             cli.getFormatter()(report.results)
         );
@@ -74,4 +74,4 @@ function task() {
     });
 }
 
-Gulp.task('lint-samples', task);
+gulp.task('lint-samples', task);

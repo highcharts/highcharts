@@ -1,3 +1,67 @@
+QUnit.test('Hide label with useHTML (#4938)', function (assert) {
+    var chart = Highcharts.chart('container', {}),
+        renderer = chart.renderer,
+        g = renderer.g().add(),
+        text = renderer.text('Label', 140, 140, true).add(g);
+    assert.strictEqual(
+        text.attr('visibility'),
+        0,
+        'Text element is visible'
+    );
+    assert.strictEqual(
+        g.attr('visibility'),
+        0,
+        'Group element is visible'
+    );
+    text.hide();
+    assert.strictEqual(
+        text.attr('visibility'),
+        'hidden',
+        'Text element is hidden'
+    );
+    g.hide();
+    assert.strictEqual(
+        g.attr('visibility'),
+        'hidden',
+        'Group element is hidden'
+    );
+});
+
+QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    // Reference point
+    ren.circle(100, 100, 3)
+        .attr({
+            fill: 'red'
+        })
+        .add();
+
+    // Add an empty text with useHTML, align it to the right
+    var text = ren.text('', 100, 100, true)
+        .attr({
+            align: 'right'
+        })
+        .add();
+
+    // Update the text
+    text.attr({
+        text: 'Hello World'
+    });
+
+
+    assert.strictEqual(
+        text.element.offsetLeft + text.element.offsetWidth,
+        100,
+        'Text is right aligned'
+    );
+
+});
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
 QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
@@ -77,13 +141,56 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
     // For some reason Edge gets the BBox width wrong, but the text looks
     // correct
-    if (navigator.userAgent.indexOf('Edge') === -1) {
+    if (
+        navigator.userAgent.indexOf('Edge') === -1 &&
+        navigator.userAgent.indexOf('Trident') === -1
+    ) {
         assert.ok(
             text.getBBox().width <= 100,
             'The text node width should be less than 100'
         );
     }
 
+});
+
+QUnit.module('whiteSpace: "nowrap"', hooks => {
+    const { Renderer } = Highcharts;
+    const renderer = new Renderer(
+        document.getElementById('container'),
+        400,
+        300
+    );
+    const text = renderer.text('test', 100, 40)
+        .css({
+            whiteSpace: 'nowrap'
+        })
+        .add();
+
+    // Cleanup
+    hooks.after(() => {
+        renderer.destroy();
+        text.destroy();
+    });
+
+
+    QUnit.test('Skip tspans', assert => {
+        text.attr({ text: 'single_word' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'single_word',
+            'should not use tspan when whiteSpace equals "nowrap", and text equals "single_word".'
+        );
+
+        text.attr({ text: 'two words' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'two words',
+            'should not use tspan when whiteSpace equals "nowrap", and text equals "two words".'
+        );
+
+    });
+
+    // TODO: move rest of nowrap tests into this module.
 });
 
 QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {

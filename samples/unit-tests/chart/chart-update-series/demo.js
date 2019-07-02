@@ -154,3 +154,83 @@ QUnit.test('Updating series with indexes', function (assert) {
         'The updated chart should have three series (#9226)'
     );
 });
+
+QUnit.test('Chart.update and series events (#11088)', assert => {
+    const counters = {
+        initial: 0,
+        updated: 0,
+        updated2: 0
+    };
+    const chart =  Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 300
+        },
+        series: [{
+            type: 'column',
+            data: [3, 2, 1]
+        }],
+        plotOptions: {
+            series: {
+                events: {
+                    click: () => counters.initial++
+                }
+            }
+        }
+    });
+    let controller = new TestController(chart);
+    controller.moveTo(100, 120);
+    controller.click(100, 120, undefined, true);
+
+    assert.strictEqual(
+        counters.initial,
+        1,
+        'Initial click handler should fire'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                events: {
+                    click: () => counters.updated++
+                }
+            }
+        }
+    });
+
+    controller = new TestController(chart);
+    controller.moveTo(100, 130);
+    controller.click(100, 130, undefined, true);
+
+    assert.strictEqual(
+        counters.initial,
+        1,
+        'Initial click handler should not fire'
+    );
+    assert.strictEqual(
+        counters.updated,
+        1,
+        'Updated click handler should fire'
+    );
+
+    chart.series[0].update({
+        pointStart: 2019,
+        events: {
+            click: () => counters.updated2++
+        }
+    });
+
+    controller.moveTo(100, 140);
+    controller.click(100, 140, undefined, true);
+    assert.strictEqual(
+        counters.updated,
+        1,
+        'With new points, updated click handler should not fire'
+    );
+    assert.strictEqual(
+        counters.updated2,
+        1,
+        'With new points, updated click handler should fire'
+    );
+
+});

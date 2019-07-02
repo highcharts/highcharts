@@ -114,6 +114,7 @@ var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 
 var defined = H.defined,
+    find = H.find,
     isObject = H.isObject,
     merge = H.merge,
     seriesType = H.seriesType,
@@ -381,6 +382,7 @@ seriesType('sankey', 'column',
         invertable: true,
         forceDL: true,
         orderNodes: true,
+        pointArrayMap: ['from', 'to'],
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,
@@ -469,11 +471,18 @@ seriesType('sankey', 'column',
                         // Hanging layout for organization chart
                         if (fromNode.options.layout === 'hanging') {
                             node.hangsFrom = fromNode;
-                            node.column += fromNode.linksFrom.findIndex(
-                                function (link) {
-                                    return link.toNode === node;
+                            i = -1; // Reuse existing variable i
+                            find(
+                                fromNode.linksFrom,
+                                function (link, index) {
+                                    var found = link.toNode === node;
+                                    if (found) {
+                                        i = index;
+                                    }
+                                    return found;
                                 }
                             );
+                            node.column += i;
                         }
                     }
                 }

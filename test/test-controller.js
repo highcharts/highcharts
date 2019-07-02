@@ -96,6 +96,41 @@ var TestController = /** @class */ (function () {
         }
         return points;
     };
+    /**
+     * Edge and IE are unable to get elementFromPoint when the group has a
+     * clip path. It reports the first underlying element with no clip path.
+     */
+    TestController.prototype.setUpMSWorkaround = function () {
+        var clipPaths = {
+            elements: [],
+            values: []
+        };
+        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
+            [].slice
+                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
+                .forEach(function (elemCP) {
+                clipPaths.elements.push(elemCP);
+                clipPaths.values.push(elemCP.getAttribute('clip-path'));
+                elemCP.removeAttribute('clip-path');
+            });
+        }
+        return clipPaths;
+    };
+    /**
+     * Undo the workaround
+     *
+     * @param clipPaths
+     *        The clip paths that were returned from the `setUpMSWorkaround`
+     *        function
+     */
+    TestController.prototype.tearDownMSWorkaround = function (clipPaths) {
+        // Reset clip paths for Edge and IE
+        if (clipPaths) {
+            clipPaths.elements.forEach(function (elemCP, i) {
+                elemCP.setAttribute('clip-path', clipPaths.values[i]);
+            });
+        }
+    };
     /* *
      *
      *  Functions
@@ -136,30 +171,20 @@ var TestController = /** @class */ (function () {
      * @param chartY
      *        Y relative to the chart.
      */
-    TestController.prototype.elementFromPoint = function (chartX, chartY) {
+    TestController.prototype.elementFromPoint = function (chartX, chartY, useMSWorkaround) {
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
+        if (useMSWorkaround === void 0) { useMSWorkaround = true; }
         var chartOffset = Highcharts.offset(this.chart.container);
-        var clipPaths = {
-            elements: [],
-            values: []
-        };
-        // Edge and IE are unable to get elementFromPoint when the group has a
-        // clip path. It reports the first underlying element with no clip path.
-        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
-            [].slice
-                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
-                .forEach(function (elemCP) {
-                clipPaths.elements.push(elemCP);
-                clipPaths.values.push(elemCP.getAttribute('clip-path'));
-                elemCP.removeAttribute('clip-path');
-            });
+        var clipPaths;
+        if (useMSWorkaround) {
+            clipPaths = this.setUpMSWorkaround();
         }
         var element = document.elementFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY));
         // Reset clip paths for Edge and IE
-        clipPaths.elements.forEach(function (elemCP, i) {
-            elemCP.setAttribute('clip-path', clipPaths.values[i]);
-        });
+        if (clipPaths) {
+            this.tearDownMSWorkaround(clipPaths);
+        }
         return element;
     };
     /**
@@ -336,11 +361,12 @@ var TestController = /** @class */ (function () {
         var to = [chartX, chartY];
         var points = TestController.getPointsBetween(from, to);
         var point, relatedTarget = fromPosition.relatedTarget, target, x1, y1;
+        var clipPaths = this.setUpMSWorkaround();
         for (var i = 0, ie = points.length; i < ie; ++i) {
             point = points[i];
             x1 = point[0];
             y1 = point[1];
-            target = this.elementFromPoint(x1, y1);
+            target = this.elementFromPoint(x1, y1, false);
             if (target !== relatedTarget) {
                 // First trigger a mouseout on the old target.
                 this.triggerEvent('mouseout', x1, y1, Highcharts.merge({
@@ -359,6 +385,7 @@ var TestController = /** @class */ (function () {
                 relatedTarget = target;
             }
         }
+        this.tearDownMSWorkaround(clipPaths);
         // Update controller positions and relatedTarget.
         this.setPosition(chartX, chartY);
     };

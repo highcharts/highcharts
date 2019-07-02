@@ -7,11 +7,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var isArray = H.isArray,
-    EMAindicator = H.seriesTypes.ema,
+var EMAindicator = H.seriesTypes.ema,
     requiredIndicator = requiredIndicatorMixin,
     correctFloat = H.correctFloat;
 
@@ -28,7 +30,7 @@ H.seriesType(
     'dema',
     'ema',
     /**
-     * Normalized average true range indicator (NATR). This series requires
+     * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *

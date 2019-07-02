@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,9 +11,9 @@ const Path = require('path');
  *
  * */
 
-const LINT_FOLDER = Path.join('test', 'typescript-lint');
+const LINT_FOLDER = path.join('test', 'typescript-lint');
 
-const TEST_FOLDER = Path.join('test', 'typescript');
+const TEST_FOLDER = path.join('test', 'typescript');
 
 /* *
  *
@@ -29,30 +29,30 @@ const TEST_FOLDER = Path.join('test', 'typescript');
  */
 function task() {
 
-    const FSLib = require('./lib/fs');
-    const ProcessLib = require('./lib/process');
-    const LogLib = require('./lib/log');
+    const fsLib = require('./lib/fs');
+    const processLib = require('./lib/process');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        LogLib.message('Linting ...');
+        logLib.message('Linting ...');
 
         const promises = [];
 
         promises.push(
-            ProcessLib
+            processLib
                 .exec('cd ' + LINT_FOLDER + ' && npx dtslint --onlyTestTsNext')
         );
 
         promises.push(
-            ...FSLib
+            ...fsLib
                 .getDirectoryPaths(TEST_FOLDER, false)
-                .map(folder => ProcessLib.exec('npx tsc -p ' + folder))
+                .map(folder => processLib.exec('npx tsc -p ' + folder))
         );
 
         Promise
             .all(promises)
-            .then(() => LogLib.success('Finished linting'))
+            .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);
     });
@@ -60,4 +60,4 @@ function task() {
 
 require('./jsdoc-dts');
 
-Gulp.task('lint-dts', task);
+gulp.task('lint-dts', task);

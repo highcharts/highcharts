@@ -1,3 +1,107 @@
+QUnit.test('Negative stack with just one point should be also calculate (#4979)', function (assert) {
+
+    var chart = $('#container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0,
+                    stacking: 'percent'
+                }
+            },
+            series: [{
+                data: [-10]
+            }, {
+                data: [10]
+            }]
+        }).highcharts(),
+        oldHeight = chart.series[0].points[0].graphic.getBBox(true).height;
+
+    chart.series[0].addPoint(-10, false);
+    chart.series[1].addPoint(10);
+
+    assert.strictEqual(
+        oldHeight,
+        chart.series[0].points[0].graphic.getBBox(true).height,
+        'Correct height for a negative point'
+    );
+});
+
+QUnit.test('Column outside plot area(#4264)', function (assert) {
+    var chart;
+
+    $('#container').highcharts({
+        chart: {
+            type: 'column',
+            zoomType: 'xy'
+        },
+        title: {
+            text: 'Historic World Population by Region'
+        },
+        subtitle: {
+            text: 'Source: Wikipedia.org'
+        },
+        xAxis: {
+            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania', 'a', 'b', 'c'],
+            title: {
+                text: null
+            },
+            min: 0
+        },
+        yAxis: {
+            min: -290,
+            max: -230,
+            title: {
+                text: 'Population (millions)',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                animation: false
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -40,
+            y: 100,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: '#FFFFFF',
+            shadow: true
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Year 1800',
+            data: [107, -31, 63]
+        }, {
+            name: 'Year 1900',
+            data: [133, -156, 97]
+        }, {
+            name: 'Year 2008',
+            data: [-97, -91, 44]
+        }]
+    });
+
+    chart = $('#container').highcharts();
+
+
+    assert.equal(
+        chart.series[0].points[0].graphic.attr('y') + chart.series[0].points[0].graphic.attr('height') < 0,
+        true,
+        'Column is above plot area'
+    );
+
+});
 // Highchart 3.0.10, Issue #2592
 // column with stacking = 'normal' draws only last point in stack
 QUnit.test(

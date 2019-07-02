@@ -7,13 +7,15 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var pick = H.pick,
     error = H.error,
     Series = H.Series,
-    isArray = H.isArray,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -250,10 +252,12 @@ seriesType(
                         );
 
                         for (i = 0; i < croppedData.xData.length; i++) {
+                            // (#10774)
                             croppedDataValues.push([
-                                croppedData.xData[i],
-                                croppedData.yData[i]
-                            ]);
+                                croppedData.xData[i]
+                            ].concat(
+                                H.splat(croppedData.yData[i])
+                            ));
                         }
 
                         oldFirstPointIndex = processedData.xData.indexOf(

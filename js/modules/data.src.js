@@ -91,6 +91,7 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
+    defined = Highcharts.defined,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
     isNumber = Highcharts.isNumber,
@@ -677,12 +678,24 @@ Highcharts.extend(Data.prototype, {
                     getValueCount(globalType),
                 seriesArr = (chartOptions && chartOptions.series) || [],
                 series = seriesArr[seriesIndex] || {},
-                pointArrayMap = getPointArrayMap(series.type || globalType) ||
-                    ['y'];
+                defaultPointArrayMap = getPointArrayMap(
+                    series.type || globalType
+                ),
+                pointArrayMap = defaultPointArrayMap || ['y'];
 
-            // Add an x reader from the x property or from an undefined column
-            // if the property is not set. It will then be auto populated later.
-            builder.addColumnReader(mapping.x, 'x');
+            if (
+                // User-defined x.mapping
+                defined(mapping.x) ||
+                // All non cartesian don't need 'x'
+                series.isCartesian ||
+                // Except pie series:
+                !defaultPointArrayMap
+            ) {
+                // Add an x reader from the x property or from an undefined
+                // column if the property is not set. It will then be auto
+                // populated later.
+                builder.addColumnReader(mapping.x, 'x');
+            }
 
             // Add all column mappings
             objectEach(mapping, function (val, name) {
@@ -2186,8 +2199,8 @@ Highcharts.extend(Data.prototype, {
                 }
             };
             // Apply it
-            merge(true, this.options, options);
-            this.init(this.options);
+            merge(true, chart.options.data, options);
+            this.init(chart.options.data);
         }
     }
 });

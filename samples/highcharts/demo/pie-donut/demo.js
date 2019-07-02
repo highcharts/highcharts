@@ -262,6 +262,7 @@ Highcharts.chart('container', {
             },
             chartOptions: {
                 series: [{
+                }, {
                     id: 'versions',
                     dataLabels: {
                         enabled: false

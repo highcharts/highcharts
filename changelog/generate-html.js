@@ -14,7 +14,7 @@ var path = require('path'),
     var marked = require('marked'),
         fs = require('fs'),
         pretty = require('pretty'),
-        semverSort = require('semver-sort');
+        semver = require('semver');
 
     var products = [{
         header: 'Highcharts Basic',
@@ -227,7 +227,17 @@ var path = require('path'),
     }
 
     function getSortedDirFiles(files) {
-        return semverSort.asc(files).reverse();
+        const versionFiles = files.map(file => file.replace('.md', ''));
+        const sortedVersions = versionFiles.sort((v1, v2) => {
+            if (v1.includes(v2) && v1.includes('-modified')) {
+                return -1;
+            }
+            if (v2.includes(v1) && v2.includes('-modified')) {
+                return 1;
+            }
+            return semver.rcompare(v1, v2);
+        });
+        return sortedVersions.map(file => file + '.md');
     }
 
     htmlContent += topHTMLContent();

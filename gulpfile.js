@@ -27,7 +27,9 @@ Gulp.registry(new GulpForwardReference());
     'common-webpack',
     'dist',
     'dist-ant',
+    'dist-upload',
     'dist-clean',
+    'dist-compress',
     'dist-copy',
     'dist-examples',
     'dist-productsjs',
@@ -63,7 +65,8 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/get-filesizes',
     'unsorted/nightly',
     'unsorted/update-vendor',
-    'unsorted/upload-api'
+    'unsorted/upload-api',
+    'unsorted/upload-files'
 ]));
 
 /* *

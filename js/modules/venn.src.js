@@ -16,10 +16,21 @@
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
 import geometryCircles from '../mixins/geometry-circles.js';
+
+import NelderMeadModule from '../mixins/nelder-mead.js';
+// TODO: replace with individual imports
+var nelderMead = NelderMeadModule.nelderMead;
+
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray,
+    isString = U.isString;
+
 import '../parts/Series.js';
 
-var color = H.Color,
+var addEvent = H.addEvent,
+    color = H.Color,
     extend = H.extend,
     getAreaOfCircle = geometryCircles.getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles =
@@ -29,14 +40,14 @@ var color = H.Color,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
+    isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
-    isString = H.isString,
     merge = H.merge,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
 
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
@@ -198,144 +209,6 @@ var isSet = function (x) {
 };
 
 /**
- * Finds an optimal position for a given point.
- * @private
- * @todo add unit tests.
- * @todo add constraints to optimize the algorithm.
- * @param {Function} fn The function to test a point.
- * @param {Array<*>} initial The initial point to optimize.
- * @return {Array<*>} Returns the opimized position of a point.
- */
-var nelderMead = function nelderMead(fn, initial) {
-    var maxIterations = 100,
-        sortByFx = function (a, b) {
-            return a.fx - b.fx;
-        },
-        pRef = 1, // Reflection parameter
-        pExp = 2, // Expansion parameter
-        pCon = -0.5, // Contraction parameter
-        pOCon = pCon * pRef, // Outwards contraction parameter
-        pShrink = 0.5; // Shrink parameter
-
-    var weightedSum = function weightedSum(weight1, v1, weight2, v2) {
-        return v1.map(function (x, i) {
-            return weight1 * x + weight2 * v2[i];
-        });
-    };
-
-    var getSimplex = function getSimplex(initial) {
-        var n = initial.length,
-            simplex = new Array(n + 1);
-
-        // Initial point to the simplex.
-        simplex[0] = initial;
-        simplex[0].fx = fn(initial);
-
-        // Create a set of extra points based on the initial.
-        for (var i = 0; i < n; ++i) {
-            var point = initial.slice();
-
-            point[i] = point[i] ? point[i] * 1.05 : 0.001;
-            point.fx = fn(point);
-            simplex[i + 1] = point;
-        }
-        return simplex;
-    };
-
-    var updateSimplex = function (simplex, point) {
-        point.fx = fn(point);
-        simplex[simplex.length - 1] = point;
-        return simplex;
-    };
-
-    var shrinkSimplex = function (simplex) {
-        var best = simplex[0];
-
-        return simplex.map(function (point) {
-            var p = weightedSum(1 - pShrink, best, pShrink, point);
-
-            p.fx = fn(p);
-            return p;
-        });
-    };
-
-    var getCentroid = function (simplex) {
-        var arr = simplex.slice(0, -1),
-            length = arr.length,
-            result = [],
-            sum = function (data, point) {
-                data.sum += point[data.i];
-                return data;
-            };
-
-        for (var i = 0; i < length; i++) {
-            result[i] = simplex.reduce(sum, { sum: 0, i: i }).sum / length;
-        }
-        return result;
-    };
-
-    var getPoint = function (centroid, worst, a, b) {
-        var point = weightedSum(a, centroid, b, worst);
-
-        point.fx = fn(point);
-        return point;
-    };
-
-    // Create a simplex
-    var simplex = getSimplex(initial);
-
-    // Iterate from 0 to max iterations
-    for (var i = 0; i < maxIterations; i++) {
-        // Sort the simplex
-        simplex.sort(sortByFx);
-
-        // Create a centroid from the simplex
-        var worst = simplex[simplex.length - 1];
-        var centroid = getCentroid(simplex);
-
-        // Calculate the reflected point.
-        var reflected = getPoint(centroid, worst, 1 + pRef, -pRef);
-
-        if (reflected.fx < simplex[0].fx) {
-            // If reflected point is the best, then possibly expand.
-            var expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
-
-            simplex = updateSimplex(
-                simplex,
-                (expanded.fx < reflected.fx) ? expanded : reflected
-            );
-        } else if (reflected.fx >= simplex[simplex.length - 2].fx) {
-            // If the reflected point is worse than the second worse, then
-            // contract.
-            var contracted;
-
-            if (reflected.fx > worst.fx) {
-                // If the reflected is worse than the worst point, do a
-                // contraction
-                contracted = getPoint(centroid, worst, 1 + pCon, -pCon);
-                if (contracted.fx < worst.fx) {
-                    simplex = updateSimplex(simplex, contracted);
-                } else {
-                    simplex = shrinkSimplex(simplex);
-                }
-            } else {
-                // Otherwise do an outwards contraction
-                contracted = getPoint(centroid, worst, 1 - pOCon, pOCon);
-                if (contracted.fx < reflected.fx) {
-                    simplex = updateSimplex(simplex, contracted);
-                } else {
-                    simplex = shrinkSimplex(simplex);
-                }
-            }
-        } else {
-            simplex = updateSimplex(simplex, reflected);
-        }
-    }
-
-    return simplex[0];
-};
-
-/**
  * Calculates a margin for a point based on the iternal and external circles.
  * The margin describes if the point is well placed within the internal circles,
  * and away from the external
@@ -434,14 +307,55 @@ var getLabelPosition = function getLabelPosition(internal, external) {
 };
 
 /**
- * Calulates data label positions for a list of relations.
+ * Finds the available width for a label, by taking the label position and
+ * finding the largest distance, which is inside all internal circles, and
+ * outside all external circles.
+ *
+ * @private
+ * @param {object} pos The x and y coordinate of the label.
+ * @param {Array<object>} internal Internal circles.
+ * @param {Array<object>} external External circles.
+ * @return {number} Returns available width for the label.
+ */
+var getLabelWidth = function getLabelWidth(pos, internal, external) {
+    var radius = internal.reduce(function (min, circle) {
+            return Math.min(circle.r, min);
+        }, Infinity),
+        // Filter out external circles that are completely overlapping.
+        filteredExternals = external.filter(function (circle) {
+            return !isPointInsideCircle(pos, circle);
+        });
+
+    var findDistance = function (maxDistance, direction) {
+        return bisect(function (x) {
+            var testPos = {
+                    x: pos.x + (direction * x),
+                    y: pos.y
+                },
+                isValid = (
+                    isPointInsideAllCircles(testPos, internal) &&
+                    isPointOutsideAllCircles(testPos, filteredExternals)
+                );
+
+            // If the position is valid, then we want to move towards the max
+            // distance. If not, then we want to  away from the max distance.
+            return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
+        }, 0, maxDistance);
+    };
+
+    // Find the smallest distance of left and right.
+    return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
+};
+
+/**
+ * Calulates data label values for a list of relations.
  * @private
  * @todo add unit tests
  * @todo NOTE: may be better suited as a part of the layout function.
  * @param {Array<object>} relations The list of relations.
- * @return {object} Returns a map from id to the data label position.
+ * @return {object} Returns a map from id to the data label values.
  */
-var getLabelPositions = function getLabelPositions(relations) {
+var getLabelValues = function getLabelValues(relations) {
     var singleSets = relations.filter(isSet);
 
     return relations.reduce(function (map, relation) {
@@ -461,13 +375,19 @@ var getLabelPositions = function getLabelPositions(relations) {
                 }, {
                     internal: [],
                     external: []
-                });
+                }),
+                // Calulate the label position.
+                position = getLabelPosition(
+                    data.internal,
+                    data.external
+                ),
+                // Calculate the label width
+                width = getLabelWidth(position, data.internal, data.external);
 
-            // Calulate the label position.
-            map[id] = getLabelPosition(
-                data.internal,
-                data.external
-            );
+            map[id] = {
+                position: position,
+                width: width
+            };
         }
         return map;
     }, {});
@@ -875,19 +795,31 @@ var vennOptions = {
         /** @ignore-option */
         enabled: true,
         /** @ignore-option */
+        verticalAlign: 'middle',
+        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         }
     },
+    /**
+     * @ignore-option
+     * @private
+     */
+    inactiveOtherPoints: true,
     marker: false,
     opacity: 0.75,
     showInLegend: false,
     states: {
+        /**
+         * @excluding halo
+         */
         hover: {
             opacity: 1,
-            halo: false,
             borderColor: '${palette.neutralColor80}'
         },
+        /**
+         * @excluding halo
+         */
         select: {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
@@ -918,7 +850,7 @@ var vennSeries = {
         var mapOfIdToShape = layout(relations);
 
         // Calculate positions of each data label
-        var mapOfIdToLabelPosition = getLabelPositions(relations);
+        var mapOfIdToLabelValues = getLabelValues(relations);
 
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
@@ -941,7 +873,9 @@ var vennSeries = {
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
                 shapeArgs,
-                dataLabelPosition = mapOfIdToLabelPosition[id];
+                dataLabelValues = mapOfIdToLabelValues[id] || {},
+                dataLabelWidth = dataLabelValues.width,
+                dataLabelPosition = dataLabelValues.position;
 
             if (shape) {
                 if (shape.r) {
@@ -978,6 +912,10 @@ var vennSeries = {
                 } else {
                     dataLabelPosition = {};
                 }
+
+                if (isNumber(dataLabelWidth)) {
+                    dataLabelWidth = Math.round(dataLabelWidth * scale);
+                }
             }
 
             point.shapeArgs = shapeArgs;
@@ -986,6 +924,15 @@ var vennSeries = {
             if (dataLabelPosition && shapeArgs) {
                 point.plotX = dataLabelPosition.x;
                 point.plotY = dataLabelPosition.y;
+            }
+
+            // Add width for the data label
+            if (dataLabelWidth && shapeArgs) {
+                point.dlOptions = {
+                    style: {
+                        width: dataLabelWidth
+                    }
+                };
             }
 
             // Set name for usage in tooltip and in data label.
@@ -1104,9 +1051,12 @@ var vennSeries = {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
         geometryCircles: geometryCircles,
+        getLabelWidth: getLabelWidth,
+        getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
+        nelderMead: NelderMeadModule,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1195,6 +1145,16 @@ var vennPoint = {
  */
 
 /**
+ * @excluding halo
+ * @apioption series.venn.states.hover
+ */
+
+/**
+ * @excluding halo
+ * @apioption series.venn.states.select
+ */
+
+/**
  * @private
  * @class
  * @name Highcharts.seriesTypes.venn
@@ -1202,3 +1162,16 @@ var vennPoint = {
  * @augments Highcharts.Series
  */
 seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
+
+// Modify final series options.
+addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
+    var options = e.options,
+        states = options.states;
+
+    if (this instanceof seriesTypes.venn) {
+        // Explicitly disable all halo options.
+        Object.keys(states).forEach(function (state) {
+            states[state].halo = false;
+        });
+    }
+});

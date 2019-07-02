@@ -1,3 +1,29 @@
+QUnit.test('Series clip-path after updating axis. (#4526)', function (assert) {
+    var chart = $('#container').highcharts('StockChart', {
+        yAxis: [{
+            id: 'yAxis-1',
+            top: '0%',
+            height: '30%'
+        }, {
+            id: 'yAxis-2',
+            top: '50%',
+            height: '30%'
+        }],
+        series: [{
+            data: [5, 4, 3, 2, 1, 2, 3, 4, 5]
+        }, {
+            data: [5, 4, 3, 2, 1, 2, 3, 4, 5],
+            yAxis: 'yAxis-2'
+        }]
+    }).highcharts();
+
+    assert.strictEqual(
+        chart.series[0].sharedClipKey !== chart.series[1].sharedClipKey,
+        true,
+        'Series have separte clip-paths.'
+    );
+});
+
 QUnit.test(
     'Navigator series\' should keep its position in series array, ' +
     'even after series.update()',
@@ -126,6 +152,9 @@ QUnit.test('Series.update', function (assert) {
 
     // create the chart
     Highcharts.stockChart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         rangeSelector: {
             selected: 1
         },

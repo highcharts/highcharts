@@ -117,6 +117,7 @@ Highcharts.theme = {
         }
     },
     legend: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
             font: '9pt Trebuchet MS, Verdana, sans-serif',
             color: '#A0A0A0'
@@ -126,6 +127,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#444'
+        },
+        title: {
+            style: {
+                color: '#C0C0C0'
+            }
         }
     },
     credits: {
@@ -250,14 +256,7 @@ Highcharts.theme = {
             ]
         },
         trackBorderColor: '#666'
-    },
-
-    // special colors for some of the
-    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-    background2: 'rgb(35, 35, 70)',
-    dataLabelsColor: '#444',
-    textColor: '#C0C0C0',
-    maskColor: 'rgba(255,255,255,0.3)'
+    }
 };
 
 // Apply the theme

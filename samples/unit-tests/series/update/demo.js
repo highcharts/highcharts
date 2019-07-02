@@ -1,6 +1,9 @@
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             showEmpty: false
@@ -94,6 +97,23 @@ QUnit.test('Series.update', function (assert) {
         'Markers changed'
     );
 
+    // Symbols (#10870)
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.symbolName,
+        'circle',
+        'The symbol should be default before updating'
+    );
+    chart.series[0].update({
+        marker: {
+            symbol: 'square'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.symbolName,
+        'square',
+        'The symbol name should update for all markers (#10870'
+    );
+
     // Color
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
@@ -141,7 +161,7 @@ QUnit.test('Series.update', function (assert) {
     );
     assert.strictEqual(
         chart.series[0].points[0].graphic.symbolName,
-        'circle',
+        'square',
         'Line point'
     );
 
@@ -300,6 +320,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
 QUnit.test('Series.update and events', assert => {
     const clicks = {
         option: 0,
+        updatedOption: 0,
         added: 0
     };
     let updated = false;
@@ -367,6 +388,29 @@ QUnit.test('Series.update and events', assert => {
     assert.ok(
         updated,
         'The afterUpdate handler has run'
+    );
+
+
+    chart.series[0].update({
+        events: {
+            click: () => clicks.updatedOption++
+        }
+    });
+
+    // Bug in test-controller? The second click won't fire
+    const controller2 = new TestController(chart);
+    controller2.moveTo(100, 130);
+    controller2.click(100, 130, undefined, true);
+
+    assert.strictEqual(
+        clicks.option,
+        2,
+        'The old click event option should be inactive'
+    );
+    assert.strictEqual(
+        clicks.updatedOption,
+        1,
+        'The new click event option should take over'
     );
 });
 
@@ -820,6 +864,9 @@ QUnit.test('series.update using altered original chart options', function (asser
 
 QUnit.test('Series.update with individual markers and data labels (#10649)', assert => {
     const chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         title: {
             text: 'Individual marker and dataLabel'
         },

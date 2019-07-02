@@ -43,6 +43,7 @@ Highcharts.theme = {
         shadow: false
     },
     legend: {
+        backgroundColor: '#F0F0EA',
         itemStyle: {
             fontWeight: 'bold',
             fontSize: '13px'
@@ -73,11 +74,7 @@ Highcharts.theme = {
         candlestick: {
             lineColor: '#404048'
         }
-    },
-
-
-    // General
-    background2: '#F0F0EA'
+    }
 
 };
 

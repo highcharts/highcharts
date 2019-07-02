@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -26,19 +26,19 @@ const SOURCE_GLOB = '**/*.ts';
  */
 function task() {
 
-    const LogLib = require('./lib/log');
-    const ProcessLib = require('./lib/process');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
-        LogLib.message('Linting [', SOURCE_GLOB, ']...');
+        logLib.message('Linting [', SOURCE_GLOB, ']...');
 
-        ProcessLib
+        processLib
             .exec('cd ts && npx eslint ' + SOURCE_GLOB)
-            .then(() => LogLib.success('Finished linting'))
+            .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('lint-ts', task);
+gulp.task('lint-ts', task);

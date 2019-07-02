@@ -43,6 +43,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -61,7 +65,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     },
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
@@ -412,8 +415,9 @@ var cbSetTreeValuesBefore = function before(node, options) {
         chart = series.chart,
         points = series.points,
         point = points[node.i],
+        colors = (series.options.colors || chart && chart.options.colors),
         colorInfo = getColor(node, {
-            colors: chart && chart.options && chart.options.colors,
+            colors: colors,
             colorIndex: series.colorIndex,
             index: options.index,
             mapOptionsToLevel: options.mapOptionsToLevel,
@@ -886,7 +890,8 @@ var sunburstSeries = {
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeTop,
             tree,
-            values;
+            values,
+            nodeIds = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
@@ -941,6 +946,18 @@ var sunburstSeries = {
         this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
         // Set mapOptionsToLevel on series for use in drawPoints.
         series.mapOptionsToLevel = mapOptionsToLevel;
+
+        // #10669 - verify if all nodes have unique ids
+        series.data.forEach(function (child) {
+            if (nodeIds[child.id]) {
+                H.error(31, false, series.chart);
+            }
+            // map
+            nodeIds[child.id] = true;
+        });
+
+        // reset object
+        nodeIds = {};
     },
 
     // Animate the slices in. Similar to the animation of polar charts.
