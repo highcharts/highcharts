@@ -59,7 +59,7 @@ import H from './Globals.js';
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string}
+ * @return {string|undefined}
  *         Formatted data label text
  */
 /**
@@ -123,7 +123,7 @@ import H from './Globals.js';
 *      Data labels inside the bar
 *
 * @name Highcharts.DataLabelsOptionsObject#align
-* @type {Highcharts.AlignValue|undefined}
+* @type {Highcharts.AlignValue|null|undefined}
 * @default center
 */ /**
 * Whether to allow data labels to overlap. To make the labels less sensitive
@@ -428,7 +428,7 @@ import H from './Globals.js';
 * chart, the label is above positive values and below negative values.
 *
 * @name Highcharts.DataLabelsOptionsObject#verticalAlign
-* @type {Highcharts.VerticalAlignValue|undefined}
+* @type {Highcharts.VerticalAlignValue|null|undefined}
 * @since 2.3.3
 */ /**
 * The x position offset of the label relative to the point in pixels.
@@ -494,9 +494,10 @@ import H from './Globals.js';
 * @name Highcharts.PointOptionsObject#labelrank
 * @type {number|undefined}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray;
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, isArray = H.isArray, splat = H.splat;
+var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size

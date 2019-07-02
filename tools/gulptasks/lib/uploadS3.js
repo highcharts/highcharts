@@ -1,9 +1,4 @@
-const semver = require('semver');
-const fs = require('fs-extra');
-const glob = require('glob');
-const upload = require('../../upload');
 const log = require('./log');
-const pkgJsonVersion = require(('../../../package.json')).version;
 
 /**
  * Adds number of days to the given date.
@@ -39,6 +34,8 @@ const HTTP_EXPIRES = {
  * @return {string} the s3bucket to upload to.
  */
 function getS3BucketConfig() {
+    const fs = require('fs-extra');
+
     if (process.env.HIGHCHARTS_S3_BUCKET) {
         return process.env.HIGHCHARTS_S3_BUCKET.replace('s3://', '');
     }
@@ -70,6 +67,8 @@ function getS3BucketConfig() {
  * @return {boolean} true, if directory or system file.
  */
 function isDirectoryOrSystemFile(source) {
+    const fs = require('fs-extra');
+
     return fs.lstatSync(source).isDirectory() || source.indexOf('.') === 0;
 }
 
@@ -100,8 +99,13 @@ function toS3FilePath(filePath, localPath, cdnPath, version = false) {
  * @param {string} version, typically from package.json.
  * @return {string[]} an array of paths where contents should be stored. E.g 7.1.1 as input would return ['7.1.1', '7.1', '7'].
  */
-function getVersionPaths(version = pkgJsonVersion) {
+function getVersionPaths(version) {
+    const semver = require('semver');
+
+    version = (version || require(('../../../package.json')).version);
+
     const preleaseVersion = semver.prerelease(version) ? `-${semver.prerelease(version).join('.')}` : '';
+
     return [
         `${semver.major(version)}${preleaseVersion}`,
         `${semver.major(version)}.${semver.minor(version)}${preleaseVersion}`,
@@ -117,6 +121,7 @@ function getVersionPaths(version = pkgJsonVersion) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadFiles(params) {
+    const upload = require('../../upload');
     const { files, name } = params;
     const s3Bucket = getS3BucketConfig();
 
@@ -156,6 +161,8 @@ function uploadFiles(params) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadProductPackage(localPath, cdnPath, prettyName, version) {
+    const fs = require('fs-extra');
+    const glob = require('glob');
     const promises = [];
     const fromDir = `${DIST_DIR}/${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);

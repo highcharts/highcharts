@@ -7,11 +7,12 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 var ATR = H.seriesTypes.atr,
     SMA = H.seriesTypes.sma,
-    isArray = H.isArray,
     merge = H.merge,
     correctFloat = H.correctFloat;
 

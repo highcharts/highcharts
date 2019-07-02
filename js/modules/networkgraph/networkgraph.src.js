@@ -527,6 +527,20 @@ seriesType(
             this.data.forEach(function (link) {
                 link.formatPrefix = 'link';
             });
+
+            this.indexateNodes();
+        },
+
+        /**
+         * Set index for each node. Required for proper `node.update()`.
+         * Note that links are indexated out of the box in `generatePoints()`.
+         *
+         * @private
+         */
+        indexateNodes: function () {
+            this.nodes.forEach(function (node, index) {
+                node.index = index;
+            });
         },
 
         /**

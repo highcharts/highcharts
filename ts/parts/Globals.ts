@@ -24,6 +24,7 @@ declare global {
     interface Window {
         Image: typeof Image;
         opera?: any;
+        TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
@@ -97,6 +98,7 @@ declare global {
             trackByArea?: any; // @todo
         }
         interface Point {
+            allowShadow?: unknown; // @todo
             below?: any; // @todo
             dataLabelOnNull?: any; // @todo
             dist?: any; // @todo
@@ -107,20 +109,19 @@ declare global {
             group?: any; // @todo
             half?: any; // @todo
             labelDistance?: any; // @todo
-            labelPosition?: any; // @todo
             name?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
             selected?: any; // @todo
-            shapeArgs?: any; // @todo
+            startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
             tooltipPos?: any; // @todo
             ttBelow?: any; // @todo
             zone?: any; // @todo
-            getConnectorPath: Function; // @todo
             getDataLabelPath: Function; // @todo
-            isValid: Function; // @todo
-            setVisible: Function; // @todo
+        }
+        interface PointOptionsObject {
+            states?: any; // @todo
         }
         interface Series {
             allowDG?: any; // @todo
@@ -141,9 +142,10 @@ declare global {
             labelBySeries?: any; // @todo
             maxLabelDistance?: any; // @todo
             modifyValue?: any; // @todo
-            noSharedTooltip?: any; // @todo
             pointArrayMap?: any; // @todo
+            pointAttrToOptions?: any; // @todo
             pointXOffset?: any; // @todo
+            radii?: any; // @todo
             resetZones?: any; // @todo
             showLine?: any; // @todo
             specialGroup?: any; // @todo
@@ -155,12 +157,14 @@ declare global {
             valueMin?: any; // @todo
             getPoint: Function; // @todo
             getPointSpline: Function; // @todo
-            getX: Function; // @todo
-            redrawPoints: Function; // @todo
-            sortByAngle: Function; // @todo
-            translate(position?: number): void; // @todo
             toYData: Function; // @todo
-            updateTotals: Function; // @todo
+        }
+        interface SeriesOptions {
+            endAngle?: any; // @todo
+            startAngle?: any; // @todo
+        }
+        interface SeriesStatesHoverOptions {
+            opacity?: any; // @todo
         }
         interface SVGRenderer {
             invertChild: Function; // @todo
@@ -224,12 +228,12 @@ var glob = typeof win === 'undefined' ?
     );
 
 var H: GlobalHighcharts = {
-    product: '@product.name@',
+    product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
+    hasTouch: !!win.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,

@@ -79,14 +79,16 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 
 var noop = H.noop,
     pick = H.pick,
     extend = H.extend,
-    isArray = H.isArray,
     defined = H.defined,
     Series = H.Series,
     seriesType = H.seriesType,

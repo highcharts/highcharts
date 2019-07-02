@@ -9,7 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -27,7 +30,6 @@ var merge = H.merge,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
-    isString = H.isString,
     pick = H.pick,
     reduce = H.reduce,
     splat = H.splat,

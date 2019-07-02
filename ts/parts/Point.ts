@@ -112,15 +112,15 @@ declare global {
                 PointStatesHoverOptionsObject |
                 PointStatesInactiveOptionsObject |
                 PointStatesNormalOptionsObject |
-                PointStatesSelectOptionObject |
+                PointStatesSelectOptionsObject |
                 undefined
             );
             hover?: PointStatesHoverOptionsObject;
             inactive?: PointStatesInactiveOptionsObject;
             normal?: PointStatesNormalOptionsObject;
-            select?: PointStatesSelectOptionObject;
+            select?: PointStatesSelectOptionsObject;
         }
-        interface PointStatesSelectOptionObject {
+        interface PointStatesSelectOptionsObject {
             enabled?: boolean;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             lineColor?: ColorString;
@@ -157,6 +157,8 @@ declare global {
             public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
+            public shapeArgs?: (BBoxObject|Dictionary<number>);
+            public shapeType?: string;
             public state?: string;
             public total?: number;
             public visible: boolean;
@@ -323,7 +325,7 @@ declare global {
  * The appearance of the point marker when selected. In order to allow a point
  * to be selected, set the `series.allowPointSelect` option to true.
  * @name Highcharts.PointMarkerStatesOptionsObject#select
- * @type {Highcharts.PointStatesSelectOptionObject}
+ * @type {Highcharts.PointStatesSelectOptionsObject}
  */
 
 /**
@@ -579,35 +581,35 @@ declare global {
  *//**
  * The hover state for a single point marker.
  * @name Highcharts.PointStatesOptionsObject#select
- * @type {Highcharts.PointStatesSelectOptionObject|undefined}
+ * @type {Highcharts.PointStatesSelectOptionsObject|undefined}
  */
 
 /**
  * The appearance of the point marker when selected. In order to allow a point
  * to be selected, set the `series.allowPointSelect` option to true.
  *
- * @interface Highcharts.PointStatesSelectOptionObject
+ * @interface Highcharts.PointStatesSelectOptionsObject
  *//**
  * Enable or disable visible feedback for selection.
- * @name Highcharts.PointStatesSelectOptionObject#enabled
+ * @name Highcharts.PointStatesSelectOptionsObject#enabled
  * @type {boolean|undefined}
  *//**
  * The fill color of the point marker.
- * @name Highcharts.PointStatesSelectOptionObject#fillColor
+ * @name Highcharts.PointStatesSelectOptionsObject#fillColor
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The color of the point marker's outline. When `undefined`, the series' or
  * point's color is used.
- * @name Highcharts.PointStatesSelectOptionObject#lineColor
+ * @name Highcharts.PointStatesSelectOptionsObject#lineColor
  * @type {Highcharts.ColorString|undefined}
  *//**
  * The width of the point marker's outline.
- * @name Highcharts.PointStatesSelectOptionObject#lineWidth
+ * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
  * @type {number|undefined}
  *//**
  * The radius of the point marker. In hover state, it defaults to the normal
  * state's radius + 2.
- * @name Highcharts.PointStatesSelectOptionObject#radius
+ * @name Highcharts.PointStatesSelectOptionsObject#radius
  * @type {number|undefined}
  */
 
@@ -635,7 +637,8 @@ declare global {
  * @type {Highcharts.PointOptionsType}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
@@ -643,7 +646,6 @@ var Point: typeof Highcharts.Point,
     erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
@@ -1185,7 +1187,9 @@ Highcharts.Point.prototype = {
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
         var series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
+            valueDecimals = pick<(number|string)>(
+                seriesTooltipOptions.valueDecimals, ''
+            ),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 

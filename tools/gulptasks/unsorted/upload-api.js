@@ -53,7 +53,7 @@ const uploadAPIDocs = () => {
             onError
         };
         const getMapOfFromTo = fileName => {
-            let to = fileName;
+            let to = argv.noextensions ? fileName.split('.').slice(0, -1).join('.') : fileName;
             if (tag !== 'current') {
                 const parts = to.split('/');
                 parts.splice(1, 0, tag);

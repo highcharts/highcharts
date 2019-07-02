@@ -178,7 +178,9 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
@@ -196,7 +198,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     hasTouch = H.hasTouch,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
@@ -552,9 +553,9 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @ignore-option */
+                /** @internal */
                 enabled: false,
-                /** @ignore-option */
+                /** @internal */
                 zIndex: 2 // #1839
             },
 
@@ -800,7 +801,7 @@ Axis.prototype.toFixedRange = function (
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined;
+        newMin = newMax = undefined as any;
     }
 
     return {
@@ -1341,7 +1342,7 @@ Navigator.prototype = {
             navigator.scrollbar.position(
                 scrollbarLeft,
                 scrollbarTop,
-                navigatorWidth,
+                navigatorWidth as any,
                 scrollbarHeight as any
             );
             // Keep scale 0-1

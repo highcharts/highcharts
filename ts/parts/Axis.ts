@@ -485,7 +485,7 @@ declare global {
             public hideCrosshair(): void;
             public init(chart: Chart, userOptions: AxisOptions): void;
             public labelMetrics(): FontMetricsObject;
-            public minFromRange(): number;
+            public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
             public redraw(): void;
             public render(): void;
@@ -741,7 +741,12 @@ declare global {
  * @return {string}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString
+} = U;
+
 import './Color.js';
 import './Options.js';
 import './Tick.js';
@@ -760,9 +765,7 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    isArray = H.isArray,
     isNumber = H.isNumber,
-    isString = H.isString,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     objectEach = H.objectEach,
@@ -1736,14 +1739,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *         Red X axis labels
              *
              * @type      {Highcharts.CSSObject}
-             * @default   {"color": "#666666", "cursor": "default", "fontSize": "11px"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}',
-                /** @ignore-option */
+                /** @internal */
                 cursor: 'default',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px'
             }
         },
@@ -2615,10 +2617,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *         Styled mode
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666"}
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor60}'
             }
         },
@@ -3107,6 +3108,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * of the plot area. When the axis' `max` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
          *
+         * Also the `softThreshold` option takes precedence over `maxPadding`,
+         * so if the data is tangent to the threshold, `maxPadding` may not
+         * apply unless `softThreshold` is set to false.
+         *
          * @sample {highcharts} highcharts/yaxis/maxpadding-02/
          *         Max padding of 0.2
          * @sample {highstock} stock/xaxis/minpadding-maxpadding/
@@ -3123,6 +3128,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * when you don't want the lowest data value to appear on the edge
          * of the plot area. When the axis' `min` option is set or a max extreme
          * is set using `axis.setExtremes()`, the maxPadding will be ignored.
+         *
+         * Also the `softThreshold` option takes precedence over `minPadding`,
+         * so if the data is tangent to the threshold, `minPadding` may not
+         * apply unless `softThreshold` is set to false.
          *
          * @sample {highcharts} highcharts/yaxis/minpadding/
          *         Min padding of 0.2
@@ -3567,6 +3576,34 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
             enabled: false,
 
+            /**
+             * Whether to hide stack labels that are outside the plot area.
+             * By default, the stack label is moved
+             * inside the plot area according to the
+             * [overflow](/highcharts/#yAxis/stackLabels/overflow)
+             * option.
+             *
+             * @type  {boolean}
+             * @since 7.1.3
+             */
+            crop: true,
+
+            /**
+             * How to handle stack total labels that flow outside the plot area.
+             * The default is set to `"justify"`,
+             * which aligns them inside the plot area.
+             * For columns and bars, this means it will be moved inside the bar.
+             * To display stack labels outside the plot area,
+             * set `crop` to `false` and `overflow` to `"allow"`.
+             *
+             * @sample highcharts/yaxis/stacklabels-overflow/
+             *         Stack labels flows outside the plot area.
+             *
+             * @type  {Highcharts.DataLabelsOverflowValue}
+             * @since 7.1.3
+             */
+            overflow: 'justify',
+
             /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
@@ -3594,18 +3631,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *         Red stack total labels
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"color": "#666666", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast"}
              * @since   2.1.5
              * @product highcharts
              */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 color: '${palette.neutralColor100}',
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px',
-                /** @ignore-option */
+                /** @internal */
                 fontWeight: 'bold',
-                /** @ignore-option */
+                /** @internal */
                 textOutline: '1px contrast'
             }
         },
@@ -4585,8 +4621,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             distance,
             xData,
             loopLength,
-            minArgs,
-            maxArgs,
+            minArgs: Array<(number|null|undefined)>,
+            maxArgs: Array<(number|null|undefined)>,
             minRange;
 
         // Set the automatic minimum range based on the closest point distance
@@ -5027,7 +5063,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (axis.range && defined(axis.max)) {
             // #618, #6773:
             axis.userMin = axis.min = hardMin =
-                Math.max(axis.dataMin as any, axis.minFromRange());
+                Math.max(axis.dataMin as any, axis.minFromRange() as any);
             axis.userMax = hardMax = axis.max as any;
 
             axis.range = null; // don't use it when running setExtremes
@@ -5195,7 +5231,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            axis.isDatetimeAxis && axis.closestPointRange
+            (axis.isDatetimeAxis && axis.closestPointRange) as number
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
@@ -7238,7 +7274,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         value: point && (this.isXAxis ?
                             point.x :
                             pick(point.stackY, point.y)
-                        ),
+                        ) as any,
                         translatedValue: pos
                     }
                 ) || null; // #3189

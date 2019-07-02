@@ -7,7 +7,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var pInt = U.pInt;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -17,7 +20,6 @@ var isNumber = H.isNumber,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    pInt = H.pInt,
     Series = H.Series,
     seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;

@@ -119,6 +119,10 @@ declare global {
             start?: number;
             width?: number;
         }
+        interface TranslationObject {
+            translateX: number;
+            translateY: number;
+        }
         class SVGElement {
             public constructor();
             [key: string]: any;
@@ -803,7 +807,13 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString,
+    pInt
+} = U;
+
 import './Color.js';
 
 var SVGElement: Highcharts.SVGElement,
@@ -823,17 +833,14 @@ var SVGElement: Highcharts.SVGElement,
     extend = H.extend,
     erase = H.erase,
     hasTouch = H.hasTouch,
-    isArray = H.isArray,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isObject = H.isObject,
-    isString = H.isString,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
     objectEach = H.objectEach,
     pick = H.pick,
-    pInt = H.pInt,
     removeEvent = H.removeEvent,
     splat = H.splat,
     stop = H.stop,
@@ -952,7 +959,9 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
-            pick(options, this.renderer.globalAnimation, true)
+            pick<(boolean|Highcharts.AnimationOptionsObject)>(
+                options, this.renderer.globalAnimation, true
+            )
         );
 
         // When the page is hidden save resources in the background by not
@@ -2136,7 +2145,7 @@ extend((
             x,
             y,
             attribs = {} as Highcharts.SVGAttributes,
-            alignTo,
+            alignTo: (string|undefined),
             renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             alignFactor,
@@ -2161,7 +2170,7 @@ extend((
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo], renderer);
+        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
 
         // Assign variables
         align = (alignOptions as any).align;

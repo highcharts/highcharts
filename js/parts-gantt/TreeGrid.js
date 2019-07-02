@@ -10,7 +10,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import './GridAxis.js';
 import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -34,7 +37,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return H.isObject(x, true);
     },
-    isString = H.isString,
     pick = H.pick,
     wrap = H.wrap,
     GridAxis = H.Axis,

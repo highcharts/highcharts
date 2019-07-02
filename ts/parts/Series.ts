@@ -34,9 +34,6 @@ declare global {
             clientX: number;
             plotY: number;
         }
-        interface PlotLineOptions extends PlotSeriesOptions {
-            // nothing as it is the base series
-        }
         interface PlotOptions {
             [key: string]: PlotSeriesOptions;
         }
@@ -88,7 +85,7 @@ declare global {
             pointInterval?: number;
             pointIntervalUnit?: SeriesPointIntervalUnitValue;
             pointPlacement?: (number|string);
-            pointRange?: number;
+            pointRange?: (number|null);
             pointStart?: number;
             pointValKey?: string;
             selected?: boolean;
@@ -99,7 +96,7 @@ declare global {
             skipKeyboardNavigation?: boolean;
             softThreshold?: boolean;
             stacking?: OptionsStackingValue;
-            states?: SeriesStatesOptionsObject;
+            states?: SeriesStatesOptions;
             step?: SeriesStepValue;
             stickyTracking?: boolean;
             threshold?: number;
@@ -181,9 +178,6 @@ declare global {
             target: Series;
             type: 'checkboxClick';
         }
-        interface SeriesLineOptions extends SeriesOptions {
-            type?: 'line';
-        }
         interface SeriesMouseOutCallbackFunction {
             (this: Series, event: PointerEvent): void;
         }
@@ -191,6 +185,7 @@ declare global {
             (this: Series, event: PointerEvent): void;
         }
         interface SeriesOptions extends PlotSeriesOptions {
+            data?: Array<PointOptionsType>;
             id?: string;
             index?: number;
             kdNow?: boolean;
@@ -213,34 +208,34 @@ declare global {
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
         }
-        interface SeriesStatesHoverHaloOptionsObject {
+        interface SeriesStatesHoverHaloOptions {
             attributes?: SVGAttributes;
             opacity?: number;
             size?: number;
         }
-        interface SeriesStatesHoverOptionsObject {
+        interface SeriesStatesHoverOptions {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
-            halo?: SeriesStatesHoverHaloOptionsObject;
+            halo?: (boolean|SeriesStatesHoverHaloOptions);
             lineWidth?: number;
             lineWidthPlus?: number;
         }
-        interface SeriesStatesInactiveOptionsObject {
+        interface SeriesStatesInactiveOptions {
             opacity?: number;
         }
-        interface SeriesStatesNormalOptionsObject {
+        interface SeriesStatesNormalOptions {
             animation?: (boolean|AnimationOptionsObject);
         }
-        interface SeriesStatesOptionsObject {
+        interface SeriesStatesOptions {
             [key: string]: (
-                SeriesStatesHoverOptionsObject |
-                SeriesStatesInactiveOptionsObject |
-                SeriesStatesNormalOptionsObject |
+                SeriesStatesHoverOptions |
+                SeriesStatesInactiveOptions |
+                SeriesStatesNormalOptions |
                 undefined
             );
-            hover?: SeriesStatesHoverOptionsObject;
-            inactive?: SeriesStatesInactiveOptionsObject;
-            normal?: SeriesStatesNormalOptionsObject;
+            hover?: SeriesStatesHoverOptions;
+            inactive?: SeriesStatesInactiveOptions;
+            normal?: SeriesStatesNormalOptions;
         }
         class Series {
             public constructor(chart?: Chart, options?: SeriesOptionsType);
@@ -263,6 +258,10 @@ declare global {
             public dataMax: number;
             public dataMin: number;
             public directTouch: boolean;
+            public drawLegendSymbol: (
+                LegendSymbolMixin['drawLineMarker']|
+                LegendSymbolMixin['drawRectangle']
+            );
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
@@ -604,7 +603,12 @@ declare global {
  *        Event that occured.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString
+} = U;
+
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -621,9 +625,7 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isArray = H.isArray,
     isNumber = H.isNumber,
-    isString = H.isString,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     objectEach = H.objectEach,
@@ -2114,42 +2116,47 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
-         * @default {"align": "center", "formatter": function () { return H.numberFormat(this.y, -1); }, "padding": 5, "style": {"fontSize": "11px", "fontWeight": "bold", "color": "contrast", "textOutline": "1px contrast"}, "verticalAlign": "bottom", "x":0, "y": 0}
          *
          * @private
          */
         dataLabels: {
-            /** @ignore-option */
+            /** @internal */
             align: 'center',
             /* eslint-disable valid-jsdoc */
-            /** @ignore-option */
+            /**
+             * @internal
+             * @default function () { return H.numberFormat(this.y, -1); }
+             */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
                 /* eslint-enable valid-jsdoc */
             },
-            /** @ignore-option */
+            /** @internal */
             padding: 5,
-            /** @ignore-option */
+            /**
+             * @internal
+             * @type {Highcharts.CSSObject}
+             */
             style: {
-                /** @ignore-option */
+                /** @internal */
                 fontSize: '11px',
-                /** @ignore-option */
+                /** @internal */
                 fontWeight: 'bold',
-                /** @ignore-option */
+                /** @internal */
                 color: 'contrast',
-                /** @ignore-option */
+                /** @internal */
                 textOutline: '1px contrast'
             },
             /**
              * above singular point
-             * @ignore-option
+             * @internal
              */
             verticalAlign: 'bottom',
-            /** @ignore-option */
+            /** @internal */
             x: 0,
-            /** @ignore-option */
+            /** @internal */
             y: 0
         } as Highcharts.DataLabelsOptionsObject,
 
@@ -4197,7 +4204,10 @@ H.Series = H.seriesType(
                             (stack as any)[xValue as any].base
                     ) {
                         yBottom = (
-                            pick(isNumber(threshold) && threshold, yAxis.min)
+                            pick<number>(
+                                (isNumber(threshold) && threshold) as any,
+                                yAxis.min
+                            )
                         );
                     }
 

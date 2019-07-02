@@ -12,6 +12,11 @@
 
 import H from './Globals.js';
 
+import U from './Utilities.js';
+const {
+    isString
+} = U;
+
 /**
  * Internal types
  * @private
@@ -20,6 +25,7 @@ declare global {
     namespace Highcharts {
         type TooltipShapeValue = ('callout'|'circle'|'square');
         interface Series {
+            noSharedTooltip?: boolean;
             tt?: SVGElement;
         }
         interface TooltipFormatterCallbackFunction {
@@ -1174,7 +1180,7 @@ H.Tooltip.prototype = {
             distributionBoxTop = chart.plotTop;
 
         // Graceful degradation for legacy formatters
-        if (H.isString(labels)) {
+        if (isString(labels)) {
             labels = [false, labels as any];
         }
         // Create the individual labels for header and points, ignore footer
@@ -1194,10 +1200,8 @@ H.Tooltip.prototype = {
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick(
-                        point.colorIndex,
-                        series.colorIndex,
-                        'none'
+                    colorClass = 'highcharts-color-' + pick<(number|string)>(
+                        point.colorIndex, series.colorIndex, 'none'
                     ),
                     target,
                     x,

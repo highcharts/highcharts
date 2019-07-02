@@ -8,10 +8,12 @@
 
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 var addEvent = H.addEvent,
-    merge = H.merge,
-    isArray = H.isArray;
+    merge = H.merge;
 
 /**
  * The line marks the last price from visible range of points.

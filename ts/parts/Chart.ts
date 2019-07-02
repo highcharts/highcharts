@@ -97,7 +97,7 @@ declare global {
             public symbolCounter: number;
             public time: Time;
             public title?: SVGElement;
-            public titleOffset: number;
+            public titleOffset: Array<number>;
             public unbindReflow?: Function;
             public userOptions: Options;
             public xAxis: Array<Axis>;
@@ -213,7 +213,13 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString,
+    pInt
+} = U;
+
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -236,14 +242,12 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
     objectEach = H.objectEach,
     Pointer = H.Pointer, // @todo add as requirement
     pick = H.pick,
-    pInt = H.pInt,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     splat = H.splat,
@@ -1150,7 +1154,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.Chart,
         redraw?: boolean
     ): void {
-        var titleOffset = 0,
+        var titleOffset = [0, 0, 0],
             requiresDirtyBox,
             renderer = this.renderer,
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
@@ -1164,12 +1168,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 titleOptions = (this as any).options[key],
                 offset = key === 'title' ? -3 :
                     // Floating subtitle (#6574)
-                    titleOptions.verticalAlign ? 0 : titleOffset + 2,
-                titleSize;
+                    titleOptions.verticalAlign ? 0 : titleOffset[0] + 2,
+                bottomAlign = (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ),
+                titleSize,
+                height;
 
             if (title) {
 
-                if (!(this as any).styledMode) {
+                if (!this.styledMode) {
                     titleSize = titleOptions.style.fontSize;
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
@@ -1177,23 +1186,38 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     .css({
                         width: (titleOptions.width ||
                             spacingBox.width + titleOptions.widthAdjust) + 'px'
-                    })
-                    .align(extend({
-                        y: offset + titleSize
-                    }, titleOptions), false, 'spacingBox');
+                    });
+
+                // Skip the cache for HTML (#3481)
+                height = title.getBBox(titleOptions.useHTML).height;
+
+                title.align(extend({
+                    y: bottomAlign ? titleSize : offset + titleSize,
+                    height
+                }, titleOptions), false, 'spacingBox');
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                    titleOffset = Math.ceil(
-                        titleOffset +
-                        // Skip the cache for HTML (#3481)
-                        title.getBBox(titleOptions.useHTML).height
+                    titleOffset[0] = Math.ceil(
+                        titleOffset[0] +
+                        height
                     );
+                }
+                if (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ) {
+                    titleOffset[2] = height;
                 }
             }
         }, this);
 
-        requiresDirtyBox = this.titleOffset !== titleOffset;
-        this.titleOffset = titleOffset; // used in getMargins
+        requiresDirtyBox = (
+            !this.titleOffset ||
+            this.titleOffset.join(',') !== titleOffset.join(',')
+        );
+
+        // Used in getMargins
+        this.titleOffset = titleOffset;
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1516,24 +1540,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (this: Highcharts.Chart, skipAxes?: boolean): void {
-        var chart = this,
-            spacing = chart.spacing,
-            margin = chart.margin,
-            titleOffset = chart.titleOffset;
+        const { spacing, margin, titleOffset } = this;
 
-        chart.resetMargins();
+        this.resetMargins();
 
         // Adjust for title and subtitle
-        if (titleOffset && !defined(margin[0])) {
-            chart.plotTop = Math.max(
-                chart.plotTop,
-                titleOffset + (chart.options.title as any).margin + spacing[0]
+        if (titleOffset[0] && !defined(margin[0])) {
+            this.plotTop = Math.max(
+                this.plotTop,
+                titleOffset[0] + (this.options.title as any).margin + spacing[0]
+            );
+        }
+
+        if (titleOffset[2] && !defined(margin[2])) {
+            this.marginBottom = Math.max(
+                this.marginBottom,
+                titleOffset[2] + (this.options.title as any).margin + spacing[2]
             );
         }
 
         // Adjust for legend
-        if (chart.legend && chart.legend.display) {
-            chart.legend.adjustMargins(margin, spacing);
+        if (this.legend && this.legend.display) {
+            this.legend.adjustMargins(margin, spacing);
         }
 
         fireEvent(this, 'getMargins');
@@ -2549,7 +2577,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (H.isArray(options.series) ? (options.series as any) : []).forEach(
+        (isArray(options.series) ? (options.series as any) : []).forEach(
             // #9680
             function (serieOptions: Highcharts.SeriesOptions): void {
                 chart.initSeries(serieOptions);

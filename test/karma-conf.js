@@ -624,6 +624,7 @@ module.exports = function (config) {
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
             retryLimit: 1,
+            pollingTimeout: 5000 // to avoid rate limit errors with browserstack.
         };
         options.customLaunchers = argv.oldie ?
             {

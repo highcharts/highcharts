@@ -43,6 +43,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isString = U.isString;
+
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -61,7 +65,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     },
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,

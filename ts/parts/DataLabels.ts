@@ -37,7 +37,7 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): string;
+            (this: DataLabelsFormatterContextObject): (string|undefined);
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -48,7 +48,7 @@ declare global {
             y: (number|null);
         }
         interface DataLabelsOptionsObject {
-            align?: AlignValue;
+            align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: ColorString;
@@ -72,9 +72,9 @@ declare global {
             style?: CSSObject;
             textPath?: DataLabelsTextPath;
             useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
+            verticalAlign?: (VerticalAlignValue|null);
             x?: number;
-            y?: number;
+            y?: (number|null);
             zIndex?: number;
         }
         interface DataLabelsTextPath {
@@ -210,7 +210,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string}
+ * @return {string|undefined}
  *         Formatted data label text
  */
 
@@ -276,7 +276,7 @@ declare global {
  *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#align
- * @type {Highcharts.AlignValue|undefined}
+ * @type {Highcharts.AlignValue|null|undefined}
  * @default center
  *//**
  * Whether to allow data labels to overlap. To make the labels less sensitive
@@ -581,7 +581,7 @@ declare global {
  * chart, the label is above positive values and below negative values.
  *
  * @name Highcharts.DataLabelsOptionsObject#verticalAlign
- * @type {Highcharts.VerticalAlignValue|undefined}
+ * @type {Highcharts.VerticalAlignValue|null|undefined}
  * @since 2.3.3
  *//**
  * The x position offset of the label relative to the point in pixels.
@@ -651,7 +651,9 @@ declare global {
  * @type {number|undefined}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Series.js';
 
 var arrayMax = H.arrayMax,
@@ -666,7 +668,6 @@ var arrayMax = H.arrayMax,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort,
-    isArray = H.isArray,
     splat = H.splat;
 
 /* eslint-disable valid-jsdoc */
@@ -1349,7 +1350,7 @@ Series.prototype.alignDataLabel = function (
             dataLabel.alignAttr = alignAttr;
 
         } else {
-            dataLabel.align(options, null as any, alignTo);
+            dataLabel.align(options as any, null as any, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 
@@ -1475,7 +1476,7 @@ Series.prototype.justifyDataLabel = function (
 
     if (justified) {
         dataLabel.placed = !isNew;
-        dataLabel.align(options, null as any, alignTo);
+        dataLabel.align(options as any, null as any, alignTo);
     }
 
     return justified;
@@ -1721,7 +1722,7 @@ if (seriesTypes.pie) {
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
                         point.distributeBox = {
-                            target: point.labelPosition.natural.y -
+                            target: (point.labelPosition as any).natural.y -
                                 point.top + size / 2,
                             size: size,
                             rank: point.y
@@ -1745,7 +1746,7 @@ if (seriesTypes.pie) {
                 labelPosition = point.labelPosition;
                 dataLabel = point.dataLabel;
                 visibility = point.visible === false ? 'hidden' : 'inherit';
-                naturalY = labelPosition.natural.y;
+                naturalY = (labelPosition as any).natural.y;
                 y = naturalY;
 
                 if (positions && defined(point.distributeBox)) {
@@ -1803,7 +1804,7 @@ if (seriesTypes.pie) {
                 // Record the placement and visibility
                 (dataLabel as any)._attr = {
                     visibility: visibility,
-                    align: labelPosition.alignment
+                    align: (labelPosition as any).alignment
                 };
 
                 (dataLabel as any)._pos = {
@@ -1813,7 +1814,7 @@ if (seriesTypes.pie) {
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
-                        } as any)[labelPosition.alignment] || 0)
+                        } as any)[(labelPosition as any).alignment] || 0)
                     ),
 
                     // 10 is for the baseline (label vs text)
@@ -1821,8 +1822,8 @@ if (seriesTypes.pie) {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                labelPosition.final.x = x;
-                labelPosition.final.y = y;
+                (labelPosition as any).final.x = x;
+                (labelPosition as any).final.y = y;
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {
@@ -2222,7 +2223,7 @@ if (seriesTypes.column) {
                     width: dataLabel.width - dataLabel.padding,
                     height: dataLabel.height - dataLabel.padding
                 },
-                point.shapeArgs
+                point.shapeArgs as any
             )
         ) {
             dataLabel.css({

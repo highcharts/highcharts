@@ -9,10 +9,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
 
-var seriesType = H.seriesType,
-    isArray = H.isArray;
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
+var seriesType = H.seriesType;
 
 /**
  * Linear regression series type.

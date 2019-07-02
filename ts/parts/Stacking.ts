@@ -64,9 +64,12 @@ declare global {
             alignOptions: AlignObject;
             axis: Axis;
             cumulative?: number;
+            crop?: boolean;
             isNegative: boolean;
             label: SVGElement;
             options: YAxisStackLabelsOptions;
+            overflow?: OptionsOverflowValue;
+            padding: number;
             total: number;
             x: number;
         }
@@ -227,8 +230,8 @@ H.StackItem = function (
             (inverted ? (isNegative ? 'left' : 'right') : 'center'),
         verticalAlign: options.verticalAlign ||
             (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
-        y: pick(options.y, inverted ? 4 : (isNegative ? 14 : -6)),
-        x: pick(options.x, inverted ? (isNegative ? -6 : 6) : 0)
+        y: options.y,
+        x: options.x
     };
 
     this.textAlign = options.textAlign ||
@@ -261,6 +264,7 @@ H.StackItem.prototype = {
         var chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
+            attr = {},
             str = formatOption ?
                 format(formatOption, this, chart.time) :
                 options.formatter.call(this); // format the text in the label
@@ -272,17 +276,22 @@ H.StackItem.prototype = {
         // Create new label
         } else {
             this.label =
-                chart.renderer
-                    .text(str, null as any, null as any, options.useHTML)
-                    .attr({
-                        align: this.textAlign,
-                        rotation: options.rotation,
-                        visibility: 'hidden' // hidden until setOffset is called
-                    })
-                    .add(group); // add to the labels-group
+            chart.renderer.label(str, null as any, null as any,
+                options.shape, null as any, null as any,
+                options.useHTML, false, 'stack-labels');
 
+            attr = {
+                text: str,
+                align: this.textAlign,
+                padding: pick(options.padding, 0),
+                visibility: 'hidden' // hidden until setOffset is called
+            };
+            this.label.attr(attr);
             if (!chart.styledMode) {
                 this.label.css(options.style);
+            }
+            if (!this.label.added) {
+                this.label.add(group); // add to the labels-group
             }
         }
 
@@ -339,19 +348,55 @@ H.StackItem.prototype = {
                 axis
             ),
             label = stackItem.label,
+            isNegative = stackItem.isNegative,
+            isJustify = pick(stackItem.options.overflow,
+                'justify') === 'justify',
+            visible,
             alignAttr;
 
         if (label && stackBox) {
+            var bBox = label.getBBox(),
+                boxOffsetX = chart.inverted ?
+                    (isNegative ? bBox.width : 0) : bBox.width / 2,
+                boxOffsetY = chart.inverted ?
+                    bBox.height / 2 : (isNegative ? -4 : bBox.height + 4);
             // Align the label to the box
             label.align(stackItem.alignOptions, null as any, stackBox);
 
             // Set visibility (#678)
             alignAttr = label.alignAttr;
-            label[
-                stackItem.options.crop === false || chart.isInsidePlot(
-                    alignAttr.x,
-                    alignAttr.y
-                ) ? 'show' : 'hide'](true);
+            label.show();
+
+            // Set label above/under stackBox
+            alignAttr.y -= boxOffsetY;
+
+            if (isJustify) {
+                // Set label x position for justifyDataLabel function
+                alignAttr.x -= boxOffsetX;
+                Series.prototype.justifyDataLabel.call(this.axis,
+                    label, stackItem.alignOptions, alignAttr, bBox, stackBox);
+                alignAttr.x += boxOffsetX;
+            }
+
+            label.attr({
+                x: alignAttr.x,
+                y: alignAttr.y
+            });
+
+            if (pick(!isJustify && stackItem.options.crop, true)) {
+                visible = chart.isInsidePlot(
+                    label.alignAttr.x - bBox.width / 2,
+                    label.alignAttr.y
+                ) && chart.isInsidePlot(
+                    label.alignAttr.x + (chart.inverted ?
+                        (isNegative ? -bBox.width : bBox.width) :
+                        bBox.width / 2),
+                    label.alignAttr.y + bBox.height
+                );
+                if (!visible) {
+                    label.hide();
+                }
+            }
         }
     },
 

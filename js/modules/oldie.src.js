@@ -11,9 +11,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var isArray = U.isArray, pInt = U.pInt;
 import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, erase = H.erase, extend = H.extend, extendClass = H.extendClass, isArray = H.isArray, isNumber = H.isNumber, isObject = H.isObject, merge = H.merge, noop = H.noop, pick = H.pick, pInt = H.pInt, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, erase = H.erase, extend = H.extend, extendClass = H.extendClass, isNumber = H.isNumber, isObject = H.isObject, merge = H.merge, noop = H.noop, pick = H.pick, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
@@ -33,7 +34,7 @@ if (doc && !doc.defaultView) {
             height: 'clientHeight'
         }[prop];
         if (el.style[prop]) {
-            return H.pInt(el.style[prop]);
+            return pInt(el.style[prop]);
         }
         if (prop === 'opacity') {
             prop = 'filter';
@@ -51,7 +52,7 @@ if (doc && !doc.defaultView) {
                 return (b / 100);
             });
         }
-        return val === '' ? 1 : H.pInt(val);
+        return val === '' ? 1 : pInt(val);
     };
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */

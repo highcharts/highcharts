@@ -201,12 +201,13 @@ import H from './Globals.js';
  * @param {global.Event} event
  *        Event that occured.
  */
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray, isString = U.isString;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isArray = H.isArray, isNumber = H.isNumber, isString = H.isString, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, splat = H.splat, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
@@ -1590,40 +1591,45 @@ null,
      *         Multiple data labels on a bar series
      *
      * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
-     * @default {"align": "center", "formatter": function () { return H.numberFormat(this.y, -1); }, "padding": 5, "style": {"fontSize": "11px", "fontWeight": "bold", "color": "contrast", "textOutline": "1px contrast"}, "verticalAlign": "bottom", "x":0, "y": 0}
      *
      * @private
      */
     dataLabels: {
-        /** @ignore-option */
+        /** @internal */
         align: 'center',
         /* eslint-disable valid-jsdoc */
-        /** @ignore-option */
+        /**
+         * @internal
+         * @default function () { return H.numberFormat(this.y, -1); }
+         */
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
             /* eslint-enable valid-jsdoc */
         },
-        /** @ignore-option */
+        /** @internal */
         padding: 5,
-        /** @ignore-option */
+        /**
+         * @internal
+         * @type {Highcharts.CSSObject}
+         */
         style: {
-            /** @ignore-option */
+            /** @internal */
             fontSize: '11px',
-            /** @ignore-option */
+            /** @internal */
             fontWeight: 'bold',
-            /** @ignore-option */
+            /** @internal */
             color: 'contrast',
-            /** @ignore-option */
+            /** @internal */
             textOutline: '1px contrast'
         },
         /**
          * above singular point
-         * @ignore-option
+         * @internal
          */
         verticalAlign: 'bottom',
-        /** @ignore-option */
+        /** @internal */
         x: 0,
-        /** @ignore-option */
+        /** @internal */
         y: 0
     },
     /**
@@ -3141,7 +3147,7 @@ null,
                 if (yBottom === stackThreshold &&
                     stackIndicator.key ===
                         stack[xValue].base) {
-                    yBottom = (pick(isNumber(threshold) && threshold, yAxis.min));
+                    yBottom = (pick((isNumber(threshold) && threshold), yAxis.min));
                 }
                 // #1200, #1232
                 if (yAxis.positiveValuesOnly && yBottom <= 0) {

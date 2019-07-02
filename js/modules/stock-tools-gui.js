@@ -8,10 +8,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 var addEvent = H.addEvent,
     createElement = H.createElement,
     pick = H.pick,
-    isArray = H.isArray,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     merge = H.merge,

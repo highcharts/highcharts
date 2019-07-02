@@ -105,7 +105,12 @@ declare global {
 }
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString
+} = U;
+
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
@@ -123,7 +128,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isArray = H.isArray,
     merge = H.merge,
     objectEach = H.objectEach,
     pick = H.pick,
@@ -777,7 +781,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if (H.isString(newHeight)) {
+        if (isString(newHeight)) {
             newHeight = H.relativeLength(
                 newHeight as string,
                 (newWidth as string) || (chart.chartWidth as any)
