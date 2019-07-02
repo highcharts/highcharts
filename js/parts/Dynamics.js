@@ -997,6 +997,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
         // Make sure preserved properties are not destroyed (#3094)
         preserve = groups.concat(preserve);
         preserve.forEach(function (prop) {
