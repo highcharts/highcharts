@@ -148,20 +148,6 @@ declare global {
             width?: number;
             zIndex?: number;
         }
-        interface XAxisDateTimeLabelFormatsOptions {
-            day?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            hour?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            millisecond?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            minute?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            month?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            second?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            week?: (string|XAxisDateTimeLabelFormatsSubOptions);
-            year?: (string| XAxisDateTimeLabelFormatsSubOptions);
-        }
-        interface XAxisDateTimeLabelFormatsSubOptions {
-            main?: string;
-            range?: boolean;
-        }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
             afterSetExtremes?: AxisSetExtremesEventCallbackFunction;
@@ -213,7 +199,6 @@ declare global {
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
             currentDateIndicator?: (boolean|XAxisCurrentDateIndicatorOptions);
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
