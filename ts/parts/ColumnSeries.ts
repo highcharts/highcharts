@@ -84,15 +84,15 @@ declare global {
 /**
  * @interface Highcharts.PointOptionsObject
  *//**
- * A name for the dash style to use for the points in column-based series. In
- * styled mode, the stroke dash-array can be set with the same classes as listed
- * under {@link Highcharts.PointOptionsObject#color}.
+ * A name for the dash style to use for the column or bar. Overrides dashStyle
+ * on the series. In styled mode, the stroke dash-array can be set with the same
+ * classes as listed under {@link Highcharts.PointOptionsObject#color}.
  * @name Highcharts.PointOptionsObject#dashStyle
  * @type {Highcharts.DashStyleValue|undefined}
  *//**
+
  * A pixel value specifying a fixed width for the column or bar. Overrides
  * pointWidth on the series.
- * @see [series.pointWidth](#plotOptions.column.pointWidth)
  * @name Highcharts.PointOptionsObject#pointWidth
  * @type {number|undefined}
  */
@@ -152,6 +152,8 @@ seriesType(
          *         Rounded columns
          *
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         borderRadius: 0,
 
@@ -204,6 +206,8 @@ seriesType(
          *
          * @since   5.0.10
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         crisp: true,
 
@@ -216,6 +220,8 @@ seriesType(
          *         No group padding - all columns are evenly spaced
          *
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         groupPadding: 0.2,
 
@@ -238,6 +244,7 @@ seriesType(
 
         /**
          * @ignore-option
+         * @private
          */
         marker: null as any, // point options are specified in the base options
 
@@ -271,6 +278,8 @@ seriesType(
          *         0 for tightly packed columns
          *
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         pointPadding: 0.1,
 
@@ -317,6 +326,8 @@ seriesType(
          *         Positive and negative close to zero values
          *
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         minPointLength: 0,
 
@@ -331,6 +342,8 @@ seriesType(
          * invisible points is to increase performance on large series.
          *
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         cropThreshold: 50,
 
@@ -351,6 +364,8 @@ seriesType(
          * @type    {number|null}
          * @since   2.3
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         pointRange: null,
 
@@ -457,11 +472,16 @@ seriesType(
          *
          * @since   4.1.9
          * @product highcharts highstock
+         *
+         * @private
          */
         softThreshold: false,
 
         // false doesn't work well: https://jsfiddle.net/highcharts/hz8fopan/14/
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         * @private
+         */
         startFromThreshold: true,
 
         stickyTracking: false,
@@ -477,6 +497,8 @@ seriesType(
          *
          * @since   2.0
          * @product highcharts
+         *
+         * @private
          */
         threshold: 0,
 
@@ -509,6 +531,8 @@ seriesType(
          * @type      {Highcharts.ColorString}
          * @default   #ffffff
          * @product   highcharts highstock gantt
+         *
+         * @private
          */
         borderColor: '${palette.backgroundColor}'
 
@@ -1242,6 +1266,29 @@ seriesType(
  * @type      {number}
  * @product   highcharts highstock
  * @apioption series.column.data.borderWidth
+ */
+
+/**
+ * A name for the dash style to use for the column or bar. Overrides
+ * dashStyle on the series.
+ *
+ * In styled mode, the stroke dash-array can be set with the same classes as
+ * listed under [data.color](#series.column.data.color).
+ *
+ * @see [series.pointWidth](#plotOptions.column.dashStyle)
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @apioption series.column.data.dashStyle
+ */
+
+/**
+ * A pixel value specifying a fixed width for the column or bar. Overrides
+ * pointWidth on the series.
+ *
+ * @see [series.pointWidth](#plotOptions.column.pointWidth)
+ *
+ * @type      {number}
+ * @apioption series.column.data.pointWidth
  */
 
 /**
