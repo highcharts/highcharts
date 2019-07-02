@@ -11,7 +11,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var pInt = U.pInt;
+
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -26,7 +29,6 @@ var arrayMax = H.arrayMax,
     isNumber = H.isNumber,
     noop = H.noop,
     pick = H.pick,
-    pInt = H.pInt,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

@@ -171,6 +171,11 @@ declare global {
  *         Parsed JavaScript time value.
  */
 
+import U from './Utilities.js';
+const {
+    pInt
+} = U;
+
 import './Axis.js';
 import './Chart.js';
 
@@ -188,7 +193,6 @@ var addEvent = H.addEvent,
     isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
-    pInt = H.pInt,
     splat = H.splat;
 
 /* ************************************************************************** *
