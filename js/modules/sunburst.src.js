@@ -45,7 +45,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isString = U.isString;
+var isNumber = U.isNumber,
+    isString = U.isString;
 
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
@@ -63,7 +64,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
-    isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,

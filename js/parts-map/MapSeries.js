@@ -29,7 +29,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isNumber = U.isNumber;
 
 import '../parts/Color.js';
 import '../parts/Options.js';
@@ -41,7 +42,6 @@ import '../parts/ScatterSeries.js';
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
     extend = H.extend,
-    isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,

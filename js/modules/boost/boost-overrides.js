@@ -11,7 +11,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+
+import U from '../../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../../parts/Color.js';
 import '../../parts/Series.js';
 import '../../parts/Options.js';
@@ -29,7 +32,6 @@ var boostEnabled = butils.boostEnabled,
     Point = H.Point,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
-    isNumber = H.isNumber,
     pick = H.pick,
     wrap = H.wrap,
     plotOptions = H.getOptions().plotOptions;

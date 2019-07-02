@@ -216,6 +216,7 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
+    isNumber,
     isString,
     pInt
 } = U;
@@ -240,7 +241,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,

@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isNumber = U.isNumber;
 
 import chartNavigationMixin from '../mixins/navigation.js';
 
@@ -19,7 +20,6 @@ var doc = H.doc,
     pick = H.pick,
     merge = H.merge,
     extend = H.extend,
-    isNumber = H.isNumber,
     fireEvent = H.fireEvent,
     isObject = H.isObject,
     objectEach = H.objectEach,

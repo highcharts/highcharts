@@ -38,12 +38,13 @@ import H from './Globals.js';
 * @name Highcharts.PointOptionsObject#pointWidth
 * @type {number|undefined}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isNumber = U.isNumber;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, extend = H.extend, defined = H.defined, isNumber = H.isNumber, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var animObject = H.animObject, color = H.color, extend = H.extend, defined = H.defined, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
 /**
  * The column series type.
  *
@@ -951,17 +952,17 @@ seriesType('column', 'line',
  * @apioption series.column.data.borderWidth
  */
 /**
-* A name for the dash style to use for the column or bar. Overrides
-* dashStyle on the series.
-*
-* In styled mode, the stroke dash-array can be set with the same classes as
-* listed under [data.color](#series.column.data.color).
-*
-* @see [series.pointWidth](#plotOptions.column.dashStyle)
-*
-* @type      {Highcharts.DashStyleValue}
-* @apioption series.column.data.dashStyle
-*/
+ * A name for the dash style to use for the column or bar. Overrides
+ * dashStyle on the series.
+ *
+ * In styled mode, the stroke dash-array can be set with the same classes as
+ * listed under [data.color](#series.column.data.color).
+ *
+ * @see [series.pointWidth](#plotOptions.column.dashStyle)
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @apioption series.column.data.dashStyle
+ */
 /**
  * A pixel value specifying a fixed width for the column or bar. Overrides
  * pointWidth on the series.

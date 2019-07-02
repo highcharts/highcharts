@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import onSeriesMixin from '../mixins/on-series.js';
 
 var noop = H.noop,
@@ -380,7 +384,7 @@ seriesType('windbarb', 'column'
         getExtremes: noop
     }, {
         isValid: function () {
-            return H.isNumber(this.value) && this.value >= 0;
+            return isNumber(this.value) && this.value >= 0;
         }
     });
 

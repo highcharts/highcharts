@@ -47,10 +47,12 @@ declare global {
  * @type {number}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    isNumber
+} = U;
 
 var deg2rad = H.deg2rad,
-    isNumber = H.isNumber,
     pick = H.pick,
     relativeLength = H.relativeLength;
 

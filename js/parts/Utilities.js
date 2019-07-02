@@ -333,7 +333,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  * @return {void}
  */
 H.error = function (code, stop, chart) {
-    var msg = H.isNumber(code) ?
+    var msg = isNumber(code) ?
         'Highcharts error #' + code + ': www.highcharts.com/errors/' +
             code :
         code, defaultHandler = function () {
@@ -670,7 +670,7 @@ H.Fx.prototype = {
                 start = [];
             }
         }
-        if (start.length && H.isNumber(shift)) {
+        if (start.length && isNumber(shift)) {
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
             fullLength = (end.length + shift * positionFactor * numParams);
@@ -888,9 +888,9 @@ H.isClass = function (obj) {
  * @return {boolean}
  *         True if the item is a finite number
  */
-H.isNumber = function (n) {
+function isNumber(n) {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
-};
+}
 /**
  * Remove the last occurence of an item from an array.
  *
@@ -1689,7 +1689,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
         // Preserve decimals. Not huge numbers (#3793).
         decimals = Math.min(origDec, 20);
     }
-    else if (!H.isNumber(decimals)) {
+    else if (!isNumber(decimals)) {
         decimals = 2;
     }
     else if (decimals && exponent[1] && exponent[1] < 0) {
@@ -2330,7 +2330,7 @@ H.animate = function (el, params, opt) {
             complete: args[4]
         };
     }
-    if (!H.isNumber(opt.duration)) {
+    if (!isNumber(opt.duration)) {
         opt.duration = 400;
     }
     opt.easing = typeof opt.easing === 'function' ?
@@ -2487,6 +2487,7 @@ if (win.jQuery) {
 // TODO use named exports when supported.
 var utils = {
     isArray: isArray,
+    isNumber: isNumber,
     isString: isString,
     pInt: pInt
 };

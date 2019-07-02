@@ -810,6 +810,7 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
+    isNumber,
     isString,
     pInt
 } = U;
@@ -6089,7 +6090,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // only change local variables
         wrapper.widthSetter = function (value: (number|string)): void {
             // width:auto => null
-            width = (H.isNumber(value) ? value : null) as any;
+            width = isNumber(value) ? value : null;
         };
         wrapper.heightSetter = function (value: number): void {
             height = value;

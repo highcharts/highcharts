@@ -7,13 +7,15 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 
 var correctFloat = H.correctFloat,
-    isNumber = H.isNumber,
     pick = H.pick,
     objectEach = H.objectEach,
     arrayMin = H.arrayMin,

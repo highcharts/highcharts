@@ -12,7 +12,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
@@ -26,7 +29,6 @@ var win = H.win,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     wrap = H.wrap,
