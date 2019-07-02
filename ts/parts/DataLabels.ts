@@ -37,7 +37,7 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): string;
+            (this: DataLabelsFormatterContextObject): (string|undefined);
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -210,7 +210,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string}
+ * @return {string|undefined}
  *         Formatted data label text
  */
 
@@ -1722,7 +1722,7 @@ if (seriesTypes.pie) {
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
                         point.distributeBox = {
-                            target: point.labelPosition.natural.y -
+                            target: (point.labelPosition as any).natural.y -
                                 point.top + size / 2,
                             size: size,
                             rank: point.y
@@ -1746,7 +1746,7 @@ if (seriesTypes.pie) {
                 labelPosition = point.labelPosition;
                 dataLabel = point.dataLabel;
                 visibility = point.visible === false ? 'hidden' : 'inherit';
-                naturalY = labelPosition.natural.y;
+                naturalY = (labelPosition as any).natural.y;
                 y = naturalY;
 
                 if (positions && defined(point.distributeBox)) {
@@ -1804,7 +1804,7 @@ if (seriesTypes.pie) {
                 // Record the placement and visibility
                 (dataLabel as any)._attr = {
                     visibility: visibility,
-                    align: labelPosition.alignment
+                    align: (labelPosition as any).alignment
                 };
 
                 (dataLabel as any)._pos = {
@@ -1814,7 +1814,7 @@ if (seriesTypes.pie) {
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
-                        } as any)[labelPosition.alignment] || 0)
+                        } as any)[(labelPosition as any).alignment] || 0)
                     ),
 
                     // 10 is for the baseline (label vs text)
@@ -1822,8 +1822,8 @@ if (seriesTypes.pie) {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                labelPosition.final.x = x;
-                labelPosition.final.y = y;
+                (labelPosition as any).final.x = x;
+                (labelPosition as any).final.y = y;
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {
@@ -2223,7 +2223,7 @@ if (seriesTypes.column) {
                     width: dataLabel.width - dataLabel.padding,
                     height: dataLabel.height - dataLabel.padding
                 },
-                point.shapeArgs
+                point.shapeArgs as any
             )
         ) {
             dataLabel.css({

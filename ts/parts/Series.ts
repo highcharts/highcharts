@@ -258,7 +258,10 @@ declare global {
             public dataMax: number;
             public dataMin: number;
             public directTouch: boolean;
-            public drawLegendSymbol: LegendSymbolMixin['drawLineMarker'];
+            public drawLegendSymbol: (
+                LegendSymbolMixin['drawLineMarker']|
+                LegendSymbolMixin['drawRectangle']
+            );
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;

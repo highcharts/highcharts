@@ -43,6 +43,7 @@ declare global {
             shapeType?: string;
         }
         interface PointOptionsObject {
+            dashStyle?: DashStyleValue;
             pointWidth?: number;
         }
         interface Series {
@@ -60,6 +61,7 @@ declare global {
             borderColor?: ColorString;
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
         }
     }
 }
@@ -77,6 +79,22 @@ declare global {
  * Offset of the columns.
  * @name Highcharts.ColumnMetricsObject#offset
  * @type {number}
+ */
+
+/**
+ * @interface Highcharts.PointOptionsObject
+ *//**
+ * A name for the dash style to use for the points in column-based series. In
+ * styled mode, the stroke dash-array can be set with the same classes as listed
+ * under {@link Highcharts.PointOptionsObject#color}.
+ * @name Highcharts.PointOptionsObject#dashStyle
+ * @type {Highcharts.DashStyleValue|undefined}
+ *//**
+ * A pixel value specifying a fixed width for the column or bar. Overrides
+ * pointWidth on the series.
+ * @see [series.pointWidth](#plotOptions.column.pointWidth)
+ * @name Highcharts.PointOptionsObject#pointWidth
+ * @type {number|undefined}
  */
 
 import './Utilities.js';
@@ -896,7 +914,8 @@ seriesType(
                 strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                     (options as any)[strokeWidthOption] ||
                     (this as any)[strokeWidthOption] || 0,
-                dashstyle = (point && point.dashStyle) || options.dashStyle,
+                dashstyle =
+                    (point && point.options.dashStyle) || options.dashStyle,
                 opacity = pick(options.opacity, 1),
                 zone,
                 brightness;
