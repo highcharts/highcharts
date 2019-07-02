@@ -49,7 +49,6 @@ Highcharts.ajax({
 
             tooltip: {
                 headerFormat: '<b>{point.point.number}. {point.point.name}</b><br>',
-                pointFormat: '{series.name}: {point.value}',
                 valueSuffix: 'u'
             },
 
@@ -70,6 +69,9 @@ Highcharts.ajax({
                 type: 'heatmap',
                 borderWidth: 1,
                 data: setPointsValue('mass', true),
+                tooltip: {
+                    pointFormat: '{series.name}: {point.value}'
+                },
                 dataLabels: {
                     enabled: true,
                     format: '{point.options.symbol}'
@@ -105,12 +107,18 @@ Highcharts.ajax({
             document.getElementById('seriestype'),
             'change',
             function () {
+                var isHeatmap = this.value === 'heatmap';
+
                 chart.update({
                     legend: {
-                        enabled: this.value === 'heatmap'
+                        enabled: isHeatmap
                     },
                     series: [{
-                        type: this.value
+                        type: this.value,
+                        tooltip: {
+                            pointFormat: '{series.name}: {point.' +
+                                    (isHeatmap ? 'value' : 'z') + '}'
+                        }
                     }]
                 });
             }
