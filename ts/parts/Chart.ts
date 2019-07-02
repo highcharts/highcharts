@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            index?: number;
+        }
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
         }
@@ -26,7 +29,11 @@ declare global {
             spacingBox: BBoxObject;
         }
         interface Options {
-            series?: Dictionary<SeriesOptions>;
+            series?: Array<SeriesOptionsType>;
+        }
+        interface Series {
+            index?: number;
+            linkedParent?: Series;
         }
         interface SubtitleObject extends SVGElement {
             update(titleOptions: SubtitleOptions, redraw?: boolean): void;
@@ -90,7 +97,7 @@ declare global {
             public symbolCounter: number;
             public time: Time;
             public title?: SVGElement;
-            public titleOffset: number;
+            public titleOffset: Array<number>;
             public unbindReflow?: Function;
             public userOptions: Options;
             public xAxis: Array<Axis>;
@@ -121,7 +128,7 @@ declare global {
             ): boolean;
             public layOutTitles(redraw?: boolean): void;
             public onload(): void;
-            public orderSeries(fromIndex: number): void;
+            public orderSeries(fromIndex?: number): void;
             public propFromSeries(): void;
             public redraw(animation?: (boolean|AnimationOptionsObject)): void;
             public reflow(e?: Event): void;
@@ -206,7 +213,12 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isArray,
+    isString
+} = U;
+
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -229,7 +241,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    isString = H.isString,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
@@ -559,7 +570,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     initSeries: function (
         this: Highcharts.Chart,
         options: Highcharts.SeriesOptions
-    ): void {
+    ): Highcharts.Series {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -587,13 +598,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Series#orderSeries
-     *
-     * @param {number} fromIndex
+     * @param {number} [fromIndex]
      *        If this is given, only the series above this index are handled.
-     *
      * @return {void}
      */
-    orderSeries: function (this: Highcharts.Chart, fromIndex: number): void {
+    orderSeries: function (this: Highcharts.Chart, fromIndex?: number): void {
         var series = this.series,
             i = fromIndex || 0;
 
@@ -1145,7 +1154,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.Chart,
         redraw?: boolean
     ): void {
-        var titleOffset = 0,
+        var titleOffset = [0, 0, 0],
             requiresDirtyBox,
             renderer = this.renderer,
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
@@ -1159,12 +1168,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 titleOptions = (this as any).options[key],
                 offset = key === 'title' ? -3 :
                     // Floating subtitle (#6574)
-                    titleOptions.verticalAlign ? 0 : titleOffset + 2,
-                titleSize;
+                    titleOptions.verticalAlign ? 0 : titleOffset[0] + 2,
+                bottomAlign = (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ),
+                titleSize,
+                height;
 
             if (title) {
 
-                if (!(this as any).styledMode) {
+                if (!this.styledMode) {
                     titleSize = titleOptions.style.fontSize;
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
@@ -1172,23 +1186,38 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     .css({
                         width: (titleOptions.width ||
                             spacingBox.width + titleOptions.widthAdjust) + 'px'
-                    })
-                    .align(extend({
-                        y: offset + titleSize
-                    }, titleOptions), false, 'spacingBox');
+                    });
+
+                // Skip the cache for HTML (#3481)
+                height = title.getBBox(titleOptions.useHTML).height;
+
+                title.align(extend({
+                    y: bottomAlign ? titleSize : offset + titleSize,
+                    height
+                }, titleOptions), false, 'spacingBox');
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                    titleOffset = Math.ceil(
-                        titleOffset +
-                        // Skip the cache for HTML (#3481)
-                        title.getBBox(titleOptions.useHTML).height
+                    titleOffset[0] = Math.ceil(
+                        titleOffset[0] +
+                        height
                     );
+                }
+                if (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ) {
+                    titleOffset[2] = height;
                 }
             }
         }, this);
 
-        requiresDirtyBox = this.titleOffset !== titleOffset;
-        this.titleOffset = titleOffset; // used in getMargins
+        requiresDirtyBox = (
+            !this.titleOffset ||
+            this.titleOffset.join(',') !== titleOffset.join(',')
+        );
+
+        // Used in getMargins
+        this.titleOffset = titleOffset;
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1511,24 +1540,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (this: Highcharts.Chart, skipAxes?: boolean): void {
-        var chart = this,
-            spacing = chart.spacing,
-            margin = chart.margin,
-            titleOffset = chart.titleOffset;
+        const { spacing, margin, titleOffset } = this;
 
-        chart.resetMargins();
+        this.resetMargins();
 
         // Adjust for title and subtitle
-        if (titleOffset && !defined(margin[0])) {
-            chart.plotTop = Math.max(
-                chart.plotTop,
-                titleOffset + (chart.options.title as any).margin + spacing[0]
+        if (titleOffset[0] && !defined(margin[0])) {
+            this.plotTop = Math.max(
+                this.plotTop,
+                titleOffset[0] + (this.options.title as any).margin + spacing[0]
+            );
+        }
+
+        if (titleOffset[2] && !defined(margin[2])) {
+            this.marginBottom = Math.max(
+                this.marginBottom,
+                titleOffset[2] + (this.options.title as any).margin + spacing[2]
             );
         }
 
         // Adjust for legend
-        if (chart.legend && chart.legend.display) {
-            chart.legend.adjustMargins(margin, spacing);
+        if (this.legend && this.legend.display) {
+            this.legend.adjustMargins(margin, spacing);
         }
 
         fireEvent(this, 'getMargins');
@@ -1987,7 +2020,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
             bgAttr = {
-                fill: chartBackgroundColor || 'none'
+                fill: (chartBackgroundColor as any) || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2024,7 +2057,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Presentational attributes for the background
             plotBackground
                 .attr({
-                    fill: plotBackgroundColor || 'none'
+                    fill: (plotBackgroundColor as any) || 'none'
                 })
                 .shadow(optionsChart.plotShadow);
 
@@ -2101,7 +2134,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             klass,
-            seriesOptions = chart.options.series as Highcharts.SeriesOptions,
+            seriesOptions =
+                chart.options.series as Array<Highcharts.SeriesOptions>,
             i,
             value;
 
@@ -2119,15 +2153,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Get the value from available chart-wide properties
             value =
-                (optionsChart as any)[key] || // It is set in the options
-                (klass && klass.prototype[key]); // The default series class
+                // It is set in the options:
+                (optionsChart as any)[key] ||
+                // The default series class:
+                (klass && (klass.prototype as any)[key]);
             // requires it
 
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = seriesTypes[seriesOptions[i].type];
-                if (klass && klass.prototype[key]) {
+                klass = seriesTypes[seriesOptions[i].type as any];
+                if (klass && (klass.prototype as any)[key]) {
                     value = true;
                 }
             }
@@ -2163,17 +2199,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (isString(linkedTo)) {
                 if (linkedTo === ':previous') {
-                    linkedTo = chart.series[series.index - 1];
+                    linkedTo = chart.series[(series.index as any) - 1] as any;
                 } else {
-                    linkedTo = chart.get(linkedTo);
+                    linkedTo = chart.get(linkedTo as any) as any;
                 }
                 // #3341 avoid mutual linking
-                if (linkedTo && linkedTo.linkedParent !== series) {
-                    linkedTo.linkedSeries.push(series);
-                    series.linkedParent = linkedTo;
+                if (linkedTo && (linkedTo as any).linkedParent !== series) {
+                    (linkedTo as any).linkedSeries.push(series);
+                    series.linkedParent = linkedTo as any;
                     series.visible = pick(
                         series.options.visible,
-                        linkedTo.options.visible,
+                        (linkedTo as any).options.visible,
                         series.visible
                     ); // #3879
                 }
@@ -2475,7 +2511,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy each series
         i = series.length;
         while (i--) {
-            series[i] = series[i].destroy();
+            series[i] = series[i].destroy() as any;
         }
 
         // ==== Destroy chart properties:
@@ -2541,7 +2577,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (H.isArray(options.series) ? (options.series as any) : []).forEach(
+        (isArray(options.series) ? (options.series as any) : []).forEach(
             // #9680
             function (serieOptions: Highcharts.SeriesOptions): void {
                 chart.initSeries(serieOptions);

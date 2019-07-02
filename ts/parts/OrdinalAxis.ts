@@ -42,12 +42,12 @@ declare global {
                 positions: Array<number>,
                 closestDistance: number,
                 findHigherRanks?: boolean
-            ): TimeTicksArray;
+            ): AxisTickPositionsArray;
             lin2val(val: number, fromIndex?: boolean): number;
             postProcessTickInterval(tickInterval: number): number;
             val2lin(val: number, toIndex?: boolean): number;
         }
-        interface TimeTicksInfoObject {
+        interface TimeTicksInfoObject extends DateTimeAxisNormalizedObject {
             segmentStarts?: Array<number>;
         }
         interface XAxisOptions {
@@ -79,7 +79,9 @@ var addEvent = H.addEvent,
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *
  * ************************************************************************** */
-addEvent(Series, 'updatedData', function (): void {
+addEvent(Series as any, 'updatedData', function (
+    this: Highcharts.Series
+): void {
     var xAxis = this.xAxis;
 
     // Destroy the extended ordinal index on updated data
@@ -106,7 +108,7 @@ Axis.prototype.getTimeTicks = function (
     positions: Array<number>,
     closestDistance: number,
     findHigherRanks?: boolean
-): Highcharts.TimeTicksArray {
+): Highcharts.AxisTickPositionsArray {
 
     var start = 0,
         end,
@@ -116,7 +118,7 @@ Axis.prototype.getTimeTicks = function (
         info,
         posLength,
         outsideMax,
-        groupPositions = ([] as any) as Highcharts.TimeTicksArray,
+        groupPositions = [] as Highcharts.AxisTickPositionsArray,
         lastGroupPosition = -Number.MAX_VALUE,
         tickPixelIntervalOption = this.options.tickPixelInterval,
         time = this.chart.time,
@@ -347,7 +349,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     // concatenate the processed X data into the existing
                     // positions, or the empty array
                     ordinalPositions = ordinalPositions.concat(
-                        series.processedXData
+                        series.processedXData as any
                     );
                     len = ordinalPositions.length;
 
@@ -677,7 +679,9 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             chart = axis.chart,
             grouping = axis.series[0].currentDataGrouping,
             ordinalIndex = axis.ordinalIndex,
-            key = grouping ? grouping.count + grouping.unitName : 'raw',
+            key = grouping ?
+                grouping.count + (grouping.unitName as any) :
+                'raw',
             overscroll = axis.options.overscroll,
             extremes = axis.getExtremes(),
             fakeAxis: Highcharts.Axis,
@@ -731,7 +735,10 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                         forced: true,
                         // doesn't matter which, use the fastest
                         approximation: 'open',
-                        units: [[grouping.unitName, [grouping.count]]]
+                        units: [[
+                            (grouping as any).unitName,
+                            [grouping.count]
+                        ]]
                     } : {
                         enabled: false
                     }
@@ -828,7 +835,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
     ): number {
         var i,
             processedXData = series.processedXData,
-            len = processedXData.length,
+            len = (processedXData as any).length,
             distances = [],
             median,
             groupIntervalFactor = this.groupIntervalFactor;
@@ -839,7 +846,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 
             // Register all the distances in an array
             for (i = 0; i < len - 1; i++) {
-                distances[i] = processedXData[i + 1] - processedXData[i];
+                distances[i] =
+                    (processedXData as any)[i + 1] - (processedXData as any)[i];
             }
 
             // Sort them and find the median
@@ -850,8 +858,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 
             // Compensate for series that don't extend through the entire axis
             // extent. #1675.
-            xMin = Math.max(xMin, processedXData[0]);
-            xMax = Math.min(xMax, processedXData[len - 1]);
+            xMin = Math.max(xMin, (processedXData as any)[0]);
+            xMax = Math.min(xMax, (processedXData as any)[len - 1]);
 
             this.groupIntervalFactor = groupIntervalFactor =
                 (len * median) / (xMax - xMin);

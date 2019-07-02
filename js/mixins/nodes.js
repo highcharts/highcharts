@@ -165,31 +165,33 @@ H.NodesMixin = {
 
     // When hovering node, highlight all connected links. When hovering a link,
     // highlight all connected nodes.
-    setNodeState: function () {
+    setNodeState: function (state) {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
 
-        others.forEach(function (linkOrNode) {
-            if (linkOrNode.series) {
-                Point.prototype.setState.apply(linkOrNode, args);
+        if (state !== 'select') {
+            others.forEach(function (linkOrNode) {
+                if (linkOrNode.series) {
+                    Point.prototype.setState.apply(linkOrNode, args);
 
-                if (!linkOrNode.isNode) {
-                    if (linkOrNode.fromNode.graphic) {
-                        Point.prototype.setState.apply(
-                            linkOrNode.fromNode,
-                            args
-                        );
-                    }
-                    if (linkOrNode.toNode.graphic) {
-                        Point.prototype.setState.apply(
-                            linkOrNode.toNode,
-                            args
-                        );
+                    if (!linkOrNode.isNode) {
+                        if (linkOrNode.fromNode.graphic) {
+                            Point.prototype.setState.apply(
+                                linkOrNode.fromNode,
+                                args
+                            );
+                        }
+                        if (linkOrNode.toNode.graphic) {
+                            Point.prototype.setState.apply(
+                                linkOrNode.toNode,
+                                args
+                            );
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         Point.prototype.setState.apply(this, args);
     }

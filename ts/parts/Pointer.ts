@@ -463,7 +463,10 @@ Highcharts.Pointer.prototype = {
                     result = isAbove;
                 // The same zIndex, sort by array index:
                 } else {
-                    result = p1.series.index > p2.series.index ? -1 : 1;
+                    result =
+                        (p1.series.index as any) > (p2.series.index as any) ?
+                            -1 :
+                            1;
                 }
                 return result;
             };
@@ -472,18 +475,18 @@ Highcharts.Pointer.prototype = {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
                     !noSharedTooltip &&
-                    s.options.findNearestPointBy.indexOf('y') < 0
+                    (s.options.findNearestPointBy as any).indexOf('y') < 0
                 ),
                 point = s.searchPoint(
                     e,
                     compareX
                 );
 
-            if (
-                // Check that we actually found a point on the series.
+            if (// Check that we actually found a point on the series.
                 isObject(point, true) &&
                 // Use the new point if it is closer.
-                (!isObject(closest, true) || (sort(closest as any, point) > 0))
+                (!isObject(closest, true) ||
+                (sort(closest as any, point as any) > 0))
             ) {
                 closest = point;
             }
@@ -537,10 +540,10 @@ Highcharts.Pointer.prototype = {
         if (xAxis && yAxis) {
             return inverted ? {
                 chartX: xAxis.len + (xAxis.pos as any) - plotX,
-                chartY: yAxis.len + (yAxis.pos as any) - point.plotY
+                chartY: yAxis.len + (yAxis.pos as any) - (point.plotY as any)
             } : {
-                chartX: plotX + xAxis.pos,
-                chartY: point.plotY + yAxis.pos
+                chartX: plotX + (xAxis.pos as any),
+                chartY: (point.plotY as any) + (yAxis.pos as any)
             };
         }
 
@@ -1020,7 +1023,9 @@ Highcharts.Pointer.prototype = {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
                     series.markerGroup.attr(seriesAttribs);
-                    series.markerGroup.clip(clip ? chart.clipRect : null);
+                    series.markerGroup.clip(
+                        clip ? (chart.clipRect as any) : (null as any)
+                    );
                 }
                 if (series.dataLabelsGroup) {
                     series.dataLabelsGroup.attr(seriesAttribs);
@@ -1624,12 +1629,20 @@ Highcharts.Pointer.prototype = {
             );
         }
         if (H.hasTouch) {
-            container.ontouchstart = function (e: TouchEvent): void {
-                pointer.onContainerTouchStart(e as any);
-            };
-            container.ontouchmove = function (e: TouchEvent): void {
-                pointer.onContainerTouchMove(e as any);
-            };
+            addEvent(
+                container,
+                'touchstart',
+                function (e: TouchEvent): void {
+                    pointer.onContainerTouchStart(e as any);
+                }
+            );
+            addEvent(
+                container,
+                'touchmove',
+                function (e: TouchEvent): void {
+                    pointer.onContainerTouchMove(e as any);
+                }
+            );
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,

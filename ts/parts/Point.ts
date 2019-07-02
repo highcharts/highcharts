@@ -18,53 +18,153 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        type PointOptionsType = (
+            number|string|Array<(number|string)>|PointOptionsObject|null
+        );
+        interface PlotSeriesOptions {
+            marker?: PointMarkerOptionsObject;
+            point?: PlotSeriesPointOptions;
+        }
+        interface PlotSeriesPointOptions {
+            events?: PointEventsOptionsObject;
+        }
+        interface PointClickCallbackFunction {
+            (this: Point, event: PointClickEventObject): void;
+        }
+        interface PointClickEventObject extends PointerEventObject {
+            point: Point;
+        }
+        interface PointEventsOptionsObject {
+            click?: PointClickCallbackFunction;
+            mouseOut?: PointMouseOutCallbackFunction;
+            mouseOver?: PointMouseOverCallbackFunction;
+            remove?: PointRemoveCallbackFunction;
+            select?: PointSelectCallbackFunction;
+            unselect?: PointUnselectCallbackFunction;
+            update?: PointUpdateCallbackFunction;
+        }
         interface PointLabelObject {
             x: string;
             y: number;
-            color: ColorString;
+            color: (ColorString|GradientColorObject|PatternObject);
             colorIndex: number;
             key: string;
             series: Series;
             point: Point;
             percentage?: number;
-            total: number;
+            total?: number;
+        }
+        interface PointMarkerOptionsObject {
+            enabled?: boolean;
+            enabledThreshold?: number;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            height?: number;
+            lineColor?: ColorString;
+            lineWidth?: number;
+            radius?: number;
+            radiusPlus?: number;
+            states?: PointStatesOptionsObject;
+            symbol?: string;
+            width?: number;
+        }
+        interface PointMouseOutCallbackFunction {
+            (this: Point, event: PointerEvent): void;
+        }
+        interface PointMouseOverCallbackFunction {
+            (this: Point, event: PointerEvent): void;
         }
         interface PointOptionsObject {
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
             colorIndex?: number;
             drilldown?: string;
+            events?: PointEventsOptionsObject;
             id?: string;
             labelrank?: number;
             legendIndex?: number;
+            marker?: PointMarkerOptionsObject;
             name?: string;
             selected?: boolean;
             x?: number;
             y?: (null|number);
         }
+        interface PointRemoveCallbackFunction {
+            (this: Point, event: Event): void;
+        }
+        interface PointStatesHoverOptionsObject {
+            animation?: (boolean|AnimationOptionsObject);
+            enabled?: boolean;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorString;
+            lineWidth?: number;
+            lineWidthPlus?: number;
+            radius?: number;
+            radiusPlus?: number;
+        }
+        interface PointStatesInactiveOptionsObject {
+            opacity?: number;
+        }
+        interface PointStatesNormalOptionsObject {
+            animation?: (boolean|AnimationOptionsObject);
+        }
+        interface PointStatesOptionsObject {
+            [key: string]: (
+                PointStatesHoverOptionsObject |
+                PointStatesInactiveOptionsObject |
+                PointStatesNormalOptionsObject |
+                PointStatesSelectOptionsObject |
+                undefined
+            );
+            hover?: PointStatesHoverOptionsObject;
+            inactive?: PointStatesInactiveOptionsObject;
+            normal?: PointStatesNormalOptionsObject;
+            select?: PointStatesSelectOptionsObject;
+        }
+        interface PointStatesSelectOptionsObject {
+            enabled?: boolean;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorString;
+            lineWidth?: number;
+            radius?: number;
+        }
+        interface PointUpdateCallbackFunction {
+            (this: Point, event: PointUpdateEventObject): void;
+        }
+        interface PointUpdateEventObject {
+            options?: PointOptionsType;
+        }
+        interface Series {
+            _hasPointLabels?: boolean;
+            _hasPointMarkers?: boolean;
+        }
+        interface SeriesOptions {
+            data?: Array<PointOptionsType>;
+        }
+        interface SeriesPointOptions {
+            events?: PointEventsOptionsObject;
+        }
         class Point {
             public constructor();
-            [property: string]: any;
             public color: (ColorString|GradientColorObject|PatternObject);
             public colorIndex: number;
             public formatPrefix: string;
             public id: string;
             public isNull: boolean;
+            public marker?: PointMarkerOptionsObject;
             public nonZonedColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
             public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
+            public shapeArgs?: (BBoxObject|Dictionary<number>);
+            public shapeType?: string;
             public state?: string;
             public total?: number;
             public visible: boolean;
             public x: (number|null);
             public y: number;
-            public applyOptions(
-                options: (number|Dictionary<any>|Array<(number|string)>|null),
-                x?: number
-            ): Point;
+            public applyOptions(options: PointOptionsType, x?: number): Point;
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;
             public getClassName(): string;
@@ -77,18 +177,88 @@ declare global {
             public getZone(): PlotSeriesZonesOptions;
             public init(
                 series: Series,
-                options: (number|Dictionary<any>|Array<(number|string)>|null),
+                options: PointOptionsType,
                 x?: number
             ): Point;
-            public optionsToObject(
-                options: (number|Dictionary<any>|Array<number|string>|null)
-            ): Dictionary<any>;
+            public optionsToObject(options: PointOptionsType): Dictionary<any>;
             public resolveColor(): void;
             public setNestedProperty<T>(object: T, value: any, key: string): T;
             public tooltipFormatter(pointFormat: string): string;
         }
     }
 }
+
+/**
+ * Function callback when a series point is clicked. Return false to cancel the
+ * action.
+ *
+ * @callback Highcharts.PointClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point where the event occured.
+ *
+ * @param {Highcharts.PointClickEventObject} event
+ *        Event arguments.
+ */
+
+/**
+ * Common information for a click event on a series point.
+ *
+ * @interface Highcharts.PointClickEventObject
+ * @extends Highcharts.PointerEventObject
+ *//**
+ * Clicked point.
+ * @name Highcharts.PointClickEventObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * Events for each single point.
+ * @interface Highcharts.PointEventsOptionsObject
+ *//**
+ * Fires when a point is clicked. One parameter, event, is passed to the
+ * function, containing common event information.
+ *
+ * If the `series.allowPointSelect` option is true, the default action for the
+ * point's click event is to toggle the point's select state. Returning `false`
+ * cancels this action.
+ * @name Highcharts.PointEventsOptionsObject#click
+ * @type {Highcharts.PointClickCallbackFunction|undefined}
+ *//**
+ * Fires when the mouse leaves the area close to the point. One parameter,
+ * `event`, is passed to the function, containing common event information.
+ * @name Highcharts.PointEventsOptionsObject#mouseOut
+ * @type {Highcharts.PointMouseOutCallbackFunction}
+ *//**
+ * Fires when the mouse enters the area close to the point. One parameter,
+ * `event`, is passed to the function, containing common event information.
+ * @name Highcharts.PointEventsOptionsObject#mouseOver
+ * @type {Highcharts.PointMouseOverCallbackFunction}
+ *//**
+ * Fires when the point is removed using the `.remove()` method. One parameter,
+ * `event`, is passed to the function. Returning `false` cancels the operation.
+ * @name Highcharts.PointEventsOptionsObject#remove
+ * @type {Highcharts.PointRemoveCallbackFunction}
+ *//**
+ * Fires when the point is selected either programmatically or following a click
+ * on the point. One parameter, `event`, is passed to the function. Returning
+ * `false` cancels the operation.
+ * @name Highcharts.PointEventsOptionsObject#select
+ * @type {Highcharts.PointSelectCallbackFunction}
+ *//**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point. One parameter, `event`, is passed to the function.
+ * Returning `false` cancels the operation.
+ * @name Highcharts.PointEventsOptionsObject#unselect
+ * @type {Highcharts.PointUnselectCallbackFunction}
+ *//**
+ * Fires when the point is updated programmatically through the `.update()``
+ * method. One parameter, `event`, is passed to the function. The new point
+ * options can be accessed through event.options. Returning `false` cancels the
+ * operation.
+ * @name Highcharts.PointEventsOptionsObject#update
+ * @type {Highcharts.PointUpdateCallbackFunction}
+ */
 
 /**
  * Configuration hash for the data label and tooltip formatters.
@@ -133,6 +303,115 @@ declare global {
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
  * @type {number|undefined}
+ */
+
+/**
+ * States for a single point marker.
+ *
+ * @interface Highcharts.PointMarkerStatesOptionsObject
+ *//**
+ * The hover state for a single point marker.
+ * @name Highcharts.PointMarkerStatesOptionsObject#hover
+ * @type {Highcharts.PointStatesHoverOptionsObject}
+ *//**
+ * @name Highcharts.PointMarkerStatesOptionsObject#inactive
+ * @type {Highcharts.PointStatesInactiveOptionsObject}
+ *//**
+ * The normal state of a single point marker. Currently only used for setting
+ * animation when returning to normal state from hover.
+ * @name Highcharts.PointMarkerStatesOptionsObject#normal
+ * @type {Highcharts.PointStatesNormalOptionsObject}
+ *//**
+ * The appearance of the point marker when selected. In order to allow a point
+ * to be selected, set the `series.allowPointSelect` option to true.
+ * @name Highcharts.PointMarkerStatesOptionsObject#select
+ * @type {Highcharts.PointStatesSelectOptionsObject}
+ */
+
+/**
+ * @interface Highcharts.PointMarkerOptionsObject
+ *//**
+ * Enable or disable the point marker. If `undefined`, the markers are hidden
+ * when the data is dense, and shown for more widespread data points.
+ * @name Highcharts.PointMarkerOptionsObject#enabled
+ * @type {boolean|undefined}
+ *//**
+ * The threshold for how dense the point markers should be before they are
+ * hidden, given that `enabled` is not defined. The number indicates the
+ * horizontal distance between the two closest points in the series, as
+ * multiples of the `marker.radius`. In other words, the default value of 2
+ * means points are hidden if overlapping horizontally.
+ * @name Highcharts.PointMarkerOptionsObject#enabledThreshold
+ * @type {number|undefined}
+ *//**
+ * The fill color of the point marker. When `undefined`, the series' or point's
+ * color is used.
+ * @name Highcharts.PointMarkerOptionsObject#fillColor
+ * @type {ColorString|GradientColorObject|PatternObject|undefined}
+ *//**
+ * Image markers only. Set the image width explicitly. When using this option,
+ * a `width` must also be set.
+ * @name Highcharts.PointMarkerOptionsObject#height
+ * @type {number|undefined}
+ *//**
+ * The color of the point marker's outline. When `undefined`, the series' or
+ * point's color is used.
+ * @name Highcharts.PointMarkerOptionsObject#lineColor
+ * @type {ColorString|undefined}
+ *//**
+ * The width of the point marker's outline.
+ * @name Highcharts.PointMarkerOptionsObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * The radius of the point marker.
+ * @name Highcharts.PointMarkerOptionsObject#radius
+ * @type {number|undefined}
+ *//**
+ * States for a single point marker.
+ * @name Highcharts.PointMarkerOptionsObject#states
+ * @type {PointStatesOptionsObject|undefined}
+ *//**
+ * A predefined shape or symbol for the marker. When undefined, the symbol is
+ * pulled from options.symbols. Other possible values are "circle", "square",
+ * "diamond", "triangle" and "triangle-down".
+ *
+ * Additionally, the URL to a graphic can be given on this form:
+ * "url(graphic.png)". Note that for the image to be applied to exported charts,
+ * its URL needs to be accessible by the export server.
+ *
+ * Custom callbacks for symbol path generation can also be added to
+ * `Highcharts.SVGRenderer.prototype.symbols`.
+ * @name Highcharts.PointMarkerOptionsObject#symbol
+ * @type {string|undefined}
+ *//**
+ * Image markers only. Set the image width explicitly. When using this option, a
+ * `height` must also be set.
+ * @name Highcharts.PointMarkerOptionsObject#width
+ * @type {number|undefined}
+ */
+
+/**
+ * Gets fired when the mouse leaves the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.PointerEvent} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the mouse enters the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
  */
 
 /**
@@ -183,6 +462,10 @@ declare global {
  * @name Highcharts.PointOptionsObject#id
  * @type {string|undefined}
  *//**
+ * Options for the point markers of line-like series.
+ * @name Highcharts.PointOptionsObject#marker
+ * @type {Highcharts.PointMarkerOptionsObject}
+ *//**
  * The name of the point as shown in the legend, tooltip, dataLabels etc.
  * @name Highcharts.PointOptionsObject#name
  * @type {string|undefined}
@@ -201,7 +484,161 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import './Utilities.js';
+/**
+ * Possible option types for a data point.
+ *
+ * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
+ */
+
+/**
+ * Gets fired when the point is removed using the `.remove()` method.
+ *
+ * @callback Highcharts.PointRemoveCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * The hover state for a single point marker.
+ * @interface Highcharts.PointStatesHoverOptionsObject
+ *//**
+ * Animation when hovering over the point marker.
+ * @name Highcharts.PointStatesHoverOptionsObject#animation
+ * @type {boolean|Highcharts.AnimationOptionsObject}
+ *//**
+ * Enable or disable the point marker.
+ * @name Highcharts.PointStatesHoverOptionsObject#enabled
+ * @type {boolean|undefined}
+ *//**
+ * The fill color of the marker in hover state. When `undefined`, the series' or
+ * point's fillColor for normal state is used.
+ * @name Highcharts.PointStatesHoverOptionsObject#fillColor
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ *//**
+ * The color of the point marker's outline. When `undefined`, the series' or
+ * point's lineColor for normal state is used.
+ * @name Highcharts.PointStatesHoverOptionsObject#lineColor
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * The width of the point marker's outline. When `undefined`, the series' or
+ * point's lineWidth for normal state is used.
+ * @name Highcharts.PointStatesHoverOptionsObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * The additional line width for a hovered point.
+ * @name Highcharts.PointStatesHoverOptionsObject#lineWidthPlus
+ * @type {number|undefined}
+ *//**
+ * The radius of the point marker. In hover state, it defaults to the normal
+ * state's radius + 2 as per the radiusPlus option.
+ * @name Highcharts.PointStatesHoverOptionsObject#radius
+ * @type {number|undefined}
+ *//**
+ * The number of pixels to increase the radius of the hovered point.
+ * @name Highcharts.PointStatesHoverOptionsObject#radiusPlus
+ * @type {number|undefined}
+ */
+
+/**
+ * @interface Highcharts.PointStatesInactiveOptionsObject
+ *//**
+ * Opacity of inactive markers.
+ * @name Highcharts.PointStatesInactiveOptionsObject#opacity
+ * @type {number|undefined}
+ */
+
+/**
+ * The normal state of a single point marker. Currently only used for setting
+ * animation when returning to normal state from hover.
+ *
+ * @interface Highcharts.PointStatesNormalOptionsObject
+ *//**
+ * Animation when returning to normal state after hovering.
+ * @name Highcharts.PointStatesNormalOptionsObject#animation
+ * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+ */
+
+/**
+ * States for a single point marker.
+ *
+ * @interface Highcharts.PointStatesOptionsObject
+ *//**
+ * The hover state for a single point marker.
+ * @name Highcharts.PointStatesOptionsObject#hover
+ * @type {Highcharts.PointStatesHoverOptionsObject|undefined}
+ *//**
+ * The hover state for a single point marker.
+ * @name Highcharts.PointStatesOptionsObject#inactive
+ * @type {Highcharts.PointStatesInactiveOptionsObject|undefined}
+ *//**
+ * The hover state for a single point marker.
+ * @name Highcharts.PointStatesOptionsObject#normal
+ * @type {Highcharts.PointStatesNormalOptionsObject|undefined}
+ *//**
+ * The hover state for a single point marker.
+ * @name Highcharts.PointStatesOptionsObject#select
+ * @type {Highcharts.PointStatesSelectOptionsObject|undefined}
+ */
+
+/**
+ * The appearance of the point marker when selected. In order to allow a point
+ * to be selected, set the `series.allowPointSelect` option to true.
+ *
+ * @interface Highcharts.PointStatesSelectOptionsObject
+ *//**
+ * Enable or disable visible feedback for selection.
+ * @name Highcharts.PointStatesSelectOptionsObject#enabled
+ * @type {boolean|undefined}
+ *//**
+ * The fill color of the point marker.
+ * @name Highcharts.PointStatesSelectOptionsObject#fillColor
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ *//**
+ * The color of the point marker's outline. When `undefined`, the series' or
+ * point's color is used.
+ * @name Highcharts.PointStatesSelectOptionsObject#lineColor
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * The width of the point marker's outline.
+ * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * The radius of the point marker. In hover state, it defaults to the normal
+ * state's radius + 2.
+ * @name Highcharts.PointStatesSelectOptionsObject#radius
+ * @type {number|undefined}
+ */
+
+/**
+ * Gets fired when the point is updated programmatically through the `.update()`
+ * method.
+ *
+ * @callback Highcharts.PointUpdateCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointUpdateEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Information about the update event.
+ *
+ * @interface Highcharts.PointUpdateEventObject
+ * @extends global.Event
+ *//**
+ * Options data of the update event.
+ * @name Highcharts.PointUpdateEventObject#options
+ * @type {Highcharts.PointOptionsType}
+ */
+
+import U from './Utilities.js';
+const isArray = U.isArray;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
@@ -209,7 +646,6 @@ var Point: typeof Highcharts.Point,
     erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
@@ -239,7 +675,7 @@ Highcharts.Point.prototype = {
      * @param {Highcharts.Series} series
      *        The series object containing this point.
      *
-     * @param {number|object|Array<(number|string)>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The data in either number, array or object format.
      *
      * @param {number} [x]
@@ -253,7 +689,7 @@ Highcharts.Point.prototype = {
     init: function (
         this: Highcharts.Point,
         series: Highcharts.Series,
-        options: (number|object|Array<(number|string)>|null),
+        options: Highcharts.PointOptionsType,
         x?: number
     ): Highcharts.Point {
 
@@ -291,7 +727,7 @@ Highcharts.Point.prototype = {
                 series.chart.options.chart as Highcharts.ChartOptions,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
-            colorIndex;
+            colorIndex: number;
 
         /**
          * The point's current color.
@@ -300,14 +736,14 @@ Highcharts.Point.prototype = {
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         if (!styledMode && !(this.options as any).color) {
-            this.color = series.color; // #3445
+            this.color = series.color as any; // #3445
         }
 
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                this.color = this.color || colors[series.colorCounter];
-                colorCount = colors.length;
+                this.color = this.color || (colors as any)[series.colorCounter];
+                colorCount = (colors as any).length;
             }
             colorIndex = series.colorCounter;
             series.colorCounter++;
@@ -316,7 +752,7 @@ Highcharts.Point.prototype = {
                 series.colorCounter = 0;
             }
         } else {
-            colorIndex = series.colorIndex;
+            colorIndex = series.colorIndex as any;
         }
 
         /**
@@ -336,7 +772,7 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param {number|Highcharts.Dictionary<any>|Array<(number|string)>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The point options as defined in series.data.
      *
      * @param {number} [x]
@@ -347,9 +783,7 @@ Highcharts.Point.prototype = {
      */
     applyOptions: function (
         this: Highcharts.Point,
-        options: (
-            number|Highcharts.Dictionary<any>|Array<(number|string)>|null
-        ),
+        options: Highcharts.PointOptionsType,
         x?: number
     ): Highcharts.Point {
         var point = this,
@@ -383,7 +817,7 @@ Highcharts.Point.prototype = {
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
-        if (options.group) {
+        if ((options as any).group) {
             delete point.group;
         }
         if (options.dataLabels) {
@@ -398,7 +832,7 @@ Highcharts.Point.prototype = {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = point[pointValKey];
+            point.y = (point as any)[pointValKey];
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -430,7 +864,7 @@ Highcharts.Point.prototype = {
         }
         if (point.x === undefined && series) {
             if (x === undefined) {
-                point.x = series.autoIncrement(point);
+                point.x = (series.autoIncrement as any)(point);
             } else {
                 point.x = x;
             }
@@ -495,7 +929,7 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param {number|Highcharts.Dictionary<*>|Array<number|string>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The input option.
      *
      * @return {Highcharts.Dictionary<*>}
@@ -503,7 +937,7 @@ Highcharts.Point.prototype = {
      */
     optionsToObject: function (
         this: Highcharts.Point,
-        options: (number|Highcharts.Dictionary<any>|Array<number|string>|null)
+        options: Highcharts.PointOptionsType
     ): Highcharts.Dictionary<any> {
         var ret = {} as Highcharts.Dictionary<any>,
             series = this.series,
@@ -601,7 +1035,7 @@ Highcharts.Point.prototype = {
             zone;
 
         zone = zones[i];
-        while (this[zoneAxis] >= zone.value) {
+        while ((this as any)[zoneAxis] >= (zone.value as any)) {
             zone = zones[++i];
         }
 
@@ -659,7 +1093,7 @@ Highcharts.Point.prototype = {
         }
 
         for (prop in point) { // eslint-disable-line guard-for-in
-            point[prop] = null;
+            (point as any)[prop] = null;
         }
     },
 
@@ -691,20 +1125,20 @@ Highcharts.Point.prototype = {
         i = props.length;
         while (i--) {
             prop = props[i];
-            if (point[prop]) {
-                point[prop] = point[prop].destroy();
+            if ((point as any)[prop]) {
+                (point as any)[prop] = (point as any)[prop].destroy();
             }
         }
 
         ['dataLabel', 'connector'].forEach(function (prop: string): void {
             var plural = prop + 's';
-            if ((kinds as any)[prop] && point[plural]) {
-                point[plural].forEach(function (item: any): void {
+            if ((kinds as any)[prop] && (point as any)[plural]) {
+                (point as any)[plural].forEach(function (item: any): void {
                     if (item.element) {
                         item.destroy();
                     }
                 });
-                delete point[plural];
+                delete (point as any)[plural];
             }
         });
     },
@@ -722,7 +1156,7 @@ Highcharts.Point.prototype = {
         this: Highcharts.Point
     ): Highcharts.PointLabelObject {
         return {
-            x: this.category,
+            x: this.category as any,
             y: this.y,
             color: this.color,
             colorIndex: this.colorIndex,
@@ -753,7 +1187,9 @@ Highcharts.Point.prototype = {
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
         var series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
+            valueDecimals = pick<(number|string)>(
+                seriesTooltipOptions.valueDecimals, ''
+            ),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
@@ -814,8 +1250,7 @@ Highcharts.Point.prototype = {
             seriesOptions = series.options;
 
         // load event handlers on demand to save time on mouseover/out
-        if (
-            seriesOptions.point.events[eventType] ||
+        if ((seriesOptions.point as any).events[eventType] ||
             (
                 point.options &&
                 point.options.events &&

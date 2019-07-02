@@ -84,7 +84,7 @@ H.extend(H.SVGElement.prototype, {
      *
      * @param {number} margin
      *
-     * @param {Higcharts.CSSObject} style
+     * @param {Highcharts.CSSObject} style
      */
     addFocusBorder: function (margin, style) {
         // Allow updating by just adding new border

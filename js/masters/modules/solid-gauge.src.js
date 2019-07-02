@@ -1,5 +1,5 @@
 /**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/solid-gauge
  * @requires highcharts
  * @requires highcharts/highcharts-more

@@ -16,22 +16,26 @@ const uploadAPIDocs = () => {
         asyncForeach,
         uploadFiles
     } = require('../../upload.js');
-    const argv = process.argv;
+    const argv = require('yargs').argv;
     const sourceFolder = './build/api/';
-    const bucket = 'api-docs-bucket.highcharts.com';
+    const bucket = argv.bucket || process.env.HIGHCHARTS_APIDOCS_BUCKET;
     const batchSize = 30000;
     const files = (
         isString(argv.files) ?
             argv.files.split(',') :
             getFilesInFolder(sourceFolder, true, '')
     );
+    if (!bucket) {
+        throw new Error('No --bucket argument specified or env. variable HIGHCHARTS_APIDOCS_BUCKET is empty or unset.');
+    }
+
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = tag => {
         const errors = [];
         const bar = new ProgressBar({
             error: '',
             total: files.length,
-            message: `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error`
+            message: !argv.silent ? `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error` : ''
         });
         const doTick = () => {
             bar.tick();
@@ -45,11 +49,11 @@ const uploadAPIDocs = () => {
         const params = {
             batchSize,
             bucket,
-            callback: doTick,
+            callback: argv.silent ? false : doTick,
             onError
         };
         const getMapOfFromTo = fileName => {
-            let to = fileName;
+            let to = argv.noextensions ? fileName.split('.').slice(0, -1).join('.') : fileName;
             if (tag !== 'current') {
                 const parts = to.split('/');
                 parts.splice(1, 0, tag);

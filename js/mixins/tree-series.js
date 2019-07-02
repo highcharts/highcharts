@@ -1,7 +1,9 @@
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
 var extend = H.extend,
-    isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },

@@ -1,3 +1,105 @@
+QUnit.test('Ticks were drawn in break(#4485)', function (assert) {
+
+    $('#container').highcharts({
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickInterval: 1,
+            breaks: [{
+                from: 5,
+                to: 10,
+                breakSize: 1
+            }],
+            labels: {
+                format: '{value}{value}{value}'
+            }
+
+        },
+        series: [{
+            gapSize: 1,
+            data: (function () {
+                var data = [],
+                    i;
+                for (i = 0; i < 20; i = i + 1) {
+                    data.push(i);
+                }
+                return data;
+            }())
+
+        }]
+    });
+
+    var chart = $('#container').highcharts();
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.join(','),
+        '0,1,2,3,4,5,10,11,12,13,14,15,16,17,18,19',
+        'Skip ticks in break'
+    );
+
+});
+
+QUnit.test('alignTicks should consider only axes with series.(#4442)', function (assert) {
+    var chart = $('#container').highcharts({
+        yAxis: [{
+            endOnTick: false,
+            maxPadding: 0.0
+        }, {
+            endOnTick: false,
+            maxPadding: 0.0
+        }],
+        series: [{
+            data: [991, 455],
+            yAxis: 1
+        }]
+    }).highcharts();
+
+    assert.strictEqual(
+        chart.series[0].data[0].plotY,
+        0,
+        'Without extra padding'
+    );
+
+});
+
+QUnit.test('Prevent dense ticks(#4477)', function (assert) {
+
+
+    $('#container').highcharts({
+        chart: {
+            type: "bar"
+        },
+        title: {
+            text: 'Only first and last axis label should be kept'
+        },
+        yAxis: [{
+            labels: {
+                staggerLines: 1
+            },
+            tickInterval: 1
+        }],
+        series: [{
+            data: [100000],
+            type: "column"
+        }]
+    });
+
+    var chart = $('#container').highcharts();
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.length < chart.yAxis[0].len,
+        true,
+        'Not too many tick positions'
+    );
+});
+
+
+
 QUnit.test('Clip tickPositions when axis extremes are set(#4086)', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {

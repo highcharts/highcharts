@@ -37,7 +37,7 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): string;
+            (this: DataLabelsFormatterContextObject): (string|undefined);
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -48,7 +48,7 @@ declare global {
             y: (number|null);
         }
         interface DataLabelsOptionsObject {
-            align?: AlignValue;
+            align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: ColorString;
@@ -72,9 +72,9 @@ declare global {
             style?: CSSObject;
             textPath?: DataLabelsTextPath;
             useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
+            verticalAlign?: (VerticalAlignValue|null);
             x?: number;
-            y?: number;
+            y?: (number|null);
             zIndex?: number;
         }
         interface DataLabelsTextPath {
@@ -82,9 +82,17 @@ declare global {
             enabled?: boolean;
         }
         interface Point {
-            dataLabel: SVGElement;
-            dataLabels: Array<SVGElement>;
+            bottom?: number;
+            connector?: SVGElement;
+            connectors?: Array<SVGElement>;
+            contrastColor?: ColorString;
+            dataLabel?: SVGElement;
+            dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
+            isLabelJustified?: boolean;
+            /** @deprecated */
+            positionIndex?: unknown;
+            top?: number;
         }
         interface PointOptionsObject {
             dataLabels?: (
@@ -94,7 +102,9 @@ declare global {
             labelrank?: number;
         }
         interface Series {
-            dataLabelPositioners: SeriesDataLabelPositionersObject;
+            /** @deprecated */
+            dataLabelsGroup?: SVGElement;
+            dataLabelPositioners?: SeriesDataLabelPositionersObject;
             alignDataLabel(
                 point: Point,
                 dataLabel: SVGElement,
@@ -200,7 +210,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string}
+ * @return {string|undefined}
  *         Formatted data label text
  */
 
@@ -266,7 +276,7 @@ declare global {
  *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#align
- * @type {Highcharts.AlignValue|undefined}
+ * @type {Highcharts.AlignValue|null|undefined}
  * @default center
  *//**
  * Whether to allow data labels to overlap. To make the labels less sensitive
@@ -571,7 +581,7 @@ declare global {
  * chart, the label is above positive values and below negative values.
  *
  * @name Highcharts.DataLabelsOptionsObject#verticalAlign
- * @type {Highcharts.VerticalAlignValue|undefined}
+ * @type {Highcharts.VerticalAlignValue|null|undefined}
  * @since 2.3.3
  *//**
  * The x position offset of the label relative to the point in pixels.
@@ -641,7 +651,9 @@ declare global {
  * @type {number|undefined}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Series.js';
 
 var arrayMax = H.arrayMax,
@@ -656,7 +668,6 @@ var arrayMax = H.arrayMax,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort,
-    isArray = H.isArray,
     splat = H.splat;
 
 /* eslint-disable valid-jsdoc */
@@ -860,7 +871,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
         fadeInDuration = Math.min(seriesAnimDuration as any, 200),
         defer = !chart.renderer.forExport && pick(
-            seriesDlOptions.defer,
+            (seriesDlOptions as any).defer,
             fadeInDuration > 0
         ),
         renderer = chart.renderer;
@@ -871,7 +882,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
      */
     function applyFilter(
         point: Highcharts.Point,
-        options: Highcharts.PlotOptions
+        options: Highcharts.DataLabelsOptionsObject
     ): boolean {
         var filter = options.filter,
             op,
@@ -880,13 +891,13 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
 
         if (filter) {
             op = filter.operator;
-            prop = point[filter.property];
+            prop = (point as any)[filter.property];
             val = filter.value;
             if (
-                (op === '>' && prop > val) ||
-                (op === '<' && prop < val) ||
-                (op === '>=' && prop >= val) ||
-                (op === '<=' && prop <= val) ||
+                (op === '>' && prop > (val as any)) ||
+                (op === '<' && prop < (val as any)) ||
+                (op === '>=' && prop >= (val as any)) ||
+                (op === '<=' && prop <= (val as any)) ||
                 (op === '==' && prop == val) || // eslint-disable-line eqeqeq
                 (op === '===' && prop === val)
             ) {
@@ -957,19 +968,19 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         mergeArrays(
             chart.options.plotOptions &&
             chart.options.plotOptions.series &&
-            chart.options.plotOptions.series.dataLabels,
+            chart.options.plotOptions.series.dataLabels as any,
             chart.options.plotOptions &&
             chart.options.plotOptions[series.type] &&
-            chart.options.plotOptions[series.type].dataLabels
+            (chart.options.plotOptions[series.type] as any).dataLabels as any
         ),
-        seriesDlOptions
+        seriesDlOptions as any
     );
 
     H.fireEvent(this, 'drawDataLabels');
 
     if (
         isArray(seriesDlOptions) ||
-        seriesDlOptions.enabled ||
+        (seriesDlOptions as any).enabled ||
         series._hasPointLabels
     ) {
 
@@ -978,7 +989,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
             'dataLabelsGroup',
             'data-labels',
             defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-            seriesDlOptions.zIndex || 6
+            (seriesDlOptions as any).zIndex || 6
         );
 
         if (defer) {
@@ -990,9 +1001,12 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         if (series.visible) { // #2597, #3023, #3024
                             dataLabelsGroup.show(true);
                         }
-                        group[
+                        (group[
                             seriesOptions.animation ? 'animate' : 'attr'
-                        ]({ opacity: 1 }, { duration: fadeInDuration });
+                        ] as any)(
+                            { opacity: 1 },
+                            { duration: fadeInDuration }
+                        );
                     }
                 }, (seriesAnimDuration as any) - fadeInDuration);
             }
@@ -1006,7 +1020,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
             // the need for dlOptions, and simplify the section below.
             pointOptions = splat(
                 mergeArrays(
-                    seriesDlOptions,
+                    seriesDlOptions as any,
                     point.dlOptions || // dlOptions is used in treemaps
                         (point.options && point.options.dataLabels)
                 )
@@ -1073,7 +1087,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
                             point.contrastColor = renderer.getContrast(
-                                point.color || series.color
+                                (point.color as any) || (series.color as any)
                             );
                             (style as any).color = (
                                 !defined(labelDistance) &&
@@ -1126,7 +1140,8 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        point.connector = point.connector.destroy();
+                        point.connector =
+                            (point.connector as any).destroy() as any;
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {
@@ -1335,7 +1350,7 @@ Series.prototype.alignDataLabel = function (
             dataLabel.alignAttr = alignAttr;
 
         } else {
-            dataLabel.align(options, null as any, alignTo);
+            dataLabel.align(options as any, null as any, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 
@@ -1367,8 +1382,12 @@ Series.prototype.alignDataLabel = function (
         // arrow pointing to thie point
         if (options.shape && !rotation) {
             dataLabel[isNew ? 'attr' : 'animate']({
-                anchorX: inverted ? chart.plotWidth - point.plotY : point.plotX,
-                anchorY: inverted ? chart.plotHeight - point.plotX : point.plotY
+                anchorX: inverted ?
+                    chart.plotWidth - (point.plotY as any) :
+                    point.plotX,
+                anchorY: inverted ?
+                    chart.plotHeight - (point.plotX as any) :
+                    point.plotY
             });
         }
     }
@@ -1457,7 +1476,7 @@ Series.prototype.justifyDataLabel = function (
 
     if (justified) {
         dataLabel.placed = !isNew;
-        dataLabel.align(options, null as any, alignTo);
+        dataLabel.align(options as any, null as any, alignTo);
     }
 
     return justified;
@@ -1482,7 +1501,7 @@ if (seriesTypes.pie) {
             naturalY: number
         ): number {
             return series.getX(
-                y < point.top + 2 || y > point.bottom - 2 ?
+                y < (point.top as any) + 2 || y > (point.bottom as any) - 2 ?
                     naturalY :
                     y,
                 point.half,
@@ -1530,7 +1549,7 @@ if (seriesTypes.pie) {
 
             // find widest data label
             points.forEach(function (point: Highcharts.Point): void {
-                dataLabelWidth = point.dataLabel.getBBox().width;
+                dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
                 }
@@ -1555,7 +1574,7 @@ if (seriesTypes.pie) {
             point,
             chart = series.chart,
             options = series.options.dataLabels,
-            connectorPadding = options.connectorPadding,
+            connectorPadding = (options as any).connectorPadding,
             connectorWidth,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
@@ -1584,7 +1603,10 @@ if (seriesTypes.pie) {
             pointDataLabelsOptions;
 
         // get out if not enabled
-        if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
+        if (!series.visible ||
+            (!(options as any).enabled &&
+            !series._hasPointLabels)
+        ) {
             return;
         }
 
@@ -1618,7 +1640,7 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    if (!defined(options.style.width) &&
+                    if (!defined((options as any).style.width) &&
                         !defined(
                             point.options.dataLabels &&
                             (point.options.dataLabels as any).style &&
@@ -1700,7 +1722,7 @@ if (seriesTypes.pie) {
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
                         point.distributeBox = {
-                            target: point.labelPosition.natural.y -
+                            target: (point.labelPosition as any).natural.y -
                                 point.top + size / 2,
                             size: size,
                             rank: point.y
@@ -1724,7 +1746,7 @@ if (seriesTypes.pie) {
                 labelPosition = point.labelPosition;
                 dataLabel = point.dataLabel;
                 visibility = point.visible === false ? 'hidden' : 'inherit';
-                naturalY = labelPosition.natural.y;
+                naturalY = (labelPosition as any).natural.y;
                 y = naturalY;
 
                 if (positions && defined(point.distributeBox)) {
@@ -1733,27 +1755,28 @@ if (seriesTypes.pie) {
                     } else {
                         labelHeight = (point.distributeBox as any).size;
                         // Find label's y position
-                        y = dataLabelPositioners.radialDistributionY(point);
+                        y = (dataLabelPositioners as any)
+                            .radialDistributionY(point);
                     }
                 }
 
                 // It is needed to delete point.positionIndex for
                 // dynamically added points etc.
 
-                delete point.positionIndex;
+                delete point.positionIndex; // @todo unused
 
                 // Find label's x position
                 // justify is undocumented in the API - preserve support for it
-                if (options.justify) {
-                    x = dataLabelPositioners.justify(
+                if ((options as any).justify) {
+                    x = (dataLabelPositioners as any).justify(
                         point,
                         radius,
                         seriesCenter
                     );
                 } else {
-                    switch (options.alignTo) {
+                    switch ((options as any).alignTo) {
                     case 'connectors':
-                        x = dataLabelPositioners.alignToConnectors(
+                        x = (dataLabelPositioners as any).alignToConnectors(
                             points,
                             i as any,
                             plotWidth,
@@ -1761,15 +1784,15 @@ if (seriesTypes.pie) {
                         );
                         break;
                     case 'plotEdges':
-                        x = dataLabelPositioners.alignToPlotEdges(
-                            dataLabel,
+                        x = (dataLabelPositioners as any).alignToPlotEdges(
+                            dataLabel as any,
                             i as any,
                             plotWidth,
                             plotLeft
                         );
                         break;
                     default:
-                        x = dataLabelPositioners.radialDistributionX(
+                        x = (dataLabelPositioners as any).radialDistributionX(
                             series,
                             point,
                             y,
@@ -1779,32 +1802,32 @@ if (seriesTypes.pie) {
                 }
 
                 // Record the placement and visibility
-                dataLabel._attr = {
+                (dataLabel as any)._attr = {
                     visibility: visibility,
-                    align: labelPosition.alignment
+                    align: (labelPosition as any).alignment
                 };
 
-                dataLabel._pos = {
+                (dataLabel as any)._pos = {
                     x: (
                         x +
-                        options.x +
+                        (options as any).x +
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
-                        } as any)[labelPosition.alignment] || 0)
+                        } as any)[(labelPosition as any).alignment] || 0)
                     ),
 
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    y: y + (options as any).y - 10
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                labelPosition.final.x = x;
-                labelPosition.final.y = y;
+                (labelPosition as any).final.x = x;
+                (labelPosition as any).final.y = y;
 
                 // Detect overflowing data labels
-                if (pick(options.crop, true)) {
-                    dataLabelWidth = dataLabel.getBBox().width;
+                if (pick((options as any).crop, true)) {
+                    dataLabelWidth = (dataLabel as any).getBBox().width;
 
                     sideOverflow = null;
                     // Overflow left
@@ -1842,7 +1865,7 @@ if (seriesTypes.pie) {
                             overflow[2]
                         );
                     }
-                    dataLabel.sideOverflow = sideOverflow;
+                    (dataLabel as any).sideOverflow = sideOverflow;
                 }
             } // for each point
         }); // for each half
@@ -1861,8 +1884,9 @@ if (seriesTypes.pie) {
             this.points.forEach(function (point: Highcharts.Point): void {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
-                  merge(options, point.options.dataLabels);
-                connectorWidth = pick(pointDataLabelsOptions.connectorWidth, 1);
+                    merge(options, point.options.dataLabels);
+                connectorWidth =
+                    pick((pointDataLabelsOptions as any).connectorWidth, 1);
 
                 // Draw the connector
                 if (connectorWidth) {
@@ -1882,7 +1906,8 @@ if (seriesTypes.pie) {
                         isNew = !connector;
 
                         if (isNew) {
-                            point.connector = connector = chart.renderer.path()
+                            point.connector = connector = chart.renderer
+                                .path()
                                 .addClass(
                                     'highcharts-data-label-connector ' +
                                     ' highcharts-color-' + point.colorIndex +
@@ -1899,20 +1924,22 @@ if (seriesTypes.pie) {
                                 connector.attr({
                                     'stroke-width': connectorWidth,
                                     'stroke': (
-                                        pointDataLabelsOptions.connectorColor ||
+                                        (
+                                            pointDataLabelsOptions as any
+                                        ).connectorColor ||
                                         point.color ||
                                         '${palette.neutralColor60}'
                                     )
                                 });
                             }
                         }
-                        connector[isNew ? 'attr' : 'animate']({
+                        (connector as any)[isNew ? 'attr' : 'animate']({
                             d: point.getConnectorPath()
                         });
-                        connector.attr('visibility', visibility);
+                        (connector as any).attr('visibility', visibility);
 
                     } else if (connector) {
-                        point.connector = connector.destroy();
+                        point.connector = connector.destroy() as any;
                     }
                 }
             });
@@ -1990,7 +2017,7 @@ if (seriesTypes.pie) {
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
                             textOverflow: (
-                                (this.options.dataLabels.style || {})
+                                ((this.options.dataLabels as any).style || {})
                                     .textOverflow ||
                                 'ellipsis'
                             )
@@ -2010,7 +2037,7 @@ if (seriesTypes.pie) {
         }, this);
     };
 
-    seriesTypes.pie.prototype.alignDataLabel = noop;
+    seriesTypes.pie.prototype.alignDataLabel = noop as any;
 
     /**
      * Verify whether the data labels are allowed to draw, or we should run more
@@ -2122,7 +2149,8 @@ if (seriesTypes.column) {
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
                 point.below, // range series
-                point.plotY > pick(this.translatedThreshold, series.yAxis.len)
+                (point.plotY as any) >
+                    pick(this.translatedThreshold, series.yAxis.len)
             ),
             // draw it inside the box?
             inside = pick(options.inside, !!this.options.stacking),
@@ -2195,7 +2223,7 @@ if (seriesTypes.column) {
                     width: dataLabel.width - dataLabel.padding,
                     height: dataLabel.height - dataLabel.padding
                 },
-                point.shapeArgs
+                point.shapeArgs as any
             )
         ) {
             dataLabel.css({

@@ -34,6 +34,10 @@ declare global {
             ): void;
         }
         interface Point {
+            className?: string;
+            events?: SeriesEventsOptions;
+            hasImportedEvents?: boolean;
+            selectedStaging?: boolean;
             state?: string;
             haloPath(size: number): SVGElement;
             importEvents(): void;
@@ -61,9 +65,9 @@ declare global {
         interface Series {
             _hasTracking?: boolean;
             halo?: SVGElement;
-            state?: string;
             stateMarkerGraphic?: SVGElement;
             tracker?: SVGElement;
+            trackerGroups?: Array<string>;
             drawTracker: (
                 TrackerMixin['drawTrackerGraph']|
                 TrackerMixin['drawTrackerPoint']
@@ -135,7 +139,9 @@ declare global {
  *        Event that occured.
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const isArray = U.isArray;
+
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
@@ -152,7 +158,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isObject = H.isObject,
-    isArray = H.isArray,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
@@ -207,7 +212,7 @@ TrackerMixin = H.TrackerMixin = {
             if (point.graphic) {
                 point.graphic.element.point = point;
             }
-            dataLabels.forEach(function (
+            (dataLabels as any).forEach(function (
                 dataLabel: Highcharts.SVGElement
             ): void {
                 if (dataLabel.div) {
@@ -220,7 +225,7 @@ TrackerMixin = H.TrackerMixin = {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            series.trackerGroups.forEach(function (key: string): void {
+            (series.trackerGroups as any).forEach(function (key: string): void {
                 if ((series as any)[key]) {
                     // we don't always have dataLabelsGroup
                     (series as any)[key]
@@ -354,9 +359,9 @@ TrackerMixin = H.TrackerMixin = {
             // is covered by the marker group. So the marker group also needs to
             // capture events.
             [series.tracker, series.markerGroup].forEach(function (
-                tracker: Highcharts.SVGElement
+                tracker: (Highcharts.SVGElement|undefined)
             ): void {
-                tracker.addClass('highcharts-tracker')
+                (tracker as any).addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
                     .on('mouseout', function (
                         e: Highcharts.PointerEventObject
@@ -365,11 +370,11 @@ TrackerMixin = H.TrackerMixin = {
                     });
 
                 if (options.cursor && !chart.styledMode) {
-                    tracker.css({ cursor: options.cursor });
+                    (tracker as any).css({ cursor: options.cursor });
                 }
 
                 if (hasTouch) {
-                    tracker.on('touchstart', onMouseOver);
+                    (tracker as any).on('touchstart', onMouseOver);
                 }
             });
         }
@@ -486,8 +491,8 @@ extend(Legend.prototype, {
             .on('click', function (event: Highcharts.PointerEventObject): void {
                 var strLegendItemClick = 'legendItemClick',
                     fnLegendItemClick = function (): void {
-                        if (item.setVisible) {
-                            item.setVisible();
+                        if ((item as any).setVisible) {
+                            (item as any).setVisible();
                         }
                     };
 
@@ -883,7 +888,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                series.options.data[series.data.indexOf(point)] =
+                (series.options.data as any)[series.data.indexOf(point)] =
                     point.options;
 
                 point.setState((selected as any) && 'select');
@@ -898,7 +903,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            loopSeries.options.data[
+                            (loopSeries.options.data as any)[
                                 loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
 
@@ -983,7 +988,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     importEvents: function (this: Highcharts.Point): void {
         if (!this.hasImportedEvents) {
             var point = this,
-                options = merge(point.series.options.point, point.options),
+                options = merge(
+                    point.series.options.point,
+                    point.options
+                ) as Highcharts.SeriesOptionsType,
                 events = options.events;
 
             point.events = events;
@@ -1020,13 +1028,16 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         move?: boolean
     ): void {
         var point = this,
-            plotX = Math.floor(point.plotX), // #4586
+            plotX = Math.floor(point.plotX as any), // #4586
             plotY = point.plotY,
             series = point.series,
             previousState = point.state,
-            stateOptions = (series.options.states[state || 'normal'] || {}),
+            stateOptions = (
+                (series.options.states as any)[state || 'normal'] ||
+                {}
+            ),
             markerOptions = (
-                defaultPlotOptions[series.type].marker &&
+                (defaultPlotOptions as any)[series.type as any].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
@@ -1035,7 +1046,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 markerOptions.states &&
                 markerOptions.states[state || 'normal']
             ) || {}),
-            stateDisabled = markerStateOptions.enabled === false,
+            stateDisabled = (markerStateOptions as any).enabled === false,
             stateMarkerGraphic = series.stateMarkerGraphic,
             pointMarker = point.marker || {},
             chart = series.chart,
@@ -1062,7 +1073,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             // general point marker's state options is disabled
             (state && (
                 stateDisabled ||
-                (normalDisabled && markerStateOptions.enabled === false)
+                (normalDisabled &&
+                (markerStateOptions as any).enabled === false)
             )) ||
 
             // individual point marker's state options is disabled
@@ -1070,7 +1082,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 state &&
                 pointMarker.states &&
                 pointMarker.states[state] &&
-                pointMarker.states[state].enabled === false
+                (pointMarker.states[state] as any).enabled === false
             ) // #1610
 
         ) {
@@ -1138,8 +1150,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     pick(
                         // Turn off globally:
                         (chart.options.chart as any).animation,
-                        markerStateOptions.animation,
-                        markerOptions.animation
+                        (markerStateOptions as any).animation,
+                        (markerOptions as any).animation
                     )
                 );
             }
@@ -1169,10 +1181,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                             chart.renderer
                                 .symbol(
                                     newSymbol,
-                                    markerAttribs.x,
-                                    markerAttribs.y,
-                                    markerAttribs.width,
-                                    markerAttribs.height
+                                    (markerAttribs as any).x,
+                                    (markerAttribs as any).y,
+                                    (markerAttribs as any).width,
+                                    (markerAttribs as any).height
                                 )
                                 .add(series.markerGroup);
                         stateMarkerGraphic.currentSymbol = newSymbol;
@@ -1181,8 +1193,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // Move the existing graphic
                 } else {
                     stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-                        x: markerAttribs.x,
-                        y: markerAttribs.y
+                        x: (markerAttribs as any).x,
+                        y: (markerAttribs as any).y
                     });
                 }
 
@@ -1193,7 +1205,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             if (stateMarkerGraphic) {
                 stateMarkerGraphic[
-                    state && chart.isInsidePlot(plotX, plotY, chart.inverted) ?
+                    state &&
+                    chart.isInsidePlot(plotX, plotY as any, chart.inverted) ?
                         'show' :
                         'hide'
                 ](); // #2450
@@ -1221,10 +1234,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo.point = point; // #6055
 
             if (!chart.styledMode) {
-                halo.attr(extend({
-                    'fill': point.color || series.color,
-                    'fill-opacity': haloOptions.opacity
-                }, haloOptions.attributes));
+                halo.attr(extend(
+                    {
+                        'fill': point.color || series.color,
+                        'fill-opacity': haloOptions.opacity
+                    } as Highcharts.SVGAttributes,
+                    haloOptions.attributes
+                ));
             }
 
         } else if (halo && halo.point && halo.point.haloPath) {
@@ -1261,8 +1277,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             chart = series.chart;
 
         return chart.renderer.symbols.circle(
-            Math.floor(this.plotX) - size,
-            this.plotY - size,
+            Math.floor(this.plotX as any) - size,
+            (this.plotY as any) - size,
             size * 2,
             size * 2
         );
@@ -1291,7 +1307,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
         // trigger the event, but to save processing time,
         // only if defined
-        if (series.options.events.mouseOver) {
+        if ((series.options.events as any).mouseOver) {
             fireEvent(series, 'mouseOver');
         }
 
@@ -1331,7 +1347,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         // fire the mouse out event
-        if (series && options.events.mouseOut) {
+        if (series && (options.events as any).mouseOut) {
             fireEvent(series, 'mouseOut');
         }
 
@@ -1380,8 +1396,8 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             // slower to un-hover
             stateAnimation = pick(
                 (
-                    stateOptions[state || 'normal'] &&
-                    stateOptions[state || 'normal'].animation
+                    (stateOptions as any)[state || 'normal'] &&
+                    (stateOptions as any)[state || 'normal'].animation
                 ),
                 (series.chart.options.chart as any).animation
             ),
@@ -1414,20 +1430,21 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
             if (!series.chart.styledMode) {
 
-                if (
-                    stateOptions[state] &&
-                    stateOptions[state].enabled === false
+                if ((stateOptions as any)[state] &&
+                    (stateOptions as any)[state].enabled === false
                 ) {
                     return;
                 }
 
                 if (state) {
                     lineWidth = (
-                        stateOptions[state].lineWidth ||
-                        lineWidth + (stateOptions[state].lineWidthPlus || 0)
+                        (stateOptions as any)[state].lineWidth ||
+                        lineWidth + (
+                            (stateOptions as any)[state].lineWidthPlus || 0
+                        )
                     ); // #4035
                     opacity = pick(
-                        stateOptions[state].opacity,
+                        (stateOptions as any)[state].opacity,
                         opacity
                     );
                 }

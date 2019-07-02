@@ -25,7 +25,6 @@ declare global {
         interface Axis {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
-            minFromRange(): number;
         }
         interface Chart {
             extraBottomMargin?: boolean;
@@ -45,16 +44,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface RangeSelectorButtonsDataGroupingOptions {
-            approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: object;
-            enabled?: boolean;
-            forced?: boolean;
-            groupAll?: boolean;
-            groupPixelWidth?: number;
-            smoothed?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
-        }
         interface RangeSelectorButtonsEventsOptions {
             click?: RangeSelectorClickCallbackFunction;
         }
@@ -63,7 +52,7 @@ declare global {
             _offsetMin?: number;
             _range?: number;
             count?: number;
-            dataGrouping?: RangeSelectorButtonsDataGroupingOptions;
+            dataGrouping?: PlotSeriesDataGroupingOptions;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;
@@ -891,7 +880,7 @@ RangeSelector.prototype = {
             baseAxis.setExtremes(
                 newMin,
                 newMax,
-                pick(redraw, 1),
+                pick(redraw, 1 as any),
                 null as any, // auto animation
                 {
                     trigger: 'rangeSelectorButton',
@@ -1845,9 +1834,9 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
 
-            if (chart.titleOffset) {
+            if (chart.titleOffset && chart.titleOffset[0]) {
                 translateY =
-                    chart.titleOffset + (chart.options.title as any).margin;
+                    chart.titleOffset[0] + (chart.options.title as any).margin;
             }
 
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
@@ -2028,10 +2017,12 @@ RangeSelector.prototype = {
  *
  * @private
  * @function Highcharts.Axis#minFromRange
- * @return {number}
+ * @return {number|undefined}
  *         The new minimum value.
  */
-Axis.prototype.minFromRange = function (this: Highcharts.Axis): number {
+Axis.prototype.minFromRange = function (
+    this: Highcharts.Axis
+): (number|undefined) {
     var rangeOptions = this.range,
         type = (rangeOptions as any).type,
         timeName = ({

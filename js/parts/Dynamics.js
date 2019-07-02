@@ -9,12 +9,13 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var isArray = U.isArray, isString = U.isString;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, isObject = H.isObject, isArray = H.isArray, merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation, splat = H.splat;
+var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, isObject = H.isObject, merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -517,7 +518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if (H.isString(newHeight)) {
+        if (isString(newHeight)) {
             newHeight = H.relativeLength(newHeight, newWidth || chart.chartWidth);
         }
         if (
@@ -584,7 +585,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#update
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The point options. Point options are handled as described under
      *        the `series.type.data` item for each series type. For example
      *        for a line series, if options is a single number, the point will
@@ -716,7 +717,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#addPoint
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {Highcharts.PointOptionsType} options
      *        The point options. If options is a single number, a point with
      *        that y value is appended to the series. If it is an array, it will
      *        be interpreted as x and y values respectively. If it is an

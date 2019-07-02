@@ -71,10 +71,11 @@ declare global {
  */
 
 import './Chart.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+const isArray = U.isArray;
 
 var Chart = H.Chart,
-    isArray = H.isArray,
     isObject = H.isObject,
     pick = H.pick,
     splat = H.splat;
@@ -368,8 +369,10 @@ Chart.prototype.currentOptions = function (
             } else if (isObject(val)) {
                 ret[key] = isArray(val) ? [] : {};
                 getCurrent(val, curr[key] || {}, ret[key], depth + 1);
+            } else if (curr[key] === undefined) { // #10286
+                ret[key] = null;
             } else {
-                ret[key] = pick(curr[key], null);
+                ret[key] = curr[key];
             }
         });
     }
