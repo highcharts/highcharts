@@ -216,7 +216,8 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
-    isString
+    isString,
+    pInt
 } = U;
 
 import './Axis.js';
@@ -247,7 +248,6 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     Pointer = H.Pointer, // @todo add as requirement
     pick = H.pick,
-    pInt = H.pInt,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     splat = H.splat,

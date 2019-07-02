@@ -1213,9 +1213,9 @@ H.merge = function (): any {
  * @return {number}
  *         number
  */
-H.pInt = function (s: any, mag?: number): number {
+function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
-};
+}
 
 /**
  * Utility function to check for string type.
@@ -2327,7 +2327,7 @@ H.numberFormat = function (
     ).toFixed(decimals);
 
     // A string containing the positive integer component of the number
-    strinteger = String(H.pInt(roundedNumber));
+    strinteger = String(pInt(roundedNumber));
 
     // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
@@ -2452,7 +2452,7 @@ H.getStyle = function (
     if (style) {
         style = style.getPropertyValue(prop);
         if (H.pick(toInt, prop !== 'opacity')) {
-            style = H.pInt(style);
+            style = pInt(style);
         }
     }
     return style;
@@ -3260,7 +3260,8 @@ if ((win as any).jQuery) {
 // TODO use named exports when supported.
 const utils = {
     isArray,
-    isString
+    isString,
+    pInt
 };
 
 export default utils;

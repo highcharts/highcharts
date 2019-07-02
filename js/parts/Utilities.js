@@ -796,9 +796,9 @@ H.merge = function () {
  * @return {number}
  *         number
  */
-H.pInt = function (s, mag) {
+function pInt(s, mag) {
     return parseInt(s, mag || 10);
-};
+}
 /**
  * Utility function to check for string type.
  *
@@ -1721,7 +1721,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
     roundedNumber = (Math.abs(exponent[1] ? exponent[0] : number) +
         Math.pow(10, -Math.max(decimals, origDec) - 1)).toFixed(decimals);
     // A string containing the positive integer component of the number
-    strinteger = String(H.pInt(roundedNumber));
+    strinteger = String(pInt(roundedNumber));
     // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
     // Language
@@ -1816,7 +1816,7 @@ H.getStyle = function (el, prop, toInt) {
     if (style) {
         style = style.getPropertyValue(prop);
         if (H.pick(toInt, prop !== 'opacity')) {
-            style = H.pInt(style);
+            style = pInt(style);
         }
     }
     return style;
@@ -2487,6 +2487,7 @@ if (win.jQuery) {
 // TODO use named exports when supported.
 var utils = {
     isArray: isArray,
-    isString: isString
+    isString: isString,
+    pInt: pInt
 };
 export default utils;

@@ -7,7 +7,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var pInt = U.pInt;
+
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
@@ -18,7 +21,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    pInt = H.pInt,
     Tick = H.Tick,
     wrap = H.wrap,
     correctFloat = H.correctFloat,

@@ -1030,7 +1030,8 @@ Highcharts.Legend.prototype = {
         margin: Array<number>,
         spacing: Array<number>
     ): void {
-        var chart = this.chart,
+        var legend = this,
+            chart = this.chart,
             options = this.options,
             alignment = this.getAlignment(),
             titleMarginOption: number = (chart.options.title as any).margin,

@@ -19,12 +19,14 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var pInt = U.pInt;
+
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var pInt = H.pInt,
-    pick = H.pick,
+var pick = H.pick,
     isNumber = H.isNumber,
     wrap = H.wrap,
     Renderer = H.Renderer,

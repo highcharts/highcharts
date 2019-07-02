@@ -810,7 +810,8 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
-    isString
+    isString,
+    pInt
 } = U;
 
 import './Color.js';
@@ -840,7 +841,6 @@ var SVGElement: Highcharts.SVGElement,
     noop = H.noop,
     objectEach = H.objectEach,
     pick = H.pick,
-    pInt = H.pInt,
     removeEvent = H.removeEvent,
     splat = H.splat,
     stop = H.stop,
