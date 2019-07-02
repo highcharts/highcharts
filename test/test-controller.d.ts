@@ -3,25 +3,40 @@
  *  Copyright (c) Highsoft AS. All rights reserved.
  *
  *!*/
+/**
+ * DOM elements
+ */
 declare type HighchartsElement = (Highcharts.HTMLDOMElement | Highcharts.SVGDOMElement);
 /**
  * Contains x and y position relative to the chart.
  */
 declare type TestControllerPoint = [number, number];
+/**
+ * SVG clip paths
+ */
+interface ClipPaths {
+    elements: Array<HighchartsElement>;
+    values: Array<string>;
+}
+/**
+ * Chart position of a controller instance
+ */
 interface TestControllerPosition extends Highcharts.PositionObject {
     relatedTarget: (HighchartsElement | null);
 }
+/**
+ * Page coordinates of a controller instance
+ */
 interface TestControllerTouchPosition {
     pageX: number;
     pageY: number;
 }
+/**
+ * Touch coordinates
+ */
 interface TestControllerTouchPositions extends Array<TestControllerTouchPosition> {
     [index: number]: TestControllerTouchPosition;
     item?: (index: number) => TestControllerTouchPosition;
-}
-interface ClipPaths {
-    elements: Array<HighchartsElement>;
-    values: Array<string>;
 }
 /**
  * The test controller makes it easy to emulate mouse and touch stuff on the
@@ -67,19 +82,6 @@ declare class TestController {
     private positionX;
     private positionY;
     private relatedTarget;
-    /**
-     * Edge and IE are unable to get elementFromPoint when the group has a
-     * clip path. It reports the first underlying element with no clip path.
-     */
-    private setUpMSWorkaround;
-    /**
-     * Undo the workaround
-     *
-     * @param clipPaths
-     *        The clip paths that were returned from the `setUpMSWorkaround`
-     *        function
-     */
-    private tearDownMSWorkaround;
     /**
      * Simulates a mouse click.
      *
@@ -281,6 +283,11 @@ declare class TestController {
      */
     pinch(chartX?: number, chartY?: number, distance?: number, debug?: boolean): void;
     /**
+     * Edge and IE are unable to get elementFromPoint when the group has a
+     * clip path. It reports the first underlying element with no clip path.
+     */
+    private setUpMSWorkaround;
+    /**
      * Move the cursor position to a new position, without firing events.
      *
      * @param chartX
@@ -330,6 +337,14 @@ declare class TestController {
      *        test result.
      */
     tap(chartX?: number, chartY?: number, twoFingers?: boolean, debug?: boolean): void;
+    /**
+     * Undo the workaround for Edge and IE.
+     *
+     * @param clipPaths
+     *        The clip paths that were returned from the `setUpMSWorkaround`
+     *        function
+     */
+    private tearDownMSWorkaround;
     /**
      * Triggers touch ends events.
      *
