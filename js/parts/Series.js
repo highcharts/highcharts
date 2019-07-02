@@ -3666,7 +3666,9 @@ null,
         }
         // Build the line
         points.forEach(function (point, i) {
-            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], pathToPoint; // the path to this point from the previous
+            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], 
+            // the path to this point from the previous
+            pathToPoint;
             if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
                 !connectCliffs) {
                 gap = true; // ... and continue
@@ -3681,7 +3683,11 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = ['M', point.plotX, point.plotY];
+                    pathToPoint = [
+                        'M',
+                        point.plotX,
+                        point.plotY
+                    ];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
