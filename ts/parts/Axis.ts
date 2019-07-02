@@ -149,14 +149,14 @@ declare global {
             zIndex?: number;
         }
         interface XAxisDateTimeLabelFormatsOptions {
-            day?: XAxisDateTimeLabelFormatsSubOptions;
-            hour?: XAxisDateTimeLabelFormatsSubOptions;
-            millisecond?: XAxisDateTimeLabelFormatsSubOptions;
-            minute?: XAxisDateTimeLabelFormatsSubOptions;
-            month?: XAxisDateTimeLabelFormatsSubOptions;
-            second?: XAxisDateTimeLabelFormatsSubOptions;
-            week?: XAxisDateTimeLabelFormatsSubOptions;
-            year?: XAxisDateTimeLabelFormatsSubOptions;
+            day?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            hour?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            millisecond?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            minute?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            month?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            second?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            week?: (string|XAxisDateTimeLabelFormatsSubOptions);
+            year?: (string| XAxisDateTimeLabelFormatsSubOptions);
         }
         interface XAxisDateTimeLabelFormatsSubOptions {
             main?: string;
@@ -1244,31 +1244,55 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /**
+             * @type {string|*}
+             */
             millisecond: {
                 main: '%H:%M:%S.%L',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             second: {
                 main: '%H:%M:%S',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             minute: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             hour: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             day: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             week: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             month: {
                 main: '%b \'%y'
             },
+            /**
+             * @type {string|*}
+             */
             year: {
                 main: '%Y'
             }
