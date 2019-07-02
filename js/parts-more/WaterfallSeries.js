@@ -776,7 +776,7 @@ seriesType('waterfall', 'column', {
     },
     // Pass the null test in ColumnSeries.translate.
     isValid: function () {
-        return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
+        return isNumber(this.y) || this.isSum || this.isIntermediateSum;
     }
 
 });

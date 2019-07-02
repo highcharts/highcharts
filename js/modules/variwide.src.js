@@ -197,7 +197,7 @@ seriesType('variwide', 'column'
         // Point functions
     }, {
         isValid: function () {
-            return isNumber(this.y, true) && isNumber(this.z, true);
+            return isNumber(this.y) && isNumber(this.z);
         }
     });
 
