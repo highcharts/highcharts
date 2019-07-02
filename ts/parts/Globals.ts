@@ -100,7 +100,6 @@ declare global {
         interface Point {
             allowShadow?: unknown; // @todo
             below?: any; // @todo
-            dashStyle?: unknown; // @todo
             dataLabelOnNull?: any; // @todo
             dist?: any; // @todo
             distX?: any; // @todo
@@ -110,20 +109,16 @@ declare global {
             group?: any; // @todo
             half?: any; // @todo
             labelDistance?: any; // @todo
-            labelPosition?: any; // @todo
             name?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
             selected?: any; // @todo
-            shapeArgs?: any; // @todo
+            startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
             tooltipPos?: any; // @todo
             ttBelow?: any; // @todo
             zone?: any; // @todo
-            getConnectorPath: Function; // @todo
             getDataLabelPath: Function; // @todo
-            isValid: Function; // @todo
-            setVisible: Function; // @todo
         }
         interface PointOptionsObject {
             states?: any; // @todo
@@ -147,10 +142,10 @@ declare global {
             labelBySeries?: any; // @todo
             maxLabelDistance?: any; // @todo
             modifyValue?: any; // @todo
-            noSharedTooltip?: any; // @todo
             pointArrayMap?: any; // @todo
             pointAttrToOptions?: any; // @todo
             pointXOffset?: any; // @todo
+            radii?: any; // @todo
             resetZones?: any; // @todo
             showLine?: any; // @todo
             specialGroup?: any; // @todo
@@ -162,15 +157,13 @@ declare global {
             valueMin?: any; // @todo
             getPoint: Function; // @todo
             getPointSpline: Function; // @todo
-            getX: Function; // @todo
-            redrawPoints: Function; // @todo
-            sortByAngle: Function; // @todo
-            translate(position?: number): void; // @todo
             toYData: Function; // @todo
-            updateTotals: Function; // @todo
+        }
+        interface SeriesOptions {
+            endAngle?: any; // @todo
+            startAngle?: any; // @todo
         }
         interface SeriesStatesHoverOptions {
-            dashStyle?: unknown; // @todo
             opacity?: any; // @todo
         }
         interface SVGRenderer {

@@ -119,6 +119,10 @@ declare global {
             start?: number;
             width?: number;
         }
+        interface TranslationObject {
+            translateX: number;
+            translateY: number;
+        }
         class SVGElement {
             public constructor();
             [key: string]: any;

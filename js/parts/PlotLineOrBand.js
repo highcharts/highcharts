@@ -74,18 +74,15 @@ H.PlotLineOrBand.prototype = {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color;
-                attribs['stroke-width'] =
-                    options.width;
+                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs['stroke-width'] = pick(options.width, 1);
                 if (options.dashStyle) {
                     attribs.dashstyle =
                         options.dashStyle;
                 }
             }
             else if (isBand) { // plot band
-                if (color) {
-                    attribs.fill = color;
-                }
+                attribs.fill = color || '${palette.highlightColor10}';
                 if (options.borderWidth) {
                     attribs.stroke = options.borderColor;
                     attribs['stroke-width'] = options.borderWidth;
@@ -298,6 +295,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot band on Y axis
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   ${palette.highlightColor10}
      * @apioption xAxis.plotBands.color
      */
     /**
@@ -541,6 +539,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {Highcharts.ColorString}
+     * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */
     /**
@@ -620,6 +619,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {number}
+     * @default   2
      * @apioption xAxis.plotLines.width
      */
     /**

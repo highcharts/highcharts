@@ -21,7 +21,6 @@ declare global {
         interface CenteredSeriesMixin {
             getCenter(this: Series): Array<number>;
             getStartAndEndRadians(
-                this: Series,
                 start: number,
                 end: number
             ): RadianAngles;
@@ -129,7 +128,6 @@ H.CenteredSeriesMixin = {
      *         Returns an object containing start and end angles as radians.
      */
     getStartAndEndRadians: function (
-        this: Highcharts.Series,
         start: number,
         end: number
     ): Highcharts.RadianAngles {

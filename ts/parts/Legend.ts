@@ -1062,7 +1062,7 @@ Highcharts.Legend.prototype = {
                             [1, -1, -1, 1][side] * (options[
                                 (side % 2) ? 'x' : 'y'
                             ] as any) +
-                            pick(options.margin, 12) +
+                            pick(options.margin as any, 12) +
                             spacing[side] +
                             (
                                 side === 0 &&
