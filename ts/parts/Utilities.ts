@@ -148,7 +148,7 @@ declare global {
             styles: CSSObject
         ): void;
         function datePropsToTimestamps(object: any): void;
-        function defined(obj: any): boolean;
+        function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
         /** @deprecated */
@@ -1354,9 +1354,9 @@ H.erase = function (arr: Array<any>, item: any): void {
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-H.defined = function (obj: any): boolean {
+function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
-};
+}
 
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
@@ -1387,7 +1387,7 @@ H.attr = function (
     // if the prop is a string
     if (isString(prop)) {
         // set the value
-        if (H.defined(value)) {
+        if (defined(value)) {
             elem.setAttribute(prop as string, value as string);
 
         // get the value
@@ -1401,7 +1401,7 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (H.defined(prop) && H.isObject(prop)) {
+    } else if (defined(prop) && H.isObject(prop)) {
         H.objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
@@ -1467,7 +1467,7 @@ H.syncTimeout = function (
  * @return {void}
  */
 H.clearTimeout = function (id: number): void {
-    if (H.defined(id)) {
+    if (defined(id)) {
         clearTimeout(id);
     }
 };
@@ -3259,6 +3259,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    defined,
     isArray,
     isNumber,
     isString,

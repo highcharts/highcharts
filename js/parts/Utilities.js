@@ -924,9 +924,9 @@ H.erase = function (arr, item) {
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-H.defined = function (obj) {
+function defined(obj) {
     return typeof obj !== 'undefined' && obj !== null;
-};
+}
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
  * a key and a value, or let the second argument be a collection of keys and
@@ -951,7 +951,7 @@ H.attr = function (elem, prop, value) {
     // if the prop is a string
     if (isString(prop)) {
         // set the value
-        if (H.defined(value)) {
+        if (defined(value)) {
             elem.setAttribute(prop, value);
             // get the value
         }
@@ -964,7 +964,7 @@ H.attr = function (elem, prop, value) {
         }
         // else if prop is defined, it is a hash of key/value pairs
     }
-    else if (H.defined(prop) && H.isObject(prop)) {
+    else if (defined(prop) && H.isObject(prop)) {
         H.objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
@@ -1023,7 +1023,7 @@ H.syncTimeout = function (fn, delay, context) {
  * @return {void}
  */
 H.clearTimeout = function (id) {
-    if (H.defined(id)) {
+    if (defined(id)) {
         clearTimeout(id);
     }
 };
@@ -2486,6 +2486,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    defined: defined,
     isArray: isArray,
     isNumber: isNumber,
     isString: isString,

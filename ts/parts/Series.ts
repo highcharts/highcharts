@@ -606,6 +606,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     isString
@@ -623,7 +624,6 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    defined = H.defined,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
@@ -3322,7 +3322,7 @@ H.Series = H.seriesType(
                     x,
                     pointIndex,
                     optionsObject = (
-                        H.defined(pointOptions) &&
+                        defined(pointOptions) &&
                         this.pointClass.prototype.optionsToObject.call(
                             { series: this },
                             pointOptions

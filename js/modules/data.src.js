@@ -84,7 +84,8 @@
 import Highcharts from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined,
+    isNumber = U.isNumber;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -94,7 +95,6 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
-    defined = Highcharts.defined,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
     merge = Highcharts.merge,

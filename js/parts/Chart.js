@@ -57,13 +57,13 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, attr = H.attr, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, defined = H.defined, extend = H.extend, find = H.find, fireEvent = H.fireEvent, isObject = H.isObject, Legend = H.Legend, // @todo add as requirement
+createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, isObject = H.isObject, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, objectEach = H.objectEach, Pointer = H.Pointer, // @todo add as requirement
 pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, splat = H.splat, syncTimeout = H.syncTimeout, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */

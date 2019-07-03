@@ -257,6 +257,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
@@ -269,7 +270,6 @@ import './Series.js';
 
 var addEvent = H.addEvent,
     CenteredSeriesMixin = H.CenteredSeriesMixin,
-    defined = H.defined,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,

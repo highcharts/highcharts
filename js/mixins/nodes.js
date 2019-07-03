@@ -1,7 +1,9 @@
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 var pick = H.pick,
-    defined = H.defined,
     Point = H.Point;
 
 H.NodesMixin = {

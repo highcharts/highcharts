@@ -14,6 +14,7 @@ import H from './Globals.js';
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber,
     isString
 } = U;
@@ -240,7 +241,6 @@ declare global {
  */
 
 var doc = H.doc,
-    defined = H.defined,
     extend = H.extend,
     format = H.format,
     merge = H.merge,

@@ -728,6 +728,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     isString
@@ -744,7 +745,6 @@ var addEvent = H.addEvent,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     extend = H.extend,

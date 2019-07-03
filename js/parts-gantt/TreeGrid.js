@@ -12,7 +12,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
+var defined = U.defined,
+    isNumber = U.isNumber,
     isString = U.isString;
 
 import './GridAxis.js';
@@ -24,7 +25,6 @@ var addEvent = H.addEvent,
     argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
-    defined = H.defined,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,

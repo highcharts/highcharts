@@ -9,10 +9,10 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined,
+    isArray = U.isArray;
 
-var defined = H.defined,
-    SMA = H.seriesTypes.sma;
+var SMA = H.seriesTypes.sma;
 
 function destroyExtraLabels(point, functionName) {
     var props = point.series.pointArrayMap,

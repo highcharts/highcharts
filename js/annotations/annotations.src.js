@@ -11,7 +11,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isString = U.isString;
+var defined = U.defined,
+    isString = U.isString;
 
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
@@ -27,7 +28,6 @@ import ControlPoint from './ControlPoint.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    defined = H.defined,
     erase = H.erase,
     find = H.find,
     pick = H.pick,

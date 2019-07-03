@@ -296,6 +296,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     pInt
@@ -309,7 +310,6 @@ var VMLRenderer,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,

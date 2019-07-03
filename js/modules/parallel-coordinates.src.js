@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -26,7 +30,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     splat = H.splat,
     extend = H.extend,
-    defined = H.defined,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 

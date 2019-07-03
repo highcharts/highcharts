@@ -215,6 +215,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     isString,
@@ -237,7 +238,6 @@ var addEvent = H.addEvent,
     discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
-    defined = H.defined,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,

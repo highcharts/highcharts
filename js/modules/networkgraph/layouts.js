@@ -8,11 +8,15 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+
+import U from '../../parts/Utilities.js';
+var defined = U.defined;
+
+
 import 'integrations.js';
 import 'QuadTree.js';
 
 var pick = H.pick,
-    defined = H.defined,
     addEvent = H.addEvent,
     Chart = H.Chart;
 

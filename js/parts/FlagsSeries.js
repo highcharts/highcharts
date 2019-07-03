@@ -13,7 +13,8 @@
 import H from './Globals.js';
 
 import U from './Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined,
+    isNumber = U.isNumber;
 
 import './Series.js';
 import './SvgRenderer.js';
@@ -22,7 +23,6 @@ import onSeriesMixin from '../mixins/on-series.js';
 var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
-    defined = H.defined,
     Renderer = H.Renderer,
     Series = H.Series,
     seriesType = H.seriesType,
