@@ -144,8 +144,7 @@ seriesType(
                     correction = (
                         ((rightContY - leftContY) *
                         (rightContX - (plotX as any))) /
-                        ((rightContX - leftContX) +
-                        ((plotY as any) - rightContY))
+                        (rightContX - leftContX) + (plotY as any) - rightContY
                     );
                 }
 

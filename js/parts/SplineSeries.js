@@ -88,8 +88,7 @@ seriesType('spline', 'line',
             if (rightContX !== leftContX) { // #5016, division by zero
                 correction = (((rightContY - leftContY) *
                     (rightContX - plotX)) /
-                    ((rightContX - leftContX) +
-                        (plotY - rightContY)));
+                    (rightContX - leftContX) + plotY - rightContY);
             }
             leftContY += correction;
             rightContY += correction;
