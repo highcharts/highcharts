@@ -105,7 +105,6 @@ declare global {
             distX?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
-            doCurve?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
@@ -158,8 +157,6 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo
-            getPointSpline: Function; // @todo
-            getStackPoints: Function; // @todo
             toYData: Function; // @todo
         }
         interface SeriesOptions {
