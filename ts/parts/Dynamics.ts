@@ -351,7 +351,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Update text
         (chart.loadingSpan as any).innerHTML =
-            str || (options.lang as any).loading;
+            pick(str, (options.lang as any).loading, '');
 
         if (!chart.styledMode) {
             // Update visuals
