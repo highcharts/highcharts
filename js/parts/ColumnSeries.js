@@ -38,12 +38,13 @@ import H from './Globals.js';
 * @name Highcharts.PointOptionsObject#pointWidth
 * @type {number|undefined}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isNumber = U.isNumber;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, extend = H.extend, defined = H.defined, isNumber = H.isNumber, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var animObject = H.animObject, color = H.color, extend = H.extend, defined = H.defined, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
 /**
  * The column series type.
  *

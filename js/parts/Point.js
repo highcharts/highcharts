@@ -441,8 +441,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var isArray = U.isArray;
-var Point, H = Highcharts, extend = H.extend, erase = H.erase, fireEvent = H.fireEvent, format = H.format, isNumber = H.isNumber, pick = H.pick, uniqueKey = H.uniqueKey, defined = H.defined, removeEvent = H.removeEvent;
+var isArray = U.isArray, isNumber = U.isNumber;
+var Point, H = Highcharts, extend = H.extend, erase = H.erase, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, defined = H.defined, removeEvent = H.removeEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -590,7 +590,7 @@ Highcharts.Point.prototype = {
         if (pointValKey) {
             point.y = point[pointValKey];
         }
-        point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y, true)); // #3571, check for NaN
+        point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y)); // #3571, check for NaN
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
         // The point is initially selected by options (#5777)
         if (point.selected) {

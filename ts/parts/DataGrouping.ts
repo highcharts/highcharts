@@ -139,7 +139,11 @@ declare global {
  * @type {number}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isNumber
+} = U;
+
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
@@ -152,7 +156,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,

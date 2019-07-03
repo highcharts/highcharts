@@ -373,7 +373,7 @@ import H from './Globals.js';
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 import U from './Utilities.js';
-var isArray = U.isArray, isString = U.isString, pInt = U.pInt;
+var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt;
 import './Color.js';
 var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, erase = H.erase, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isObject = H.isObject, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, splat = H.splat, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
@@ -4224,7 +4224,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // only change local variables
         wrapper.widthSetter = function (value) {
             // width:auto => null
-            width = (H.isNumber(value) ? value : null);
+            width = isNumber(value) ? value : null;
         };
         wrapper.heightSetter = function (value) {
             height = value;

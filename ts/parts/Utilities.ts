@@ -620,7 +620,7 @@ H.error = function (
     stop?: boolean,
     chart?: Highcharts.Chart
 ): void {
-    var msg = H.isNumber(code) ?
+    var msg = isNumber(code) ?
             'Highcharts error #' + code + ': www.highcharts.com/errors/' +
             code :
             code,
@@ -1063,7 +1063,7 @@ H.Fx.prototype = {
             }
         }
 
-        if (start.length && H.isNumber(shift)) {
+        if (start.length && isNumber(shift)) {
 
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
@@ -1315,9 +1315,9 @@ H.isClass = function (obj: any): boolean {
  * @return {boolean}
  *         True if the item is a finite number
  */
-H.isNumber = function (n: unknown): n is number {
+function isNumber(n: unknown): n is number {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
-};
+}
 
 /**
  * Remove the last occurence of an item from an array.
@@ -2293,7 +2293,7 @@ H.numberFormat = function (
     if (decimals === -1) {
         // Preserve decimals. Not huge numbers (#3793).
         decimals = Math.min(origDec, 20);
-    } else if (!H.isNumber(decimals)) {
+    } else if (!isNumber(decimals)) {
         decimals = 2;
     } else if (decimals && exponent[1] && exponent[1] as any < 0) {
         // Expose decimals from exponential notation (#7042)
@@ -3069,7 +3069,7 @@ H.animate = function (
             complete: args[4]
         };
     }
-    if (!H.isNumber((opt as any).duration)) {
+    if (!isNumber((opt as any).duration)) {
         (opt as any).duration = 400;
     }
     (opt as any).easing = typeof (opt as any).easing === 'function' ?
@@ -3260,6 +3260,7 @@ if ((win as any).jQuery) {
 // TODO use named exports when supported.
 const utils = {
     isArray,
+    isNumber,
     isString,
     pInt
 };

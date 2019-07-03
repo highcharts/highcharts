@@ -39,12 +39,14 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 var fireEvent = H.fireEvent,
     defined = H.defined,
     pick = H.pick,
     extend = H.extend,
     merge = H.merge,
-    isNumber = H.isNumber,
     correctFloat = H.correctFloat,
     bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';

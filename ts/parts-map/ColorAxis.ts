@@ -113,7 +113,11 @@ declare global {
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    isNumber
+} = U;
+
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
@@ -125,7 +129,6 @@ var addEvent = H.addEvent,
     color = H.color,
     ColorAxis: Highcharts.ColorAxis,
     extend = H.extend,
-    isNumber = H.isNumber,
     Legend = H.Legend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,

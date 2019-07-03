@@ -11,6 +11,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
 import '../modules/static-scale.src.js';
@@ -19,7 +23,6 @@ import 'Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     seriesType = H.seriesType,

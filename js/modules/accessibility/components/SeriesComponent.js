@@ -11,6 +11,10 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+
+import U from '../../../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -1227,7 +1231,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 point.options.accessibility.description,
             timeDesc = point.getA11yTimeDescription(),
             numberFormat = function (value) {
-                if (H.isNumber(value)) {
+                if (isNumber(value)) {
                     var lang = H.defaultOptions.lang;
                     return H.numberFormat(
                         value,

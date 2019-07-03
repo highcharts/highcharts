@@ -9,15 +9,15 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var pInt = U.pInt;
+var isNumber = U.isNumber,
+    pInt = U.pInt;
 
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
 
-var isNumber = H.isNumber,
-    merge = H.merge,
+var merge = H.merge,
     noop = H.noop,
     pick = H.pick,
     Series = H.Series,

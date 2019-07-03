@@ -1,11 +1,12 @@
 'use strict';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+
+import U from '../../parts/Utilities.js';
+var isNumber = U.isNumber;
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
-    merge = H.merge,
-    isNumber = H.isNumber;
+    merge = H.merge;
 
 /**
  * @class

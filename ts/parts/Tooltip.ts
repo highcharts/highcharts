@@ -14,6 +14,7 @@ import H from './Globals.js';
 
 import U from './Utilities.js';
 const {
+    isNumber,
     isString
 } = U;
 
@@ -238,13 +239,10 @@ declare global {
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 
-import './Utilities.js';
-
 var doc = H.doc,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     splat = H.splat,

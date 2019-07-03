@@ -10,8 +10,10 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 var addEvent = H.addEvent,
-    isNumber = H.isNumber,
     setOptions = H.setOptions,
     each = H.each;
 

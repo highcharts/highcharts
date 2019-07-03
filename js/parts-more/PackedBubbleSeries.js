@@ -111,7 +111,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isNumber = U.isNumber;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -744,7 +745,7 @@ seriesType(
                     bBox[3] = max(bBox[3], p.plotY + radius);
                 }
             });
-            return H.isNumber(bBox.width / bBox.height) ? bBox : null;
+            return isNumber(bBox.width / bBox.height) ? bBox : null;
         },
         /**
          * The function responsible for calculating the parent node radius

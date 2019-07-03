@@ -7,7 +7,9 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
 
 var Chart = H.Chart,
     pick = H.pick;
@@ -33,7 +35,7 @@ H.addEvent(H.Axis, 'afterSetOptions', function () {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (
         !this.horiz &&
-        H.isNumber(this.options.staticScale) &&
+        isNumber(this.options.staticScale) &&
         (
             !chartOptions.height ||
             (

@@ -729,6 +729,7 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -750,7 +751,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    isNumber = H.isNumber,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     objectEach = H.objectEach,
