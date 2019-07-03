@@ -25,7 +25,7 @@ declare global {
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
         type SeriesType = (
-            CandlestickSeries|ColumnSeries|OHLCSeries|PieSeries|Series
+            CandlestickSeries|ColumnSeries|LineSeries|OHLCSeries|PieSeries
         );
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
