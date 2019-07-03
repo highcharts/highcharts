@@ -21,19 +21,18 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
     });
 
 
-    assert.close(
+    assert.strictEqual(
         chart.container.querySelector('.highcharts-stack-labels text')
-            .getBBox().y,
-        0,
-        1,
-        'The y attribute is around to 0.'
+            .getAttribute('y') !== null,
+        true,
+        'Y attribute is set (#8834)'
     );
 
     assert.strictEqual(
         chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
-        'Stack label is hidden.'
+        'Stack label is hidden (#8834)'
     );
 });
 
@@ -68,16 +67,19 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         firstStackLabel = stacks.column[0].label,
         lastStackLabel = stacks.column[3].label;
 
-    assert.strictEqual(
+    assert.close(
         firstStackLabel.alignAttr.x -
-        (firstStackLabel.getBBox().width / 2) >= 0,
-        true,
+        (firstStackLabel.getBBox().width / 2),
+        0,
+        0.5,
         'Stack label should be inside plot area left'
+        //0.5 is a value arised from difference between fonts
     );
-    assert.strictEqual(
+    assert.close(
         lastStackLabel.alignAttr.x +
-        (lastStackLabel.getBBox().width / 2) <= chart.plotWidth,
-        true,
+        (lastStackLabel.getBBox().width / 2),
+        chart.plotWidth,
+        0.5,
         'Stack label should be inside plot area right'
     );
 
