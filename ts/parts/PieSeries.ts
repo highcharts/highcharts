@@ -55,10 +55,12 @@ declare global {
         interface PieSeriesPositionObject extends PositionObject {
             alignment: AlignValue;
         }
-        interface PieSeriesStatesHoverOptions extends SeriesStatesHoverOptions {
+        interface PieSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions
+        {
             brightness?: number;
         }
-        interface PieSeriesStatesOptions extends SeriesStatesOptions {
+        interface PieSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: PieSeriesStatesHoverOptions;
         }
         class PiePoint extends LinePoint {
