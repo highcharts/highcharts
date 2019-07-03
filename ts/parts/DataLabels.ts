@@ -1127,7 +1127,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                 // If the point is outside the plot area, destroy it. #678, #820
                 if (dataLabel && (!labelEnabled || !defined(labelText))) {
                     point.dataLabel =
-                        point.dataLabel && point.dataLabel.destroy() as any;
+                        point.dataLabel && point.dataLabel.destroy();
                     if (point.dataLabels) {
                         // Remove point.dataLabels if this was the last one
                         if (point.dataLabels.length === 1) {
@@ -1141,7 +1141,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                     }
                     if (connector) {
                         point.connector =
-                            (point.connector as any).destroy() as any;
+                            (point.connector as any).destroy();
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {
@@ -1657,7 +1657,7 @@ if (seriesTypes.pie) {
                         }
                     }
                 } else {
-                    point.dataLabel = point.dataLabel.destroy() as any;
+                    point.dataLabel = point.dataLabel.destroy();
                     // Workaround to make pies destroy multiple datalabels
                     // correctly. This logic needs rewriting to support multiple
                     // datalabels fully.
@@ -1939,7 +1939,7 @@ if (seriesTypes.pie) {
                         (connector as any).attr('visibility', visibility);
 
                     } else if (connector) {
-                        point.connector = connector.destroy() as any;
+                        point.connector = connector.destroy();
                     }
                 }
             });

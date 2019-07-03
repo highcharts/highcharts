@@ -1375,7 +1375,7 @@ Highcharts.Legend.prototype = {
                         height: height
                     });
                 } else if (clipRect) { // Reset (#5912)
-                    legend.clipRect = clipRect.destroy() as any;
+                    legend.clipRect = clipRect.destroy();
                     legend.contentGroup.clip();
                 }
 
@@ -1520,7 +1520,7 @@ Highcharts.Legend.prototype = {
         // Reset
         } else if (nav) {
             clipToHeight();
-            this.nav = nav.destroy() as any; // #6322
+            this.nav = nav.destroy(); // #6322
             this.scrollGroup.attr({
                 translateY: 1
             });

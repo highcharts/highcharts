@@ -1055,7 +1055,8 @@ seriesType(
                     cy: centerY,
                     r: this.center[2] / 2,
                     fill: (options.fillColor as any) || 'none',
-                    stroke: (options.color as any) || '${palette.neutralColor20}'
+                    stroke: (options.color as any) ||
+                        '${palette.neutralColor20}'
                 });
 
             } else if (this.graph) { // Destroy the graph object.

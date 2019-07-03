@@ -282,6 +282,7 @@ seriesType('pie', 'line',
      *         Empty pie series
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   ${palette.neutralColor20}
      * @apioption plotOptions.pie.color
      */
     /**
@@ -816,7 +817,8 @@ seriesType('pie', 'line',
                 cy: centerY,
                 r: this.center[2] / 2,
                 fill: options.fillColor || 'none',
-                stroke: options.color || '${palette.neutralColor20}'
+                stroke: options.color ||
+                    '${palette.neutralColor20}'
             });
         }
         else if (this.graph) { // Destroy the graph object.

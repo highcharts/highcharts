@@ -2451,7 +2451,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.credits.update = function (
                 options: Highcharts.CreditsOptions
             ): void {
-                chart.credits = (chart.credits as any).destroy() as any;
+                chart.credits = (chart.credits as any).destroy();
                 chart.addCredits(options);
             };
         }

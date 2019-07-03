@@ -396,7 +396,7 @@ H.Tooltip.prototype = {
 
             if (tt) {
                 if (!tt.isActive || force) {
-                    series.tt = tt.destroy() as any;
+                    series.tt = tt.destroy();
                 } else {
                     tt.isActive = false;
                 }
@@ -605,11 +605,11 @@ H.Tooltip.prototype = {
     destroy: function (this: Highcharts.Tooltip): void {
         // Destroy and clear local variables
         if (this.label) {
-            this.label = this.label.destroy() as any;
+            this.label = this.label.destroy();
         }
         if (this.split && this.tt) {
             (this.cleanSplit as any)(this.chart, true);
-            this.tt = this.tt.destroy() as any;
+            this.tt = this.tt.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
