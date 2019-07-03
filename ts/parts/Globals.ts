@@ -105,7 +105,6 @@ declare global {
             distX?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
-            doCurve?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
