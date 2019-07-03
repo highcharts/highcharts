@@ -106,8 +106,9 @@ import H from './Globals.js';
 * @name Highcharts.RadialGradientColorObject#r
 * @type {number}
 */
-import './Utilities.js';
-var isNumber = H.isNumber, merge = H.merge, pInt = H.pInt;
+import U from './Utilities.js';
+var isNumber = U.isNumber, pInt = U.pInt;
+var merge = H.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Handle color operations. Some object methods are chainable.

@@ -84,7 +84,8 @@ import Highcharts from './Globals.js';
 * @name Highcharts.SeriesLegendItemClickEventObject#type
 * @type {"legendItemClick"}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isNumber = U.isNumber;
 var H = Highcharts, addEvent = H.addEvent, css = H.css, discardElement = H.discardElement, defined = H.defined, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, pick = H.pick, setAnimation = H.setAnimation, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -640,7 +641,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     adjustMargins: function (margin, spacing) {
-        var chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
+        var legend = this, chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
             chart.titleOffset[0] + titleMarginOption :
             0, titleMarginBottom = titleMarginOption !== undefined ?
             chart.titleOffset[2] + titleMarginOption :
@@ -685,7 +686,7 @@ Highcharts.Legend.prototype = {
                 lastPoint = H.find(useFirstPoint ?
                     item.points :
                     item.points.slice(0).reverse(), function (item) {
-                    return H.isNumber(item.plotY);
+                    return isNumber(item.plotY);
                 });
                 height = item.legendGroup.getBBox().height;
                 top = item.yAxis.top - chart.plotTop;

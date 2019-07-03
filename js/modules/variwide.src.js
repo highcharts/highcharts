@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/AreaSeries.js';
 
 var addEvent = H.addEvent,
@@ -193,7 +197,7 @@ seriesType('variwide', 'column'
         // Point functions
     }, {
         isValid: function () {
-            return H.isNumber(this.y, true) && H.isNumber(this.z, true);
+            return isNumber(this.y) && isNumber(this.z);
         }
     });
 

@@ -638,7 +638,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isNumber
+} = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
@@ -646,7 +649,6 @@ var Point: typeof Highcharts.Point,
     erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
-    isNumber = H.isNumber,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
     defined = H.defined,
@@ -836,7 +838,7 @@ Highcharts.Point.prototype = {
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
-            point.x === null || !(isNumber as any)(point.y, true)
+            point.x === null || !isNumber(point.y)
         ); // #3571, check for NaN
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874

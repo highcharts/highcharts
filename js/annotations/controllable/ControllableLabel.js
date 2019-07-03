@@ -1,6 +1,9 @@
 'use strict';
 import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
+
+import U from './../../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
@@ -467,7 +470,7 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
         yOffset,
         lateral = w / 2;
 
-    if (H.isNumber(anchorX) && H.isNumber(anchorY)) {
+    if (isNumber(anchorX) && isNumber(anchorY)) {
 
         path = ['M', anchorX, anchorY];
 

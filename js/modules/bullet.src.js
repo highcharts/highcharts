@@ -7,10 +7,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
 
 var pick = H.pick,
-    isNumber = H.isNumber,
     relativeLength = H.relativeLength,
     seriesType = H.seriesType,
     columnProto = H.seriesTypes.column.prototype;

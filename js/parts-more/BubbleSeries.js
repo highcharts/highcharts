@@ -11,7 +11,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber,
+    pInt = U.pInt;
+
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -23,10 +27,8 @@ var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     color = H.color,
-    isNumber = H.isNumber,
     noop = H.noop,
     pick = H.pick,
-    pInt = H.pInt,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -520,7 +522,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = series.zData.filter(H.isNumber);
+                zData = series.zData.filter(isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,

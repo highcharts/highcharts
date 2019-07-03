@@ -744,6 +744,7 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -765,7 +766,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    isNumber = H.isNumber,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     objectEach = H.objectEach,
@@ -3575,6 +3575,34 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @product highcharts
              */
             enabled: false,
+
+            /**
+             * Whether to hide stack labels that are outside the plot area.
+             * By default, the stack label is moved
+             * inside the plot area according to the
+             * [overflow](/highcharts/#yAxis/stackLabels/overflow)
+             * option.
+             *
+             * @type  {boolean}
+             * @since 7.1.3
+             */
+            crop: true,
+
+            /**
+             * How to handle stack total labels that flow outside the plot area.
+             * The default is set to `"justify"`,
+             * which aligns them inside the plot area.
+             * For columns and bars, this means it will be moved inside the bar.
+             * To display stack labels outside the plot area,
+             * set `crop` to `false` and `overflow` to `"allow"`.
+             *
+             * @sample highcharts/yaxis/stacklabels-overflow/
+             *         Stack labels flows outside the plot area.
+             *
+             * @type  {Highcharts.DataLabelsOverflowValue}
+             * @since 7.1.3
+             */
+            overflow: 'justify',
 
             /* eslint-disable valid-jsdoc */
             /**

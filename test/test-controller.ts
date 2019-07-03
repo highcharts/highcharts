@@ -96,8 +96,10 @@ class TestController {
     private static createTouchList (
         positions: TestControllerTouchPositions
     ): TestControllerTouchPositions {
-        positions.item = function (this: TestControllerTouchPositions, i: number) {
-            console.log(typeof this, Object.keys(this));
+        positions.item = function (
+            this: TestControllerTouchPositions,
+            i: number
+        ) {
             return this[i];
         };
         return positions;

@@ -607,6 +607,7 @@ declare global {
 import U from './Utilities.js';
 const {
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -626,7 +627,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     objectEach = H.objectEach,
@@ -4064,7 +4064,7 @@ H.Series = H.seriesType(
                 // For points within the visible range, including the first
                 // point outside the visible range (#7061), consider y extremes.
                 validValue = (
-                    ((isNumber as any)(y, true) || isArray(y)) &&
+                    (isNumber(y) || isArray(y)) &&
                     (!yAxis.positiveValuesOnly || ((y as any).length || y > 0))
                 );
                 withinRange = (

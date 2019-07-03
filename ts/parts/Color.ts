@@ -167,11 +167,13 @@ declare global {
  * @type {number}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    isNumber,
+    pInt
+} = U;
 
-var isNumber = H.isNumber,
-    merge = H.merge,
-    pInt = H.pInt;
+var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

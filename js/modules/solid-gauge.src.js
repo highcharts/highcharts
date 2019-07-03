@@ -19,13 +19,15 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber,
+    pInt = U.pInt;
+
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var pInt = H.pInt,
-    pick = H.pick,
-    isNumber = H.isNumber,
+var pick = H.pick,
     wrap = H.wrap,
     Renderer = H.Renderer,
     colorAxisMethods;

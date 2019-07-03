@@ -26,6 +26,9 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
@@ -33,7 +36,6 @@ var Series = H.Series,
     addEvent = H.addEvent,
     wrap = H.wrap,
     color = H.color,
-    isNumber = H.isNumber,
     numberFormat = H.numberFormat,
     objectEach = H.objectEach,
     merge = H.merge,

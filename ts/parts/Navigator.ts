@@ -179,7 +179,10 @@ declare global {
 }
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isNumber
+} = U;
 
 import './Color.js';
 import './Axis.js';
@@ -198,7 +201,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     hasTouch = H.hasTouch,
-    isNumber = H.isNumber,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     pick = H.pick,

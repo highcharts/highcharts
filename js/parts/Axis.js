@@ -205,11 +205,11 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var isArray = U.isArray, isString = U.isString;
+var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, isNumber = H.isNumber, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, splat = H.splat, syncTimeout = H.syncTimeout, Tick = H.Tick;
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, splat = H.splat, syncTimeout = H.syncTimeout, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -2826,6 +2826,32 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * @product highcharts
              */
             enabled: false,
+            /**
+             * Whether to hide stack labels that are outside the plot area.
+             * By default, the stack label is moved
+             * inside the plot area according to the
+             * [overflow](/highcharts/#yAxis/stackLabels/overflow)
+             * option.
+             *
+             * @type  {boolean}
+             * @since 7.1.3
+             */
+            crop: true,
+            /**
+             * How to handle stack total labels that flow outside the plot area.
+             * The default is set to `"justify"`,
+             * which aligns them inside the plot area.
+             * For columns and bars, this means it will be moved inside the bar.
+             * To display stack labels outside the plot area,
+             * set `crop` to `false` and `overflow` to `"allow"`.
+             *
+             * @sample highcharts/yaxis/stacklabels-overflow/
+             *         Stack labels flows outside the plot area.
+             *
+             * @type  {Highcharts.DataLabelsOverflowValue}
+             * @since 7.1.3
+             */
+            overflow: 'justify',
             /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is

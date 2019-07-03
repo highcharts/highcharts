@@ -52,7 +52,11 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    pInt
+} = U;
+
 import './SvgRenderer.js';
 
 var attr = H.attr,
@@ -64,7 +68,6 @@ var attr = H.attr,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     pick = H.pick,
-    pInt = H.pInt,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     win = H.win;

@@ -176,7 +176,8 @@ import H from './Globals.js';
 * @since 2.1.7
 * @product highcharts
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var isNumber = U.isNumber;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
@@ -1002,7 +1003,7 @@ seriesType('pie', 'line',
      * @return {boolean}
      */
     isValid: function () {
-        return H.isNumber(this.y, true) && this.y >= 0;
+        return isNumber(this.y) && this.y >= 0;
     },
     /**
      * Toggle the visibility of the pie slice

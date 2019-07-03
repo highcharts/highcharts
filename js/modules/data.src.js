@@ -82,7 +82,10 @@
 'use strict';
 
 import Highcharts from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 
@@ -94,7 +97,6 @@ var addEvent = Highcharts.addEvent,
     defined = Highcharts.defined,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
-    isNumber = Highcharts.isNumber,
     merge = Highcharts.merge,
     splat = Highcharts.splat,
     fireEvent = Highcharts.fireEvent,

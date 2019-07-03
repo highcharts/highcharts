@@ -14,12 +14,13 @@ import H from '../parts/Globals.js';
  *
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, ColorAxis, extend = H.extend, isNumber = H.isNumber, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, merge = H.merge, pick = H.pick;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, ColorAxis, extend = H.extend, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The ColorAxis object for inclusion in gradient legends.

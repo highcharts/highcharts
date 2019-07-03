@@ -295,7 +295,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isNumber,
+    pInt
+} = U;
 
 import '../parts/SvgRenderer.js';
 
@@ -312,12 +316,10 @@ var VMLRenderer,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    pInt = H.pInt,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
@@ -350,7 +352,7 @@ if (doc && !doc.defaultView) {
             } as Highcharts.Dictionary<string>)[prop];
 
         if (el.style[prop as any]) {
-            return H.pInt(el.style[prop as any]);
+            return pInt(el.style[prop as any]);
         }
         if (prop === 'opacity') {
             prop = 'filter';
@@ -380,7 +382,7 @@ if (doc && !doc.defaultView) {
             );
         }
 
-        return val === '' ? 1 : H.pInt(val);
+        return val === '' ? 1 : pInt(val);
     };
 }
 
