@@ -26,13 +26,18 @@ Highcharts.ajax({
 
             title: {
                 text: 'Periodic Table',
-                floating: true
+                floating: true,
+                x: 130,
+                y: 100,
+                align: 'left'
             },
 
             subtitle: {
                 text: 'Atomic mass',
                 floating: true,
-                y: 30
+                x: 130,
+                y: 120,
+                align: 'left'
             },
 
             xAxis: {
@@ -77,7 +82,24 @@ Highcharts.ajax({
                     format: '{point.options.symbol}'
                 },
                 borderColor: '#FFFFFF'
-            }]
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        title: {
+                            x: 60
+                        },
+
+                        subtitle: {
+                            x: 60
+                        }
+                    }
+                }]
+            }
         });
 
         // Change coloring
