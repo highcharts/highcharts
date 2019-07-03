@@ -4,6 +4,7 @@ js/modules/oldie-polyfills.src.js
 js/parts/AreaSeries.js
 js/parts/Axis.js
 js/parts/BarSeries.js
+js/parts/CandlestickSeries.js
 js/parts/Chart.js
 js/parts/Color.js
 js/parts/ColumnSeries.js

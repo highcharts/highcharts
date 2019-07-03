@@ -89,7 +89,6 @@ declare global {
             colorByPoint?: any; // @todo
             inactiveOtherPoints?: any; // @todo
             innerSize?: any; // @todo
-            lineColor?: any; // @todo
             minSize?: any; // @todo
             negativeFillColor?: any; // @todo
             size?: any; // @todo
@@ -100,6 +99,7 @@ declare global {
         interface Point {
             allowShadow?: unknown; // @todo
             below?: any; // @todo
+            close?: any; // @todo
             dataLabelOnNull?: any; // @todo
             dist?: any; // @todo
             distX?: any; // @todo
@@ -112,9 +112,12 @@ declare global {
             isCliff?: any; // @todo
             labelDistance?: any; // @todo
             name?: any; // @todo
+            open?: any; // @todo
+            plotClose?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
             rectPlotX?: any; // @todo
+            plotOpen?: any; // @todo
             selected?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
