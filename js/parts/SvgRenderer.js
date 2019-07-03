@@ -455,7 +455,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
      *        Animation options.
      *
      * @param {Function} [complete]

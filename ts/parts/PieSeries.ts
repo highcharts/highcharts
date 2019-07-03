@@ -18,60 +18,24 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PlotSeriesOptions {
-            ignoreHiddenPoint?: boolean;
-        }
-        interface Point {
-            angle?: number;
-            connectorShapes?: Dictionary<PointConnectorShapeFunction>;
-            delayedRendering?: boolean;
-            labelPosition?: PointLabelPositionObject;
-            shadowGroup?: SVGElement;
-            sliced?: boolean;
-            slicedTranslation?: TranslationObject;
-            getConnectorPath(): void;
-            getTranslate(): TranslationObject;
-            isValid(): boolean;
-            setVisible(vis: boolean, redraw?: boolean): void;
-            slice(
-                sliced: boolean,
-                redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject)
-            ): void;
-        }
-        interface PointConnectorShapeFunction {
+        interface PiePointConnectorShapeFunction {
             (...args: Array<any>): SVGPathArray;
         }
-        interface PointLabelConnectorPositionObject {
+        interface PiePointLabelConnectorPositionObject {
             breakAt: PositionObject;
             touchingSliceAt: PositionObject;
         }
-        interface PointLabelPositionObject {
+        interface PiePointLabelPositionObject {
             alignment: AlignValue;
-            connectorPosition: PointLabelConnectorPositionObject;
+            connectorPosition: PiePointLabelConnectorPositionObject;
             'final': Dictionary<undefined>;
             natural: PositionObject;
         }
-        interface PointOptionsObject {
+        interface PiePointOptions extends LinePointOptions {
             sliced?: boolean;
             visible?: boolean;
         }
-        interface SeriesPiePositionObject extends PositionObject {
-            alignment: AlignValue;
-        }
-        interface Series {
-            endAngleRad?: number;
-            getCenter: CenteredSeriesMixin['getCenter'];
-            shadowGroup?: SVGElement;
-            startAngleRad?: number;
-            total?: number;
-            getX(y: number, left: boolean, point: Point): number;
-            redrawPoints(): void;
-            sortByAngle(points: Array<Point>, sign: number): void;
-            translate(positions: Array<number>): void;
-            updateTotals(): void;
-        }
-        interface SeriesPieDataLabelsOptionsObject
+        interface PieSeriesDataLabelsOptionsObject
             extends DataLabelsOptionsObject
         {
             alignTo?: string;
@@ -82,6 +46,58 @@ declare global {
             crookDistance?: string;
             distance?: number;
             softConnector?: boolean;
+        }
+        interface PieSeriesOptions extends LineSeriesOptions {
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
+            ignoreHiddenPoint?: boolean;
+            states?: PieSeriesStatesOptions;
+        }
+        interface PieSeriesPositionObject extends PositionObject {
+            alignment: AlignValue;
+        }
+        interface PieSeriesStatesHoverOptions extends SeriesStatesHoverOptions {
+            brightness?: number;
+        }
+        interface PieSeriesStatesOptions extends SeriesStatesOptions {
+            hover?: PieSeriesStatesHoverOptions;
+        }
+        class PiePoint extends LinePoint {
+            public angle?: number;
+            public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
+            public delayedRendering?: boolean;
+            public labelPosition?: PiePointLabelPositionObject;
+            public options: PiePointOptions;
+            public series: PieSeries;
+            public shadowGroup?: SVGElement;
+            public sliced?: boolean;
+            public slicedTranslation?: TranslationAttributes;
+            public getConnectorPath(): void;
+            public getTranslate(): TranslationAttributes;
+            public isValid(): boolean;
+            public setVisible(vis: boolean, redraw?: boolean): void;
+            public slice(
+                sliced: boolean,
+                redraw?: boolean,
+                animation?: (boolean|AnimationOptionsObject)
+            ): void;
+        }
+        class PieSeries extends LineSeries {
+            public endAngleRad?: number;
+            public data: Array<PiePoint>;
+            public getCenter: CenteredSeriesMixin['getCenter'];
+            public options: PieSeriesOptions;
+            public points: Array<PiePoint>;
+            public shadowGroup?: SVGElement;
+            public startAngleRad?: number;
+            public total?: number;
+            public getX(y: number, left: boolean, point: PiePoint): number;
+            public redrawPoints(): void;
+            public sortByAngle(
+                points: Array<(PiePoint|Point)>,
+                sign: number
+            ): void;
+            public translate(positions?: Array<number>): void;
+            public updateTotals(): void;
         }
     }
 }
@@ -290,7 +306,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.PieSeriesOptions>(
     'pie',
     'line',
 
@@ -428,7 +444,7 @@ seriesType(
             connectorShape: 'fixedOffset',
             /** @ignore-option */
             crookDistance: '70%'
-        } as Highcharts.SeriesPieDataLabelsOptionsObject,
+        },
 
         /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
@@ -688,13 +704,13 @@ seriesType(
          *
          * @param {boolean} [init=false]
          */
-        animate: function (this: Highcharts.Series, init?: boolean): void {
+        animate: function (this: Highcharts.PieSeries, init?: boolean): void {
             var series = this,
                 points = series.points,
                 startAngleRad = series.startAngleRad;
 
             if (!init) {
-                points.forEach(function (point: Highcharts.Point): void {
+                points.forEach(function (point: Highcharts.PiePoint): void {
                     var graphic = point.graphic,
                         args = point.shapeArgs;
 
@@ -723,7 +739,7 @@ seriesType(
 
         // Define hasData function for non-cartesian series.
         // Returns true if the series has points at all.
-        hasData: function (this: Highcharts.Series): boolean {
+        hasData: function (this: Highcharts.PieSeries): boolean {
             return !!(this.processedXData as any).length; // != 0
         },
 
@@ -734,7 +750,7 @@ seriesType(
          * @function Highcharts.seriesTypes.pie#updateTotals
          * @return {void}
          */
-        updateTotals: function (this: Highcharts.Series): void {
+        updateTotals: function (this: Highcharts.PieSeries): void {
             var i,
                 total = 0,
                 points = this.points,
@@ -770,7 +786,7 @@ seriesType(
          * @function Highcharts.seriesTypes.pie#generatePoints
          * @return {void}
          */
-        generatePoints: function (this: Highcharts.Series): void {
+        generatePoints: function (this: Highcharts.PieSeries): void {
             Series.prototype.generatePoints.call(this);
             this.updateTotals();
         },
@@ -782,10 +798,10 @@ seriesType(
          * @private
          */
         getX: function (
-            this: Highcharts.Series,
+            this: Highcharts.PieSeries,
             y: number,
             left: boolean,
-            point: Highcharts.Point
+            point: Highcharts.PiePoint
         ): number {
             var center = this.center,
                 // Variable pie has individual radius
@@ -824,12 +840,12 @@ seriesType(
          *
          * @private
          * @function Highcharts.seriesTypes.pie#translate
-         * @param {Array<number>} positions
+         * @param {Array<number>} [positions]
          * @return {void}
          */
         translate: function (
-            this: Highcharts.Series,
-            positions: Array<number>
+            this: Highcharts.PieSeries,
+            positions?: Array<number>
         ): void {
             this.generatePoints();
 
@@ -1002,7 +1018,7 @@ seriesType(
          * @function Highcharts.seriesTypes.pie#drawPoints
          * @return {void}
          */
-        redrawPoints: function (this: Highcharts.Series): void {
+        redrawPoints: function (this: Highcharts.PieSeries): void {
             var series = this,
                 chart = series.chart,
                 renderer = chart.renderer,
@@ -1019,7 +1035,7 @@ seriesType(
             }
 
             // draw the slices
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (point: Highcharts.PiePoint): void {
                 var animateTo = {};
                 graphic = point.graphic;
                 if (!point.isNull && graphic) {
@@ -1083,7 +1099,7 @@ seriesType(
                     graphic.addClass(point.getClassName());
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy();
+                    point.graphic = graphic.destroy() as any;
                 }
             });
 
@@ -1094,10 +1110,10 @@ seriesType(
          * animations are normally run in `drawPoints()`.
          * @private
          */
-        drawPoints: function (this: Highcharts.Series): void {
+        drawPoints: function (this: Highcharts.PieSeries): void {
             var renderer = this.chart.renderer;
 
-            this.points.forEach(function (point: Highcharts.Point): void {
+            this.points.forEach(function (point: Highcharts.PiePoint): void {
                 if (!point.graphic) {
                     point.graphic = (renderer as any)[point.shapeType as any](
                         point.shapeArgs
@@ -1124,13 +1140,13 @@ seriesType(
          * @return {void}
          */
         sortByAngle: function (
-            this: Highcharts.Series,
-            points: Array<Highcharts.Point>,
+            this: Highcharts.PieSeries,
+            points: Array<Highcharts.PiePoint>,
             sign: number
         ): void {
             points.sort(function (
-                a: Highcharts.Point,
-                b: Highcharts.Point
+                a: Highcharts.PiePoint,
+                b: Highcharts.PiePoint
             ): number {
                 return (
                     ((a.angle !== undefined) as any) &&
@@ -1178,7 +1194,7 @@ seriesType(
          * @function Highcharts.seriesTypes.pie#pointClass#init
          * @return {Highcharts.Point}
          */
-        init: function (this: Highcharts.Point): Highcharts.Point {
+        init: function (this: Highcharts.PiePoint): Highcharts.PiePoint {
 
             Point.prototype.init.apply(this, arguments as any);
 
@@ -1206,7 +1222,7 @@ seriesType(
          * @function Highcharts.seriesTypes.pie#pointClass#isValid
          * @return {boolean}
          */
-        isValid: function (this: Highcharts.Point): boolean {
+        isValid: function (this: Highcharts.PiePoint): boolean {
             return isNumber(this.y) && this.y >= 0;
         },
 
@@ -1222,7 +1238,7 @@ seriesType(
          * @return {void}
          */
         setVisible: function (
-            this: Highcharts.Point,
+            this: Highcharts.PiePoint,
             vis: boolean,
             redraw?: boolean
         ): void {
@@ -1287,7 +1303,7 @@ seriesType(
          * @return {void}
          */
         slice: function (
-            this: Highcharts.Point,
+            this: Highcharts.PiePoint,
             sliced: boolean,
             redraw?: boolean,
             animation?: (boolean|Highcharts.AnimationOptionsObject)
@@ -1314,7 +1330,7 @@ seriesType(
             (series.options.data as any)[series.data.indexOf(point)] =
                 point.options;
 
-            point.graphic.animate(this.getTranslate());
+            (point.graphic as any).animate(this.getTranslate());
 
             if (point.shadowGroup) {
                 point.shadowGroup.animate(this.getTranslate());
@@ -1324,11 +1340,11 @@ seriesType(
         /**
          * @private
          * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
-         * @return {Highcharts.TranslationObject}
+         * @return {Highcharts.TranslationAttributes}
          */
         getTranslate: function (
-            this: Highcharts.Point
-        ): Highcharts.TranslationObject {
+            this: Highcharts.PiePoint
+        ): Highcharts.TranslationAttributes {
             return this.sliced ? (this.slicedTranslation as any) : {
                 translateX: 0,
                 translateY: 0
@@ -1342,7 +1358,7 @@ seriesType(
          * @return {Highcharts.SVGPathArray}
          */
         haloPath: function (
-            this: Highcharts.Point,
+            this: Highcharts.PiePoint,
             size: number
         ): Highcharts.SVGPathArray {
             var shapeArgs = this.shapeArgs;
@@ -1366,9 +1382,11 @@ seriesType(
         connectorShapes: {
         // only one available before v7.0.0
             fixedOffset: function (
-                labelPosition: Highcharts.SeriesPiePositionObject,
-                connectorPosition: Highcharts.PointLabelConnectorPositionObject,
-                options: Highcharts.SeriesPieDataLabelsOptionsObject
+                labelPosition: Highcharts.PieSeriesPositionObject,
+                connectorPosition: (
+                    Highcharts.PiePointLabelConnectorPositionObject
+                ),
+                options: Highcharts.PieSeriesDataLabelsOptionsObject
             ): Highcharts.SVGPathArray {
                 var breakAt = connectorPosition.breakAt,
                     touchingSliceAt = connectorPosition.touchingSliceAt,
@@ -1404,8 +1422,10 @@ seriesType(
             },
 
             straight: function (
-                labelPosition: Highcharts.SeriesPiePositionObject,
-                connectorPosition: Highcharts.PointLabelConnectorPositionObject
+                labelPosition: Highcharts.PieSeriesPositionObject,
+                connectorPosition: (
+                    Highcharts.PiePointLabelConnectorPositionObject
+                )
             ): Highcharts.SVGPathArray {
                 var touchingSliceAt = connectorPosition.touchingSliceAt;
 
@@ -1421,10 +1441,12 @@ seriesType(
             },
 
             crookedLine: function (
-                this: Highcharts.Point,
-                labelPosition: Highcharts.SeriesPiePositionObject,
-                connectorPosition: Highcharts.PointLabelConnectorPositionObject,
-                options: Highcharts.SeriesPieDataLabelsOptionsObject
+                this: Highcharts.PiePoint,
+                labelPosition: Highcharts.PieSeriesPositionObject,
+                connectorPosition: (
+                    Highcharts.PiePointLabelConnectorPositionObject
+                ),
+                options: Highcharts.PieSeriesDataLabelsOptionsObject
             ): Highcharts.SVGPathArray {
 
                 var touchingSliceAt = connectorPosition.touchingSliceAt,
@@ -1474,7 +1496,7 @@ seriesType(
          * Extendable method for getting the path of the connector between the
          * data label and the pie slice.
          */
-        getConnectorPath: function (this: Highcharts.Point): void {
+        getConnectorPath: function (this: Highcharts.PiePoint): void {
             var labelPosition = this.labelPosition,
                 options = this.series.options.dataLabels,
                 connectorShape = (options as any).connectorShape,

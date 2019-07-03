@@ -236,15 +236,15 @@ declare global {
             base: number,
             offset?: number
         ): number;
-        function removeEvent<T> (
+        function removeEvent<T>(
             el: T,
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType(
+        function seriesType<TOptions extends SeriesOptions>(
             type: string,
             parent: string,
-            options: SeriesOptionsType,
+            options: TOptions,
             props: Dictionary<any>,
             pointProps?: Dictionary<any>
         ): typeof Series;

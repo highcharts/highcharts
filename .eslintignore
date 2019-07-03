@@ -5,6 +5,7 @@ js/parts/AreaSplineSeries.js
 js/parts/AreaSeries.js
 js/parts/Axis.js
 js/parts/BarSeries.js
+js/parts/CandlestickSeries.js
 js/parts/Chart.js
 js/parts/Color.js
 js/parts/ColumnSeries.js
@@ -19,6 +20,7 @@ js/parts/Legend.js
 js/parts/LogarithmicAxis.js
 js/parts/MSPointer.js
 js/parts/Navigator.js
+js/parts/OHLCSeries.js
 js/parts/Options.js
 js/parts/OrdinalAxis.js
 js/parts/PieSeries.js

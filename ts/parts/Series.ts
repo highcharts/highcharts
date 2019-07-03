@@ -24,6 +24,9 @@ declare global {
         type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
+        type SeriesType = (
+            CandlestickSeries|ColumnSeries|OHLCSeries|PieSeries|Series
+        );
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
             left?: KDNode;
@@ -33,6 +36,17 @@ declare global {
         interface KDPointSearchObject {
             clientX: number;
             plotY: number;
+        }
+        interface LinePointOptions extends PointOptionsObject {
+        }
+        interface LineSeriesOptions extends SeriesOptions {
+            states?: LineSeriesStatesOptions;
+        }
+        interface LineSeriesStatesHoverOptions
+            extends SeriesStatesHoverOptions
+        {}
+        interface LineSeriesStatesOptions extends SeriesStatesOptions {
+            hover?: LineSeriesStatesHoverOptions;
         }
         interface PlotOptions {
             [key: string]: PlotSeriesOptions;
@@ -122,6 +136,7 @@ declare global {
             isInside?: boolean;
             low?: number;
             negative?: boolean;
+            options: PointOptionsObject;
             plotX?: number;
             plotY?: number;
             stackTotal?: number;
@@ -186,10 +201,12 @@ declare global {
         }
         interface SeriesOptions extends PlotSeriesOptions {
             data?: Array<PointOptionsType>;
+            grouping?: boolean;
             id?: string;
             index?: number;
             kdNow?: boolean;
             legendIndex?: number;
+            lineColor?: ColorString;
             name?: string;
             selected?: boolean;
             stack?: (object|string);
@@ -227,15 +244,18 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
         }
         interface SeriesStatesOptions {
-            [key: string]: (
-                SeriesStatesHoverOptions |
-                SeriesStatesInactiveOptions |
-                SeriesStatesNormalOptions |
-                undefined
-            );
             hover?: SeriesStatesHoverOptions;
             inactive?: SeriesStatesInactiveOptions;
             normal?: SeriesStatesNormalOptions;
+        }
+        class LinePoint extends Point {
+            public options: LinePointOptions;
+            public series: LineSeries;
+        }
+        class LineSeries extends Series {
+            public data: Array<LinePoint>;
+            public options: LineSeriesOptions;
+            public points: Array<LinePoint>;
         }
         class Series {
             public constructor(chart?: Chart, options?: SeriesOptionsType);
@@ -369,6 +389,7 @@ declare global {
             public pointPlacementToXValue(): number;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
+            public redrawPoints(): void;
             public render(): void;
             public searchKDTree(
                 point: KDPointSearchObject,
@@ -389,6 +410,7 @@ declare global {
             public setOptions(
                 itemOptions: SeriesOptionsType
             ): SeriesOptionsType;
+            public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(data: Array<PointOptionsType>): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
@@ -702,7 +724,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType(
+H.Series = H.seriesType<Highcharts.SeriesOptions>(
     'line',
 
     /**
@@ -3016,8 +3038,10 @@ H.Series = H.seriesType(
             fireEvent(this, 'setOptions', e);
 
             // These may be modified by the event
-            var userPlotOptions = userOptions.plotOptions || {},
-                typeOptions = (e.plotOptions as any)[this.type];
+            var typeOptions = (e.plotOptions as any)[this.type],
+                userPlotOptions = (
+                    userOptions.plotOptions || {} as Highcharts.PlotOptions
+                );
 
             // use copy to prevent undetected changes (#9762)
             this.userOptions = e.userOptions;
@@ -4685,7 +4709,7 @@ H.Series = H.seriesType(
                         }
 
                     } else if (graphic) {
-                        point.graphic = graphic.destroy(); // #1269
+                        point.graphic = graphic.destroy() as any; // #1269
                     }
                 }
             }
@@ -5549,7 +5573,9 @@ H.Series = H.seriesType(
          *
          * @return {Highcharts.SeriesPlotBoxObject}
          */
-        getPlotBox: function (): Highcharts.SeriesPlotBoxObject {
+        getPlotBox: function (
+            this: Highcharts.Series
+        ): Highcharts.SeriesPlotBoxObject {
             var chart = this.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis;
