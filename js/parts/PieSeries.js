@@ -267,10 +267,9 @@ seriesType('pie', 'line',
      */
     center: [null, null],
     /**
-     * The main color of the series. The default value is pulled from the
-     * `options.colors` array. Pie series is represented as an empty circle
-     * if total sum of its values is 0. Use this property to define the
-     * color of its border.
+     * The color of the pie series. A pie series is represented as an empty
+     * circle if the total sum of its values is 0. Use this property to
+     * define the color of its border.
      *
      * In styled mode, the color can be defined by the
      * [colorIndex](#plotOptions.series.colorIndex) option. Also, the series
@@ -279,16 +278,8 @@ seriesType('pie', 'line',
      * `.highcharts-series-{n}` class, or individual classes given by the
      * `className` option.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-color-general/
-     *         General plot option
-     * @sample {highcharts} highcharts/plotoptions/series-color-specific/
-     *         One specific series
-     * @sample {highcharts} highcharts/plotoptions/series-color-area/
-     *         Area color
-     * @sample {highcharts} highcharts/series/infographic/
-     *         Pattern fill
-     * @sample {highmaps} maps/demo/category-map/
-     *         Category map by multiple series
+     * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+     *         Empty pie series
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.pie.color
@@ -348,13 +339,13 @@ seriesType('pie', 'line',
         crookDistance: '70%'
     },
     /**
-     * The series is represented as an empty circle if total sum of its
-     * values is 0. `fillColor` defines the color of that circle.
-     * Use [pie.lineWidth](#plotOptions.pie.lineWidth) to manipulate the
-     * border thickness.
+     * If the total sum of the pie's values is 0, the series is represented
+     * as an empty circle . The `fillColor` option defines the color of that
+     * circle. Use [pie.borderWidth](#plotOptions.pie.borderWidth) to set
+     * the border thickness.
      *
      * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
-     *         Empty pie styled
+     *         Empty pie series
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @private
@@ -424,17 +415,6 @@ seriesType('pie', 'line',
      * @private
      */
     legendType: 'point',
-    /**
-     * The series is represented as an empty circle if total sum of its
-     * values is 0. `lineWidth` defines thickness of that circle. Use
-     * [pie.fillColor](#plotOptions.pie.fillColor) to manipulate its color.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
-     *         Empty pie styled
-     *
-     * @product highcharts
-     */
-    lineWidth: 2,
     /**
      * @ignore-option
      *
@@ -817,9 +797,9 @@ seriesType('pie', 'line',
      * regular graph.
      *
      * @private
-     * @function Highcharts.seriesTypes.pie#drawGraph
+     * @function Highcharts.seriesTypes.pie#drawEmpty
      */
-    drawGraph: function () {
+    drawEmpty: function () {
         var centerX, centerY, options = this.options;
         // Draw auxiliary graph if there're no visible points.
         if (this.total === 0) {
@@ -831,13 +811,12 @@ seriesType('pie', 'line',
                     .add(this.group);
             }
             this.graph.animate({
-                'stroke-width': options.lineWidth,
+                'stroke-width': options.borderWidth,
                 cx: centerX,
                 cy: centerY,
-                r: (this.center[2] / 2 -
-                    options.dataLabels.distance),
+                r: this.center[2] / 2,
                 fill: options.fillColor || 'none',
-                stroke: options.color || options.supportingColor
+                stroke: options.color || '${palette.neutralColor20}'
             });
         }
         else if (this.graph) { // Destroy the graph object.
@@ -853,6 +832,7 @@ seriesType('pie', 'line',
      */
     redrawPoints: function () {
         var series = this, chart = series.chart, renderer = chart.renderer, groupTranslation, graphic, pointAttr, shapeArgs, shadow = series.options.shadow;
+        this.drawEmpty();
         if (shadow && !series.shadowGroup && !chart.styledMode) {
             series.shadowGroup = renderer.g('shadow')
                 .attr({ zIndex: -1 })
@@ -970,7 +950,12 @@ seriesType('pie', 'line',
      * @private
      * @function Highcharts.seriesTypes.pie#getSymbol
      */
-    getSymbol: noop
+    getSymbol: noop,
+    /**
+     * @private
+     * @type {null}
+     */
+    drawGraph: null
 }, 
 /**
  * @lends seriesTypes.pie.prototype.pointClass.prototype

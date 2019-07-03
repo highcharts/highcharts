@@ -3187,9 +3187,6 @@ H.Series = H.seriesType(
                 this.getCyclic('color');
 
             } else if (this.options.colorByPoint) {
-                // #5526, supporting color is used for empty series graphic.
-                this.options.supportingColor = this.options.color;
-
                 // #4359, selected slice got series.color even when colorByPoint
                 // was set.
                 this.options.color = null as any;

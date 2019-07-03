@@ -19,7 +19,7 @@ Highcharts.chart('container', {
             y: 0,
             name: 'Point 3.'
         }],
-        lineWidth: 5,
+        borderWidth: 2,
         color: '#c0ffee'
     }]
 });
