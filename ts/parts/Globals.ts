@@ -157,6 +157,7 @@ declare global {
             valueMin?: any; // @todo
             getPoint: Function; // @todo
             getPointSpline: Function; // @todo
+            getStackPoints: Function; // @todo
             toYData: Function; // @todo
         }
         interface SeriesOptions {

@@ -7,13 +7,27 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from './Globals.js';
+
+declare global {
+    namespace Highcharts {
+        // nothing to declare
+    }
+}
+
 import './Utilities.js';
 import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, seriesType = H.seriesType;
+
+var areaProto = H.seriesTypes.area.prototype,
+    defaultPlotOptions = H.defaultPlotOptions,
+    LegendSymbolMixin = H.LegendSymbolMixin,
+    seriesType = H.seriesType;
+
 /**
  * AreaSpline series type.
  *
@@ -23,27 +37,33 @@ var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlot
  *
  * @augments Highcharts.Series
  */
-seriesType('areaspline', 'spline', 
-/**
- * The area spline series is an area series where the graph between the
- * points is smoothed into a spline.
- *
- * @sample {highcharts} highcharts/demo/areaspline/
- *         Area spline chart
- * @sample {highstock} stock/demo/areaspline/
- *         Area spline chart
- *
- * @extends   plotOptions.area
- * @excluding step
- * @product   highcharts highstock
- * @apioption plotOptions.areaspline
- */
-defaultPlotOptions.area, {
-    getStackPoints: areaProto.getStackPoints,
-    getGraphPath: areaProto.getGraphPath,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-});
+seriesType(
+    'areaspline',
+    'spline',
+
+    /**
+     * The area spline series is an area series where the graph between the
+     * points is smoothed into a spline.
+     *
+     * @sample {highcharts} highcharts/demo/areaspline/
+     *         Area spline chart
+     * @sample {highstock} stock/demo/areaspline/
+     *         Area spline chart
+     *
+     * @extends   plotOptions.area
+     * @excluding step
+     * @product   highcharts highstock
+     * @apioption plotOptions.areaspline
+     */
+    defaultPlotOptions.area,
+    {
+        getStackPoints: areaProto.getStackPoints,
+        getGraphPath: areaProto.getGraphPath,
+        drawGraph: areaProto.drawGraph,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    }
+);
+
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
@@ -54,6 +74,7 @@ defaultPlotOptions.area, {
  * @product   highcharts highstock
  * @apioption series.areaspline
  */
+
 /**
  * An array of data points for the series. For the `areaspline` series
  * type, points can be given in the following ways:
@@ -113,4 +134,5 @@ defaultPlotOptions.area, {
  * @product   highcharts highstock
  * @apioption series.areaspline.data
  */
+
 ''; // adds doclets above into transpilat

@@ -1,6 +1,7 @@
 js/mixins/centered-series.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
+js/parts/AreaSplineSeries.js
 js/parts/Axis.js
 js/parts/BarSeries.js
 js/parts/Chart.js
@@ -44,4 +45,5 @@ test/test-controller.js
 test/test-template.js
 test/test-utilities.js
 tools/eslint-plugin-highcharts/node_modules/**
+tools/jsdoc/storage/**/*.js
 vendor/**/*
