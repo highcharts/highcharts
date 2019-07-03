@@ -2,6 +2,7 @@ js/mixins/centered-series.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/AreaSplineSeries.js
+js/parts/AreaSeries.js
 js/parts/Axis.js
 js/parts/BarSeries.js
 js/parts/Chart.js
@@ -29,6 +30,7 @@ js/parts/Responsive.js
 js/parts/ScrollablePlotArea.js
 js/parts/Scrollbar.js
 js/parts/Series.js
+js/parts/SplineSeries.js
 js/parts/Stacking.js
 js/parts/SvgRenderer.js
 js/parts/Tick.js
