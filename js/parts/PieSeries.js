@@ -652,7 +652,7 @@ seriesType('pie', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.pie#translate
-     * @param {Array<number>} positions
+     * @param {Array<number>} [positions]
      * @return {void}
      */
     translate: function (positions) {
@@ -1010,7 +1010,7 @@ seriesType('pie', 'line',
     /**
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
-     * @return {Highcharts.TranslationObject}
+     * @return {Highcharts.TranslationAttributes}
      */
     getTranslate: function () {
         return this.sliced ? this.slicedTranslation : {

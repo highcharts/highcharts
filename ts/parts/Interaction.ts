@@ -213,7 +213,7 @@ TrackerMixin = H.TrackerMixin = {
             );
 
             if (point.graphic) {
-                point.graphic.element.point = point;
+                (point.graphic.element as any).point = point;
             }
             (dataLabels as any).forEach(function (
                 dataLabel: Highcharts.SVGElement
@@ -1047,7 +1047,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             markerStateOptions = ((
                 markerOptions &&
                 markerOptions.states &&
-                markerOptions.states[state || 'normal']
+                (markerOptions.states as any)[state || 'normal']
             ) || {}),
             stateDisabled = (markerStateOptions as any).enabled === false,
             stateMarkerGraphic = series.stateMarkerGraphic,
@@ -1084,8 +1084,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             (
                 state &&
                 pointMarker.states &&
-                pointMarker.states[state] &&
-                (pointMarker.states[state] as any).enabled === false
+                (pointMarker.states as any)[state] &&
+                (pointMarker.states as any)[state].enabled === false
             ) // #1610
 
         ) {
@@ -1223,7 +1223,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((point.graphic || stateMarkerGraphic).parentGroup);
+                    .add(
+                        ((point.graphic || stateMarkerGraphic) as any)
+                            .parentGroup
+                    );
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any

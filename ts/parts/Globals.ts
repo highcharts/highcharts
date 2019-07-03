@@ -89,7 +89,6 @@ declare global {
             colorByPoint?: any; // @todo
             inactiveOtherPoints?: any; // @todo
             innerSize?: any; // @todo
-            lineColor?: any; // @todo
             minSize?: any; // @todo
             negativeFillColor?: any; // @todo
             size?: any; // @todo
@@ -105,25 +104,22 @@ declare global {
             distX?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
-            graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
             isCliff?: any; // @todo
             labelDistance?: any; // @todo
             name?: any; // @todo
+            plotClose?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
             rectPlotX?: any; // @todo
+            plotOpen?: any; // @todo
             selected?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
             tooltipPos?: any; // @todo
             ttBelow?: any; // @todo
             zone?: any; // @todo
-            getDataLabelPath: Function; // @todo
-        }
-        interface PointOptionsObject {
-            states?: any; // @todo
         }
         interface Series {
             allowDG?: any; // @todo
@@ -157,7 +153,6 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo
-            toYData: Function; // @todo
         }
         interface SeriesOptions {
             endAngle?: any; // @todo

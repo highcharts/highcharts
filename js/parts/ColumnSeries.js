@@ -450,6 +450,7 @@ seriesType('column', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.column#init
+     * @return {void}
      */
     init: function () {
         Series.prototype.init.apply(this, arguments);
@@ -470,7 +471,6 @@ seriesType('column', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
-     *
      * @return {Highcharts.ColumnMetricsObject}
      */
     getColumnMetrics: function () {
@@ -684,7 +684,7 @@ seriesType('column', 'line',
      * @private
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.ColumnPoint} point
      *
      * @param {string} state
      *
@@ -717,7 +717,9 @@ seriesType('column', 'line',
         if (state) {
             stateOptions = merge(options.states[state], 
             // #6401
-            point.options.states && point.options.states[state] || {});
+            point.options.states &&
+                point.options.states[state] ||
+                {});
             brightness = stateOptions.brightness;
             fill =
                 stateOptions.color || (brightness !== undefined &&

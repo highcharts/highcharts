@@ -119,7 +119,7 @@ declare global {
             start?: number;
             width?: number;
         }
-        interface TranslationObject {
+        interface TranslationAttributes extends SVGAttributes {
             translateX: number;
             translateY: number;
         }
@@ -149,7 +149,7 @@ declare global {
             public alignSetter(value: ('start'|'middle'|'end')): void;
             public animate(
                 params: SVGAttributes,
-                options?: AnimationOptionsObject,
+                options?: (boolean|AnimationOptionsObject),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -944,7 +944,7 @@ extend((
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -956,7 +956,7 @@ extend((
     animate: function (
         this: Highcharts.SVGElement,
         params: Highcharts.SVGAttributes,
-        options?: Highcharts.AnimationOptionsObject,
+        options?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(

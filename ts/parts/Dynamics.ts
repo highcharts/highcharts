@@ -908,7 +908,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             // Update visuals
             if (point.y === null && graphic) { // #4146
-                point.graphic = graphic.destroy();
+                point.graphic = graphic.destroy() as any;
             }
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
@@ -919,7 +919,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         (options as any).marker &&
                         (options as any).marker.symbol !== undefined
                     ) {
-                        point.graphic = graphic.destroy();
+                        point.graphic = graphic.destroy() as any;
                     }
                 }
                 if (options && (options as any).dataLabels && point.dataLabel) {

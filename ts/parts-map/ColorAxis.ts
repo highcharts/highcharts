@@ -1219,7 +1219,9 @@ extend(ColorAxis.prototype, {
                         visible: true,
                         setState: noop,
                         isDataClass: true,
-                        setVisible: function (): void {
+                        setVisible: function (
+                            this: Highcharts.ColorAxisLegendItemObject
+                        ): void {
                             vis = this.visible = !vis;
                             axis.series.forEach(function (
                                 series: Highcharts.Series
@@ -1228,13 +1230,13 @@ extend(ColorAxis.prototype, {
                                     point: Highcharts.Point
                                 ): void {
                                     if (point.dataClass === i) {
-                                        point.setVisible(vis);
+                                        (point as any).setVisible(vis);
                                     }
                                 });
                             });
                             chart.legend.colorizeItem(this as any, vis);
                         }
-                    } as Highcharts.ColorAxisLegendItemObject,
+                    },
                     dataClass
                 ));
             });

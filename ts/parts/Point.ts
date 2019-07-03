@@ -85,6 +85,7 @@ declare global {
             marker?: PointMarkerOptionsObject;
             name?: string;
             selected?: boolean;
+            states?: PointStatesOptionsObject;
             x?: number;
             y?: (null|number);
         }
@@ -108,13 +109,6 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
         }
         interface PointStatesOptionsObject {
-            [key: string]: (
-                PointStatesHoverOptionsObject |
-                PointStatesInactiveOptionsObject |
-                PointStatesNormalOptionsObject |
-                PointStatesSelectOptionsObject |
-                undefined
-            );
             hover?: PointStatesHoverOptionsObject;
             inactive?: PointStatesInactiveOptionsObject;
             normal?: PointStatesNormalOptionsObject;
@@ -180,6 +174,7 @@ declare global {
                 options: PointOptionsType,
                 x?: number
             ): Point;
+            public isValid?(): boolean;
             public optionsToObject(options: PointOptionsType): Dictionary<any>;
             public resolveColor(): void;
             public setNestedProperty<T>(object: T, value: any, key: string): T;

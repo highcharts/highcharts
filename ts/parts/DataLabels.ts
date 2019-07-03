@@ -89,10 +89,12 @@ declare global {
             dataLabel?: SVGElement;
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
+            graphic?: SVGElement;
             isLabelJustified?: boolean;
             /** @deprecated */
             positionIndex?: unknown;
             top?: number;
+            getDataLabelPath(dataLabel: SVGElement): SVGElement;
         }
         interface PointOptionsObject {
             dataLabels?: (
@@ -1488,7 +1490,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
-        radialDistributionY: function (point: Highcharts.Point): number {
+        radialDistributionY: function (point: Highcharts.PiePoint): number {
             return point.top + (point.distributeBox as any).pos;
         },
         // get the x - use the natural x position for labels near the
@@ -1497,8 +1499,8 @@ if (seriesTypes.pie) {
 
         // Based on the value computed in Highcharts' distribute algorithm.
         radialDistributionX: function (
-            series: Highcharts.Series,
-            point: Highcharts.Point,
+            series: Highcharts.PieSeries,
+            point: Highcharts.PiePoint,
             y: number,
             naturalY: number
         ): number {
@@ -1513,7 +1515,7 @@ if (seriesTypes.pie) {
 
         // dataLabels.distance determines the x position of the label
         justify: function (
-            point: Highcharts.Point,
+            point: Highcharts.PiePoint,
             radius: number,
             seriesCenter: Array<number>
         ): number {
@@ -1541,7 +1543,7 @@ if (seriesTypes.pie) {
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
         alignToConnectors: function (
-            points: Array<Highcharts.Point>,
+            points: Array<Highcharts.PiePoint>,
             half: boolean,
             plotWidth: number,
             plotLeft: number
@@ -1550,7 +1552,7 @@ if (seriesTypes.pie) {
                 dataLabelWidth;
 
             // find widest data label
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Highcharts.PiePoint): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
@@ -1569,7 +1571,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function (
-        this: Highcharts.Series
+        this: Highcharts.PieSeries
     ): void {
         var series = this,
             data = series.data,
@@ -1595,7 +1597,7 @@ if (seriesTypes.pie) {
             halves = [
                 [], // right
                 [] // left
-            ] as [Array<Highcharts.Point>, Array<Highcharts.Point>],
+            ] as [Array<Highcharts.PiePoint>, Array<Highcharts.PiePoint>],
             x,
             y,
             visibility,
@@ -1613,7 +1615,7 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        data.forEach(function (point: Highcharts.Point): void {
+        data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
@@ -1630,7 +1632,7 @@ if (seriesTypes.pie) {
         // run parent method
         Series.prototype.drawDataLabels.apply(series);
 
-        data.forEach(function (point: Highcharts.Point): void {
+        data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
@@ -1674,7 +1676,7 @@ if (seriesTypes.pie) {
          * of the pie to detect overlapping labels.
          */
         halves.forEach(function (
-            points: Array<Highcharts.Point>,
+            points: Array<Highcharts.PiePoint>,
             i: number
         ): void {
 
@@ -1705,7 +1707,7 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                points.forEach(function (point: Highcharts.Point): void {
+                points.forEach(function (point: Highcharts.PiePoint): void {
                     // check if specific points' label is outside the pie
                     if (point.labelDistance > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
@@ -1874,8 +1876,7 @@ if (seriesTypes.pie) {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (
-            arrayMax(overflow) === 0 ||
+        if (arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
 
@@ -1883,7 +1884,7 @@ if (seriesTypes.pie) {
             (this.placeDataLabels as any)();
 
 
-            this.points.forEach(function (point: Highcharts.Point): void {
+            this.points.forEach(function (point: Highcharts.PiePoint): void {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                     merge(options, point.options.dataLabels);
@@ -1996,7 +1997,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.placeDataLabels = function (
-        this: Highcharts.Series
+        this: Highcharts.PieSeries
     ): void {
         this.points.forEach(function (
             this: Highcharts.Series,
@@ -2052,7 +2053,7 @@ if (seriesTypes.pie) {
      * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (
-        this: Highcharts.Series,
+        this: Highcharts.PieSeries,
         overflow: Array<number>
     ): boolean {
 
@@ -2138,8 +2139,8 @@ if (seriesTypes.column) {
      * @return {void}
      */
     seriesTypes.column.prototype.alignDataLabel = function (
-        this: Highcharts.Series,
-        point: Highcharts.Point,
+        this: Highcharts.ColumnSeries,
+        point: Highcharts.ColumnPoint,
         dataLabel: Highcharts.SVGElement,
         options: Highcharts.DataLabelsOptionsObject,
         alignTo: Highcharts.BBoxObject,

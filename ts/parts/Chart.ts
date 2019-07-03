@@ -88,7 +88,7 @@ declare global {
             public reflowTimeout?: number;
             public renderer: ChartRenderer;
             public renderTo: HTMLDOMElement;
-            public series: Array<Series>;
+            public series: Array<SeriesType>;
             public seriesGroup?: SVGElement;
             public spacing: Array<number>;
             public spacingBox: BBoxObject;
@@ -388,7 +388,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var options,
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
-            userPlotOptions = userOptions.plotOptions || {};
+            userPlotOptions =
+                userOptions.plotOptions || {} as Highcharts.PlotOptions;
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (
@@ -735,8 +736,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         series.forEach(function (serie: Highcharts.Series): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if (serie.updateTotals) {
-                        serie.updateTotals();
+                    if ((serie as Highcharts.PieSeries).updateTotals) {
+                        (serie as Highcharts.PieSeries).updateTotals();
                     }
                     redrawLegend = true;
                 } else if (
@@ -894,7 +895,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Search points
         for (i = 0; !ret && i < series.length; i++) {
-            ret = find(series[i].points || [], itemById);
+            ret = find((series[i].points as any) || [], itemById);
         }
 
         return ret;

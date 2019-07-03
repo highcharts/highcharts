@@ -2328,7 +2328,7 @@ null,
         };
         fireEvent(this, 'setOptions', e);
         // These may be modified by the event
-        var userPlotOptions = userOptions.plotOptions || {}, typeOptions = e.plotOptions[this.type];
+        var typeOptions = e.plotOptions[this.type], userPlotOptions = (userOptions.plotOptions || {});
         // use copy to prevent undetected changes (#9762)
         this.userOptions = e.userOptions;
         options = merge(typeOptions, plotOptions.series, 

@@ -22,7 +22,7 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesOptions {
+        interface ColumnSeriesOptions {
             borderRadius?: number;
             crisp?: boolean;
             grouping?: boolean;
@@ -37,31 +37,56 @@ declare global {
             borderWidth?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
         }
-        interface Point {
-            barX?: number;
-            pointWidth?: number;
-            shapeType?: string;
-        }
-        interface PointOptionsObject {
+        interface ColumnPointOptions extends PointOptionsObject {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
         }
-        interface Series {
-            borderWidth?: number;
-            columnIndex?: number;
-            columnMetrics?: ColumnMetricsObject;
-            cropShould?: number;
-            dashStyle?: DashStyleValue;
-            dense?: boolean;
-            crispCol(x: number, y: number, w: number, h: number): BBoxObject;
-            getColumnMetrics(): ColumnMetricsObject;
-            remove(): void;
+        interface ColumnSeriesOptions extends LineSeriesOptions {
+            states?: ColumnSeriesStatesOptions;
         }
-        interface SeriesStatesHoverOptions {
+        interface ColumnSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions
+        {
             borderColor?: ColorString;
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
+        }
+        interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
+            hover?: ColumnSeriesStatesHoverOptions;
+            select?: ColumnSeriesStatesSelectOptions;
+        }
+        interface ColumnSeriesStatesSelectOptions {
+            borderColor?: ColorString;
+            brightness?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+        }
+        class ColumnPoint extends Point {
+            public barX?: number;
+            public options: ColumnPointOptions;
+            public pointWidth?: number;
+            public series: ColumnSeries;
+            public shapeType?: string;
+        }
+        class ColumnSeries extends Series {
+            public borderWidth?: number;
+            public columnIndex?: number;
+            public columnMetrics?: ColumnMetricsObject;
+            public cropShould?: number;
+            public dashStyle?: DashStyleValue;
+            public data: Array<ColumnPoint>;
+            public dense?: boolean;
+            public options: ColumnSeriesOptions;
+            public points: Array<ColumnPoint>;
+            public crispCol(
+                x: number,
+                y: number,
+                w: number,
+                h: number
+            ): BBoxObject;
+            public getColumnMetrics(): ColumnMetricsObject;
+            public remove(): void;
         }
     }
 }
@@ -128,7 +153,7 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.ColumnSeriesOptions>(
     'column',
     'line',
 
@@ -561,8 +586,9 @@ seriesType(
          *
          * @private
          * @function Highcharts.seriesTypes.column#init
+         * @return {void}
          */
-        init: function (this: Highcharts.Series): void {
+        init: function (this: Highcharts.ColumnSeries): void {
             Series.prototype.init.apply(this, arguments as any);
 
             var series = this,
@@ -587,11 +613,10 @@ seriesType(
          *
          * @private
          * @function Highcharts.seriesTypes.column#getColumnMetrics
-         *
          * @return {Highcharts.ColumnMetricsObject}
          */
         getColumnMetrics: function (
-            this: Highcharts.Series
+            this: Highcharts.ColumnSeries
         ): Highcharts.ColumnMetricsObject {
 
             var series = this,
@@ -614,7 +639,7 @@ seriesType(
                 columnCount = 1;
             } else {
                 series.chart.series.forEach(function (
-                    otherSeries: Highcharts.Series
+                    otherSeries: Highcharts.SeriesType
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
                         otherOptions = otherSeries.options,
@@ -638,7 +663,7 @@ seriesType(
                         } else if (otherOptions.grouping !== false) { // #1162
                             columnIndex = columnCount++;
                         }
-                        otherSeries.columnIndex = columnIndex;
+                        (otherSeries as any).columnIndex = columnIndex;
                     }
                 });
             }
@@ -698,7 +723,7 @@ seriesType(
          * @return {Highcharts.BBoxObject}
          */
         crispCol: function (
-            this: Highcharts.Series,
+            this: Highcharts.ColumnSeries,
             x: number,
             y: number,
             w: number,
@@ -751,7 +776,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#translate
          */
-        translate: function (this: Highcharts.Series): void {
+        translate: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = series.chart,
                 options = series.options,
@@ -790,7 +815,9 @@ seriesType(
             Series.prototype.translate.apply(series);
 
             // Record the new values
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (
+                point: Highcharts.ColumnPoint
+            ): void {
                 var yBottom = pick(point.yBottom, translatedThreshold),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
@@ -901,7 +928,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#drawGraph
          */
-        drawGraph: function (this: Highcharts.Series): void {
+        drawGraph: function (this: Highcharts.ColumnSeries): void {
             this.group[
                 this.dense ? 'addClass' : 'removeClass'
             ]('highcharts-dense-data');
@@ -913,19 +940,19 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#pointAttribs
          *
-         * @param {Highcharts.Point} point
+         * @param {Highcharts.ColumnPoint} point
          *
          * @param {string} state
          *
          * @return {Highcharts.SVGAttributes}
          */
         pointAttribs: function (
-            this: Highcharts.Series,
-            point: Highcharts.Point,
+            this: Highcharts.ColumnSeries,
+            point: Highcharts.ColumnPoint,
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
-                stateOptions: Highcharts.SeriesStatesHoverOptions,
+                stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
                 ret: Highcharts.SVGAttributes,
                 p2o = this.pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
@@ -970,7 +997,9 @@ seriesType(
                 stateOptions = merge(
                     (options.states as any)[state],
                     // #6401
-                    point.options.states && point.options.states[state] || {}
+                    point.options.states &&
+                    (point.options.states as any)[state] ||
+                    {}
                 );
                 brightness = stateOptions.brightness;
                 fill =
@@ -1009,7 +1038,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#drawPoints
          */
-        drawPoints: function (this: Highcharts.Series): void {
+        drawPoints: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = this.chart,
                 options = series.options,
@@ -1033,7 +1062,7 @@ seriesType(
                         graphic &&
                         graphic.element.nodeName !== point.shapeType
                     ) {
-                        graphic = graphic.destroy();
+                        graphic = graphic.destroy() as any;
                     }
 
                     if (graphic) { // update
@@ -1049,14 +1078,14 @@ seriesType(
 
                     // Border radius is not stylable (#6900)
                     if (options.borderRadius) {
-                        graphic[verb]({
+                        (graphic as any)[verb]({
                             r: options.borderRadius
                         });
                     }
 
                     // Presentational
                     if (!chart.styledMode) {
-                        graphic[verb](series.pointAttribs(
+                        (graphic as any)[verb](series.pointAttribs(
                             point,
                             point.selected && 'select'
                         ))
@@ -1067,11 +1096,11 @@ seriesType(
                             );
                     }
 
-                    graphic.addClass(point.getClassName(), true);
+                    (graphic as any).addClass(point.getClassName(), true);
 
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy(); // #1269
+                    point.graphic = graphic.destroy() as any; // #1269
                 }
             });
         },
@@ -1085,7 +1114,7 @@ seriesType(
          * @param {boolean} init
          *        Whether to initialize the animation or run it
          */
-        animate: function (this: Highcharts.Series, init: boolean): void {
+        animate: function (this: Highcharts.ColumnSeries, init: boolean): void {
             var series = this,
                 yAxis = this.yAxis,
                 options = series.options,
@@ -1148,7 +1177,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#remove
          */
-        remove: function (this: Highcharts.Series): void {
+        remove: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = series.chart;
 
