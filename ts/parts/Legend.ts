@@ -218,13 +218,16 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined,
+    isNumber
+} = U;
 
 var H = Highcharts,
     addEvent = H.addEvent,
     css = H.css,
     discardElement = H.discardElement,
-    defined = H.defined,
     fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
@@ -1111,7 +1114,7 @@ Highcharts.Legend.prototype = {
                         (item as any).points :
                         (item as any).points.slice(0).reverse(),
                     function (item: Highcharts.Point): boolean {
-                        return H.isNumber(item.plotY);
+                        return isNumber(item.plotY);
                     }
                 );
                 height = (item.legendGroup as any).getBBox().height;

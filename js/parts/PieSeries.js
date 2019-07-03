@@ -176,14 +176,15 @@ import H from './Globals.js';
 * @since 2.1.7
 * @product highcharts
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var defined = U.defined, isNumber = U.isNumber;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, defined = H.defined, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
 /**
  * Pie series type.
  *
@@ -924,7 +925,7 @@ seriesType('pie', 'line',
      * @return {boolean}
      */
     isValid: function () {
-        return H.isNumber(this.y, true) && this.y >= 0;
+        return isNumber(this.y) && this.y >= 0;
     },
     /**
      * Toggle the visibility of the pie slice

@@ -12,7 +12,9 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isString = U.isString;
+var defined = U.defined,
+    isNumber = U.isNumber,
+    isString = U.isString;
 
 import './GridAxis.js';
 import Tree from './Tree.js';
@@ -23,7 +25,6 @@ var addEvent = H.addEvent,
     argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
-    defined = H.defined,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
@@ -32,7 +33,6 @@ var addEvent = H.addEvent,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
-    isNumber = H.isNumber,
     isObject = function (x) {
         // Always use strict mode.
         return H.isObject(x, true);
@@ -227,7 +227,7 @@ var renderLabelIcon = function (tick, params) {
             y: labelBox.y - (height / 2)
         },
         rotation = params.collapsed ? 90 : 180,
-        shouldRender = params.show && H.isNumber(iconCenter.y);
+        shouldRender = params.show && isNumber(iconCenter.y);
 
     if (isNew) {
         tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](

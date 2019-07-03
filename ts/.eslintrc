@@ -37,6 +37,7 @@
         "no-undefined": 0,
         "no-underscore-dangle": 0,
         "no-unused-expressions": 0,
+        "no-use-before-define": 0,
         "no-useless-constructor": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
@@ -49,6 +50,7 @@
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
         "@typescript-eslint/no-unused-vars": 0,
+        "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
         "node/no-unsupported-features": 0
     }

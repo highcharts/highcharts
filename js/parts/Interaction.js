@@ -58,7 +58,7 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray;
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
@@ -418,7 +418,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     mouseDownPos >= axisStartPos &&
                     mouseDownPos <= axisEndPos) ||
                     isXAxis ||
-                    !H.defined(mouseDownPos)) {
+                    !defined(mouseDownPos)) {
                     isWithinPane = true;
                 }
                 // don't zoom more than minRange

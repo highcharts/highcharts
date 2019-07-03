@@ -454,6 +454,25 @@ QUnit.test('Series.update and setData', function (assert) {
         'Graph is continuous (#7326)'
     );
 
+    chart.series[0].setData([{
+        x: 0,
+        y: 10,
+        customProp: true
+    }]);
+
+    chart.update({
+        series: [{
+            data: [{
+                y: 100
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.data[0].customProp,
+        true,
+        'Custom property should be available in options after update (#11244)'
+    );
 });
 
 QUnit.test('Series.update color index, class name should change', function (assert) {

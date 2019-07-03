@@ -9,7 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 
@@ -20,7 +23,6 @@ var cos = Math.cos,
 var animObject = H.animObject,
     charts = H.charts,
     color = H.color,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     extend = H.extend,
     merge = H.merge,

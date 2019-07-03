@@ -139,7 +139,12 @@ declare global {
  * @type {number}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined,
+    isNumber
+} = U;
+
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
@@ -149,10 +154,8 @@ var addEvent = H.addEvent,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    defined = H.defined,
     extend = H.extend,
     format = H.format,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,

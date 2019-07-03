@@ -10,14 +10,14 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, extend = H.extend, hasTouch = H.hasTouch, isNumber = H.isNumber, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, extend = H.extend, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.

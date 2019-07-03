@@ -108,10 +108,12 @@ declare global {
             graphic?: any; // @todo
             group?: any; // @todo
             half?: any; // @todo
+            isCliff?: any; // @todo
             labelDistance?: any; // @todo
             name?: any; // @todo
             plotHigh?: any; // @todo
             plotLow?: any; // @todo
+            rectPlotX?: any; // @todo
             selected?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
@@ -130,7 +132,6 @@ declare global {
             center?: any; // @todo
             clipBox?: any; // @todo
             colorKey?: any; // @todo
-            fillColor?: any; // @todo
             fillGraph?: any; // @todo
             fixedBox?: any; // @todo
             forceDL?: any; // @todo
@@ -156,7 +157,6 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo
-            getPointSpline: Function; // @todo
             toYData: Function; // @todo
         }
         interface SeriesOptions {

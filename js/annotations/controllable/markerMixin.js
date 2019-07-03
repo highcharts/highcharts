@@ -1,7 +1,10 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import './../../parts/Chart.js';
-import './../../parts/Utilities.js';
+
+import U from './../../parts/Utilities.js';
+var defined = U.defined;
+
 import './../../parts/SvgRenderer.js';
 
 /**
@@ -117,7 +120,7 @@ var markerMixin = {
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
-            color = H.defined(fill) && fill !== 'none' ?
+            color = defined(fill) && fill !== 'none' ?
                 fill :
                 itemOptions.stroke,
 

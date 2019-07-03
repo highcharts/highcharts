@@ -81,7 +81,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined,
+    isArray = U.isArray;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -89,7 +90,6 @@ import '../parts/Series.js';
 var noop = H.noop,
     pick = H.pick,
     extend = H.extend,
-    defined = H.defined,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,

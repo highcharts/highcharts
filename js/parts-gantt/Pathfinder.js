@@ -32,12 +32,14 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Point.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
 import 'ArrowSymbols.js';
 
-var defined = H.defined,
-    deg2rad = H.deg2rad,
+var deg2rad = H.deg2rad,
     extend = H.extend,
     addEvent = H.addEvent,
     merge = H.merge,

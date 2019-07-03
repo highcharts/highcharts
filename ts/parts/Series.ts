@@ -263,6 +263,7 @@ declare global {
                 LegendSymbolMixin['drawRectangle']
             );
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
+            public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
@@ -605,7 +606,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -621,11 +624,9 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    defined = H.defined,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     objectEach = H.objectEach,
@@ -3321,7 +3322,7 @@ H.Series = H.seriesType(
                     x,
                     pointIndex,
                     optionsObject = (
-                        H.defined(pointOptions) &&
+                        defined(pointOptions) &&
                         this.pointClass.prototype.optionsToObject.call(
                             { series: this },
                             pointOptions
@@ -4060,7 +4061,7 @@ H.Series = H.seriesType(
                 // For points within the visible range, including the first
                 // point outside the visible range (#7061), consider y extremes.
                 validValue = (
-                    ((isNumber as any)(y, true) || isArray(y)) &&
+                    (isNumber(y) || isArray(y)) &&
                     (!yAxis.positiveValuesOnly || ((y as any).length || y > 0))
                 );
                 withinRange = (
@@ -5007,7 +5008,8 @@ H.Series = H.seriesType(
                 var plotX = point.plotX,
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
-                    pathToPoint; // the path to this point from the previous
+                    // the path to this point from the previous
+                    pathToPoint: Highcharts.SVGPathArray;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -5027,7 +5029,11 @@ H.Series = H.seriesType(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = ['M', point.plotX, point.plotY];
+                        pathToPoint = [
+                            'M',
+                            point.plotX as any,
+                            point.plotY as any
+                        ];
 
                     // Generate the spline as defined in the SplineSeries object
                     } else if (series.getPointSpline) {
@@ -5039,35 +5045,39 @@ H.Series = H.seriesType(
                         if (step === 1) { // right
                             pathToPoint = [
                                 'L',
-                                lastPoint.plotX,
-                                plotY
+                                lastPoint.plotX as any,
+                                plotY as any
                             ];
 
                         } else if (step === 2) { // center
                             pathToPoint = [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY,
+                                lastPoint.plotY as any,
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                plotY
+                                plotY as any
                             ];
 
                         } else {
                             pathToPoint = [
                                 'L',
-                                plotX,
-                                lastPoint.plotY
+                                plotX as any,
+                                lastPoint.plotY as any
                             ];
                         }
-                        pathToPoint.push('L', plotX, plotY);
+                        pathToPoint.push(
+                            'L',
+                            plotX as any,
+                            plotY as any
+                        );
 
                     } else {
                         // normal line to next point
                         pathToPoint = [
                             'L',
-                            plotX,
-                            plotY
+                            plotX as any,
+                            plotY as any
                         ];
                     }
 

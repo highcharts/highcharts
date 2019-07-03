@@ -1,11 +1,11 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isNumber = U.isNumber;
 
 var deg2rad = H.deg2rad,
-    find = H.find,
-    isNumber = H.isNumber;
+    find = H.find;
 
 /**
  * Alternative solution to correctFloat.

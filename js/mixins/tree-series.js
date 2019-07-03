@@ -1,7 +1,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    isNumber = U.isNumber;
 
 var extend = H.extend,
     isBoolean = function (x) {
@@ -11,7 +12,6 @@ var extend = H.extend,
         return typeof x === 'function';
     },
     isObject = H.isObject,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick;
 

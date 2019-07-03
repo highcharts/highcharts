@@ -21,13 +21,13 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var pInt = U.pInt;
+var isNumber = U.isNumber,
+    pInt = U.pInt;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
 var pick = H.pick,
-    isNumber = H.isNumber,
     wrap = H.wrap,
     Renderer = H.Renderer,
     colorAxisMethods;

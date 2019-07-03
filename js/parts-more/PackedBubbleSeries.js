@@ -111,7 +111,9 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined,
+    isArray = U.isArray,
+    isNumber = U.isNumber;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -124,7 +126,6 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    defined = H.defined,
     pick = H.pick,
     addEvent = H.addEvent,
     Chart = H.Chart,
@@ -744,7 +745,7 @@ seriesType(
                     bBox[3] = max(bBox[3], p.plotY + radius);
                 }
             });
-            return H.isNumber(bBox.width / bBox.height) ? bBox : null;
+            return isNumber(bBox.width / bBox.height) ? bBox : null;
         },
         /**
          * The function responsible for calculating the parent node radius
@@ -1342,7 +1343,7 @@ seriesType(
             // and undefined values
             chart.series.forEach(function (s) {
                 s.yData.forEach(function (p) {
-                    if (H.defined(p)) {
+                    if (defined(p)) {
                         if (p > valMax) {
                             valMax = p;
                         }

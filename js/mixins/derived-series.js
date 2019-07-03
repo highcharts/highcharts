@@ -1,6 +1,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Series.js';
 
 var Series = H.Series,
@@ -64,7 +68,7 @@ var derivedSeriesMixin = {
         var chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
             baseSeries = (
-                H.defined(baseSeriesOptions) &&
+                defined(baseSeriesOptions) &&
                 (
                     chart.series[baseSeriesOptions] ||
                     chart.get(baseSeriesOptions)

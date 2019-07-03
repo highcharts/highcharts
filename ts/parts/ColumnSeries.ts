@@ -97,7 +97,12 @@ declare global {
  * @type {number|undefined}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined,
+    isNumber
+} = U;
+
 import './Color.js';
 import './Legend.js';
 import './Series.js';
@@ -106,8 +111,6 @@ import './Options.js';
 var animObject = H.animObject,
     color = H.color,
     extend = H.extend,
-    defined = H.defined,
-    isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,

@@ -140,11 +140,13 @@ declare global {
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined
+} = U;
 
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     erase = H.erase,
     merge = H.merge,

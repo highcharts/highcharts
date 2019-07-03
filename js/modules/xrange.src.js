@@ -19,12 +19,14 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+var defined = U.defined,
+    isNumber = U.isNumber;
+
 var addEvent = H.addEvent,
-    defined = H.defined,
     color = H.Color,
     columnType = H.seriesTypes.column,
     correctFloat = H.correctFloat,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
     pick = H.pick,

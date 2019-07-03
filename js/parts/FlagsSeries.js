@@ -11,7 +11,11 @@
 'use strict';
 
 import H from './Globals.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+var defined = U.defined,
+    isNumber = U.isNumber;
+
 import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
@@ -19,7 +23,6 @@ import onSeriesMixin from '../mixins/on-series.js';
 var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
-    defined = H.defined,
     Renderer = H.Renderer,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -617,7 +620,7 @@ seriesType(
         isValid: function () {
             // #9233 - Prevent from treating flags as null points (even if
             // they have no y values defined).
-            return H.isNumber(this.y) || this.y === undefined;
+            return isNumber(this.y) || this.y === undefined;
         }
     }
 

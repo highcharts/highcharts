@@ -148,20 +148,6 @@ declare global {
             width?: number;
             zIndex?: number;
         }
-        interface XAxisDateTimeLabelFormatsOptions {
-            day?: XAxisDateTimeLabelFormatsSubOptions;
-            hour?: XAxisDateTimeLabelFormatsSubOptions;
-            millisecond?: XAxisDateTimeLabelFormatsSubOptions;
-            minute?: XAxisDateTimeLabelFormatsSubOptions;
-            month?: XAxisDateTimeLabelFormatsSubOptions;
-            second?: XAxisDateTimeLabelFormatsSubOptions;
-            week?: XAxisDateTimeLabelFormatsSubOptions;
-            year?: XAxisDateTimeLabelFormatsSubOptions;
-        }
-        interface XAxisDateTimeLabelFormatsSubOptions {
-            main?: string;
-            range?: boolean;
-        }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
             afterSetExtremes?: AxisSetExtremesEventCallbackFunction;
@@ -213,7 +199,6 @@ declare global {
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
             currentDateIndicator?: (boolean|XAxisCurrentDateIndicatorOptions);
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
@@ -743,7 +728,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -758,14 +745,12 @@ var addEvent = H.addEvent,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    isNumber = H.isNumber,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     objectEach = H.objectEach,
@@ -1244,31 +1229,55 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /**
+             * @type {string|*}
+             */
             millisecond: {
                 main: '%H:%M:%S.%L',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             second: {
                 main: '%H:%M:%S',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             minute: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             hour: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             day: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             week: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             month: {
                 main: '%b \'%y'
             },
+            /**
+             * @type {string|*}
+             */
             year: {
                 main: '%Y'
             }

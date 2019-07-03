@@ -140,7 +140,10 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    defined,
+    isArray
+} = U;
 
 import './Chart.js';
 import './Options.js';
@@ -671,7 +674,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     mouseDownPos >= axisStartPos &&
                     mouseDownPos <= axisEndPos) ||
                     isXAxis ||
-                    !H.defined(mouseDownPos)
+                    !defined(mouseDownPos)
                 ) {
                     isWithinPane = true;
                 }

@@ -809,7 +809,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
+    isNumber,
     isString,
     pInt
 } = U;
@@ -826,7 +828,6 @@ var SVGElement: Highcharts.SVGElement,
     color = H.color,
     css = H.css,
     createElement = H.createElement,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
@@ -6089,7 +6090,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // only change local variables
         wrapper.widthSetter = function (value: (number|string)): void {
             // width:auto => null
-            width = (H.isNumber(value) ? value : null) as any;
+            width = isNumber(value) ? value : null;
         };
         wrapper.heightSetter = function (value: number): void {
             height = value;

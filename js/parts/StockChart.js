@@ -11,7 +11,9 @@
 import H from './Globals.js';
 
 import U from './Utilities.js';
-var isString = U.isString;
+var defined = U.defined,
+    isNumber = U.isNumber,
+    isString = U.isString;
 
 import './Chart.js';
 import './Axis.js';
@@ -34,10 +36,8 @@ var addEvent = H.addEvent,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
-    defined = H.defined,
     extend = H.extend,
     format = H.format,
-    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,

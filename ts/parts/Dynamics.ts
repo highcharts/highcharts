@@ -107,7 +107,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
+    isNumber,
     isString
 } = U;
 
@@ -122,11 +124,9 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
     objectEach = H.objectEach,
@@ -351,7 +351,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Update text
         (chart.loadingSpan as any).innerHTML =
-            str || (options.lang as any).loading;
+            pick(str, (options.lang as any).loading, '');
 
         if (!chart.styledMode) {
             // Update visuals
@@ -1410,6 +1410,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
+
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
 
         // Make sure preserved properties are not destroyed (#3094)
         preserve = groups.concat(preserve);

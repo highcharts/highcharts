@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isString = U.isString;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, isObject = H.isObject, merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation, splat = H.splat;
+var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isObject = H.isObject, merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation, splat = H.splat;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -997,6 +997,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
         // Make sure preserved properties are not destroyed (#3094)
         preserve = groups.concat(preserve);
         preserve.forEach(function (prop) {

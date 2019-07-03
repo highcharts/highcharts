@@ -11,7 +11,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined,
+    isNumber = U.isNumber;
+
 import '../parts/Series.js';
 
 var extend = H.extend,
@@ -131,8 +135,8 @@ H.seriesType(
                 this.slots = [];
             }
             if (
-                H.isNumber(this.options.startAngle) &&
-                H.isNumber(this.options.endAngle)
+                isNumber(this.options.startAngle) &&
+                isNumber(this.options.endAngle)
             ) {
                 H.seriesTypes.pie.prototype.translate.call(this);
                 this.slots = this.getSlots();
@@ -351,7 +355,7 @@ H.seriesType(
                         pointMarkerOptions.radius,
                         seriesMarkerOptions.radius
                     ),
-                    size = H.defined(r) ? 2 * r : itemSize,
+                    size = defined(r) ? 2 * r : itemSize,
                     padding = size * options.itemPadding,
                     x,
                     y,

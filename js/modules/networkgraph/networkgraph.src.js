@@ -92,7 +92,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+
+import U from '../../parts/Utilities.js';
+var defined = U.defined;
+
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import '/layouts.js';
@@ -100,7 +103,6 @@ import '/draggable-nodes.js';
 
 
 var addEvent = H.addEvent,
-    defined = H.defined,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     pick = H.pick,

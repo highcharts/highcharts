@@ -19,8 +19,9 @@ import H from '../parts/Globals.js';
 * @name Highcharts.RadianAngles#start
 * @type {number}
 */
-import '../parts/Utilities.js';
-var deg2rad = H.deg2rad, isNumber = H.isNumber, pick = H.pick, relativeLength = H.relativeLength;
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+var deg2rad = H.deg2rad, pick = H.pick, relativeLength = H.relativeLength;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

@@ -202,12 +202,12 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var isArray = U.isArray, isString = U.isString;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isNumber = H.isNumber, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, splat = H.splat, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
@@ -2538,7 +2538,7 @@ null,
         this.xIncrement = null;
         // Iterate the new data
         data.forEach(function (pointOptions, i) {
-            var id, x, pointIndex, optionsObject = (H.defined(pointOptions) &&
+            var id, x, pointIndex, optionsObject = (defined(pointOptions) &&
                 this.pointClass.prototype.optionsToObject.call({ series: this }, pointOptions)) || {};
             // Get the x of the new data point
             x = optionsObject.x;
@@ -3061,7 +3061,7 @@ null,
             y = yData[i];
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
-            validValue = ((isNumber(y, true) || isArray(y)) &&
+            validValue = ((isNumber(y) || isArray(y)) &&
                 (!yAxis.positiveValuesOnly || (y.length || y > 0)));
             withinRange = (this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
@@ -3666,7 +3666,9 @@ null,
         }
         // Build the line
         points.forEach(function (point, i) {
-            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], pathToPoint; // the path to this point from the previous
+            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], 
+            // the path to this point from the previous
+            pathToPoint;
             if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
                 !connectCliffs) {
                 gap = true; // ... and continue
@@ -3681,7 +3683,11 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = ['M', point.plotX, point.plotY];
+                    pathToPoint = [
+                        'M',
+                        point.plotX,
+                        point.plotY
+                    ];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {

@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, pInt = U.pInt;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, pInt = U.pInt;
 import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, erase = H.erase, extend = H.extend, extendClass = H.extendClass, isNumber = H.isNumber, isObject = H.isObject, merge = H.merge, noop = H.noop, pick = H.pick, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, erase = H.erase, extend = H.extend, extendClass = H.extendClass, isObject = H.isObject, merge = H.merge, noop = H.noop, pick = H.pick, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.

@@ -39,14 +39,16 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isNumber = U.isNumber;
+
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
     addEvent = H.addEvent,
     extend = H.extend,
-    isNumber = H.isNumber,
     pick = H.pick,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -712,7 +714,11 @@ Chart.prototype.drawSeriesLabels = function () {
             maxFontSize = labelOptions.maxFontSize,
             dataExtremes,
             areaMin,
-            areaMax;
+            areaMax,
+            colorClass = 'highcharts-color-' + pick(
+                series.colorIndex,
+                'none'
+            );
 
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {
@@ -753,13 +759,17 @@ Chart.prototype.drawSeriesLabels = function () {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '')
-                    )
-                    .css(extend({
+                        (series.options.className || '') +
+                        colorClass
+                    );
+
+                if (!chart.renderer.styledMode) {
+                    label.css(extend({
                         color: onArea ?
                             chart.renderer.getContrast(series.color) :
                             series.color
                     }, series.options.label.style));
+                }
 
                 // Adapt label sizes to the sum of the data
                 if (minFontSize && maxFontSize) {

@@ -148,7 +148,7 @@ declare global {
             styles: CSSObject
         ): void;
         function datePropsToTimestamps(object: any): void;
-        function defined(obj: any): boolean;
+        function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
         /** @deprecated */
@@ -620,7 +620,7 @@ H.error = function (
     stop?: boolean,
     chart?: Highcharts.Chart
 ): void {
-    var msg = H.isNumber(code) ?
+    var msg = isNumber(code) ?
             'Highcharts error #' + code + ': www.highcharts.com/errors/' +
             code :
             code,
@@ -1063,7 +1063,7 @@ H.Fx.prototype = {
             }
         }
 
-        if (start.length && H.isNumber(shift)) {
+        if (start.length && isNumber(shift)) {
 
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
@@ -1315,9 +1315,9 @@ H.isClass = function (obj: any): boolean {
  * @return {boolean}
  *         True if the item is a finite number
  */
-H.isNumber = function (n: unknown): n is number {
+function isNumber(n: unknown): n is number {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
-};
+}
 
 /**
  * Remove the last occurence of an item from an array.
@@ -1354,9 +1354,9 @@ H.erase = function (arr: Array<any>, item: any): void {
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-H.defined = function (obj: any): boolean {
+function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
-};
+}
 
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
@@ -1387,7 +1387,7 @@ H.attr = function (
     // if the prop is a string
     if (isString(prop)) {
         // set the value
-        if (H.defined(value)) {
+        if (defined(value)) {
             elem.setAttribute(prop as string, value as string);
 
         // get the value
@@ -1401,7 +1401,7 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (H.defined(prop) && H.isObject(prop)) {
+    } else if (defined(prop) && H.isObject(prop)) {
         H.objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
@@ -1467,7 +1467,7 @@ H.syncTimeout = function (
  * @return {void}
  */
 H.clearTimeout = function (id: number): void {
-    if (H.defined(id)) {
+    if (defined(id)) {
         clearTimeout(id);
     }
 };
@@ -2293,7 +2293,7 @@ H.numberFormat = function (
     if (decimals === -1) {
         // Preserve decimals. Not huge numbers (#3793).
         decimals = Math.min(origDec, 20);
-    } else if (!H.isNumber(decimals)) {
+    } else if (!isNumber(decimals)) {
         decimals = 2;
     } else if (decimals && exponent[1] && exponent[1] as any < 0) {
         // Expose decimals from exponential notation (#7042)
@@ -3069,7 +3069,7 @@ H.animate = function (
             complete: args[4]
         };
     }
-    if (!H.isNumber((opt as any).duration)) {
+    if (!isNumber((opt as any).duration)) {
         (opt as any).duration = 400;
     }
     (opt as any).easing = typeof (opt as any).easing === 'function' ?
@@ -3259,7 +3259,9 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    defined,
     isArray,
+    isNumber,
     isString,
     pInt
 };
