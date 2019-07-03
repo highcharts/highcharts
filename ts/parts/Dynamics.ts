@@ -107,6 +107,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     isString
@@ -123,7 +124,6 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,

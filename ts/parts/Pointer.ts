@@ -214,6 +214,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
@@ -226,7 +227,6 @@ var H = Highcharts,
     charts = H.charts,
     color = H.color,
     css = H.css,
-    defined = H.defined,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,

@@ -809,6 +809,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
     isString,
@@ -827,7 +828,6 @@ var SVGElement: Highcharts.SVGElement,
     color = H.color,
     css = H.css,
     createElement = H.createElement,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,

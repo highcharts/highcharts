@@ -13,13 +13,15 @@
 'use strict';
 
 import Highcharts from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var defined = Highcharts.defined,
-    pick = Highcharts.pick,
+var pick = Highcharts.pick,
     win = Highcharts.win,
     doc = win.document,
     seriesTypes = Highcharts.seriesTypes,

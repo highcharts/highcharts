@@ -9,12 +9,13 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
 
 var each = H.each,
     merge = H.merge,
     error = H.error,
-    defined = H.defined,
     SMA = H.seriesTypes.sma;
 
 /**

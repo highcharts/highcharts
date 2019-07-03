@@ -202,12 +202,12 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, splat = H.splat, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
@@ -2538,7 +2538,7 @@ null,
         this.xIncrement = null;
         // Iterate the new data
         data.forEach(function (pointOptions, i) {
-            var id, x, pointIndex, optionsObject = (H.defined(pointOptions) &&
+            var id, x, pointIndex, optionsObject = (defined(pointOptions) &&
                 this.pointClass.prototype.optionsToObject.call({ series: this }, pointOptions)) || {};
             // Get the x of the new data point
             x = optionsObject.x;

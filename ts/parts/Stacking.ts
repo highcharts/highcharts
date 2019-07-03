@@ -157,7 +157,11 @@ declare global {
  * @type {number}
  */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined
+} = U;
+
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
@@ -165,7 +169,6 @@ import './Series.js';
 var Axis = H.Axis,
     Chart = H.Chart,
     correctFloat = H.correctFloat,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     format = H.format,
     objectEach = H.objectEach,

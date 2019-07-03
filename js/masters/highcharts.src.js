@@ -40,6 +40,7 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    defined: U.defined,
     isArray: U.isArray,
     isNumber: U.isNumber,
     isString: U.isString,

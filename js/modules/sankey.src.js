@@ -105,7 +105,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -113,8 +116,7 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 
-var defined = H.defined,
-    find = H.find,
+var find = H.find,
     isObject = H.isObject,
     merge = H.merge,
     seriesType = H.seriesType,
@@ -451,7 +453,7 @@ seriesType('sankey', 'column',
                     i,
                     point;
 
-                if (!H.defined(node.options.column)) {
+                if (!defined(node.options.column)) {
                     // No links to this node, place it left
                     if (node.linksTo.length === 0) {
                         node.column = 0;

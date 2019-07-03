@@ -57,7 +57,12 @@ declare global {
 }
 
 import './Axis.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+const {
+    defined
+} = U;
+
 import './Chart.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
@@ -67,7 +72,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
-    defined = H.defined,
     extend = H.extend,
     noop = H.noop,
     pick = H.pick,
@@ -778,7 +782,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             positions = [],
             max = axis.dataMax;
 
-        if (H.defined(distance)) {
+        if (defined(distance)) {
             // Max + pointRange because we need to scroll to the last
 
             positions.push(max);

@@ -652,12 +652,14 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    defined,
+    isArray
+} = U;
 
 import './Series.js';
 
 var arrayMax = H.arrayMax,
-    defined = H.defined,
     extend = H.extend,
     format = H.format,
     merge = H.merge,

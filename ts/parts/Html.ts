@@ -54,6 +54,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     pInt
 } = U;
 
@@ -62,7 +63,6 @@ import './SvgRenderer.js';
 var attr = H.attr,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
     extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,

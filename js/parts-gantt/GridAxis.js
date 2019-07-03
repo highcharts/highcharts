@@ -10,7 +10,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var defined = U.defined,
+    isArray = U.isArray,
     isNumber = U.isNumber;
 
 var addEvent = H.addEvent,
@@ -18,7 +19,6 @@ var addEvent = H.addEvent,
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
-    defined = H.defined,
     isObject = function (x) {
         // Always use strict mode
         return H.isObject(x, true);

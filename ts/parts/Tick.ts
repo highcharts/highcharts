@@ -120,11 +120,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
 var correctFloat = H.correctFloat,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     merge = H.merge,

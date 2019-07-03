@@ -639,6 +639,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber
 } = U;
@@ -651,7 +652,6 @@ var Point: typeof Highcharts.Point,
     format = H.format,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
-    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

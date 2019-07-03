@@ -30,8 +30,9 @@ import Axis from './Axis.js';
  *
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
-import './Utilities.js';
-var arrayMax = H.arrayMax, arrayMin = H.arrayMin, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, merge = H.merge, pick = H.pick;
+import U from './Utilities.js';
+var defined = U.defined;
+var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands

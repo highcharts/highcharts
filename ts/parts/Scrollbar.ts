@@ -140,7 +140,11 @@ declare global {
 }
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined
+} = U;
+
 import './Axis.js';
 import './Options.js';
 
@@ -148,7 +152,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,

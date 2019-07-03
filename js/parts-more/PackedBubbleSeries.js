@@ -111,7 +111,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var defined = U.defined,
+    isArray = U.isArray,
     isNumber = U.isNumber;
 
 import '../parts/Axis.js';
@@ -125,7 +126,6 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    defined = H.defined,
     pick = H.pick,
     addEvent = H.addEvent,
     Chart = H.Chart,
@@ -1343,7 +1343,7 @@ seriesType(
             // and undefined values
             chart.series.forEach(function (s) {
                 s.yData.forEach(function (p) {
-                    if (H.defined(p)) {
+                    if (defined(p)) {
                         if (p > valMax) {
                             valMax = p;
                         }

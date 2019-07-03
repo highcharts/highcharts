@@ -220,6 +220,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
@@ -227,7 +228,6 @@ var H = Highcharts,
     addEvent = H.addEvent,
     css = H.css,
     discardElement = H.discardElement,
-    defined = H.defined,
     fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
