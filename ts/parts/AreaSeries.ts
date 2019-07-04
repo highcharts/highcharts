@@ -18,16 +18,33 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PlotSeriesOptions {
+        interface AreaPointOptions extends LinePointOptions {
+        }
+        interface AreaSeriesOptions extends LineSeriesOptions {
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillOpacity?: number;
+            states?: AreaSeriesStatesOptions;
+        }
+        interface AreaSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions
+        {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             fillOpacity?: number;
         }
-        interface Point {
-            leftNull?: boolean;
-            rightNull?: boolean;
+        interface AreaSeriesStatesOptions extends LineSeriesStatesOptions {
+            hover?: AreaSeriesStatesHoverOptions;
         }
-        interface Series {
-            getStackPoints(points: Array<Point>): Array<Point>;
+        class AreaPoint extends LinePoint {
+            public leftNull?: boolean;
+            public options: AreaPointOptions;
+            public rightNull?: boolean;
+            public series: AreaSeries;
+        }
+        class AreaSeries extends LineSeries {
+            public data: Array<AreaPoint>;
+            public options: AreaSeriesOptions;
+            public points: Array<AreaPoint>;
+            public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
     }
 }
@@ -53,7 +70,7 @@ var color = H.color,
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.AreaSeriesOptions>(
     'area',
     'line',
 
@@ -211,16 +228,16 @@ seriesType(
          * @private
          */
         getStackPoints: function (
-            this: Highcharts.Series,
-            points: Array<Highcharts.Point>
-        ): Array<Highcharts.Point> {
+            this: Highcharts.AreaSeries,
+            points: Array<Highcharts.AreaPoint>
+        ): Array<Highcharts.AreaPoint> {
             var series = this,
-                segment = [] as Array<Highcharts.Point>,
+                segment = [] as Array<Highcharts.AreaPoint>,
                 keys = [] as Array<string>,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 stack = yAxis.stacks[this.stackKey as any],
-                pointMap = {} as Highcharts.Dictionary<Highcharts.Point>,
+                pointMap = {} as Highcharts.Dictionary<Highcharts.AreaPoint>,
                 seriesIndex = series.index,
                 yAxisSeries = yAxis.series,
                 seriesLength = yAxisSeries.length,
@@ -369,8 +386,8 @@ seriesType(
          * @private
          */
         getGraphPath: function (
-            this: Highcharts.Series,
-            points: Array<Highcharts.Point>
+            this: Highcharts.AreaSeries,
+            points: Array<Highcharts.AreaPoint>
         ): Highcharts.SVGPathArray {
             var getGraphPath = Series.prototype.getGraphPath,
                 graphPath: Highcharts.SVGPathArray,
@@ -379,7 +396,7 @@ seriesType(
                 yAxis = this.yAxis,
                 topPath,
                 bottomPath,
-                bottomPoints = [] as Array<Highcharts.Point>,
+                bottomPoints = [] as Array<Highcharts.AreaPoint>,
                 graphPoints = [],
                 seriesIndex = this.index,
                 i,
@@ -510,7 +527,7 @@ seriesType(
          * getSegmentPath method called from Series.prototype.drawGraph.
          * @private
          */
-        drawGraph: function (this: Highcharts.Series): void {
+        drawGraph: function (this: Highcharts.AreaSeries): void {
 
             // Define or reset areaPath
             this.areaPath = [];

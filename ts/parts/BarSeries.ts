@@ -18,8 +18,19 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Series {
-            inverted?: boolean;
+        interface BarPointOptions extends ColumnPointOptions {
+        }
+        interface BarSeriesOptions extends ColumnSeriesOptions {
+        }
+        class BarPoint extends ColumnPoint {
+            public options: BarPointOptions;
+            public series: BarSeries;
+        }
+        class BarSeries extends ColumnSeries {
+            public data: Array<BarPoint>;
+            public inverted?: boolean;
+            public options: BarSeriesOptions;
+            public points: Array<BarPoint>;
         }
     }
 }
@@ -38,7 +49,7 @@ var seriesType = H.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.BarSeriesOptions>(
     'bar',
     'column',
 

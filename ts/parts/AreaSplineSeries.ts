@@ -14,7 +14,19 @@ import H from './Globals.js';
 
 declare global {
     namespace Highcharts {
-        // nothing to declare
+        interface AreaSplinePointOptions extends SplinePointOptions {
+        }
+        interface AreaSplineSeriesOptions extends SplineSeriesOptions {
+        }
+        class AreaSplinePoint extends SplinePoint {
+            public options: AreaSplinePointOptions;
+            public series: AreaSplineSeries;
+        }
+        class AreaSplineSeries extends SplineSeries {
+            public data: Array<AreaSplinePoint>;
+            public options: AreaSplineSeriesOptions;
+            public points: Array<AreaSplinePoint>;
+        }
     }
 }
 
@@ -23,7 +35,7 @@ import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
 
-var areaProto = H.seriesTypes.area.prototype,
+var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries,
     defaultPlotOptions = H.defaultPlotOptions,
     LegendSymbolMixin = H.LegendSymbolMixin,
     seriesType = H.seriesType;
@@ -37,7 +49,7 @@ var areaProto = H.seriesTypes.area.prototype,
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.AreaSplineSeriesOptions>(
     'areaspline',
     'spline',
 

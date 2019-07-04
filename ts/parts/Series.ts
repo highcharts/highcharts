@@ -5060,9 +5060,17 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         ];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if (series.getPointSpline) {
+                    } else if (
+                        (series as Highcharts.SplineSeries).getPointSpline
+                    ) {
 
-                        pathToPoint = series.getPointSpline(points, point, i);
+                        pathToPoint = (
+                            series as Highcharts.SplineSeries
+                        ).getPointSpline(
+                            points as Array<Highcharts.SplinePoint>,
+                            point as Highcharts.SplinePoint,
+                            i
+                        );
 
                     } else if (step) {
 

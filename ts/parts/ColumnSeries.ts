@@ -37,7 +37,7 @@ declare global {
             borderWidth?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
         }
-        interface ColumnPointOptions extends PointOptionsObject {
+        interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
         }
@@ -62,14 +62,14 @@ declare global {
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
         }
-        class ColumnPoint extends Point {
+        class ColumnPoint extends LinePoint {
             public barX?: number;
             public options: ColumnPointOptions;
             public pointWidth?: number;
             public series: ColumnSeries;
             public shapeType?: string;
         }
-        class ColumnSeries extends Series {
+        class ColumnSeries extends LineSeries {
             public borderWidth?: number;
             public columnIndex?: number;
             public columnMetrics?: ColumnMetricsObject;

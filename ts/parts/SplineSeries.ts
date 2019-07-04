@@ -18,15 +18,24 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Point {
-            doCurve?: boolean;
-            rightContX?: number;
-            rightContY?: number;
+        interface SplinePointOptions extends LinePointOptions {
         }
-        interface Series {
-            getPointSpline(
-                points: Array<Point>,
-                point: Point,
+        interface SplineSeriesOptions extends LineSeriesOptions {
+        }
+        class SplinePoint extends LinePoint {
+            public doCurve?: boolean;
+            public options: SplinePointOptions;
+            public rightContX?: number;
+            public rightContY?: number;
+            public series: SplineSeries;
+        }
+        class SplineSeries extends LineSeries {
+            public data: Array<SplinePoint>;
+            public options: SplineSeriesOptions;
+            public points: Array<SplinePoint>;
+            public getPointSpline(
+                points: Array<SplinePoint>,
+                point: SplinePoint,
                 i: number
             ): SVGPathArray;
         }
@@ -49,7 +58,7 @@ var pick = H.pick,
  *
  * @augments Highcarts.Series
  */
-seriesType(
+seriesType<Highcharts.SplineSeriesOptions>(
     'spline',
     'line',
     /**
@@ -69,12 +78,13 @@ seriesType(
     {
     },
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @lends seriesTypes.spline.prototype
      */
     {
+
+        /* eslint-disable valid-jsdoc */
+
         /**
          * Get the spline segment from a given point's previous neighbour to the
          * given point.
@@ -91,9 +101,9 @@ seriesType(
          * @return {Highcharts.SVGPathArray}
          */
         getPointSpline: function (
-            this: Highcharts.Series,
-            points: Array<Highcharts.Point>,
-            point: Highcharts.Point,
+            this: Highcharts.SplineSeries,
+            points: Array<Highcharts.SplinePoint>,
+            point: Highcharts.SplinePoint,
             i: number
         ): Highcharts.SVGPathArray {
             var
@@ -114,7 +124,7 @@ seriesType(
             /**
              * @private
              */
-            function doCurve(otherPoint: Highcharts.Point): boolean {
+            function doCurve(otherPoint: Highcharts.SplinePoint): boolean {
                 return otherPoint &&
                     !otherPoint.isNull &&
                     otherPoint.doCurve !== false &&
@@ -246,10 +256,11 @@ seriesType(
             lastPoint.rightContX = lastPoint.rightContY = null as any;
             return ret;
         }
+
+        /* eslint-enable valid-jsdoc */
+
     }
 );
-
-/* eslint-enable valid-jsdoc */
 
 /**
  * A `spline` series. If the [type](#series.spline.type) option is
