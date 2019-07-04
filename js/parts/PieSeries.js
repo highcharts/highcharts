@@ -600,7 +600,9 @@ seriesType('pie', 'line',
             point = points[i];
             total += (ignoreHiddenPoint && !point.visible) ?
                 0 :
-                point.isNull ? 0 : point.y;
+                point.isNull ?
+                    0 :
+                    point.y;
         }
         this.total = total;
         // Set each point's properties

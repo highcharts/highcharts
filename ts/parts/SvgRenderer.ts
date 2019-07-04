@@ -96,7 +96,7 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: (SymbolFunction<SVGElement|SVGPathArray>|undefined);
+            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;

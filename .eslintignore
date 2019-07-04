@@ -1,4 +1,5 @@
 js/mixins/centered-series.js
+js/mixins/on-series.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/AreaSplineSeries.js
@@ -13,6 +14,7 @@ js/parts/DataGrouping.js
 js/parts/DataLabels.js
 js/parts/DateTimeAxis.js
 js/parts/Dynamics.js
+js/parts/FlagsSeries.js
 js/parts/Globals.js
 js/parts/Html.js
 js/parts/Interaction.js

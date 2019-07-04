@@ -26,7 +26,7 @@ declare global {
         interface DataLabelsBoxObject {
             align?: number;
             pos?: number;
-            rank?: number;
+            rank?: (number|null);
             size: number;
             target: number;
             targets?: Array<number>;

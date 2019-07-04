@@ -762,7 +762,9 @@ seriesType<Highcharts.PieSeriesOptions>(
                 point = points[i];
                 total += (ignoreHiddenPoint && !point.visible) ?
                     0 :
-                    point.isNull ? 0 : point.y;
+                    point.isNull ?
+                        0 :
+                        (point.y as any);
             }
             this.total = total;
 
@@ -770,9 +772,9 @@ seriesType<Highcharts.PieSeriesOptions>(
             for (i = 0; i < len; i++) {
                 point = points[i];
                 point.percentage =
-                (total > 0 && (point.visible || !ignoreHiddenPoint)) ?
-                    point.y / total * 100 :
-                    0;
+                    (total > 0 && (point.visible || !ignoreHiddenPoint)) ?
+                        (point.y as any) / total * 100 :
+                        0;
                 point.total = total;
             }
         },

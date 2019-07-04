@@ -34,7 +34,7 @@ declare global {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
         }
-        interface SymbolsDictionary {
+        interface SymbolDictionary {
             rect(
                 x: number,
                 y: number,
@@ -201,7 +201,7 @@ declare global {
             public isIE8: boolean;
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
-            public symbols: SymbolsDictionary;
+            public symbols: SymbolDictionary;
             public circle(obj: Dictionary<number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
