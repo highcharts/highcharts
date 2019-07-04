@@ -29,6 +29,12 @@ add_gh_user_config: &add_gh_user_config
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
 
+filtered_branches: &filtered_branches
+  branches:
+    only:
+      - vacation2019
+      - master
+
 #######################################
 
 executors:
@@ -210,29 +216,36 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters: *filtered_branches
       - install_dependencies:
+          filters: *filtered_branches
           requires:
             - checkout_code
       - generate_ts_declarations:
+          filters: *filtered_branches
           requires:
             - install_dependencies
       - test_browsers:
+          filters: *filtered_branches
           name: "test-Mac.Safari"
           requires:
             - install_dependencies
           browsers: "Mac.Safari"
       - test_browsers:
+          filters: *filtered_branches
           name: "test-Win.Chrome"
           requires:
             - "test-Mac.Safari"
           browsers: "Win.Chrome"
       - test_browsers:
+          filters: *filtered_branches
           name: "test-Mac.Firefox"
           requires:
             - "test-Win.Chrome"
           browsers: "Mac.Firefox"
       - test_browsers:
+          filters: *filtered_branches
           name: "test-Win.IE8"
           requires:
             - "test-Mac.Firefox"
