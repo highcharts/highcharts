@@ -11,7 +11,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    splat = U.splat;
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
@@ -28,7 +29,6 @@ var addEvent = H.addEvent,
     wrap = H.wrap,
     merge = H.merge,
     erase = H.erase,
-    splat = H.splat,
     extend = H.extend,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;

@@ -219,7 +219,8 @@ const {
     isArray,
     isNumber,
     isString,
-    pInt
+    pInt,
+    splat
 } = U;
 
 import './Axis.js';
@@ -250,7 +251,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    splat = H.splat,
     syncTimeout = H.syncTimeout,
     win = H.win;
 

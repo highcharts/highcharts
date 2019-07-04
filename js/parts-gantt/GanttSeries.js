@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    splat = U.splat;
 
 import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
@@ -78,7 +79,7 @@ seriesType('gantt', 'xrange'
                 }
 
                 if (!format) {
-                    format = H.splat(
+                    format = splat(
                         tooltip.getDateFormat(
                             xAxis.closestPointRange,
                             point.start,

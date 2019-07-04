@@ -10,12 +10,12 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    splat = U.splat;
 
 import 'GanttSeries.js';
 
 var merge = H.merge,
-    splat = H.splat,
     Chart = H.Chart;
 
 /**

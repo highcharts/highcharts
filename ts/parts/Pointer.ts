@@ -215,7 +215,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isNumber
+    isNumber,
+    splat
 } = U;
 
 import './Tooltip.js';
@@ -233,7 +234,6 @@ var H = Highcharts,
     isObject = H.isObject,
     offset = H.offset,
     pick = H.pick,
-    splat = H.splat,
     Tooltip = H.Tooltip;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

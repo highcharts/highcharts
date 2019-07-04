@@ -14,7 +14,8 @@ import Highcharts from './Globals.js';
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    splat
 } = U;
 
 /**
@@ -742,7 +743,7 @@ Highcharts.Time.prototype = {
         f: (string|Array<T>|Highcharts.Dictionary<T>)
     ): Highcharts.Dictionary<T> {
         if (!H.isObject(f, true)) { // check for string or array
-            f = H.splat(f);
+            f = splat(f);
             return {
                 main: f[0],
                 from: f[1],

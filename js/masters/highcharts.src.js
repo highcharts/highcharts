@@ -44,7 +44,8 @@ extend(Highcharts, {
     isArray: U.isArray,
     isNumber: U.isNumber,
     isString: U.isString,
-    pInt: U.pInt
+    pInt: U.pInt,
+    splat: U.splat
 });
 
 export default Highcharts;

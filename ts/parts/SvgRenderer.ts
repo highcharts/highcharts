@@ -813,7 +813,8 @@ const {
     isArray,
     isNumber,
     isString,
-    pInt
+    pInt,
+    splat
 } = U;
 
 import './Color.js';
@@ -843,7 +844,6 @@ var SVGElement: Highcharts.SVGElement,
     objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
-    splat = H.splat,
     stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,

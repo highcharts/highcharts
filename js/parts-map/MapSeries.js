@@ -30,7 +30,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var isArray = U.isArray,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    splat = U.splat;
 
 import '../parts/Color.js';
 import '../parts/Options.js';
@@ -49,8 +50,7 @@ var colorPointMixin = H.colorPointMixin,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    splat = H.splat;
+    seriesTypes = H.seriesTypes;
 
 /**
  * @private

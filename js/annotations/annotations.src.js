@@ -12,7 +12,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isString = U.isString;
+    isString = U.isString,
+    splat = U.splat;
 
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
@@ -32,7 +33,6 @@ var merge = H.merge,
     find = H.find,
     pick = H.pick,
     reduce = H.reduce,
-    splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties,
     chartProto = H.Chart.prototype;
 

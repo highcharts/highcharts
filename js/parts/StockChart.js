@@ -13,7 +13,8 @@ import H from './Globals.js';
 import U from './Utilities.js';
 var defined = U.defined,
     isNumber = U.isNumber,
-    isString = U.isString;
+    isString = U.isString,
+    splat = U.splat;
 
 import './Chart.js';
 import './Axis.js';
@@ -43,7 +44,6 @@ var addEvent = H.addEvent,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
-    splat = H.splat,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer,
 

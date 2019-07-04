@@ -9,7 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var splat = U.splat;
+
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Tick.js';
@@ -25,7 +28,6 @@ var ZAxis,
     perspective3D = H.perspective3D,
     pick = H.pick,
     shapeArea = H.shapeArea,
-    splat = H.splat,
     Tick = H.Tick,
     wrap = H.wrap;
 

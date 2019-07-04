@@ -731,7 +731,8 @@ const {
     defined,
     isArray,
     isNumber,
-    isString
+    isString,
+    splat
 } = U;
 
 import './Color.js';
@@ -757,7 +758,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    splat = H.splat,
     syncTimeout = H.syncTimeout,
     Tick = H.Tick;
 

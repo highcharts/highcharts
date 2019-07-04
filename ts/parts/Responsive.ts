@@ -73,12 +73,14 @@ declare global {
 import './Chart.js';
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    splat
+} = U;
 
 var Chart = H.Chart,
     isObject = H.isObject,
-    pick = H.pick,
-    splat = H.splat;
+    pick = H.pick;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart

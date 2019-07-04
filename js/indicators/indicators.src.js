@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    splat = U.splat;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
@@ -256,7 +257,7 @@ seriesType(
                             croppedDataValues.push([
                                 croppedData.xData[i]
                             ].concat(
-                                H.splat(croppedData.yData[i])
+                                splat(croppedData.yData[i])
                             ));
                         }
 

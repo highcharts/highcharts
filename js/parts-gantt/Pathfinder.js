@@ -34,7 +34,8 @@ import H from '../parts/Globals.js';
 import '../parts/Point.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    splat = U.splat;
 
 import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
 import 'ArrowSymbols.js';
@@ -874,7 +875,7 @@ Pathfinder.prototype = {
                         connects = (
                             point.options &&
                             point.options.connect &&
-                            H.splat(point.options.connect)
+                            splat(point.options.connect)
                         );
 
                     if (point.visible && point.isInside !== false && connects) {
