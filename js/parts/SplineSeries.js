@@ -38,11 +38,11 @@ seriesType('spline', 'line',
  * @optionparent plotOptions.spline
  */
 {}, 
-/* eslint-disable valid-jsdoc */
 /**
  * @lends seriesTypes.spline.prototype
  */
 {
+    /* eslint-disable valid-jsdoc */
     /**
      * Get the spline segment from a given point's previous neighbour to the
      * given point.
@@ -180,8 +180,8 @@ seriesType('spline', 'line',
         lastPoint.rightContX = lastPoint.rightContY = null;
         return ret;
     }
+    /* eslint-enable valid-jsdoc */
 });
-/* eslint-enable valid-jsdoc */
 /**
  * A `spline` series. If the [type](#series.spline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

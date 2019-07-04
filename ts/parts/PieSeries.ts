@@ -94,10 +94,7 @@ declare global {
             public total?: number;
             public getX(y: number, left: boolean, point: PiePoint): number;
             public redrawPoints(): void;
-            public sortByAngle(
-                points: Array<(PiePoint|Point)>,
-                sign: number
-            ): void;
+            public sortByAngle(points: Array<PiePoint>, sign: number): void;
             public translate(positions?: Array<number>): void;
             public updateTotals(): void;
         }

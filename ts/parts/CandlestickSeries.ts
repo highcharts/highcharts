@@ -45,6 +45,7 @@ declare global {
             public series: CandlestickSeries;
         }
         class CandlestickSeries extends OHLCSeries {
+            public data: Array<CandlestickPoint>;
             public options: CandlestickSeriesOptions;
             public points: Array<CandlestickPoint>;
         }

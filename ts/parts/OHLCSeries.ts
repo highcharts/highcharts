@@ -34,11 +34,12 @@ declare global {
         interface OHLCSeriesStatesOptions extends ColumnSeriesStatesOptions {
             hover?: OHLCSeriesStatesHoverOptions;
         }
-        class OHLCPoint extends Point {
+        class OHLCPoint extends ColumnPoint {
             public close: number;
             public high: number;
             public low: number;
             public open: number;
+            public options: OHLCPointOptions;
             public series: OHLCSeries;
         }
         class OHLCSeries extends ColumnSeries {
