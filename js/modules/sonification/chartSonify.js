@@ -98,7 +98,8 @@
 import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    splat = U.splat;
 
 import utilities from 'utilities.js';
 
@@ -457,7 +458,7 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
         // earcons or silent waits.
         order = orderOptions.reduce(function (orderList, orderDef) {
             // Return set of items to play simultaneously. Could be only one.
-            var simulItems = H.splat(orderDef).reduce(function (items, item) {
+            var simulItems = splat(orderDef).reduce(function (items, item) {
                 var itemObject;
 
                 // Is this item a series ID?
@@ -520,7 +521,7 @@ function addAfterSeriesWaits(order, wait) {
     }
 
     return order.reduce(function (newOrder, orderDef, i) {
-        var simultaneousPaths = H.splat(orderDef);
+        var simultaneousPaths = splat(orderDef);
 
         newOrder.push(simultaneousPaths);
 
@@ -552,7 +553,7 @@ function addAfterSeriesWaits(order, wait) {
  */
 function getWaitTime(order) {
     return order.reduce(function (waitTime, orderDef) {
-        var def = H.splat(orderDef);
+        var def = splat(orderDef);
 
         return waitTime + (
             def.length === 1 && def[0].options && def[0].options.silentWait || 0
@@ -617,7 +618,7 @@ function syncSimultaneousPaths(paths) {
  */
 function getSimulPathDurationTotal(order) {
     return order.reduce(function (durationTotal, orderDef) {
-        return durationTotal + H.splat(orderDef).reduce(
+        return durationTotal + splat(orderDef).reduce(
             function (maxPathDuration, item) {
                 var timeExtremes = item.series && item.seriesOptions &&
                         item.seriesOptions.timeExtremes;
@@ -678,7 +679,7 @@ function buildPathsFromOrder(order, duration) {
 
     // Go through the order list and convert the items
     return order.reduce(function (allPaths, orderDef) {
-        var simultaneousPaths = H.splat(orderDef).reduce(
+        var simultaneousPaths = splat(orderDef).reduce(
             function (simulPaths, item) {
                 if (item instanceof H.sonification.TimelinePath) {
                     // This item is already a path object
@@ -903,7 +904,7 @@ function setCursor(points) {
     var timeline = this.sonification.timeline;
 
     if (timeline) {
-        H.splat(points).forEach(function (point) {
+        splat(points).forEach(function (point) {
             // We created the events with the ID of the points, which makes
             // this easy. Just call setCursor for each ID.
             timeline.setCursor(point.id);

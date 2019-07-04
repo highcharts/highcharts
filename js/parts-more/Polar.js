@@ -7,7 +7,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var splat = U.splat;
+
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -613,7 +616,7 @@ H.addEvent(H.Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
-    H.splat(this.options.pane).forEach(function (paneOptions) {
+    splat(this.options.pane).forEach(function (paneOptions) {
         new H.Pane( // eslint-disable-line no-new
             paneOptions,
             this

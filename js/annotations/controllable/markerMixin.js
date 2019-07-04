@@ -3,7 +3,8 @@ import H from './../../parts/Globals.js';
 import './../../parts/Chart.js';
 
 import U from './../../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    splat = U.splat;
 
 import './../../parts/SvgRenderer.js';
 
@@ -167,7 +168,7 @@ H.SVGRenderer.prototype.definition = function (def) {
     function recurse(config, parent) {
         var ret;
 
-        H.splat(config).forEach(function (item) {
+        splat(config).forEach(function (item) {
             var node = ren.createElement(item.tagName),
                 attr = {};
 

@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined;
+var defined = U.defined, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -527,7 +527,7 @@ Highcharts.Time.prototype = {
      */
     resolveDTLFormat: function (f) {
         if (!H.isObject(f, true)) { // check for string or array
-            f = H.splat(f);
+            f = splat(f);
             return {
                 main: f[0],
                 from: f[1],

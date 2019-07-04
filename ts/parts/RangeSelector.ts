@@ -175,7 +175,8 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
-    pInt
+    pInt,
+    splat
 } = U;
 
 import './Axis.js';
@@ -192,8 +193,7 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
-    splat = H.splat;
+    pick = H.pick;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *

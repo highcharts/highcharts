@@ -16,7 +16,8 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
-    isString
+    isString,
+    splat
 } = U;
 
 /**
@@ -245,7 +246,6 @@ var doc = H.doc,
     format = H.format,
     merge = H.merge,
     pick = H.pick,
-    splat = H.splat,
     syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 

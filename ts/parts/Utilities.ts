@@ -1420,9 +1420,9 @@ H.attr = function (
  * @return {Array}
  *         The produced or original array.
  */
-H.splat = function (obj: any): Array<any> {
+function splat(obj: any): Array<any> {
     return isArray(obj) ? obj : [obj];
-};
+}
 
 /**
  * Set a timeout if the delay is given, otherwise perform the function
@@ -3263,7 +3263,8 @@ const utils = {
     isArray,
     isNumber,
     isString,
-    pInt
+    pInt,
+    splat
 };
 
 export default utils;

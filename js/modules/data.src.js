@@ -85,7 +85,8 @@ import Highcharts from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    splat = U.splat;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -98,7 +99,6 @@ var addEvent = Highcharts.addEvent,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
     merge = Highcharts.merge,
-    splat = Highcharts.splat,
     fireEvent = Highcharts.fireEvent,
     SeriesBuilder;
 

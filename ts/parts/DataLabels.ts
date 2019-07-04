@@ -656,7 +656,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isArray
+    isArray,
+    splat
 } = U;
 
 import './Series.js';
@@ -671,8 +672,7 @@ var arrayMax = H.arrayMax,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort,
-    splat = H.splat;
+    stableSort = H.stableSort;
 
 /* eslint-disable valid-jsdoc */
 

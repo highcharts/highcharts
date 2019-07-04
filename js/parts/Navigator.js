@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
@@ -1530,7 +1530,7 @@ Navigator.prototype = {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
-                H.splat(chartNavigatorSeriesOptions);
+                splat(chartNavigatorSeriesOptions);
             chartNavigatorSeriesOptions.forEach(function (userSeriesOptions, i) {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);

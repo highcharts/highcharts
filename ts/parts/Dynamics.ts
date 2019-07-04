@@ -110,7 +110,8 @@ const {
     defined,
     isArray,
     isNumber,
-    isString
+    isString,
+    splat
 } = U;
 
 import './Axis.js';
@@ -134,8 +135,7 @@ var addEvent = H.addEvent,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    setAnimation = H.setAnimation,
-    splat = H.splat;
+    setAnimation = H.setAnimation;
 
 /* eslint-disable valid-jsdoc */
 

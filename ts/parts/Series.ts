@@ -631,7 +631,8 @@ const {
     defined,
     isArray,
     isNumber,
-    isString
+    isString,
+    splat
 } = U;
 
 import './Options.js';
@@ -655,7 +656,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
-    splat = H.splat,
     SVGElement = H.SVGElement,
     syncTimeout = H.syncTimeout,
     win = H.win;

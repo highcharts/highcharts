@@ -182,7 +182,8 @@ import U from './Utilities.js';
 const {
     defined,
     isArray,
-    isNumber
+    isNumber,
+    splat
 } = U;
 
 import './Color.js';
@@ -2255,7 +2256,7 @@ Navigator.prototype = {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
-                (H.splat(chartNavigatorSeriesOptions) as any);
+                (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
                 userSeriesOptions: Highcharts.SeriesOptionsType,
                 i: number

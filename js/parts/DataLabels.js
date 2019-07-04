@@ -495,9 +495,9 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, splat = U.splat;
 import './Series.js';
-var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, splat = H.splat;
+var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
