@@ -37,6 +37,7 @@ js/parts/Scrollbar.js
 js/parts/Series.js
 js/parts/SplineSeries.js
 js/parts/Stacking.js
+js/parts/StockChart.js
 js/parts/SvgRenderer.js
 js/parts/Tick.js
 js/parts/Time.js
