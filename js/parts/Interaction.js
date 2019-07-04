@@ -899,8 +899,6 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // slower to un-hover
         stateAnimation = pick((stateOptions[state || 'normal'] &&
             stateOptions[state || 'normal'].animation), series.chart.options.chart.animation), attribs, i = 0;
-        console.log(state, stateAnimation, (stateOptions[state || 'normal'] &&
-            stateOptions[state || 'normal'].animation), series.chart.options.chart.animation);
         state = state || '';
         if (series.state !== state) {
             // Toggle class names
