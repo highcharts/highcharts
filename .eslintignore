@@ -31,6 +31,7 @@ js/parts/Point.js
 js/parts/Pointer.js
 js/parts/RangeSelector.js
 js/parts/Responsive.js
+js/parts/ScatterSeries.js
 js/parts/ScrollablePlotArea.js
 js/parts/Scrollbar.js
 js/parts/Series.js
