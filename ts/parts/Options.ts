@@ -301,7 +301,7 @@ declare global {
             pointFormat?: string;
             pointFormatter?: FormatterCallbackFunction<Point>;
             positioner?: TooltipPositionerCallbackFunction;
-            shadow?: boolean;
+            shadow?: (boolean|ShadowOptionsObject);
             shape?: TooltipShapeValue;
             shared?: boolean;
             snap?: number;
@@ -3812,6 +3812,8 @@ H.defaultOptions = {
          *         False
          * @sample {highmaps} maps/tooltip/positioner/
          *         Fixed tooltip position, border and shadow disabled
+         *
+         * @type {boolean|Highcharts.ShadowOptionsObject}
          */
         shadow: true,
 

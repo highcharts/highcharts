@@ -3264,6 +3264,8 @@ H.defaultOptions = {
          *         False
          * @sample {highmaps} maps/tooltip/positioner/
          *         Fixed tooltip position, border and shadow disabled
+         *
+         * @type {boolean|Highcharts.ShadowOptionsObject}
          */
         shadow: true,
         /**
