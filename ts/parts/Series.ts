@@ -66,9 +66,6 @@ declare global {
             colorAxis?: boolean;
             colorIndex?: number;
             colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
             connectEnds?: boolean;
             connectNulls?: boolean;
             cropThreshold?: number;
@@ -4265,7 +4262,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
                 // general hook, used for Highstock compare mode
                 if (hasModifyValue) {
-                    yValue = series.modifyValue(yValue, point);
+                    yValue = (series.modifyValue as any)(yValue, point);
                 }
 
                 // Set the the plotY value, reset it for redraws
