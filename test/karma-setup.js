@@ -41,6 +41,20 @@ Highcharts.setOptions({
             kdNow: true,
             dataLabels: {
                 defer: false
+            },
+            states: {
+                hover: {
+                    animation: false
+                },
+                select: {
+                    animation: false
+                },
+                inactive: {
+                    animation: false
+                },
+                normal: {
+                    animation: false
+                }
             }
         },
         // We cannot use it in plotOptions.series because treemap

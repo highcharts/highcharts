@@ -445,13 +445,15 @@ extend(Legend.prototype, {
         (useHTML ? legendItem : (item.legendGroup as any))
             .on('mouseover', function (): void {
 
-                legend.allItems.forEach(function (
-                    inactiveItem: (Highcharts.Point|Highcharts.Series)
-                ): void {
-                    if (item !== inactiveItem) {
-                        inactiveItem.setState('inactive', !isPoint);
-                    }
-                });
+                if (item.visible) {
+                    legend.allItems.forEach(function (
+                        inactiveItem: (Highcharts.Point|Highcharts.Series)
+                    ): void {
+                        if (item !== inactiveItem) {
+                            inactiveItem.setState('inactive', !isPoint);
+                        }
+                    });
+                }
 
                 item.setState('hover');
 
@@ -497,6 +499,17 @@ extend(Legend.prototype, {
                         if ((item as any).setVisible) {
                             (item as any).setVisible();
                         }
+                        // Reset inactive state
+                        legend.allItems.forEach(function (
+                            inactiveItem: (Highcharts.Point|Highcharts.Series)
+                        ): void {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState(
+                                    item.visible ? 'inactive' : '',
+                                    !isPoint
+                                );
+                            }
+                        });
                     };
 
                 // A CSS class to dim or hide other than the hovered series.

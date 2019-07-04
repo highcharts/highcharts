@@ -267,11 +267,13 @@ extend(Legend.prototype, {
         // itself (#1249)
         (useHTML ? legendItem : item.legendGroup)
             .on('mouseover', function () {
-            legend.allItems.forEach(function (inactiveItem) {
-                if (item !== inactiveItem) {
-                    inactiveItem.setState('inactive', !isPoint);
-                }
-            });
+            if (item.visible) {
+                legend.allItems.forEach(function (inactiveItem) {
+                    if (item !== inactiveItem) {
+                        inactiveItem.setState('inactive', !isPoint);
+                    }
+                });
+            }
             item.setState('hover');
             // A CSS class to dim or hide other than the hovered series.
             // Works only if hovered series is visible (#10071).
@@ -302,6 +304,12 @@ extend(Legend.prototype, {
                 if (item.setVisible) {
                     item.setVisible();
                 }
+                // Reset inactive state
+                legend.allItems.forEach(function (inactiveItem) {
+                    if (item !== inactiveItem) {
+                        inactiveItem.setState(item.visible ? 'inactive' : '', !isPoint);
+                    }
+                });
             };
             // A CSS class to dim or hide other than the hovered series.
             // Event handling in iOS causes the activeClass to be added
@@ -891,6 +899,8 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // slower to un-hover
         stateAnimation = pick((stateOptions[state || 'normal'] &&
             stateOptions[state || 'normal'].animation), series.chart.options.chart.animation), attribs, i = 0;
+        console.log(state, stateAnimation, (stateOptions[state || 'normal'] &&
+            stateOptions[state || 'normal'].animation), series.chart.options.chart.animation);
         state = state || '';
         if (series.state !== state) {
             // Toggle class names
