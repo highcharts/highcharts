@@ -350,7 +350,8 @@ seriesType('bubble', 'scatter', {
             zMin = 0;
         }
 
-        if (!isNumber(value)) {
+        if (value === null) {
+        //if (!isNumber(value)) {
             radius = null;
         // Issue #4419 - if value is less than zMin, push a radius that's
         // always smaller than the minimum size
