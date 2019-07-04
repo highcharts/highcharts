@@ -140,7 +140,7 @@ declare global {
             plotX?: number;
             plotY?: number;
             stackTotal?: number;
-            stackY?: number;
+            stackY?: (number|null);
             yBottom?: number;
         }
         interface SeriesAfterAnimateCallbackFunction {
@@ -4173,7 +4173,8 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     yBottom = point.low,
                     stack = stacking && yAxis.stacks[(
                         series.negStacks &&
-                        yValue < (stackThreshold ? 0 : (threshold as any)) ?
+                        (yValue as any) <
+                        (stackThreshold ? 0 : (threshold as any)) ?
                             '-' :
                             ''
                     ) + series.stackKey],
@@ -4183,7 +4184,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 // Discard disallowed y values for log axes (#3434)
                 if (yAxis.positiveValuesOnly &&
                     yValue !== null &&
-                    yValue <= 0
+                    (yValue as any) <= 0
                 ) {
                     point.isNull = true;
                 }
@@ -4244,7 +4245,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     point.total = point.stackTotal = (pointStack as any).total;
                     point.percentage =
                         (pointStack as any).total &&
-                        (point.y / (pointStack as any).total * 100);
+                        ((point.y as any) / (pointStack as any).total * 100);
                     point.stackY = yValue;
 
                     // Place the stack label

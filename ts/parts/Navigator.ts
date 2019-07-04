@@ -60,7 +60,7 @@ declare global {
             navigatorSeries?: Series;
         }
         interface SymbolDictionary {
-            'navigator-handle'?: (
+            'navigator-handle': (
                 x: number,
                 y: number,
                 w: number,

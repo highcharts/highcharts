@@ -22,16 +22,6 @@ declare global {
             offset: number;
             width: number;
         }
-        interface ColumnSeriesOptions {
-            borderRadius?: number;
-            crisp?: boolean;
-            grouping?: boolean;
-            groupPadding?: number;
-            maxPointWidth?: number;
-            minPointLength?: number;
-            pointPadding?: number;
-            pointWidth?: number;
-        }
         interface PlotSeriesZonesOptions {
             borderColor?: ColorString;
             borderWidth?: number;
@@ -42,6 +32,14 @@ declare global {
             pointWidth?: number;
         }
         interface ColumnSeriesOptions extends LineSeriesOptions {
+            borderRadius?: number;
+            crisp?: boolean;
+            grouping?: boolean;
+            groupPadding?: number;
+            maxPointWidth?: number;
+            minPointLength?: number;
+            pointPadding?: number;
+            pointWidth?: number;
             states?: ColumnSeriesStatesOptions;
         }
         interface ColumnSeriesStatesHoverOptions
@@ -843,9 +841,9 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                     // in visible range (#7046)
                     if (
                         point.y === threshold &&
-                        series.dataMax <= threshold &&
+                        series.dataMax <= (threshold as any) &&
                         // and if there's room for it (#7311)
-                        (yAxis.min as any) < threshold &&
+                        (yAxis.min as any) < (threshold as any) &&
                         // if all points are the same value (i.e zero) not draw
                         // as negative points (#10646)
                         dataMin !== dataMax

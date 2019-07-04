@@ -3115,7 +3115,8 @@ null,
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
-                yValue < (stackThreshold ? 0 : threshold) ?
+                yValue <
+                    (stackThreshold ? 0 : threshold) ?
                 '-' :
                 '') + series.stackKey], pointStack, stackValues;
             // Discard disallowed y values for log axes (#3434)

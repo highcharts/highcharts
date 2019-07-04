@@ -44,8 +44,8 @@ declare global {
             update?: PointUpdateCallbackFunction;
         }
         interface PointLabelObject {
-            x: string;
-            y: number;
+            x?: string;
+            y?: (number|null);
             color: (ColorString|GradientColorObject|PatternObject);
             colorIndex: number;
             key: string;
@@ -157,7 +157,7 @@ declare global {
             public total?: number;
             public visible: boolean;
             public x: (number|null);
-            public y: number;
+            public y?: (number|null);
             public applyOptions(options: PointOptionsType, x?: number): Point;
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;
@@ -1153,7 +1153,7 @@ Highcharts.Point.prototype = {
         this: Highcharts.Point
     ): Highcharts.PointLabelObject {
         return {
-            x: this.category as any,
+            x: this.category,
             y: this.y,
             color: this.color,
             colorIndex: this.colorIndex,
