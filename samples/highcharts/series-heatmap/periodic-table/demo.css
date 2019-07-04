@@ -65,3 +65,17 @@
     height: 500px;
 }
 
+@media (max-width:600px) {
+    #outer-container label {
+        display: block;
+        width: 190px;
+    }
+    #outer-container label:before {
+        top: 16px;
+    }
+
+    #outer-container label:after {
+        top: 22px;
+    }
+
+}
