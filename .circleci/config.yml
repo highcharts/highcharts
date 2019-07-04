@@ -113,7 +113,7 @@ jobs:
     description: Run tests with different browser configs at BrowserStack
     parameters:
       browsers:
-        description: "Which browser to test? "
+        description: "Which browser to test?"
         type: string
         default: "Mac.Safari"
       browsercount:
