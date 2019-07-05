@@ -27,7 +27,7 @@ declare global {
             baseSeries?: (number|string);
         }
         interface Series {
-            baseSeries?: (Series|null);
+            baseSeries?: Series;
             eventRemovers?: Array<Function>;
             initialised?: boolean;
         }
@@ -36,7 +36,7 @@ declare global {
                 'addBaseSeriesEvents'
             ];
             public addEvents: DerivedSeriesMixin['addEvents'];
-            public baseSeries: (Series|null);
+            public baseSeries?: Series;
             public destroy: DerivedSeriesMixin['destroy'];
             public eventRemovers: Array<Function>;
             public hasDerivedData: boolean;
@@ -89,7 +89,7 @@ var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
         Series.prototype.init.apply(this, arguments as any);
 
         this.initialised = false;
-        this.baseSeries = null;
+        this.baseSeries = null as any;
         this.eventRemovers = [];
 
         this.addEvents();
@@ -126,7 +126,7 @@ var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
                 )
             );
 
-        this.baseSeries = baseSeries || null;
+        this.baseSeries = baseSeries || null as any;
     },
 
     /**
@@ -184,7 +184,7 @@ var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
             derivedSeries.baseSeries,
             'destroy',
             function (): void {
-                derivedSeries.baseSeries = null;
+                derivedSeries.baseSeries = null as any;
                 derivedSeries.initialised = false;
             }
         );

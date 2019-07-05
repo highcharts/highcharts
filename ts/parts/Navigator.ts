@@ -53,10 +53,10 @@ declare global {
             yAxis?: YAxisOptions;
         }
         interface Options {
-            baseSeries?: Series;
             navigator?: NavigatorOptions;
         }
         interface Series {
+            baseSeries?: Series;
             navigatorSeries?: Series;
         }
         interface SymbolDictionary {
