@@ -2,48 +2,45 @@
 @import 'https://fonts.googleapis.com/css?family=Signika:400,700';
 
 // Chart background, point stroke for markers and columns etc
-$background-color: none;
+$highcharts-background-color: none;
 
 // Colors for data series and points.
-$colors: #f45b5b #8085e9 #8d4654 #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
+$highcharts-colors: #f45b5b #8085e9 #8d4654 #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
 
 // Neutral colors
-$neutral-color-100: #fff;
-$neutral-color-80: #000;
+$highcharts-neutral-color-100: #fff;
+$highcharts-neutral-color-80: #000;
 
 // Data-labels
-$data-label-color: #000;
+$highcharts-data-label-color: #000;
 
 // Fonts
-$font-family: 'Signika', Arial, Helvetica, sans-serif;
-$title-font-size: 16px;
-$legend-font-size: 13px;
-$axis-labels-font-size: 12px;
+$highcharts-font-family: 'Signika', Arial, Helvetica, sans-serif;
+$highcharts-title-font-size: 16px;
+$highcharts-legend-font-size: 13px;
+$highcharts-axis-labels-font-size: 12px;
 
 // Tooltip
-$tooltip-border: 0px;
-$tooltip-background: $neutral-color-100;
+$highcharts-tooltip-border: 0px;
+$highcharts-tooltip-background: $highcharts-neutral-color-100;
 
 // Buttons
-$highcharts-button-background: $neutral-color-100;
+$highcharts-button-background: $highcharts-neutral-color-100;
 $highcharts-button-border: #C0C0C8;
 $highcharts-button-text:  #000;
 
 $highcharts-button-pressed-background: #D0D0D8;
 $highcharts-button-pressed-text:  #000;
 
-$context-button-background: $neutral-color-100;
+$highcharts-context-button-background: $highcharts-neutral-color-100;
 
 // Navigator
-$navigator-series-fill: #f45b5b;
-$navigator-series-border: #f45b5b;
-
-// Scrollbar
-$scrollbar-track-border: #C0C0C8;
+$highcharts-navigator-series-fill: #f45b5b;
+$highcharts-navigator-series-border: #f45b5b;
 
 // General
 .highcharts-container {
-  background: url(https://www.highcharts.com/samples/graphics/sand.png);
+    background: url(https://www.highcharts.com/samples/graphics/sand.png);
 }
 
 // Boxplot
@@ -52,14 +49,12 @@ $scrollbar-track-border: #C0C0C8;
 }
 
 // Navigator
-.highcharts-navigator-xaxis .highcharts-grid-line {
-  stroke: #D0D0D8;
-}
+$highcharts-grid-line-color: #D0D0D8;
+
 
 // Scrollbar
-.highcharts-scrollbar-track {
-  stroke: #C0C0C8;
-}
+$highcharts-scrollbar-arrow-background: #C0C0C8;
+$highcharts-scrollbar-track-background: #C0C0C8;
 
 // Title
 .highcharts-title {
