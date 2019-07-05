@@ -272,7 +272,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
                         function (value: number, i: number): void {
                             if (value !== null) {
                                 if (hasModifyValue) {
-                                    value = series.modifyValue(value);
+                                    value = (series.modifyValue as any)(value);
                                 }
                                 (point as any)[translated[i]] =
                                     yAxis.toPixels(value, true);

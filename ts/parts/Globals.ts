@@ -54,6 +54,7 @@ declare global {
             hoverPoints?: any; // @todo
             hoverSeries?: any; // @todo
             inverted?: any; // @todo
+            is3d?: any; // @todo
             isBoosting?: any; // @todo
             isPrinting?: any; // @todo
             mapCredits?: any; // @todo
@@ -138,7 +139,6 @@ declare global {
             isSeriesBoosting?: any; // @todo
             labelBySeries?: any; // @todo
             maxLabelDistance?: any; // @todo
-            modifyValue?: any; // @todo
             pointArrayMap?: any; // @todo
             pointAttrToOptions?: any; // @todo
             pointXOffset?: any; // @todo

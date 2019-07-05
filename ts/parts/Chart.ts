@@ -42,6 +42,15 @@ declare global {
             update(titleOptions: TitleOptions, redraw?: boolean): void;
         }
         class Chart {
+            public constructor(
+                options: Options,
+                callback?: ChartCallbackFunction
+            );
+            public constructor(
+                renderTo: (string|HTMLDOMElement),
+                options: Options,
+                callback?: ChartCallbackFunction
+            );
             public constructor();
             public _cursor?: (CursorValue|null);
             public axes: Array<Axis>;

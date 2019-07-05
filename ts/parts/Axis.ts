@@ -88,8 +88,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: (XAxisOptions|Array<XAxisOptions>);
-            yAxis?: (YAxisOptions|Array<YAxisOptions>);
+            xAxis?: Array<XAxisOptions>;
+            yAxis?: Array<YAxisOptions>;
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -341,7 +341,7 @@ declare global {
             public closestPointRange: number;
             public coll: string;
             public cross?: SVGElement;
-            public crosshair: (boolean|AxisCrosshairOptions);
+            public crosshair?: AxisCrosshairOptions;
             public dataMax?: (null|number);
             public dataMin?: (null|number);
             public defaultBottomAxisOptions: AxisOptions;
