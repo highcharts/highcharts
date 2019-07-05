@@ -15,21 +15,9 @@
  * @private
  */
 declare global {
-    type GlobalHTMLElement = HTMLElement;
-    type GlobalSVGElement = SVGElement;
-    interface Document {
-        msHidden: boolean;
-        webkitHidden: boolean;
-    }
-    interface Window {
-        Image: typeof Image;
-        opera?: any;
-        TouchEvent?: typeof TouchEvent;
-    }
-    const win: Window; // @todo: UMD variable
-    function parseFloat (value: (number|string)): number;
     namespace Highcharts {
         type LabelFormatterCallbackFunction = any; // @todo
+        type NavigationOptions = any; // @todo
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = object; // @todo
@@ -188,6 +176,19 @@ declare global {
         const svg: boolean;
     }
     type GlobalHighcharts = typeof Highcharts;
+    type GlobalHTMLElement = HTMLElement;
+    type GlobalSVGElement = SVGElement;
+    interface Document {
+        msHidden: boolean;
+        webkitHidden: boolean;
+    }
+    interface Window {
+        Image: typeof Image;
+        opera?: any;
+        TouchEvent?: typeof TouchEvent;
+    }
+    const win: Window; // @todo: UMD variable
+    function parseFloat (value: (number|string)): number;
 }
 
 /* globals Image, window */
