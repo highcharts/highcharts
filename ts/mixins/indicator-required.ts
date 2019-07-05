@@ -7,12 +7,49 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Indicator {
+            generateMessage: RequiredIndicatorMixin['generateMessage'];
+            isParentLoaded: RequiredIndicatorMixin['isParentLoaded'];
+            options: IndicatorOptions;
+        }
+        interface IndicatorOptions extends SeriesOptions {
+            data?: undefined;
+        }
+        interface IndicatorCallbackFunction {
+            (indicator: Indicator): boolean;
+        }
+        interface RequiredIndicatorMixin {
+            generateMessage(indicatorType: string, required: string): string;
+            isParentLoaded(
+                this: Indicator,
+                indicator: (Indicator|undefined),
+                requiredIndicator: string,
+                type: string,
+                callback: IndicatorCallbackFunction,
+                errMessage: string
+            ): boolean;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
+
 var error = H.error;
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var requiredIndicatorMixin = {
+
+var requiredIndicatorMixin: Highcharts.RequiredIndicatorMixin = {
     /**
      * Check whether given indicator is loaded, else throw error.
      * @private
@@ -30,11 +67,20 @@ var requiredIndicatorMixin = {
      * @return {boolean}
      *         Returns false when there is no required indicator loaded.
      */
-    isParentLoaded: function (indicator, requiredIndicator, type, callback, errMessage) {
+    isParentLoaded: function (
+        this: Highcharts.Indicator,
+        indicator: (Highcharts.Indicator|undefined),
+        requiredIndicator: string,
+        type: string,
+        callback: Highcharts.IndicatorCallbackFunction,
+        errMessage: string
+    ): boolean {
         if (indicator) {
             return callback ? callback(indicator) : true;
         }
-        error(errMessage || this.generateMessage(type, requiredIndicator));
+        error(
+            errMessage || this.generateMessage(type, requiredIndicator)
+        );
         return false;
     },
     /**
@@ -46,7 +92,10 @@ var requiredIndicatorMixin = {
      * @return {string}
      *         Error message
      */
-    generateMessage: function (indicatorType, required) {
+    generateMessage: function (
+        indicatorType: string,
+        required: string
+    ): string {
         return 'Error: "' + indicatorType +
             '" indicator type requires "' + required +
             '" indicator loaded before. Please read docs: ' +
@@ -54,4 +103,5 @@ var requiredIndicatorMixin = {
             indicatorType;
     }
 };
+
 export default requiredIndicatorMixin;
