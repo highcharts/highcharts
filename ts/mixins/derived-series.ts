@@ -24,7 +24,7 @@ declare global {
             setDerivedData(): Array<PointOptionsType>;
         }
         interface DerivedSeriesOptions extends SeriesOptions {
-            baseSeries?: string;
+            baseSeries?: (number|string);
         }
         interface Series {
             baseSeries?: (Series|null);
@@ -122,7 +122,7 @@ var derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
                 defined(baseSeriesOptions) &&
                 (
                     chart.series[baseSeriesOptions as any] ||
-                    chart.get(baseSeriesOptions)
+                    chart.get(baseSeriesOptions as any)
                 )
             );
 
