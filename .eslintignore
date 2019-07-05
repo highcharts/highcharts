@@ -1,3 +1,4 @@
+js/mixins/ajax.js
 js/mixins/centered-series.js
 js/mixins/download-url.js
 js/mixins/on-series.js
