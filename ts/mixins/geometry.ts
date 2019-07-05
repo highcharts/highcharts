@@ -3,6 +3,27 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface GeometryMixin {
+            getAngleBetweenPoints(
+                p1: PositionObject,
+                p2: PositionObject
+            ): number;
+            getCenterOfPoints(points: Array<PositionObject>): PositionObject;
+            getDistanceBetweenPoints(
+                p1: PositionObject,
+                p2: PositionObject
+            ): number;
+        }
+    }
+}
+
 /**
  * Calculates the center between a list of points.
  * @private
@@ -11,17 +32,24 @@
  * @return {Highcharts.PositionObject}
  *         Calculated center
  */
-var getCenterOfPoints = function getCenterOfPoints(points) {
-    var sum = points.reduce(function (sum, point) {
+var getCenterOfPoints = function getCenterOfPoints(
+    points: Array<Highcharts.PositionObject>
+): Highcharts.PositionObject {
+    var sum = points.reduce(function (
+        sum: Highcharts.PositionObject,
+        point: Highcharts.PositionObject
+    ): Highcharts.PositionObject {
         sum.x += point.x;
         sum.y += point.y;
         return sum;
     }, { x: 0, y: 0 });
+
     return {
         x: sum.x / points.length,
         y: sum.y / points.length
     };
 };
+
 /**
  * Calculates the distance between two points based on their x and y
  * coordinates.
@@ -33,9 +61,13 @@ var getCenterOfPoints = function getCenterOfPoints(points) {
  * @return {number}
  *         Returns the distance between the points.
  */
-var getDistanceBetweenPoints = function getDistanceBetweenPoints(p1, p2) {
+var getDistanceBetweenPoints = function getDistanceBetweenPoints(
+    p1: Highcharts.PositionObject,
+    p2: Highcharts.PositionObject
+): number {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
+
 /**
  * Calculates the angle between two points.
  * @todo add unit tests.
@@ -44,12 +76,17 @@ var getDistanceBetweenPoints = function getDistanceBetweenPoints(p1, p2) {
  * @param {Highcharts.PositionObject} p2 The second point.
  * @return {number} Returns the angle in radians.
  */
-var getAngleBetweenPoints = function getAngleBetweenPoints(p1, p2) {
+var getAngleBetweenPoints = function getAngleBetweenPoints(
+    p1: Highcharts.PositionObject,
+    p2: Highcharts.PositionObject
+): number {
     return Math.atan2(p2.x - p1.x, p2.y - p1.y);
 };
-var geometry = {
+
+var geometry: Highcharts.GeometryMixin = {
     getAngleBetweenPoints: getAngleBetweenPoints,
     getCenterOfPoints: getCenterOfPoints,
     getDistanceBetweenPoints: getDistanceBetweenPoints
 };
+
 export default geometry;
