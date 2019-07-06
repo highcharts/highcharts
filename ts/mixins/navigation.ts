@@ -61,7 +61,9 @@ var chartNavigation: Highcharts.ChartNavigationMixin = {
             chart.navigation = {
                 updates: [],
                 update: function (options, redraw?: boolean): void {
-                    this.updates.forEach(function (updateConfig) {
+                    this.updates.forEach(function (
+                        updateConfig: Highcharts.ChartNavigationUpdateObject
+                    ): void {
                         updateConfig.update.call(
                             updateConfig.context,
                             options,
