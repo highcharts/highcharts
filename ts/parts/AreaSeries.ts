@@ -43,6 +43,7 @@ declare global {
         class AreaSeries extends LineSeries {
             public data: Array<AreaPoint>;
             public options: AreaSeriesOptions;
+            public pointClass: typeof AreaPoint;
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }

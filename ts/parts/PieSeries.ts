@@ -88,6 +88,7 @@ declare global {
             public data: Array<PiePoint>;
             public getCenter: CenteredSeriesMixin['getCenter'];
             public options: PieSeriesOptions;
+            public pointClass: typeof PiePoint;
             public points: Array<PiePoint>;
             public shadowGroup?: SVGElement;
             public startAngleRad?: number;

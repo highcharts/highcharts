@@ -30,6 +30,7 @@ declare global {
             public data: Array<BarPoint>;
             public inverted?: boolean;
             public options: BarSeriesOptions;
+            public pointClass: typeof BarPoint;
             public points: Array<BarPoint>;
         }
     }

@@ -76,6 +76,7 @@ declare global {
             public data: Array<ColumnPoint>;
             public dense?: boolean;
             public options: ColumnSeriesOptions;
+            public pointClass: typeof ColumnPoint;
             public points: Array<ColumnPoint>;
             public crispCol(
                 x: number,

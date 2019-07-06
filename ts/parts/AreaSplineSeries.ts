@@ -29,6 +29,7 @@ declare global {
         class AreaSplineSeries extends SplineSeries {
             public data: Array<AreaSplinePoint>;
             public options: AreaSplineSeriesOptions;
+            public pointClass: typeof AreaSplinePoint;
             public points: Array<AreaSplinePoint>;
         }
     }

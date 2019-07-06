@@ -82,6 +82,7 @@ declare global {
             public getPlotBox: OnSeriesMixin['getPlotBox'];
             public onSeries?: SeriesType;
             public options: FlagSeriesOptions;
+            public pointClass: typeof FlagPoint;
             public points: Array<FlagPoint>;
             public translate: OnSeriesMixin['translate'];
             public setClip(): void;

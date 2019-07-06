@@ -46,6 +46,7 @@ declare global {
             public data: Array<OHLCPoint>;
             public options: OHLCSeriesOptions;
             public pointArrayMap: Array<string>;
+            public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
             public init(): void;
             public toYData(): OHLCYData;

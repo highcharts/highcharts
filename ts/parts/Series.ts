@@ -252,6 +252,7 @@ declare global {
         class LineSeries extends Series {
             public data: Array<LinePoint>;
             public options: LineSeriesOptions;
+            public pointClass: typeof LinePoint;
             public points: Array<LinePoint>;
         }
         class Series {

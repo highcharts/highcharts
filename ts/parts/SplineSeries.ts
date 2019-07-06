@@ -32,6 +32,7 @@ declare global {
         class SplineSeries extends LineSeries {
             public data: Array<SplinePoint>;
             public options: SplineSeriesOptions;
+            public pointClass: typeof SplinePoint;
             public points: Array<SplinePoint>;
             public getPointSpline(
                 points: Array<SplinePoint>,
