@@ -35,6 +35,7 @@ declare global {
         class ScatterSeries extends LineSeries {
             public data: Array<ScatterPoint>;
             public options: ScatterSeriesOptions;
+            public pointClass: typeof ScatterPoint;
             public points: Array<ScatterPoint>;
             public applyJitter(): void;
         }
