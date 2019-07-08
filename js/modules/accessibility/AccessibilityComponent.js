@@ -213,7 +213,7 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             left: bBox.x + 'px',
-            top: bBox.y - this.chart.containerHeight + 'px'
+            top: bBox.y - this.chart.chartHeight + 'px'
         });
 
         // Handle pre-click
