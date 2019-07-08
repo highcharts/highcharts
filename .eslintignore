@@ -2,6 +2,9 @@ js/mixins/*.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/*.js
+js/parts-more/AreaRangeSeries.js
+js/parts-more/Pane.js
+js/parts-more/RadialAxis.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/cloud/**/**/*.js
