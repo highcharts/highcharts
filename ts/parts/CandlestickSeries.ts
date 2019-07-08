@@ -300,9 +300,11 @@ seriesType(
                     halfWidth = Math.round((point.shapeArgs as any).width / 2);
                     hasTopWhisker = reversedYAxis ?
                         bottomBox !== point.yBottom :
-                        Math.round(topBox) !== Math.round(point.plotHigh);
+                        Math.round(topBox) !==
+                        Math.round(point.plotHigh as any);
                     hasBottomWhisker = reversedYAxis ?
-                        Math.round(topBox) !== Math.round(point.plotHigh) :
+                        Math.round(topBox) !==
+                        Math.round(point.plotHigh as any) :
                         bottomBox !== point.yBottom;
                     topBox = Math.round(topBox) + crispCorr;
                     bottomBox = Math.round(bottomBox) + crispCorr;
@@ -329,7 +331,9 @@ seriesType(
                         // #460, #2094
                         crispX, hasTopWhisker ?
                             Math.round(
-                                reversedYAxis ? point.yBottom : point.plotHigh
+                                reversedYAxis ?
+                                    point.yBottom :
+                                    (point.plotHigh as any)
                             ) :
                             topBox,
                         'M',
@@ -338,7 +342,9 @@ seriesType(
                         // #460, #2094
                         crispX, hasBottomWhisker ?
                             Math.round(
-                                reversedYAxis ? point.plotHigh : point.yBottom
+                                reversedYAxis ?
+                                    (point.plotHigh as any) :
+                                    point.yBottom
                             ) :
                             bottomBox
                     );

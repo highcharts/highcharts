@@ -139,6 +139,7 @@ declare global {
             stackTotal?: number;
             stackY?: (number|null);
             yBottom?: number;
+            zone?: PlotSeriesZonesOptions;
         }
         interface SeriesAfterAnimateCallbackFunction {
             (this: Series, event: SeriesAfterAnimateEventObject): void;
@@ -4324,7 +4325,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 }
 
                 // Find point zone
-                point.zone = this.zones.length && point.getZone();
+                point.zone = (this.zones.length && point.getZone() as any);
             }
             series.closestPointRangePx = closestPointRangePx;
 
@@ -4834,7 +4835,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
             color = (
                 pointColorOption ||
-                zoneColor ||
+                (zoneColor as any) ||
                 pointColor ||
                 color
             );

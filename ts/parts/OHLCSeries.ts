@@ -284,7 +284,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
                 // Align the tooltip to the high value to avoid covering the
                 // point
                 point.tooltipPos[1] =
-                point.plotHigh + yAxis.pos - series.chart.plotTop;
+                    (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
             });
         },
 
@@ -338,7 +338,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
                         'M',
                         crispX, Math.round(point.yBottom as any),
                         'L',
-                        crispX, Math.round(point.plotHigh)
+                        crispX, Math.round(point.plotHigh as any)
                     ];
 
                     // open
