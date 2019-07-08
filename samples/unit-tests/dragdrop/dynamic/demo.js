@@ -49,11 +49,12 @@ QUnit.test('Dragdrop and logarithmic axes', function (assert) {
             },
 
             series: [{
+                type: 'scatter',
                 data: [
-                    [1.5, 70],
+                    [1.5, 70], // drag this point
                     [2, 45],
                     [3.5, 20],
-                    [5, 15], // drag this point
+                    [5, 15],
                     [7.5, 8],
                     [16, 3]
                 ]

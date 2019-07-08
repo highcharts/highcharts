@@ -1495,6 +1495,8 @@ function getPositionSnapshot(e, points, guideBox) {
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
         objectEach(point.series.dragDropProps, function (val, key) {
+            var axis = point.series[val.axis + 'Axis'];
+
             pointProps[key] = point[key];
             // Record how far cursor was from the point when drag started.
             // This later will be used to calculate new value according to the
@@ -1502,9 +1504,7 @@ function getPositionSnapshot(e, points, guideBox) {
             // e.g. `high` value is translated to `highOffset`
             pointProps[key + 'Offset'] =
                 // e.g. yAxis.toPixels(point.high), xAxis.toPixels(point.end)
-                point.series[val.axis + 'Axis'].toPixels(point[key]) -
-                    // e.chartX vs e.chartY
-                    e['chart' + val.axis.toUpperCase()];
+                axis.toPixels(point[key]) - (axis.horiz ? e.chartX : e.chartY);
         });
         pointProps.point = point; // Store reference to point
         res.points[point.id] = pointProps;
@@ -1921,8 +1921,6 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     var point = this,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
-        yAxis = series.yAxis,
-        xAxis = series.xAxis,
         result = {},
         updateSingleProp,
         pointOrigin = origin.points[point.id];
@@ -1960,11 +1958,11 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     // it within min/max ranges.
     objectEach(updateProps, function (val, key) {
         var oldVal = pointOrigin[key],
-            offset = pointOrigin[key + 'Offset'],
+            axis = series[val.axis + 'Axis'],
             newVal = limitToRange(
-                (val.axis === 'x' ?
-                    xAxis.toValue(newPos.chartX + offset) :
-                    yAxis.toValue(newPos.chartY + offset)
+                axis.toValue(
+                    (axis.horiz ? newPos.chartX : newPos.chartY) +
+                    pointOrigin[key + 'Offset']
                 ),
                 val.axis.toUpperCase()
             );
