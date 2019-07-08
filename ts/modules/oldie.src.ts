@@ -49,6 +49,11 @@ declare global {
             /** @requires highcharts/modules/oldies */
             getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
             /** @requires highcharts/modules/oldies */
+            invertChild(
+                element: HTMLDOMElement,
+                parentNode: HTMLDOMElement
+            ): void;
+            /** @requires highcharts/modules/oldies */
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */

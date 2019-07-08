@@ -185,9 +185,11 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
                 halfWidth = Math.round(point.shapeArgs.width / 2);
                 hasTopWhisker = reversedYAxis ?
                     bottomBox !== point.yBottom :
-                    Math.round(topBox) !== Math.round(point.plotHigh);
+                    Math.round(topBox) !==
+                        Math.round(point.plotHigh);
                 hasBottomWhisker = reversedYAxis ?
-                    Math.round(topBox) !== Math.round(point.plotHigh) :
+                    Math.round(topBox) !==
+                        Math.round(point.plotHigh) :
                     bottomBox !== point.yBottom;
                 topBox = Math.round(topBox) + crispCorr;
                 bottomBox = Math.round(bottomBox) + crispCorr;
@@ -201,11 +203,15 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
                 'M', crispX, topBox, 'L', 
                 // #460, #2094
                 crispX, hasTopWhisker ?
-                    Math.round(reversedYAxis ? point.yBottom : point.plotHigh) :
+                    Math.round(reversedYAxis ?
+                        point.yBottom :
+                        point.plotHigh) :
                     topBox, 'M', crispX, bottomBox, 'L', 
                 // #460, #2094
                 crispX, hasBottomWhisker ?
-                    Math.round(reversedYAxis ? point.plotHigh : point.yBottom) :
+                    Math.round(reversedYAxis ?
+                        point.plotHigh :
+                        point.yBottom) :
                     bottomBox);
                 graphic[isNew ? 'attr' : 'animate']({ d: path })
                     .addClass(point.getClassName(), true);

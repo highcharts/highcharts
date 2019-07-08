@@ -37,6 +37,7 @@ declare global {
             tickPositionInfo?: any; // @todo
         }
         interface Chart {
+            angular?: any; // @todo
             fixedRange?: any; // @todo
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
@@ -99,8 +100,6 @@ declare global {
             labelDistance?: any; // @todo
             name?: any; // @todo
             plotClose?: any; // @todo
-            plotHigh?: any; // @todo
-            plotLow?: any; // @todo
             rectPlotX?: any; // @todo
             plotOpen?: any; // @todo
             selected?: any; // @todo
@@ -108,7 +107,6 @@ declare global {
             tooltipDateKeys?: any; // @todo
             tooltipPos?: any; // @todo
             ttBelow?: any; // @todo
-            zone?: any; // @todo
         }
         interface Series {
             allowDG?: any; // @todo
@@ -148,9 +146,6 @@ declare global {
         }
         interface SeriesStatesHoverOptions {
             opacity?: any; // @todo
-        }
-        interface SVGRenderer {
-            invertChild: Function; // @todo
         }
         interface Tick {
             slotWidth?: any; // @todo

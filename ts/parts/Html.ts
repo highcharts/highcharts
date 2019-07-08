@@ -218,7 +218,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
             [].forEach.call(elem.childNodes, function (child: ChildNode): void {
-                renderer.invertChild(child, elem);
+                renderer.invertChild(child as any, elem);
             });
         }
 

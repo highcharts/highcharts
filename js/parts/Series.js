@@ -3203,7 +3203,7 @@ null,
                 lastPlotX = plotX;
             }
             // Find point zone
-            point.zone = this.zones.length && point.getZone();
+            point.zone = (this.zones.length && point.getZone());
         }
         series.closestPointRangePx = closestPointRangePx;
         fireEvent(this, 'afterTranslate');
