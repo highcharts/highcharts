@@ -1054,7 +1054,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         point.connector,
                     labelDistance = pick(
                         (labelOptions as any).distance,
-                        point.labelDistance
+                        (point as Highcharts.PiePoint).labelDistance
                     ),
                     isNew = !dataLabel;
 
@@ -1508,7 +1508,7 @@ if (seriesTypes.pie) {
                 y < (point.top as any) + 2 || y > (point.bottom as any) - 2 ?
                     naturalY :
                     y,
-                point.half,
+                point.half as any,
                 point
             );
         },
@@ -1520,7 +1520,7 @@ if (seriesTypes.pie) {
             seriesCenter: Array<number>
         ): number {
             return seriesCenter[0] + (point.half ? -1 : 1) *
-            (radius + point.labelDistance);
+            (radius + (point.labelDistance as any));
         },
 
         // Left edges of the left-half labels touch the left edge of the plot
@@ -1638,7 +1638,7 @@ if (seriesTypes.pie) {
                 if (point.visible) { // #407, #2510
 
                     // Arrange points for detection collision
-                    halves[point.half].push(point);
+                    halves[point.half as any].push(point);
 
                     // Reset positions (#4905)
                     point.dataLabel._pos = null;
@@ -1709,15 +1709,15 @@ if (seriesTypes.pie) {
                 );
                 points.forEach(function (point: Highcharts.PiePoint): void {
                     // check if specific points' label is outside the pie
-                    if (point.labelDistance > 0 && point.dataLabel) {
+                    if ((point.labelDistance as any) > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
                         // Used for calculation of y value in getX method
                         point.top = Math.max(
                             0,
-                            centerY - radius - point.labelDistance
+                            centerY - radius - (point.labelDistance as any)
                         );
                         point.bottom = Math.min(
-                            centerY + radius + point.labelDistance,
+                            centerY + radius + (point.labelDistance as any),
                             chart.plotHeight
                         );
                         size = point.dataLabel.getBBox().height || 21;
@@ -1898,11 +1898,10 @@ if (seriesTypes.pie) {
                     connector = point.connector;
                     dataLabel = point.dataLabel;
 
-                    if (
-                        dataLabel &&
+                    if (dataLabel &&
                         dataLabel._pos &&
                         point.visible &&
-                        point.labelDistance > 0
+                        (point.labelDistance as any) > 0
                     ) {
                         visibility = dataLabel._attr.visibility;
 
@@ -1958,7 +1957,7 @@ if (seriesTypes.pie) {
      *
      * @param {*} labelPos
      *
-     * @return {Highcharts.PathObject}
+     * @return {Highcharts.SVGPathArray}
      */
     // TODO: depracated - remove it
     /*
@@ -2068,7 +2067,7 @@ if (seriesTypes.pie) {
 
         if (!ret) {
             // Handle horizontal size and center
-            if (centerOption[0] !== null) { // Fixed center
+            if ((centerOption as any)[0] !== null) { // Fixed center
                 newSize = Math.max(center[2] -
                     Math.max(overflow[1], overflow[3]), minSize);
 
@@ -2083,7 +2082,7 @@ if (seriesTypes.pie) {
             }
 
             // Handle vertical size and center
-            if (centerOption[1] !== null) { // Fixed center
+            if ((centerOption as any)[1] !== null) { // Fixed center
                 newSize = Math.max(Math.min(newSize, center[2] -
                     Math.max(overflow[0], overflow[2])), minSize);
 
@@ -2140,7 +2139,7 @@ if (seriesTypes.column) {
      */
     seriesTypes.column.prototype.alignDataLabel = function (
         this: Highcharts.ColumnSeries,
-        point: Highcharts.ColumnPoint,
+        point: Highcharts.Point,
         dataLabel: Highcharts.SVGElement,
         options: Highcharts.DataLabelsOptionsObject,
         alignTo: Highcharts.BBoxObject,
@@ -2151,7 +2150,7 @@ if (seriesTypes.column) {
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                point.below, // range series
+                (point as Highcharts.AreaRangePoint).below, // range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, series.yAxis.len)
             ),

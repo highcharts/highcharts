@@ -29,6 +29,7 @@ declare global {
         interface Series {
             baseSeries?: Series;
             eventRemovers?: Array<Function>;
+            hasDerivedData?: DerivedSeriesMixin['hasDerivedData'];
             initialised?: boolean;
         }
         class DerivedSeries extends Series implements DerivedSeriesMixin {

@@ -40,6 +40,7 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
+            startFromThreshold?: boolean;
             states?: ColumnSeriesStatesOptions;
         }
         interface ColumnSeriesStatesHoverOptions
@@ -60,15 +61,23 @@ declare global {
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
         }
+        interface PlotSeriesOptions {
+            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
+        }
+        interface Series {
+            barW?: number;
+            pointXOffset?: number;
+        }
         class ColumnPoint extends LinePoint {
             public barX?: number;
+            public group?: unknown;
             public options: ColumnPointOptions;
             public pointWidth?: number;
             public series: ColumnSeries;
             public shapeType?: string;
         }
         class ColumnSeries extends LineSeries {
-            public borderWidth?: number;
+            public borderWidth: number;
             public columnIndex?: number;
             public columnMetrics?: ColumnMetricsObject;
             public cropShould?: number;
@@ -78,6 +87,8 @@ declare global {
             public options: ColumnSeriesOptions;
             public pointClass: typeof ColumnPoint;
             public points: Array<ColumnPoint>;
+            public pointXOffset: number;
+            public translatedThreshold?: number;
             public crispCol(
                 x: number,
                 y: number,
@@ -788,13 +799,13 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                 yAxis = series.yAxis,
                 threshold = options.threshold,
                 translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
+                    yAxis.getThreshold(threshold as any),
                 minPointLength = pick(options.minPointLength, 5),
                 metrics = series.getColumnMetrics(),
                 seriesPointWidth = metrics.width,
                 // postprocessed for border width
                 seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+                    Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
                 dataMax = series.dataMax;
@@ -953,7 +964,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             var options = this.options,
                 stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
                 ret: Highcharts.SVGAttributes,
-                p2o = this.pointAttrToOptions || {},
+                p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
                 strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
                 fill = (point && point.color) || this.color,
@@ -1046,7 +1057,9 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                 shapeArgs;
 
             // draw the columns
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (
+                point: Highcharts.ColumnPoint
+            ): void {
                 var plotY = point.plotY,
                     graphic = point.graphic,
                     verb = graphic && chart.pointCount < animationLimit ?
@@ -1086,7 +1099,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                     if (!chart.styledMode) {
                         (graphic as any)[verb](series.pointAttribs(
                             point,
-                            point.selected && 'select'
+                            (point.selected && 'select') as any
                         ))
                             .shadow(
                                 point.allowShadow !== false && options.shadow,

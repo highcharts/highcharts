@@ -27,6 +27,9 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
+        interface PlotSeriesOptions {
+            legendType?: ('point'|'series');
+        }
         interface Point {
             _legendItemPos?: Array<number>;
             checkbox?: LegendCheckBoxElement;
@@ -55,9 +58,6 @@ declare global {
             legendLine?: SVGElement;
             legendSymbol?: SVGElement;
             pageIx?: number;
-        }
-        interface SeriesOptions {
-            legendType?: ('point'|'series');
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
@@ -712,7 +712,7 @@ Highcharts.Legend.prototype = {
         (item.legendItem as any).attr({
             text: options.labelFormat ?
                 H.format(options.labelFormat, item, this.chart.time) :
-                options.labelFormatter.call(item)
+                (options.labelFormatter as any).call(item)
         });
     },
 
@@ -1746,7 +1746,7 @@ H.LegendSymbolMixin = {
             );
 
             // Restrict symbol markers size
-            if (this.symbol.indexOf('url') === 0) {
+            if ((this.symbol as any).indexOf('url') === 0) {
                 markerOptions = merge(markerOptions, {
                     width: symbolHeight,
                     height: symbolHeight
@@ -1755,7 +1755,7 @@ H.LegendSymbolMixin = {
             }
 
             this.legendSymbol = legendSymbol = renderer.symbol(
-                this.symbol,
+                this.symbol as any,
                 (symbolWidth / 2) - radius,
                 verticalCenter - radius,
                 2 * radius,

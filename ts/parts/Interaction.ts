@@ -37,6 +37,7 @@ declare global {
             className?: string;
             events?: SeriesEventsOptions;
             hasImportedEvents?: boolean;
+            selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
             haloPath(size: number): SVGElement;
@@ -74,6 +75,7 @@ declare global {
             );
             hide(): void;
             onMouseOut(): void;
+            onMouseOver(): void;
             select(selected?: boolean): void;
             setState(state?: string, inherit?: boolean): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
@@ -271,9 +273,12 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function (this: Highcharts.Series): void {
         var series = this,
             options = series.options,
-            trackByArea = options.trackByArea,
+            trackByArea =
+                (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
             trackerPath = ([] as Highcharts.SVGPathArray).concat(
-                trackByArea ? series.areaPath : series.graphPath
+                trackByArea ?
+                    ((series as Highcharts.AreaSeries).areaPath as any) :
+                    (series.graphPath as any)
             ),
             trackerPathLength = trackerPath.length,
             chart = series.chart,
@@ -990,7 +995,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
         }
 
-        chart.hoverPoints = chart.hoverPoint = null;
+        chart.hoverPoints = chart.hoverPoint = null as any;
     },
 
     /**
@@ -1358,7 +1363,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             hoverPoint = chart.hoverPoint;
 
         // #182, set to null before the mouseOut event fires
-        chart.hoverSeries = null;
+        chart.hoverSeries = null as any;
 
         // trigger mouse out on the point, which must be in this series
         if (hoverPoint) {

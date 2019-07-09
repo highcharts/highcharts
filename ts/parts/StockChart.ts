@@ -30,10 +30,14 @@ declare global {
             compareBase?: (0|100);
             compareStart?: boolean;
         }
+        interface Options {
+            isStock?: boolean;
+        }
         interface Point {
             change?: number;
         }
         interface Series {
+            clipBox?: BBoxObject;
             compareValue?: number;
             modifyValue?(value?: number, point?: Point): (number|undefined);
             setCompare(compare?: string): void;

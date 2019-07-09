@@ -21,8 +21,15 @@ declare global {
         interface Axis {
             fake?: boolean;
             previousZoom?: [(null|number), (null|number)];
+            toFixedRange(
+                pxMin?: number,
+                pxMax?: number,
+                fixedMin?: number,
+                fixedMax?: number
+            ): RangeObject;
         }
         interface Chart {
+            navigator?: Navigator;
             scrollbar?: Scrollbar;
             scroller?: Navigator;
         }
@@ -129,19 +136,19 @@ declare global {
             public drawHandle(
                 x: number,
                 index: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public drawMasks(
                 zoomedMin: number,
                 zoomedMax: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public drawOutline(
                 zoomedMin: number,
                 zoomedMax: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public getBaseSeriesMin(currentSeriesMin: number): number;
@@ -775,32 +782,34 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
  *
  * @private
  * @function Highcharts.Axis#toFixedRange
- * @param {number} pxMin
- * @param {number} pxMax
- * @param {number} fixedMin
- * @param {number} fixedMax
+ * @param {number} [pxMin]
+ * @param {number} [pxMax]
+ * @param {number} [fixedMin]
+ * @param {number} [fixedMax]
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (
     this: Highcharts.Axis,
-    pxMin: number,
-    pxMax: number,
-    fixedMin: number,
-    fixedMax: number
+    pxMin?: number,
+    pxMax?: number,
+    fixedMin?: number,
+    fixedMax?: number
 ): Highcharts.RangeObject {
     var fixedRange = this.chart && this.chart.fixedRange,
-        newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)),
-        newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)),
+        newMin =
+            pick(fixedMin, this.translate(pxMin as any, true, !this.horiz)),
+        newMax =
+            pick(fixedMax, this.translate(pxMax as any, true, !this.horiz)),
         changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
     // If the difference between the fixed range and the actual requested range
     // is too great, the user is dragging across an ordinal gap, and we need to
     // release the range selector button.
-    if (changeRatio > 0.7 && changeRatio < 1.3) {
+    if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
         if (fixedMax) {
-            newMin = newMax - fixedRange;
+            newMin = newMax - (fixedRange as any);
         } else {
-            newMax = newMin + fixedRange;
+            newMax = newMin + (fixedRange as any);
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
@@ -841,7 +850,7 @@ Navigator.prototype = {
      * @param {number} index
      *        0 for left and 1 for right
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag for chart.inverted
      *
      * @param {string} verb
@@ -883,7 +892,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -893,7 +902,7 @@ Navigator.prototype = {
         this: Highcharts.Navigator,
         zoomedMin: number,
         zoomedMax: number,
-        inverted: boolean,
+        inverted: (boolean|undefined),
         verb: string
     ): void {
         var navigator = this,
@@ -993,7 +1002,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -1003,7 +1012,7 @@ Navigator.prototype = {
         this: Highcharts.Navigator,
         zoomedMin: number,
         zoomedMax: number,
-        inverted: boolean,
+        inverted: (boolean|undefined),
         verb: string
     ): void {
         var navigator = this,
@@ -1585,7 +1594,7 @@ Navigator.prototype = {
             navigator.fixedExtreme = reverse ? baseXAxis.max : baseXAxis.min;
         }
 
-        chart.fixedRange = null;
+        chart.fixedRange = null as any;
     },
     /**
      * Mouse move event based on x/y mouse position.

@@ -83,7 +83,7 @@ var onSeriesMixin = {
             onSeries = (
                 optionsOnSeries &&
                 chart.get(optionsOnSeries)
-            ) as Highcharts.SeriesType,
+            ) as Highcharts.OnSeriesType,
             onKey = options.onKey || 'y',
             step = onSeries && onSeries.options.step,
             onData = (onSeries && onSeries.points) as (

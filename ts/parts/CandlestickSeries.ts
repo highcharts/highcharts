@@ -283,7 +283,7 @@ seriesType(
                             .attr(
                                 series.pointAttribs(
                                     point,
-                                    point.selected && 'select'
+                                    (point.selected && 'select') as any
                                 )
                             ) // #3897
                             .shadow(series.options.shadow);

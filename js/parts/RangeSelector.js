@@ -1078,9 +1078,9 @@ RangeSelector.prototype = {
      *
      * @private
      * @function Highcharts.RangeSelector#render
-     * @param {number} min
+     * @param {number} [min]
      *        X axis minimum
-     * @param {number} max
+     * @param {number} [max]
      *        X axis maximum
      * @return {void}
      */

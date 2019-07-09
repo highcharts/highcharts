@@ -171,7 +171,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
                 }
                 if (!series.chart.styledMode) {
                     graphic
-                        .attr(series.pointAttribs(point, point.selected && 'select')) // #3897
+                        .attr(series.pointAttribs(point, (point.selected && 'select'))) // #3897
                         .shadow(series.options.shadow);
                 }
                 // Crisp vector coordinates

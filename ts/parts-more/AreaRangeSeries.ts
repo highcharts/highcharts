@@ -35,6 +35,7 @@ declare global {
                 AreaRangeDataLabelsOptionsObject|
                 Array<AreaRangeDataLabelsOptionsObject>
             );
+            trackByArea?: boolean;
         }
         interface Point {
             plotHigh?: AreaRangePoint['plotHigh'];
@@ -42,6 +43,7 @@ declare global {
         }
         class AreaRangePoint extends AreaPoint {
             public _plotY?: number;
+            public below?: boolean;
             public dataLabelUpper?: SVGElement;
             public high: number;
             public isInside?: boolean;

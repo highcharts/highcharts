@@ -1333,7 +1333,7 @@ if (seriesTypes.pie) {
      *
      * @param {*} labelPos
      *
-     * @return {Highcharts.PathObject}
+     * @return {Highcharts.SVGPathArray}
      */
     // TODO: depracated - remove it
     /*

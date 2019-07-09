@@ -18,6 +18,10 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            labelLeft?: number;
+            labelRight?: number;
+        }
         interface Chart {
             colorAxis?: Array<ColorAxis>;
         }
@@ -68,6 +72,7 @@ declare global {
             public defaultLegendLength: number;
             public legendColor?: GradientColorObject;
             public legendGroup?: SVGElement
+            public legendItem: ColorAxisLegendItemObject;
             public legendItemHeight?: number;
             public legendItems: Array<ColorAxisLegendItemObject>;
             public legendItemWidth?: number;

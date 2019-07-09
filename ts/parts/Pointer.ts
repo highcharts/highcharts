@@ -20,9 +20,13 @@ declare global {
     namespace Highcharts {
         interface Chart {
             cancelClick?: boolean;
+            hoverPoint?: PointerHoverDataObject['hoverPoint'];
+            hoverPoints?: PointerHoverDataObject['hoverPoints'];
+            hoverSeries?: PointerHoverDataObject['hoverSeries'];
             mouseDownX?: number;
             mouseDownY?: number;
             mouseIsDown?: (boolean|string);
+            tooltip?: Tooltip;
         }
         interface PointerAxisCoordinateObject {
             axis: Axis;
@@ -42,8 +46,8 @@ declare global {
         }
         interface PointerHoverDataObject {
             hoverPoint: Point;
-            hoverSeries: Series;
             hoverPoints: Array<Point>;
+            hoverSeries: Series;
         }
         interface SelectDataObject {
             axis: Axis;
@@ -60,6 +64,7 @@ declare global {
             [key: string]: any;
             public chart: Chart;
             public followTouchMove?: boolean;
+            public hoverX?: unknown;
             public lastValidTouch: object;
             public options: Options;
             public pinchDown: Array<any>;
@@ -70,13 +75,13 @@ declare global {
             public drop(e: Event): void;
             public findNearestKDPoint(
                 series: Array<Series>,
-                shared: boolean,
+                shared: (boolean|undefined),
                 e: PointerEventObject
             ): (Point|undefined);
             public getActiveSeries(points: Array<Point>): Array<Series>;
             public getChartCoordinatesFromPoint(
                 point: Point,
-                inverted: boolean
+                inverted?: boolean
             ): (PointerCoordinatesObject|undefined)
             public getCoordinates(
                 e: PointerEventObject
@@ -86,7 +91,7 @@ declare global {
                 existingHoverSeries: (Series|undefined),
                 series: Array<Series>,
                 isDirectTouch: boolean,
-                shared: boolean,
+                shared: (boolean|undefined),
                 e: PointerEventObject
             ): PointerHoverDataObject;
             public getPointFromEvent(e: Event): (Point|undefined)
@@ -426,7 +431,7 @@ Highcharts.Pointer.prototype = {
      * @param {Array<Highcharts.Series>} series
      *        All the series to search in.
      *
-     * @param {boolean} shared
+     * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
      * @param {Highcharts.PointerEventObject} e
@@ -439,7 +444,7 @@ Highcharts.Pointer.prototype = {
     findNearestKDPoint: function (
         this: Highcharts.Pointer,
         series: Array<Highcharts.Series>,
-        shared: boolean,
+        shared: (boolean|undefined),
         e: Highcharts.PointerEventObject
     ): (Highcharts.Point|undefined) {
         var closest: (Highcharts.Point|undefined),
@@ -447,8 +452,8 @@ Highcharts.Pointer.prototype = {
                 p1: Highcharts.Point,
                 p2: Highcharts.Point
             ): number {
-                var isCloserX = p1.distX - p2.distX,
-                    isCloser = p1.dist - p2.dist,
+                var isCloserX = (p1.distX as any) - (p2.distX as any),
+                    isCloser = (p1.dist as any) - (p2.dist as any),
                     isAbove =
                         (p2.series.group && p2.series.group.zIndex) -
                         (p1.series.group && p1.series.group.zIndex),
@@ -522,17 +527,14 @@ Highcharts.Pointer.prototype = {
     /**
      * @private
      * @function Highcharts.Pointer#getChartCoordinatesFromPoint
-     *
      * @param {Highcharts.Point} point
-     *
-     * @param {boolean} inverted
-     *
+     * @param {boolean} [inverted]
      * @return {Highcharts.PointerCoordinatesObject|undefined}
      */
     getChartCoordinatesFromPoint: function (
         this: Highcharts.Pointer,
         point: Highcharts.Point,
-        inverted: boolean
+        inverted?: boolean
     ): (Highcharts.PointerCoordinatesObject|undefined) {
         var series = point.series,
             xAxis = series.xAxis,
@@ -577,7 +579,7 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} isDirectTouch
      *        Is the pointer directly hovering the point.
      *
-     * @param {boolean} shared
+     * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
      * @param {Highcharts.PointerEventObject} e
@@ -593,7 +595,7 @@ Highcharts.Pointer.prototype = {
         existingHoverSeries: (Highcharts.Series|undefined),
         series: Array<Highcharts.Series>,
         isDirectTouch: boolean,
-        shared: boolean,
+        shared: (boolean|undefined),
         e: Highcharts.PointerEventObject
     ): Highcharts.PointerHoverDataObject {
         var hoverPoint: Highcharts.Point,
@@ -691,10 +693,16 @@ Highcharts.Pointer.prototype = {
         var pointer = this,
             chart = pointer.chart,
             series = chart.series,
-            tooltip = chart.tooltip && chart.tooltip.options.enabled ?
-                chart.tooltip :
-                undefined,
-            shared = tooltip ? tooltip.shared : false,
+            tooltip = (
+                chart.tooltip && chart.tooltip.options.enabled ?
+                    chart.tooltip :
+                    undefined
+            ),
+            shared = (
+                tooltip ?
+                    tooltip.shared :
+                    false
+            ),
             hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
             // onMouseOver or already hovering a series with directTouch
@@ -713,9 +721,9 @@ Highcharts.Pointer.prototype = {
                 e
             ),
             activeSeries = ([] as Array<Highcharts.Series>),
-            useSharedTooltip: boolean,
-            followPointer: boolean,
-            anchor: [number, number],
+            useSharedTooltip: (boolean|undefined),
+            followPointer: (boolean|undefined),
+            anchor: Array<number>,
             points: Array<Highcharts.Point>;
 
         // Update variables from hoverData.
@@ -803,8 +811,10 @@ Highcharts.Pointer.prototype = {
             }
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
-            anchor = tooltip.getAnchor([{}], e);
-            tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
+            anchor = tooltip.getAnchor([{} as any], e);
+            tooltip.updatePosition(
+                { plotX: anchor[0], plotY: anchor[1] } as any
+            );
         }
 
         // Start the event listener to pick up the tooltip and crosshairs
@@ -994,7 +1004,7 @@ Highcharts.Pointer.prototype = {
                 axis.hideCrosshair();
             });
 
-            pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
+            pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null as any;
         }
     },
 

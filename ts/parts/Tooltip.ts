@@ -27,6 +27,12 @@ const {
 declare global {
     namespace Highcharts {
         type TooltipShapeValue = ('callout'|'circle'|'square');
+        interface PlotSeriesOptions {
+            tooltip?: TooltipOptions;
+        }
+        interface Point {
+            tooltipPos?: Array<number>;
+        }
         interface Series {
             noSharedTooltip?: boolean;
             tt?: SVGElement;
@@ -94,8 +100,8 @@ declare global {
             public destroy(): void;
             public getAnchor(
                 points: Array<Point>,
-                mouseEvent: PointerEventObject
-            ): [number, number, (number|undefined)];
+                mouseEvent?: PointerEventObject
+            ): Array<number>;
             public getDateFormat(
                 range: number,
                 date: number,
@@ -123,7 +129,7 @@ declare global {
             ): void;
             public refresh(
                 pointOrPoints: (Point|Array<Point>),
-                mouseEvent: PointerEventObject
+                mouseEvent?: PointerEventObject
             ): void;
             public renderSplit(
                 labels: (string|Array<(boolean|string)>),
@@ -722,13 +728,13 @@ H.Tooltip.prototype = {
      *
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *
-     * @return {Array<number,number,(number|undefined)>}
+     * @return {Array<number>}
      */
     getAnchor: function (
         this: Highcharts.Tooltip,
         points: Array<Highcharts.Point>,
-        mouseEvent: Highcharts.PointerEventObject
-    ): [number, number, (number|undefined)] {
+        mouseEvent?: Highcharts.PointerEventObject
+    ): Array<number> {
         var ret,
             chart = this.chart,
             pointer = chart.pointer,
@@ -1006,7 +1012,7 @@ H.Tooltip.prototype = {
     refresh: function (
         this: Highcharts.Tooltip,
         pointOrPoints: (Highcharts.Point|Array<Highcharts.Point>),
-        mouseEvent: Highcharts.PointerEventObject
+        mouseEvent?: Highcharts.PointerEventObject
     ): void {
         var tooltip = this,
             chart = this.chart,
@@ -1278,7 +1284,7 @@ H.Tooltip.prototype = {
                                 // Scrollable plot area
                                 chart.scrollablePixelsX ?
                                     chart.scrollablePixelsX -
-                                        chart.marginRight :
+                                        (chart.marginRight as any) :
                                     0
                             ) -
                             boxWidth

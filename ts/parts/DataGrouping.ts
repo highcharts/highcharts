@@ -348,7 +348,7 @@ var groupData = function (
 
     // Calculate values array size from pointArrayMap length
     if (pointArrayMapLength) {
-        pointArrayMap.forEach(function (): void {
+        (pointArrayMap as any).forEach(function (): void {
             values.push([]);
         });
     } else {
@@ -446,7 +446,7 @@ var groupData = function (
                     }, [(dataOptions as any)[index]]),
                 val;
 
-            for (j = 0; j < pointArrayMapLength; j++) {
+            for (j = 0; j < (pointArrayMapLength as any); j++) {
                 val = (point as any)[pointArrayMap[j]];
                 if (isNumber(val)) {
                     values[j].push(val);

@@ -244,7 +244,7 @@ Highcharts.Pointer.prototype = {
      * @param {Array<Highcharts.Series>} series
      *        All the series to search in.
      *
-     * @param {boolean} shared
+     * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
      * @param {Highcharts.PointerEventObject} e
@@ -312,11 +312,8 @@ Highcharts.Pointer.prototype = {
     /**
      * @private
      * @function Highcharts.Pointer#getChartCoordinatesFromPoint
-     *
      * @param {Highcharts.Point} point
-     *
-     * @param {boolean} inverted
-     *
+     * @param {boolean} [inverted]
      * @return {Highcharts.PointerCoordinatesObject|undefined}
      */
     getChartCoordinatesFromPoint: function (point, inverted) {
@@ -356,7 +353,7 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} isDirectTouch
      *        Is the pointer directly hovering the point.
      *
-     * @param {boolean} shared
+     * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
      * @param {Highcharts.PointerEventObject} e
@@ -437,9 +434,11 @@ Highcharts.Pointer.prototype = {
      * @fires Highcharts.Point#event:mouseOver
      */
     runPointActions: function (e, p) {
-        var pointer = this, chart = pointer.chart, series = chart.series, tooltip = chart.tooltip && chart.tooltip.options.enabled ?
+        var pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip && chart.tooltip.options.enabled ?
             chart.tooltip :
-            undefined, shared = tooltip ? tooltip.shared : false, hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
+            undefined), shared = (tooltip ?
+            tooltip.shared :
+            false), hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
         // onMouseOver or already hovering a series with directTouch
         isDirectTouch = e.type !== 'touchmove' && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
             pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e), activeSeries = [], useSharedTooltip, followPointer, anchor, points;

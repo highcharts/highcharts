@@ -2045,7 +2045,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/labelformatter/
          *         Data classes with label formatter
          *
-         * @context {Highcharts.Series|Highcharts.Point}
+         * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function () {
             /** eslint-enable valid-jsdoc */

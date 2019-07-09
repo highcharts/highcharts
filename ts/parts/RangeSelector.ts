@@ -29,6 +29,8 @@ declare global {
         interface Chart {
             extraBottomMargin?: boolean;
             extraTopMargin?: boolean;
+            fixedRange?: number;
+            rangeSelector?: RangeSelector;
         }
         interface Options {
             rangeSelector?: RangeSelectorOptions;
@@ -129,7 +131,7 @@ declare global {
             ): RangeObject;
             public hideInput(name: string): void;
             public init(chart: Chart): void;
-            public render(min: number, max: number): void;
+            public render(min?: number, max?: number): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -1510,16 +1512,16 @@ RangeSelector.prototype = {
      *
      * @private
      * @function Highcharts.RangeSelector#render
-     * @param {number} min
+     * @param {number} [min]
      *        X axis minimum
-     * @param {number} max
+     * @param {number} [max]
      *        X axis maximum
      * @return {void}
      */
     render: function (
         this: Highcharts.RangeSelector,
-        min: number,
-        max: number
+        min?: number,
+        max?: number
     ): void {
 
         var rangeSelector = this,
@@ -1963,7 +1965,7 @@ RangeSelector.prototype = {
         this.destroy();
         this.init(chart);
 
-        chart.rangeSelector.render();
+        (chart.rangeSelector as any).render();
     },
 
     /**
@@ -2216,7 +2218,7 @@ if (!H.RangeSelector) {
             }
 
             if (this.extraBottomMargin) {
-                this.marginBottom += rangeSelectorHeight;
+                (this.marginBottom as any) += rangeSelectorHeight;
             }
         }
     });
@@ -2233,7 +2235,7 @@ if (!H.RangeSelector) {
         function renderRangeSelector(): void {
             extremes = chart.xAxis[0].getExtremes();
             if (isNumber(extremes.min)) {
-                rangeSelector.render(extremes.min, extremes.max);
+                (rangeSelector as any).render(extremes.min, extremes.max);
             }
         }
 
@@ -2243,7 +2245,7 @@ if (!H.RangeSelector) {
                 chart.xAxis[0],
                 'afterSetExtremes',
                 function (e: Highcharts.RangeObject): void {
-                    rangeSelector.render(e.min, e.max);
+                    (rangeSelector as any).render(e.min, e.max);
                 }
             );
 

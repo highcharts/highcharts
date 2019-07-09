@@ -28,6 +28,9 @@ declare global {
         interface ScatterSeriesOptions extends LineSeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
         }
+        interface Series {
+            takeOrdinalPosition?: boolean;
+        }
         class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
             public series: ScatterSeries;
@@ -37,6 +40,7 @@ declare global {
             public options: ScatterSeriesOptions;
             public pointClass: typeof ScatterPoint;
             public points: Array<ScatterPoint>;
+            public takeOrdinalPosition: boolean;
             public applyJitter(): void;
         }
     }

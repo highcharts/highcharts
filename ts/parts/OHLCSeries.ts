@@ -34,18 +34,27 @@ declare global {
         interface OHLCSeriesStatesOptions extends ColumnSeriesStatesOptions {
             hover?: OHLCSeriesStatesHoverOptions;
         }
+        interface Series {
+            pointArrayMap?: OHLCSeries['pointArrayMap'];
+        }
         class OHLCPoint extends ColumnPoint {
             public close: number;
             public high: number;
             public low: number;
             public open: number;
             public options: OHLCPointOptions;
+            public plotClose: number;
+            public plotHigh?: number;
+            public plotLow?: number;
+            public plotOpen: number;
             public series: OHLCSeries;
+            public yBottom?: number;
         }
         class OHLCSeries extends ColumnSeries {
             public data: Array<OHLCPoint>;
             public options: OHLCSeriesOptions;
             public pointArrayMap: Array<string>;
+            public pointAttrToOptions: Dictionary<string>;
             public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
             public init(): void;
@@ -194,7 +203,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
         pointValKey: 'close',
 
         pointAttrToOptions: {
-            'stroke': 'color',
+            stroke: 'color',
             'stroke-width': 'lineWidth'
         },
 
@@ -283,7 +292,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
 
                 // Align the tooltip to the high value to avoid covering the
                 // point
-                point.tooltipPos[1] =
+                (point.tooltipPos as any)[1] =
                     (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
             });
         },
@@ -322,7 +331,8 @@ seriesType<Highcharts.OHLCSeriesOptions>(
                     if (!chart.styledMode) {
                         graphic.attr(
                             series.pointAttribs(
-                                point, point.selected && 'select'
+                                point,
+                                (point.selected && 'select') as any
                             )
                         ); // #3897
                     }

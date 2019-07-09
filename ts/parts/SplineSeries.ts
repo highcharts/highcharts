@@ -129,7 +129,8 @@ seriesType<Highcharts.SplineSeriesOptions>(
                 return otherPoint &&
                     !otherPoint.isNull &&
                     otherPoint.doCurve !== false &&
-                    !point.isCliff; // #6387, area splines next to null
+                    // #6387, area splines next to null:
+                    !(point as Highcharts.AreaSplinePoint).isCliff;
             }
 
             // Find control points

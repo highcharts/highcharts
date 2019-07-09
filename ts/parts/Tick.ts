@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface AxisLabelsFormatterContextObject {
+            tickPositionInfo?: TimeTicksInfoObject;
+        }
         interface TickParametersObject {
             category?: string;
             options?: Dictionary<any>;

@@ -698,7 +698,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         stack = stacks[key as any][x];
         if (y !== null) {
             stack.points[pointKey as any] = stack.points[series.index as any] =
-                [pick(stack.cumulative, stackThreshold)];
+                [pick(stack.cumulative, stackThreshold as any)];
 
             // Record the base of the stack
             if (!defined(stack.cumulative)) {
@@ -742,7 +742,8 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             stack.total = correctFloat(stack.total + (y || 0));
         }
 
-        stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
+        stack.cumulative =
+            pick(stack.cumulative, stackThreshold as any) + (y || 0);
 
         if (y !== null) {
             (stack.points[pointKey as any] as any).push(stack.cumulative);

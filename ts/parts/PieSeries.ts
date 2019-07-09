@@ -48,8 +48,16 @@ declare global {
             softConnector?: boolean;
         }
         interface PieSeriesOptions extends LineSeriesOptions {
+            endAngle?: number;
+            center?: [(number|string|null), (number|string|null)];
+            colorByPoint?: boolean;
             dataLabels?: PieSeriesDataLabelsOptionsObject;
             ignoreHiddenPoint?: boolean;
+            inactiveOtherPoints?: boolean;
+            innerSize?: (number|string);
+            minSize?: number;
+            size?: (number|string|null);
+            startAngle?: number;
             states?: PieSeriesStatesOptions;
         }
         interface PieSeriesPositionObject extends PositionObject {
@@ -63,11 +71,22 @@ declare global {
         interface PieSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: PieSeriesStatesHoverOptions;
         }
+        interface PlotSeriesOptions {
+            center?: PieSeriesOptions['center'];
+            colorByPoint?: PieSeriesOptions['colorByPoint'];
+            inactiveOtherPoints?: PieSeriesOptions['inactiveOtherPoints'];
+            innerSize?: PieSeriesOptions['innerSize'];
+            minSize?: PieSeriesOptions['minSize'];
+            size?: PieSeriesOptions['size'];
+        }
         class PiePoint extends LinePoint {
             public angle?: number;
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
+            public half?: number;
+            public labelDistance?: number;
             public labelPosition?: PiePointLabelPositionObject;
+            public name: string;
             public options: PiePointOptions;
             public series: PieSeries;
             public shadowGroup?: SVGElement;
@@ -84,9 +103,11 @@ declare global {
             ): void;
         }
         class PieSeries extends LineSeries {
+            public center: Array<number>;
             public endAngleRad?: number;
             public data: Array<PiePoint>;
             public getCenter: CenteredSeriesMixin['getCenter'];
+            public maxLabelDistance: number;
             public options: PieSeriesOptions;
             public pointClass: typeof PiePoint;
             public points: Array<PiePoint>;
@@ -378,7 +399,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @sample {highcharts} highcharts/plotoptions/pie-center/
          *         Centered at 100, 100
          *
-         * @type    {Array<number|string|null>}
+         * @type    {Array<(number|string|null),(number|string|null)>}
          * @default [null, null]
          * @product highcharts
          *
@@ -829,7 +850,7 @@ seriesType<Highcharts.PieSeriesOptions>(
             (left ? -1 : 1) *
             (Math.cos(angle) * (radius + point.labelDistance)) +
             (
-                point.labelDistance > 0 ?
+                (point.labelDistance as any) > 0 ?
                     (left ? -1 : 1) * (this.options.dataLabels as any).padding :
                     0
             );
@@ -920,8 +941,10 @@ seriesType<Highcharts.PieSeriesOptions>(
 
                 // Compute point.labelDistance if it's defined as percentage
                 // of slice radius (#8854)
-                point.labelDistance =
-                  H.relativeLength(point.labelDistance, point.shapeArgs.r);
+                point.labelDistance = H.relativeLength(
+                    point.labelDistance as any,
+                    point.shapeArgs.r
+                );
 
                 // Saved for later dataLabels distance calculation.
                 series.maxLabelDistance = Math.max(
@@ -1063,7 +1086,7 @@ seriesType<Highcharts.PieSeriesOptions>(
                         }
                         pointAttr = series.pointAttribs(
                             point,
-                            point.selected && 'select'
+                            (point.selected && 'select') as any
                         );
                     }
 

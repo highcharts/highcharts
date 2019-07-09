@@ -498,7 +498,7 @@ H.Tooltip.prototype = {
      *
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *
-     * @return {Array<number,number,(number|undefined)>}
+     * @return {Array<number>}
      */
     getAnchor: function (points, mouseEvent) {
         var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;

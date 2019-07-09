@@ -48,7 +48,7 @@ declare global {
             y?: (number|null);
             color: (ColorString|GradientColorObject|PatternObject);
             colorIndex: number;
-            key: string;
+            key?: string;
             series: Series;
             point: Point;
             percentage?: number;
@@ -271,7 +271,7 @@ declare global {
  *//**
  * The name of the related point.
  * @name Highcharts.PointLabelObject#key
- * @type {number|string}
+ * @type {string|undefined}
  *//**
  * The percentage for related points in a stacked series or pies.
  * @name Highcharts.PointLabelObject#percentage
@@ -288,12 +288,12 @@ declare global {
  * The total of values in either a stack for stacked series, or a pie in a pie
  * series.
  * @name Highcharts.PointLabelObject#total
- * @type {number}
+ * @type {number|undefined}
  *//**
  * For categorized axes this property holds the category name for the point. For
  * other axes it holds the X value.
  * @name Highcharts.PointLabelObject#x
- * @type {number|string}
+ * @type {number|string|undefined}
  *//**
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
@@ -814,8 +814,8 @@ Highcharts.Point.prototype = {
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
-        if ((options as any).group) {
-            delete point.group;
+        if ((options as Highcharts.ColumnPoint).group) {
+            delete (point as Highcharts.ColumnPoint).group;
         }
         if (options.dataLabels) {
             delete point.dataLabels;
@@ -1071,7 +1071,7 @@ Highcharts.Point.prototype = {
             point.setState();
             erase(hoverPoints, point);
             if (!hoverPoints.length) {
-                chart.hoverPoints = null;
+                chart.hoverPoints = null as any;
             }
 
         }
@@ -1192,7 +1192,8 @@ Highcharts.Point.prototype = {
 
         // Replace default point style with class name
         if (series.chart.styledMode) {
-            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+            pointFormat =
+                (series.chart.tooltip as any).styledModeFormat(pointFormat);
         }
 
         // Loop over the point array map and replace unformatted values with

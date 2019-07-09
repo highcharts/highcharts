@@ -34,6 +34,8 @@ declare global {
             innerContainer?: HTMLDOMElement;
             scrollingContainer?: HTMLDOMElement;
             scrollableMask?: SVGElement;
+            scrollablePixelsX?: number;
+            scrollablePixelsY?: number;
             applyFixed(): void;
             moveFixedElements(): void;
             setUpScrolling(): void;
@@ -407,11 +409,13 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
 
         if (scrollableOptions.scrollPositionX) {
             (this.scrollingContainer as any).scrollLeft =
-                this.scrollablePixelsX * scrollableOptions.scrollPositionX;
+                (this.scrollablePixelsX as any) *
+                scrollableOptions.scrollPositionX;
         }
         if (scrollableOptions.scrollPositionY) {
             (this.scrollingContainer as any).scrollTop =
-                this.scrollablePixelsY * scrollableOptions.scrollPositionY;
+                (this.scrollablePixelsY as any) *
+                scrollableOptions.scrollPositionY;
         }
     }
 
