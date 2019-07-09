@@ -3,15 +3,81 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface GaugePointOptions extends LinePointOptions {
+            dial?: GaugeSeriesOptions['dial'];
+            pivot?: GaugeSeriesOptions['pivot'];
+        }
+        interface GaugeSeriesOptions extends LineSeriesOptions {
+            dial?: CSSObject;
+            overshoot?: number;
+            pivot?: CSSObject;
+            states?: GaugeSeriesStatesOptions;
+            wrap?: boolean;
+        }
+        interface GaugeSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions
+        {
+            dial?: CSSObject;
+            pivot?: CSSObject;
+        }
+        interface GaugeSeriesStatesOptions extends LineSeriesStatesOptions {
+            hover?: GaugeSeriesStatesHoverOptions;
+        }
+        class GaugePoint extends LinePoint {
+            public dial?: SVGElement;
+            public option: GaugePointOptions;
+            public series: GaugeSeries;
+            public shapeArgs: SVGAttributes;
+            public setState(state?: string): void;
+        }
+        class GaugeSeries extends LineSeries {
+            public data: Array<GaugePoint>;
+            public drawTracker: TrackerMixin['drawTrackerPoint'];
+            public options: GaugeSeriesOptions;
+            public pivot?: SVGElement;
+            public pointClass: typeof GaugePoint;
+            public points: Array<GaugePoint>;
+            public yAxis: RadialAxis;
+            public animate(init?: boolean): void;
+            public drawPoints(): void;
+            public hasData(): boolean;
+            public render(): void;
+            public setData(
+                data: Array<PointOptionsType>,
+                redraw?: boolean
+            ): void;
+            public translate(): void;
+        }
+    }
+}
+
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var isNumber = U.isNumber,
+    pInt = U.pInt;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, TrackerMixin = H.TrackerMixin;
+
+var merge = H.merge,
+    noop = H.noop,
+    pick = H.pick,
+    Series = H.Series,
+    seriesType = H.seriesType,
+    TrackerMixin = H.TrackerMixin;
+
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.
@@ -28,7 +94,8 @@ var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
-seriesType('gauge', 'line', {
+seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
+
     /**
      * When this option is `true`, the dial will wrap around the axes. For
      * instance, in a full-range gauge going from 0 to 360, a value of 400
@@ -42,6 +109,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.wrap
      */
+
     /**
      * Data labels for the gauge. For gauges, the data labels are enabled
      * by default and shown in a bordered box below the point.
@@ -69,6 +137,7 @@ seriesType('gauge', 'line', {
         /** @ignore-option */
         zIndex: 2
     },
+
     /**
      * Options for the dial or arrow pointer of the gauge.
      *
@@ -83,6 +152,7 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     dial: {},
+
     /**
      * The length of the dial's base part, relative to the total radius
      * or length of the dial.
@@ -96,6 +166,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.baseLength
      */
+
     /**
      * The pixel width of the base of the gauge dial. The base is the part
      * closest to the pivot, defined by baseLength.
@@ -109,6 +180,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.baseWidth
      */
+
     /**
      * The radius or length of the dial, in percentages relative to the
      * radius of the gauge itself.
@@ -122,6 +194,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.radius
      */
+
     /**
      * The length of the dial's rear end, the part that extends out on the
      * other side of the pivot. Relative to the dial's length.
@@ -135,6 +208,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.rearLength
      */
+
     /**
      * The width of the top of the dial, closest to the perimeter. The pivot
      * narrows in from the base to the top.
@@ -148,6 +222,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.topWidth
      */
+
     /**
      * The background or fill color of the gauge's dial.
      *
@@ -160,6 +235,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.backgroundColor
      */
+
     /**
      * The border color or stroke of the gauge's dial. By default, the
      * borderWidth is 0, so this must be set in addition to a custom border
@@ -174,6 +250,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.borderColor
      */
+
     /**
      * The width of the gauge dial border in pixels.
      *
@@ -186,6 +263,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.borderWidth
      */
+
     /**
      * Allow the dial to overshoot the end of the perimeter axis by this
      * many degrees. Say if the gauge axis goes from 0 to 60, a value of
@@ -203,6 +281,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.overshoot
      */
+
     /**
      * Options for the pivot or the center point of the gauge.
      *
@@ -217,6 +296,7 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     pivot: {},
+
     /**
      * The pixel radius of the pivot.
      *
@@ -229,6 +309,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.radius
      */
+
     /**
      * The border or stroke width of the pivot.
      *
@@ -241,6 +322,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.borderWidth
      */
+
     /**
      * The border or stroke color of the pivot. In able to change this,
      * the borderWidth must also be set to something other than the default
@@ -255,6 +337,7 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.borderColor
      */
+
     /**
      * The background color or fill of the pivot.
      *
@@ -267,9 +350,11 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.pivot.backgroundColor
      */
+
     tooltip: {
         headerFormat: ''
     },
+
     /**
      * Whether to display this particular series or series type in the
      * legend. Defaults to false for gauge series.
@@ -278,39 +363,68 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     showInLegend: false
-    // Prototype members
+
+// Prototype members
 }, {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
     angular: true,
-    directTouch: true,
+    directTouch: true, // #5063
     drawGraph: noop,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
+
     /* eslint-disable valid-jsdoc */
+
     /**
      * Calculate paths etc
      * @private
      */
-    translate: function () {
-        var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
+    translate: function (this: Highcharts.GaugeSeries): void {
+
+        var series = this,
+            yAxis = series.yAxis,
+            options = series.options,
+            center = yAxis.center;
+
         series.generatePoints();
-        series.points.forEach(function (point) {
-            var dialOptions = merge(options.dial, point.dial), radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
-                200, baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
-                100, rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
-                100, baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+
+        series.points.forEach(function (point: Highcharts.GaugePoint): void {
+
+            var dialOptions =
+                    merge(options.dial, point.dial) as Highcharts.CSSObject,
+                radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
+                    200,
+                baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
+                    100,
+                rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
+                    100,
+                baseWidth = dialOptions.baseWidth || 3,
+                topWidth = dialOptions.topWidth || 1,
+                overshoot = options.overshoot,
+                rotation = yAxis.startAngleRad + (yAxis.translate(
+                    point.y as any, null, null, null, true
+                ) as any);
+
             // Handle the wrap and overshoot options
             if (isNumber(overshoot)) {
                 overshoot = overshoot / 180 * Math.PI;
-                rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
+                rotation = Math.max(
+                    yAxis.startAngleRad - overshoot,
+                    Math.min(yAxis.endAngleRad + overshoot, rotation)
+                );
+
+            } else if (options.wrap === false) {
+                rotation = Math.max(
+                    yAxis.startAngleRad,
+                    Math.min(yAxis.endAngleRad, rotation)
+                );
             }
-            else if (options.wrap === false) {
-                rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
-            }
+
             rotation = rotation * 180 / Math.PI;
+
             point.shapeType = 'path';
             point.shapeArgs = {
                 d: dialOptions.path || [
@@ -319,46 +433,61 @@ seriesType('gauge', 'line', {
                     'L',
                     baseLength, -baseWidth / 2,
                     radius, -topWidth / 2,
-                    radius, topWidth / 2,
-                    baseLength, baseWidth / 2,
-                    -rearLength, baseWidth / 2,
+                    radius, (topWidth as any) / 2,
+                    baseLength, (baseWidth as any) / 2,
+                    -rearLength, (baseWidth as any) / 2,
                     'z'
                 ],
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation
-            };
+            } as Highcharts.SVGAttributes;
+
             // Positions for data label
             point.plotX = center[0];
             point.plotY = center[1];
         });
     },
+
     /**
      * Draw the points where each point is one needle
      * @private
      */
-    drawPoints: function () {
-        var series = this, chart = series.chart, center = series.yAxis.center, pivot = series.pivot, options = series.options, pivotOptions = options.pivot, renderer = chart.renderer;
-        series.points.forEach(function (point) {
-            var graphic = point.graphic, shapeArgs = point.shapeArgs, d = shapeArgs.d, dialOptions = merge(options.dial, point.dial); // #1233
+    drawPoints: function (this: Highcharts.GaugeSeries): void {
+
+        var series = this,
+            chart = series.chart,
+            center = series.yAxis.center,
+            pivot = series.pivot,
+            options = series.options,
+            pivotOptions = options.pivot,
+            renderer = chart.renderer;
+
+        series.points.forEach(function (point: Highcharts.GaugePoint): void {
+
+            var graphic = point.graphic,
+                shapeArgs = point.shapeArgs,
+                d = shapeArgs.d,
+                dialOptions = merge(options.dial, point.dial); // #1233
+
             if (graphic) {
                 graphic.animate(shapeArgs);
                 shapeArgs.d = d; // animate alters it
-            }
-            else {
+            } else {
                 point.graphic =
-                    renderer[point.shapeType](shapeArgs)
+                    (renderer as any)[point.shapeType as any](shapeArgs)
                         .attr({
-                        // required by VML when animation is false
-                        rotation: shapeArgs.rotation,
-                        zIndex: 1
-                    })
+                            // required by VML when animation is false
+                            rotation: shapeArgs.rotation,
+                            zIndex: 1
+                        })
                         .addClass('highcharts-dial')
                         .add(series.group);
             }
+
             // Presentational attributes
             if (!chart.styledMode) {
-                point.graphic[graphic ? 'animate' : 'attr']({
+                (point.graphic as any)[graphic ? 'animate' : 'attr']({
                     stroke: dialOptions.borderColor || 'none',
                     'stroke-width': dialOptions.borderWidth || 0,
                     fill: dialOptions.backgroundColor ||
@@ -366,72 +495,92 @@ seriesType('gauge', 'line', {
                 });
             }
         });
+
         // Add or move the pivot
         if (pivot) {
-            pivot.animate({
+            pivot.animate({ // #1235
                 translateX: center[0],
                 translateY: center[1]
             });
-        }
-        else {
+        } else {
             series.pivot =
-                renderer.circle(0, 0, pick(pivotOptions.radius, 5))
+                renderer.circle(0, 0, pick((pivotOptions as any).radius, 5))
                     .attr({
-                    zIndex: 2
-                })
+                        zIndex: 2
+                    })
                     .addClass('highcharts-pivot')
                     .translate(center[0], center[1])
                     .add(series.group);
+
             // Presentational attributes
             if (!chart.styledMode) {
                 series.pivot.attr({
-                    'stroke-width': pivotOptions.borderWidth || 0,
-                    stroke: pivotOptions.borderColor ||
+                    'stroke-width': (pivotOptions as any).borderWidth || 0,
+                    stroke: (pivotOptions as any).borderColor ||
                         '${palette.neutralColor20}',
-                    fill: pivotOptions.backgroundColor ||
+                    fill: (pivotOptions as any).backgroundColor ||
                         '${palette.neutralColor100}'
-                });
+                } as Highcharts.SVGAttributes);
             }
         }
     },
+
     /**
      * Animate the arrow up from startAngle
      * @private
      */
-    animate: function (init) {
+    animate: function (this: Highcharts.GaugeSeries, init?: boolean): void {
         var series = this;
+
         if (!init) {
-            series.points.forEach(function (point) {
+            series.points.forEach(function (
+                point: Highcharts.GaugePoint
+            ): void {
                 var graphic = point.graphic;
+
                 if (graphic) {
                     // start value
                     graphic.attr({
                         rotation: series.yAxis.startAngleRad * 180 / Math.PI
                     });
+
                     // animate
                     graphic.animate({
                         rotation: point.shapeArgs.rotation
                     }, series.options.animation);
                 }
             });
+
             // delete this function to allow it only once
-            series.animate = null;
+            series.animate = null as any;
         }
     },
+
     /**
      * @private
      */
-    render: function () {
-        this.group = this.plotGroup('group', 'series', this.visible ? 'visible' : 'hidden', this.options.zIndex, this.chart.seriesGroup);
+    render: function (this: Highcharts.GaugeSeries): void {
+        this.group = this.plotGroup(
+            'group',
+            'series',
+            this.visible ? 'visible' : 'hidden',
+            this.options.zIndex,
+            this.chart.seriesGroup
+        );
         Series.prototype.render.call(this);
         this.group.clip(this.chart.clipRect);
     },
+
     /**
      * Extend the basic setData method by running processData and generatePoints
      * immediately, in order to access the points from the legend.
      * @private
      */
-    setData: function (data, redraw) {
+    setData: function (
+        this: Highcharts.GaugeSeries,
+        data: Array<Highcharts.PointOptionsType>,
+        redraw?: boolean
+    ): void {
         Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
@@ -439,29 +588,38 @@ seriesType('gauge', 'line', {
             this.chart.redraw();
         }
     },
+
     /**
      * Define hasData function for non-cartesian series.
      * Returns true if the series has points at all.
      * @private
      */
-    hasData: function () {
+    hasData: function (this: Highcharts.GaugeSeries): boolean {
         return !!this.points.length; // != 0
     },
+
     // If the tracking module is loaded, add the point tracker
     drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+
     /* eslint-enable valid-jsdoc */
+
 }, {
     // Point members
+
     /* eslint-disable valid-jsdoc */
+
     /**
      * Don't do any hover colors or anything
      * @private
      */
-    setState: function (state) {
+    setState: function (this: Highcharts.GaugePoint, state?: string): void {
         this.state = state;
     }
+
     /* eslint-enable valid-jsdoc */
+
 });
+
 /**
  * A `gauge` series. If the [type](#series.gauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
@@ -475,6 +633,7 @@ seriesType('gauge', 'line', {
  * @product   highcharts
  * @apioption series.gauge
  */
+
 /**
  * An array of data points for the series. For the `gauge` series type,
  * points can be given in the following ways:
@@ -515,4 +674,5 @@ seriesType('gauge', 'line', {
  * @product   highcharts
  * @apioption series.gauge.data
  */
+
 ''; // adds the doclets above in the transpiled file
