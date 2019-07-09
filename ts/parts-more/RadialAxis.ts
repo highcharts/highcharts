@@ -21,6 +21,9 @@ declare global {
         type RadialAxisOptions = (RadialAxisXOptions|RadialAxisYOptions);
         type RadialAxisXOptions = XAxisOptions;
         type RadialAxisYOptions = YAxisOptions;
+        interface Axis {
+            sector?: number;
+        }
         interface AxisPlotBandsOptions {
             innerRadius?: (number|string);
             outerRadius?: (number|string);
@@ -29,6 +32,9 @@ declare global {
         }
         interface AxisPlotLinesOptions {
             reverse?: boolean;
+        }
+        interface Chart {
+            inverted?: boolean;
         }
         interface HiddenAxisMixin {
             getOffset: Function;

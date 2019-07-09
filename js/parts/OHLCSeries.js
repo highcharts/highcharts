@@ -124,7 +124,7 @@ seriesType('ohlc', 'column'
     },
     pointValKey: 'close',
     pointAttrToOptions: {
-        'stroke': 'color',
+        stroke: 'color',
         'stroke-width': 'lineWidth'
     },
     /**
@@ -207,7 +207,7 @@ seriesType('ohlc', 'column'
                         .add(series.group);
                 }
                 if (!chart.styledMode) {
-                    graphic.attr(series.pointAttribs(point, point.selected && 'select')); // #3897
+                    graphic.attr(series.pointAttribs(point, (point.selected && 'select'))); // #3897
                 }
                 // crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;

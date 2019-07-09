@@ -70,7 +70,8 @@ seriesType('spline', 'line',
             return otherPoint &&
                 !otherPoint.isNull &&
                 otherPoint.doCurve !== false &&
-                !point.isCliff; // #6387, area splines next to null
+                // #6387, area splines next to null:
+                !point.isCliff;
         }
         // Find control points
         if (doCurve(lastPoint) && doCurve(nextPoint)) {

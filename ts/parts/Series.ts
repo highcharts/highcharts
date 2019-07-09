@@ -27,6 +27,9 @@ declare global {
         type SeriesType = (
             CandlestickSeries|ColumnSeries|LineSeries|OHLCSeries|PieSeries
         );
+        interface Chart {
+            runTrackerClick?: boolean;
+        }
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
             left?: KDNode;
@@ -128,6 +131,8 @@ declare global {
             category?: string;
             clientX?: number;
             dataGroup?: DataGroupingInfoObject;
+            dist?: number;
+            distX?: number;
             hasImage?: boolean;
             index?: number;
             isInside?: boolean;
@@ -232,8 +237,9 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
             halo?: (boolean|SeriesStatesHoverHaloOptions);
-            lineWidth?: number;
+            lineWidth?: SeriesOptions['lineWidth'];
             lineWidthPlus?: number;
+            opacity?: SeriesOptions['opacity'];
         }
         interface SeriesStatesInactiveOptions {
             opacity?: number;
@@ -314,6 +320,7 @@ declare global {
             public sorted: boolean;
             public state: string;
             public stickyTracking: boolean;
+            public symbol?: string;
             public tooltipOptions: TooltipOptions;
             public type: string;
             public userOptions: SeriesOptionsType;
@@ -4418,7 +4425,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 clipBox = series.clipBox || chart.clipBox;
 
                 if (finalBox) {
-                    clipBox.width = chart.plotSizeX;
+                    clipBox.width = chart.plotSizeX as any;
                     clipBox.x = 0;
                 }
             }
@@ -4653,7 +4660,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
                         markerAttribs = series.markerAttribs(
                             point,
-                            point.selected && 'select'
+                            (point.selected && 'select') as any
                         );
 
                         if (graphic) { // update
@@ -4699,7 +4706,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                             graphic[verb](
                                 series.pointAttribs(
                                     point,
-                                    point.selected && 'select'
+                                    (point.selected && 'select') as any
                                 )
                             );
                         }
@@ -4968,7 +4975,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
             // remove from hoverSeries
             if (chart.hoverSeries === series) {
-                chart.hoverSeries = null;
+                chart.hoverSeries = null as any;
             }
             erase(chart.series, series);
             chart.orderSeries();

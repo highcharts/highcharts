@@ -4750,11 +4750,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param {Highcharts.Point} point The point to inspect.
      * @return {number} The X value that the point is given.
      */
-    nameToX: function (this: Highcharts.Axis, point: Highcharts.Point): number {
+    nameToX: function (
+        this: Highcharts.Axis,
+        point: Highcharts.Point
+    ): (number|undefined) {
         var explicitCategories = isArray(this.categories),
             names = explicitCategories ? this.categories : this.names,
             nameX = point.options.x,
-            x;
+            x: (number|undefined);
 
         point.series.requireSorting = false;
 
@@ -4764,7 +4767,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 (
                     explicitCategories ?
                         (names as any).indexOf(point.name) :
-                        pick((names as any).keys[point.name], -1)
+                        pick((names as any).keys[point.name as any], -1)
 
                 );
         }
@@ -4778,9 +4781,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // Write the last point's name to the names array
         if (x !== undefined) {
-            this.names[x] = point.name;
+            this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
-            (this.names.keys as any)[point.name] = x;
+            (this.names.keys as any)[point.name as any] = x;
         }
 
         return x;

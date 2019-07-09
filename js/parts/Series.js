@@ -3431,7 +3431,7 @@ null,
                 if (enabled && !point.isNull) {
                     // Shortcuts
                     symbol = pick(pointMarkerOptions.symbol, series.symbol);
-                    markerAttribs = series.markerAttribs(point, point.selected && 'select');
+                    markerAttribs = series.markerAttribs(point, (point.selected && 'select'));
                     if (graphic) { // update
                         // Since the marker group isn't clipped, each
                         // individual marker must be toggled
@@ -3461,7 +3461,7 @@ null,
                     }
                     // Presentational attributes
                     if (graphic && !chart.styledMode) {
-                        graphic[verb](series.pointAttribs(point, point.selected && 'select'));
+                        graphic[verb](series.pointAttribs(point, (point.selected && 'select')));
                     }
                     if (graphic) {
                         graphic.addClass(point.getClassName(), true);

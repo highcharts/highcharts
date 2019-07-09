@@ -781,7 +781,7 @@ seriesType('column', 'line',
                 }
                 // Presentational
                 if (!chart.styledMode) {
-                    graphic[verb](series.pointAttribs(point, point.selected && 'select'))
+                    graphic[verb](series.pointAttribs(point, (point.selected && 'select')))
                         .shadow(point.allowShadow !== false && options.shadow, null, options.stacking && !options.borderRadius);
                 }
                 graphic.addClass(point.getClassName(), true);

@@ -16,7 +16,6 @@
  */
 declare global {
     namespace Highcharts {
-        type LabelFormatterCallbackFunction = any; // @todo
         type NavigationOptions = any; // @todo
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
@@ -24,128 +23,57 @@ declare global {
         type XAxisScrollbarOptions = any; // @todo
         type YAxisStackLabelsOptions = any; // @todo
         interface Axis {
-            extKey?: any; // @todo
-            id?: any; // @todo
-            labelLeft?: any; // @todo
-            labelRight?: any; // @todo
-            sector?: any; // @todo
-            beforePadding: Function; // @todo
-            getMaxLabelDimensions: Function; // @todo
-            toFixedRange: Function; // @todo
-        }
-        interface AxisLabelsFormatterContextObject {
-            tickPositionInfo?: any; // @todo
+            beforePadding?: Function; // @todo
+            getMaxLabelDimensions?: Function; // @todo
         }
         interface Chart {
-            angular?: any; // @todo
-            fixedRange?: any; // @todo
-            hoverPoint?: any; // @todo
-            hoverPoints?: any; // @todo
-            hoverSeries?: any; // @todo
-            inverted?: any; // @todo
+            angular?: unknown; // @todo
             is3d?: any; // @todo
             isBoosting?: any; // @todo
             isPrinting?: any; // @todo
             mapCredits?: any; // @todo
-            marginBottom?: any; // @todo
-            marginRight?: any; // @todo
-            navigator?: Navigator; // @todo
             openMenu?: any; // @todo
-            polar?: any; // @todo
-            rangeSelector?: any; // @todo
             redrawTrigger?: any; // @todo
-            runTrackerClick?: any; // @todo
-            scrollablePixelsX?: any; // @todo
-            scrollablePixelsY?: any; // @todo
-            tooltip?: any; // @todo
         }
         interface ChartOptions {
             forExport?: any; // @todo
-            reflow?: any; // @todo
-            renderer?: any; // @todo
-            skipClone?: any; // @todo
-        }
-        interface ColorAxis {
-            legendItem?: any; // @todo
         }
         interface Options {
             exporting?: any; // @todo
-            isStock?: boolean; // @todo
             navigation?: any; // @todo
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
-            center?: any; // @todo
-            colorByPoint?: any; // @todo
-            inactiveOtherPoints?: any; // @todo
-            innerSize?: any; // @todo
-            minSize?: any; // @todo
-            negativeFillColor?: any; // @todo
-            size?: any; // @todo
-            startFromThreshold?: any; // @todo
-            tooltip?: any; // @todo
-            trackByArea?: any; // @todo
         }
         interface Point {
             allowShadow?: unknown; // @todo
-            below?: any; // @todo
             dataLabelOnNull?: any; // @todo
-            dist?: any; // @todo
-            distX?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
-            group?: any; // @todo
-            half?: any; // @todo
-            isCliff?: any; // @todo
-            labelDistance?: any; // @todo
-            name?: any; // @todo
-            plotClose?: any; // @todo
             rectPlotX?: any; // @todo
-            plotOpen?: any; // @todo
-            selected?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
-            tooltipPos?: any; // @todo
             ttBelow?: any; // @todo
         }
         interface Series {
             allowDG?: any; // @todo
-            areaPath?: any; // @todo
-            barW?: any; // @todo
-            center?: any; // @todo
-            clipBox?: any; // @todo
             colorKey?: any; // @todo
             fillGraph?: any; // @todo
             fixedBox?: any; // @todo
             forceDL?: any; // @todo
             gappedPath?: any; // @todo
             group?: any; // @todo
-            hasDerivedData?: any; // @todo
             invertable?: any; // @todo
             isSeriesBoosting?: any; // @todo
             labelBySeries?: any; // @todo
-            maxLabelDistance?: any; // @todo
-            pointArrayMap?: any; // @todo
-            pointAttrToOptions?: any; // @todo
-            pointXOffset?: any; // @todo
             radii?: any; // @todo
             resetZones?: any; // @todo
             showLine?: any; // @todo
             specialGroup?: any; // @todo
-            symbol?: any; // @todo
-            takeOrdinalPosition?: any; // @todo
-            translatedThreshold?: any; // @todo
             useCommonDataGrouping?: any; // @todo
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo
-        }
-        interface SeriesOptions {
-            endAngle?: any; // @todo
-            startAngle?: any; // @todo
-        }
-        interface SeriesStatesHoverOptions {
-            opacity?: any; // @todo
         }
         interface Tick {
             slotWidth?: any; // @todo

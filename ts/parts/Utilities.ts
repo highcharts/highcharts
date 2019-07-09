@@ -34,7 +34,9 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
-        type HTMLAttributes = Dictionary<boolean|number|string|Function>;
+        type HTMLAttributes = (
+            Dictionary<(boolean|number|string|Function|undefined)>
+        );
         type HTMLDOMElement = GlobalHTMLElement;
         type RelativeSize = (number|string);
         interface AnimationOptionsObject {

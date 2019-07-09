@@ -19,6 +19,10 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         type ButtonRelativeToValue = ('plotBox'|'spacingBox');
+        interface Chart {
+            marginRight: ChartOptions['marginRight'];
+            polar: ChartOptions['polar'];
+        }
         interface ChartAddSeriesCallbackFunction {
             (this: Chart, event: ChartAddSeriesEventObject): void;
         }
@@ -84,6 +88,7 @@ declare global {
             plotBorderWidth?: number;
             plotShadow?: (boolean|CSSObject);
             polar?: boolean;
+            reflow?: boolean;
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
             shadow?: (boolean|CSSObject);
@@ -200,7 +205,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: LabelFormatterCallbackFunction;
+            labelFormatter?: FormatterCallbackFunction<Point|Series>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -2513,13 +2518,13 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/labelformatter/
          *         Data classes with label formatter
          *
-         * @context {Highcharts.Series|Highcharts.Point}
+         * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
             this: (Highcharts.Series|Highcharts.Point)
         ): string {
             /** eslint-enable valid-jsdoc */
-            return this.name;
+            return this.name as any;
         },
 
         /**

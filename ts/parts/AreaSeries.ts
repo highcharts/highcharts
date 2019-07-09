@@ -18,11 +18,15 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface AreaPathObject extends SVGPathArray {
+            xMap?: number;
+        }
         interface AreaPointOptions extends LinePointOptions {
         }
         interface AreaSeriesOptions extends LineSeriesOptions {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             fillOpacity?: number;
+            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
             states?: AreaSeriesStatesOptions;
         }
         interface AreaSeriesStatesHoverOptions
@@ -30,17 +34,23 @@ declare global {
         {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             fillOpacity?: number;
+            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface AreaSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: AreaSeriesStatesHoverOptions;
         }
+        interface PlotSeriesOptions {
+            negativeFillColor?: AreaSeriesOptions['negativeFillColor'];
+        }
         class AreaPoint extends LinePoint {
+            public isCliff?: boolean;
             public leftNull?: boolean;
             public options: AreaPointOptions;
             public rightNull?: boolean;
             public series: AreaSeries;
         }
         class AreaSeries extends LineSeries {
+            public areaPath?: AreaPathObject;
             public data: Array<AreaPoint>;
             public options: AreaSeriesOptions;
             public pointClass: typeof AreaPoint;
@@ -395,13 +405,13 @@ seriesType<Highcharts.AreaSeriesOptions>(
                 options = this.options,
                 stacking = options.stacking,
                 yAxis = this.yAxis,
-                topPath,
+                topPath: Highcharts.AreaPathObject,
                 bottomPath,
-                bottomPoints = [] as Array<Highcharts.AreaPoint>,
-                graphPoints = [],
+                bottomPoints: Array<Highcharts.AreaPoint> = [],
+                graphPoints: Array<Highcharts.AreaPoint> = [],
                 seriesIndex = this.index,
                 i,
-                areaPath,
+                areaPath: Highcharts.AreaPathObject,
                 plotX: number,
                 stacks = yAxis.stacks[this.stackKey as any],
                 threshold = options.threshold,
@@ -458,7 +468,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                                 yAxis.getThreshold(top),
                             isNull: isNull,
                             isCliff: true
-                        });
+                        } as any);
                         bottomPoints.push({ // @todo create real point object
                             plotX: plotX,
                             plotY: bottom === null ?
@@ -516,7 +526,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
             // TODO: don't set leftCliff and rightCliff when connectNulls?
             graphPath = getGraphPath
                 .call(this, graphPoints, false, connectNulls);
-            (areaPath as any).xMap = (topPath as any).xMap;
+            areaPath.xMap = topPath.xMap;
             this.areaPath = areaPath;
 
             return graphPath;

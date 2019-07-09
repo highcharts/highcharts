@@ -503,10 +503,10 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options
  *
  * @private
  * @function Highcharts.Axis#toFixedRange
- * @param {number} pxMin
- * @param {number} pxMax
- * @param {number} fixedMin
- * @param {number} fixedMax
+ * @param {number} [pxMin]
+ * @param {number} [pxMax]
+ * @param {number} [fixedMin]
+ * @param {number} [fixedMax]
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
@@ -556,7 +556,7 @@ Navigator.prototype = {
      * @param {number} index
      *        0 for left and 1 for right
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag for chart.inverted
      *
      * @param {string} verb
@@ -585,7 +585,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -676,7 +676,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb

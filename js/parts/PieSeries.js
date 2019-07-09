@@ -259,7 +259,7 @@ seriesType('pie', 'line',
      * @sample {highcharts} highcharts/plotoptions/pie-center/
      *         Centered at 100, 100
      *
-     * @type    {Array<number|string|null>}
+     * @type    {Array<(number|string|null),(number|string|null)>}
      * @default [null, null]
      * @product highcharts
      *
@@ -694,8 +694,7 @@ seriesType('pie', 'line',
                 point.options.dataLabels.distance), labelDistance);
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
-            point.labelDistance =
-                H.relativeLength(point.labelDistance, point.shapeArgs.r);
+            point.labelDistance = H.relativeLength(point.labelDistance, point.shapeArgs.r);
             // Saved for later dataLabels distance calculation.
             series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
             // The angle must stay within -90 and 270 (#2645)
@@ -802,7 +801,7 @@ seriesType('pie', 'line',
                     if (shadowGroup) {
                         shadowGroup.attr(groupTranslation);
                     }
-                    pointAttr = series.pointAttribs(point, point.selected && 'select');
+                    pointAttr = series.pointAttribs(point, (point.selected && 'select'));
                 }
                 // Draw the slice
                 if (!point.delayedRendering) {

@@ -84,6 +84,7 @@ declare global {
             public options: FlagSeriesOptions;
             public pointClass: typeof FlagPoint;
             public points: Array<FlagPoint>;
+            public takeOrdinalPosition: boolean;
             public translate: OnSeriesMixin['translate'];
             public setClip(): void;
         }
@@ -430,8 +431,8 @@ seriesType<Highcharts.FlagSeriesOptions>(
                 points = series.points,
                 chart = series.chart,
                 renderer = chart.renderer,
-                plotX,
-                plotY,
+                plotX: (number|undefined),
+                plotY: (number|undefined),
                 inverted = chart.inverted,
                 options = series.options,
                 optionsY = options.y,
@@ -556,7 +557,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
 
                     // Set the tooltip anchor position
                     point.tooltipPos = [
-                        plotX,
+                        plotX as any,
                         plotY + (yAxis.pos as any) - chart.plotTop
                     ]; // #6327
 

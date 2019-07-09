@@ -25,6 +25,9 @@ declare global {
             ): void;
             setNodeState(this: Highcharts.NodesPoint, state: string): void;
         }
+        interface Point {
+            name?: string;
+        }
         interface Series {
             nodes?: Array<NodesPoint>;
         }

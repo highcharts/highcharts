@@ -94,7 +94,7 @@ import Highcharts from './Globals.js';
 */ /**
 * The name of the related point.
 * @name Highcharts.PointLabelObject#key
-* @type {number|string}
+* @type {string|undefined}
 */ /**
 * The percentage for related points in a stacked series or pies.
 * @name Highcharts.PointLabelObject#percentage
@@ -111,12 +111,12 @@ import Highcharts from './Globals.js';
 * The total of values in either a stack for stacked series, or a pie in a pie
 * series.
 * @name Highcharts.PointLabelObject#total
-* @type {number}
+* @type {number|undefined}
 */ /**
 * For categorized axes this property holds the category name for the point. For
 * other axes it holds the X value.
 * @name Highcharts.PointLabelObject#x
-* @type {number|string}
+* @type {number|string|undefined}
 */ /**
 * The y value of the point.
 * @name Highcharts.PointLabelObject#y
@@ -868,7 +868,8 @@ Highcharts.Point.prototype = {
         var series = this.series, seriesTooltipOptions = series.tooltipOptions, valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''), valuePrefix = seriesTooltipOptions.valuePrefix || '', valueSuffix = seriesTooltipOptions.valueSuffix || '';
         // Replace default point style with class name
         if (series.chart.styledMode) {
-            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+            pointFormat =
+                series.chart.tooltip.styledModeFormat(pointFormat);
         }
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup

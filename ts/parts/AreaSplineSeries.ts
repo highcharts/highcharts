@@ -23,6 +23,7 @@ declare global {
         interface AreaSplineSeriesOptions extends SplineSeriesOptions {
         }
         class AreaSplinePoint extends SplinePoint {
+            public isCliff?: AreaPoint['isCliff'];
             public options: AreaSplinePointOptions;
             public series: AreaSplineSeries;
         }

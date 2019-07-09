@@ -986,8 +986,8 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
             // axis which is smaller and faster.
             chart.fixedRange = max - min;
             trimmedRange = xAxis.toFixedRange(
-                null,
-                null,
+                null as any,
+                null as any,
                 lin2val.apply(searchAxisLeft, [
                     val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
                     true // translate from index
@@ -999,8 +999,7 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
             );
 
             // Apply it if it is within the available data range
-            if (
-                trimmedRange.min >= Math.min(extremes.dataMin, min) &&
+            if (trimmedRange.min >= Math.min(extremes.dataMin, min) &&
                 trimmedRange.max <= Math.max(dataMax, max) + (overscroll as any)
             ) {
                 xAxis.setExtremes(

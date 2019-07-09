@@ -443,7 +443,8 @@ Series.prototype.setStackedPoints = function () {
         else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
-        stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
+        stack.cumulative =
+            pick(stack.cumulative, stackThreshold) + (y || 0);
         if (y !== null) {
             stack.points[pointKey].push(stack.cumulative);
             stackedYData[i] = stack.cumulative;

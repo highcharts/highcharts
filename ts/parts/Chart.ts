@@ -19,10 +19,15 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         interface Axis {
+            extKey?: string;
             index?: number;
         }
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
+        }
+        interface ChartOptions {
+            renderer?: string;
+            skipClone?: boolean;
         }
         interface ChartRenderer extends SVGRenderer {
             plotBox: BBoxObject;
@@ -61,7 +66,7 @@ declare global {
             public chartBackground?: SVGElement;
             public chartHeight: number;
             public chartWidth: number;
-            public clipBox?: BBoxObject;
+            public clipBox: BBoxObject;
             public clipOffset?: Array<number>;
             public clipRect?: SVGElement;
             public colorCounter: number;
@@ -78,6 +83,7 @@ declare global {
             public labelCollectors: Array<Function>;
             public legend: Legend;
             public margin: Array<number>;
+            public marginBottom?: number;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
             public options: Options;
@@ -892,7 +898,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @return {boolean}
          */
         function itemById(item: (Highcharts.Axis|Highcharts.Series)): boolean {
-            return item.id === id || (item.options && item.options.id === id);
+            return (
+                (item as Highcharts.Series).id === id ||
+                (item.options && item.options.id === id)
+            );
         }
 
         ret =
@@ -1502,7 +1511,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart._cursor = container.style.cursor as Highcharts.CursorValue;
 
         // Initialize the renderer
-        Ren = (H as any)[optionsChart.renderer] || H.Renderer;
+        Ren = (H as any)[optionsChart.renderer as any] || H.Renderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -1564,7 +1573,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (titleOffset[2] && !defined(margin[2])) {
             this.marginBottom = Math.max(
-                this.marginBottom,
+                this.marginBottom as any,
                 titleOffset[2] + (this.options.title as any).margin + spacing[2]
             );
         }
@@ -1870,7 +1879,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          */
         chart.plotWidth = plotWidth = Math.max(
             0,
-            Math.round((chartWidth as any) - plotLeft - chart.marginRight)
+            Math.round(
+                (chartWidth as any) - plotLeft - (chart.marginRight as any)
+            )
         );
 
         /**
@@ -1881,7 +1892,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          */
         chart.plotHeight = plotHeight = Math.max(
             0,
-            Math.round((chartHeight as any) - plotTop - chart.marginBottom)
+            Math.round(
+                (chartHeight as any) - plotTop - (chart.marginBottom as any)
+            )
         );
 
         chart.plotSizeX = inverted ? plotHeight : plotWidth;

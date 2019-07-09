@@ -552,7 +552,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @return {boolean}
          */
         function itemById(item) {
-            return item.id === id || (item.options && item.options.id === id);
+            return (item.id === id ||
+                (item.options && item.options.id === id));
         }
         ret =
             // Search axes
