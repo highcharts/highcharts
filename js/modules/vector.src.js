@@ -211,8 +211,11 @@ seriesType('vector', 'scatter'
                             translateX: plotX,
                             translateY: plotY,
                             rotation: point.direction
-                        })
-                        .attr(this.pointAttribs(point));
+                        });
+                    if (!this.chart.styledMode) {
+                        point.graphic
+                            .attr(this.pointAttribs(point));
+                    }
 
                 } else if (point.graphic) {
                     point.graphic = point.graphic.destroy();

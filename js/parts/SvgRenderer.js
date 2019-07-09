@@ -2299,6 +2299,10 @@ SVGElement.prototype['stroke-widthSetter'] =
             element.removeAttribute('stroke');
             this.hasStroke = false;
         }
+        else if (this.renderer.styledMode && this['stroke-width']) {
+            element.setAttribute('stroke-width', this['stroke-width']);
+            this.hasStroke = true;
+        }
     };
 /**
  * Allows direct access to the Highcharts rendering layer in order to draw
