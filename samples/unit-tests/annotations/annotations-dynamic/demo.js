@@ -56,7 +56,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     );
 
     var secondAnnotationOptions = {
-        id: '2',
+        id: 2,
         labels: [{
             point: {
                 x: 3,
@@ -138,6 +138,14 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         annotation.shapes[0].graphic.attr('r'),
         25,
         'Correct annotation size after update (annotations.shapes)'
+    );
+
+    chart.removeAnnotation(2);
+
+    assert.strictEqual(
+        chart.annotations.length,
+        2,
+        'Annotation with id=number, should be removed without errors (#10648)'
     );
 });
 
