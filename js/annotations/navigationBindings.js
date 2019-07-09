@@ -1364,7 +1364,6 @@ H.setOptions({
         /**
          * Additional options to popup.
          *
-         * @type      {Highcharts.AnnotationsPopup}
          * @apioption navigation.annotationsPopup
          */
         annotationsPopup: {
