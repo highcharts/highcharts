@@ -345,8 +345,11 @@ seriesType('windbarb', 'column'
                             translateX: plotX + this.options.xOffset,
                             translateY: plotY + this.options.yOffset,
                             rotation: point.direction
-                        })
-                        .attr(this.pointAttribs(point));
+                        });
+                    if (!this.chart.styledMode) {
+                        point.graphic
+                            .attr(this.pointAttribs(point));
+                    }
 
                 } else if (point.graphic) {
                     point.graphic = point.graphic.destroy();

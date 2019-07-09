@@ -3406,6 +3406,9 @@ SVGElement.prototype.strokeSetter = function (
     } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
         element.removeAttribute('stroke');
         this.hasStroke = false;
+    } else if (this.renderer.styledMode && this['stroke-width']) {
+        element.setAttribute('stroke-width', this['stroke-width']);
+        this.hasStroke = true;
     }
 };
 

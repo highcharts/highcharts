@@ -266,8 +266,9 @@ g.highcharts-series,
     stroke-width: 0;
 }
 .highcharts-markers {
-    stroke-width: 1px;
-    stroke: $background-color;
+    stroke-width: 2px;
+    stroke: #000000;
+    fill: #cccccc;
 }
 .highcharts-point {
     stroke-width: 1px;
