@@ -205,10 +205,10 @@ declare global {
         function map(arr: Array<any>, fn: Function): Array<any>;
         function merge<T>(
             extend: boolean,
-            a: T,
+            a: (T|undefined),
             ...n: Array<object|undefined>
         ): T;
-        function merge<T>(a: T, ...n: Array<object|undefined>): T;
+        function merge<T>(a: (T|undefined), ...n: Array<object|undefined>): T;
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,

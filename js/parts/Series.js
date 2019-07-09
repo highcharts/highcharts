@@ -4029,7 +4029,7 @@ null,
      * @param {string} prop
      * @param {string} name
      * @param {string} visibility
-     * @param {number} zIndex
+     * @param {number} [zIndex]
      * @param {Highcharts.SVGElement} [parent]
      * @return {Highcharts.SVGElement}
      */

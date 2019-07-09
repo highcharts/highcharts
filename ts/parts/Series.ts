@@ -388,7 +388,7 @@ declare global {
                 prop: string,
                 name: string,
                 visibility: string,
-                zIndex: number,
+                zIndex?: number,
                 parent?: SVGElement
             ): SVGElement;
             public pointAttribs(point: Point, state?: string): SVGAttributes;
@@ -5525,7 +5525,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * @param {string} prop
          * @param {string} name
          * @param {string} visibility
-         * @param {number} zIndex
+         * @param {number} [zIndex]
          * @param {Highcharts.SVGElement} [parent]
          * @return {Highcharts.SVGElement}
          */
@@ -5534,7 +5534,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             prop: string,
             name: string,
             visibility: string,
-            zIndex: number,
+            zIndex?: number,
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
