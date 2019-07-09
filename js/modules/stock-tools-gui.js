@@ -209,6 +209,9 @@ H.setOptions({
             /**
              * Path where Highcharts will look for icons. Change this to use
              * icons from a different server.
+             *
+             * See also [iconsURL](#navigation.annotationsOptions.iconsURL) for popup.
+             *
              */
             iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/',
             /**
@@ -1086,6 +1089,9 @@ H.Toolbar.prototype = {
                 className: PREFIX + 'submenu-item-arrow ' +
                     PREFIX + 'arrow-right'
             }, null, buttonWrapper);
+
+            submenuArrow.style['background-image'] = 'url(' +
+                guiOptions.iconsURL + 'arrow-bottom.svg)';
         } else {
             mainButton.style['background-image'] = 'url(' +
                 guiOptions.iconsURL + btnOptions.symbol + ')';
@@ -1114,9 +1120,15 @@ H.Toolbar.prototype = {
             className: PREFIX + 'arrow-up'
         }, null, stockToolbar.arrowWrapper);
 
+        stockToolbar.arrowUp.style['background-image'] =
+            'url(' + this.options.iconsURL + 'arrow-right.svg)';
+
         stockToolbar.arrowDown = createElement(DIV, {
             className: PREFIX + 'arrow-down'
         }, null, stockToolbar.arrowWrapper);
+
+        stockToolbar.arrowDown.style['background-image'] =
+            'url(' + this.options.iconsURL + 'arrow-right.svg)';
 
         wrapper.insertBefore(
             stockToolbar.arrowWrapper,
@@ -1236,6 +1248,9 @@ H.Toolbar.prototype = {
             className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
         }, null, wrapper);
 
+        showhideBtn.style['background-image'] =
+            'url(' + this.options.iconsURL + 'arrow-right.svg)';
+
         if (!visible) {
             // hide
             if (submenu) {
@@ -1243,7 +1258,6 @@ H.Toolbar.prototype = {
             }
             showhideBtn.style.left = '0px';
             stockToolbar.visible = visible = false;
-
             toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
             wrapper.style.height = showhideBtn.offsetHeight + 'px';
