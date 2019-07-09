@@ -12,7 +12,6 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isString = U.isString,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -211,7 +210,7 @@ merge(
              * annotation in [Chart#removeAnnotation(id)](
              * /class-reference/Highcharts.Chart#removeAnnotation) method.
              *
-             * @type      {string}
+             * @type      {string|number}
              * @apioption annotations.id
              */
 
@@ -1237,17 +1236,19 @@ H.extend(chartProto, /** @lends Highcharts.Chart# */ {
     /**
      * Remove an annotation from the chart.
      *
-     * @param {String|Annotation} idOrAnnotation - The annotation's id or
+     * @param {String|Number|Annotation} idOrAnnotation - The annotation's id or
      *      direct annotation object.
      */
     removeAnnotation: function (idOrAnnotation) {
         var annotations = this.annotations,
-            annotation = isString(idOrAnnotation) ? find(
-                annotations,
-                function (annotation) {
-                    return annotation.options.id === idOrAnnotation;
-                }
-            ) : idOrAnnotation;
+            annotation = idOrAnnotation.coll === 'annotations' ?
+                idOrAnnotation :
+                find(
+                    annotations,
+                    function (annotation) {
+                        return annotation.options.id === idOrAnnotation;
+                    }
+                );
 
         if (annotation) {
             fireEvent(annotation, 'remove');
