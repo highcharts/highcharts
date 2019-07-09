@@ -7,11 +7,41 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface AreaSplineRangePointOptions extends AreaRangePointOptions {
+        }
+        interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
+        }
+        class AreaSplineRangePoint extends AreaRangePoint {
+            public option: AreaSplineRangePointOptions;
+            public series: AreaSplineRangeSeries;
+        }
+        class AreaSplineRangeSeries extends AreaRangeSeries {
+            public data: Array<AreaSplineRangePoint>;
+            public getPointSpline: SplineSeries['getPointSpline'];
+            public options: AreaSplineRangeSeriesOptions;
+            public pointClass: typeof AreaSplineRangePoint;
+            public points: Array<AreaSplineRangePoint>;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+
+var seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
+
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
@@ -27,9 +57,12 @@ var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  * @product   highcharts highstock
  * @apioption plotOptions.areasplinerange
  */
-seriesType('areasplinerange', 'arearange', null, {
-    getPointSpline: seriesTypes.spline.prototype.getPointSpline
+seriesType('areasplinerange', 'arearange', null as any, {
+    getPointSpline: (
+        seriesTypes.spline as typeof Highcharts.SplineSeries
+    ).prototype.getPointSpline
 });
+
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -39,6 +72,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * @product   highcharts highstock
  * @apioption series.areasplinerange
  */
+
 /**
  * An array of data points for the series. For the `areasplinerange`
  * series type, points can be given in the following ways:
@@ -93,4 +127,5 @@ seriesType('areasplinerange', 'arearange', null, {
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data
  */
+
 ''; // adds doclets above to transpiled file
