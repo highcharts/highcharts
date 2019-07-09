@@ -60,6 +60,9 @@ declare global {
         interface FlagSeriesStatesOptions extends ColumnSeriesStatesOptions {
             hover?: FlagSeriesStatesHoverOptions;
         }
+        interface Series {
+            allowDG?: boolean;
+        }
         interface SymbolDictionary {
             circlepin: SymbolFunction<SVGPathArray>;
             flag: SymbolFunction<SVGPathArray>;
@@ -78,6 +81,7 @@ declare global {
             public isValid(): boolean;
         }
         class FlagSeries extends ColumnSeries {
+            public allowDG: boolean;
             public data: Array<FlagPoint>;
             public getPlotBox: OnSeriesMixin['getPlotBox'];
             public onSeries?: SeriesType;

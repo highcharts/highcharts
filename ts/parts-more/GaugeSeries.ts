@@ -38,6 +38,10 @@ declare global {
         interface GaugeSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: GaugeSeriesStatesHoverOptions;
         }
+        interface Series {
+            fixedBox?: boolean;
+            forceDL?: boolean;
+        }
         class GaugePoint extends LinePoint {
             public dial?: SVGElement;
             public option: GaugePointOptions;
@@ -48,6 +52,8 @@ declare global {
         class GaugeSeries extends LineSeries {
             public data: Array<GaugePoint>;
             public drawTracker: TrackerMixin['drawTrackerPoint'];
+            public fixedBox: boolean;
+            public forceDL: boolean;
             public options: GaugeSeriesOptions;
             public pivot?: SVGElement;
             public pointClass: typeof GaugePoint;

@@ -7,11 +7,58 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface ColumnRangePointOptions extends AreaRangePointOptions {
+        }
+        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
+            minPointLength?: number;
+        }
+        class ColumnRangePoint extends AreaRangePoint {
+            public barX: ColumnPoint['barX'];
+            public options: ColumnRangePointOptions;
+            public pointWidth: ColumnPoint['pointWidth'];
+            public series: ColumnRangeSeries;
+            public shapeArgs: SVGAttributes;
+            public shapeType: ColumnPoint['shapeType'];
+        }
+        class ColumnRangeSeries extends AreaRangeSeries {
+            public animate: ColumnSeries['animate'];
+            public crispCol: ColumnSeries['crispCol'];
+            public data: Array<ColumnRangePoint>;
+            public drawPoints: ColumnSeries['drawPoints'];
+            public drawTracker: ColumnSeries['drawTracker'];
+            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
+            public options: ColumnRangeSeriesOptions;
+            public pointAttribs: ColumnSeries['pointAttribs'];
+            public pointClass: typeof ColumnRangePoint;
+            public points: Array<ColumnRangePoint>;
+            public polarArc: Function;
+            public translate(): void;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
-var colProto = seriesTypes.column.prototype;
+
+var defaultPlotOptions = H.defaultPlotOptions,
+    merge = H.merge,
+    noop = H.noop,
+    pick = H.pick,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
+
+var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
+
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. Requires `highcharts-more.js`. To display
@@ -27,6 +74,7 @@ var colProto = seriesTypes.column.prototype;
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions = {
+
     /**
      * Extended data labels for range series types. Range series data labels
      * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
@@ -39,9 +87,12 @@ var columnRangeOptions = {
      * @product   highcharts highstock
      * @apioption plotOptions.columnrange.dataLabels
      */
+
     pointRange: null,
+
     /** @ignore-option */
     marker: null,
+
     states: {
         hover: {
             /** @ignore-option */
@@ -49,6 +100,7 @@ var columnRangeOptions = {
         }
     }
 };
+
 /**
  * The ColumnRangeSeries class
  *
@@ -58,65 +110,106 @@ var columnRangeOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, columnRangeOptions), {
+seriesType('columnrange', 'arearange', merge(
+    defaultPlotOptions.column,
+    defaultPlotOptions.arearange,
+    columnRangeOptions
+), {
+
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    translate: function () {
-        var series = this, yAxis = series.yAxis, xAxis = series.xAxis, startAngleRad = xAxis.startAngleRad, start, chart = series.chart, isRadial = series.xAxis.isRadial, safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999, plotHigh;
+    translate: function (this: Highcharts.ColumnRangeSeries): void {
+        var series = this,
+            yAxis = series.yAxis,
+            xAxis = series.xAxis,
+            startAngleRad = xAxis.startAngleRad,
+            start,
+            chart = series.chart,
+            isRadial = series.xAxis.isRadial,
+            safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999,
+            plotHigh;
+
         // eslint-disable-next-line valid-jsdoc
         /**
          * Don't draw too far outside plot area (#6835)
          * @private
          */
-        function safeBounds(pixelPos) {
-            return Math.min(Math.max(-safeDistance, pixelPos), safeDistance);
+        function safeBounds(pixelPos: number): number {
+            return Math.min(Math.max(
+                -safeDistance,
+                pixelPos
+            ), safeDistance);
         }
+
+
         colProto.translate.apply(series);
+
         // Set plotLow and plotHigh
-        series.points.forEach(function (point) {
-            var shapeArgs = point.shapeArgs, minPointLength = series.options.minPointLength, heightDifference, height, y;
-            point.plotHigh = plotHigh = safeBounds(yAxis.translate(point.high, 0, 1, 0, 1));
-            point.plotLow = safeBounds(point.plotY);
+        series.points.forEach(function (
+            point: Highcharts.ColumnRangePoint
+        ): void {
+            var shapeArgs = point.shapeArgs,
+                minPointLength = series.options.minPointLength,
+                heightDifference,
+                height,
+                y;
+
+            point.plotHigh = plotHigh = safeBounds(
+                yAxis.translate(
+                    point.high, 0 as any, 1 as any, 0 as any, 1 as any
+                ) as any
+            );
+            point.plotLow = safeBounds(point.plotY as any);
+
             // adjust shape
             y = plotHigh;
-            height = pick(point.rectPlotY, point.plotY) - plotHigh;
+            height = pick((point as any).rectPlotY, point.plotY) - plotHigh;
+
             // Adjust for minPointLength
-            if (Math.abs(height) < minPointLength) {
-                heightDifference = (minPointLength - height);
+            if (Math.abs(height) < (minPointLength as any)) {
+                heightDifference = ((minPointLength as any) - height);
                 height += heightDifference;
                 y -= heightDifference / 2;
-                // Adjust for negative ranges or reversed Y axis (#1457)
-            }
-            else if (height < 0) {
+
+            // Adjust for negative ranges or reversed Y axis (#1457)
+            } else if (height < 0) {
                 height *= -1;
                 y -= height;
             }
+
             if (isRadial) {
-                start = point.barX + startAngleRad;
+
+                start = (point.barX as any) + startAngleRad;
                 point.shapeType = 'path';
                 point.shapeArgs = {
-                    d: series.polarArc(y + height, y, start, start + point.pointWidth)
+                    d: series.polarArc(
+                        y + height,
+                        y,
+                        start,
+                        start + point.pointWidth
+                    )
                 };
-            }
-            else {
+            } else {
+
                 shapeArgs.height = height;
                 shapeArgs.y = y;
+
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + yAxis.pos - chart.plotLeft - y -
-                            height / 2,
-                        xAxis.len + xAxis.pos - chart.plotTop -
-                            shapeArgs.x - shapeArgs.width / 2,
+                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - y -
+                        height / 2,
+                        xAxis.len + (xAxis.pos as any) - chart.plotTop -
+                        shapeArgs.x - shapeArgs.width / 2,
                         height
                     ] : [
-                    xAxis.left - chart.plotLeft + shapeArgs.x +
+                        xAxis.left - chart.plotLeft + shapeArgs.x +
                         shapeArgs.width / 2,
-                    yAxis.pos - chart.plotTop + y + height / 2,
-                    height
-                ]; // don't inherit from column tooltip position - #3372
+                        (yAxis.pos as any) - chart.plotTop + y + height / 2,
+                        height
+                    ]; // don't inherit from column tooltip position - #3372
             }
         });
     },
@@ -124,37 +217,46 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
+
     // Overrides from modules that may be loaded after this module
-    crispCol: function () {
-        return colProto.crispCol.apply(this, arguments);
+    crispCol: function (
+        this: Highcharts.ColumnRangeSeries
+    ): Highcharts.BBoxObject {
+        return colProto.crispCol.apply(this, arguments as any);
     },
-    drawPoints: function () {
-        return colProto.drawPoints.apply(this, arguments);
+    drawPoints: function (this: Highcharts.ColumnRangeSeries): void {
+        return colProto.drawPoints.apply(this, arguments as any);
     },
-    drawTracker: function () {
-        return colProto.drawTracker.apply(this, arguments);
+    drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
+        return colProto.drawTracker.apply(this, arguments as any);
     },
-    getColumnMetrics: function () {
-        return colProto.getColumnMetrics.apply(this, arguments);
+    getColumnMetrics: function (
+        this: Highcharts.ColumnRangeSeries
+    ): Highcharts.ColumnMetricsObject {
+        return colProto.getColumnMetrics.apply(this, arguments as any);
     },
-    pointAttribs: function () {
-        return colProto.pointAttribs.apply(this, arguments);
+    pointAttribs: function (
+        this: Highcharts.ColumnRangeSeries
+    ): Highcharts.SVGAttributes {
+        return colProto.pointAttribs.apply(this, arguments as any);
     },
-    animate: function () {
-        return colProto.animate.apply(this, arguments);
+    animate: function (this: Highcharts.ColumnRangeSeries): void {
+        return colProto.animate.apply(this, arguments as any);
     },
-    polarArc: function () {
-        return colProto.polarArc.apply(this, arguments);
+    polarArc: function (this: Highcharts.ColumnRangeSeries): void {
+        return (colProto as any).polarArc.apply(this, arguments);
     },
-    translate3dPoints: function () {
+    translate3dPoints: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.translate3dPoints.apply(this, arguments);
     },
-    translate3dShapes: function () {
+    translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.translate3dShapes.apply(this, arguments);
     }
 }, {
     setState: colProto.pointClass.prototype.setState
 });
+
+
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
  * option is not specified, it is inherited from
@@ -165,6 +267,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @product   highcharts highstock
  * @apioption series.columnrange
  */
+
 /**
  * An array of data points for the series. For the `columnrange` series
  * type, points can be given in the following ways:
@@ -220,19 +323,23 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @product   highcharts highstock
  * @apioption series.columnrange.data
  */
+
 /**
  * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
  * @product   highcharts highstock
  * @apioption series.columnrange.data.dataLabels
  */
+
 /**
  * @excluding halo, lineWidth, lineWidthPlus, marker
  * @product   highcharts highstock
  * @apioption series.columnrange.states.hover
  */
+
 /**
  * @excluding halo, lineWidth, lineWidthPlus, marker
  * @product   highcharts highstock
  * @apioption series.columnrange.states.select
  */
+
 ''; // adds doclets above into transpiled
