@@ -38,6 +38,10 @@ declare global {
         interface ChartOptions {
             forExport?: any; // @todo
         }
+        interface ColumnSeries {
+            translate3dPoints: Function; // @todo
+            translate3dShapes: Function; // @todo
+        }
         interface Options {
             exporting?: any; // @todo
             navigation?: any; // @todo
@@ -56,11 +60,8 @@ declare global {
             ttBelow?: any; // @todo
         }
         interface Series {
-            allowDG?: any; // @todo
             colorKey?: any; // @todo
             fillGraph?: any; // @todo
-            fixedBox?: any; // @todo
-            forceDL?: any; // @todo
             gappedPath?: any; // @todo
             group?: any; // @todo
             invertable?: any; // @todo

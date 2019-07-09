@@ -69,12 +69,12 @@ declare global {
             pointXOffset?: number;
         }
         class ColumnPoint extends LinePoint {
-            public barX?: number;
+            public barX: number;
             public group?: unknown;
             public options: ColumnPointOptions;
-            public pointWidth?: number;
+            public pointWidth: number;
             public series: ColumnSeries;
-            public shapeType?: string;
+            public shapeType: string;
         }
         class ColumnSeries extends LineSeries {
             public borderWidth: number;

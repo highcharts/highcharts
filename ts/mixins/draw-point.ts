@@ -19,7 +19,7 @@ declare global {
             onComplete?: Function;
             isNew?: boolean;
             renderer: Renderer;
-            shapeArgs?: unknown;
+            shapeArgs?: SVGAttributes;
             shapeType: string;
         }
     }
