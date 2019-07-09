@@ -49,8 +49,8 @@ wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
     }
 });
 
-H.Popup = function (parentDiv) {
-    this.init(parentDiv);
+H.Popup = function (chart) {
+    this.init(chart);
 };
 
 H.Popup.prototype = {
@@ -60,14 +60,15 @@ H.Popup.prototype = {
      * @param {HTMLDOMElement} - container where popup should be placed
      * @return {HTMLDOMElement} - return created popup's div
      */
-    init: function (parentDiv) {
+    init: function (chart) {
 
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup'
-        }, null, parentDiv);
+        }, null, chart.container);
 
         this.lang = this.getLangpack();
+        this.iconsURL = chart.options.navigation.annotationsPopup.iconsURL;
 
         // add close button
         this.addCloseBtn();
@@ -84,6 +85,9 @@ H.Popup.prototype = {
         closeBtn = createElement(DIV, {
             className: PREFIX + 'popup-close'
         }, null, this.container);
+
+        closeBtn.style['background-image'] = 'url(' +
+                this.iconsURL + 'close.svg)';
 
         ['click', 'touchstart'].forEach(function (eventName) {
             addEvent(closeBtn, eventName, function () {
@@ -363,6 +367,8 @@ H.Popup.prototype = {
             );
 
             button.className += ' ' + PREFIX + 'annotation-remove-button';
+            button.style['background-image'] = 'url(' +
+                this.iconsURL + 'destroy.svg)';
 
             button = this.addButton(
                 popupDiv,
@@ -381,6 +387,9 @@ H.Popup.prototype = {
             );
 
             button.className += ' ' + PREFIX + 'annotation-edit-button';
+            button.style['background-image'] = 'url(' +
+                this.iconsURL + 'edit.svg)';
+
         },
         /**
          * Create annotation simple form.
@@ -1045,7 +1054,7 @@ H.Popup.prototype = {
 addEvent(H.NavigationBindings, 'showPopup', function (config) {
     if (!this.popup) {
         // Add popup to main container
-        this.popup = new H.Popup(this.chart.container);
+        this.popup = new H.Popup(this.chart);
     }
 
     this.popup.showForm(

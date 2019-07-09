@@ -164,7 +164,8 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-popup-close {
-  background: url("https://code.highcharts.com/#{$version}/gfx/stock-icons/close.svg") no-repeat 50% 50%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -207,12 +208,14 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-popup button.highcharts-annotation-edit-button {
-  background:url("https://code.highcharts.com/#{$version}/gfx/stock-icons/edit.svg") no-repeat 50% 50% transparent;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
   text-indent: -9999px;
 }
 
 .highcharts-popup button.highcharts-annotation-remove-button {
-  background:url("https://code.highcharts.com/#{$version}/gfx/stock-icons/destroy.svg") no-repeat 50% 50% transparent;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
   text-indent: -9999px;
 }
 

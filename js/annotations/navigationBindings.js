@@ -1360,6 +1360,19 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {}
+        annotationsOptions: {},
+        /**
+         * Additional options to popup.
+         *
+         * @type      {Highcharts.AnnotationsPopup}
+         * @apioption navigation.annotationsPopup
+         */
+        annotationsPopup: {
+            /**
+             * Path where Highcharts will look for icons. Change this to use
+             * icons from a different server.
+             */
+            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+        }
     }
 });
