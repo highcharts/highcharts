@@ -38,7 +38,7 @@ declare global {
         }
         interface KDPointSearchObject {
             clientX: number;
-            plotY: number;
+            plotY?: number;
         }
         interface LinePointOptions extends PointOptionsObject {
         }

@@ -73,7 +73,7 @@ declare global {
             public drawDataLabels(): void;
             public drawPoints(): void;
             public getGraphPath(points: Array<AreaRangePoint>): SVGPathArray;
-            public highToXY(point: AreaRangePoint): void;
+            public highToXY(point: (AreaRangePoint & PolarPoint)): void;
             public translate(): void;
             public toYData(point: AreaRangePoint): [number, number];
         }
@@ -269,7 +269,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
         // Find the polar plotX and plotY
         var chart = this.chart,
             xy = this.xAxis.postTranslate(
-                point.rectPlotX,
+                point.rectPlotX as any,
                 this.yAxis.len - point.plotHigh
             );
 
@@ -320,8 +320,8 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
 
         // Postprocess plotHigh
         if (this.chart.polar) {
-            this.points.forEach(function (
-                point: Highcharts.AreaRangePoint
+            (this as any).points.forEach(function (
+                point: (Highcharts.AreaRangePoint & Highcharts.PolarPoint)
             ): void {
                 series.highToXY(point);
                 point.tooltipPos = [
