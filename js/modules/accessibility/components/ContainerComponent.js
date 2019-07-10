@@ -88,6 +88,21 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
                 }
             )
         );
+
+        // Make credits readable by screen reader
+        var creditsEl = chart.credits && chart.credits.element;
+        if (creditsEl) {
+            if (chart.credits.textStr) {
+                creditsEl.setAttribute(
+                    'aria-label', chart.langFormat(
+                        'accessibility.credits', {
+                            creditsStr: chart.credits.textStr
+                        }
+                    )
+                );
+            }
+            this.unhideElementFromScreenReaders(creditsEl);
+        }
     },
 
 
