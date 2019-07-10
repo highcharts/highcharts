@@ -8,6 +8,7 @@ js/parts-more/ColumnPyramidSeries.js
 js/parts-more/ColumnRangeSeries.js
 js/parts-more/GaugeSeries.js
 js/parts-more/Pane.js
+js/parts-more/Polar.js
 js/parts-more/RadialAxis.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js

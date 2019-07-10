@@ -23,7 +23,7 @@ declare global {
             getMaxLabelDimensions?: Function; // @todo
         }
         interface Chart {
-            angular?: unknown; // @todo
+            hasParallelCoordinates?: any; // @todo parallel module
             is3d?: any; // @todo
             isBoosting?: any; // @todo
             isPrinting?: any; // @todo
@@ -50,7 +50,6 @@ declare global {
             dataLabelOnNull?: any; // @todo
             dlBox?: any; // @todo
             dlOptions?: any; // @todo
-            rectPlotX?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
             ttBelow?: any; // @todo
