@@ -268,6 +268,7 @@ declare global {
             public animationTimeout?: number;
             public area?: SVGElement;
             public axisTypes: ['xAxis', 'yAxis'];
+            public basePointRange?: number;
             public buildingKdTree?: boolean;
             public chart: Chart;
             public clips?: Array<SVGElement>;
@@ -3814,7 +3815,8 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             series.processedXData = processedXData;
             series.processedYData = processedYData;
 
-            series.closestPointRange = closestPointRange;
+            series.closestPointRange =
+                series.basePointRange = closestPointRange;
 
         },
 

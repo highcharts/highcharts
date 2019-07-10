@@ -499,11 +499,17 @@ H.Series.prototype.gappedPath = function () {
 
         // Gap unit is relative
         if (this.options.gapUnit !== 'value') {
-            gapSize *= this.closestPointRange;
+            gapSize *= this.basePointRange;
         }
 
         // Setting a new gapSize in case dataGrouping is enabled (#7686)
-        if (groupingSize && groupingSize > gapSize) {
+        if (
+            groupingSize &&
+            groupingSize > gapSize &&
+            // Except when DG is forced (e.g. from other series)
+            // and has lower granularity than actual points (#11351)
+            groupingSize >= this.basePointRange
+        ) {
             gapSize = groupingSize;
         }
 
