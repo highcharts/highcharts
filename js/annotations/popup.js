@@ -49,8 +49,8 @@ wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
     }
 });
 
-H.Popup = function (chart) {
-    this.init(chart);
+H.Popup = function (parentDiv, iconsURL) {
+    this.init(parentDiv, iconsURL);
 };
 
 H.Popup.prototype = {
@@ -60,15 +60,15 @@ H.Popup.prototype = {
      * @param {HTMLDOMElement} - container where popup should be placed
      * @return {HTMLDOMElement} - return created popup's div
      */
-    init: function (chart) {
+    init: function (parentDiv, iconsURL) {
 
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup'
-        }, null, chart.container);
+        }, null, parentDiv);
 
         this.lang = this.getLangpack();
-        this.iconsURL = chart.options.navigation.annotationsPopup.iconsURL;
+        this.iconsURL = iconsURL;
 
         // add close button
         this.addCloseBtn();
@@ -1054,7 +1054,10 @@ H.Popup.prototype = {
 addEvent(H.NavigationBindings, 'showPopup', function (config) {
     if (!this.popup) {
         // Add popup to main container
-        this.popup = new H.Popup(this.chart);
+        this.popup = new H.Popup(
+            this.chart.container,
+            this.options.annotationsPopup.iconsURL
+        );
     }
 
     this.popup.showForm(
