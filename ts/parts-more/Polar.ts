@@ -29,6 +29,7 @@ declare global {
         }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
+            ttBelow?: boolean;
         }
         interface PolarConnector {
             leftContX: number;
