@@ -243,14 +243,12 @@ declare global {
             range?: number;
             reversed?: boolean;
             reversedStacks?: boolean;
-            scrollbar?: XAxisScrollbarOptions;
             showEmpty?: boolean;
             showFirstLabel?: boolean;
             showLastLabel?: boolean;
             side?: number;
             softMax?: number;
             softMin?: number;
-            stackLabels?: undefined;
             startOfWeek?: number;
             startOnTick?: boolean;
             tickAmount?: number;
@@ -297,7 +295,6 @@ declare global {
             minColor?: ColorString;
             minLength?: (number|string);
             resize?: YAxisResizeOptions;
-            stackLabels?: YAxisStackLabelsOptions;
             staticScale?: number;
             stops?: Array<[number, ColorString]>;
             tooltipValueFormat?: string;
@@ -6925,7 +6922,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = options.stackLabels,
+            stackLabelOptions =
+                (options as Highcharts.YAxisOptions).stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,

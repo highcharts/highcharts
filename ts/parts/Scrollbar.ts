@@ -67,6 +67,9 @@ declare global {
             vertical?: boolean;
             zIndex?: number;
         }
+        interface XAxisOptions {
+            scrollbar?: ScrollbarOptions;
+        }
         class Scrollbar {
             public constructor(
                 renderer: SVGRenderer,

@@ -73,6 +73,25 @@ declare global {
             total: number;
             x: number;
         }
+        interface YAxisOptions {
+            stackLabels?: YAxisStackLabelsOptions;
+        }
+        interface YAxisStackLabelsOptions {
+            align?: AlignValue;
+            allowOverlap?: boolean;
+            crop?: boolean;
+            enabled?: boolean;
+            format?: string;
+            formatter?: FormatterCallbackFunction<StackItemObject>;
+            overflow?: DataLabelsOverflowValue;
+            rotation?: number;
+            style?: CSSObject;
+            textAlign?: AlignValue;
+            useHTML?: boolean;
+            verticalAlign?: VerticalAlignValue;
+            x?: number;
+            y?: number;
+        }
         class StackItem {
             public constructor(
                 axis: Axis,
@@ -268,30 +287,38 @@ H.StackItem.prototype = {
             options = this.options,
             formatOption = options.format,
             attr = {},
-            str = formatOption ?
+            str = formatOption ? // format the text in the label
                 format(formatOption, this, chart.time) :
-                options.formatter.call(this); // format the text in the label
+                (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
         if (this.label) {
             this.label.attr({ text: str, visibility: 'hidden' });
-        // Create new label
         } else {
-            this.label =
-            chart.renderer.label(str, null as any, null as any,
-                options.shape, null as any, null as any,
-                options.useHTML, false, 'stack-labels');
+            // Create new label
+            this.label = chart.renderer
+                .label(
+                    str,
+                    null as any,
+                    null as any,
+                    (options as any).shape,
+                    null as any,
+                    null as any,
+                    options.useHTML,
+                    false,
+                    'stack-labels'
+                );
 
             attr = {
                 text: str,
                 align: this.textAlign,
-                padding: pick(options.padding, 0),
+                padding: pick((options as any).padding, 0),
                 visibility: 'hidden' // hidden until setOffset is called
             };
             this.label.attr(attr);
             if (!chart.styledMode) {
-                this.label.css(options.style);
+                this.label.css(options.style as any);
             }
             if (!this.label.added) {
                 this.label.add(group); // add to the labels-group
@@ -686,7 +713,9 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             } else {
                 stacks[key as any][x] = new H.StackItem(
                     yAxis,
-                    yAxis.options.stackLabels,
+                    (
+                        yAxis.options as Highcharts.YAxisOptions
+                    ).stackLabels as any,
                     isNegative,
                     x,
                     stackOption as any

@@ -16,12 +16,8 @@
  */
 declare global {
     namespace Highcharts {
-        type NavigationOptions = any; // @todo
-        type OptionsOverflowValue = ('allow'|'justify');
-        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PatternObject = object; // @todo
-        type XAxisScrollbarOptions = any; // @todo
-        type YAxisStackLabelsOptions = any; // @todo
+        type NavigationOptions = any; // @todo exporting module
+        type PatternObject = object; // @todo pattern module
         interface Axis {
             beforePadding?: Function; // @todo
             getMaxLabelDimensions?: Function; // @todo
