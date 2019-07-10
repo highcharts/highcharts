@@ -49,8 +49,8 @@ wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
     }
 });
 
-H.Popup = function (parentDiv, iconsURL) {
-    this.init(parentDiv, iconsURL);
+H.Popup = function (parentDiv, config) {
+    this.init(parentDiv, config);
 };
 
 H.Popup.prototype = {
@@ -58,9 +58,10 @@ H.Popup.prototype = {
      * Initialize the popup. Create base div and add close button.
      * @private
      * @param {HTMLDOMElement} - container where popup should be placed
+     * @param {Object} - user options
      * @return {HTMLDOMElement} - return created popup's div
      */
-    init: function (parentDiv, iconsURL) {
+    init: function (parentDiv, config) {
 
         // create popup div
         this.container = createElement(DIV, {
@@ -68,7 +69,7 @@ H.Popup.prototype = {
         }, null, parentDiv);
 
         this.lang = this.getLangpack();
-        this.iconsURL = iconsURL;
+        this.iconsURL = config.iconsURL;
 
         // add close button
         this.addCloseBtn();
@@ -1056,7 +1057,7 @@ addEvent(H.NavigationBindings, 'showPopup', function (config) {
         // Add popup to main container
         this.popup = new H.Popup(
             this.chart.container,
-            this.options.annotationsPopup.iconsURL
+            this.options.annotationsPopup
         );
     }
 
