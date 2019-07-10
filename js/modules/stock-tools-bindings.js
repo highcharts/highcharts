@@ -905,6 +905,7 @@ var stockToolsBindings = {
                     {
                         langKey: 'horizontalLine',
                         type: 'infinityLine',
+                        draggable: 'y',
                         typeOptions: {
                             type: 'horizontalLine',
                             points: [{
@@ -938,6 +939,7 @@ var stockToolsBindings = {
                     {
                         langKey: 'verticalLine',
                         type: 'infinityLine',
+                        draggable: 'x',
                         typeOptions: {
                             type: 'verticalLine',
                             points: [{
