@@ -119,18 +119,18 @@ H.StackItem.prototype = {
      * @return {void}
      */
     render: function (group) {
-        var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ?
+        var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
             format(formatOption, this, chart.time) :
-            options.formatter.call(this); // format the text in the label
+            options.formatter.call(this);
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
         if (this.label) {
             this.label.attr({ text: str, visibility: 'hidden' });
-            // Create new label
         }
         else {
-            this.label =
-                chart.renderer.label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
+            // Create new label
+            this.label = chart.renderer
+                .label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
             attr = {
                 text: str,
                 align: this.textAlign,
