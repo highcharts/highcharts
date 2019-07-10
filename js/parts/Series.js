@@ -2867,7 +2867,8 @@ null,
         series.cropStart = cropStart;
         series.processedXData = processedXData;
         series.processedYData = processedYData;
-        series.closestPointRange = closestPointRange;
+        series.closestPointRange =
+            series.basePointRange = closestPointRange;
     },
     /**
      * Iterate over xData and crop values between min and max. Returns
