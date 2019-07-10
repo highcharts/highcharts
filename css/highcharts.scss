@@ -266,9 +266,8 @@ g.highcharts-series,
     stroke-width: 0;
 }
 .highcharts-markers {
-    stroke-width: 2px;
-    stroke: #000000;
-    fill: #cccccc;
+    stroke-width: 1px;
+    stroke: $background-color;
 }
 .highcharts-point {
     stroke-width: 1px;
@@ -370,6 +369,15 @@ g.highcharts-series,
     fill-opacity: 0.75;
 }
 
+.highcharts-vector-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-windbarb-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+ }
 
 
 /* Legend */
