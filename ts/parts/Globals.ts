@@ -52,24 +52,23 @@ declare global {
             dlOptions?: any; // @todo
             startR?: any; // @todo
             tooltipDateKeys?: any; // @todo
-            ttBelow?: any; // @todo
         }
         interface Series {
-            colorKey?: any; // @todo
-            fillGraph?: any; // @todo
-            gappedPath?: any; // @todo
+            colorKey?: any; // @todo color series mixin
+            fillGraph?: any; // @todo ichimoku indicator
+            gappedPath?: any; // @todo broken axis module
             group?: any; // @todo
             invertable?: any; // @todo
-            isSeriesBoosting?: any; // @todo
-            labelBySeries?: any; // @todo
-            radii?: any; // @todo
-            resetZones?: any; // @todo
+            isSeriesBoosting?: any; // @todo boost module
+            labelBySeries?: any; // @todo series label module
+            radii?: any; // @todo bubble series
+            resetZones?: any; // @todo macd indicator
             showLine?: any; // @todo
             specialGroup?: any; // @todo
-            useCommonDataGrouping?: any; // @todo
+            useCommonDataGrouping?: any; // @todo indicators
             valueMax?: any; // @todo
             valueMin?: any; // @todo
-            getPoint: Function; // @todo
+            getPoint: Function; // @todo boost module
         }
         interface Tick {
             slotWidth?: any; // @todo
