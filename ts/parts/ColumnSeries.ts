@@ -649,7 +649,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                 columnCount = 1;
             } else {
                 series.chart.series.forEach(function (
-                    otherSeries: Highcharts.SeriesType
+                    otherSeries: Highcharts.Series
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
                         otherOptions = otherSeries.options,

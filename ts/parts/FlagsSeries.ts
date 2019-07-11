@@ -18,21 +18,21 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type FlagShapeValue = ('circlepin'|'flag'|'squarepin');
+        type FlagsShapeValue = ('circlepin'|'flag'|'squarepin');
         interface DataLabelsBoxObject {
             anchorX?: number;
             plotX?: number;
         }
-        interface FlagPointOptions extends ColumnPointOptions {
+        interface FlagsPointOptions extends ColumnPointOptions {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             labelrank?: number;
             selected?: boolean;
-            shape?: FlagShapeValue;
+            shape?: FlagsShapeValue;
             text?: string;
             title?: string;
             x?: number;
         }
-        interface FlagSeriesOptions extends ColumnSeriesOptions {
+        interface FlagsSeriesOptions extends ColumnSeriesOptions {
             allowOverlapX?: boolean;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             height?: number;
@@ -40,9 +40,9 @@ declare global {
             lineWidth?: number;
             onKey?: string;
             onSeries?: string;
-            shape?: FlagShapeValue;
+            shape?: FlagsShapeValue;
             stackDistance?: number;
-            states?: FlagSeriesStatesOptions;
+            states?: FlagsSeriesStatesOptions;
             style?: CSSObject;
             textAlign?: AlignValue;
             title?: string;
@@ -50,15 +50,15 @@ declare global {
             width?: number;
             y?: number;
         }
-        interface FlagSeriesStatesHoverOptions
+        interface FlagsSeriesStatesHoverOptions
             extends ColumnSeriesStatesHoverOptions
         {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             lineColor?: ColorString;
-            shape?: FlagShapeValue;
+            shape?: FlagsShapeValue;
         }
-        interface FlagSeriesStatesOptions extends ColumnSeriesStatesOptions {
-            hover?: FlagSeriesStatesHoverOptions;
+        interface FlagsSeriesStatesOptions extends ColumnSeriesStatesOptions {
+            hover?: FlagsSeriesStatesHoverOptions;
         }
         interface Series {
             allowDG?: boolean;
@@ -68,26 +68,26 @@ declare global {
             flag: SymbolFunction<SVGPathArray>;
             squarepin: SymbolFunction<SVGPathArray>;
         }
-        class FlagPoint extends ColumnPoint {
+        class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;
             public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public lineWidth?: number;
-            public options: FlagPointOptions;
+            public options: FlagsPointOptions;
             public raised?: boolean;
-            public series: FlagSeries;
+            public series: FlagsSeries;
             public stackIndex?: number;
             public style?: CSSObject;
             public isValid(): boolean;
         }
-        class FlagSeries extends ColumnSeries {
+        class FlagsSeries extends ColumnSeries {
             public allowDG: boolean;
-            public data: Array<FlagPoint>;
+            public data: Array<FlagsPoint>;
             public getPlotBox: OnSeriesMixin['getPlotBox'];
-            public onSeries?: SeriesType;
-            public options: FlagSeriesOptions;
-            public pointClass: typeof FlagPoint;
-            public points: Array<FlagPoint>;
+            public onSeries?: Series;
+            public options: FlagsSeriesOptions;
+            public pointClass: typeof FlagsPoint;
+            public points: Array<FlagsPoint>;
             public takeOrdinalPosition: boolean;
             public translate: OnSeriesMixin['translate'];
             public setClip(): void;
@@ -96,7 +96,7 @@ declare global {
 }
 
 /**
- * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagShapeValue
+ * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
 import U from './Utilities.js';
@@ -127,7 +127,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.FlagSeriesOptions>(
+seriesType<Highcharts.FlagsSeriesOptions>(
     'flags',
     'column'
 
@@ -198,7 +198,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @sample {highstock} stock/plotoptions/flags/
          *         Different shapes
          *
-         * @type    {Highcharts.FlagShapeValue}
+         * @type    {Highcharts.FlagsShapeValue}
          * @product highstock
          */
         shape: 'flag',
@@ -397,8 +397,8 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @return {Highcharts.SVGAttributes}
          */
         pointAttribs: function (
-            this: Highcharts.FlagSeries,
-            point: Highcharts.FlagPoint,
+            this: Highcharts.FlagsSeries,
+            point: Highcharts.FlagsPoint,
             state?: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
@@ -430,7 +430,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @function Highcharts.seriesTypes.flags#drawPoints
          * @return {void}
          */
-        drawPoints: function (this: Highcharts.FlagSeries): void {
+        drawPoints: function (this: Highcharts.FlagsSeries): void {
             var series = this,
                 points = series.points,
                 chart = series.chart,
@@ -582,7 +582,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
 
                 H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
-                points.forEach(function (point: Highcharts.FlagPoint): void {
+                points.forEach(function (point: Highcharts.FlagsPoint): void {
                     var box = point.graphic && boxesMap[point.plotX as any];
 
                     if (box) {
@@ -610,7 +610,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
             // Can be a mix of SVG and HTML and we need events for both (#6303)
             if (options.useHTML) {
                 H.wrap(series.markerGroup, 'on', function (
-                    this: Highcharts.FlagSeries,
+                    this: Highcharts.FlagsSeries,
                     proceed
                 ): Highcharts.SVGElement {
                     return H.SVGElement.prototype.on.apply(
@@ -632,7 +632,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @function Highcharts.seriesTypes.flags#drawTracker
          * @return {void}
          */
-        drawTracker: function (this: Highcharts.FlagSeries): void {
+        drawTracker: function (this: Highcharts.FlagsSeries): void {
             var series = this,
                 points = series.points;
 
@@ -643,7 +643,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
             * of vertically stacked elements as well as tight points on the x
             * axis. #1924.
             */
-            points.forEach(function (point: Highcharts.FlagPoint): void {
+            points.forEach(function (point: Highcharts.FlagsPoint): void {
                 var graphic = point.graphic;
 
                 if (graphic) {
@@ -662,7 +662,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
 
                         // Revert other raised points
                         points.forEach(function (
-                            otherPoint: Highcharts.FlagPoint
+                            otherPoint: Highcharts.FlagsPoint
                         ): void {
                             if (
                                 otherPoint !== point &&
@@ -688,7 +688,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @param {boolean} [init]
          * @return {void}
          */
-        animate: function (this: Highcharts.FlagSeries, init?: boolean): void {
+        animate: function (this: Highcharts.FlagsSeries, init?: boolean): void {
             if (init) {
                 this.setClip();
             } else {
@@ -701,7 +701,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
          * @function Highcharts.seriesTypes.flags#setClip
          * @return {void}
          */
-        setClip: function (this: Highcharts.FlagSeries): void {
+        setClip: function (this: Highcharts.FlagsSeries): void {
             Series.prototype.setClip.apply(this, arguments as any);
             if (this.options.clip !== false && this.sharedClipKey) {
                 (this.markerGroup as any)
@@ -730,7 +730,7 @@ seriesType<Highcharts.FlagSeriesOptions>(
      * @lends Highcharts.seriesTypes.flag.prototype.pointClass.prototype
      */
     {
-        isValid: function (this: Highcharts.FlagPoint): boolean {
+        isValid: function (this: Highcharts.FlagsPoint): boolean {
             // #9233 - Prevent from treating flags as null points (even if
             // they have no y values defined).
             return isNumber(this.y) || this.y === undefined;
