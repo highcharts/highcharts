@@ -1,10 +1,11 @@
-js/mixins/*.js
+js/mixins/**/*.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
-js/parts/*.js
+js/parts/**/*.js
 js/parts-more/AreaRangeSeries.js
 js/parts-more/AreaSplineRangeSeries.js
 js/parts-more/BubbleLegend.js
+js/parts-more/BubbleSeries.js
 js/parts-more/ColumnPyramidSeries.js
 js/parts-more/ColumnRangeSeries.js
 js/parts-more/GaugeSeries.js

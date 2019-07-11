@@ -309,8 +309,8 @@ declare global {
             public pointInterval?: number;
             public points: Array<Point>;
             public pointValKey?: string;
-            public processedXData?: Array<number>;
-            public processedYData?: Array<number>;
+            public processedXData: Array<number>;
+            public processedYData: Array<number>;
             public requireSorting: boolean;
             public selected: boolean;
             public sharedClipKey?: string;
@@ -3692,10 +3692,11 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             force?: boolean
         ): (boolean|undefined) {
             var series = this,
-                processedXData = series.xData, // copied during slice operation
-                processedYData = series.yData,
+                // copied during slice operation:
+                processedXData: Array<number> = series.xData as any,
+                processedYData: Array<number> = series.yData as any,
                 dataLength = (processedXData as any).length,
-                croppedData,
+                croppedData: Highcharts.SeriesCropDataObject,
                 cropStart = 0,
                 cropped,
                 distance,
@@ -3718,8 +3719,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             // If the series data or axes haven't changed, don't go through
             // this. Return false to pass the message on to override methods
             // like in data grouping.
-            if (
-                isCartesian &&
+            if (isCartesian &&
                 !series.isDirty &&
                 !xAxis.isDirty &&
                 !series.yAxis.isDirty &&
@@ -3736,8 +3736,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             }
 
             // optionally filter out points outside the plot area
-            if (
-                isCartesian &&
+            if (isCartesian &&
                 series.sorted &&
                 !getExtremesFromAll &&
                 (
@@ -3748,8 +3747,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             ) {
 
                 // it's outside current extremes
-                if (
-                    (processedXData as any)[dataLength - 1] < (min as any) ||
+                if ((processedXData as any)[dataLength - 1] < (min as any) ||
                     (processedXData as any)[0] > (max as any)
                 ) {
                     processedXData = [];
@@ -3787,8 +3785,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         (processedXData as any)[i - 1])
                 );
 
-                if (
-                    distance > 0 &&
+                if (distance > 0 &&
                     (
                         closestPointRange === undefined ||
                         distance < closestPointRange
