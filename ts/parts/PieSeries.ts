@@ -821,7 +821,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @private
          */
         getX: function (
-            this: Highcharts.PieSeries,
+            this: Highcharts.VariablePieSeries,
             y: number,
             left: boolean,
             point: Highcharts.PiePoint

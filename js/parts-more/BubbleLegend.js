@@ -436,7 +436,7 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#getRangeRadius
      * @param {number} value
      *        Range value
-     * @return {number}
+     * @return {number|null}
      *         Radius for one range
      */
     getRangeRadius: function (value) {

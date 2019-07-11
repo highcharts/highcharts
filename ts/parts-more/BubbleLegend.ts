@@ -20,10 +20,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type BubbleSizeByValue = ('area'|'width');
         interface BubbleLegendFormatterContextObject {
             center: number;
-            radius: number;
+            radius: (number|null);
             value: number;
         }
         interface BubbleLegendLabelsOptions {
@@ -115,7 +114,7 @@ declare global {
             public formatLabel(range: BubbleLegendRangesOptions): string;
             public getLabelStyles(): CSSObject;
             public getMaxLabelSize(): BBoxObject;
-            public getRangeRadius(value: number): number;
+            public getRangeRadius(value: number): (number|null);
             public getRanges(): Array<BubbleLegendRangesOptions>;
             public hideOverlappingLabels(): void;
             public init(options: BubbleLegendOptions, legend: Legend): void;
@@ -659,16 +658,18 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#getRangeRadius
      * @param {number} value
      *        Range value
-     * @return {number}
+     * @return {number|null}
      *         Radius for one range
      */
     getRangeRadius: function (
         this: Highcharts.BubbleLegend,
         value: number
-    ): number {
+    ): (number|null) {
         var options = this.options,
             seriesIndex = this.options.seriesIndex,
-            bubbleSeries = this.chart.series[seriesIndex as any],
+            bubbleSeries: Highcharts.BubbleSeries = (
+                this.chart.series[seriesIndex as any] as any
+            ),
             zMax = (options.ranges as any)[0].value,
             zMin = (options.ranges as any)[
                 (options.ranges as any).length - 1
@@ -680,8 +681,8 @@ H.BubbleLegend.prototype = {
             this,
             zMin,
             zMax,
-            minSize,
-            maxSize,
+            minSize as any,
+            maxSize as any,
             value
         );
     },
@@ -785,7 +786,7 @@ H.BubbleLegend.prototype = {
         symbols.bubbleItems.push(
             renderer
                 .circle(
-                    posX,
+                    posX as any,
                     (elementCenter as any) + crispMovement,
                     absoluteRadius
                 )
@@ -973,7 +974,7 @@ H.BubbleLegend.prototype = {
                         Math.max(
                             arrayMin(zData),
                             s.options.displayNegative === false ?
-                                s.options.zThreshold :
+                                (s.options.zThreshold as any) :
                                 -Number.MAX_VALUE
                         )
                     ));
@@ -1043,11 +1044,11 @@ H.BubbleLegend.prototype = {
             calculatedSize;
 
         // Calculate prediceted max size of bubble
-        if (floating || !(/%$/.test(maxSize))) {
+        if (floating || !(/%$/.test(maxSize as any))) {
             calculatedSize = maxPxSize;
 
         } else {
-            maxSize = parseFloat(maxSize);
+            maxSize = parseFloat(maxSize as any);
 
             calculatedSize = ((plotSize + lastLineHeight -
                 fontMetrics.h / 2) * maxSize / 100) / (maxSize / 100 + 1);

@@ -16,9 +16,9 @@
  */
 declare global {
     namespace Highcharts {
-        type BubbleSeries = Dictionary<any>; // @todo
         type NavigationOptions = any; // @todo exporting module
         type PatternObject = object; // @todo pattern module
+        type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             beforePadding?: Function; // @todo
             getMaxLabelDimensions?: Function; // @todo
@@ -63,7 +63,6 @@ declare global {
             invertable?: any; // @todo
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
-            radii?: any; // @todo bubble series
             resetZones?: any; // @todo macd indicator
             showLine?: any; // @todo
             specialGroup?: any; // @todo
@@ -71,7 +70,6 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo boost module
-            getRadius: Function; // @todo bubble series
         }
         interface Tick {
             slotWidth?: any; // @todo

@@ -2796,8 +2796,9 @@ null,
      * @return {boolean|undefined}
      */
     processData: function (force) {
-        var series = this, processedXData = series.xData, // copied during slice operation
-        processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
+        var series = this, 
+        // copied during slice operation:
+        processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
         options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
         isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
