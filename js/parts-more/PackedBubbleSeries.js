@@ -55,7 +55,7 @@
  * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
  * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
  * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#format
- * @type {string}
+ * @type {string|undefined}
  * @since 7.0.0
  *//**
  * Callback JavaScript function to format the data label for a node. Note that
@@ -67,22 +67,22 @@
  *//**
  * Callback to format data labels for _parentNodes_. The `parentNodeFormat`
  * option takes precedence over the `parentNodeFormatter`.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#parentNodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeFormatter
+ * @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>|undefined}
  * @since 7.1.0
  *//**
  * Options for a _parentNode_ label text.
  * @sample highcharts/series-packedbubble/packed-dashboard
  *         Dashboard with dataLabels on parentNodes
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#parentNodeTextPath
- * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPath}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeTextPath
+ * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
  * @since 7.1.0
 *//**
  * Options for a _node_ label text which should follow marker's shape.
  * **Note:** Only SVG-based renderer supports this option.
  * @see {@link Highcharts.SeriesPackedBubbleDataLabelsTextPath#linkTextPath}
  * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#textPath
- * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPath}
+ * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
  * @since 7.1.0
  */
 
@@ -92,16 +92,16 @@
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsTextPath
+ * @interface Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
  * @since 7.1.0
  *//**
  * Presentation attributes for the text path.
- * @name Highcharts.SeriesPackedBubbleDataLabelsTextPath#attributes
- * @type {Highcharts.SVGAttributes}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#attributes
+ * @type {Highcharts.SVGAttributes|undefined}
  * @since 7.1.0
  *//**
  * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.SeriesPackedBubbleDataLabelsTextPath#enabled
+ * @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#enabled
  * @type {boolean|undefined}
  * @since 7.1.0
  */

@@ -85,7 +85,7 @@
  * true will disable this option.
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkTextPath
- * @type {Highcharts.DataLabelsTextPath|undefined}
+ * @type {Highcharts.DataLabelsTextPathOptionsObject|undefined}
  * @since 7.1.0
  */
 
