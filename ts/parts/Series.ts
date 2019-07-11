@@ -2744,7 +2744,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     (series as any)[key + 'Data'] = [];
                 }
             });
-            if (!series.points) {
+            if (!series.points && !series.data) {
                 series.setData(options.data as any, false);
             }
 
