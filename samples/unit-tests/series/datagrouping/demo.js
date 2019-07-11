@@ -343,6 +343,57 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
 
 });
 
+
+QUnit.test('Switch from non-grouped to grouped', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 400
+        },
+        series: [{
+            dataGrouping: {
+                enabled: true
+            },
+            data: [
+                [1556578800000, 0.006],
+                [1556665200000, 0.002],
+                [1556751600000, 0.003],
+                [1556838000000, 0.001],
+                [1556924400000, 0.002],
+                [1557010800000, 0.002],
+                [1557097200000, 0.002],
+                [1557183600000, 0.002],
+                [1557270000000, 0.002],
+                [1557356400000, 0.003],
+                [1557442800000, 0.002],
+                [1557529200000, 0.002],
+                [1557615600000, 0.001],
+                [1557702000000, 0],
+                [1557788400000, 0],
+                [1557874800000, 0],
+                [1557961200000, 0]
+            ]
+        }]
+    });
+
+    chart.series[0].update({
+        data: (() => {
+            var arr = [],
+                i = 0;
+            for (; i < 3999; i++) {
+                arr.push([Date.UTC(2019, 3, 30, 23, i * 10), i]);
+            }
+            return arr;
+        })()
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-markers path').length,
+        0,
+        'After series update no old markers should be left on the chart (#10745)'
+    );
+
+});
+
 QUnit.test('Data groupind and extremes change', function (assert) {
     var min = 0,
         chart = Highcharts.stockChart('container', {

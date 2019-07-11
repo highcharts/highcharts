@@ -2125,7 +2125,7 @@ null,
                 series[key + 'Data'] = [];
             }
         });
-        if (!series.points) {
+        if (!series.points && !series.data) {
             series.setData(options.data, false);
         }
         // Mark cartesian
