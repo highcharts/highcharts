@@ -719,7 +719,7 @@ H.Fx.prototype = {
  *        Whether to extend the left-side object (a) or return a whole new
  *        object.
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
@@ -736,7 +736,7 @@ H.Fx.prototype = {
 *
 * @function Highcharts.merge<T>
 *
-* @param {T} a
+* @param {T|undefined} a
 *        The first object to extend. When only this is given, the function
 *        returns a deep copy.
 *

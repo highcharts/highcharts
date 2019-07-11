@@ -950,9 +950,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                 function (
                     el: Highcharts.DataLabelsOptionsObject
                 ): Highcharts.DataLabelsOptionsObject {
-                    return merge<Highcharts.DataLabelsOptionsObject>(
-                        one as any, el
-                    );
+                    return merge(one, el);
                 }
             );
         } else if (!isArray(one) && !isArray(two)) {

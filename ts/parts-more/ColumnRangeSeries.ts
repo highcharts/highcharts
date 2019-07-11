@@ -73,7 +73,7 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
  * @product      highcharts highstock
  * @optionparent plotOptions.columnrange
  */
-var columnRangeOptions = {
+var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data labels
@@ -91,7 +91,7 @@ var columnRangeOptions = {
     pointRange: null,
 
     /** @ignore-option */
-    marker: null,
+    marker: null as any,
 
     states: {
         hover: {
