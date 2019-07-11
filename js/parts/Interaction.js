@@ -255,7 +255,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @return {void}
@@ -333,7 +333,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @return {void}
      * @fires Highcharts.Series#event:checkboxClick
      */

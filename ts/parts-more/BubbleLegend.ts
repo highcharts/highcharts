@@ -9,27 +9,162 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        type BubbleSizeByValue = ('area'|'width');
+        interface BubbleLegendFormatterContextObject {
+            center: number;
+            radius: number;
+            value: number;
+        }
+        interface BubbleLegendLabelsOptions {
+            align?: AlignValue;
+            allowOverlap?: boolean;
+            className?: string;
+            format?: string;
+            formatter?: (
+                FormatterCallbackFunction<BubbleLegendFormatterContextObject>
+            );
+            style?: CSSObject;
+            x?: number;
+            y?: number;
+        }
+        interface BubbleLegendOptions {
+            borderColor?: ColorString;
+            borderWidth?: number;
+            className?: string;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            connectorClassName?: string;
+            connectorColor?: ColorString;
+            connectorDistance?: number;
+            connectorWidth?: number;
+            enabled?: boolean;
+            labels?: BubbleLegendLabelsOptions;
+            legendIndex?: number;
+            maxSize?: number;
+            minSize?: number;
+            placed?: boolean;
+            ranges?: Array<BubbleLegendRangesOptions>;
+            seriesIndex?: number;
+            sizeBy?: BubbleSizeByValue;
+            sizeByAbsoluteValue?: boolean;
+            zIndex?: number;
+            zThreshold?: number;
+        }
+        interface BubbleLegendRangesOptions
+            extends Partial<BubbleLegendFormatterContextObject>
+        {
+            autoRanges?: boolean;
+            borderColor?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            connectorColor?: ColorString;
+            bubbleStyle?: CSSObject;
+            connectorStyle?: CSSObject;
+            labelStyle?: CSSObject;
+            value?: any;
+        }
+        interface Chart {
+            getVisibleBubbleSeriesIndex(): number;
+        }
+        interface Legend {
+            bubbleLegend?: BubbleLegend;
+            getLinesHeights(): Array<Dictionary<number>>;
+            retranslateItems(lines: Array<Dictionary<number>>): void;
+        }
+        interface LegendItemObject {
+            ignoreSeries?: boolean;
+        }
+        interface LegendOptions {
+            bubbleLegend?: BubbleLegendOptions;
+        }
+        interface Point {
+            isBubble?: boolean;
+        }
+        interface Series {
+            isBubble?: boolean;
+        }
+        class BubbleLegend {
+            public constructor(options: BubbleLegendOptions, legend: Legend);
+            public chart: Chart;
+            public fontMetrics: FontMetricsObject;
+            public legend: Legend;
+            public legendGroup: SVGElement;
+            public legendItem: SVGElement;
+            public legendItemHeight: number;
+            public legendItemWidth: number;
+            public legendSymbol: SVGElement;
+            public maxLabel: BBoxObject;
+            public movementX: number;
+            public ranges: Array<BubbleLegendRangesOptions>;
+            public setState: Function;
+            public symbols: Dictionary<Array<SVGElement>>;
+            public options: BubbleLegendOptions;
+            public visible: boolean;
+            public addToLegend(items: Array<(Point|Series)>): void;
+            public correctSizes(): void;
+            public drawLegendSymbol(legend: Legend): void;
+            public formatLabel(range: BubbleLegendRangesOptions): string;
+            public getLabelStyles(): CSSObject;
+            public getMaxLabelSize(): BBoxObject;
+            public getRangeRadius(value: number): number;
+            public getRanges(): Array<BubbleLegendRangesOptions>;
+            public hideOverlappingLabels(): void;
+            public init(options: BubbleLegendOptions, legend: Legend): void;
+            public predictBubbleSizes(): [number, number];
+            public render(): void;
+            public renderRange(range: BubbleLegendRangesOptions): void;
+            public setOptions(): void;
+            public updateRanges(min: number, max: number): void;
+        }
+    }
+}
+
 /**
  * @interface Highcharts.BubbleLegendFormatterContextObject
- */ /**
-* The center y position of the range.
-* @name Highcharts.BubbleLegendFormatterContextObject#center
-* @type {number}
-*/ /**
-* The radius of the bubble range.
-* @name Highcharts.BubbleLegendFormatterContextObject#radius
-* @type {number}
-*/ /**
-* The bubble value.
-* @name Highcharts.BubbleLegendFormatterContextObject#value
-* @type {number}
-*/
+ *//**
+ * The center y position of the range.
+ * @name Highcharts.BubbleLegendFormatterContextObject#center
+ * @type {number}
+ *//**
+ * The radius of the bubble range.
+ * @name Highcharts.BubbleLegendFormatterContextObject#radius
+ * @type {number}
+ *//**
+ * The bubble value.
+ * @name Highcharts.BubbleLegendFormatterContextObject#value
+ * @type {number}
+ */
+
 import U from '../parts/Utilities.js';
 var isNumber = U.isNumber;
-var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, wrap = H.wrap, color = H.color, numberFormat = H.numberFormat, objectEach = H.objectEach, merge = H.merge, noop = H.noop, pick = H.pick, stableSort = H.stableSort, setOptions = H.setOptions, arrayMin = H.arrayMin, arrayMax = H.arrayMax;
-setOptions({
+
+var Series = H.Series,
+    Legend = H.Legend,
+    Chart = H.Chart,
+
+    addEvent = H.addEvent,
+    wrap = H.wrap,
+    color = H.color,
+    numberFormat = H.numberFormat,
+    objectEach = H.objectEach,
+    merge = H.merge,
+    noop = H.noop,
+    pick = H.pick,
+    stableSort = H.stableSort,
+    setOptions = H.setOptions,
+    arrayMin = H.arrayMin,
+    arrayMax = H.arrayMax;
+
+setOptions({ // Set default bubble legend options
     legend: {
         /**
          * The bubble legend is an additional element in legend which
@@ -200,19 +335,19 @@ setOptions({
              * not specified, the `minSize` and the `maxSize` are calculated
              * from bubble series.
              */
-            maxSize: 60,
+            maxSize: 60, // Number
             /**
              * Minimum bubble legend range size. If values for ranges are
              * not specified, the `minSize` and the `maxSize` are calculated
              * from bubble series.
              */
-            minSize: 10,
+            minSize: 10, // Number
             /**
              * The position of the bubble legend in the legend.
              * @sample highcharts/bubble-legend/connectorandlabels/
              *         Bubble legend as last item in legend
              */
-            legendIndex: 0,
+            legendIndex: 0, // Number
             /**
              * Options for specific range. One range consists of bubble,
              * label and connector.
@@ -244,7 +379,7 @@ setOptions({
                  * @type {Highcharts.ColorString}
                  */
                 connectorColor: undefined
-            },
+            } as any,
             /**
              * Whether the bubble legend range value should be represented
              * by the area or the width of the bubble. The default, area,
@@ -276,7 +411,9 @@ setOptions({
         }
     }
 });
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
 /**
  * BubbleLegend class.
  *
@@ -288,9 +425,14 @@ setOptions({
  * @param {Highcharts.Legend} legend
  *        Legend
  */
-H.BubbleLegend = function (options, legend) {
+H.BubbleLegend = function (
+    this: Highcharts.BubbleLegend,
+    options: Highcharts.BubbleLegendOptions,
+    legend: Highcharts.Legend
+): void {
     this.init(options, legend);
-};
+} as any;
+
 H.BubbleLegend.prototype = {
     /**
      * Create basic bubbleLegend properties similar to item in legend.
@@ -303,13 +445,19 @@ H.BubbleLegend.prototype = {
      *        Legend
      * @return {void}
      */
-    init: function (options, legend) {
+    init: function (
+        this: Highcharts.BubbleLegend,
+        options: Highcharts.BubbleLegendOptions,
+        legend: Highcharts.Legend
+    ): void {
         this.options = options;
         this.visible = true;
         this.chart = legend.chart;
         this.legend = legend;
     },
+
     setState: noop,
+
     /**
      * Depending on the position option, add bubbleLegend to legend items.
      *
@@ -319,10 +467,14 @@ H.BubbleLegend.prototype = {
      *        All legend items
      * @return {void}
      */
-    addToLegend: function (items) {
+    addToLegend: function (
+        this: Highcharts.BubbleLegend,
+        items: Array<(Highcharts.Point|Highcharts.Series)>
+    ): void {
         // Insert bubbleLegend into legend items
-        items.splice(this.options.legendIndex, 0, this);
+        items.splice(this.options.legendIndex as any, 0, this as any);
     },
+
     /**
      * Calculate ranges, sizes and call the next steps of bubbleLegend
      * creation.
@@ -333,37 +485,61 @@ H.BubbleLegend.prototype = {
      *        Legend instance
      * @return {void}
      */
-    drawLegendSymbol: function (legend) {
-        var chart = this.chart, options = this.options, size, itemDistance = pick(legend.options.itemDistance, 20), connectorSpace, ranges = options.ranges, radius, maxLabel, connectorDistance = options.connectorDistance;
+    drawLegendSymbol: function (legend: Highcharts.Legend): void {
+        var chart = this.chart,
+            options = this.options,
+            size,
+            itemDistance = pick(legend.options.itemDistance, 20),
+            connectorSpace,
+            ranges =
+                options.ranges as Array<Highcharts.BubbleLegendRangesOptions>,
+            radius,
+            maxLabel,
+            connectorDistance = options.connectorDistance;
+
         // Predict label dimensions
-        this.fontMetrics = chart.renderer.fontMetrics(options.labels.style.fontSize.toString() + 'px');
+        this.fontMetrics = chart.renderer.fontMetrics(
+            (options.labels as any).style.fontSize.toString() + 'px'
+        );
+
         // Do not create bubbleLegend now if ranges or ranges valeus are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
-            legend.options.bubbleLegend.autoRanges = true;
+            (legend.options.bubbleLegend as any).autoRanges = true;
             return;
         }
+
         // Sort ranges to right render order
-        stableSort(ranges, function (a, b) {
+        stableSort(ranges, function (
+            a: Highcharts.BubbleLegendRangesOptions,
+            b: Highcharts.BubbleLegendRangesOptions
+        ): number {
             return b.value - a.value;
         });
+
         this.ranges = ranges;
+
         this.setOptions();
         this.render();
+
         // Get max label size
         maxLabel = this.getMaxLabelSize();
         radius = this.ranges[0].radius;
-        size = radius * 2;
+        size = (radius as any) * 2;
+
         // Space for connectors and labels.
         connectorSpace =
-            connectorDistance - radius + maxLabel.width;
+            (connectorDistance as any) - (radius as any) + maxLabel.width;
         connectorSpace = connectorSpace > 0 ? connectorSpace : 0;
+
         this.maxLabel = maxLabel;
-        this.movementX = options.labels.align === 'left' ?
+        this.movementX = (options.labels as any).align === 'left' ?
             connectorSpace : 0;
+
         this.legendItemWidth = size + connectorSpace + itemDistance;
         this.legendItemHeight = size + this.fontMetrics.h / 2;
     },
+
     /**
      * Set style options for each bubbleLegend range.
      *
@@ -371,30 +547,59 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#setOptions
      * @return {void}
      */
-    setOptions: function () {
-        var ranges = this.ranges, options = this.options, series = this.chart.series[options.seriesIndex], baseline = this.legend.baseline, bubbleStyle = {
-            'z-index': options.zIndex,
-            'stroke-width': options.borderWidth
-        }, connectorStyle = {
-            'z-index': options.zIndex,
-            'stroke-width': options.connectorWidth
-        }, labelStyle = this.getLabelStyles(), fillOpacity = series.options.marker.fillOpacity, styledMode = this.chart.styledMode;
+    setOptions: function (this: Highcharts.BubbleLegend): void {
+        var ranges = this.ranges,
+            options = this.options,
+            series = this.chart.series[options.seriesIndex as any],
+            baseline = this.legend.baseline,
+            bubbleStyle: Highcharts.CSSObject = {
+                'z-index': options.zIndex,
+                'stroke-width': options.borderWidth
+            },
+            connectorStyle: Highcharts.CSSObject = {
+                'z-index': options.zIndex,
+                'stroke-width': options.connectorWidth
+            },
+            labelStyle = this.getLabelStyles(),
+            fillOpacity = (series.options.marker as any).fillOpacity,
+            styledMode = this.chart.styledMode;
+
         // Allow to parts of styles be used individually for range
-        ranges.forEach(function (range, i) {
+        ranges.forEach(function (
+            this: Highcharts.BubbleLegend,
+            range: Highcharts.BubbleLegendRangesOptions,
+            i: number
+        ): void {
             if (!styledMode) {
-                bubbleStyle.stroke = pick(range.borderColor, options.borderColor, series.color);
-                bubbleStyle.fill = pick(range.color, options.color, fillOpacity !== 1 ?
-                    color(series.color).setOpacity(fillOpacity)
-                        .get('rgba') :
-                    series.color);
-                connectorStyle.stroke = pick(range.connectorColor, options.connectorColor, series.color);
+                bubbleStyle.stroke = pick(
+                    range.borderColor,
+                    options.borderColor,
+                    series.color
+                );
+                bubbleStyle.fill = pick(
+                    range.color as any,
+                    options.color as any,
+                    fillOpacity !== 1 ?
+                        color(series.color as any).setOpacity(fillOpacity)
+                            .get('rgba') :
+                        series.color
+                );
+                connectorStyle.stroke = pick(
+                    range.connectorColor,
+                    options.connectorColor,
+                    series.color
+                );
             }
+
             // Set options needed for rendering each range
             ranges[i].radius = this.getRangeRadius(range.value);
             ranges[i] = merge(ranges[i], {
-                center: (ranges[0].radius - ranges[i].radius +
-                    baseline)
+                center: (
+                    (ranges[0].radius as any) - (ranges[i].radius as any) +
+                    (baseline as any)
+                )
             });
+
             if (!styledMode) {
                 merge(true, ranges[i], {
                     bubbleStyle: merge(false, bubbleStyle),
@@ -404,6 +609,7 @@ H.BubbleLegend.prototype = {
             }
         }, this);
     },
+
     /**
      * Merge options for bubbleLegend labels.
      *
@@ -411,23 +617,40 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#getLabelStyles
      * @return {Highcharts.CSSObject}
      */
-    getLabelStyles: function () {
-        var options = this.options, additionalLabelsStyle = {}, labelsOnLeft = options.labels.align === 'left', rtl = this.legend.options.rtl;
+    getLabelStyles: function (
+        this: Highcharts.BubbleLegend
+    ): Highcharts.CSSObject {
+        var options = this.options,
+            additionalLabelsStyle = {} as Highcharts.CSSObject,
+            labelsOnLeft = (options.labels as any).align === 'left',
+            rtl = this.legend.options.rtl;
+
         // To separate additional style options
-        objectEach(options.labels.style, function (value, key) {
-            if (key !== 'color' &&
+        objectEach((options.labels as any).style, function (
+            value: string,
+            key: string
+        ): void {
+            if (
+                key !== 'color' &&
                 key !== 'fontSize' &&
-                key !== 'z-index') {
+                key !== 'z-index'
+            ) {
                 additionalLabelsStyle[key] = value;
             }
         });
+
         return merge(false, additionalLabelsStyle, {
-            'font-size': options.labels.style.fontSize,
-            fill: pick(options.labels.style.color, '${palette.neutralColor100}'),
+            'font-size': (options.labels as any).style.fontSize,
+            fill: pick(
+                (options.labels as any).style.color,
+                '${palette.neutralColor100}'
+            ),
             'z-index': options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'
         });
     },
+
+
     /**
      * Calculate radius for each bubble range,
      * used code from BubbleSeries.js 'getRadius' method.
@@ -439,10 +662,30 @@ H.BubbleLegend.prototype = {
      * @return {number}
      *         Radius for one range
      */
-    getRangeRadius: function (value) {
-        var options = this.options, seriesIndex = this.options.seriesIndex, bubbleSeries = this.chart.series[seriesIndex], zMax = options.ranges[0].value, zMin = options.ranges[options.ranges.length - 1].value, minSize = options.minSize, maxSize = options.maxSize;
-        return bubbleSeries.getRadius.call(this, zMin, zMax, minSize, maxSize, value);
+    getRangeRadius: function (
+        this: Highcharts.BubbleLegend,
+        value: number
+    ): number {
+        var options = this.options,
+            seriesIndex = this.options.seriesIndex,
+            bubbleSeries = this.chart.series[seriesIndex as any],
+            zMax = (options.ranges as any)[0].value,
+            zMin = (options.ranges as any)[
+                (options.ranges as any).length - 1
+            ].value,
+            minSize = options.minSize,
+            maxSize = options.maxSize;
+
+        return bubbleSeries.getRadius.call(
+            this,
+            zMin,
+            zMax,
+            minSize,
+            maxSize,
+            value
+        );
     },
+
     /**
      * Render the legendSymbol group.
      *
@@ -450,8 +693,11 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#render
      * @return {void}
      */
-    render: function () {
-        var renderer = this.chart.renderer, zThreshold = this.options.zThreshold;
+    render: function (this: Highcharts.BubbleLegend): void {
+        var renderer = this.chart.renderer,
+            zThreshold = this.options.zThreshold;
+
+
         if (!this.symbols) {
             this.symbols = {
                 connectors: [],
@@ -462,19 +708,26 @@ H.BubbleLegend.prototype = {
         // Nesting SVG groups to enable handleOverflow
         this.legendSymbol = renderer.g('bubble-legend');
         this.legendItem = renderer.g('bubble-legend-item');
+
         // To enable default 'hideOverlappingLabels' method
         this.legendSymbol.translateX = 0;
         this.legendSymbol.translateY = 0;
-        this.ranges.forEach(function (range) {
-            if (range.value >= zThreshold) {
+
+        this.ranges.forEach(function (
+            this: Highcharts.BubbleLegend,
+            range: Highcharts.BubbleLegendRangesOptions
+        ): void {
+            if (range.value >= (zThreshold as any)) {
                 this.renderRange(range);
             }
         }, this);
         // To use handleOverflow method
         this.legendSymbol.add(this.legendItem);
         this.legendItem.add(this.legendGroup);
+
         this.hideOverlappingLabels();
     },
+
     /**
      * Render one range, consisting of bubble symbol, connector and label.
      *
@@ -484,51 +737,122 @@ H.BubbleLegend.prototype = {
      *        Range options
      * @return {void}
      */
-    renderRange: function (range) {
-        var mainRange = this.ranges[0], legend = this.legend, options = this.options, labelsOptions = options.labels, chart = this.chart, renderer = chart.renderer, symbols = this.symbols, labels = symbols.labels, label, elementCenter = range.center, absoluteRadius = Math.abs(range.radius), connectorDistance = options.connectorDistance, labelsAlign = labelsOptions.align, rtl = legend.options.rtl, fontSize = labelsOptions.style.fontSize, connectorLength = rtl || labelsAlign === 'left' ?
-            -connectorDistance : connectorDistance, borderWidth = options.borderWidth, connectorWidth = options.connectorWidth, posX = mainRange.radius, posY = elementCenter - absoluteRadius -
-            borderWidth / 2 + connectorWidth / 2, labelY, labelX, fontMetrics = this.fontMetrics, labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2, crispMovement = (posY % 1 ? 1 : 0.5) -
-            (connectorWidth % 2 ? 0 : 0.5), styledMode = renderer.styledMode;
+    renderRange: function (
+        this: Highcharts.BubbleLegend,
+        range: Highcharts.BubbleLegendRangesOptions
+    ): void {
+        var mainRange = this.ranges[0],
+            legend = this.legend,
+            options = this.options,
+            labelsOptions = options.labels,
+            chart = this.chart,
+            renderer = chart.renderer,
+            symbols = this.symbols,
+            labels = symbols.labels,
+            label,
+            elementCenter = range.center,
+            absoluteRadius = Math.abs(range.radius as any),
+            connectorDistance = options.connectorDistance,
+            labelsAlign = (labelsOptions as any).align,
+            rtl = legend.options.rtl,
+            fontSize = (labelsOptions as any).style.fontSize,
+            connectorLength = rtl || labelsAlign === 'left' ?
+                -(connectorDistance as any) : connectorDistance,
+            borderWidth = options.borderWidth,
+            connectorWidth = options.connectorWidth,
+            posX = mainRange.radius,
+            posY = (elementCenter as any) - absoluteRadius -
+                (borderWidth as any) / 2 + (connectorWidth as any) / 2,
+            labelY,
+            labelX,
+            fontMetrics = this.fontMetrics,
+            labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2,
+            crispMovement = (posY % 1 ? 1 : 0.5) -
+                ((connectorWidth as any) % 2 ? 0 : 0.5),
+            styledMode = renderer.styledMode;
+
         // Set options for centered labels
         if (labelsAlign === 'center') {
             connectorLength = 0; // do not use connector
             options.connectorDistance = 0;
-            range.labelStyle.align = 'center';
+            (range.labelStyle as any).align = 'center';
         }
-        labelY = posY + options.labels.y;
-        labelX = posX + connectorLength + options.labels.x;
+
+        labelY = posY + (options.labels as any).y;
+        labelX = (posX as any) + connectorLength + (options.labels as any).x;
+
         // Render bubble symbol
-        symbols.bubbleItems.push(renderer
-            .circle(posX, elementCenter + crispMovement, absoluteRadius)
-            .attr(styledMode ? {} : range.bubbleStyle)
-            .addClass((styledMode ?
-            'highcharts-color-' +
-                this.options.seriesIndex + ' ' :
-            '') +
-            'highcharts-bubble-legend-symbol ' +
-            (options.className || '')).add(this.legendSymbol));
+        symbols.bubbleItems.push(
+            renderer
+                .circle(
+                    posX,
+                    (elementCenter as any) + crispMovement,
+                    absoluteRadius
+                )
+                .attr(
+                    styledMode ? {} : range.bubbleStyle
+                )
+                .addClass(
+                    (
+                        styledMode ?
+                            'highcharts-color-' +
+                                this.options.seriesIndex + ' ' :
+                            ''
+                    ) +
+                    'highcharts-bubble-legend-symbol ' +
+                    (options.className || '')
+                ).add(
+                    this.legendSymbol
+                )
+        );
+
         // Render connector
-        symbols.connectors.push(renderer
-            .path(renderer.crispLine([
-            'M',
-            posX,
-            posY,
-            'L',
-            posX + connectorLength,
-            posY
-        ], options.connectorWidth))
-            .attr(styledMode ? {} : range.connectorStyle)
-            .addClass((styledMode ?
-            'highcharts-color-' +
-                this.options.seriesIndex + ' ' : '') +
-            'highcharts-bubble-legend-connectors ' +
-            (options.connectorClassName || '')).add(this.legendSymbol));
+        symbols.connectors.push(
+            renderer
+                .path(renderer.crispLine(
+                    [
+                        'M',
+                        posX as any,
+                        posY,
+                        'L',
+                        (posX as any) + (connectorLength as any),
+                        posY
+                    ],
+                    options.connectorWidth as any
+                ))
+                .attr(
+                    styledMode ? {} : range.connectorStyle
+                )
+                .addClass(
+                    (
+                        styledMode ?
+                            'highcharts-color-' +
+                                this.options.seriesIndex + ' ' : ''
+                    ) +
+                    'highcharts-bubble-legend-connectors ' +
+                    (options.connectorClassName || '')
+                ).add(
+                    this.legendSymbol
+                )
+        );
+
         // Render label
         label = renderer
-            .text(this.formatLabel(range), labelX, labelY + labelMovement)
-            .attr(styledMode ? {} : range.labelStyle)
-            .addClass('highcharts-bubble-legend-labels ' +
-            (options.labels.className || '')).add(this.legendSymbol);
+            .text(
+                this.formatLabel(range),
+                labelX,
+                labelY + labelMovement
+            )
+            .attr(
+                styledMode ? {} : range.labelStyle
+            )
+            .addClass(
+                'highcharts-bubble-legend-labels ' +
+                ((options.labels as any).className || '')
+            ).add(
+                this.legendSymbol
+            );
+
         labels.push(label);
         // To enable default 'hideOverlappingLabels' method
         label.placed = true;
@@ -537,6 +861,7 @@ H.BubbleLegend.prototype = {
             y: labelY + labelMovement
         };
     },
+
     /**
      * Get the label which takes up the most space.
      *
@@ -544,20 +869,27 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#getMaxLabelSize
      * @return {Highcharts.BBoxObject}
      */
-    getMaxLabelSize: function () {
-        var labels = this.symbols.labels, maxLabel, labelSize;
-        labels.forEach(function (label) {
+    getMaxLabelSize: function (
+        this: Highcharts.BubbleLegend
+    ): Highcharts.BBoxObject {
+        var labels = this.symbols.labels,
+            maxLabel: (Highcharts.BBoxObject|undefined),
+            labelSize: Highcharts.BBoxObject;
+
+        labels.forEach(function (label: Highcharts.SVGElement): void {
             labelSize = label.getBBox(true);
+
             if (maxLabel) {
                 maxLabel = labelSize.width > maxLabel.width ?
                     labelSize : maxLabel;
-            }
-            else {
+
+            } else {
                 maxLabel = labelSize;
             }
         });
-        return maxLabel || {};
+        return maxLabel || ({} as any);
     },
+
     /**
      * Get formatted label for range.
      *
@@ -568,12 +900,19 @@ H.BubbleLegend.prototype = {
      * @return {string}
      *         Range label text
      */
-    formatLabel: function (range) {
-        var options = this.options, formatter = options.labels.formatter, format = options.labels.format;
+    formatLabel: function (
+        this: Highcharts.BubbleLegend,
+        range: Highcharts.BubbleLegendRangesOptions
+    ): string {
+        var options = this.options,
+            formatter = (options.labels as any).formatter,
+            format = (options.labels as any).format;
+
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormat(range.value, 1);
     },
+
     /**
      * By using default chart 'hideOverlappingLabels' method, hide or show
      * labels and connectors.
@@ -582,21 +921,28 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#hideOverlappingLabels
      * @return {void}
      */
-    hideOverlappingLabels: function () {
-        var chart = this.chart, allowOverlap = this.options.labels.allowOverlap, symbols = this.symbols;
+    hideOverlappingLabels: function (this: Highcharts.BubbleLegend): void {
+        var chart = this.chart,
+            allowOverlap = (this.options.labels as any).allowOverlap,
+            symbols = this.symbols;
+
         if (!allowOverlap && symbols) {
             chart.hideOverlappingLabels(symbols.labels);
+
             // Hide or show connectors
-            symbols.labels.forEach(function (label, index) {
+            symbols.labels.forEach(function (
+                label: Highcharts.SVGElement,
+                index: number
+            ): void {
                 if (!label.newOpacity) {
                     symbols.connectors[index].hide();
-                }
-                else if (label.newOpacity !== label.oldOpacity) {
+                } else if (label.newOpacity !== label.oldOpacity) {
                     symbols.connectors[index].show();
                 }
             });
         }
     },
+
     /**
      * Calculate ranges from created series.
      *
@@ -605,26 +951,45 @@ H.BubbleLegend.prototype = {
      * @return {Array<Highcharts.LegendBubbleLegendRangesOptions>}
      *         Array of range objects
      */
-    getRanges: function () {
-        var bubbleLegend = this.legend.bubbleLegend, series = bubbleLegend.chart.series, ranges, rangesOptions = bubbleLegend.options.ranges, zData, minZ = Number.MAX_VALUE, maxZ = -Number.MAX_VALUE;
-        series.forEach(function (s) {
+    getRanges: function (
+        this: Highcharts.BubbleLegend
+    ): Array<Highcharts.BubbleLegendRangesOptions> {
+        var bubbleLegend = this.legend.bubbleLegend,
+            series = (bubbleLegend as any).chart.series,
+            ranges: Array<Highcharts.BubbleLegendRangesOptions>,
+            rangesOptions = (bubbleLegend as any).options.ranges,
+            zData,
+            minZ = Number.MAX_VALUE,
+            maxZ = -Number.MAX_VALUE;
+
+        series.forEach(function (s: Highcharts.BubbleSeries): void {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
                 zData = s.zData.filter(isNumber);
+
                 if (zData.length) {
-                    minZ = pick(s.options.zMin, Math.min(minZ, Math.max(arrayMin(zData), s.options.displayNegative === false ?
-                        s.options.zThreshold :
-                        -Number.MAX_VALUE)));
-                    maxZ = pick(s.options.zMax, Math.max(maxZ, arrayMax(zData)));
+                    minZ = pick(s.options.zMin, Math.min(
+                        minZ,
+                        Math.max(
+                            arrayMin(zData),
+                            s.options.displayNegative === false ?
+                                s.options.zThreshold :
+                                -Number.MAX_VALUE
+                        )
+                    ));
+                    maxZ = pick(
+                        s.options.zMax,
+                        Math.max(maxZ, arrayMax(zData))
+                    );
                 }
             }
         });
+
         // Set values for ranges
         if (minZ === maxZ) {
             // Only one range if min and max values are the same.
             ranges = [{ value: maxZ }];
-        }
-        else {
+        } else {
             ranges = [
                 { value: minZ },
                 { value: (minZ + maxZ) / 2 },
@@ -635,14 +1000,20 @@ H.BubbleLegend.prototype = {
         if (rangesOptions.length && rangesOptions[0].radius) {
             ranges.reverse();
         }
+
         // Merge ranges values with user options
-        ranges.forEach(function (range, i) {
+        ranges.forEach(function (
+            range: Highcharts.BubbleLegendRangesOptions,
+            i: number
+        ): void {
             if (rangesOptions && rangesOptions[i]) {
                 ranges[i] = merge(false, rangesOptions[i], range);
             }
         });
+
         return ranges;
     },
+
     /**
      * Calculate bubble legend sizes from rendered series.
      *
@@ -651,26 +1022,50 @@ H.BubbleLegend.prototype = {
      * @return {Array<number,number>}
      *         Calculated min and max bubble sizes
      */
-    predictBubbleSizes: function () {
-        var chart = this.chart, fontMetrics = this.fontMetrics, legendOptions = chart.legend.options, floating = legendOptions.floating, horizontal = legendOptions.layout === 'horizontal', lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0, plotSizeX = chart.plotSizeX, plotSizeY = chart.plotSizeY, bubbleSeries = chart.series[this.options.seriesIndex], minSize = Math.ceil(bubbleSeries.minPxSize), maxPxSize = Math.ceil(bubbleSeries.maxPxSize), maxSize = bubbleSeries.options.maxSize, plotSize = Math.min(plotSizeY, plotSizeX), calculatedSize;
+    predictBubbleSizes: function (
+        this: Highcharts.BubbleLegend
+    ): [number, number] {
+        var chart = this.chart,
+            fontMetrics = this.fontMetrics,
+            legendOptions = chart.legend.options,
+            floating = legendOptions.floating,
+            horizontal = legendOptions.layout === 'horizontal',
+            lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
+            plotSizeX = chart.plotSizeX,
+            plotSizeY = chart.plotSizeY,
+            bubbleSeries = chart.series[this.options.seriesIndex as any] as (
+                Highcharts.BubbleSeries
+            ),
+            minSize = Math.ceil(bubbleSeries.minPxSize),
+            maxPxSize = Math.ceil(bubbleSeries.maxPxSize),
+            maxSize = bubbleSeries.options.maxSize,
+            plotSize = Math.min(plotSizeY as any, plotSizeX as any),
+            calculatedSize;
+
         // Calculate prediceted max size of bubble
         if (floating || !(/%$/.test(maxSize))) {
             calculatedSize = maxPxSize;
-        }
-        else {
+
+        } else {
             maxSize = parseFloat(maxSize);
+
             calculatedSize = ((plotSize + lastLineHeight -
                 fontMetrics.h / 2) * maxSize / 100) / (maxSize / 100 + 1);
+
             // Get maxPxSize from bubble series if calculated bubble legend
             // size will not affect to bubbles series.
-            if ((horizontal && plotSizeY - calculatedSize >=
-                plotSizeX) || (!horizontal && plotSizeX -
-                calculatedSize >= plotSizeY)) {
+            if (
+                (horizontal && (plotSizeY as any) - calculatedSize >=
+               (plotSizeX as any)) || (!horizontal && (plotSizeX as any) -
+               calculatedSize >= (plotSizeY as any))
+            ) {
                 calculatedSize = maxPxSize;
             }
         }
+
         return [minSize, Math.ceil(calculatedSize)];
     },
+
     /**
      * Correct ranges with calculated sizes.
      *
@@ -680,12 +1075,18 @@ H.BubbleLegend.prototype = {
      * @param {number} max
      * @return {void}
      */
-    updateRanges: function (min, max) {
+    updateRanges: function (
+        this: Highcharts.BubbleLegend,
+        min: number,
+        max: number
+    ): void {
         var bubbleLegendOptions = this.legend.options.bubbleLegend;
-        bubbleLegendOptions.minSize = min;
-        bubbleLegendOptions.maxSize = max;
-        bubbleLegendOptions.ranges = this.getRanges();
+
+        (bubbleLegendOptions as any).minSize = min;
+        (bubbleLegendOptions as any).maxSize = max;
+        (bubbleLegendOptions as any).ranges = this.getRanges();
     },
+
     /**
      * Because of the possibility of creating another legend line, predicted
      * bubble legend sizes may differ by a few pixels, so it is necessary to
@@ -695,37 +1096,61 @@ H.BubbleLegend.prototype = {
      * @function Highcharts.BubbleLegend#correctSizes
      * @return {void}
      */
-    correctSizes: function () {
-        var legend = this.legend, chart = this.chart, bubbleSeries = chart.series[this.options.seriesIndex], bubbleSeriesSize = bubbleSeries.maxPxSize, bubbleLegendSize = this.options.maxSize;
-        if (Math.abs(Math.ceil(bubbleSeriesSize) - bubbleLegendSize) >
-            1) {
-            this.updateRanges(this.options.minSize, bubbleSeries.maxPxSize);
+    correctSizes: function (this: Highcharts.BubbleLegend): void {
+        var legend = this.legend,
+            chart = this.chart,
+            bubbleSeries = (
+                chart.series[
+                    this.options.seriesIndex as any
+                ] as Highcharts.BubbleSeries
+            ),
+            bubbleSeriesSize = bubbleSeries.maxPxSize,
+            bubbleLegendSize = this.options.maxSize;
+
+        if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
+            1
+        ) {
+            this.updateRanges(
+                this.options.minSize as any,
+                bubbleSeries.maxPxSize
+            );
             legend.render();
         }
     }
-};
+} as any;
+
 // Start the bubble legend creation process.
-addEvent(H.Legend, 'afterGetAllItems', function (e) {
-    var legend = this, bubbleLegend = legend.bubbleLegend, legendOptions = legend.options, options = legendOptions.bubbleLegend, bubbleSeriesIndex = legend.chart.getVisibleBubbleSeriesIndex();
+addEvent(H.Legend as any, 'afterGetAllItems', function (
+    this: Highcharts.Legend,
+    e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
+): void {
+    var legend = this,
+        bubbleLegend = legend.bubbleLegend,
+        legendOptions = legend.options,
+        options = legendOptions.bubbleLegend,
+        bubbleSeriesIndex = legend.chart.getVisibleBubbleSeriesIndex();
+
     // Remove unnecessary element
     if (bubbleLegend && bubbleLegend.ranges && bubbleLegend.ranges.length) {
         // Allow change the way of calculating ranges in update
-        if (options.ranges.length) {
-            options.autoRanges =
-                !!options.ranges[0].autoRanges;
+        if ((options as any).ranges.length) {
+            (options as any).autoRanges =
+                !!(options as any).ranges[0].autoRanges;
         }
         // Update bubbleLegend dimensions in each redraw
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
     if (bubbleSeriesIndex >= 0 &&
-        legendOptions.enabled &&
-        options.enabled) {
-        options.seriesIndex = bubbleSeriesIndex;
-        legend.bubbleLegend = new H.BubbleLegend(options, legend);
+            legendOptions.enabled &&
+            (options as any).enabled
+    ) {
+        (options as any).seriesIndex = bubbleSeriesIndex;
+        legend.bubbleLegend = new H.BubbleLegend(options as any, legend);
         legend.bubbleLegend.addToLegend(e.allItems);
     }
 });
+
 /**
  * Check if there is at least one visible bubble series.
  *
@@ -734,19 +1159,26 @@ addEvent(H.Legend, 'afterGetAllItems', function (e) {
  * @return {number}
  *         First visible bubble series index
  */
-Chart.prototype.getVisibleBubbleSeriesIndex = function () {
-    var series = this.series, i = 0;
+Chart.prototype.getVisibleBubbleSeriesIndex = function (
+    this: Highcharts.Chart
+): number {
+    var series = this.series,
+        i = 0;
+
     while (i < series.length) {
-        if (series[i] &&
+        if (
+            series[i] &&
             series[i].isBubble &&
             series[i].visible &&
-            series[i].zData.length) {
+            (series[i] as any).zData.length
+        ) {
             return i;
         }
         i++;
     }
     return -1;
 };
+
 /**
  * Calculate height for each row in legend.
  *
@@ -755,24 +1187,33 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function () {
  * @return {Array<Highcharts.Dictionary<number>>}
  *         Informations about line height and items amount
  */
-Legend.prototype.getLinesHeights = function () {
-    var items = this.allItems, lines = [], lastLine, length = items.length, i = 0, j = 0;
+Legend.prototype.getLinesHeights = function (
+    this: Highcharts.Legend
+): Array<Highcharts.Dictionary<number>> {
+    var items = this.allItems,
+        lines = [] as Array<Highcharts.Dictionary<number>>,
+        lastLine,
+        length = items.length,
+        i = 0,
+        j = 0;
+
     for (i = 0; i < length; i++) {
         if (items[i].legendItemHeight) {
             // for bubbleLegend
-            items[i].itemHeight = items[i].legendItemHeight;
+            (items[i] as any).itemHeight = items[i].legendItemHeight;
         }
         if ( // Line break
-        items[i] === items[length - 1] ||
+            items[i] === items[length - 1] ||
             items[i + 1] &&
-                items[i]._legendItemPos[1] !==
-                    items[i + 1]._legendItemPos[1]) {
+            (items[i]._legendItemPos as any)[1] !==
+            (items[i + 1]._legendItemPos as any)[1]
+        ) {
             lines.push({ height: 0 });
             lastLine = lines[lines.length - 1];
             // Find the highest item in line
             for (j; j <= i; j++) {
-                if (items[j].itemHeight > lastLine.height) {
-                    lastLine.height = items[j].itemHeight;
+                if ((items[j] as any).itemHeight > lastLine.height) {
+                    lastLine.height = (items[j] as any).itemHeight;
                 }
             }
             lastLine.step = i;
@@ -780,6 +1221,7 @@ Legend.prototype.getLinesHeights = function () {
     }
     return lines;
 };
+
 /**
  * Correct legend items translation in case of different elements heights.
  *
@@ -789,31 +1231,57 @@ Legend.prototype.getLinesHeights = function () {
  *        Informations about line height and items amount
  * @return {void}
  */
-Legend.prototype.retranslateItems = function (lines) {
-    var items = this.allItems, orgTranslateX, orgTranslateY, movementX, rtl = this.options.rtl, actualLine = 0;
-    items.forEach(function (item, index) {
-        orgTranslateX = item.legendGroup.translateX;
-        orgTranslateY = item._legendItemPos[1];
-        movementX = item.movementX;
-        if (movementX || (rtl && item.ranges)) {
+Legend.prototype.retranslateItems = function (
+    this: Highcharts.Legend,
+    lines: Array<Highcharts.Dictionary<number>>
+): void {
+    var items = this.allItems,
+        orgTranslateX,
+        orgTranslateY,
+        movementX,
+        rtl = this.options.rtl,
+        actualLine = 0;
+
+    items.forEach(function (
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
+        index: number
+    ): void {
+        orgTranslateX = (item.legendGroup as any).translateX;
+        orgTranslateY = (item._legendItemPos as any)[1];
+
+        movementX = (item as any).movementX;
+
+        if (movementX || (rtl && (item as any).ranges)) {
             movementX = rtl ?
-                orgTranslateX - item.options.maxSize / 2 :
+                orgTranslateX - (item as any).options.maxSize / 2 :
                 orgTranslateX + movementX;
-            item.legendGroup.attr({ translateX: movementX });
+
+            (item.legendGroup as any).attr({ translateX: movementX });
         }
         if (index > lines[actualLine].step) {
             actualLine++;
         }
-        item.legendGroup.attr({
-            translateY: Math.round(orgTranslateY + lines[actualLine].height / 2)
+
+        (item.legendGroup as any).attr({
+            translateY: Math.round(
+                orgTranslateY + lines[actualLine].height / 2
+            )
         });
-        item._legendItemPos[1] = orgTranslateY +
+        (item._legendItemPos as any)[1] = orgTranslateY +
             lines[actualLine].height / 2;
     });
 };
+
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(Series, 'legendItemClick', function () {
-    var series = this, chart = series.chart, visible = series.visible, legend = series.chart.legend, status;
+addEvent(Series as any, 'legendItemClick', function (
+    this: Highcharts.Series
+): void {
+    var series = this,
+        chart = series.chart,
+        visible = series.visible,
+        legend = series.chart.legend,
+        status;
+
     if (legend && legend.bubbleLegend) {
         // Temporary correct 'visible' property
         series.visible = !visible;
@@ -821,59 +1289,88 @@ addEvent(Series, 'legendItemClick', function () {
         series.ignoreSeries = visible;
         // Check if at lest one bubble series is visible
         status = chart.getVisibleBubbleSeriesIndex() >= 0;
+
         // Hide bubble legend if all bubble series are disabled
         if (legend.bubbleLegend.visible !== status) {
             // Show or hide bubble legend
             legend.update({
                 bubbleLegend: { enabled: status }
             });
+
             legend.bubbleLegend.visible = status; // Restore default status
         }
         series.visible = visible;
     }
 });
+
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
-wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
-    var chart = this, legend = chart.legend, bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0, bubbleLegendOptions, bubbleSizes;
-    if (legend && legend.options.enabled && legend.bubbleLegend &&
-        legend.options.bubbleLegend.autoRanges && bubbleSeries) {
+wrap(Chart.prototype, 'drawChartBox', function (
+    this: Highcharts.Chart,
+    proceed: Function,
+    options: Highcharts.Options,
+    callback: Highcharts.ChartCallbackFunction
+): void {
+    var chart = this,
+        legend = chart.legend,
+        bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
+        bubbleLegendOptions: Highcharts.BubbleLegendOptions,
+        bubbleSizes;
+
+    if (
+        legend && legend.options.enabled && legend.bubbleLegend &&
+        (legend.options.bubbleLegend as any).autoRanges && bubbleSeries
+    ) {
         bubbleLegendOptions = legend.bubbleLegend.options;
         bubbleSizes = legend.bubbleLegend.predictBubbleSizes();
+
         legend.bubbleLegend.updateRanges(bubbleSizes[0], bubbleSizes[1]);
         // Disable animation on init
         if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
-            legend.allItems.forEach(function (item) {
-                item.legendGroup.translateY = null;
+
+            legend.allItems.forEach(function (
+                item: (
+                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                )
+            ): void {
+                (item.legendGroup as any).translateY = null;
             });
         }
+
         // Create legend with bubbleLegend
         legend.render();
+
         chart.getMargins();
-        chart.axes.forEach(function (axis) {
+
+        chart.axes.forEach(function (axis: Highcharts.Axis): void {
             axis.render();
+
             if (!bubbleLegendOptions.placed) {
                 axis.setScale();
                 axis.updateNames();
                 // Disable axis animation on init
-                objectEach(axis.ticks, function (tick) {
+                objectEach(axis.ticks, function (tick: Highcharts.Tick): void {
                     tick.isNew = true;
                     tick.isNewLabel = true;
                 });
             }
         });
         bubbleLegendOptions.placed = true;
+
         // After recalculate axes, calculate margins again.
         chart.getMargins();
+
         // Call default 'drawChartBox' method.
         proceed.call(chart, options, callback);
+
         // Check bubble legend sizes and correct them if necessary.
         legend.bubbleLegend.correctSizes();
+
         // Correct items positions with different dimensions in legend.
         legend.retranslateItems(legend.getLinesHeights());
-    }
-    else {
+
+    } else {
         proceed.call(chart, options, callback);
         // Allow color change on static bubble legend after click on legend
         if (legend && legend.options.enabled && legend.bubbleLegend) {

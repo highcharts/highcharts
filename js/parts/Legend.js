@@ -212,13 +212,10 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#colorizeItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        A Series or Point instance
-     *
      * @param {boolean} [visible=false]
      *        Dimmed or colored
-     *
      * @return {void}
      *
      * @todo
@@ -273,10 +270,8 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#positionItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to position
-     *
      * @return {void}
      */
     positionItem: function (item) {
@@ -299,9 +294,9 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#destroyItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to remove
+     * @return {void}
      */
     destroyItem: function (item) {
         var checkbox = item.checkbox;
@@ -443,7 +438,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#renderItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to render.
      *
      * @return {void}
@@ -535,7 +530,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#layoutItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *
      * @return {void}
      */
@@ -578,18 +573,14 @@ Highcharts.Legend.prototype = {
     },
     /**
      * Get all items, which is one item per series for most series and one
-     * item per point for pie series and its derivatives.
+     * item per point for pie series and its derivatives. Fires the event
+     * `afterGetAllItems`.
      *
      * @private
      * @function Highcharts.Legend#getAllItems
-     *
-     * @return {Array<(Highcharts.Point|Highcharts.Series)>}
+     * @return {Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)>}
      *         The current items in the legend.
-     *
      * @fires Highcharts.Legend#event:afterGetAllItems
-     *
-     * @todo
-     * Make events official: Fires the event `afterGetAllItems`.
      */
     getAllItems: function () {
         var allItems = [];

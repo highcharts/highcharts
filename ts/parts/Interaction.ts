@@ -26,9 +26,9 @@ declare global {
             zoomOut(): void;
         }
         interface Legend {
-            createCheckboxForItem(item: (Point|Series)): void;
+            createCheckboxForItem(item: (BubbleLegend|Point|Series)): void;
             setItemEvents(
-                item: (Point|Series),
+                item: (BubbleLegend|Point|Series),
                 legendItem: SVGElement,
                 useHTML?: boolean
             ): void;
@@ -425,7 +425,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @return {void}
@@ -434,7 +434,7 @@ extend(Legend.prototype, {
      */
     setItemEvents: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
         legendItem: Highcharts.SVGElement,
         useHTML?: boolean
     ): void {
@@ -452,7 +452,10 @@ extend(Legend.prototype, {
 
                 if (item.visible) {
                     legend.allItems.forEach(function (
-                        inactiveItem: (Highcharts.Point|Highcharts.Series)
+                        inactiveItem: (
+                            Highcharts.BubbleLegend|Highcharts.Point|
+                            Highcharts.Series
+                        )
                     ): void {
                         if (item !== inactiveItem) {
                             inactiveItem.setState('inactive', !isPoint);
@@ -486,7 +489,10 @@ extend(Legend.prototype, {
                 }
 
                 legend.allItems.forEach(function (
-                    inactiveItem: (Highcharts.Point|Highcharts.Series)
+                    inactiveItem: (
+                        Highcharts.BubbleLegend|Highcharts.Point|
+                        Highcharts.Series
+                    )
                 ): void {
                     if (item !== inactiveItem) {
                         inactiveItem.setState('', !isPoint);
@@ -506,7 +512,10 @@ extend(Legend.prototype, {
                         }
                         // Reset inactive state
                         legend.allItems.forEach(function (
-                            inactiveItem: (Highcharts.Point|Highcharts.Series)
+                            inactiveItem: (
+                                Highcharts.BubbleLegend|Highcharts.Point|
+                                Highcharts.Series
+                            )
                         ): void {
                             if (item !== inactiveItem) {
                                 inactiveItem.setState(
@@ -545,21 +554,21 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @return {void}
      * @fires Highcharts.Series#event:checkboxClick
      */
     createCheckboxForItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
         var legend = this;
 
         item.checkbox = createElement('input', {
             type: 'checkbox',
             className: 'highcharts-legend-checkbox',
-            checked: item.selected,
-            defaultChecked: item.selected // required by IE7
+            checked: (item as any).selected,
+            defaultChecked: (item as any).selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (
@@ -575,7 +584,7 @@ extend(Legend.prototype, {
                     item: item
                 },
                 function (): void {
-                    item.select();
+                    (item as any).select();
                 }
             );
         });

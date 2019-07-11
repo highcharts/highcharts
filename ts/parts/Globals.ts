@@ -16,6 +16,7 @@
  */
 declare global {
     namespace Highcharts {
+        type BubbleSeries = Dictionary<any>; // @todo
         type NavigationOptions = any; // @todo exporting module
         type PatternObject = object; // @todo pattern module
         interface Axis {
@@ -30,6 +31,7 @@ declare global {
             mapCredits?: any; // @todo
             openMenu?: any; // @todo
             redrawTrigger?: any; // @todo
+            hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
@@ -69,6 +71,7 @@ declare global {
             valueMax?: any; // @todo
             valueMin?: any; // @todo
             getPoint: Function; // @todo boost module
+            getRadius: Function; // @todo bubble series
         }
         interface Tick {
             slotWidth?: any; // @todo
