@@ -48,6 +48,7 @@ declare global {
             enabled?: boolean;
             handles?: NavigatorHandlesOptions;
             height?: number;
+            isInternal?: boolean;
             margin?: number;
             maskFill?: (ColorString|GradientColorObject|PatternObject);
             maskInside?: boolean;
@@ -1871,7 +1872,7 @@ Navigator.prototype = {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge({
+            navigator.xAxis = new Axis(chart, merge<Highcharts.XAxisOptions>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal

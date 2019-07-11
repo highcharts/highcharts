@@ -173,8 +173,8 @@ declare global {
             eventArguments?: (Dictionary<any>|Event),
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
-        function format(str: string, ctx: any, time: Time): string;
-        function formatSingle(format: string, val: any, time: Time): string;
+        function format(str: string, ctx: any, time?: Time): string;
+        function formatSingle(format: string, val: any, time?: Time): string;
         function getMagnitude(num: number): number;
         function isIntersectRect(
             box1: BBoxObject,
@@ -208,7 +208,10 @@ declare global {
             a: (T|undefined),
             ...n: Array<object|undefined>
         ): T;
-        function merge<T>(a: (T|undefined), ...n: Array<object|undefined>): T;
+        function merge<T>(
+            a: (T|undefined),
+            ...n: Array<object|undefined>
+        ): T;
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,
@@ -1127,7 +1130,7 @@ H.Fx.prototype = {
  *        Whether to extend the left-side object (a) or return a whole new
  *        object.
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
@@ -1144,7 +1147,7 @@ H.Fx.prototype = {
  *
  * @function Highcharts.merge<T>
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
@@ -1155,12 +1158,12 @@ H.Fx.prototype = {
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-H.merge = function (): any {
+H.merge = function<T> (): T {
     /* eslint-enable valid-jsdoc */
     var i,
         args = arguments,
         len,
-        ret = {},
+        ret = {} as T,
         doCopy = function (copy: any, original: any): any {
             // An object is replacing a primitive
             if (typeof copy !== 'object') {
@@ -1772,7 +1775,7 @@ H.datePropsToTimestamps = function (object: any): void {
 H.formatSingle = function (
     format: string,
     val: any,
-    time: Highcharts.Time
+    time?: Highcharts.Time
 ): string {
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
@@ -1823,7 +1826,7 @@ H.formatSingle = function (
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, time: Highcharts.Time): string {
+H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
     var splitter = '{',
         isInside = false,
         segment,
