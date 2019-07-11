@@ -24,9 +24,6 @@ declare global {
         type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
-        type SeriesType = (
-            CandlestickSeries|ColumnSeries|LineSeries|OHLCSeries|PieSeries
-        );
         interface Chart {
             runTrackerClick?: boolean;
         }

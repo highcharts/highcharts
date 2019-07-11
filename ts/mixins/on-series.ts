@@ -18,8 +18,8 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OnSeriesPointType = (FlagPoint);
-        type OnSeriesType = (FlagSeries);
+        type OnSeriesPointType = (FlagsPoint);
+        type OnSeriesType = (FlagsSeries);
         interface OnSeriesMixin {
             getPlotBox(this: OnSeriesType): SeriesPlotBoxObject;
             translate(): void;

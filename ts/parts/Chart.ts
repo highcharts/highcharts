@@ -103,7 +103,7 @@ declare global {
             public reflowTimeout?: number;
             public renderer: ChartRenderer;
             public renderTo: HTMLDOMElement;
-            public series: Array<SeriesType>;
+            public series: Array<Series>;
             public seriesGroup?: SVGElement;
             public spacing: Array<number>;
             public spacingBox: BBoxObject;

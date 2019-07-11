@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 /**
- * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagShapeValue
+ * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 import U from './Utilities.js';
 var defined = U.defined, isNumber = U.isNumber;
@@ -90,7 +90,7 @@ seriesType('flags', 'column'
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
      *
-     * @type    {Highcharts.FlagShapeValue}
+     * @type    {Highcharts.FlagsShapeValue}
      * @product highstock
      */
     shape: 'flag',
