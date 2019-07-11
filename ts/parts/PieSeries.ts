@@ -821,15 +821,17 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @private
          */
         getX: function (
-            this: Highcharts.VariablePieSeries,
+            this: Highcharts.PieSeries,
             y: number,
             left: boolean,
             point: Highcharts.PiePoint
         ): number {
             var center = this.center,
                 // Variable pie has individual radius
-                radius = this.radii ?
-                    this.radii[point.index as any] :
+                radius = (this as Highcharts.VariablePieSeries).radii ?
+                    (this as Highcharts.VariablePieSeries).radii[
+                        point.index as any
+                    ] :
                     center[2] / 2,
                 angle,
                 x;
