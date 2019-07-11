@@ -800,11 +800,31 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
  * @return {object} The blob object, or undefined if not supported.
  */
 function getBlobFromContent(content, type) {
-    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
-        return new win.Blob(
-            ['\uFEFF' + content], // #7084
-            { type: type }
-        );
+    var nav = win.navigator,
+        webKit = (
+            nav.userAgent.indexOf('WebKit') > -1 &&
+            nav.userAgent.indexOf('Chrome') < 0
+        ),
+        domurl = win.URL || win.webkitURL || win;
+
+    try {
+        // MS specific
+        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+            var blob = new win.MSBlobBuilder();
+            blob.append(content);
+            return blob.getBlob('image/svg+xml');
+        }
+
+        // Safari requires data URI since it doesn't allow navigation to blob
+        // URLs.
+        if (!webKit) {
+            return domurl.createObjectURL(new win.Blob(
+                ['\uFEFF' + content], // #7084
+                { type: type }
+            ));
+        }
+    } catch (e) {
+        // Ignore
     }
 }
 
