@@ -5,6 +5,7 @@ js/parts/**/*.js
 js/parts-map/ColorAxis.js
 js/parts-map/ColorSeriesMixin.js
 js/parts-map/GeoJSON.js
+js/parts-map/MapAxis.js
 js/parts-more/AreaRangeSeries.js
 js/parts-more/AreaSplineRangeSeries.js
 js/parts-more/BoxPlotSeries.js
