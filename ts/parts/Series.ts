@@ -264,7 +264,7 @@ declare global {
             public _i: number;
             public animationTimeout?: number;
             public area?: SVGElement;
-            public axisTypes: ['xAxis', 'yAxis'];
+            public axisTypes: Array<string>;
             public basePointRange?: number;
             public buildingKdTree?: boolean;
             public chart: Chart;
@@ -305,7 +305,7 @@ declare global {
             public name: string;
             public optionalAxis?: string;
             public options: SeriesOptionsType;
-            public parallelArrays: ['x', 'y'];
+            public parallelArrays: Array<string>;
             public pointClass: typeof Point;
             public pointInterval?: number;
             public points: Array<Point>;
@@ -2831,9 +2831,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             ): void {
 
                 // repeat for xAxis and yAxis
-                (series.axisTypes || []).forEach(function (
-                    AXIS: Highcharts.AxisCollValue
-                ): void {
+                (series.axisTypes || []).forEach(function (AXIS: string): void {
 
                     // loop through the chart's axis objects
                     (chart as any)[AXIS].forEach(function (
@@ -2845,13 +2843,14 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         // the number of the axis, or if undefined, use the
                         // first axis
                         if (
-                            seriesOptions[AXIS] === axisOptions.index ||
+                            (seriesOptions as any)[AXIS] ===
+                            axisOptions.index ||
                             (
-                                seriesOptions[AXIS] !== undefined &&
-                                seriesOptions[AXIS] === axisOptions.id
+                                (seriesOptions as any)[AXIS] !== undefined &&
+                                (seriesOptions as any)[AXIS] === axisOptions.id
                             ) ||
                             (
-                                seriesOptions[AXIS] === undefined &&
+                                (seriesOptions as any)[AXIS] === undefined &&
                                 axisOptions.index === 0
                             )
                         ) {

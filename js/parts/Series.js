@@ -2199,7 +2199,8 @@ null,
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
-                    if (seriesOptions[AXIS] === axisOptions.index ||
+                    if (seriesOptions[AXIS] ===
+                        axisOptions.index ||
                         (seriesOptions[AXIS] !== undefined &&
                             seriesOptions[AXIS] === axisOptions.id) ||
                         (seriesOptions[AXIS] === undefined &&
