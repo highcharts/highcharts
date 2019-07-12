@@ -105,3 +105,42 @@ QUnit.test('Dragdrop and logarithmic axes', function (assert) {
         'Correct y-value after vertical drag&drop (#10285)'
     );
 });
+
+QUnit.test('Dragdrop with boost', function (assert) {
+    var chart = Highcharts.chart('container', {
+            boost: {
+                seriesThreshold: 1
+            },
+            series: [{
+                data: [
+                    [0, 4, 'line1'],
+                    [10, 7, 'line1'],
+                    [10.001, 3, 'line1'],
+                    [10.002, 5, 'line1'],
+                    [20, 10, 'line1']
+                ],
+                keys: ['x', 'y', 'groupId'],
+                dragDrop: {
+                    liveRedraw: false,
+                    draggableX: true,
+                    draggableY: true,
+                    groupBy: 'groupId'
+                }
+            }]
+        }),
+        controller = new TestController(chart),
+        point = chart.series[0].points[0],
+        x = point.plotX + chart.plotLeft,
+        y = point.plotY + chart.plotTop;
+
+    controller.mouseMove(x, y);
+    controller.mouseDown(x, y);
+    controller.mouseMove(x + 100, y + 100);
+    controller.mouseUp(x + 100, y + 100);
+
+    assert.notEqual(
+        point.x,
+        chart.series[0].points[0].x,
+        'Dragdrop should work with boost (#11156).'
+    );
+});
