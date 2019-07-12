@@ -22,6 +22,7 @@ declare global {
         }
         interface PolygonSeriesOptions extends ScatterSeriesOptions {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
+            trackByArea?: boolean;
         }
         class PolygonPoint extends ScatterPoint {
             public options: PolygonPointOptions;
@@ -67,7 +68,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @product      highcharts highstock
  * @optionparent plotOptions.polygon
  */
-seriesType('polygon', 'scatter', {
+seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
     marker: {
         enabled: false,
         states: {
