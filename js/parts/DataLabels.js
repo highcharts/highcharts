@@ -412,7 +412,7 @@ import H from './Globals.js';
 * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
 * true will disable this option.
 * @name Highcharts.DataLabelsOptionsObject#textPath
-* @type {Highcharts.DataLabelsTextPath|undefined}
+* @type {Highcharts.DataLabelsTextPathOptionsObject|undefined}
 * @since 7.1.0
 */ /**
 * Whether to
@@ -469,16 +469,16 @@ import H from './Globals.js';
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.DataLabelsTextPath
+ * @interface Highcharts.DataLabelsTextPathOptionsObject
  * @since 7.1.0
  */ /**
 * Presentation attributes for the text path.
-* @name Highcharts.DataLabelsTextPath#attributes
-* @type {Highcharts.SVGAttributes}
+* @name Highcharts.DataLabelsTextPathOptionsObject#attributes
+* @type {Highcharts.SVGAttributes|undefined}
 * @since 7.1.0
 */ /**
 * Enable or disable `textPath` option for link's or marker's data labels.
-* @name Highcharts.DataLabelsTextPath#enabled
+* @name Highcharts.DataLabelsTextPathOptionsObject#enabled
 * @type {boolean|undefined}
 * @since 7.1.0
 */

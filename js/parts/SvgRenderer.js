@@ -2015,7 +2015,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#setTextPath
      * @param {Highcharts.SVGElement} path - path to follow
-     * @param {Highcharts.DataLabelsTextPath} textPathOptions - options
+     * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions - options
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
