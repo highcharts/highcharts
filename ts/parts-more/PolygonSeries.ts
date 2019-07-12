@@ -7,14 +7,49 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface PolygonPointOptions extends ScatterPointOptions {
+        }
+        interface PolygonSeriesOptions extends ScatterSeriesOptions {
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+        }
+        class PolygonPoint extends ScatterPoint {
+            public options: PolygonPointOptions;
+            public series: PolygonSeries;
+        }
+        class PolygonSeries extends ScatterSeries {
+            public areaPath?: SVGPathArray;
+            public data: Array<PolygonPoint>;
+            public options: PolygonSeriesOptions;
+            public pointClass: typeof PolygonPoint;
+            public points: Array<PolygonPoint>;
+            public type: string;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
-var LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+
+var LegendSymbolMixin = H.LegendSymbolMixin,
+    noop = H.noop,
+    Series = H.Series,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
+
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
@@ -47,11 +82,17 @@ seriesType('polygon', 'scatter', {
         pointFormat: ''
     },
     trackByArea: true
-    // Prototype members
+
+// Prototype members
 }, {
     type: 'polygon',
-    getGraphPath: function () {
-        var graphPath = Series.prototype.getGraphPath.call(this), i = graphPath.length + 1;
+    getGraphPath: function (
+        this: Highcharts.PolygonSeries
+    ): Highcharts.SVGPathArray {
+
+        var graphPath = (Series.prototype.getGraphPath as any).call(this),
+            i = graphPath.length + 1;
+
         // Close all segments
         while (i--) {
             if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
@@ -61,7 +102,7 @@ seriesType('polygon', 'scatter', {
         this.areaPath = graphPath;
         return graphPath;
     },
-    drawGraph: function () {
+    drawGraph: function (this: Highcharts.PolygonSeries): void {
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
         seriesTypes.area.prototype.drawGraph.call(this);
@@ -70,6 +111,8 @@ seriesType('polygon', 'scatter', {
     drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
+
+
 /**
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -79,6 +122,7 @@ seriesType('polygon', 'scatter', {
  * @product   highcharts highstock
  * @apioption series.polygon
  */
+
 /**
  * An array of data points for the series. For the `polygon` series
  * type, points can be given in the following ways:
@@ -138,4 +182,5 @@ seriesType('polygon', 'scatter', {
  * @product   highcharts highstock
  * @apioption series.polygon.data
  */
+
 ''; // adds doclets above to transpiled file
