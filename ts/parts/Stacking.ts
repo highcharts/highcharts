@@ -98,7 +98,7 @@ declare global {
                 options: YAxisStackLabelsOptions,
                 isNegative: boolean,
                 x: number,
-                stackOption: OptionsStackingValue
+                stackOption?: OptionsStackingValue
             );
             public alignOptions: AlignObject;
             public axis: Axis;
@@ -110,7 +110,7 @@ declare global {
             public options: YAxisStackLabelsOptions;
             public points: Dictionary<Array<number>>;
             public rightCliff: number;
-            public stack: OptionsStackingValue;
+            public stack?: OptionsStackingValue;
             public textAlign: AlignValue;
             public total: (null|number);
             public touched?: number;
@@ -207,7 +207,7 @@ var Axis = H.Axis,
  * @param {Highcharts.YAxisStackLabelsOptions} options
  * @param {boolean} isNegative
  * @param {number} x
- * @param {Highcharts.OptionsStackingValue} stackOption
+ * @param {Highcharts.OptionsStackingValue} [stackOption]
  */
 H.StackItem = function (
     this: Highcharts.StackItem,
@@ -215,7 +215,7 @@ H.StackItem = function (
     options: Highcharts.YAxisStackLabelsOptions,
     isNegative: boolean,
     x: number,
-    stackOption: Highcharts.OptionsStackingValue
+    stackOption?: Highcharts.OptionsStackingValue
 ): void {
 
     var inverted = axis.chart.inverted;
