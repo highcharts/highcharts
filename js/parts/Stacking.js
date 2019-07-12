@@ -66,7 +66,7 @@ var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObject
  * @param {Highcharts.YAxisStackLabelsOptions} options
  * @param {boolean} isNegative
  * @param {number} x
- * @param {Highcharts.OptionsStackingValue} stackOption
+ * @param {Highcharts.OptionsStackingValue} [stackOption]
  */
 H.StackItem = function (axis, options, isNegative, x, stackOption) {
     var inverted = axis.chart.inverted;

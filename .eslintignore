@@ -15,6 +15,7 @@ js/parts-more/Pane.js
 js/parts-more/Polar.js
 js/parts-more/PolygonSeries.js
 js/parts-more/RadialAxis.js
+js/parts-more/WaterfallSeries.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/cloud/**/**/*.js
