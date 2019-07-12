@@ -120,47 +120,48 @@ QUnit.test('dataGrouping and keys', function (assert) {
 
 QUnit.test('dataGrouping approximations', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        chart: {
-            width: 400
-        },
-        plotOptions: {
-            series: {
+            chart: {
+                width: 400
+            },
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        forced: true,
+                        units: [
+                            ['millisecond', [10]]
+                        ],
+                        approximation: 'wrong'
+                    }
+                }
+            },
+            series: [{
+                data: [0, 5, 40]
+            }, {
+                type: 'column',
+                data: [2, 2, 2]
+            }, {
+                type: 'ohlc',
+                data: [[1, 3, 0, 2], [1, 5, 1, 2], [2, 2, 2, 2]]
+            }, {
+                type: 'arearange',
                 dataGrouping: {
                     forced: true,
+                    approximation: 'range',
                     units: [
-                        ['millisecond', [10]]
-                    ],
-                    approximation: 'wrong'
-                }
-            }
-        },
-        series: [{
-            data: [0, 5, 40]
-        }, {
-            type: 'column',
-            data: [2, 2, 2]
-        }, {
-            type: 'ohlc',
-            data: [[1, 3, 0, 2], [1, 5, 1, 2], [2, 2, 2, 2]]
-        }, {
-            type: 'arearange',
-            dataGrouping: {
-                forced: true,
-                approximation: 'range',
-                units: [
-                    ['millisecond', [2]]
+                        ['millisecond', [2]]
+                    ]
+                },
+                data: [
+                    [0, 1, 2],
+                    [1, 2, 3],
+                    [2, null, null],
+                    [3, null, null],
+                    [4, 2, 3],
+                    [5, 1, 2]
                 ]
-            },
-            data: [
-                [0, 1, 2],
-                [1, 2, 3],
-                [2, null, null],
-                [3, null, null],
-                [4, 2, 3],
-                [5, 1, 2]
-            ]
-        }]
-    });
+            }]
+        }),
+        newSeries;
 
     assert.strictEqual(
         chart.series[0].points[0].y === 15 &&
@@ -175,6 +176,32 @@ QUnit.test('dataGrouping approximations', function (assert) {
         '"range" approximation should return nulls when all points in a group are nulls (#6716).'
     );
 
+    newSeries = chart.addSeries({
+        type: 'line',
+        showInNavigator: true,
+        pointInterval: 13000,
+        data: (function () {
+            var arr = [];
+
+            for (var i = 0; i < 999; i++) {
+                arr.push(52.218);
+            }
+
+            return arr;
+        }()),
+        dataGrouping: {
+            approximation: 'average',
+            units: [
+                ['second', [30]]
+            ]
+        }
+    });
+
+    assert.strictEqual(
+        newSeries.navigatorSeries.points.filter(p => p.y === 52.218).length,
+        newSeries.navigatorSeries.points.length,
+        'All points should have the same average value (#11191).'
+    );
 });
 
 QUnit.test('dataGrouping and multiple series', function (assert) {
@@ -394,7 +421,7 @@ QUnit.test('Switch from non-grouped to grouped', function (assert) {
 
 });
 
-QUnit.test('Data groupind and extremes change', function (assert) {
+QUnit.test('Data grouping and extremes change', function (assert) {
     var min = 0,
         chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -445,7 +472,7 @@ QUnit.test('Data groupind and extremes change', function (assert) {
     );
 });
 
-QUnit.test('Data groupind, keys and turboThreshold', function (assert) {
+QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [{
             keys: ['x', 'a', 'y'],

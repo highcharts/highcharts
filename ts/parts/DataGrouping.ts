@@ -153,6 +153,7 @@ var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
+    correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
     extend = H.extend,
     format = H.format,
@@ -213,7 +214,7 @@ H.approximations = {
         // If we have a number, return it divided by the length. If not,
         // return null or undefined based on what the sum method finds.
         if (isNumber(ret) && len) {
-            ret = (ret as any) / len;
+            ret = correctFloat((ret as any) / len);
         }
 
         return ret;
