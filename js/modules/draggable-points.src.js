@@ -1529,11 +1529,27 @@ function getPositionSnapshot(e, points, guideBox) {
  */
 function getGroupedPoints(point) {
     var series = point.series,
+        points = [],
         groupKey = series.options.dragDrop.groupBy;
+
+    if (series.isSeriesBoosting) { // #11156
+        series.options.data.forEach(function (pointOptions, i) {
+            points.push(
+                (new series.pointClass()).init( // eslint-disable-line new-cap
+                    series,
+                    pointOptions
+                )
+            );
+            points[points.length - 1].index = i;
+        });
+
+    } else {
+        points = series.points;
+    }
 
     return point.options[groupKey] ?
         // If we have a grouping option, filter the points by that
-        series.points.filter(function (comparePoint) {
+        points.filter(function (comparePoint) {
             return comparePoint.options[groupKey] === point.options[groupKey];
         }) :
         // Otherwise return the point by itself only
