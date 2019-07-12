@@ -7,12 +7,50 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface ErrorBarPointOptions extends BoxPlotPointOptions {
+        }
+        interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
+        }
+        class ErrorBarPoint extends BoxPlotPoint {
+            public options: ErrorBarPointOptions;
+            public series: ErrorBarSeries;
+        }
+        class ErrorBarSeries extends BoxPlotSeries {
+            public data: Array<ErrorBarPoint>;
+            public doQuartiles: boolean;
+            public linkedParent: ErrorBarSeries;
+            public options: ErrorBarSeriesOptions;
+            public pointArrayMap: Array<string>;
+            public pointClass: typeof ErrorBarPoint;
+            public points: Array<ErrorBarPoint>;
+            public pointValKey: string;
+            public type: string;
+            public getColumnMetrics(): ColumnMetricsObject;
+            public drawDataLabels(): void;
+            public toYData(point: ErrorBarPoint): Array<number>;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+
+var noop = H.noop,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
+
 /**
  * Error bars are a graphical representation of the variability of data and are
  * used on graphs to indicate the error, or uncertainty in a reported
@@ -28,6 +66,7 @@ var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {
+
     /**
      * The main color of the bars. This can be overridden by
      * [stemColor](#plotOptions.errorbar.stemColor) and
@@ -42,7 +81,9 @@ seriesType('errorbar', 'boxplot', {
      * @product highcharts
      */
     color: '${palette.neutralColor100}',
+
     grouping: false,
+
     /**
      * The parent series of the error bar. The default value links it to
      * the previous series. Otherwise, use the id of the parent series.
@@ -51,9 +92,11 @@ seriesType('errorbar', 'boxplot', {
      * @product highcharts
      */
     linkedTo: ':previous',
+
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
     },
+
     /**
      * The line width of the whiskers, the horizontal lines marking low
      * and high values. When `null`, the general
@@ -67,35 +110,45 @@ seriesType('errorbar', 'boxplot', {
      * @product highcharts
      */
     whiskerWidth: null
-    // Prototype members
+
+// Prototype members
 }, {
     type: 'errorbar',
     // array point configs are mapped to this
     pointArrayMap: ['low', 'high'],
     // return a plain array for speedy calculation
-    toYData: function (point) {
+    toYData: function (point: Highcharts.ErrorBarPoint): Array<number> {
         return [point.low, point.high];
     },
-    pointValKey: 'high',
+    pointValKey: 'high', // defines the top of the tracker
     doQuartiles: false,
     drawDataLabels: seriesTypes.arearange ?
-        function () {
+        function (this: Highcharts.ErrorBarSeries): void {
             var valKey = this.pointValKey;
+
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            this.data.forEach(function (point) {
-                point.y = point[valKey];
+            this.data.forEach(function (point: Highcharts.ErrorBarPoint): void {
+                point.y = (point as any)[valKey];
             });
         } :
         noop,
+
     // Get the width and X offset, either on top of the linked series column or
     // standalone
-    getColumnMetrics: function () {
-        return ((this.linkedParent && this.linkedParent.columnMetrics) ||
-            seriesTypes.column.prototype.getColumnMetrics.call(this));
+    getColumnMetrics: function (
+        this: Highcharts.ErrorBarSeries
+    ): Highcharts.ColumnMetricsObject {
+        return (
+            (this.linkedParent && this.linkedParent.columnMetrics) ||
+            (
+                seriesTypes.column.prototype as Highcharts.ColumnSeries
+            ).getColumnMetrics.call(this)
+        );
     }
 });
+
 /**
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
@@ -105,6 +158,7 @@ seriesType('errorbar', 'boxplot', {
  * @product   highcharts
  * @apioption series.errorbar
  */
+
 /**
  * An array of data points for the series. For the `errorbar` series
  * type, points can be given in the following ways:
@@ -160,4 +214,5 @@ seriesType('errorbar', 'boxplot', {
  * @product   highcharts
  * @apioption series.errorbar.data
  */
+
 ''; // adds doclets above to transpiled file
