@@ -28,7 +28,6 @@ declare global {
             is3d?: any; // @todo
             isBoosting?: any; // @todo
             isPrinting?: any; // @todo
-            mapCredits?: any; // @todo
             openMenu?: any; // @todo
             redrawTrigger?: any; // @todo
             hideOverlappingLabels: Function; // @todo overlapping module
