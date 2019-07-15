@@ -419,10 +419,12 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    H.Pointer.prototype.normalize = function (
-        e: PointerEvent,
+    H.Pointer.prototype.normalize = function<
+        T extends Highcharts.PointerEventObject
+    > (
+        e: (T|PointerEvent),
         chartPosition?: Highcharts.OffsetObject
-    ): Highcharts.PointerEventObject {
+    ): T {
 
         e = e || win.event;
         if (!e.target) {
@@ -434,12 +436,12 @@ if (!svg) {
             this.chartPosition = chartPosition = H.offset(this.chart.container);
         }
 
-        return H.extend(e as Highcharts.PointerEventObject, {
+        return H.extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
             chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
             chartY: Math.round(e.y)
-        });
+        }) as T;
     };
 
     /**
