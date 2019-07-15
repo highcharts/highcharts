@@ -316,6 +316,7 @@ seriesType('bubble', 'scatter', {
         var len,
             i,
             zData = this.zData,
+            yData = this.yData,
             minSize = series.minPxSize,
             maxSize = series.maxPxSize,
             radii = [],
@@ -325,13 +326,22 @@ seriesType('bubble', 'scatter', {
         for (i = 0, len = zData.length; i < len; i++) {
             value = zData[i];
             // Separate method to get individual radius for bubbleLegend
-            radii.push(this.getRadius(zMin, zMax, minSize, maxSize, value));
+            radii.push(
+                this.getRadius(
+                    zMin,
+                    zMax,
+                    minSize,
+                    maxSize,
+                    value,
+                    yData[i]
+                )
+            );
         }
         this.radii = radii;
     },
 
     // Get the individual radius for one point.
-    getRadius: function (zMin, zMax, minSize, maxSize, value) {
+    getRadius: function (zMin, zMax, minSize, maxSize, value, yValue) {
         var options = this.options,
             sizeByArea = options.sizeBy !== 'width',
             zThreshold = options.zThreshold,
@@ -350,8 +360,8 @@ seriesType('bubble', 'scatter', {
             zMin = 0;
         }
 
-        if (value === null) {
-        //if (!isNumber(value)) {
+        // #8608 - bubble should be visible when z is undefined
+        if (yValue === null || value === null) {
             radius = null;
         // Issue #4419 - if value is less than zMin, push a radius that's
         // always smaller than the minimum size
