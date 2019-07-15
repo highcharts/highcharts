@@ -15,7 +15,8 @@ import H from '../parts/Globals.js';
 var addEvent = H.addEvent,
     Axis = H.Axis,
     PlotLineOrBand = H.PlotLineOrBand,
-    merge = H.merge;
+    merge = H.merge,
+    wrap = H.wrap;
 
 var defaultConfig = {
     /**
@@ -39,8 +40,19 @@ var defaultConfig = {
     color: '${palette.highlightColor20}',
     width: 2,
     label: {
+        /**
+         * Format of the label. This options is passed as the fist argument to
+         * [dateFormat](/class-reference/Highcharts#dateFormat) function.
+         *
+         * @type      {string}
+         * @default   '%a, %b %d %Y, %H:%M'
+         * @product   gantt
+         * @apioption xAxis.currentDateIndicator.label.format
+         */
         format: '%a, %b %d %Y, %H:%M',
-        formatter: undefined,
+        formatter: function (value, format) {
+            return H.dateFormat(format, value);
+        },
         rotation: 0,
         style: {
             fontSize: '10px'
@@ -53,15 +65,8 @@ addEvent(Axis, 'afterSetOptions', function () {
         cdiOptions = options.currentDateIndicator;
 
     if (cdiOptions) {
-        if (typeof cdiOptions === 'object') {
-            // Ignore formatter if custom format is defined
-            if (cdiOptions.label && cdiOptions.label.format) {
-                cdiOptions.label.formatter = undefined;
-            }
-            cdiOptions = merge(defaultConfig, cdiOptions);
-        } else {
-            cdiOptions = merge(defaultConfig);
-        }
+        cdiOptions = typeof cdiOptions === 'object' ?
+            merge(defaultConfig, cdiOptions) : merge(defaultConfig);
 
         cdiOptions.value = new Date();
 
@@ -75,26 +80,24 @@ addEvent(Axis, 'afterSetOptions', function () {
 });
 
 addEvent(PlotLineOrBand, 'render', function () {
-    var options = this.options,
-        format,
-        formatter;
+    // If the label already exists, update its text
+    if (this.label) {
+        this.label.attr({
+            text: this.getLabelText(this.options.label)
+        });
+    }
+});
 
-    if (options.currentDateIndicator && options.label) {
-        format = options.label.format;
-        formatter = options.label.formatter;
+wrap(PlotLineOrBand.prototype, 'getLabelText', function (defaultMethod,
+    defaultLabelOptions) {
+    var options = this.options;
+
+    if (options.currentDateIndicator && options.label &&
+        typeof options.label.formatter === 'function') {
 
         options.value = new Date();
-        if (typeof formatter === 'function') {
-            options.label.text = formatter(this);
-        } else {
-            options.label.text = H.dateFormat(format, new Date());
-        }
-
-        // If the label already exists, update its text
-        if (this.label) {
-            this.label.attr({
-                text: options.label.text
-            });
-        }
+        return options.label.formatter
+            .call(this, options.value, options.label.format);
     }
+    return defaultMethod.call(this, defaultLabelOptions);
 });
