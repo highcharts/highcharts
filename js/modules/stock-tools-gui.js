@@ -1082,7 +1082,7 @@ H.Toolbar.prototype = {
 
 
         // submenu
-        if (items && items.length > 1) {
+        if (items && items.length) {
 
             // arrow is a hook to show / hide submenu
             submenuArrow = createElement(SPAN, {
