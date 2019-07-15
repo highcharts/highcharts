@@ -64,11 +64,15 @@ declare global {
         interface PlotSeriesOptions {
             startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
         }
+        interface Point {
+            allowShadow?: ColumnPoint['allowShadow'];
+        }
         interface Series {
             barW?: number;
             pointXOffset?: number;
         }
         class ColumnPoint extends LinePoint {
+            public allowShadow?: boolean;
             public barX: number;
             public group?: unknown;
             public options: ColumnPointOptions;
@@ -84,6 +88,7 @@ declare global {
             public dashStyle?: DashStyleValue;
             public data: Array<ColumnPoint>;
             public dense?: boolean;
+            public group: SVGElement;
             public options: ColumnSeriesOptions;
             public pointClass: typeof ColumnPoint;
             public points: Array<ColumnPoint>;
@@ -1161,7 +1166,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                     series.group.attr(attr);
 
                 } else { // run the animation
-                    translateStart = series.group.attr(translateProp);
+                    translateStart = series.group.attr(translateProp) as any;
                     series.group.animate(
                         { scaleY: 1 },
                         extend(animObject(series.options.animation), {

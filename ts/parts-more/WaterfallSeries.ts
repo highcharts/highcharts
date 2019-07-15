@@ -23,6 +23,9 @@ declare global {
                 WaterfallAxis['renderWaterfallStackTotals']
             );
         }
+        interface Series {
+            showLine?: WaterfallSeries['showLine'];
+        }
         interface WaterfallAxis extends Axis {
             dummyStackItem?: StackItem;
             options: YAxisOptions;

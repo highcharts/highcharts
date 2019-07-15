@@ -1446,7 +1446,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                 series.group,
                 series.markerGroup,
                 series.dataLabelsGroup
-            ].forEach(function (group: Highcharts.SVGElement): void {
+            ].forEach(function (
+                group: (Highcharts.SVGElement|undefined)
+            ): void {
                 if (group) {
                     // Old state
                     if (series.state) {

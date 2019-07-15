@@ -52,6 +52,7 @@ declare global {
         interface PolarSeries extends Series {
             connectEnds?: boolean;
             data: Array<PolarPoint>;
+            group: SVGElement;
             hasClipCircleSetter?: boolean;
             kdByAngle?: boolean;
             points: Array<PolarPoint>;

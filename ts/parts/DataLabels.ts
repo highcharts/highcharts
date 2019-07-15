@@ -89,6 +89,8 @@ declare global {
             dataLabel?: SVGElement;
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
+            dlBox?: BBoxObject;
+            dlOptions?: DataLabelsOptionsObject;
             graphic?: SVGElement;
             isLabelJustified?: boolean;
             /** @deprecated */
@@ -1023,7 +1025,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
             pointOptions = splat(
                 mergeArrays(
                     seriesDlOptions as any,
-                    point.dlOptions || // dlOptions is used in treemaps
+                    (point.dlOptions as any) || // dlOptions is used in treemaps
                         (point.options && point.options.dataLabels)
                 )
             );
@@ -1259,7 +1261,11 @@ Series.prototype.alignDataLabel = function (
 ): void {
     var chart = this.chart,
         inverted = this.isCartesian && chart.inverted,
-        plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
+        plotX = pick(
+            point.dlBox && (point.dlBox as any).centerX,
+            point.plotX,
+            -9999
+        ),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),
         baseline,
@@ -2158,7 +2164,7 @@ if (seriesTypes.column) {
 
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
-            alignTo = merge(dlBox);
+            alignTo = merge(dlBox) as any;
 
             if (alignTo.y < 0) {
                 alignTo.height += alignTo.y;
