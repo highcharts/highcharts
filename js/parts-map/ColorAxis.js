@@ -723,8 +723,10 @@ extend(ColorAxis.prototype, {
         while (i--) {
             series[i].getExtremes();
             if (series[i].valueMin !== undefined) {
-                this.dataMin = Math.min(this.dataMin, series[i].valueMin);
-                this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+                this.dataMin =
+                    Math.min(this.dataMin, series[i].valueMin);
+                this.dataMax =
+                    Math.max(this.dataMax, series[i].valueMax);
             }
         }
     },

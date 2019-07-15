@@ -1031,8 +1031,10 @@ extend(ColorAxis.prototype, {
         while (i--) {
             series[i].getExtremes();
             if (series[i].valueMin !== undefined) {
-                this.dataMin = Math.min(this.dataMin, series[i].valueMin);
-                this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+                this.dataMin =
+                    Math.min(this.dataMin, series[i].valueMin as any);
+                this.dataMax =
+                    Math.max(this.dataMax, series[i].valueMax as any);
             }
         }
     },
@@ -1043,7 +1045,7 @@ extend(ColorAxis.prototype, {
     drawCrosshair: function (
         this: Highcharts.ColorAxis,
         e: Highcharts.PointerEventObject,
-        point: Highcharts.Point
+        point: Highcharts.ColorPoint
     ): void {
         var plotX = point && point.plotX,
             plotY = point && point.plotY,
