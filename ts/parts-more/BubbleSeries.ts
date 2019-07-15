@@ -418,6 +418,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         var len: number,
             i: number,
             zData = this.zData,
+            yData = this.yData,
             minSize = series.minPxSize,
             maxSize = series.maxPxSize,
             radii = [] as Array<(number|null)>,
@@ -432,7 +433,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
                 zMax,
                 minSize as any,
                 maxSize as any,
-                value
+                value,
+                yData[i]
             ));
         }
         this.radii = radii;
@@ -448,7 +450,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         zMax: number,
         minSize: number,
         maxSize: number,
-        value: number
+        value: number,
+        yValue: number
     ): (number|null) {
         var options = this.options,
             sizeByArea = options.sizeBy !== 'width',
@@ -468,7 +471,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
             zMin = 0;
         }
 
-        if (!isNumber(value)) {
+        // #8608 - bubble should be visible when z is undefined
+        if (yValue === null || value === null) {
             radius = null;
         // Issue #4419 - if value is less than zMin, push a radius that's
         // always smaller than the minimum size
