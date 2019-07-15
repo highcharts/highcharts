@@ -5,6 +5,7 @@ js/parts/**/*.js
 js/parts-map/ColorAxis.js
 js/parts-map/ColorSeriesMixin.js
 js/parts-map/GeoJSON.js
+js/parts-map/HeatmapSeries.js
 js/parts-map/MapAxis.js
 js/parts-map/MapNavigation.js
 js/parts-map/MapPointer.js

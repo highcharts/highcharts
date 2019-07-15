@@ -19,7 +19,7 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         interface ScatterPointOptions extends LinePointOptions {
-
+            // placeholder for inheritance
         }
         interface ScatterSeriesJitterOptions {
             x?: number;
@@ -27,6 +27,15 @@ declare global {
         }
         interface ScatterSeriesOptions extends LineSeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
+            states?: ScatterSeriesStatesOptions;
+        }
+        interface ScatterSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions
+        {
+            // placeholder for inheritance
+        }
+        interface ScatterSeriesStatesOptions extends LineSeriesStatesOptions {
+            hover?: ScatterSeriesStatesHoverOptions;
         }
         interface Series {
             takeOrdinalPosition?: boolean;
