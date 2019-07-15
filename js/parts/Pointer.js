@@ -464,14 +464,7 @@ Highcharts.Pointer.prototype = {
             if (chart.hoverSeries !== hoverSeries) {
                 hoverSeries.onMouseOver();
             }
-            // Set inactive state for all points
-            activeSeries = pointer.getActiveSeries(points);
-            chart.series.forEach(function (inactiveSeries) {
-                if (inactiveSeries.options.inactiveOtherPoints ||
-                    activeSeries.indexOf(inactiveSeries) === -1) {
-                    inactiveSeries.setState('inactive', true);
-                }
-            });
+            pointer.setInactiveSeries(points);
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p) {
                 p.setState('hover');
@@ -534,6 +527,33 @@ Highcharts.Pointer.prototype = {
             }
             else {
                 axis.hideCrosshair();
+            }
+        });
+    },
+    /**
+     * Set inactive state to all series that are not currently hovered,
+     * or, if `inactiveOtherPoints` is set to true, set inactive state to
+     * all points within that series.
+     *
+     * @function Highcharts.Pointer#setInactiveSeries
+     *
+     * @private
+     *
+     * @param {Array<Highcharts.Point>} points
+     *        Currently hovered points
+     *
+     */
+    setInactiveSeries: function (points) {
+        // Set inactive state for all points
+        var activeSeries = this.chart.pointer.getActiveSeries(points);
+        this.chart.series.forEach(function (inactiveSeries) {
+            if (activeSeries.indexOf(inactiveSeries) === -1) {
+                // Inactive series
+                inactiveSeries.setState('inactive', true);
+            }
+            else if (inactiveSeries.options.inactiveOtherPoints) {
+                // Active series, but other points should be inactivated
+                inactiveSeries.setAllPointsState('inactive');
             }
         });
     },
