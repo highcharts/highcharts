@@ -47,28 +47,21 @@ declare global {
             accessibility?: any; // @todo
         }
         interface Point {
-            allowShadow?: unknown; // @todo
-            dataLabelOnNull?: any; // @todo
-            dlBox?: any; // @todo
-            dlOptions?: any; // @todo
-            startR?: any; // @todo
-            tooltipDateKeys?: any; // @todo
+            startR?: any; // @todo solid-gauge
+            tooltipDateKeys?: any; // @todo xrange
             zoomTo: Function; // @todo map series
         }
         interface Series {
             colorKey?: any; // @todo color series mixin
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
-            group?: any; // @todo
-            invertable?: any; // @todo
+            invertable?: any; // @todo sankey
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
             resetZones?: any; // @todo macd indicator
-            showLine?: any; // @todo
-            specialGroup?: any; // @todo
             useCommonDataGrouping?: any; // @todo indicators
-            valueMax?: any; // @todo
-            valueMin?: any; // @todo
+            valueMax?: any; // @todo (heat)map series
+            valueMin?: any; // @todo (heat)map series
             getPoint: Function; // @todo boost module
         }
         interface Tick {

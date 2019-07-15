@@ -39,6 +39,7 @@ declare global {
             bubblePadding?: BubbleSeries['bubblePadding'];
             maxPxSize?: BubbleSeries['maxPxSize'];
             minPxSize?: BubbleSeries['minPxSize'];
+            specialGroup?: BubbleSeries['specialGroup'];
             zData?: BubbleSeries['zData'];
         }
         class BubblePoint extends ScatterPoint {

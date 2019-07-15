@@ -291,6 +291,7 @@ declare global {
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
             public graphPath?: SVGPathArray;
+            public group?: SVGElement;
             public hasCartesianSeries?: Chart['hasCartesianSeries'];
             public hasRendered?: boolean;
             public hcEvents: Dictionary<Array<EventWrapperObject<Series>>>;
@@ -4499,7 +4500,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             }
 
             if (options.clip !== false || animation) {
-                this.group.clip(
+                (this.group as any).clip(
                     animation || seriesClipBox ? clipRect : chart.clipRect
                 );
                 (this.markerGroup as any).clip(markerClipRect);
@@ -4617,8 +4618,10 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 hasPointMarker,
                 enabled,
                 isInside,
-                markerGroup =
-                    (series as any)[series.specialGroup] || series.markerGroup,
+                markerGroup = (
+                    (series as any)[series.specialGroup as any] ||
+                    series.markerGroup
+                ),
                 xAxis = series.xAxis,
                 markerAttribs,
                 globallyEnabled = pick(

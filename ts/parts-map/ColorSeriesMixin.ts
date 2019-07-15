@@ -57,6 +57,9 @@ declare global {
         interface ColorSeriesOptions extends SeriesOptions {
             nullColor?: ColorString;
         }
+        interface Point {
+            dataLabelOnNull?: ColorPoint['dataLabelOnNull'];
+        }
         let colorPointMixin: ColorPointMixin;
         let colorSeriesMixin: ColorSeriesMixin;
     }
