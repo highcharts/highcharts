@@ -36,14 +36,6 @@ QUnit.test('Inactive state and styledMode', function (assert) {
         );
 
         assert.strictEqual(
-            window
-                .getComputedStyle(inactivePoints[0], null)
-                .getPropertyValue('opacity'),
-            '0.2',
-            'Inactive point should have opacity=0.2 (#11389)'
-        );
-
-        assert.strictEqual(
             document.querySelectorAll('.highcharts-series-inactive').length,
             0,
             'Series should not have inactive state class, ' +
