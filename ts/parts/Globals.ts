@@ -31,7 +31,6 @@ declare global {
             openMenu?: any; // @todo
             redrawTrigger?: any; // @todo
             hideOverlappingLabels: Function; // @todo overlapping module
-            mapZoom: Function; // @todo map navigation
         }
         interface ChartOptions {
             forExport?: any; // @todo
@@ -42,7 +41,6 @@ declare global {
         }
         interface Options {
             exporting?: any; // @todo
-            mapNavigation?: any; // @todo
             navigation?: any; // @todo
         }
         interface PlotSeriesOptions {
