@@ -100,10 +100,10 @@ declare global {
                 className: string
             ): (boolean|undefined);
             public init(chart: Chart, options: Options): void;
-            public normalize(
-                e: (PointerEvent|TouchEvent),
+            public normalize<T extends PointerEventObject>(
+                e: (T|PointerEvent),
                 chartPosition?: OffsetObject
-            ): PointerEventObject;
+            ): T;
             public onContainerClick(e: PointerEventObject): void
             public onContainerMouseDown(e: PointerEventObject): void;
             public onContainerMouseLeave(e: PointerEventObject): void;
