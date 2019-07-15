@@ -1230,3 +1230,12 @@ seriesType(
  * @product   highcharts
  * @apioption series.networkgraph.nodes.mass
  */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
+ *
+ * @type      {Highcharts.SeriesNetworkDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkDataLabelsOptionsObject>}
+ *
+ * @apioption series.networkgraph.nodes.dataLabels
+ */
