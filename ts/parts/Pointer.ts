@@ -118,6 +118,7 @@ declare global {
                 clip?: boolean
             ): void;
             public setDOMEvents(): void;
+            public setInactiveSeries(points: Array<Point>): void;
             public zoomOption(e: Event): void;
         }
         let chartCount: number;
@@ -768,19 +769,7 @@ Highcharts.Pointer.prototype = {
                 hoverSeries.onMouseOver();
             }
 
-            // Set inactive state for all points
-            activeSeries = pointer.getActiveSeries(points);
-
-            chart.series.forEach(function (
-                inactiveSeries: Highcharts.Series
-            ): void {
-                if (
-                    inactiveSeries.options.inactiveOtherPoints ||
-                    activeSeries.indexOf(inactiveSeries) === -1
-                ) {
-                    inactiveSeries.setState('inactive', true);
-                }
-            });
+            pointer.setInactiveSeries(points);
 
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p: Highcharts.Point): void {
@@ -861,6 +850,39 @@ Highcharts.Pointer.prototype = {
             // Axis has snapping crosshairs, but no hover point belongs to axis
             } else {
                 axis.hideCrosshair();
+            }
+        });
+    },
+
+    /**
+     * Set inactive state to all series that are not currently hovered,
+     * or, if `inactiveOtherPoints` is set to true, set inactive state to
+     * all points within that series.
+     *
+     * @function Highcharts.Pointer#setInactiveSeries
+     *
+     * @private
+     *
+     * @param {Array<Highcharts.Point>} points
+     *        Currently hovered points
+     *
+     */
+    setInactiveSeries: function (
+        this: Highcharts.Pointer,
+        points: Array<Highcharts.Point>
+    ): void {
+        // Set inactive state for all points
+        var activeSeries = this.chart.pointer.getActiveSeries(points);
+
+        this.chart.series.forEach(function (
+            inactiveSeries: Highcharts.Series
+        ): void {
+            if (activeSeries.indexOf(inactiveSeries) === -1) {
+                // Inactive series
+                inactiveSeries.setState('inactive', true);
+            } else if (inactiveSeries.options.inactiveOtherPoints) {
+                // Active series, but other points should be inactivated
+                inactiveSeries.setAllPointsState('inactive');
             }
         });
     },

@@ -78,6 +78,7 @@ declare global {
             onMouseOver(): void;
             select(selected?: boolean): void;
             setState(state?: string, inherit?: boolean): void;
+            setAllPointsState(state?: string): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
         }
@@ -1527,12 +1528,29 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // Don't loop over points on a series that doesn't apply inactive state
         // to siblings markers (e.g. line, column)
         if (inherit && inactiveOtherPoints && series.points) {
-            series.points.forEach(function (point: Highcharts.Point): void {
-                if (point.setState) {
-                    point.setState(state);
-                }
-            });
+            series.setAllPointsState(state);
         }
+    },
+
+    /**
+     * Set the state for all points in the series.
+     *
+     * @function Highcharts.Series#setAllPointsState
+     *
+     * @private
+     *
+     * @param {string} [state]
+     *        Can be either `hover` or undefined to set to normal state.
+     */
+    setAllPointsState: function (
+        this: Highcharts.Series,
+        state?: string
+    ): void {
+        this.points.forEach(function (point: Highcharts.Point): void {
+            if (point.setState) {
+                point.setState(state);
+            }
+        });
     },
 
     /**
