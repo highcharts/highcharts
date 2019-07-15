@@ -16,6 +16,7 @@
  */
 declare global {
     namespace Highcharts {
+        type MapBubbleSeries = any; // @todo highmaps
         type NavigationOptions = any; // @todo exporting module
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
@@ -24,24 +25,28 @@ declare global {
             getMaxLabelDimensions?: Function; // @todo
         }
         interface Chart {
+            drilldownLevels?: any; // @todo drilldown module
             hasParallelCoordinates?: any; // @todo parallel module
-            is3d?: any; // @todo
-            isBoosting?: any; // @todo
-            isPrinting?: any; // @todo
-            openMenu?: any; // @todo
-            redrawTrigger?: any; // @todo
+            is3d?: any; // @todo highcharts 3d
+            isBoosting?: any; // @todo boost module
+            isPrinting?: any; // @todo exporting module
+            openMenu?: any; // @todo exporting module
+            redrawTrigger?: any; // @todo static-scale module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
         }
         interface ColumnSeries {
+            animateDrillupFrom: Function; // @todo drilldown module
+            animateDrillupTo: Function; // @todo drilldown module
             translate3dPoints: Function; // @todo
             translate3dShapes: Function; // @todo
         }
         interface Options {
-            exporting?: any; // @todo
-            navigation?: any; // @todo
+            drilldown?: any; // @todo drilldown module
+            exporting?: any; // @todo exporting module
+            navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
@@ -49,10 +54,8 @@ declare global {
         interface Point {
             startR?: any; // @todo solid-gauge
             tooltipDateKeys?: any; // @todo xrange
-            zoomTo: Function; // @todo map series
         }
         interface Series {
-            colorKey?: any; // @todo color series mixin
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
             invertable?: any; // @todo sankey
@@ -60,8 +63,6 @@ declare global {
             labelBySeries?: any; // @todo series label module
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
-            valueMax?: any; // @todo (heat)map series
-            valueMin?: any; // @todo (heat)map series
             getPoint: Function; // @todo boost module
         }
         interface Tick {
@@ -80,8 +81,10 @@ declare global {
         const isSafari: boolean;
         const isTouchDevice: boolean;
         const isWebKit: boolean;
+        const maps: Dictionary<any>; // @todo map
         const marginNames: Array<string>;
         const noop: Function;
+        const splitPath: Function; // @todo map
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;

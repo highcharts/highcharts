@@ -19,10 +19,14 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface MapPointer extends Pointer {
-            chart: MapNavigationChart;
+            chart: MapPointerChart;
             mapNavigation: MapNavigation;
             onContainerDblClick(e: PointerEventObject): void;
             onContainerMouseWheel(e: PointerEventObject): void;
+        }
+        interface MapPointerChart extends MapChart {
+            hoverPoint: MapPoint;
+            mapZoom: MapNavigationChart['mapZoom'];
         }
         interface PointerEventObject {
             /** @deprecated */
