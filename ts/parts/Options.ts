@@ -18,7 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type ButtonRelativeToValue = ('plotBox'|'spacingBox');
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         interface Chart {

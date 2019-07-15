@@ -18,11 +18,13 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Pointer {
+        interface MapPointer extends Pointer {
+            chart: MapNavigationChart;
+            mapNavigation: MapNavigation;
             onContainerDblClick(e: PointerEventObject): void;
             onContainerMouseWheel(e: PointerEventObject): void;
         }
-        interface PointerWheelEventObject extends PointerEventObject {
+        interface PointerEventObject {
             /** @deprecated */
             wheelDelta: number;
         }
@@ -44,14 +46,14 @@ extend(Pointer.prototype, {
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (
-        this: Highcharts.Pointer,
+        this: Highcharts.MapPointer,
         e: Highcharts.PointerEventObject
     ): void {
         var chart = this.chart;
 
         e = this.normalize(e);
 
-        if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
+        if ((chart.options.mapNavigation as any).enableDoubleClickZoomTo) {
             if (
                 chart.pointer.inClass(e.target as any, 'highcharts-tracker') &&
                 chart.hoverPoint
@@ -76,8 +78,8 @@ extend(Pointer.prototype, {
 
     // The event handler for the mouse scroll event
     onContainerMouseWheel: function (
-        this: Highcharts.Pointer,
-        e: Highcharts.PointerWheelEventObject
+        this: Highcharts.MapPointer,
+        e: Highcharts.PointerEventObject
     ): void {
         var chart = this.chart,
             delta;
@@ -85,14 +87,14 @@ extend(Pointer.prototype, {
         e = this.normalize(e);
 
         // Firefox uses e.detail, WebKit and IE uses wheelDelta
-        delta = e.detail || -(e.wheelDelta / 120);
+        delta = e.detail || -((e.wheelDelta as any) / 120);
         if (chart.isInsidePlot(
             e.chartX - chart.plotLeft,
             e.chartY - chart.plotTop
         )) {
             chart.mapZoom(
                 Math.pow(
-                    chart.options.mapNavigation.mouseWheelSensitivity,
+                    (chart.options.mapNavigation as any).mouseWheelSensitivity,
                     delta
                 ),
                 chart.xAxis[0].toValue(e.chartX),
@@ -114,7 +116,10 @@ wrap(Pointer.prototype, 'zoomOption', function (
     var mapNavigation = this.chart.options.mapNavigation;
 
     // Pinch status
-    if (pick(mapNavigation.enableTouchZoom, mapNavigation.enabled)) {
+    if (pick(
+        (mapNavigation as any).enableTouchZoom,
+        (mapNavigation as any).enabled)
+    ) {
         (this.chart.options.chart as any).pinchType = 'xy';
     }
 

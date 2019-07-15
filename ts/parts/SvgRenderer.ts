@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'callout'|'circle'|'diamond'|'square'|'triangle'|
-            'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'square'|
+            'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
@@ -313,7 +313,7 @@ declare global {
                 text: string,
                 x: number,
                 y: number,
-                callback: Function,
+                callback: EventCallbackFunction<SVGElement>,
                 normalState?: SVGAttributes,
                 hoverState?: SVGAttributes,
                 pressedState?: SVGAttributes,
@@ -4491,7 +4491,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the button's top side.
      *
-     * @param {Function} callback
+     * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      *        The function to execute on button click or touch.
      *
      * @param {Highcharts.SVGAttributes} [normalState]
@@ -4520,7 +4520,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         text: string,
         x: number,
         y: number,
-        callback: Function,
+        callback: Highcharts.EventCallbackFunction<Highcharts.SVGElement>,
         normalState?: Highcharts.SVGAttributes,
         hoverState?: Highcharts.SVGAttributes,
         pressedState?: Highcharts.SVGAttributes,

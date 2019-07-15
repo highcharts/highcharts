@@ -3082,7 +3082,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the button's top side.
      *
-     * @param {Function} callback
+     * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      *        The function to execute on button click or touch.
      *
      * @param {Highcharts.SVGAttributes} [normalState]

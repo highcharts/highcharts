@@ -1615,7 +1615,7 @@ RangeSelector.prototype = {
                         rangeOptions.text as any,
                         0,
                         0,
-                        function (e: Event): void {
+                        function (e: (Event|Highcharts.Dictionary<any>)): void {
 
                             // extract events from button object and call
                             var buttonEvents = (
@@ -1626,7 +1626,7 @@ RangeSelector.prototype = {
 
                             if (buttonEvents) {
                                 callDefaultEvent =
-                                        buttonEvents.call(rangeOptions, e);
+                                    buttonEvents.call(rangeOptions, e as any);
                             }
 
                             if (callDefaultEvent !== false) {
