@@ -41,6 +41,7 @@ declare global {
             minPxSize?: BubbleSeries['minPxSize'];
             specialGroup?: BubbleSeries['specialGroup'];
             zData?: BubbleSeries['zData'];
+            yData?: BubbleSeries['yData'];
         }
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
@@ -62,6 +63,7 @@ declare global {
             public radii: Array<(number|null)>;
             public specialGroup: string;
             public zData: Array<number>;
+            public yData: Array<number>;
             public zMax: BubbleSeriesOptions['zMax'];
             public zMin: BubbleSeriesOptions['zMin'];
             public zoneAxis: string;
@@ -76,7 +78,8 @@ declare global {
                 zMax: number,
                 minSize: number,
                 maxSize: number,
-                value: number
+                value: number,
+                yValue?: number
             ): (number|null);
             public hasData(): boolean;
             public pointAttribs(
@@ -451,7 +454,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         minSize: number,
         maxSize: number,
         value: number,
-        yValue: number
+        yValue?: number
     ): (number|null) {
         var options = this.options,
             sizeByArea = options.sizeBy !== 'width',
