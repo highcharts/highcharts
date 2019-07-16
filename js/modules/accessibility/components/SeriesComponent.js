@@ -623,7 +623,8 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
         chart.series.forEach(function (series) {
             component[
                 (series.options.accessibility &&
-                series.options.accessibility.enabled) !== false ?
+                series.options.accessibility.enabled) !== false &&
+                series.visible ?
                     'addSeriesDescription' : 'hideSeriesFromScreenReader'
             ](series);
         });
