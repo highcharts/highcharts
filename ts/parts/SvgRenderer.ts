@@ -75,7 +75,7 @@ declare global {
         interface SVGAttributes {
             [key: string]: any;
             d?: (string|SVGPathArray);
-            fill?: ColorString;
+            fill?: (ColorString|GradientColorObject|PatternObject);
             inverted?: boolean;
             matrix?: Array<number>;
             rotation?: number;
