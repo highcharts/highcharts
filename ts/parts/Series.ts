@@ -337,7 +337,7 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<number>,
+                yData: Array<(number|null|undefined)>,
                 min: number,
                 max: number,
                 cropShoulder?: number
