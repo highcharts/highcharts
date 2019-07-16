@@ -357,6 +357,11 @@ H.extendAnnotation(Measure, null,
                 this.calculations.updateStartPoints.call(this, true, false);
             }
 
+            // #11174 - clipBox was not recalculate during resize / redraw
+            if (this.clipRect) {
+                this.clipRect.animate(this.getClipBox());
+            }
+
             this.addValues(resize);
             this.addCrosshairs();
             this.redrawItems(this.shapes, animation);
