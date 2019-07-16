@@ -1111,40 +1111,38 @@ H.setOptions({
                 start: function (e) {
                     var coords = this.chart.pointer.getCoordinates(e),
                         navigation = this.chart.options.navigation,
+                        x = coords.xAxis[0].value,
+                        y = coords.yAxis[0].value,
                         controlPoints = [{
-                            positioner: function (target) {
+                            positioner: function (annotation) {
                                 var xy = H.Annotation.MockPoint
                                     .pointToPixels(
-                                        target.points[0]
+                                        annotation.shapes[0].points[2]
                                     );
 
                                 return {
-                                    x: xy.x + target.options.width - 4,
-                                    y: xy.y + target.options.height - 4
+                                    x: xy.x - 4,
+                                    y: xy.y - 4
                                 };
                             },
                             events: {
                                 drag: function (e, target) {
-                                    var annotation = target.annotation,
-                                        inverted = this.chart.inverted,
-                                        xy = this
-                                            .mouseMoveToTranslation(e);
+                                    var coords = this.chart.pointer
+                                            .getCoordinates(e),
+                                        x = coords.xAxis[0].value,
+                                        y = coords.yAxis[0].value,
+                                        shape = target.options.shapes[0],
+                                        points = shape.points;
 
-                                    target.options.width = Math.max(
-                                        target.options.width +
-                                            (inverted ? xy.y : xy.x),
-                                        5
-                                    );
-                                    target.options.height = Math.max(
-                                        target.options.height +
-                                            (inverted ? xy.x : xy.y),
-                                        5
-                                    );
+                                    // Top right point
+                                    points[1].x = x;
+                                    // Bottom right point (cursor position)
+                                    points[2].x = x;
+                                    points[2].y = y;
+                                    // Bottom left
+                                    points[3].y = y;
 
-                                    annotation.options.shapes[0] =
-                                        target.options;
-                                    annotation.userOptions.shapes[0] =
-                                        target.options;
+                                    target.options.shapes[0].points = points;
 
                                     target.redraw(false);
                                 }
@@ -1156,17 +1154,30 @@ H.setOptions({
                             {
                                 langKey: 'rectangle',
                                 shapes: [{
-                                    type: 'rect',
-                                    point: {
+                                    type: 'path',
+                                    points: [{
                                         xAxis: 0,
                                         yAxis: 0,
-                                        x: coords.xAxis[0].value,
-                                        y: coords.yAxis[0].value
-                                    },
-                                    width: 5,
-                                    height: 5,
-                                    controlPoints: controlPoints
-                                }]
+                                        x: x,
+                                        y: y
+                                    }, {
+                                        xAxis: 0,
+                                        yAxis: 0,
+                                        x: x,
+                                        y: y
+                                    }, {
+                                        xAxis: 0,
+                                        yAxis: 0,
+                                        x: x,
+                                        y: y
+                                    }, {
+                                        xAxis: 0,
+                                        yAxis: 0,
+                                        x: x,
+                                        y: y
+                                    }]
+                                }],
+                                controlPoints: controlPoints
                             },
                             navigation
                                 .annotationsOptions,
@@ -1180,29 +1191,22 @@ H.setOptions({
                 /** @ignore */
                 steps: [
                     function (e, annotation) {
-                        var xAxis = this.chart.xAxis[0],
-                            yAxis = this.chart.yAxis[0],
-                            inverted = this.chart.inverted,
-                            point = annotation.options.shapes[0].point,
-                            x = xAxis.toPixels(point.x),
-                            y = yAxis.toPixels(point.y),
-                            width = Math.max(
-                                inverted ? e.chartX - y : e.chartX - x,
-                                5
-                            ),
-                            height = Math.max(
-                                inverted ? e.chartY - x : e.chartY - y,
-                                5
-                            );
+                        var points = annotation.options.shapes[0].points,
+                            coords = this.chart.pointer.getCoordinates(e),
+                            x = coords.xAxis[0].value,
+                            y = coords.yAxis[0].value;
+
+                        // Top right point
+                        points[1].x = x;
+                        // Bottom right point (cursor position)
+                        points[2].x = x;
+                        points[2].y = y;
+                        // Bottom left
+                        points[3].y = y;
 
                         annotation.update({
                             shapes: [{
-                                width: width,
-                                height: height,
-                                point: {
-                                    x: point.x,
-                                    y: point.y
-                                }
+                                points: points
                             }]
                         });
                     }
