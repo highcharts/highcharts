@@ -62,8 +62,7 @@ declare global {
             public points: Array<BubblePoint>;
             public radii: Array<(number|null)>;
             public specialGroup: string;
-            public zData: Array<(number|undefined|null)>;
-            public yData: Array<(number|undefined|null)>;
+            public zData: Array<number|null|undefined>;
             public zMax: BubbleSeriesOptions['zMax'];
             public zMin: BubbleSeriesOptions['zMin'];
             public zoneAxis: string;
@@ -436,8 +435,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
                 zMax,
                 minSize as any,
                 maxSize as any,
-                value,
-                yData[i]
+                value as any,
+                yData && yData[i] as any
             ));
         }
         this.radii = radii;
