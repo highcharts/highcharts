@@ -23,11 +23,11 @@ var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
  *        Context to format
-
+ *
  * @param {Highcharts.Tooltip} tooltip
  *        The tooltip instance
  *
- * @return {false|string|Array<string>}
+ * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  *         Formatted text or false
  */
 /**
@@ -107,6 +107,7 @@ var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U
 /**
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
+''; // separates doclets above from variables below
 var doc = H.doc, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, syncTimeout = H.syncTimeout, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

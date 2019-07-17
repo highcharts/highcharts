@@ -135,8 +135,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         /** @ignore-option */
         formatter: function (
             this: Highcharts.DataLabelsFormatterContextObject
-        ): string { // #2945
-            return (this.point as Highcharts.BubblePoint).z as any;
+        ): (number|undefined) { // #2945
+            return (this.point as Highcharts.BubblePoint).z;
         },
         /** @ignore-option */
         inside: true,

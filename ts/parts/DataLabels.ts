@@ -37,7 +37,9 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): (string|undefined);
+            (this: DataLabelsFormatterContextObject): (
+                number|string|null|undefined
+            );
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -214,7 +216,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string|undefined}
+ * @return {number|string|null|undefined}
  *         Formatted data label text
  */
 
