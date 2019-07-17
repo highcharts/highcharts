@@ -2150,7 +2150,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         dataLabels: {
             /** @internal */
             align: 'center',
-            /* eslint-disable valid-jsdoc */
+            // eslint-disable-next-line valid-jsdoc
             /**
              * @internal
              * @default function () { return H.numberFormat(this.y, -1); }
@@ -2159,7 +2159,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
-                /* eslint-enable valid-jsdoc */
             },
             /** @internal */
             padding: 5,

@@ -158,11 +158,11 @@ declare global {
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
  *        Context to format
-
+ *
  * @param {Highcharts.Tooltip} tooltip
  *        The tooltip instance
  *
- * @return {false|string|Array<string>}
+ * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  *         Formatted text or false
  */
 
@@ -246,6 +246,8 @@ declare global {
 /**
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
+
+''; // separates doclets above from variables below
 
 var doc = H.doc,
     extend = H.extend,

@@ -203,8 +203,8 @@ seriesType<Highcharts.MapSeriesOptions>(
             crop: false,
             // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
-            formatter: function (): string { // #2945
-                return (this.point as Highcharts.MapPoint).value as any;
+            formatter: function (): (number|null) { // #2945
+                return (this.point as Highcharts.MapPoint).value;
             },
             /** @ignore-option */
             inside: true, // for the color

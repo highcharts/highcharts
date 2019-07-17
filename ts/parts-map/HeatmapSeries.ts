@@ -220,8 +220,8 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
         dataLabels: {
             // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
-            formatter: function (): string { // #2945
-                return (this.point as Highcharts.HeatmapPoint).value as any;
+            formatter: function (): (number|null) { // #2945
+                return (this.point as Highcharts.HeatmapPoint).value;
             },
             /** @ignore-option */
             inside: true,
