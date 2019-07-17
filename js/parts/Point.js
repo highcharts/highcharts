@@ -85,7 +85,7 @@ import Highcharts from './Globals.js';
  */ /**
 * The point's current color.
 * @name Highcharts.PointLabelObject#color
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The point's current color index, used in styled mode instead of `color`. The
 * color index is inserted in class names used for styling.
@@ -327,12 +327,12 @@ import Highcharts from './Globals.js';
 * The fill color of the marker in hover state. When `undefined`, the series' or
 * point's fillColor for normal state is used.
 * @name Highcharts.PointStatesHoverOptionsObject#fillColor
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The color of the point marker's outline. When `undefined`, the series' or
 * point's lineColor for normal state is used.
 * @name Highcharts.PointStatesHoverOptionsObject#lineColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The width of the point marker's outline. When `undefined`, the series' or
 * point's lineWidth for normal state is used.
@@ -407,7 +407,7 @@ import Highcharts from './Globals.js';
 * The color of the point marker's outline. When `undefined`, the series' or
 * point's color is used.
 * @name Highcharts.PointStatesSelectOptionsObject#lineColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The width of the point marker's outline.
 * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
@@ -502,7 +502,7 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
          */
         if (!styledMode && !this.options.color) {
             this.color = series.color; // #3445

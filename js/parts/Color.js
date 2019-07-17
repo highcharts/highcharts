@@ -116,7 +116,7 @@ var merge = H.merge;
  * @class
  * @name Highcharts.Color
  *
- * @param {Highcharts.ColorString|Highcharts.GradientColorObject} input
+ * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
  *        The input color in either rbga or hex format
  */
 H.Color = function (input) {
@@ -160,7 +160,7 @@ H.Color.prototype = {
      * @private
      * @function Highcharts.Color#init
      *
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject} input
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
      *        The input color in either rbga or hex format
      *
      * @return {void}
@@ -229,7 +229,7 @@ H.Color.prototype = {
      * @param {string} [format]
      *        Possible values are 'a', 'rgb', 'rgba' (default).
      *
-     * @return {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @return {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      *         This color as a string or gradient stops.
      */
     get: function (format) {
@@ -353,7 +353,7 @@ H.Color.prototype = {
  *
  * @function Highcharts.color
  *
- * @param {Highcharts.ColorString} input
+ * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
  *        The input color in either rbga or hex format
  *
  * @return {Highcharts.Color}

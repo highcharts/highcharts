@@ -118,7 +118,7 @@ seriesType('waterfall', 'column', {
      *
      * In styled mode, the stroke can be set with the `.highcharts-graph` class.
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
      */
@@ -143,7 +143,7 @@ seriesType('waterfall', 'column', {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
      */

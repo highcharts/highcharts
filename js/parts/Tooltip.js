@@ -34,7 +34,7 @@ var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U
  * @interface Highcharts.TooltipFormatterContextObject
  */ /**
 * @name Highcharts.TooltipFormatterContextObject#color
-* @type {Highcharts.ColorString}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
 */ /**
 * @name Highcharts.TooltipFormatterContextObject#colorIndex
 * @type {number|undefined}
@@ -341,7 +341,7 @@ H.Tooltip.prototype = {
                 if (!styledMode) {
                     this.label
                         .attr({
-                        'fill': options.backgroundColor,
+                        fill: options.backgroundColor,
                         'stroke-width': options.borderWidth
                     })
                         // #2301, #2657
