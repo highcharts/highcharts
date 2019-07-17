@@ -10,6 +10,7 @@ js/parts-map/MapAxis.js
 js/parts-map/MapLineSeries.js
 js/parts-map/MapNavigation.js
 js/parts-map/MapPointer.js
+js/parts-map/MapPointSeries.js
 js/parts-map/MapSeries.js
 js/parts-more/AreaRangeSeries.js
 js/parts-more/AreaSplineRangeSeries.js
