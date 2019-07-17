@@ -53,7 +53,7 @@ setOptions({
              * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             borderColor: undefined,
             /**
@@ -99,7 +99,7 @@ setOptions({
              * The color of the connector, can be also defined
              * for an individual range.
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             connectorColor: undefined,
             /**
@@ -231,7 +231,7 @@ setOptions({
                 value: undefined,
                 /**
                  * The color of the border for individual range.
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 borderColor: undefined,
                 /**
@@ -241,7 +241,7 @@ setOptions({
                 color: undefined,
                 /**
                  * The color of the connector for individual range.
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 connectorColor: undefined
             },

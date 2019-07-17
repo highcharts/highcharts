@@ -199,7 +199,7 @@ extend(defaultOptions, {
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             borderColor: '${palette.neutralColor40}'
         },
@@ -226,7 +226,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/outline/
          *         2px blue outline
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
         outlineColor: '${palette.neutralColor20}',

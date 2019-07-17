@@ -187,7 +187,7 @@ seriesType('flags', 'column'
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #000000
      * @product   highstock
      * @apioption plotOptions.flags.lineColor
@@ -207,7 +207,7 @@ seriesType('flags', 'column'
             /**
              * The color of the line/border of the flag.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
             lineColor: '${palette.neutralColor100}',

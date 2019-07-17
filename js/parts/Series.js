@@ -784,7 +784,7 @@ null,
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1198,7 +1198,7 @@ null,
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         lineColor: '${palette.backgroundColor}',
         /**
@@ -1353,7 +1353,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
                  */
                 /**
@@ -1445,7 +1445,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 lineColor: '${palette.neutralColor100}',
                 /**
@@ -3856,7 +3856,7 @@ null,
                     (zone.className || '')
             ];
             if (!this.chart.styledMode) {
-                propset.push(zone.color || this.color, zone.dashStyle || this.options.dashStyle);
+                propset.push((zone.color || this.color), (zone.dashStyle || this.options.dashStyle));
             }
             props.push(propset);
         }, this);

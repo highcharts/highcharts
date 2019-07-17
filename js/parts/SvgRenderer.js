@@ -217,7 +217,7 @@ import H from './Globals.js';
 * @type {string|Highcharts.SVGPathArray|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#fill
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#inverted
 * @type {boolean|undefined}
@@ -241,7 +241,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#stroke
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#style
 * @type {string|Highcharts.CSSObject|undefined}
@@ -3422,12 +3422,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     */
     rect: function (x, y, width, height, r, strokeWidth) {
         r = isObject(x) ? x.r : r;
-        var wrapper = this.createElement('rect'), attribs = isObject(x) ? x : x === undefined ? {} : {
-            x: x,
-            y: y,
-            width: Math.max(width, 0),
-            height: Math.max(height, 0)
-        };
+        var wrapper = this.createElement('rect'), attribs = isObject(x) ?
+            x :
+            x === undefined ?
+                {} :
+                {
+                    x: x,
+                    y: y,
+                    width: Math.max(width, 0),
+                    height: Math.max(height, 0)
+                };
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
                 attribs.strokeWidth = strokeWidth;

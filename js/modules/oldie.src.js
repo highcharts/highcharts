@@ -819,10 +819,12 @@ if (!svg) {
         color: function (color, elem, prop, wrapper) {
             var renderer = this, colorObject, regexRgba = /^rgba/, markup, fillType, ret = 'none';
             // Check for linear or radial gradient
-            if (color && color.linearGradient) {
+            if (color &&
+                color.linearGradient) {
                 fillType = 'gradient';
             }
-            else if (color && color.radialGradient) {
+            else if (color &&
+                color.radialGradient) {
                 fillType = 'pattern';
             }
             if (fillType) {

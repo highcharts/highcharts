@@ -213,7 +213,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/gridlines/
          *         Grid lines demonstrated
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6e6e6
          * @product   highcharts highmaps
          * @apioption colorAxis.gridLineColor
@@ -331,7 +331,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         minColor: '${palette.highlightColor10}',
@@ -350,7 +350,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         maxColor: '${palette.highlightColor100}',
@@ -593,7 +593,7 @@ extend(ColorAxis.prototype, {
      * @function Highcharts.ColorAxis#toColor
      * @param {number} value
      * @param {Highcharts.Point} point
-     * @return {string|undefined}
+     * @return {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
      */
     toColor: function (value, point) {
         var pos, stops = this.stops, from, to, color, dataClasses = this.dataClasses, dataClass, i;

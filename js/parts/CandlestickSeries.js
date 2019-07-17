@@ -31,7 +31,7 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     1.3.6
      * @product   highstock
      * @apioption plotOptions.candlestick.upLineColor
@@ -76,7 +76,7 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #000000
      * @product highstock
      */
