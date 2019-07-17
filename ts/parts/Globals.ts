@@ -81,10 +81,8 @@ declare global {
         const isSafari: boolean;
         const isTouchDevice: boolean;
         const isWebKit: boolean;
-        const maps: Dictionary<any>; // @todo map
         const marginNames: Array<string>;
         const noop: Function;
-        const splitPath: Function; // @todo map
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;

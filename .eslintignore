@@ -6,6 +6,7 @@ js/parts-map/ColorAxis.js
 js/parts-map/ColorSeriesMixin.js
 js/parts-map/GeoJSON.js
 js/parts-map/HeatmapSeries.js
+js/parts-map/Map.js
 js/parts-map/MapAxis.js
 js/parts-map/MapLineSeries.js
 js/parts-map/MapNavigation.js
