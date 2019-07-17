@@ -1317,7 +1317,7 @@ seriesType<Highcharts.MapSeriesOptions>(
                     (series.mapMap as any)[(point as any)[joinBy[1]]];
                 if (mapPoint) {
                     // This applies only to bubbles
-                    if ((series as Highcharts.MapBubbleSeries).xyFromShape) {
+                    if ((series as any).xyFromShape) {
                         point.x = mapPoint._midX;
                         point.y = mapPoint._midY;
                     }
