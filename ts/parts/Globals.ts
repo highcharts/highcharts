@@ -16,7 +16,6 @@
  */
 declare global {
     namespace Highcharts {
-        type MapBubbleSeries = any; // @todo highmaps
         type NavigationOptions = any; // @todo exporting module
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
