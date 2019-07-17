@@ -83,7 +83,7 @@ declare global {
             rotationOriginY?: number;
             scaleX?: number;
             scaleY?: number;
-            stroke?: ColorString;
+            stroke?: (ColorString|GradientColorObject|PatternObject);
             style?: (string|CSSObject);
             translateX?: number;
             translateY?: number;
@@ -642,7 +642,7 @@ declare global {
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
  * @name Highcharts.SVGAttributes#fill
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}
@@ -666,7 +666,7 @@ declare global {
  * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#style
  * @type {string|Highcharts.CSSObject|undefined}
@@ -4935,23 +4935,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         r = isObject(x) ? (x as any).r : r;
 
         var wrapper = this.createElement('rect'),
-            attribs = isObject(x) ? x : x === undefined ? {} : {
-                x: x,
-                y: y,
-                width: Math.max(width as any, 0),
-                height: Math.max(height as any, 0)
-            };
+            attribs: Highcharts.SVGAttributes = isObject(x) ?
+                (x as any) :
+                x === undefined ?
+                    {} :
+                    {
+                        x: x,
+                        y: y,
+                        width: Math.max(width as any, 0),
+                        height: Math.max(height as any, 0)
+                    };
 
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
-                (attribs as any).strokeWidth = strokeWidth;
+                attribs.strokeWidth = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
-            (attribs as any).fill = 'none';
+            attribs.fill = 'none';
         }
 
         if (r) {
-            (attribs as any).r = r;
+            attribs.r = r;
         }
 
         wrapper.rSetter = function (

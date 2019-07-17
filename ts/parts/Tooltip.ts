@@ -44,7 +44,7 @@ declare global {
             ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
-            color: ColorString;
+            color: (ColorString|GradientColorObject|PatternObject);
             colorIndex?: number;
             key: number;
             percentage?: number;
@@ -170,7 +170,7 @@ declare global {
  * @interface Highcharts.TooltipFormatterContextObject
  *//**
  * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  *//**
  * @name Highcharts.TooltipFormatterContextObject#colorIndex
  * @type {number|undefined}
@@ -537,7 +537,7 @@ H.Tooltip.prototype = {
                 if (!styledMode) {
                     this.label
                         .attr({
-                            'fill': options.backgroundColor as any,
+                            fill: options.backgroundColor,
                             'stroke-width': options.borderWidth
                         })
                         // #2301, #2657
@@ -1222,7 +1222,7 @@ H.Tooltip.prototype = {
                     };
 
                     if (!chart.styledMode) {
-                        attribs.fill = options.backgroundColor as any;
+                        attribs.fill = options.backgroundColor;
                         attribs['stroke-width'] = options.borderWidth;
                     }
 
@@ -1255,8 +1255,8 @@ H.Tooltip.prototype = {
                         .attr({
                             stroke: (
                                 options.borderColor ||
-                                (point.color as any) ||
-                                (series.color as any) ||
+                                point.color ||
+                                series.color ||
                                 '${palette.neutralColor80}'
                             )
                         });

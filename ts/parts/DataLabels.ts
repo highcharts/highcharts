@@ -51,11 +51,11 @@ declare global {
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;
@@ -313,7 +313,7 @@ declare global {
  *      Data labels box options
  *
  * @name Highcharts.DataLabelsOptionsObject#borderColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  * @since 2.2.1
  *//**
  * The border radius in pixels for the data label.
@@ -365,7 +365,7 @@ declare global {
  *      White data labels
  *
  * @name Highcharts.DataLabelsOptionsObject#color
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * Whether to hide data labels that are outside the plot area. By default, the
  * data label is moved inside the plot area according to the
@@ -1091,7 +1091,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
                             point.contrastColor = renderer.getContrast(
-                                (point.color as any) || (series.color as any)
+                                (point.color || series.color) as any
                             );
                             (style as any).color = (
                                 !defined(labelDistance) &&

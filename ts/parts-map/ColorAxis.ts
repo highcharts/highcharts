@@ -52,8 +52,8 @@ declare global {
             dataClassColor?: string;
             dataClasses?: Array<ColorAxisDataClassesOptions>;
             marker?: ColorAxisMarkerOptions;
-            maxColor?: ColorString;
-            minColor?: ColorString;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
+            minColor?: (ColorString|GradientColorObject|PatternObject);
             stops?: GradientColorObject['stops'];
         }
         interface Options {
@@ -107,7 +107,10 @@ declare global {
             public setOptions(userOptions: ColorAxisOptions): void;
             public setState(state?: string): void;
             public setTickPositions(): void;
-            public toColor(value: number, point: Point): (string|undefined);
+            public toColor(
+                value: number,
+                point: Point
+            ): (ColorString|GradientColorObject|PatternObject|undefined);
         }
     }
 }
@@ -348,7 +351,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/gridlines/
          *         Grid lines demonstrated
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6e6e6
          * @product   highcharts highmaps
          * @apioption colorAxis.gridLineColor
@@ -481,7 +484,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         minColor: '${palette.highlightColor10}',
@@ -501,7 +504,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         maxColor: '${palette.highlightColor100}',
@@ -675,8 +678,8 @@ extend(ColorAxis.prototype, {
                     colorCounter = 0;
                 }
             } else {
-                dataClass.color = color(options.minColor as any).tweenTo(
-                    color(options.maxColor as any),
+                dataClass.color = color(options.minColor).tweenTo(
+                    color(options.maxColor),
                     len < 2 ? 0.5 : i / (len - 1) // #3219
                 );
             }
@@ -827,18 +830,22 @@ extend(ColorAxis.prototype, {
      * @function Highcharts.ColorAxis#toColor
      * @param {number} value
      * @param {Highcharts.Point} point
-     * @return {string|undefined}
+     * @return {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
      */
     toColor: function (
         this: Highcharts.ColorAxis,
         value: number,
         point: Highcharts.Point
-    ): (string|undefined) {
+    ): (
+        Highcharts.ColorString|Highcharts.GradientColorObject|
+        Highcharts.PatternObject|undefined
+        // eslint-disable-next-line @typescript-eslint/indent
+    ) {
         var pos,
             stops = this.stops,
             from,
             to,
-            color: (string|undefined),
+            color: (Highcharts.ColorString|undefined),
             dataClasses = this.dataClasses,
             dataClass,
             i;

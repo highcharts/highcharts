@@ -46,7 +46,7 @@ declare global {
         interface PointLabelObject {
             x?: string;
             y?: (number|null);
-            color: (ColorString|GradientColorObject|PatternObject);
+            color?: (ColorString|GradientColorObject|PatternObject);
             colorIndex: number;
             key?: string;
             series: Series;
@@ -59,7 +59,7 @@ declare global {
             enabledThreshold?: number;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             height?: number;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             radius?: number;
             radiusPlus?: number;
@@ -96,7 +96,7 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             lineWidthPlus?: number;
             radius?: number;
@@ -117,7 +117,7 @@ declare global {
         interface PointStatesSelectOptionsObject {
             enabled?: boolean;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             radius?: number;
         }
@@ -139,7 +139,7 @@ declare global {
         }
         class Point {
             public constructor();
-            public color: (ColorString|GradientColorObject|PatternObject);
+            public color?: (ColorString|GradientColorObject|PatternObject);
             public colorIndex: number;
             public formatPrefix: string;
             public id: string;
@@ -262,7 +262,7 @@ declare global {
  *//**
  * The point's current color.
  * @name Highcharts.PointLabelObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The point's current color index, used in styled mode instead of `color`. The
  * color index is inserted in class names used for styling.
@@ -512,12 +512,12 @@ declare global {
  * The fill color of the marker in hover state. When `undefined`, the series' or
  * point's fillColor for normal state is used.
  * @name Highcharts.PointStatesHoverOptionsObject#fillColor
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The color of the point marker's outline. When `undefined`, the series' or
  * point's lineColor for normal state is used.
  * @name Highcharts.PointStatesHoverOptionsObject#lineColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The width of the point marker's outline. When `undefined`, the series' or
  * point's lineWidth for normal state is used.
@@ -596,7 +596,7 @@ declare global {
  * The color of the point marker's outline. When `undefined`, the series' or
  * point's color is used.
  * @name Highcharts.PointStatesSelectOptionsObject#lineColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The width of the point marker's outline.
  * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
@@ -730,10 +730,10 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
          */
         if (!styledMode && !(this.options as any).color) {
-            this.color = series.color as any; // #3445
+            this.color = series.color; // #3445
         }
 
         if (series.options.colorByPoint) {

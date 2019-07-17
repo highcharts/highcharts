@@ -246,7 +246,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
             options.upColor &&
             point.open < point.close
             ) {
-                attribs.stroke = options.upColor as any;
+                attribs.stroke = options.upColor;
             }
 
             return attribs;

@@ -13,7 +13,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface TreeColorObject {
-            color: ColorString;
+            color: (ColorString|GradientColorObject|PatternObject);
             colorIndex: number;
         }
         interface TreeSeriesMixin {

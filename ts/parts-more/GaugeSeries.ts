@@ -257,7 +257,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      * @sample {highcharts} highcharts/plotoptions/gauge-dial/
      *         Dial options demonstrated
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #cccccc
      * @since     2.3.0
      * @product   highcharts
@@ -344,7 +344,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
      *         Pivot options demonstrated
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #cccccc
      * @since     2.3.0
      * @product   highcharts
