@@ -289,7 +289,7 @@ seriesType<Highcharts.MapSeriesOptions>(
          * @sample {highmaps} maps/plotoptions/series-border/
          *         Borders demo
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   '#cccccc'
          * @product   highmaps
          * @apioption plotOptions.series.borderColor
@@ -395,7 +395,7 @@ seriesType<Highcharts.MapSeriesOptions>(
                 /**
                  * The border color of the point in this state.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderColor
                  */

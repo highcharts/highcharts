@@ -2019,7 +2019,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
             mgn,
-            bgAttr: Highcharts.CSSObject,
+            bgAttr: Highcharts.SVGAttributes,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -2043,7 +2043,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
             bgAttr = {
-                fill: (chartBackgroundColor as any) || 'none'
+                fill: chartBackgroundColor || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2080,7 +2080,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Presentational attributes for the background
             plotBackground
                 .attr({
-                    fill: (plotBackgroundColor as any) || 'none'
+                    fill: plotBackgroundColor || 'none'
                 })
                 .shadow(optionsChart.plotShadow);
 

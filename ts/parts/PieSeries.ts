@@ -39,7 +39,7 @@ declare global {
             extends DataLabelsOptionsObject
         {
             alignTo?: string;
-            connectorColor?: ColorString;
+            connectorColor?: (ColorString|GradientColorObject|PatternObject);
             connectorPadding?: number;
             connectorShape?: (string|Function);
             connectorWidth?: number;
@@ -181,7 +181,7 @@ declare global {
  *      Styled connectors
  *
  * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  * @since 2.1
  * @product highcharts
  *//**
@@ -646,7 +646,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/
          *         Black border
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ffffff
          * @product highcharts
          *

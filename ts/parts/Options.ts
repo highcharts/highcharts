@@ -60,7 +60,7 @@ declare global {
             alignTicks?: boolean;
             animation?: (boolean|AnimationOptionsObject);
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
@@ -85,7 +85,7 @@ declare global {
                 ColorString|GradientColorObject|PatternObject
             );
             plotBackgroundImage?: string;
-            plotBorderColor?: ColorString;
+            plotBorderColor?: (ColorString|GradientColorObject|PatternObject);
             plotBorderWidth?: number;
             plotShadow?: (boolean|CSSObject);
             polar?: boolean;
@@ -93,7 +93,9 @@ declare global {
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
             shadow?: (boolean|CSSObject);
-            selectionMarkerFill?: ColorString;
+            selectionMarkerFill?: (
+                ColorString|GradientColorObject|PatternObject
+            );
             showAxes?: boolean;
             spacing?: Array<number>;
             spacingBottom?: number;
@@ -180,18 +182,18 @@ declare global {
             zoomOut?: string;
         }
         interface LegendNavigationOptions {
-            activeColor?: ColorString;
+            activeColor?: (ColorString|GradientColorObject|PatternObject);
             animation?: (boolean|AnimationOptionsObject);
             arrowSize?: number;
             enabled?: boolean;
-            inactiveColor?: ColorString;
+            inactiveColor?: (ColorString|GradientColorObject|PatternObject);
             style?: CSSObject;
         }
         interface LegendOptions {
             align?: AlignValue;
             alignColumns?: boolean;
-            backgroundColor?: ColorString;
-            borderColor?: ColorString;
+            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             enabled?: boolean;
@@ -284,7 +286,7 @@ declare global {
         interface TooltipOptions {
             animation?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
@@ -1570,7 +1572,7 @@ H.defaultOptions = {
          * @see In styled mode, the selection marker fill is set with the
          *      `.highcharts-selection-marker` class.
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   rgba(51,92,173,0.25)
          * @since     2.1.7
          * @apioption chart.selectionMarkerFill
@@ -1812,7 +1814,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/border/
          *         Border options
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         borderColor: '${palette.highlightColor80}',
 
@@ -1913,7 +1915,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/plotborder/
          *         Plot border options
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         plotBorderColor: '${palette.neutralColor20}'
 
@@ -2322,7 +2324,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption legend.backgroundColor
          */
 
@@ -2584,7 +2586,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         borderColor: '${palette.neutralColor40}',
 
@@ -2684,7 +2686,7 @@ H.defaultOptions = {
              * @sample  {highstock} highcharts/legend/navigation/
              *          Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString}
+             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
             activeColor: '${palette.highlightColor100}',
@@ -2701,7 +2703,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString}
+             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
             inactiveColor: '${palette.neutralColor20}'
@@ -3204,7 +3206,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 

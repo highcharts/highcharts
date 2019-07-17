@@ -397,7 +397,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)
                 .setOpacity(fillOpacity)
-                .get('rgba') as any;
+                .get('rgba');
         }
 
         return attr;
