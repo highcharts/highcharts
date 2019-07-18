@@ -26,7 +26,7 @@ declare global {
             public root: QuadTreeNode;
             public calculateMassAndCenter(): void;
             public clear(chart?: Chart): void;
-            public insertNodes(nodes: Array<Point>): void;
+            public insertNodes(nodes: Array<NetworkgraphPoint>): void;
             public render(chart?: Chart, clear?: boolean): void;
             public renderBox(
                 qtNode: QuadTreeNode,
@@ -42,8 +42,8 @@ declare global {
             ): void;
         }
         class QuadTreeNode {
-            public constructor(box: RectangleObject);
-            public body: (boolean|Point);
+            public constructor(box: Dictionary<number>);
+            public body: (boolean|NetworkgraphPoint);
             public box: Dictionary<number>;
             public boxSize: number;
             public graphic?: SVGElement;
@@ -57,8 +57,8 @@ declare global {
             public plotX?: number;
             public plotY?: number;
             public divideBox(): void;
-            public getBoxPosition(node: Point): number;
-            public insert(point: Point, depth?: number): void;
+            public getBoxPosition(node: NetworkgraphPoint): number;
+            public insert(point: NetworkgraphPoint, depth?: number): void;
             public updateMassAndCenter(): void;
         }
     }
@@ -142,7 +142,7 @@ H.extend(
          */
         insert: function (
             this: Highcharts.QuadTreeNode,
-            point: Highcharts.Point,
+            point: Highcharts.NetworkgraphPoint,
             depth: number
         ): void {
             if (this.isInternal) {
@@ -270,15 +270,15 @@ H.extend(
          * Determine which of the quadrants should be used when placing node in
          * the QuadTree. Returned index is always in range `<0, 3>`.
          *
-         * @param {Highcharts.Point} node
+         * @param {Highcharts.Point} point
          * @return {number}
          */
         getBoxPosition: function (
             this: Highcharts.QuadTreeNode,
-            node: Highcharts.Point
+            point: Highcharts.NetworkgraphPoint
         ): number {
-            var left = (node.plotX as any) < this.box.left + this.box.width / 2,
-                top = (node.plotY as any) < this.box.top + this.box.height / 2,
+            var left = point.plotX < this.box.left + this.box.width / 2,
+                top = point.plotY < this.box.top + this.box.height / 2,
                 index: number;
 
             if (left) {
@@ -352,13 +352,13 @@ H.extend(
          */
         insertNodes: function (
             this: Highcharts.QuadTree,
-            nodes: Array<Highcharts.Point>
+            points: Array<Highcharts.NetworkgraphPoint>
         ): void {
-            nodes.forEach(function (
+            points.forEach(function (
                 this: Highcharts.QuadTree,
-                node: Highcharts.Point
+                point: Highcharts.NetworkgraphPoint
             ): void {
-                this.root.insert(node, this.maxDepth);
+                this.root.insert(point, this.maxDepth);
             }, this);
         },
         /**

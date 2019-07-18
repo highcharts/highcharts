@@ -199,11 +199,11 @@ H.extend(QuadTreeNode.prototype,
      * Determine which of the quadrants should be used when placing node in
      * the QuadTree. Returned index is always in range `<0, 3>`.
      *
-     * @param {Highcharts.Point} node
+     * @param {Highcharts.Point} point
      * @return {number}
      */
-    getBoxPosition: function (node) {
-        var left = node.plotX < this.box.left + this.box.width / 2, top = node.plotY < this.box.top + this.box.height / 2, index;
+    getBoxPosition: function (point) {
+        var left = point.plotX < this.box.left + this.box.width / 2, top = point.plotY < this.box.top + this.box.height / 2, index;
         if (left) {
             if (top) {
                 // Top left
@@ -262,9 +262,9 @@ H.extend(QuadTree.prototype,
      *
      * @param {Array<Highcharts.Point>} points
      */
-    insertNodes: function (nodes) {
-        nodes.forEach(function (node) {
-            this.root.insert(node, this.maxDepth);
+    insertNodes: function (points) {
+        points.forEach(function (point) {
+            this.root.insert(point, this.maxDepth);
         }, this);
     },
     /**
