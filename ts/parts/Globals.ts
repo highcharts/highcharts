@@ -18,6 +18,9 @@ declare global {
     namespace Highcharts {
         type MapBubbleSeries = any; // @todo highmaps
         type NavigationOptions = any; // @todo exporting module
+        type NetworkgraphLayout = any; // @todo networkgraph
+        type NetworkgraphPoint = any; // @todo networkgraph
+        type NetworkgraphSeries = any; // @todo networkgraph
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
