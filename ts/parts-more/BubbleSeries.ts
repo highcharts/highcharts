@@ -23,7 +23,7 @@ declare global {
             fillOpacity?: number;
         }
         interface BubblePointOptions extends ScatterPointOptions {
-            z?: number;
+            z?: (number|null);
         }
         interface BubbleSeriesOptions extends ScatterSeriesOptions {
             displayNegative?: boolean;
@@ -45,7 +45,7 @@ declare global {
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
             public series: BubbleSeries;
-            public z?: number;
+            public z?: (number|null);
             public haloPath(size: number): SVGElement;
         }
         class BubbleSeries extends ScatterSeries {
@@ -135,7 +135,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         /** @ignore-option */
         formatter: function (
             this: Highcharts.DataLabelsFormatterContextObject
-        ): (number|undefined) { // #2945
+        ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },
         /** @ignore-option */
@@ -810,7 +810,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
  * based on the `z`, and controlled by series options like `minSize`,
  * `maxSize`, `sizeBy`, `zMin` and `zMax`.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts
  * @apioption series.bubble.data.z
  */

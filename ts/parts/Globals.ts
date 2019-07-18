@@ -16,8 +16,10 @@
  */
 declare global {
     namespace Highcharts {
-        type MapBubbleSeries = any; // @todo highmaps
         type NavigationOptions = any; // @todo exporting module
+        type NetworkgraphLayout = any; // @todo networkgraph
+        type NetworkgraphPoint = any; // @todo networkgraph
+        type NetworkgraphSeries = any; // @todo networkgraph
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
@@ -61,6 +63,7 @@ declare global {
             invertable?: any; // @todo sankey
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
+            layout?: any; // @todo networkgraph
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module

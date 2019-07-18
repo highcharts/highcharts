@@ -547,7 +547,7 @@ Axis.prototype.beforePadding = function () {
  * based on the `z`, and controlled by series options like `minSize`,
  * `maxSize`, `sizeBy`, `zMin` and `zMax`.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts
  * @apioption series.bubble.data.z
  */
