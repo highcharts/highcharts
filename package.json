@@ -3,6 +3,7 @@
   "version": "7.1.2-modified",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
+  "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
   "repository": {
     "type": "git",
