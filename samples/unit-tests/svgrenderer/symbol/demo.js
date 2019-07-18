@@ -48,21 +48,54 @@ QUnit.test('Symbol tests', function (assert) {
         .add();
 
     total++;
-    setTimeout(function () {
-        assert.strictEqual(
-            symbol1.element.getAttribute('width'),
-            '30',
-            'Width ok'
-        );
-        assert.strictEqual(
-            symbol1.element.getAttribute('transform') &&
-                symbol1.element.getAttribute('transform')
-                    .replace(' ', ','), // MSIE
-            'translate(-15,-15)',
-            'Translate ok'
-        );
-        ifDone();
-    }, 100);
+
+    // wait for the image to be loaded
+    symbol1.element.onload = function () {
+        setTimeout(function () {
+            assert.strictEqual(
+                symbol1.element.getAttribute('width'),
+                '30',
+                'Width ok'
+            );
+            assert.strictEqual(
+                symbol1.element.getAttribute('transform') &&
+                    symbol1.element.getAttribute('transform')
+                        .replace(' ', ','), // MSIE
+                'translate(-15,-15)',
+                'Translate ok'
+            );
+            ifDone();
+
+            // Label with background
+            // moved here due to using symbol1 image
+            var label = ren
+                .label('Hello Label', 300, 100, url)
+                .attr({
+                    padding: 0,
+                    width: 100,
+                    height: 30
+                })
+                .add();
+
+            total++;
+            setTimeout(function () {
+                assert.strictEqual(
+                    label.box.element.getAttribute('width'),
+                    '30',
+                    'Label box width ok'
+                );
+                assert.strictEqual(
+                    label.box.element.getAttribute('transform') &&
+                    label.box.element.getAttribute('transform')
+                        .replace('(35)', '(35,0)'), // MSIE
+                    'translate(35,0)',
+                    'Label box translate ok, centered in label'
+                );
+                ifDone();
+                // console.log(Highcharts.symbolSizes);
+            }, 100);
+        }, 100);
+    };
 
 
     // With explicit size
@@ -74,49 +107,25 @@ QUnit.test('Symbol tests', function (assert) {
         .add();
 
     total++;
-    setTimeout(function () {
-        assert.strictEqual(
-            symbol2.element.getAttribute('width'),
-            '20',
-            'Width ok'
-        );
-        assert.strictEqual(
-            symbol2.element.getAttribute('transform') &&
-                symbol2.element.getAttribute('transform')
-                    .replace(' ', ','), // MSIE
-            'translate(-10,-10)',
-            'Translate ok'
-        );
-        ifDone();
-    }, 100);
 
-    // Label with background
-    var label = ren
-        .label('Hello Label', 300, 100, url)
-        .attr({
-            padding: 0,
-            width: 100,
-            height: 30
-        })
-        .add();
-
-    total++;
-    setTimeout(function () {
-        assert.strictEqual(
-            label.box.element.getAttribute('width'),
-            '30',
-            'Label box width ok'
-        );
-        assert.strictEqual(
-            label.box.element.getAttribute('transform') &&
-            label.box.element.getAttribute('transform')
-                .replace('(35)', '(35,0)'), // MSIE
-            'translate(35,0)',
-            'Label box translate ok, centered in label'
-        );
-        ifDone();
-        // console.log(Highcharts.symbolSizes);
-    }, 100);
+    // wait for the image to be loaded
+    symbol2.element.onload = function () {
+        setTimeout(function () {
+            assert.strictEqual(
+                symbol2.element.getAttribute('width'),
+                '20',
+                'Width ok'
+            );
+            assert.strictEqual(
+                symbol2.element.getAttribute('transform') &&
+                    symbol2.element.getAttribute('transform')
+                        .replace(' ', ','), // MSIE
+                'translate(-10,-10)',
+                'Translate ok'
+            );
+            ifDone();
+        }, 100);
+    };
 
     // Symbol with wrong name #6627
     var symbol3 = ren
