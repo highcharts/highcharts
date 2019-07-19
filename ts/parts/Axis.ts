@@ -1206,6 +1206,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
+         * Whether to zoom axis. If chart.zoom is enabled, the option allows
+         * to disable zooming on axis.
+         *
+         * @sample {highcharts} highcharts/xaxis/xaxis/zoomenabled/
+         *         Zoom enabled
+         *
+         *
+         * @type      {boolean}
+         * @default   enabled
+         * @apioption xAxis.zoomEnabled
+         */
+
+        /**
          * For a datetime axis, the scale will automatically adjust to the
          * appropriate unit. This member gives the default string
          * representations used for each unit. For intermediate values,
