@@ -1,0 +1,1 @@
+Verify that tooltips display correctly with scaling/transform matching the chart, and that tooltip follows the mouse hovering action as on a normal chart.
