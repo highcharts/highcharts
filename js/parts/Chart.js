@@ -1643,6 +1643,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive();
         }
+        // Handle scaling
+        chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
     },
@@ -1693,6 +1695,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 chart.credits = chart.credits.destroy();
                 chart.addCredits(options);
             };
+        }
+    },
+    /**
+     * Handle scaling, #11329 - when there is scaling/transform on the container
+     * or on a parent element, we need to take this into account. We calculate
+     * the scaling once here and it is picked up where we need to use it
+     * (Pointer, Tooltip).
+     *
+     * @private
+     * @function Highcharts.Chart#updateContainerScaling
+     * @return {void}
+     */
+    updateContainerScaling: function () {
+        var container = this.container;
+        if (container.offsetWidth &&
+            container.offsetHeight &&
+            container.getBoundingClientRect) {
+            var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
+            if (scaleX !== 1 || scaleY !== 1) {
+                this.containerScaling = { scaleX: scaleX, scaleY: scaleY };
+            }
+            else {
+                delete this.containerScaling;
+            }
         }
     },
     /**

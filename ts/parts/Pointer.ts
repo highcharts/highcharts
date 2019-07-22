@@ -386,10 +386,21 @@ Highcharts.Pointer.prototype = {
             this.chartPosition = chartPosition = offset(this.chart.container);
         }
 
+        let chartX = ePos.pageX - chartPosition.left,
+            chartY = ePos.pageY - chartPosition.top;
+
+        // #11329 - when there is scaling on a parent element, we need to take
+        // this into account
+        const containerScaling = this.chart.containerScaling;
+        if (containerScaling) {
+            chartX /= containerScaling.scaleX;
+            chartY /= containerScaling.scaleY;
+        }
+
         return extend(e, {
-            chartX: Math.round(ePos.pageX - chartPosition.left),
-            chartY: Math.round(ePos.pageY - chartPosition.top)
-        }) as any;
+            chartX: Math.round(chartX),
+            chartY: Math.round(chartY)
+        }) as any;    
     },
 
     /**
