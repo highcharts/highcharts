@@ -255,10 +255,13 @@ Chart.prototype.getStacks = function () {
         }
     });
     chart.series.forEach(function (series) {
+        var xAxis = series.xAxis;
         if (series.options.stacking &&
             (series.visible === true ||
                 chart.options.chart.ignoreHiddenSeries === false)) {
-            series.stackKey = series.type + pick(series.options.stack, '');
+            series.stackKey = series.type +
+                pick(series.options.stack, '') + ',' +
+                xAxis.options.left + ',' + xAxis.options.width;
         }
     });
 };
