@@ -499,11 +499,15 @@ Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
     });
 
     chart.series.forEach(function (series: Highcharts.Series): void {
+        var xAxis = series.xAxis;
+
         if (series.options.stacking &&
             (series.visible === true ||
             (chart.options.chart as any).ignoreHiddenSeries === false)
         ) {
-            series.stackKey = series.type + pick(series.options.stack, '');
+            series.stackKey = series.type +
+                pick(series.options.stack, '') + ',' +
+                xAxis.options.left + ',' + xAxis.options.width;
         }
     });
 };
