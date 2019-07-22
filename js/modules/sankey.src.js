@@ -302,6 +302,20 @@ seriesType('sankey', 'column',
          */
         linkOpacity: 0.5,
         /**
+         * The minimal height for a line of a sankey. By default,
+         * 0 values are not shown.
+         *
+         * @type      {number}
+         * @default {0}
+         * @apioption plotOptions.sankey.minLinkHeight
+         * @sample highcharts/plotoptions/sankey-minlinkheight
+         *         Sankey diagram with minimal link height
+         *
+         * @since        7.1.3
+         *
+         */
+        minLinkHeight: 0,
+        /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
          *
@@ -647,7 +661,10 @@ seriesType('sankey', 'column',
                 toNode = point.toNode,
                 chart = this.chart,
                 translationFactor = this.translationFactor,
-                linkHeight = point.weight * translationFactor,
+                linkHeight = Math.max(
+                    point.weight * translationFactor,
+                    this.options.minLinkHeight
+                ),
                 options = this.options,
                 fromLinkTop = fromNode.offset(point, 'linksFrom') *
                     translationFactor,
