@@ -83,6 +83,7 @@ H.extend(QuadTreeNode.prototype,
      *        Max depth of the QuadTree
      */
     insert: function (point, depth) {
+        var newQuadTreeNode;
         if (this.isInternal) {
             // Internal node:
             this.nodes[this.getBoxPosition(point)].insert(point, depth - 1);
@@ -110,7 +111,24 @@ H.extend(QuadTreeNode.prototype,
                         .insert(point, depth - 1);
                 }
                 else {
-                    this.nodes.push(point);
+                    // We are below max allowed depth. That means either:
+                    // - really huge number of points
+                    // - falling two points into exactly the same position
+                    // In this case, create another node in the QuadTree.
+                    //
+                    // Alternatively we could add some noise to the
+                    // position, but that could result in different
+                    // rendered chart in exporting.
+                    newQuadTreeNode = new QuadTreeNode({
+                        top: point.plotX,
+                        left: point.plotY,
+                        // Width/height below 1px
+                        width: 0.1,
+                        height: 0.1
+                    });
+                    newQuadTreeNode.body = point;
+                    newQuadTreeNode.isInternal = false;
+                    this.nodes.push(newQuadTreeNode);
                 }
             }
         }
@@ -301,9 +319,6 @@ H.extend(QuadTree.prototype,
             return;
         }
         node.nodes.forEach(function (qtNode) {
-            if (chart) {
-                // this.renderBox(qtNode, chart, clear);
-            }
             if (qtNode.isInternal) {
                 if (beforeCallback) {
                     goFurther = beforeCallback(qtNode);
@@ -333,43 +348,5 @@ H.extend(QuadTree.prototype,
         this.visitNodeRecursive(null, null, function (node) {
             node.updateMassAndCenter();
         });
-    },
-    render: function (chart, clear) {
-        this.visitNodeRecursive(this.root, null, null, chart, clear);
-    },
-    clear: function (chart) {
-        this.render(chart, true);
-    },
-    renderBox: function (qtNode, chart, clear) {
-        if (!qtNode.graphic && !clear) {
-            qtNode.graphic = chart.renderer
-                .rect(qtNode.box.left + chart.plotLeft, qtNode.box.top + chart.plotTop, qtNode.box.width, qtNode.box.height)
-                .attr({
-                stroke: 'rgba(100, 100, 100, 0.5)',
-                'stroke-width': 2
-            })
-                .add();
-            if (!isNaN(qtNode.plotX)) {
-                qtNode.graphic2 = chart.renderer
-                    .circle(qtNode.plotX, qtNode.plotY, qtNode.mass / 10)
-                    .attr({
-                    fill: 'red',
-                    translateY: chart.plotTop,
-                    translateX: chart.plotLeft
-                })
-                    .add();
-            }
-        }
-        else if (clear) {
-            if (qtNode.graphic) {
-                qtNode.graphic = qtNode.graphic.destroy();
-            }
-            if (qtNode.graphic2) {
-                qtNode.graphic2 = qtNode.graphic2.destroy();
-            }
-            if (qtNode.label) {
-                qtNode.label = qtNode.label.destroy();
-            }
-        }
     }
 });
