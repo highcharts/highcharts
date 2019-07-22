@@ -737,7 +737,7 @@ H.Tooltip.prototype = {
         if (shared &&
             !(point.series &&
                 point.series.noSharedTooltip)) {
-            chart.pointer.setInactiveSeries(point);
+            chart.pointer.applyInactiveState(point);
             // Now set hover state for the choosen ones:
             point.forEach(function (item) {
                 item.setState('hover');

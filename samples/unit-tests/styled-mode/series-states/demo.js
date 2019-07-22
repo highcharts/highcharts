@@ -1,9 +1,9 @@
 QUnit.test('Inactive state and styledMode', function (assert) {
-    var done = assert.async(),
-        chart = Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
             chart: {
                 type: 'dependencywheel',
-                styledMode: true
+                styledMode: true,
+                className: 'fix-11389'
             },
 
             series: [{
@@ -25,23 +25,18 @@ QUnit.test('Inactive state and styledMode', function (assert) {
 
     controller.mouseOver(x, y);
 
-    setTimeout(() => {
+    inactivePoints = document.querySelectorAll('.fix-11389 .highcharts-point-inactive');
 
-        inactivePoints = document.querySelectorAll('.highcharts-point-inactive');
+    assert.strictEqual(
+        inactivePoints.length,
+        2,
+        'Exactly one point should have inactive state.'
+    );
 
-        assert.strictEqual(
-            inactivePoints.length,
-            2,
-            'Exactly one point should have inactive state.'
-        );
-
-        assert.strictEqual(
-            document.querySelectorAll('.highcharts-series-inactive').length,
-            0,
-            'Series should not have inactive state class, ' +
-                'when points within inherit state'
-        );
-        done();
-
-    }, 500);
+    assert.strictEqual(
+        document.querySelectorAll('.fix-11389 .highcharts-series-inactive').length,
+        0,
+        'Series should not have inactive state class, ' +
+            'when points within inherit state'
+    );
 });
