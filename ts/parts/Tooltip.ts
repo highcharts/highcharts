@@ -1049,7 +1049,7 @@ H.Tooltip.prototype = {
             !((point as any).series &&
             (point as any).series.noSharedTooltip)
         ) {
-            chart.pointer.setInactiveSeries(point as any);
+            chart.pointer.applyInactiveState(point as any);
 
             // Now set hover state for the choosen ones:
             (point as any).forEach(function (item: Highcharts.Point): void {

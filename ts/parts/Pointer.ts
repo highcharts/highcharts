@@ -69,6 +69,7 @@ declare global {
             public options: Options;
             public pinchDown: Array<any>;
             public runChartClick: boolean;
+            public applyInactiveState(points: Array<Point>): void;
             public destroy(): void;
             public drag(e: PointerEventObject): void;
             public dragStart(e: PointerEventObject): void;
@@ -78,7 +79,6 @@ declare global {
                 shared: (boolean|undefined),
                 e: PointerEventObject
             ): (Point|undefined);
-            public getActiveSeries(points: Array<Point>): Array<Series>;
             public getChartCoordinatesFromPoint(
                 point: Point,
                 inverted?: boolean
@@ -118,7 +118,6 @@ declare global {
                 clip?: boolean
             ): void;
             public setDOMEvents(): void;
-            public setInactiveSeries(points: Array<Point>): void;
             public zoomOption(e: Event): void;
         }
         let chartCount: number;
@@ -758,7 +757,7 @@ Highcharts.Pointer.prototype = {
                 hoverSeries.onMouseOver();
             }
 
-            pointer.setInactiveSeries(points);
+            pointer.applyInactiveState(points);
 
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p: Highcharts.Point): void {
@@ -848,7 +847,7 @@ Highcharts.Pointer.prototype = {
      * or, if `inactiveOtherPoints` is set to true, set inactive state to
      * all points within that series.
      *
-     * @function Highcharts.Pointer#setInactiveSeries
+     * @function Highcharts.Pointer#applyInactiveState
      *
      * @private
      *
@@ -856,48 +855,14 @@ Highcharts.Pointer.prototype = {
      *        Currently hovered points
      *
      */
-    setInactiveSeries: function (
+    applyInactiveState: function (
         this: Highcharts.Pointer,
         points: Array<Highcharts.Point>
     ): void {
-        // Set inactive state for all points
-        var activeSeries = this.chart.pointer.getActiveSeries(points);
-
-        this.chart.series.forEach(function (
-            inactiveSeries: Highcharts.Series
-        ): void {
-            if (activeSeries.indexOf(inactiveSeries) === -1) {
-                // Inactive series
-                inactiveSeries.setState('inactive', true);
-            } else if (inactiveSeries.options.inactiveOtherPoints) {
-                // Active series, but other points should be inactivated
-                inactiveSeries.setAllPointsState('inactive');
-            }
-        });
-    },
-
-    /**
-     * Get currently active series, in opposite to `inactive` series.
-     * Active series includes also it's parents/childs (via linkedTo) option
-     * and navigator series
-     *
-     * @function Highcharts.Pointer#getActiveSeries
-     *
-     * @private
-     *
-     * @param {Array<Highcharts.Point>} points
-     *        Currently hovered points
-     *
-     * @return {Array<Highcharts.Series>}
-     *         Array of series
-     */
-    getActiveSeries: function (
-        this: Highcharts.Pointer,
-        points: Array<Highcharts.Point>
-    ): Array<Highcharts.Series> {
         var activeSeries = [] as Array<Highcharts.Series>,
             series: Highcharts.Series;
 
+        // Get all active series from the hovered points
         (points || []).forEach(function (item: Highcharts.Point): void {
             series = item.series;
 
@@ -921,8 +886,18 @@ Highcharts.Pointer.prototype = {
                 activeSeries.push(series.navigatorSeries);
             }
         });
-
-        return activeSeries;
+        // Now loop over all series, filtering out active series
+        this.chart.series.forEach(function (
+            inactiveSeries: Highcharts.Series
+        ): void {
+            if (activeSeries.indexOf(inactiveSeries) === -1) {
+                // Inactive series
+                inactiveSeries.setState('inactive', true);
+            } else if (inactiveSeries.options.inactiveOtherPoints) {
+                // Active series, but other points should be inactivated
+                inactiveSeries.setAllPointsToState('inactive');
+            }
+        });
     },
 
     /**
