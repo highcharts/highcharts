@@ -284,9 +284,9 @@ H.extend(QuadTree.prototype,
      * DFS (postorder): `d -> e -> b -> c -> a`
      *
      * @param {Highcharts.QuadTreeNode|null} node
-     * @param {Function} beforeCallback function to be called before
+     * @param {Function} [beforeCallback] function to be called before
      *                      visiting children nodes
-     * @param {Function} afterCallback function to be called after
+     * @param {Function} [afterCallback] function to be called after
      *                      visiting children nodes
      */
     visitNodeRecursive: function (node, beforeCallback, afterCallback, chart, clear) {

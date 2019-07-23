@@ -273,7 +273,7 @@ declare global {
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
-            zoomEnabled?: undefined;
+            zoomEnabled?: boolean;
         }
         interface XAxisTitleOptions {
             align?: AxisTitleAlignValue;
