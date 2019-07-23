@@ -121,7 +121,7 @@ seriesType(
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.trendline
- * @since     6.0.0
+ * @since     7.1.3
  * @product   highstock
  * @excluding dataParser, dataURL
  * @apioption series.trendline
