@@ -31,7 +31,7 @@ seriesType(
      * `linkedTo` option to be set.
      *
      * @sample stock/indicators/trendline
-     *         Exponential moving average indicator
+     *         Trendline indicator
      *
      * @extends      plotOptions.sma
      * @since        7.1.3
@@ -39,25 +39,23 @@ seriesType(
      * @optionparent plotOptions.trendline
      */
     {
-        name: 'TRENDLINE',
         params: {
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * By default index value used to be set to 0. Since Highstock 7
-             * by default index is set to 3 which means that the trendline
-             * indicator will be calculated using Close values.
+             * By default index value used to be set to 3.
              */
-            index: 3,
-            period: 0
+            index: 3
         }
     },
     /**
      * @lends Highcharts.Series#
      */
     {
+        nameBase: 'Trendline',
+        nameComponents: false,
         getValues: function (series, params) {
             var xVal = series.xData,
                 yVal = series.yData,
@@ -69,12 +67,8 @@ seriesType(
                 sumXY = 0,
                 sumX2 = 0,
                 xValLength = xVal.length,
-                index, alpha, beta, i, x, y;
-
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                index = params.index ? params.index : 3;
-            }
+                index = params.index,
+                alpha, beta, i, x, y;
 
             // Get sums:
             for (i = 0; i < xValLength; i++) {
