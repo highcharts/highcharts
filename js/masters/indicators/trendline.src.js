@@ -1,6 +1,6 @@
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
- * @module highcharts/indicators/ema
+ * @module highcharts/indicators/trendline
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/linearregression.src.js';
+import '../../indicators/trendline.src.js';
