@@ -39,13 +39,16 @@ seriesType(
      * @optionparent plotOptions.trendline
      */
     {
+        /**
+         * @excluding period
+         */
         params: {
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * By default index value used to be set to 3.
+             * @default 3
              */
             index: 3
         }
