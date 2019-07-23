@@ -307,7 +307,7 @@ H.extend(QuadTree.prototype,
      * @param {Function} afterCallback function to be called after
      *                      visiting children nodes
      */
-    visitNodeRecursive: function (node, beforeCallback, afterCallback, chart, clear) {
+    visitNodeRecursive: function (node, beforeCallback, afterCallback) {
         var goFurther;
         if (!node) {
             node = this.root;
@@ -326,7 +326,7 @@ H.extend(QuadTree.prototype,
                 if (goFurther === false) {
                     return;
                 }
-                this.visitNodeRecursive(qtNode, beforeCallback, afterCallback, chart, clear);
+                this.visitNodeRecursive(qtNode, beforeCallback, afterCallback);
             }
             else if (qtNode.body) {
                 if (beforeCallback) {

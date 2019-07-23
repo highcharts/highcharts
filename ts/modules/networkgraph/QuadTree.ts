@@ -29,9 +29,7 @@ declare global {
             public visitNodeRecursive(
                 node: (QuadTreeNode|null),
                 beforeCallback: (Function|null),
-                afterCallback: (Function|null),
-                chart?: Chart,
-                clear?: boolean
+                afterCallback: (Function|null)
             ): void;
         }
         class QuadTreeNode {
@@ -398,9 +396,7 @@ H.extend(
             this: Highcharts.QuadTree,
             node: (Highcharts.QuadTreeNode|null),
             beforeCallback: (Function|null),
-            afterCallback: (Function|null),
-            chart?: Highcharts.Chart,
-            clear?: boolean
+            afterCallback: (Function|null)
         ): void {
             var goFurther: (boolean|undefined);
 
@@ -431,9 +427,7 @@ H.extend(
                         this.visitNodeRecursive(
                             qtNode,
                             beforeCallback,
-                            afterCallback,
-                            chart,
-                            clear
+                            afterCallback
                         );
                     } else if (qtNode.body) {
                         if (beforeCallback) {
