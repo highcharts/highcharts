@@ -17,7 +17,6 @@
 declare global {
     namespace Highcharts {
         type NavigationOptions = any; // @todo exporting module
-        type NetworkgraphLayout = any; // @todo networkgraph
         type NetworkgraphPoint = any; // @todo networkgraph
         type NetworkgraphSeries = any; // @todo networkgraph
         type PatternObject = object; // @todo pattern module
@@ -28,6 +27,7 @@ declare global {
         }
         interface Chart {
             drilldownLevels?: any; // @todo drilldown module
+            graphLayoutsLookup?: any; // @todo networkgraph
             hasParallelCoordinates?: any; // @todo parallel module
             is3d?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
@@ -44,6 +44,9 @@ declare global {
             animateDrillupTo: Function; // @todo drilldown module
             translate3dPoints: Function; // @todo
             translate3dShapes: Function; // @todo
+        }
+        interface NetworkgraphLayout {
+            beforeStep: Function; // @todo networkgraph
         }
         interface Options {
             drilldown?: any; // @todo drilldown module

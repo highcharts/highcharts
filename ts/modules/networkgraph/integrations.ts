@@ -20,7 +20,9 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface NetworkgraphEulerIntegrationObject {
+        interface NetworkgraphEulerIntegrationObject
+            extends NetworkgraphIntegrationObject
+        {
             attractive(
                 this: NetworkgraphSeries,
                 link: NetworkgraphPoint,
@@ -44,10 +46,23 @@ declare global {
             repulsiveForceFunction(d: number, k: number): number;
         }
         interface NetworkgraphIntegrationDictionary {
+            [name: string]: NetworkgraphIntegrationObject;
             verlet: NetworkgraphVerletIntegrationObject;
             euler: NetworkgraphEulerIntegrationObject;
         }
-        interface NetworkgraphVerletIntegrationObject {
+        interface NetworkgraphIntegrationObject {
+            [name: string]: Function;
+            attractive: Function;
+            attractiveForceFunction: Function;
+            barycenter: Function;
+            getK: Function;
+            integrate: Function;
+            repulsive: Function;
+            repulsiveForceFunction: Function;
+        }
+        interface NetworkgraphVerletIntegrationObject
+            extends NetworkgraphIntegrationObject
+        {
             attractive(
                 this: NetworkgraphSeries,
                 link: NetworkgraphPoint,
@@ -233,7 +248,7 @@ H.networkgraphIntegrations = {
             layout: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint
         ): void {
-            var friction = -layout.options.friction,
+            var friction = -(layout.options.friction as any),
                 maxSpeed = layout.options.maxSpeed,
                 prevX = node.prevX,
                 prevY = node.prevY,
@@ -245,8 +260,8 @@ H.networkgraphIntegrations = {
                 signY = abs(diffY) / (diffY || 1);
 
             // Apply max speed:
-            diffX = signX * Math.min(maxSpeed, Math.abs(diffX));
-            diffY = signY * Math.min(maxSpeed, Math.abs(diffY));
+            diffX = signX * Math.min(maxSpeed as any, Math.abs(diffX));
+            diffY = signY * Math.min(maxSpeed as any, Math.abs(diffY));
 
             // Store for the next iteration:
             node.prevX = node.plotX + node.dispX;
@@ -453,8 +468,8 @@ H.networkgraphIntegrations = {
         ): void {
             var distanceR: number;
 
-            node.dispX += node.dispX * layout.options.friction;
-            node.dispY += node.dispY * layout.options.friction;
+            node.dispX += node.dispX * (layout.options.friction as any);
+            node.dispY += node.dispY * (layout.options.friction as any);
 
             distanceR = node.temperature = layout.vectorLength({
                 x: node.dispX,
@@ -463,9 +478,9 @@ H.networkgraphIntegrations = {
 
             if (distanceR !== 0) {
                 node.plotX += node.dispX / distanceR *
-                    Math.min(Math.abs(node.dispX), layout.temperature);
+                    Math.min(Math.abs(node.dispX), layout.temperature as any);
                 node.plotY += node.dispY / distanceR *
-                    Math.min(Math.abs(node.dispY), layout.temperature);
+                    Math.min(Math.abs(node.dispY), layout.temperature as any);
             }
         },
         /**

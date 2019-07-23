@@ -472,14 +472,7 @@ Highcharts.Pointer.prototype = {
             if (chart.hoverSeries !== hoverSeries) {
                 hoverSeries.onMouseOver();
             }
-            // Set inactive state for all points
-            activeSeries = pointer.getActiveSeries(points);
-            chart.series.forEach(function (inactiveSeries) {
-                if (inactiveSeries.options.inactiveOtherPoints ||
-                    activeSeries.indexOf(inactiveSeries) === -1) {
-                    inactiveSeries.setState('inactive', true);
-                }
-            });
+            pointer.applyInactiveState(points);
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p) {
                 p.setState('hover');
@@ -546,22 +539,21 @@ Highcharts.Pointer.prototype = {
         });
     },
     /**
-     * Get currently active series, in opposite to `inactive` series.
-     * Active series includes also it's parents/childs (via linkedTo) option
-     * and navigator series
+     * Set inactive state to all series that are not currently hovered,
+     * or, if `inactiveOtherPoints` is set to true, set inactive state to
+     * all points within that series.
      *
-     * @function Highcharts.Pointer#getActiveSeries
+     * @function Highcharts.Pointer#applyInactiveState
      *
      * @private
      *
      * @param {Array<Highcharts.Point>} points
      *        Currently hovered points
      *
-     * @return {Array<Highcharts.Series>}
-     *         Array of series
      */
-    getActiveSeries: function (points) {
+    applyInactiveState: function (points) {
         var activeSeries = [], series;
+        // Get all active series from the hovered points
         (points || []).forEach(function (item) {
             series = item.series;
             // Include itself
@@ -579,7 +571,17 @@ Highcharts.Pointer.prototype = {
                 activeSeries.push(series.navigatorSeries);
             }
         });
-        return activeSeries;
+        // Now loop over all series, filtering out active series
+        this.chart.series.forEach(function (inactiveSeries) {
+            if (activeSeries.indexOf(inactiveSeries) === -1) {
+                // Inactive series
+                inactiveSeries.setState('inactive', true);
+            }
+            else if (inactiveSeries.options.inactiveOtherPoints) {
+                // Active series, but other points should be inactivated
+                inactiveSeries.setAllPointsToState('inactive');
+            }
+        });
     },
     /**
      * Reset the tracking by hiding the tooltip, the hover series state and the

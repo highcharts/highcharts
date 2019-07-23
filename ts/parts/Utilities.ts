@@ -195,7 +195,7 @@ declare global {
         function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: any): boolean;
         function isDOMElement(obj: any): boolean;
-        function isFunction(obj: any): boolean;
+        function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
         function isString(s: unknown): s is string;
@@ -3199,7 +3199,7 @@ H.uniqueKey = (function (): any {
     };
 }());
 
-H.isFunction = function (obj: any): boolean {
+H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
 };
 

@@ -21,6 +21,12 @@ import H from '../../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class QuadTree {
+            public constructor(
+                x: number,
+                y: number,
+                width: number,
+                height: number
+            );
             public box: Dictionary<number>;
             public maxDepth: number;
             public root: QuadTreeNode;
@@ -28,8 +34,8 @@ declare global {
             public insertNodes(nodes: Array<NetworkgraphPoint>): void;
             public visitNodeRecursive(
                 node: (QuadTreeNode|null),
-                beforeCallback: (Function|null),
-                afterCallback: (Function|null)
+                beforeCallback?: (Function|null),
+                afterCallback?: (Function|null)
             ): void;
         }
         class QuadTreeNode {
@@ -387,16 +393,16 @@ H.extend(
          * DFS (postorder): `d -> e -> b -> c -> a`
          *
          * @param {Highcharts.QuadTreeNode|null} node
-         * @param {Function} beforeCallback function to be called before
+         * @param {Function} [beforeCallback] function to be called before
          *                      visiting children nodes
-         * @param {Function} afterCallback function to be called after
+         * @param {Function} [afterCallback] function to be called after
          *                      visiting children nodes
          */
         visitNodeRecursive: function (
             this: Highcharts.QuadTree,
             node: (Highcharts.QuadTreeNode|null),
-            beforeCallback: (Function|null),
-            afterCallback: (Function|null)
+            beforeCallback?: (Function|null),
+            afterCallback?: (Function|null)
         ): void {
             var goFurther: (boolean|undefined);
 

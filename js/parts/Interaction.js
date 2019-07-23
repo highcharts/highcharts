@@ -963,12 +963,25 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // Don't loop over points on a series that doesn't apply inactive state
         // to siblings markers (e.g. line, column)
         if (inherit && inactiveOtherPoints && series.points) {
-            series.points.forEach(function (point) {
-                if (point.setState) {
-                    point.setState(state);
-                }
-            });
+            series.setAllPointsToState(state);
         }
+    },
+    /**
+     * Set the state for all points in the series.
+     *
+     * @function Highcharts.Series#setAllPointsToState
+     *
+     * @private
+     *
+     * @param {string} [state]
+     *        Can be either `hover` or undefined to set to normal state.
+     */
+    setAllPointsToState: function (state) {
+        this.points.forEach(function (point) {
+            if (point.setState) {
+                point.setState(state);
+            }
+        });
     },
     /**
      * Show or hide the series.
