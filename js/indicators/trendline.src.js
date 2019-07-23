@@ -39,6 +39,7 @@ seriesType(
      * @optionparent plotOptions.trendline
      */
     {
+        name: 'TRENDLINE',
         params: {
             /**
              * The point index which indicator calculations will base. For
@@ -49,7 +50,8 @@ seriesType(
              * by default index is set to 3 which means that the trendline
              * indicator will be calculated using Close values.
              */
-            index: 3
+            index: 3,
+            period: 0
         }
     },
     /**
