@@ -12,11 +12,12 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   available. It emulates animation in sync. Use the utility functions
   `TestUtilities.lolexInstall` before the test and
   `TestUtilities.lolexRunAndUninstall` after (find samples in the test suite).
-- *Testing with templates*. Test templates provide generic charts, that can be
-  modified for particular test cases. Use `TestTemplate.test` inside QUnit with
-  templates in the `test/templates` directory. *Note*: Templates are, for the
-  moment, not available in [Highcharts Utils]. Therefor you should not create
-  `demo.details` or `demo.html` in a template-based test case.
+- *Testing with templates*. Test templates provide generic charts between
+  several tests, that can be modified for particular test cases. Use
+  `TestTemplate.test` inside a `QUnit.test` with templates found in the
+  `test/templates` directory. `TestTemplate` handles most option modifications
+  (exception functions) and reverse them after each test case, which is faster
+  then the classic destruction and creation of charts for each test.
 
 #### Optimize for Speed
 We want fast running tests. The time it takes to run the test suite is largely
@@ -39,6 +40,9 @@ limit the number of charts in the test suite.
 - Similar to the above, all tests run in the same thread, so a badly written 
   test may cause errors downstream. Try limiting the number of tests that run
   by modifying the glob in the `files` config in `tests/karma-config.js`.
+- Also keep in mind, that `TestTemplate` creates additional charts that are kept
+  between tests. It is therefore advisable to limit DOM operations to your own
+  `Chart.container` element.
 - Traditionally, the Highcharts unit tests have a `demo.html` file where the
   tests in `demo.js` run. In karma/QUnit, the `demo.html` file is not included.
   If the test depends on things like the width of the container or other DOM 
