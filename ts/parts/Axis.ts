@@ -1209,7 +1209,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether to zoom axis. If chart.zoom is enabled, the option allows
          * to disable zooming on axis.
          *
-         * @sample {highcharts} highcharts/xaxis/xaxis/zoomenabled/
+         * @sample {highcharts} highcharts/xaxis/zoomenabled/
          *         Zoom enabled
          *
          *
