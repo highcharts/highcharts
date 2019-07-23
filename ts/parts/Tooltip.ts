@@ -835,42 +835,38 @@ H.Tooltip.prototype = {
                 chart.chartHeight,
             chartPosition = chart.pointer.chartPosition,
             containerScaling = chart.containerScaling,
-            scaleX = (val: number): number =>
-                    containerScaling ? val * containerScaling.scaleX : val,
-            scaleY = (val: number): number =>
-                    containerScaling ? val * containerScaling.scaleY : val,
+            scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+                containerScaling ? val * containerScaling.scaleX : val
+            ),
+            scaleY = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+                containerScaling ? val * containerScaling.scaleY : val
+            ),
             // Build parameter arrays for firstDimension()/secondDimension()
-            buildDimensionArray = (dim: 'x' | 'y') => {
+            buildDimensionArray = (dim: 'x' | 'y'): Array<number|string> => {
                 const isX = dim === 'x';
                 return [
                     dim, // Dimension - x or y
-                    isX ? outerWidth
-                        : outerHeight,
-                    isX ? boxWidth
-                        : boxHeight
+                    isX ? outerWidth : outerHeight,
+                    isX ? boxWidth : boxHeight
                 ].concat(outside ? [
                     // If we are using tooltip.outside, we need to scale the
                     // position to match scaling of the container in case there
                     // is a transform/zoom on the container. #11329
-                    isX ? scaleX(boxWidth)
-                        : scaleY(boxHeight),
+                    isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(point.plotX! + chart.plotLeft)
-                        : chartPosition.top - distance +
-                            scaleY(point.plotY! + chart.plotTop),
+                            scaleX((point.plotX as any) + chart.plotLeft) :
+                        chartPosition.top - distance +
+                            scaleY((point.plotY as any) + chart.plotTop),
                     0,
-                    isX ? outerWidth
-                        : outerHeight
+                    isX ? outerWidth : outerHeight
                 ] : [
                     // Not outside, no scaling is needed
-                    isX ? boxWidth
-                        : boxHeight,
-                    isX ? point.plotX! + chart.plotLeft
-                        : point.plotY! + chart.plotTop,
-                    isX ? chart.plotLeft
-                        : chart.plotTop,
-                    isX ? chart.plotLeft + chart.plotWidth
-                        : chart.plotTop + chart.plotHeight
+                    isX ? boxWidth : boxHeight,
+                    isX ? (point.plotX as any) + chart.plotLeft :
+                        (point.plotY as any) + chart.plotTop,
+                    isX ? chart.plotLeft : chart.plotTop,
+                    isX ? chart.plotLeft + chart.plotWidth :
+                        chart.plotTop + chart.plotHeight
                 ]);
             },
             first = buildDimensionArray('y'),
@@ -1413,8 +1409,8 @@ H.Tooltip.prototype = {
                 label.height,
                 point
             ),
-            anchorX = point.plotX! + chart.plotLeft,
-            anchorY = point.plotY! + chart.plotTop,
+            anchorX = (point.plotX as any) + chart.plotLeft,
+            anchorY = (point.plotY as any) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change

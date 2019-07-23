@@ -400,7 +400,7 @@ Highcharts.Pointer.prototype = {
         return extend(e, {
             chartX: Math.round(chartX),
             chartY: Math.round(chartY)
-        }) as any;    
+        }) as any;
     },
 
     /**
