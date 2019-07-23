@@ -516,12 +516,12 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Sankey and minimum line height',
+    'Sankey and minimum line width',
     function (assert) {
 
         var chart = Highcharts.chart('container', {
                 series: [{
-                    minLinkHeight: 1,
+                    minLinkWidth: 1,
                     keys: ['from', 'to', 'weight'],
                     data: [
                         ['Brazil', 'England', 1],
