@@ -565,43 +565,35 @@ H.Tooltip.prototype = {
             doc.documentElement.clientWidth - 2 * distance :
             chart.chartWidth, outerHeight = outside ?
             Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, doc.body.offsetHeight, doc.documentElement.offsetHeight, doc.documentElement.clientHeight) :
-            chart.chartHeight, chartPosition = chart.pointer.chartPosition, containerScaling = chart.containerScaling, scaleX = function (val) {
-            return containerScaling ? val * containerScaling.scaleX : val;
-        }, scaleY = function (val) {
-            return containerScaling ? val * containerScaling.scaleY : val;
-        }, 
+            chart.chartHeight, chartPosition = chart.pointer.chartPosition, containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        containerScaling ? val * containerScaling.scaleX : val); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        containerScaling ? val * containerScaling.scaleY : val); }, 
         // Build parameter arrays for firstDimension()/secondDimension()
         buildDimensionArray = function (dim) {
             var isX = dim === 'x';
             return [
                 dim,
-                isX ? outerWidth
-                    : outerHeight,
-                isX ? boxWidth
-                    : boxHeight
+                isX ? outerWidth : outerHeight,
+                isX ? boxWidth : boxHeight
             ].concat(outside ? [
                 // If we are using tooltip.outside, we need to scale the
                 // position to match scaling of the container in case there
                 // is a transform/zoom on the container. #11329
-                isX ? scaleX(boxWidth)
-                    : scaleY(boxHeight),
+                isX ? scaleX(boxWidth) : scaleY(boxHeight),
                 isX ? chartPosition.left - distance +
-                    scaleX(point.plotX + chart.plotLeft)
-                    : chartPosition.top - distance +
+                    scaleX(point.plotX + chart.plotLeft) :
+                    chartPosition.top - distance +
                         scaleY(point.plotY + chart.plotTop),
                 0,
-                isX ? outerWidth
-                    : outerHeight
+                isX ? outerWidth : outerHeight
             ] : [
                 // Not outside, no scaling is needed
-                isX ? boxWidth
-                    : boxHeight,
-                isX ? point.plotX + chart.plotLeft
-                    : point.plotY + chart.plotTop,
-                isX ? chart.plotLeft
-                    : chart.plotTop,
-                isX ? chart.plotLeft + chart.plotWidth
-                    : chart.plotTop + chart.plotHeight
+                isX ? boxWidth : boxHeight,
+                isX ? point.plotX + chart.plotLeft :
+                    point.plotY + chart.plotTop,
+                isX ? chart.plotLeft : chart.plotTop,
+                isX ? chart.plotLeft + chart.plotWidth :
+                    chart.plotTop + chart.plotHeight
             ]);
         }, first = buildDimensionArray('y'), second = buildDimensionArray('x'), 
         // The far side is right or bottom

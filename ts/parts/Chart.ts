@@ -72,7 +72,7 @@ declare global {
             public colorCounter: number;
             public container: HTMLDOMElement;
             public containerHeight?: string;
-            public containerScaling?: { scaleX: number, scaleY: number };
+            public containerScaling?: { scaleX: number; scaleY: number };
             public containerWidth?: string;
             public credits?: SVGElement;
             public hasCartesianSeries?: boolean;
