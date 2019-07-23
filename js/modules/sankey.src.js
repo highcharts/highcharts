@@ -168,7 +168,7 @@ seriesType('sankey', 'column',
      *               maxPointWidth, negativeColor, pointInterval,
      *               pointIntervalUnit, pointPadding, pointPlacement,
      *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones
+     *               stacking, threshold, zoneAxis, zones, minPointLength
      * @optionparent plotOptions.sankey
      */
     {
@@ -302,19 +302,19 @@ seriesType('sankey', 'column',
          */
         linkOpacity: 0.5,
         /**
-         * The minimal height for a line of a sankey. By default,
+         * The minimal width for a line of a sankey. By default,
          * 0 values are not shown.
          *
          * @type      {number}
          * @default {0}
-         * @apioption plotOptions.sankey.minLinkHeight
-         * @sample highcharts/plotoptions/sankey-minlinkheight
+         * @apioption plotOptions.sankey.minLinkWidth
+         * @sample highcharts/plotoptions/sankey-minlinkwidth
          *         Sankey diagram with minimal link height
          *
          * @since        7.1.3
          *
          */
-        minLinkHeight: 0,
+        minLinkWidth: 0,
         /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
@@ -663,7 +663,7 @@ seriesType('sankey', 'column',
                 translationFactor = this.translationFactor,
                 linkHeight = Math.max(
                     point.weight * translationFactor,
-                    this.options.minLinkHeight
+                    this.options.minLinkWidth
                 ),
                 options = this.options,
                 fromLinkTop = fromNode.offset(point, 'linksFrom') *
