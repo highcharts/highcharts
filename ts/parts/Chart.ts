@@ -72,6 +72,7 @@ declare global {
             public colorCounter: number;
             public container: HTMLDOMElement;
             public containerHeight?: string;
+            public containerScaling?: { scaleX: number; scaleY: number };
             public containerWidth?: string;
             public credits?: SVGElement;
             public hasCartesianSeries?: boolean;
@@ -165,6 +166,7 @@ declare global {
                 redraw?: boolean
             ): void;
             public temporaryDisplay(revert?: boolean): void;
+            public updateContainerScaling(): void;
         }
         function chart(
             options: Options,
@@ -2408,6 +2410,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive();
         }
 
+        // Handle scaling
+        chart.updateContainerScaling();
+
         // Set flag
         chart.hasRendered = true;
 
@@ -2477,6 +2482,34 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 chart.credits = (chart.credits as any).destroy() as any;
                 chart.addCredits(options);
             };
+        }
+    },
+
+    /**
+     * Handle scaling, #11329 - when there is scaling/transform on the container
+     * or on a parent element, we need to take this into account. We calculate
+     * the scaling once here and it is picked up where we need to use it
+     * (Pointer, Tooltip).
+     *
+     * @private
+     * @function Highcharts.Chart#updateContainerScaling
+     * @return {void}
+     */
+    updateContainerScaling: function (this: Highcharts.Chart): void {
+        const container = this.container;
+        if (
+            container.offsetWidth &&
+            container.offsetHeight &&
+            container.getBoundingClientRect
+        ) {
+            const bb = container.getBoundingClientRect(),
+                scaleX = bb.width / container.offsetWidth,
+                scaleY = bb.height / container.offsetHeight;
+            if (scaleX !== 1 || scaleY !== 1) {
+                this.containerScaling = { scaleX, scaleY };
+            } else {
+                delete this.containerScaling;
+            }
         }
     },
 
