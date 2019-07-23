@@ -52,13 +52,13 @@ import highContrastTheme from './high-contrast-theme.js';
 import defaultOptions from './options.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
-var addEvent = H.addEvent,
+var Chart = H.Chart,
+    addEvent = H.addEvent,
     doc = H.win.document,
     pick = H.pick,
     merge = H.merge,
     extend = H.extend,
     error = H.error;
-
 
 // Add default options
 merge(true, H.defaultOptions, defaultOptions, {
@@ -455,93 +455,95 @@ Accessibility.prototype = {
 
 
 // Handle updates to the module and send render updates to components
-addEvent(H.Chart, 'render', function (e) {
-    var a11y = this.accessibility;
-    // Update/destroy
-    if (this.a11yDirty && this.renderTo) {
-        delete this.a11yDirty;
-        var accessibilityOptions = this.options.accessibility;
-        if (accessibilityOptions && accessibilityOptions.enabled) {
-            if (a11y) {
-                a11y.update();
+Chart.prototype.callbacks.push(function (chart) {
+    addEvent(chart, 'render', function (e) {
+        var a11y = this.accessibility;
+        // Update/destroy
+        if (this.a11yDirty && this.renderTo) {
+            delete this.a11yDirty;
+            var accessibilityOptions = this.options.accessibility;
+            if (accessibilityOptions && accessibilityOptions.enabled) {
+                if (a11y) {
+                    a11y.update();
+                } else {
+                    this.accessibility = a11y = new Accessibility(this);
+                }
+            } else if (a11y) {
+                // Destroy if after update we have a11y and it is disabled
+                if (a11y.destroy) {
+                    a11y.destroy();
+                }
+                delete this.accessibility;
             } else {
-                this.accessibility = a11y = new Accessibility(this);
+                // Just hide container
+                this.renderTo.setAttribute('aria-hidden', true);
             }
-        } else if (a11y) {
-            // Destroy if after update we have a11y and it is disabled
-            if (a11y.destroy) {
-                a11y.destroy();
+        }
+        // Update markup regardless
+        if (a11y) {
+            Object.keys(a11y.components).forEach(function (componentName) {
+                a11y.components[componentName].onChartRender(e);
+            });
+        }
+    });
+
+    // Update with chart/series/point updates
+    addEvent(chart, 'update', function (e) {
+        // Merge new options
+        var newOptions = e.options.accessibility;
+        if (newOptions) {
+            // Handle custom component updating specifically
+            if (newOptions.customComponents) {
+                this.options.accessibility.customComponents =
+                    newOptions.customComponents;
+                delete newOptions.customComponents;
             }
-            delete this.accessibility;
-        } else {
-            // Just hide container
-            this.renderTo.setAttribute('aria-hidden', true);
+            merge(true, this.options.accessibility, newOptions);
+            // Recreate from scratch
+            if (this.accessibility && this.accessibility.destroy) {
+                this.accessibility.destroy();
+                delete this.accessibility;
+            }
         }
-    }
-    // Update markup regardless
-    if (a11y) {
-        Object.keys(a11y.components).forEach(function (componentName) {
-            a11y.components[componentName].onChartRender(e);
-        });
-    }
-});
 
-// Update with chart/series/point updates
-addEvent(H.Chart, 'update', function (e) {
-    // Merge new options
-    var newOptions = e.options.accessibility;
-    if (newOptions) {
-        // Handle custom component updating specifically
-        if (newOptions.customComponents) {
-            this.options.accessibility.customComponents =
-                newOptions.customComponents;
-            delete newOptions.customComponents;
-        }
-        merge(true, this.options.accessibility, newOptions);
-        // Recreate from scratch
-        if (this.accessibility && this.accessibility.destroy) {
-            this.accessibility.destroy();
-            delete this.accessibility;
-        }
-    }
-
-    // Mark dirty for update
-    this.a11yDirty = true;
-});
-
-// Mark dirty for update
-addEvent(H.Point, 'update', function () {
-    if (this.series.chart.accessibility) {
-        this.series.chart.a11yDirty = true;
-    }
-});
-['addSeries', 'init'].forEach(function (event) {
-    addEvent(H.Chart, event, function () {
+        // Mark dirty for update
         this.a11yDirty = true;
     });
-});
-['update', 'updatedData', 'remove'].forEach(function (event) {
-    addEvent(H.Series, event, function () {
-        if (this.chart.accessibility) {
-            this.chart.a11yDirty = true;
+
+    // Mark dirty for update
+    addEvent(H.Point, 'update', function () {
+        if (this.series.chart.accessibility) {
+            this.series.chart.a11yDirty = true;
         }
     });
-});
+    ['addSeries', 'init'].forEach(function (event) {
+        addEvent(chart, event, function () {
+            this.a11yDirty = true;
+        });
+    });
+    ['update', 'updatedData', 'remove'].forEach(function (event) {
+        addEvent(H.Series, event, function () {
+            if (this.chart.accessibility) {
+                this.chart.a11yDirty = true;
+            }
+        });
+    });
 
-// Direct updates (events happen after render)
-[
-    'afterDrilldown', 'drillupall'
-].forEach(function (event) {
-    addEvent(H.Chart, event, function () {
+    // Direct updates (events happen after render)
+    [
+        'afterDrilldown', 'drillupall'
+    ].forEach(function (event) {
+        addEvent(chart, event, function () {
+            if (this.accessibility) {
+                this.accessibility.update();
+            }
+        });
+    });
+
+    // Destroy with chart
+    addEvent(chart, 'destroy', function () {
         if (this.accessibility) {
-            this.accessibility.update();
+            this.accessibility.destroy();
         }
     });
-});
-
-// Destroy with chart
-addEvent(H.Chart, 'destroy', function () {
-    if (this.accessibility) {
-        this.accessibility.destroy();
-    }
 });
