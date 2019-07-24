@@ -1173,7 +1173,7 @@ H.merge = function<T> (): T {
             H.objectEach(original, function (value: any, key: string): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (H.isObject(value, true) &&
+                if (isObject(value, true) &&
                     !H.isClass(value) &&
                     !H.isDOMElement(value)
                 ) {
@@ -1268,7 +1268,7 @@ function isArray(obj: unknown): obj is Array<unknown> {
  * @return {boolean}
  *         True if the argument is an object.
  */
-H.isObject = function (obj: any, strict?: boolean): boolean {
+function isObject(obj: any, strict?: boolean): boolean {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 };
 
@@ -1284,7 +1284,7 @@ H.isObject = function (obj: any, strict?: boolean): boolean {
  *         True if the argument is a HTML Element.
  */
 H.isDOMElement = function (obj: any): boolean {
-    return H.isObject(obj) && typeof obj.nodeType === 'number';
+    return isObject(obj) && typeof obj.nodeType === 'number';
 };
 
 /**
@@ -1302,7 +1302,7 @@ H.isClass = function (obj: any): boolean {
     var c = obj && obj.constructor;
 
     return !!(
-        H.isObject(obj, true) &&
+        isObject(obj, true) &&
         !H.isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object')
     );
@@ -1406,7 +1406,7 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (defined(prop) && H.isObject(prop)) {
+    } else if (defined(prop) && isObject(prop)) {
         H.objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
@@ -1743,9 +1743,9 @@ H.wrap = function (
  */
 H.datePropsToTimestamps = function (object: any): void {
     H.objectEach(object, function (val: any, key: string): void {
-        if (H.isObject(val) && typeof val.getTime === 'function') {
+        if (isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
-        } else if (H.isObject(val) || isArray(val)) {
+        } else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -2230,7 +2230,7 @@ H.setAnimation = function (
 H.animObject = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
-    return H.isObject(animation) ?
+    return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
 };
@@ -3066,7 +3066,7 @@ H.animate = function (
         fx,
         args;
 
-    if (!H.isObject(opt)) { // Number or undefined/null
+    if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
         opt = {
             duration: args[2],
@@ -3267,6 +3267,7 @@ const utils = {
     defined,
     isArray,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat

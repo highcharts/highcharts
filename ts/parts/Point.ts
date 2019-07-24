@@ -636,7 +636,8 @@ import U from './Utilities.js';
 const {
     defined,
     isArray,
-    isNumber
+    isNumber,
+    isObject
 } = U;
 
 var Point: typeof Highcharts.Point,
@@ -908,7 +909,7 @@ Highcharts.Point.prototype = {
             result[key] = (
                 isLastKey ?
                     value :
-                    H.isObject(result[key], true) ?
+                    isObject(result[key], true) ?
                         result[key] :
                         {}
             );

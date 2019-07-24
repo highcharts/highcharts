@@ -107,7 +107,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    isObject = U.isObject;
 
 import '../parts/Options.js';
 import '../mixins/nodes.js';
@@ -117,7 +118,6 @@ var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 
 var find = H.find,
-    isObject = H.isObject,
     merge = H.merge,
     seriesType = H.seriesType,
     pick = H.pick,

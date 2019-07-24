@@ -756,7 +756,7 @@ H.merge = function () {
         }
         H.objectEach(original, function (value, key) {
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (H.isObject(value, true) &&
+            if (isObject(value, true) &&
                 !H.isClass(value) &&
                 !H.isDOMElement(value)) {
                 copy[key] = doCopy(copy[key] || {}, value);
@@ -842,9 +842,10 @@ function isArray(obj) {
  * @return {boolean}
  *         True if the argument is an object.
  */
-H.isObject = function (obj, strict) {
+function isObject(obj, strict) {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
-};
+}
+;
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -857,7 +858,7 @@ H.isObject = function (obj, strict) {
  *         True if the argument is a HTML Element.
  */
 H.isDOMElement = function (obj) {
-    return H.isObject(obj) && typeof obj.nodeType === 'number';
+    return isObject(obj) && typeof obj.nodeType === 'number';
 };
 /**
  * Utility function to check if an Object is an class.
@@ -872,7 +873,7 @@ H.isDOMElement = function (obj) {
  */
 H.isClass = function (obj) {
     var c = obj && obj.constructor;
-    return !!(H.isObject(obj, true) &&
+    return !!(isObject(obj, true) &&
         !H.isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
 };
@@ -964,7 +965,7 @@ H.attr = function (elem, prop, value) {
         }
         // else if prop is defined, it is a hash of key/value pairs
     }
-    else if (defined(prop) && H.isObject(prop)) {
+    else if (defined(prop) && isObject(prop)) {
         H.objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
@@ -1248,10 +1249,10 @@ H.wrap = function (obj, method, func) {
  */
 H.datePropsToTimestamps = function (object) {
     H.objectEach(object, function (val, key) {
-        if (H.isObject(val) && typeof val.getTime === 'function') {
+        if (isObject(val) && typeof val.getTime === 'function') {
             object[key] = val.getTime();
         }
-        else if (H.isObject(val) || isArray(val)) {
+        else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -1636,7 +1637,7 @@ H.setAnimation = function (animation, chart) {
  *         An object with at least a duration property.
  */
 H.animObject = function (animation) {
-    return H.isObject(animation) ?
+    return isObject(animation) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
 };
@@ -2322,7 +2323,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  */
 H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
-    if (!H.isObject(opt)) { // Number or undefined/null
+    if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
         opt = {
             duration: args[2],
@@ -2489,6 +2490,7 @@ var utils = {
     defined: defined,
     isArray: isArray,
     isNumber: isNumber,
+    isObject: isObject,
     isString: isString,
     pInt: pInt,
     splat: splat

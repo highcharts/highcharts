@@ -21,7 +21,7 @@ var addEvent = H.addEvent,
     dateFormat = H.dateFormat,
     isObject = function (x) {
         // Always use strict mode
-        return H.isObject(x, true);
+        return U.isObject(x, true);
     },
     merge = H.merge,
     pick = H.pick,

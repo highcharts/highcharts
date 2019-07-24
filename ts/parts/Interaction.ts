@@ -145,7 +145,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isArray
+    isArray,
+    isObject
 } = U;
 
 import './Chart.js';
@@ -163,7 +164,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
