@@ -757,7 +757,7 @@ H.merge = function () {
         H.objectEach(original, function (value, key) {
             // Copy the contents of objects, but not arrays or DOM nodes
             if (isObject(value, true) &&
-                !H.isClass(value) &&
+                !isClass(value) &&
                 !isDOMElement(value)) {
                 copy[key] = doCopy(copy[key] || {}, value);
                 // Primitives and arrays are copied over directly
@@ -870,12 +870,12 @@ function isDOMElement(obj) {
  * @return {boolean}
  *         True if the argument is an class.
  */
-H.isClass = function (obj) {
+function isClass(obj) {
     var c = obj && obj.constructor;
     return !!(isObject(obj, true) &&
         !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
-};
+}
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
  * Infinity or -Infinity).
@@ -2488,6 +2488,7 @@ if (win.jQuery) {
 var utils = {
     defined: defined,
     isArray: isArray,
+    isClass: isClass,
     isDOMElement: isDOMElement,
     isNumber: isNumber,
     isObject: isObject,
