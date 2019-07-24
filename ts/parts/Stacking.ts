@@ -489,7 +489,8 @@ H.StackItem.prototype = {
  * @return {void}
  */
 Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
-    var chart = this;
+    var chart = this,
+        inverted = chart.inverted;
 
     // reset stacks for each yAxis
     chart.yAxis.forEach(function (axis: Highcharts.Axis): void {
@@ -505,9 +506,12 @@ Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
             (series.visible === true ||
             (chart.options.chart as any).ignoreHiddenSeries === false)
         ) {
-            series.stackKey = series.type +
-                pick(series.options.stack, '') + ',' +
-                xAxis.options.left + ',' + xAxis.options.width;
+            series.stackKey = [
+                series.type,
+                pick(series.options.stack, ''),
+                inverted ? xAxis.options.top : xAxis.options.left,
+                inverted ? xAxis.options.height : xAxis.options.width
+            ].join(',');
         }
     });
 };
