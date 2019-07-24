@@ -72,14 +72,14 @@ declare global {
             shadow?: (boolean|ShadowOptionsObject);
             shape?: string;
             style?: CSSObject;
-            textPath?: DataLabelsTextPath;
+            textPath?: DataLabelsTextPathOptionsObject;
             useHTML?: boolean;
             verticalAlign?: (VerticalAlignValue|null);
             x?: number;
             y?: (number|null);
             zIndex?: number;
         }
-        interface DataLabelsTextPath {
+        interface DataLabelsTextPathOptionsObject {
             attributes?: SVGAttributes;
             enabled?: boolean;
         }

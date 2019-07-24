@@ -1,8 +1,5 @@
 js/mixins/**/*.js
-js/modules/networkgraph/draggable-nodes.js
-js/modules/networkgraph/integrations.js
-js/modules/networkgraph/layouts.js
-js/modules/networkgraph/QuadTree.js
+js/modules/networkgraph/*.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/**/*.js
