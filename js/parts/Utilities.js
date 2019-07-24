@@ -723,7 +723,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object|undefined>} [...n]
+ * @param {...Array<object|undefined>} [n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -740,7 +740,7 @@ H.Fx.prototype = {
 *        The first object to extend. When only this is given, the function
 *        returns a deep copy.
 *
-* @param {Array<object|undefined>} [...n]
+* @param {...Array<object|undefined>} [n]
 *        An object to merge into the previous one.
 *
 * @return {T}
