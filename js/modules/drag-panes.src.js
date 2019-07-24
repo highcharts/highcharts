@@ -12,7 +12,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    objectEach = U.objectEach;
 
 import '../parts/Axis.js';
 import '../parts/Pointer.js';
@@ -22,7 +23,6 @@ var hasTouch = H.hasTouch,
     wrap = H.wrap,
     addEvent = H.addEvent,
     relativeLength = H.relativeLength,
-    objectEach = H.objectEach,
     Axis = H.Axis,
     Pointer = H.Pointer,
 

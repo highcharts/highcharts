@@ -12,12 +12,12 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    objectEach = U.objectEach;
 
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    objectEach = H.objectEach,
     pick = H.pick,
     isIntersectRect = H.isIntersectRect,
     addEvent = H.addEvent,

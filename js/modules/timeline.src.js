@@ -16,7 +16,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    objectEach = U.objectEach;
 
 var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin,
@@ -557,7 +558,7 @@ seriesType('timeline', 'line',
             }
 
             // Change coordinates so that they will be relative to data label.
-            H.objectEach(coords, function (_coord, i) {
+            objectEach(coords, function (_coord, i) {
                 coords[i] -= (dl.alignAttr || dl)[i[0]];
             });
 

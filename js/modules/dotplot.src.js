@@ -19,7 +19,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
+
 import '../parts/Series.js';
 
 var extend = H.extend,
@@ -132,7 +135,7 @@ seriesType('dotplot', 'column', {
                     itemY--;
                 }
             }
-            H.objectEach(graphics, function (graphic, key) {
+            objectEach(graphics, function (graphic, key) {
                 if (!graphic.isActive) {
                     graphic.destroy();
                     delete graphic[key];

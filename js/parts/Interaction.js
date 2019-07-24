@@ -58,7 +58,7 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isObject = U.isObject;
+var defined = U.defined, isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach;
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
@@ -639,7 +639,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         if (!this.hasImportedEvents) {
             var point = this, options = merge(point.series.options.point, point.options), events = options.events;
             point.events = events;
-            H.objectEach(events, function (event, eventType) {
+            objectEach(events, function (event, eventType) {
                 if (H.isFunction(event)) {
                     addEvent(point, eventType, event);
                 }

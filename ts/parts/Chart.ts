@@ -238,6 +238,7 @@ const {
     isNumber,
     isObject,
     isString,
+    objectEach,
     pInt,
     splat
 } = U;
@@ -264,7 +265,6 @@ var addEvent = H.addEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
-    objectEach = H.objectEach,
     Pointer = H.Pointer, // @todo add as requirement
     pick = H.pick,
     removeEvent = H.removeEvent,

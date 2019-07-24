@@ -177,6 +177,7 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
+    objectEach,
     pInt,
     splat
 } = U;
@@ -1994,7 +1995,7 @@ RangeSelector.prototype = {
         }
 
         // Destroy HTML and SVG elements
-        H.objectEach(rSelector, function (val: unknown, key: string): void {
+        objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
                 if ((val as Highcharts.SVGElement).destroy) {
                     // SVGElement

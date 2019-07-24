@@ -94,7 +94,7 @@ import Highcharts from './Globals.js';
 * @type {Array<Highcharts.SelectDataObject>}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, splat = U.splat;
+var defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
 import './Tooltip.js';
 import './Color.js';
 var H = Highcharts, addEvent = H.addEvent, attr = H.attr, charts = H.charts, color = H.color, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, offset = H.offset, pick = H.pick, Tooltip = H.Tooltip;
@@ -1131,7 +1131,7 @@ Highcharts.Pointer.prototype = {
         }
         // memory and CPU leak
         clearInterval(pointer.tooltipTimeout);
-        H.objectEach(pointer, function (val, prop) {
+        objectEach(pointer, function (val, prop) {
             pointer[prop] = null;
         });
     }

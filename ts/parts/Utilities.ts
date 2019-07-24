@@ -885,7 +885,7 @@ H.Fx.prototype = {
 
             done = true;
 
-            H.objectEach(curAnim, function (val: boolean): void {
+            objectEach(curAnim, function (val: boolean): void {
                 if (val !== true) {
                     done = false;
                 }
@@ -1204,7 +1204,7 @@ H.merge = function<T> (): T {
                 copy = {};
             }
 
-            H.objectEach(original, function (value: any, key: string): void {
+            objectEach(original, function (value: any, key: string): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
@@ -1441,7 +1441,7 @@ H.attr = function (
 
     // else if prop is defined, it is a hash of key/value pairs
     } else if (defined(prop) && isObject(prop)) {
-        H.objectEach(prop, function (val: any, key: string): void {
+        objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
     }
@@ -1777,7 +1777,7 @@ H.wrap = function (
  * @return {void}
  */
 H.datePropsToTimestamps = function (obj: any): void {
-    H.objectEach(obj, function (val: any, key: string): void {
+    objectEach(obj, function (val: any, key: string): void {
         if (isObject(val) && typeof val.getTime === 'function') {
             obj[key] = val.getTime();
         } else if (isObject(val) || isArray(val)) {
@@ -2162,7 +2162,7 @@ H.arrayMax = function (data: Array<any>): number {
  * @return {void}
  */
 H.destroyObjectProperties = function (obj: any, except?: any): void {
-    H.objectEach(obj, function (val: any, n: string): void {
+    objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
             // Invoke the destroy
@@ -2648,7 +2648,7 @@ H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
  *
  * @return {void}
  */
-H.objectEach = function<T> (
+function objectEach<T>(
     obj: any,
     fn: Highcharts.ObjectEachCallbackFunction<T>,
     ctx?: T
@@ -2755,7 +2755,7 @@ H.objectEach = function<T> (
  *
  * @return {boolean}
  */
-H.objectEach({
+objectEach({
     map: 'map',
     each: 'forEach',
     grep: 'filter',
@@ -2920,7 +2920,7 @@ H.removeEvent = function<T> (
             types = eventCollection;
         }
 
-        H.objectEach(types, function (val: any, n: string): void {
+        objectEach(types, function (val: any, n: string): void {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
@@ -3117,7 +3117,7 @@ H.animate = function (
         ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
     (opt as any).curAnim = H.merge(params) as any;
 
-    H.objectEach(params, function (val: any, prop: string): void {
+    objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
         H.stop(el as any, prop);
 
@@ -3309,6 +3309,7 @@ const utils = {
     isNumber,
     isObject,
     isString,
+    objectEach,
     pInt,
     splat
 };

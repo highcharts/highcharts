@@ -13,7 +13,7 @@ import H from './Globals.js';
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber;
+var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach;
 import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
@@ -382,7 +382,7 @@ seriesType('flags', 'column'
         }
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
-            H.objectEach(boxesMap, function (box) {
+            objectEach(boxesMap, function (box) {
                 box.plotX = box.anchorX;
                 boxes.push(box);
             });

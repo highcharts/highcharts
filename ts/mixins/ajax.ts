@@ -12,6 +12,11 @@
 
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+const {
+    objectEach
+} = U;
+
 /**
  * Internal types
  * @private
@@ -122,7 +127,7 @@ H.ajax = function (
         );
     }
 
-    H.objectEach(options.headers, function (val: string, key: string): void {
+    objectEach(options.headers, function (val: string, key: string): void {
         r.setRequestHeader(key, val);
     });
 

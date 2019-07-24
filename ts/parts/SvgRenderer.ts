@@ -815,6 +815,7 @@ const {
     isNumber,
     isObject,
     isString,
+    objectEach,
     pInt,
     splat
 } = U;
@@ -841,7 +842,6 @@ var SVGElement: Highcharts.SVGElement,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
     stop = H.stop,
@@ -981,7 +981,7 @@ extend((
         } else {
             this.attr(params, undefined, complete);
             // Call the end step synchronously
-            H.objectEach(params, function (val: any, prop: string): void {
+            objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
                     animOptions.step.call(this, val, { prop: prop, pos: 1 });
                 }
@@ -3107,7 +3107,7 @@ extend((
             }
 
             // Additional attributes
-            H.objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val: string, key: string): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
                     val

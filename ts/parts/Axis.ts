@@ -736,6 +736,7 @@ const {
     isArray,
     isNumber,
     isString,
+    objectEach,
     splat
 } = U;
 
@@ -758,7 +759,6 @@ var addEvent = H.addEvent,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,

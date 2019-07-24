@@ -17,7 +17,8 @@ var defined = U.defined,
     isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
-    isString = U.isString;
+    isString = U.isString,
+    objectEach = U.objectEach;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -42,7 +43,7 @@ var seriesType = H.seriesType,
     color = H.Color,
     eachObject = function (list, func, context) {
         context = context || this;
-        H.objectEach(list, function (val, key) {
+        objectEach(list, function (val, key) {
             func.call(context, val, key, list);
         });
     },
