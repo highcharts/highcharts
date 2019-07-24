@@ -232,6 +232,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     erase,
     isArray,
@@ -251,7 +252,6 @@ import './Pointer.js';
 var addEvent = H.addEvent,
     animate = H.animate,
     animObject = H.animObject,
-    attr = H.attr,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,

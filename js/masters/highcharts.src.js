@@ -40,6 +40,7 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    attr: U.attr,
     defined: U.defined,
     erase: U.erase,
     isArray: U.isArray,
