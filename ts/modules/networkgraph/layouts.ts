@@ -34,6 +34,15 @@ declare global {
             theta?: number;
             type?: string;
         }
+        interface NetworkgraphPoint {
+            dispX?: number;
+            dispY?: number;
+            prevX?: number;
+            prevY?: number;
+        }
+        interface NetworkgraphSeriesOptions {
+            layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
+        }
         class NetworkgraphLayout {
             public constructor();
             public approximation?: string;
@@ -85,11 +94,11 @@ declare global {
             public getBarycenter(): Dictionary<number>;
             public getDistR(
                 nodeA: NetworkgraphPoint,
-                nodeB: NetworkgraphPoint
+                nodeB: (NetworkgraphPoint|QuadTreeNode)
             ): number;
             public getDistXY(
                 nodeA: NetworkgraphPoint,
-                nodeB: NetworkgraphPoint
+                nodeB: (NetworkgraphPoint|QuadTreeNode)
             ): Dictionary<number>;
             public getSystemTemperature(): number;
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
@@ -112,7 +121,7 @@ declare global {
             public setTemperature(): void;
             public vectorLength(vector: Dictionary<number>): number;
         }
-        let layouts: Dictionary<NetworkgraphLayout>;
+        let layouts: Dictionary<(typeof NetworkgraphLayout)>;
     }
 }
 
@@ -423,8 +432,7 @@ H.extend(
                     return node.linksTo.length === 0;
                 }),
                 sortedNodes = [] as Array<Highcharts.NetworkgraphPoint>,
-                visitedNodes =
-                    {} as Highcharts.Dictionary<Highcharts.NetworkgraphPoint>,
+                visitedNodes = {} as Highcharts.Dictionary<boolean>,
                 radius = this.options.initialPositionRadius;
 
             function addToNodes(node: Highcharts.NetworkgraphPoint): void {
@@ -484,7 +492,7 @@ H.extend(
             });
         },
         setRandomPositions: function (
-            this: Highcharts.NetworkgraphPoint
+            this: Highcharts.NetworkgraphLayout
         ): void {
             var box = this.box,
                 nodes = this.nodes,
@@ -540,8 +548,8 @@ H.extend(
                 cy = 0;
 
             this.nodes.forEach(function (node) {
-                cx += node.plotX * node.mass;
-                cy += node.plotY * node.mass;
+                cx += (node.plotX as any) * node.mass;
+                cy += (node.plotY as any) * node.mass;
 
                 systemMass += node.mass;
             });
@@ -566,7 +574,7 @@ H.extend(
                 goDeeper,
                 force;
 
-            if (node !== quadNode && distanceR !== 0) {
+            if ((node as any) !== quadNode && distanceR !== 0) {
                 if (quadNode.isInternal) {
                     // Internal node:
                     if (
@@ -639,7 +647,7 @@ H.extend(
                             // Only close nodes affect each other:
                             /* layout.getDistR(node, repNode) < 2 * k && */
                             // Not dragged:
-                            !node.fixedPosition
+                            !(node as any).fixedPosition
                         ) {
                             distanceXY = layout.getDistXY(node, repNode);
                             distanceR = layout.vectorLength(distanceXY);
@@ -696,8 +704,8 @@ H.extend(
             var layout = this,
                 nodes = layout.nodes;
 
-            nodes.forEach(function (node) {
-                if (node.fixedPosition) {
+            nodes.forEach(function (node: Highcharts.NetworkgraphPoint): void {
+                if ((node as any).fixedPosition) {
                     return;
                 }
 
@@ -756,7 +764,7 @@ H.extend(
             // Limit X-coordinates:
             node.plotX = Math.max(
                 Math.min(
-                    node.plotX,
+                    node.plotX as any,
                     box.width - radius
                 ),
                 box.left + radius
@@ -765,7 +773,7 @@ H.extend(
             // Limit Y-coordinates:
             node.plotY = Math.max(
                 Math.min(
-                    node.plotY,
+                    node.plotY as any,
                     box.height - radius
                 ),
                 box.top + radius
@@ -812,7 +820,7 @@ H.extend(
                 value: number,
                 node: Highcharts.NetworkgraphPoint
             ): number {
-                return value + (node.temperature as any);
+                return value + (node as any).temperature;
             }, 0);
         },
         vectorLength: function (
@@ -824,7 +832,7 @@ H.extend(
         getDistR: function (
             this: Highcharts.NetworkgraphLayout,
             nodeA: Highcharts.NetworkgraphPoint,
-            nodeB: Highcharts.NetworkgraphPoint
+            nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
         ): number {
             var distance = this.getDistXY(nodeA, nodeB);
 
@@ -833,10 +841,10 @@ H.extend(
         getDistXY: function (
             this: Highcharts.NetworkgraphLayout,
             nodeA: Highcharts.NetworkgraphPoint,
-            nodeB: Highcharts.NetworkgraphPoint
+            nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
         ): Highcharts.Dictionary<number> {
-            var xDist = nodeA.plotX - nodeB.plotX,
-                yDist = nodeA.plotY - nodeB.plotY;
+            var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
+                yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
 
             return {
                 x: xDist,
@@ -852,7 +860,9 @@ H.extend(
  * Multiple series support:
  * ************************************************************************** */
 // Clear previous layouts
-addEvent(Chart as any, 'predraw', function (this: Highcharts.Chart): void {
+addEvent(Chart as any, 'predraw', function (
+    this: Highcharts.NetworkgraphChart
+): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {
@@ -861,7 +871,9 @@ addEvent(Chart as any, 'predraw', function (this: Highcharts.Chart): void {
         );
     }
 });
-addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+addEvent(Chart as any, 'render', function (
+    this: Highcharts.NetworkgraphChart
+): void {
     var systemsStable,
         afterRender = false;
 

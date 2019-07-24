@@ -103,16 +103,16 @@ H.networkgraphIntegrations = {
         attractive: function (link, force, distanceXY) {
             var massFactor = link.getMass(), translatedX = -distanceXY.x * force * this.diffTemperature, translatedY = -distanceXY.y * force * this.diffTemperature;
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.plotX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.plotY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                link.fromNode.plotX -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                link.fromNode.plotY -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.plotX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.plotY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                link.toNode.plotX +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                link.toNode.plotY +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -150,7 +150,9 @@ H.networkgraphIntegrations = {
         integrate: function (layout, node) {
             var friction = -layout.options.friction, maxSpeed = layout.options.maxSpeed, prevX = node.prevX, prevY = node.prevY, 
             // Apply friciton:
-            diffX = (node.plotX + node.dispX - prevX) * friction, diffY = (node.plotY + node.dispY - prevY) * friction, abs = Math.abs, signX = abs(diffX) / (diffX || 1), // need to deal with 0
+            diffX = ((node.plotX + node.dispX -
+                prevX) * friction), diffY = ((node.plotY + node.dispY -
+                prevY) * friction), abs = Math.abs, signX = abs(diffX) / (diffX || 1), // need to deal with 0
             signY = abs(diffY) / (diffY || 1);
             // Apply max speed:
             diffX = signX * Math.min(maxSpeed, Math.abs(diffX));
@@ -234,10 +236,10 @@ H.networkgraphIntegrations = {
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
                     var degree = node.getDegree(), phi = degree * (1 + degree / 2);
-                    node.dispX += (xFactor - node.plotX) *
-                        gravitationalConstant * phi / node.degree;
-                    node.dispY += (yFactor - node.plotY) *
-                        gravitationalConstant * phi / node.degree;
+                    node.dispX += ((xFactor - node.plotX) *
+                        gravitationalConstant * phi / node.degree);
+                    node.dispY += ((yFactor - node.plotY) *
+                        gravitationalConstant * phi / node.degree);
                 }
             });
         },
@@ -276,16 +278,16 @@ H.networkgraphIntegrations = {
         attractive: function (link, force, distanceXY, distanceR) {
             var massFactor = link.getMass(), translatedX = (distanceXY.x / distanceR) * force, translatedY = (distanceXY.y / distanceR) * force;
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.dispX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.dispY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                link.fromNode.dispX -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                link.fromNode.dispY -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.dispX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.dispY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                link.toNode.dispX +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                link.toNode.dispY +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -330,17 +332,19 @@ H.networkgraphIntegrations = {
          */
         integrate: function (layout, node) {
             var distanceR;
-            node.dispX += node.dispX * layout.options.friction;
-            node.dispY += node.dispY * layout.options.friction;
+            node.dispX +=
+                node.dispX * layout.options.friction;
+            node.dispY +=
+                node.dispY * layout.options.friction;
             distanceR = node.temperature = layout.vectorLength({
                 x: node.dispX,
                 y: node.dispY
             });
             if (distanceR !== 0) {
-                node.plotX += node.dispX / distanceR *
-                    Math.min(Math.abs(node.dispX), layout.temperature);
-                node.plotY += node.dispY / distanceR *
-                    Math.min(Math.abs(node.dispY), layout.temperature);
+                node.plotX += (node.dispX / distanceR *
+                    Math.min(Math.abs(node.dispX), layout.temperature));
+                node.plotY += (node.dispY / distanceR *
+                    Math.min(Math.abs(node.dispY), layout.temperature));
             }
         },
         /**

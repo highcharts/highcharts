@@ -292,8 +292,10 @@ H.extend(
             this: Highcharts.QuadTreeNode,
             point: Highcharts.NetworkgraphPoint
         ): number {
-            var left = point.plotX < this.box.left + this.box.width / 2,
-                top = point.plotY < this.box.top + this.box.height / 2,
+            var left =
+                    (point.plotX as any) < this.box.left + this.box.width / 2,
+                top =
+                    (point.plotY as any) < this.box.top + this.box.height / 2,
                 index: number;
 
             if (left) {

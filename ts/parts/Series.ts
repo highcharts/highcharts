@@ -44,7 +44,14 @@ declare global {
         }
         interface LineSeriesStatesHoverOptions
             extends SeriesStatesHoverOptions
-        {}
+        {
+            // only for inheritance
+        }
+        interface LineSeriesStatesInactiveOptions
+            extends SeriesStatesInactiveOptions
+        {
+            // only for inheritance
+        }
         interface LineSeriesStatesOptions extends SeriesStatesOptions {
             hover?: LineSeriesStatesHoverOptions;
         }
