@@ -103,7 +103,9 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var erase = U.erase;
 
 var addEvent = H.addEvent,
     wrap = H.wrap,
@@ -569,7 +571,7 @@ H.addEvent(H.Chart, 'redraw', function () {
         patterns.forEach(function (id) {
             if (usedIds.indexOf(id) === -1) {
                 // Remove id from used id list
-                H.erase(renderer.defIds, id);
+                erase(renderer.defIds, id);
                 // Remove pattern element
                 if (renderer.patternElements[id]) {
                     renderer.patternElements[id].destroy();

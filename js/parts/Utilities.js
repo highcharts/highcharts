@@ -917,7 +917,7 @@ function isNumber(n) {
  *
  * @return {void}
  */
-H.erase = function (arr, item) {
+function erase(arr, item) {
     var i = arr.length;
     while (i--) {
         if (arr[i] === item) {
@@ -925,7 +925,7 @@ H.erase = function (arr, item) {
             break;
         }
     }
-};
+}
 /**
  * Check if an object is null or undefined.
  *
@@ -2500,6 +2500,7 @@ if (win.jQuery) {
 // TODO use named exports when supported.
 var utils = {
     defined: defined,
+    erase: erase,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,

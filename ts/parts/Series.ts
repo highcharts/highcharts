@@ -641,6 +641,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     isString,
@@ -659,7 +660,6 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement

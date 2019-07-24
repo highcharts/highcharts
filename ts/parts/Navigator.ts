@@ -189,6 +189,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     splat
@@ -207,7 +208,6 @@ var addEvent = H.addEvent,
     color = H.color,
     defaultOptions = H.defaultOptions,
     destroyObjectProperties = H.destroyObjectProperties,
-    erase = H.erase,
     extend = H.extend,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

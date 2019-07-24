@@ -12,6 +12,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
+    erase = U.erase,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -28,7 +29,6 @@ import ControlPoint from './ControlPoint.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    erase = H.erase,
     find = H.find,
     pick = H.pick,
     reduce = H.reduce,

@@ -41,6 +41,7 @@ import '../parts/Responsive.js';
 
 extend(Highcharts, {
     defined: U.defined,
+    erase: U.erase,
     isArray: U.isArray,
     isClass: U.isClass,
     isDOMElement: U.isDOMElement,
