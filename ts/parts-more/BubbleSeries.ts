@@ -460,8 +460,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
             sizeByArea = options.sizeBy !== 'width',
             zThreshold = options.zThreshold,
             zRange = zMax - zMin,
-            pos = 0.5,
-            radius;
+            pos = 0.5;
 
         // #8608 - bubble should be visible when z is undefined
         if (yValue === null || value === null) {
