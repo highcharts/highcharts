@@ -142,13 +142,13 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    erase
 } = U;
 
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     destroyObjectProperties = H.destroyObjectProperties,
-    erase = H.erase,
     merge = H.merge,
     pick = H.pick;
 

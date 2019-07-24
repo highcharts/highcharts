@@ -635,6 +635,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     isObject
@@ -643,7 +644,6 @@ const {
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     extend = H.extend,
-    erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
     pick = H.pick,

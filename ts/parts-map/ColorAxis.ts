@@ -123,6 +123,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    erase,
     isNumber
 } = U;
 
@@ -1323,7 +1324,7 @@ addEvent(Legend as any, 'afterGetAllItems', function (
             colorAxis.series.forEach(function (
                 series: Highcharts.Series
             ): void {
-                H.erase(e.allItems, series);
+                erase(e.allItems, series);
             });
         }
     }

@@ -810,6 +810,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     isObject,
@@ -834,7 +835,6 @@ var SVGElement: Highcharts.SVGElement,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
     extend = H.extend,
-    erase = H.erase,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,

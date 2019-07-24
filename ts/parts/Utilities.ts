@@ -1337,7 +1337,7 @@ function isNumber(n: unknown): n is number {
  *
  * @return {void}
  */
-H.erase = function (arr: Array<any>, item: any): void {
+function erase(arr: Array<any>, item: any): void {
     var i = arr.length;
 
     while (i--) {
@@ -1346,7 +1346,7 @@ H.erase = function (arr: Array<any>, item: any): void {
             break;
         }
     }
-};
+}
 
 /**
  * Check if an object is null or undefined.
@@ -3265,6 +3265,7 @@ if ((win as any).jQuery) {
 // TODO use named exports when supported.
 const utils = {
     defined,
+    erase,
     isArray,
     isClass,
     isDOMElement,

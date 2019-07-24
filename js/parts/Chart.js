@@ -57,7 +57,7 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -1743,7 +1743,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(chart, 'destroy');
         // Delete the chart from charts lookup array
         if (chart.renderer.forExport) {
-            H.erase(charts, chart); // #6569
+            erase(charts, chart); // #6569
         }
         else {
             charts[chart.index] = undefined;
