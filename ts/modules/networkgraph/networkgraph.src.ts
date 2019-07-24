@@ -79,7 +79,6 @@ declare global {
             draggable?: boolean;
             link?: SVGAttributes;
             marker?: NetworkgraphPointMarkerOptionsObject;
-            mass?: NodesSeriesOptions['mass'];
             nodes?: Array<NetworkgraphPointOptions>;
             states?: NetworkgraphSeriesStatesOptions;
         }
