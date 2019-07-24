@@ -23,8 +23,8 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var isArray = U.isArray, splat = U.splat;
-var Chart = H.Chart, isObject = H.isObject, pick = H.pick;
+var isArray = U.isArray, isObject = U.isObject, splat = U.splat;
+var Chart = H.Chart, pick = H.pick;
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.

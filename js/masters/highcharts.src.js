@@ -43,6 +43,7 @@ extend(Highcharts, {
     defined: U.defined,
     isArray: U.isArray,
     isNumber: U.isNumber,
+    isObject: U.isObject,
     isString: U.isString,
     pInt: U.pInt,
     splat: U.splat

@@ -221,6 +221,7 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
+    isObject,
     splat
 } = U;
 
@@ -236,7 +237,6 @@ var H = Highcharts,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     offset = H.offset,
     pick = H.pick,
     Tooltip = H.Tooltip;

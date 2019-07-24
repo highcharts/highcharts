@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, splat = U.splat;
+var defined = U.defined, isObject = U.isObject, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -526,7 +526,7 @@ Highcharts.Time.prototype = {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     resolveDTLFormat: function (f) {
-        if (!H.isObject(f, true)) { // check for string or array
+        if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
                 main: f[0],

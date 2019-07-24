@@ -14,14 +14,14 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var isArray = U.isArray,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    isObject = U.isObject;
 
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
 var extend = H.extend,
-    isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,
     find = H.find,

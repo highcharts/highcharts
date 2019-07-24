@@ -13,6 +13,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined,
     isArray = U.isArray,
+    isObject = U.isObject,
     isString = U.isString;
 
 var addEvent = H.addEvent,
@@ -20,7 +21,6 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
-    isObject = H.isObject,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',

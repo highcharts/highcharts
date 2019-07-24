@@ -16,6 +16,7 @@ import U from '../parts/Utilities.js';
 var defined = U.defined,
     isArray = U.isArray,
     isNumber = U.isNumber,
+    isObject = U.isObject,
     isString = U.isString;
 
 import '../parts/Options.js';
@@ -35,7 +36,6 @@ var seriesType = H.seriesType,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
-    isObject = H.isObject,
     pick = H.pick,
     Series = H.Series,
     stableSort = H.stableSort,

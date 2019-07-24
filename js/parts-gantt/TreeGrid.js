@@ -35,7 +35,7 @@ var addEvent = H.addEvent,
     },
     isObject = function (x) {
         // Always use strict mode.
-        return H.isObject(x, true);
+        return U.isObject(x, true);
     },
     pick = H.pick,
     wrap = H.wrap,

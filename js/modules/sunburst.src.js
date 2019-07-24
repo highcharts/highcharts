@@ -46,6 +46,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var isNumber = U.isNumber,
+    isObject = U.isObject,
     isString = U.isString;
 
 import '../mixins/centered-series.js';
@@ -64,7 +65,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
-    isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,

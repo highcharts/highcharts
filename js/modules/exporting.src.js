@@ -80,7 +80,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isObject = U.isObject;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
@@ -1560,7 +1563,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     item = chart.options.exporting.menuItemDefinitions[item];
                 }
 
-                if (H.isObject(item, true)) {
+                if (isObject(item, true)) {
                     var element;
 
                     if (item.separator) {

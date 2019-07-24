@@ -235,6 +235,7 @@ const {
     defined,
     isArray,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat
@@ -259,7 +260,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,

@@ -58,13 +58,13 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, isObject = U.isObject;
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, hasTouch = H.hasTouch, isObject = H.isObject, Legend = H.Legend, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, hasTouch = H.hasTouch, Legend = H.Legend, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.

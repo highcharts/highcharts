@@ -304,6 +304,7 @@ const {
     defined,
     isArray,
     isNumber,
+    isObject,
     pInt
 } = U;
 
@@ -321,7 +322,6 @@ var VMLRenderer,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
-    isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,

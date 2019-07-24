@@ -15,7 +15,8 @@
 import Highcharts from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    isObject = U.isObject;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -930,7 +931,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
             if (typeof ob[key] === 'function') {
                 delete ob[key];
             }
-            if (Highcharts.isObject(ob[key])) { // object and not an array
+            if (isObject(ob[key])) { // object and not an array
                 removeFunctions(ob[key]);
             }
         });
