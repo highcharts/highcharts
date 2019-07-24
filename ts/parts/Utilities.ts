@@ -1174,7 +1174,7 @@ H.merge = function<T> (): T {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
-                    !H.isClass(value) &&
+                    !isClass(value) &&
                     !isDOMElement(value)
                 ) {
                     copy[key] = doCopy(copy[key] || {}, value);
@@ -1298,7 +1298,7 @@ function isDOMElement(obj: unknown): obj is HTMLElement {
  * @return {boolean}
  *         True if the argument is an class.
  */
-H.isClass = function (obj: any): boolean {
+function isClass(obj: any): boolean {
     var c = obj && obj.constructor;
 
     return !!(
@@ -1306,7 +1306,7 @@ H.isClass = function (obj: any): boolean {
         !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object')
     );
-};
+}
 
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
@@ -3266,6 +3266,7 @@ if ((win as any).jQuery) {
 const utils = {
     defined,
     isArray,
+    isClass,
     isDOMElement,
     isNumber,
     isObject,
