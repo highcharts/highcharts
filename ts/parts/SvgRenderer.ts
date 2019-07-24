@@ -806,6 +806,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     erase,
     isArray,
@@ -824,7 +825,6 @@ var SVGElement: Highcharts.SVGElement,
 
     addEvent = H.addEvent,
     animate = H.animate,
-    attr = H.attr,
     charts = H.charts,
     color = H.color,
     css = H.css,
@@ -2734,7 +2734,10 @@ extend((
                     attr(
                         shadow,
                         'height',
-                        Math.max(attr(shadow, 'height') - strokeWidth, 0)
+                        Math.max(
+                            (attr(shadow, 'height') as any) - strokeWidth,
+                            0
+                        )
                     );
                     (shadow as any).cutHeight = strokeWidth;
                 }

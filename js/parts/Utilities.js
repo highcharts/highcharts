@@ -958,10 +958,10 @@ function defined(obj) {
  * @param {number|string} [value]
  *        The value if a single property is set.
  *
- * @return {*}
+ * @return {string|null|undefined}
  *         When used as a getter, return the value.
  */
-H.attr = function (elem, prop, value) {
+function attr(elem, prop, value) {
     var ret;
     // if the prop is a string
     if (isString(prop)) {
@@ -979,13 +979,13 @@ H.attr = function (elem, prop, value) {
         }
         // else if prop is defined, it is a hash of key/value pairs
     }
-    else if (defined(prop) && isObject(prop)) {
+    else {
         objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
     }
     return ret;
-};
+}
 /**
  * Check if an element is an array, and if not, make it into an array.
  *
@@ -2476,12 +2476,13 @@ if (win.jQuery) {
             }
             // When called without parameters or with the return argument,
             // return an existing chart
-            return charts[H.attr(this[0], 'data-highcharts-chart')];
+            return charts[attr(this[0], 'data-highcharts-chart')];
         }
     };
 }
 // TODO use named exports when supported.
 var utils = {
+    attr: attr,
     defined: defined,
     erase: erase,
     isArray: isArray,

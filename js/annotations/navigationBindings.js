@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var attr = U.attr,
+    isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
     objectEach = U.objectEach;
@@ -689,7 +690,7 @@ extend(H.NavigationBindings.prototype, {
             elemClassName;
 
         while (element) {
-            elemClassName = H.attr(element, 'class');
+            elemClassName = attr(element, 'class');
             if (elemClassName) {
                 classNames = classNames.concat(
                     elemClassName.split(' ').map(

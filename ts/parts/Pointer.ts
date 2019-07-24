@@ -219,6 +219,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     isNumber,
     isObject,
@@ -231,7 +232,6 @@ import './Color.js';
 
 var H = Highcharts,
     addEvent = H.addEvent,
-    attr = H.attr,
     charts = H.charts,
     color = H.color,
     css = H.css,
