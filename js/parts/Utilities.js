@@ -758,7 +758,7 @@ H.merge = function () {
             // Copy the contents of objects, but not arrays or DOM nodes
             if (isObject(value, true) &&
                 !H.isClass(value) &&
-                !H.isDOMElement(value)) {
+                !isDOMElement(value)) {
                 copy[key] = doCopy(copy[key] || {}, value);
                 // Primitives and arrays are copied over directly
             }
@@ -845,7 +845,6 @@ function isArray(obj) {
 function isObject(obj, strict) {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
 }
-;
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -857,9 +856,9 @@ function isObject(obj, strict) {
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-H.isDOMElement = function (obj) {
+function isDOMElement(obj) {
     return isObject(obj) && typeof obj.nodeType === 'number';
-};
+}
 /**
  * Utility function to check if an Object is an class.
  *
@@ -874,7 +873,7 @@ H.isDOMElement = function (obj) {
 H.isClass = function (obj) {
     var c = obj && obj.constructor;
     return !!(isObject(obj, true) &&
-        !H.isDOMElement(obj) &&
+        !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
 };
 /**
@@ -2489,6 +2488,7 @@ if (win.jQuery) {
 var utils = {
     defined: defined,
     isArray: isArray,
+    isDOMElement: isDOMElement,
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,

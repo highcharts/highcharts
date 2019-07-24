@@ -42,6 +42,7 @@ import '../parts/Responsive.js';
 extend(Highcharts, {
     defined: U.defined,
     isArray: U.isArray,
+    isDOMElement: U.isDOMElement,
     isNumber: U.isNumber,
     isObject: U.isObject,
     isString: U.isString,

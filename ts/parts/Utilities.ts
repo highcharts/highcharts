@@ -194,7 +194,7 @@ declare global {
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: any): boolean;
-        function isDOMElement(obj: any): boolean;
+        function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
@@ -1175,7 +1175,7 @@ H.merge = function<T> (): T {
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
                     !H.isClass(value) &&
-                    !H.isDOMElement(value)
+                    !isDOMElement(value)
                 ) {
                     copy[key] = doCopy(copy[key] || {}, value);
 
@@ -1270,7 +1270,7 @@ function isArray(obj: unknown): obj is Array<unknown> {
  */
 function isObject(obj: any, strict?: boolean): boolean {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
-};
+}
 
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1283,9 +1283,9 @@ function isObject(obj: any, strict?: boolean): boolean {
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-H.isDOMElement = function (obj: any): boolean {
-    return isObject(obj) && typeof obj.nodeType === 'number';
-};
+function isDOMElement(obj: unknown): obj is HTMLElement {
+    return isObject(obj) && typeof (obj as any).nodeType === 'number';
+}
 
 /**
  * Utility function to check if an Object is an class.
@@ -1303,7 +1303,7 @@ H.isClass = function (obj: any): boolean {
 
     return !!(
         isObject(obj, true) &&
-        !H.isDOMElement(obj) &&
+        !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object')
     );
 };
@@ -3266,6 +3266,7 @@ if ((win as any).jQuery) {
 const utils = {
     defined,
     isArray,
+    isDOMElement,
     isNumber,
     isObject,
     isString,
