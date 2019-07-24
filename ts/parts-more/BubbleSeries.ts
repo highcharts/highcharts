@@ -463,35 +463,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
             pos = 0.5,
             radius;
 
-        // When sizing by threshold, the absolute value of z determines
-        // the size of the bubble.
-        /*if (options.sizeByAbsoluteValue && isNumber(value)) {
-            value = Math.abs(value - (zThreshold as any));
-            zMax = zRange = Math.max(
-                zMax - (zThreshold as any),
-                Math.abs(zMin - (zThreshold as any))
-            );
-            zMin = 0;
-        }
-
         // #8608 - bubble should be visible when z is undefined
-        if (yValue === null || value === null) {
-            radius = null;
-        // Issue #4419 - if value is less than zMin, push a radius that's
-        // always smaller than the minimum size
-        } else if (isNumber(value) && (value < zMin)) {
-            radius = minSize / 2 - 1;
-        } else {
-            pos = (zRange > 0 && isNumber(value)) ? (value - zMin) / zRange : 0.5;
-            if (sizeByArea && pos >= 0) {
-                pos = Math.sqrt(pos);
-            }
-            radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
-        }
-
-        return radius;*/
-
-                // #8608 - bubble should be visible when z is undefined
         if (yValue === null || value === null) {
             return null;
         }
@@ -510,7 +482,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
             // Issue #4419 - if value is less than zMin, push a radius that's
             // always smaller than the minimum size
             if (value < zMin) {
-               return minSize / 2 - 1;
+                return minSize / 2 - 1;
             }
 
             // Relative size, a number between 0 and 1
