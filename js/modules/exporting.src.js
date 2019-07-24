@@ -82,7 +82,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isObject = U.isObject;
+var isObject = U.isObject,
+    objectEach = U.objectEach;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -100,7 +101,6 @@ var defaultOptions = H.defaultOptions,
     css = H.css,
     merge = H.merge,
     pick = H.pick,
-    objectEach = H.objectEach,
     extend = H.extend,
     isTouchDevice = H.isTouchDevice,
     win = H.win,

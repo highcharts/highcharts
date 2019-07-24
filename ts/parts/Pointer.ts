@@ -222,6 +222,7 @@ const {
     defined,
     isNumber,
     isObject,
+    objectEach,
     splat
 } = U;
 
@@ -1703,7 +1704,7 @@ Highcharts.Pointer.prototype = {
         // memory and CPU leak
         clearInterval(pointer.tooltipTimeout);
 
-        H.objectEach(pointer, function (val: any, prop: string): void {
+        objectEach(pointer, function (val: any, prop: string): void {
             pointer[prop] = null;
         });
     }

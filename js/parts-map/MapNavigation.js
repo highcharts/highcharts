@@ -9,7 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
 import '../parts/Chart.js';
 var addEvent = H.addEvent, Chart = H.Chart, doc = H.doc, extend = H.extend, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -82,7 +83,7 @@ MapNavigation.prototype.update = function (options) {
         mapNavButtons.pop().destroy();
     }
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-        H.objectEach(o.buttons, function (button, n) {
+        objectEach(o.buttons, function (button, n) {
             buttonOptions = merge(o.buttonOptions, button);
             // Presentational
             if (!chart.styledMode) {

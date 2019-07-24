@@ -35,6 +35,7 @@ import '../parts/Point.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
+    objectEach = U.objectEach,
     splat = U.splat;
 
 import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
@@ -801,7 +802,7 @@ Connection.prototype = {
      */
     destroy: function () {
         if (this.graphics) {
-            H.objectEach(this.graphics, function (val) {
+            objectEach(this.graphics, function (val) {
                 val.destroy();
             });
             delete this.graphics;

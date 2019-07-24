@@ -48,6 +48,7 @@ extend(Highcharts, {
     isNumber: U.isNumber,
     isObject: U.isObject,
     isString: U.isString,
+    objectEach: U.objectEach,
     pInt: U.pInt,
     splat: U.splat
 });

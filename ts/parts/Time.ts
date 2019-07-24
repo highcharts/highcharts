@@ -16,6 +16,7 @@ import U from './Utilities.js';
 const {
     defined,
     isObject,
+    objectEach,
     splat
 } = U;
 
@@ -709,7 +710,7 @@ Highcharts.Time.prototype = {
 
 
         // Do the replaces
-        H.objectEach(replacements, function (
+        objectEach(replacements, function (
             val: (string|Function),
             key: string
         ): void {

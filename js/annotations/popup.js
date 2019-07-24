@@ -14,11 +14,11 @@ import U from '../parts/Utilities.js';
 var defined = U.defined,
     isArray = U.isArray,
     isObject = U.isObject,
-    isString = U.isString;
+    isString = U.isString,
+    objectEach = U.objectEach;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
     indexFilter = /\d/g,

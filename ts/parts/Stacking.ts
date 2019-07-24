@@ -178,7 +178,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    objectEach
 } = U;
 
 import './Axis.js';
@@ -190,7 +191,6 @@ var Axis = H.Axis,
     correctFloat = H.correctFloat,
     destroyObjectProperties = H.destroyObjectProperties,
     format = H.format,
-    objectEach = H.objectEach,
     pick = H.pick,
     Series = H.Series;
 

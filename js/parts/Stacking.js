@@ -49,11 +49,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined;
+var defined = U.defined, objectEach = U.objectEach;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, objectEach = H.objectEach, pick = H.pick, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, pick = H.pick, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative

@@ -154,7 +154,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    erase
+    erase,
+    objectEach
 } = U;
 
 var arrayMax = H.arrayMax,
@@ -311,7 +312,7 @@ H.PlotLineOrBand.prototype = {
 
             // events
             if (events) {
-                H.objectEach(events, function (event, eventType): void {
+                objectEach(events, function (event, eventType): void {
                     (svgElem as any).on(eventType, function (e: any): void {
                         events[eventType].apply(plotLine, [e]);
                     });

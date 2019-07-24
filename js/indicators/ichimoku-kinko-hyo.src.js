@@ -10,7 +10,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isArray = U.isArray;
+    isArray = U.isArray,
+    objectEach = U.objectEach;
 
 var UNDEFINED,
     seriesType = H.seriesType,
@@ -497,7 +498,7 @@ seriesType(
             }
 
             // Modify options and generate lines:
-            H.objectEach(ikhMap, function (values, lineName) {
+            objectEach(ikhMap, function (values, lineName) {
                 if (mainLineOptions[lineName] && lineName !== 'senkouSpan') {
                     // First line is rendered by default option
                     indicator.points = allIchimokuPoints[lineIndex];

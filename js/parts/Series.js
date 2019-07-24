@@ -202,13 +202,13 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
+merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.

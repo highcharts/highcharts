@@ -146,7 +146,8 @@ import U from './Utilities.js';
 const {
     defined,
     isArray,
-    isObject
+    isObject,
+    objectEach
 } = U;
 
 import './Chart.js';
@@ -1027,7 +1028,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             point.events = events;
 
-            H.objectEach(events, function (
+            objectEach(events, function (
                 event: Function,
                 eventType: string
             ): void {

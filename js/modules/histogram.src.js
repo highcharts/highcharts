@@ -11,12 +11,12 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    objectEach = U.objectEach;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var objectEach = H.objectEach,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,

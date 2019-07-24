@@ -113,6 +113,7 @@ const {
     isNumber,
     isObject,
     isString,
+    objectEach,
     splat
 } = U;
 
@@ -130,7 +131,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    objectEach = H.objectEach,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,

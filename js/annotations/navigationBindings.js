@@ -11,7 +11,8 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var isArray = U.isArray,
     isNumber = U.isNumber,
-    isObject = U.isObject;
+    isObject = U.isObject,
+    objectEach = U.objectEach;
 
 import chartNavigationMixin from '../mixins/navigation.js';
 
@@ -22,7 +23,6 @@ var doc = H.doc,
     merge = H.merge,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    objectEach = H.objectEach,
     PREFIX = 'highcharts-';
 
 // IE 9-11 polyfill for Element.closest():
@@ -894,7 +894,7 @@ if (H.Annotation) {
     selectableAnnotation(H.Annotation);
 
     // Advanced annotations:
-    H.objectEach(H.Annotation.types, function (annotationType) {
+    objectEach(H.Annotation.types, function (annotationType) {
         selectableAnnotation(annotationType);
     });
 }

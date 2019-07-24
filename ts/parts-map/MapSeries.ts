@@ -155,10 +155,12 @@ import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isNumber = U.isNumber,
-    splat = U.splat;
-
+const {
+    isArray,
+    isNumber,
+    objectEach,
+    splat
+} = U;
 
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
@@ -766,7 +768,7 @@ seriesType<Highcharts.MapSeriesOptions>(
 
             // Cache cos/sin of transform rotation angle
             if (mapTransforms) {
-                H.objectEach(mapTransforms, function (transform: any): void {
+                objectEach(mapTransforms, function (transform: any): void {
                     if (transform.rotation) {
                         transform.cosAngle = Math.cos(transform.rotation);
                         transform.sinAngle = Math.sin(transform.rotation);

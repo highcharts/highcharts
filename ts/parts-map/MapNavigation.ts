@@ -81,7 +81,11 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    objectEach
+} = U;
+
 import '../parts/Chart.js';
 
 var addEvent = H.addEvent,
@@ -189,7 +193,7 @@ MapNavigation.prototype.update = function (
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
-        H.objectEach(o.buttons, function (
+        objectEach(o.buttons, function (
             button: Highcharts.MapNavigationButtonOptions,
             n: string
         ): void {

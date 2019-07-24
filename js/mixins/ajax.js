@@ -9,6 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
 /**
  * @interface Highcharts.AjaxSettingsObject
  */ /**
@@ -88,7 +90,7 @@ H.ajax = function (attr) {
     if (!options.headers['Content-Type']) {
         r.setRequestHeader('Content-Type', headers[options.dataType] || headers.text);
     }
-    H.objectEach(options.headers, function (val, key) {
+    objectEach(options.headers, function (val, key) {
         r.setRequestHeader(key, val);
     });
     // @todo lacking timeout handling

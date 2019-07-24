@@ -4,6 +4,7 @@ import './../../parts/Chart.js';
 
 import U from './../../parts/Utilities.js';
 var defined = U.defined,
+    objectEach = U.objectEach,
     splat = U.splat;
 
 import './../../parts/SvgRenderer.js';
@@ -173,7 +174,7 @@ H.SVGRenderer.prototype.definition = function (def) {
                 attr = {};
 
             // Set attributes
-            H.objectEach(item, function (val, key) {
+            objectEach(item, function (val, key) {
                 if (
                     key !== 'tagName' &&
                     key !== 'children' &&
@@ -209,7 +210,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 H.addEvent(H.Chart, 'afterGetContainer', function () {
     this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
 
-    H.objectEach(this.options.defs, function (def) {
+    objectEach(this.options.defs, function (def) {
         if (def.tagName === 'marker' && def.render !== false) {
             this.renderer.addMarker(def.id, def);
         }
