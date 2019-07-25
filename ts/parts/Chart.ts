@@ -273,7 +273,8 @@ const {
     isString,
     objectEach,
     pInt,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 import './Axis.js';
@@ -301,7 +302,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -1884,7 +1884,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration);
+        }, animObject(globalAnimation).duration || 0);
     },
 
     /**

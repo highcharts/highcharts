@@ -293,7 +293,10 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+const {
+    objectEach,
+    syncTimeout
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -1096,7 +1099,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
 
         // Do dummy animation on first point to get to complete
-        H.syncTimeout(function (): void {
+        syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 newSeries.points.forEach(function (
                     point: Highcharts.Point,

@@ -125,7 +125,7 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+var objectEach = U.objectEach, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -760,7 +760,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
             }
         });
         // Do dummy animation on first point to get to complete
-        H.syncTimeout(function () {
+        syncTimeout(function () {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 newSeries.points.forEach(function (point, i) {
                     // Fade in other points

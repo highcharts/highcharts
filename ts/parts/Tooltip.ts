@@ -17,7 +17,8 @@ const {
     defined,
     isNumber,
     isString,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 /**
@@ -254,7 +255,6 @@ var doc = H.doc,
     format = H.format,
     merge = H.merge,
     pick = H.pick,
-    syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
