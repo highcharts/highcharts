@@ -694,7 +694,8 @@ const {
     isNumber,
     isString,
     objectEach,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 import './Color.js';
@@ -719,7 +720,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     Tick = H.Tick;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

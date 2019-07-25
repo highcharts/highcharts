@@ -654,7 +654,8 @@ const {
     isNumber,
     isString,
     objectEach,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 import './Options.js';
@@ -677,7 +678,6 @@ var addEvent = H.addEvent,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /**
@@ -5795,7 +5795,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (!hasRendered) {
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();
-                }, animDuration as any);
+                }, animDuration || 0);
             }
 
             // Means data is in accordance with what you see

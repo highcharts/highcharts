@@ -1009,22 +1009,23 @@ function splat(obj) {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (fn, delay, context) {
-    if (delay) {
+function syncTimeout(fn, delay, context) {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
  * (e.g. by `chart.destroy()`). For the details see
@@ -2494,6 +2495,7 @@ var utils = {
     isString: isString,
     objectEach: objectEach,
     pInt: pInt,
-    splat: splat
+    splat: splat,
+    syncTimeout: syncTimeout
 };
 export default utils;
