@@ -395,7 +395,7 @@ seriesType('pie', 'line',
      * try to shrink to make room for data labels in side the plot area,
      *  but only to this size.
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   80
      * @since     3.0
      * @product   highcharts
