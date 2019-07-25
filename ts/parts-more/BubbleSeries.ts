@@ -62,8 +62,8 @@ declare global {
             public points: Array<BubblePoint>;
             public radii: Array<(number|null)>;
             public specialGroup: string;
-            public zData: Array<number|null|undefined>;
-            public yData: Array<number|null|undefined>;
+            public zData: Array<(number|null|undefined)>;
+            public yData: Array<(number|null|undefined)>;
             public zMax: BubbleSeriesOptions['zMax'];
             public zMin: BubbleSeriesOptions['zMin'];
             public zoneAxis: string;

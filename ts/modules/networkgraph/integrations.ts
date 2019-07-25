@@ -141,12 +141,12 @@ H.networkgraphIntegrations = {
             yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
                 (gravitationalConstant as any);
 
-            this.nodes.forEach(function (
-                node: Highcharts.NetworkgraphPoint
-            ): void {
-                if (!(node as any).fixedPosition) {
-                    (node.plotX as any) -= xFactor / node.mass / node.degree;
-                    (node.plotY as any) -= yFactor / node.mass / node.degree;
+            this.nodes.forEach(function (node: Highcharts.Point): void {
+                if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    (node.plotX as any) -=
+                        xFactor / (node.mass as any) / (node.degree as any);
+                    (node.plotY as any) -=
+                        yFactor / (node.mass as any) / (node.degree as any);
                 }
             });
         },
@@ -360,20 +360,21 @@ H.networkgraphIntegrations = {
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
 
-            this.nodes.forEach(function (
-                node: Highcharts.NetworkgraphPoint
-            ): void {
-                if (!node.fixedPosition) {
-                    var degree = node.getDegree(),
+            this.nodes.forEach(function (node: Highcharts.Point): void {
+                if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    var degree =
+                            (node as Highcharts.NetworkgraphPoint).getDegree(),
                         phi = degree * (1 + degree / 2);
 
                     (node.dispX as any) += (
                         (xFactor - (node.plotX as any)) *
-                        (gravitationalConstant as any) * phi / node.degree
+                        (gravitationalConstant as any) *
+                        phi / (node.degree as any)
                     );
                     (node.dispY as any) += (
                         (yFactor - (node.plotY as any)) *
-                        (gravitationalConstant as any) * phi / node.degree
+                        (gravitationalConstant as any) *
+                        phi / (node.degree as any)
                     );
                 }
             });

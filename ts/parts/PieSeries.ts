@@ -55,7 +55,7 @@ declare global {
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
-            minSize?: number;
+            minSize?: (number|string);
             size?: (number|string|null);
             startAngle?: number;
             states?: PieSeriesStatesOptions;
@@ -548,7 +548,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          * try to shrink to make room for data labels in side the plot area,
          *  but only to this size.
          *
-         * @type      {number}
+         * @type      {number|string}
          * @default   80
          * @since     3.0
          * @product   highcharts

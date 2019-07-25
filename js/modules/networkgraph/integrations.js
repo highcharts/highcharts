@@ -58,8 +58,10 @@ H.networkgraphIntegrations = {
                 gravitationalConstant;
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
-                    node.plotX -= xFactor / node.mass / node.degree;
-                    node.plotY -= yFactor / node.mass / node.degree;
+                    node.plotX -=
+                        xFactor / node.mass / node.degree;
+                    node.plotY -=
+                        yFactor / node.mass / node.degree;
                 }
             });
         },
@@ -237,9 +239,11 @@ H.networkgraphIntegrations = {
                 if (!node.fixedPosition) {
                     var degree = node.getDegree(), phi = degree * (1 + degree / 2);
                     node.dispX += ((xFactor - node.plotX) *
-                        gravitationalConstant * phi / node.degree);
+                        gravitationalConstant *
+                        phi / node.degree);
                     node.dispY += ((yFactor - node.plotY) *
-                        gravitationalConstant * phi / node.degree);
+                        gravitationalConstant *
+                        phi / node.degree);
                 }
             });
         },

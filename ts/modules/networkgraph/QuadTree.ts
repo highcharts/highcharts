@@ -31,7 +31,7 @@ declare global {
             public maxDepth: number;
             public root: QuadTreeNode;
             public calculateMassAndCenter(): void;
-            public insertNodes(nodes: Array<NetworkgraphPoint>): void;
+            public insertNodes(nodes: Array<Point>): void;
             public visitNodeRecursive(
                 node: (QuadTreeNode|null),
                 beforeCallback?: (Function|null),
@@ -40,7 +40,7 @@ declare global {
         }
         class QuadTreeNode {
             public constructor(box: Dictionary<number>);
-            public body: (boolean|NetworkgraphPoint);
+            public body: (boolean|Point);
             public box: Dictionary<number>;
             public boxSize: number;
             public isEmpty: boolean;
@@ -51,8 +51,8 @@ declare global {
             public plotX?: number;
             public plotY?: number;
             public divideBox(): void;
-            public getBoxPosition(node: NetworkgraphPoint): number;
-            public insert(point: NetworkgraphPoint, depth?: number): void;
+            public getBoxPosition(node: Point): number;
+            public insert(point: Point, depth?: number): void;
             public updateMassAndCenter(): void;
         }
     }
@@ -136,7 +136,7 @@ H.extend(
          */
         insert: function (
             this: Highcharts.QuadTreeNode,
-            point: Highcharts.NetworkgraphPoint,
+            point: Highcharts.Point,
             depth: number
         ): void {
             var newQuadTreeNode: Highcharts.QuadTreeNode;
@@ -290,7 +290,7 @@ H.extend(
          */
         getBoxPosition: function (
             this: Highcharts.QuadTreeNode,
-            point: Highcharts.NetworkgraphPoint
+            point: Highcharts.Point
         ): number {
             var left =
                     (point.plotX as any) < this.box.left + this.box.width / 2,
@@ -369,11 +369,11 @@ H.extend(
          */
         insertNodes: function (
             this: Highcharts.QuadTree,
-            points: Array<Highcharts.NetworkgraphPoint>
+            points: Array<Highcharts.Point>
         ): void {
             points.forEach(function (
                 this: Highcharts.QuadTree,
-                point: Highcharts.NetworkgraphPoint
+                point: Highcharts.Point
             ): void {
                 this.root.insert(point, this.maxDepth);
             }, this);
