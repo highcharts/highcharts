@@ -74,6 +74,7 @@ var addEvent = H.addEvent,
 addEvent(H.Series, 'afterRender', function () {
     var serie = this,
         seriesOptions = serie.options,
+        pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
@@ -86,8 +87,10 @@ addEvent(H.Series, 'afterRender', function () {
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
             points = serie.points,
+            yLength = serie.yData.length,
+            pLength = points.length,
             x = serie.xData[serie.xData.length - 1],
-            y = serie.yData[serie.yData.length - 1],
+            y = serie.yData[yLength - 1],
             lastPoint,
             yValue,
             crop;
@@ -115,17 +118,17 @@ addEvent(H.Series, 'afterRender', function () {
 
         if (lastVisiblePrice &&
             lastVisiblePrice.enabled &&
-            points.length > 0
+            pLength > 0
         ) {
 
-            crop = points[points.length - 1].x === x ? 1 : 2;
+            crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent'
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = serie.lastVisiblePrice;
-            lastPoint = points[points.length - crop];
+            lastPoint = points[pLength - crop];
             // Save price
             yAxis.drawCrosshair(null, lastPoint);
 
