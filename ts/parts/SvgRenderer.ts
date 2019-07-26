@@ -4562,14 +4562,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
-            }, normalState as any);
+            }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, hoverState as any);
+            }, hoverState);
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
@@ -4580,7 +4580,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, pressedState as any);
+            }, pressedState);
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
@@ -4589,7 +4589,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, disabledState as any);
+            }, disabledState);
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }

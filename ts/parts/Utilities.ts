@@ -161,11 +161,11 @@ declare global {
             stop?: boolean,
             chart?: Chart
         ): void;
-        function extend<T>(a: T, b: object): T;
-        function extendClass(
-            parent: any,
-            members: Dictionary<any>
-        ): any;
+        function extend<T extends object>(a: (T|undefined), b: object): T;
+        function extendClass<T extends Class, TReturn extends Class = T>(
+            parent: T,
+            members: unknown
+        ): TReturn;
         function find<T>(arr: Array<T>, fn: Function): (T|undefined);
         function fireEvent<T>(
             el: T,
@@ -176,10 +176,6 @@ declare global {
         function format(str: string, ctx: any, time?: Time): string;
         function formatSingle(format: string, val: any, time?: Time): string;
         function getMagnitude(num: number): number;
-        function isIntersectRect(
-            box1: BBoxObject,
-            box2: BBoxObject
-        ): boolean;
         function getStyle(
             el: HTMLDOMElement,
             prop: string,
@@ -193,9 +189,13 @@ declare global {
             fromIndex?: number
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
-        function isClass(obj: any): boolean;
+        function isClass(obj: (object|undefined)): obj is Class;
         function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
+        function isIntersectRect(
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean;
         function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
         function isString(s: unknown): s is string;
@@ -203,15 +203,32 @@ declare global {
         function keys(obj: any): Array<string>;
         /** @deprecated */
         function map(arr: Array<any>, fn: Function): Array<any>;
-        function merge<T>(
+        function merge<T1, T2 = object>(
             extend: boolean,
-            a: (T|undefined),
-            ...n: Array<object|undefined>
-        ): T;
-        function merge<T>(
-            a: (T|undefined),
-            ...n: Array<object|undefined>
-        ): T;
+            a?: T1,
+            ...n: Array<T2|undefined>
+        ): (T1&T2);
+        function merge<
+            T1 extends object = object,
+            T2 = unknown,
+            T3 = unknown,
+            T4 = unknown,
+            T5 = unknown,
+            T6 = unknown,
+            T7 = unknown,
+            T8 = unknown,
+            T9 = unknown
+        >(
+            a?: T1,
+            b?: T2,
+            c?: T3,
+            d?: T4,
+            e?: T5,
+            f?: T6,
+            g?: T7,
+            h?: T8,
+            i?: T9,
+        ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,
@@ -1288,17 +1305,17 @@ function isDOMElement(obj: unknown): obj is HTMLElement {
 }
 
 /**
- * Utility function to check if an Object is an class.
+ * Utility function to check if an Object is a class.
  *
  * @function Highcharts.isClass
  *
- * @param {*} obj
+ * @param {object|undefined} obj
  *        The item to check.
  *
  * @return {boolean}
- *         True if the argument is an class.
+ *         True if the argument is a class.
  */
-function isClass(obj: any): boolean {
+function isClass(obj: (object|undefined)): boolean {
     var c = obj && obj.constructor;
 
     return !!(
@@ -1483,7 +1500,7 @@ H.clearTimeout = function (id: number): void {
  *
  * @function Highcharts.extend<T>
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The object to be extended.
  *
  * @param {object} b
@@ -1492,12 +1509,12 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T> (a: T, b: object): T {
+H.extend = function<T> (a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
     if (!a) {
-        a = {} as any;
+        a = {} as T;
     }
     for (n in b) { // eslint-disable-line guard-for-in
         (a as any)[n] = (b as any)[n];
@@ -1607,26 +1624,27 @@ H.createElement = function (
     return el;
 };
 
+// eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
  *
- * @function Highcharts.extendClass
+ * @function Highcharts.extendClass<T>
  *
- * @param {*} parent
+ * @param {T} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {*}
+ * @return {T}
  *         A new prototype.
  */
-H.extendClass = function (
-    parent: any,
-    members: Highcharts.Dictionary<any>
-): any {
-    var object = function (): void {};
+H.extendClass = function<T extends Class, TReturn extends Class = T> (
+    parent: T,
+    members: any
+): TReturn {
+    var object: TReturn = (function (): void {}) as any;
 
     object.prototype = new parent(); // eslint-disable-line new-cap
     H.extend(object.prototype, members);
@@ -3163,8 +3181,10 @@ H.seriesType = function (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] ||
-        function (): void {}, props);
+    seriesTypes[type] = H.extendClass(
+        seriesTypes[parent] || function (): void {},
+        props
+    );
     seriesTypes[type].prototype.type = type;
 
     // Create the point class if needed

@@ -352,7 +352,7 @@ H.Color.prototype = {
             ret: Highcharts.Color['input'];
 
         if (this.stops) {
-            ret = merge(input);
+            ret = merge(input as any);
             (ret as any).stops = [].concat((ret as any).stops);
             this.stops.forEach(function (
                 stop: Highcharts.Color,

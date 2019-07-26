@@ -94,13 +94,20 @@ declare global {
     type GlobalHighcharts = typeof Highcharts;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
+    interface Class extends Function {
+        new(...args: Array<any>): any;
+    }
     interface Document {
         msHidden: boolean;
         webkitHidden: boolean;
     }
+    interface Index extends Object {
+        [key: string]: any;
+        [index: number]: any;
+    }
     interface Window {
         Image: typeof Image;
-        opera?: any;
+        opera?: unknown;
         TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable
