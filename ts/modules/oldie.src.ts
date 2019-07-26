@@ -103,25 +103,36 @@ declare global {
             public element: VMLDOMElement;
             public elemHeight?: number;
             public getBBox: SVGElement['getBBox'];
+            public heightSetter: VMLElement['xSetter'];
             public inverted?: boolean;
             public isCircle?: boolean;
             public onAdd?: Function;
+            public opacitySetter: Function;
             public parentGroup?: VMLElement;
             public r?: number;
             public renderer: VMLRenderer;
             public rotation?: number;
             public shadows?: Array<VMLDOMElement>;
             public 'stroke-opacitySetter': VMLElement['fill-opacitySetter'];
+            public updateShadows: Function;
             public updateTransform: HTMLElement['htmlUpdateTransform'];
+            public widthSetter: VMLElement['xSetter'];
             public xCorr?: number;
             public yCorr?: number;
+            public ySetter: VMLElement['xSetter'];
             public add(parent?: VMLElement): VMLElement;
             public attr(attr?: VMLAttributes): VMLElement;
             public attr(key: string, val: string): VMLElement;
             public classGetter(): string;
             public classSetter(value: string): void;
+            public clip(clipRect: VMLClipRectObject): VMLElement;
             public css(style: CSSObject): VMLElement;
             public cutOffPath(path: string, length: number): string;
+            public dashstyleSetter(
+                value: string,
+                key: string,
+                element: HTMLDOMElement
+            ): void;
             public destroy(): void;
             public dSetter(
                 value: VMLPathArray,
@@ -188,6 +199,11 @@ declare global {
                 element: VMLDOMElement
             ): void;
             public xSetter(
+                value: string,
+                key: string,
+                element: VMLDOMElement
+            ): void;
+            public zIndexSetter(
                 value: string,
                 key: string,
                 element: VMLDOMElement
@@ -312,7 +328,7 @@ import '../parts/SvgRenderer.js';
 
 var VMLRenderer,
     VMLRendererExtension,
-    VMLElement,
+    VMLElement: typeof Highcharts.VMLElement,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
@@ -860,7 +876,7 @@ if (!svg) {
          * @param {Highcharts.CSSObject} styles
          * @return {Highcharts.VMLElement}
          */
-        css: SVGElement.prototype.htmlCss as Highcharts.HTMLElement['htmlCss'],
+        css: SVGElement.prototype.htmlCss as any,
 
         /**
          * Removes a child either by removeChild or move to garbageBin.
@@ -1071,7 +1087,10 @@ if (!svg) {
             }
             return this.element.getAttribute(key);
         },
-        classSetter: function (value: string): void {
+        classSetter: function (
+            this: Highcharts.VMLElement,
+            value: string
+        ): void {
             // IE8 Standards mode has problems retrieving the className unless
             // set like this. IE8 Standards can't set the class name before the
             // element is appended.
@@ -1290,9 +1309,9 @@ if (!svg) {
         classGetter: function (this: Highcharts.VMLElement): string {
             return this.getAttr('className') || '';
         }
-    };
+    } as any;
     (VMLElement as any)['stroke-opacitySetter'] =
-        VMLElement['fill-opacitySetter'];
+        (VMLElement as any)['fill-opacitySetter'];
     H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
     // Some shared setters

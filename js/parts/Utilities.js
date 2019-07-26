@@ -860,15 +860,15 @@ function isDOMElement(obj) {
     return isObject(obj) && typeof obj.nodeType === 'number';
 }
 /**
- * Utility function to check if an Object is an class.
+ * Utility function to check if an Object is a class.
  *
  * @function Highcharts.isClass
  *
- * @param {*} obj
+ * @param {object|undefined} obj
  *        The item to check.
  *
  * @return {boolean}
- *         True if the argument is an class.
+ *         True if the argument is a class.
  */
 function isClass(obj) {
     var c = obj && obj.constructor;
@@ -1033,7 +1033,7 @@ H.clearTimeout = function (id) {
  *
  * @function Highcharts.extend<T>
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The object to be extended.
  *
  * @param {object} b
@@ -1136,23 +1136,24 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
     }
     return el;
 };
+// eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
  *
- * @function Highcharts.extendClass
+ * @function Highcharts.extendClass<T>
  *
- * @param {*} parent
+ * @param {T} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {*}
+ * @return {T}
  *         A new prototype.
  */
 H.extendClass = function (parent, members) {
-    var object = function () { };
+    var object = (function () { });
     object.prototype = new parent(); // eslint-disable-line new-cap
     H.extend(object.prototype, members);
     return object;
@@ -2400,8 +2401,7 @@ H.seriesType = function (type, parent, options, props, pointProps) {
     // Merge the options
     defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] ||
-        function () { }, props);
+    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
     // Create the point class if needed
     if (pointProps) {
