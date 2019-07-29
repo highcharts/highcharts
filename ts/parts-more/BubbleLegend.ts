@@ -1121,7 +1121,7 @@ H.BubbleLegend.prototype = {
 } as any;
 
 // Start the bubble legend creation process.
-addEvent(H.Legend as any, 'afterGetAllItems', function (
+addEvent(H.Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
 ): void {
@@ -1274,9 +1274,7 @@ Legend.prototype.retranslateItems = function (
 };
 
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(Series as any, 'legendItemClick', function (
-    this: Highcharts.Series
-): void {
+addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
     var series = this,
         chart = series.chart,
         visible = series.visible,

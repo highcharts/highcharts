@@ -415,7 +415,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement as any, 'afterInit', function (
+    H.addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {

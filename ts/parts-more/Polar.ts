@@ -749,7 +749,7 @@ H.SVGRenderer.prototype.clipCircle = function (
     return wrapper;
 };
 
-H.addEvent(H.Chart as any, 'getAxes', function (this: Highcharts.Chart): void {
+H.addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
 
     if (!this.pane) {
         this.pane = [];
@@ -765,7 +765,7 @@ H.addEvent(H.Chart as any, 'getAxes', function (this: Highcharts.Chart): void {
     }, this);
 });
 
-H.addEvent(H.Chart as any, 'afterDrawChartBox', function (
+H.addEvent(H.Chart, 'afterDrawChartBox', function (
     this: Highcharts.Chart
 ): void {
     (this.pane as any).forEach(function (pane: Highcharts.Pane): void {

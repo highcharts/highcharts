@@ -841,7 +841,7 @@ seriesProto.generatePoints = function (this: Highcharts.Series): void {
 
 // Override point prototype to throw a warning when trying to update grouped
 // points.
-addEvent(Point as any, 'update', function (
+addEvent(Point, 'update', function (
     this: Highcharts.Point
 ): (boolean|undefined) {
     if (this.dataGroup) {
@@ -852,7 +852,7 @@ addEvent(Point as any, 'update', function (
 
 // Extend the original method, make the tooltip's header reflect the grouped
 // range.
-addEvent(Tooltip as any, 'headerFormatter', function (
+addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
     e: Highcharts.Dictionary<any>
 ): void {
@@ -944,7 +944,7 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(Series as any, 'afterSetOptions', function (
+addEvent(Series, 'afterSetOptions', function (
     this: Highcharts.Series,
     e: { options: Highcharts.PlotSeriesOptions }
 ): void {
@@ -975,7 +975,7 @@ addEvent(Series as any, 'afterSetOptions', function (
 // When resetting the scale reset the hasProccessed flag to avoid taking
 // previous data grouping of neighbour series into accound when determining
 // group pixel width (#2692).
-addEvent(Axis as any, 'afterSetScale', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
     this.series.forEach(function (series: Highcharts.Series): void {
         series.hasProcessed = false;
     });
