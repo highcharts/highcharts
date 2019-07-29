@@ -120,7 +120,7 @@ var addEvent = H.addEvent,
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-addEvent(Chart as any, 'afterSetChartSize', function (
+addEvent(Chart, 'afterSetChartSize', function (
     this: Highcharts.Chart,
     e: { skipAxes: boolean }
 ): void {
@@ -220,7 +220,7 @@ addEvent(Chart as any, 'afterSetChartSize', function (
     }
 });
 
-addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
     if (this.scrollablePixelsX || this.scrollablePixelsY) {
         if (this.setUpScrolling) {
             this.setUpScrolling();

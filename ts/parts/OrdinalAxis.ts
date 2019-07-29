@@ -83,9 +83,7 @@ var addEvent = H.addEvent,
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *
  * ************************************************************************** */
-addEvent(Series as any, 'updatedData', function (
-    this: Highcharts.Series
-): void {
+addEvent(Series, 'updatedData', function (this: Highcharts.Series): void {
     var xAxis = this.xAxis;
 
     // Destroy the extended ordinal index on updated data
@@ -915,7 +913,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 
 // Extending the Chart.pan method for ordinal axes
-addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
+addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
     var chart = this,
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
@@ -1029,7 +1027,7 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
     }
 });
 
-addEvent(Axis as any, 'foundExtremes', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'foundExtremes', function (this: Highcharts.Axis): void {
     var axis = this;
 
     if (
@@ -1059,7 +1057,7 @@ addEvent(Axis as any, 'foundExtremes', function (this: Highcharts.Axis): void {
 // For ordinal axis, that loads data async, redraw axis after data is loaded.
 // If we don't do that, axis will have the same extremes as previously, but
 // ordinal positions won't be calculated. See #10290
-addEvent(Axis as any, 'afterSetScale', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
     var axis = this;
 
     if (axis.horiz && !axis.isDirty) {

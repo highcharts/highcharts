@@ -331,7 +331,7 @@ H.StockChart = H.stockChart = function (
 
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(Series as any, 'setOptions', function (
+addEvent(Series, 'setOptions', function (
     this: Highcharts.Series,
     e: { plotOptions: Highcharts.PlotOptions }
 ): void {
@@ -371,7 +371,7 @@ addEvent(Series as any, 'setOptions', function (
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-addEvent(Axis as any, 'autoLabelAlign', function (
+addEvent(Axis, 'autoLabelAlign', function (
     this: Highcharts.Axis,
     e: Event
 ): void {
@@ -400,7 +400,7 @@ addEvent(Axis as any, 'autoLabelAlign', function (
 });
 
 // Clear axis from label panes (#6071)
-addEvent(Axis as any, 'destroy', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'destroy', function (this: Highcharts.Axis): void {
     var chart = this.chart,
         key = this.options && (this.options.top + ',' + this.options.height);
 
@@ -410,7 +410,7 @@ addEvent(Axis as any, 'destroy', function (this: Highcharts.Axis): void {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-addEvent(Axis as any, 'getPlotLinePath', function (
+addEvent(Axis, 'getPlotLinePath', function (
     this: Highcharts.Axis,
     e: Event & Highcharts.AxisPlotLinePathOptionsObject
 ): void {
@@ -619,16 +619,14 @@ if ((Renderer as unknown) === VMLRenderer) {
 }
 
 // Wrapper to hide the label
-addEvent(Axis as any, 'afterHideCrosshair', function (
-    this: Highcharts.Axis
-): void {
+addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
     if (this.crossLabel) {
         this.crossLabel = this.crossLabel.hide();
     }
 });
 
 // Extend crosshairs to also draw the label
-addEvent(Axis as any, 'afterDrawCrosshair', function (
+addEvent(Axis, 'afterDrawCrosshair', function (
     this: Highcharts.Axis,
     event: { e: Highcharts.PointerEventObject; point: Highcharts.Point }
 ): void {
@@ -893,7 +891,10 @@ seriesProto.setCompare = function (
  * @ignore
  * @function Highcharts.Series#processData
  */
-seriesProto.processData = function (this: Highcharts.Series): void {
+seriesProto.processData = function (
+    this: Highcharts.Series,
+    force?: boolean
+): (boolean|undefined) {
     var series = this,
         i,
         keyIndex = -1,
@@ -937,12 +938,12 @@ seriesProto.processData = function (this: Highcharts.Series): void {
             }
         }
     }
-} as any;
+
+    return; // eslint-disable-line no-useless-return
+};
 
 // Modify series extremes
-addEvent(Series as any, 'afterGetExtremes', function (
-    this: Highcharts.Series
-): void {
+addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
     if (this.modifyValue) {
         var extremes = [
             this.modifyValue(this.dataMin),
@@ -1022,7 +1023,7 @@ Point.prototype.tooltipFormatter = function (
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(Series as any, 'render', function (this: Highcharts.Series): void {
+addEvent(Series, 'render', function (this: Highcharts.Series): void {
     var chart = this.chart,
         clipHeight;
 
@@ -1076,7 +1077,7 @@ addEvent(Series as any, 'render', function (this: Highcharts.Series): void {
     }
 });
 
-addEvent(Chart as any, 'update', function (
+addEvent(Chart, 'update', function (
     this: Highcharts.StockChart,
     e: { options: Highcharts.Options }
 ): void {

@@ -1286,7 +1286,7 @@ extend(ColorAxis.prototype, {
 });
 
 // Extend the chart getAxes method to also get the color axis
-addEvent(Chart as any, 'afterGetAxes', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'afterGetAxes', function (this: Highcharts.Chart): void {
 
     var options = this.options,
         colorAxisOptions = options.colorAxis;
@@ -1300,7 +1300,7 @@ addEvent(Chart as any, 'afterGetAxes', function (this: Highcharts.Chart): void {
 
 // Add the color axis. This also removes the axis' own series to prevent
 // them from showing up individually.
-addEvent(Legend as any, 'afterGetAllItems', function (
+addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<Highcharts.ColorAxis> }
 ): void {
@@ -1334,7 +1334,7 @@ addEvent(Legend as any, 'afterGetAllItems', function (
     }
 });
 
-addEvent(Legend as any, 'afterColorizeItem', function (
+addEvent(Legend, 'afterColorizeItem', function (
     this: Highcharts.Legend,
     e: { item: Highcharts.ColorAxis; visible: boolean }
 ): void {
@@ -1346,9 +1346,7 @@ addEvent(Legend as any, 'afterColorizeItem', function (
 });
 
 // Updates in the legend need to be reflected in the color axis (6888)
-addEvent(Legend as any, 'afterUpdate', function (
-    this: Highcharts.Legend
-): void {
+addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
     if ((this.chart.colorAxis as any)[0]) {
         (this.chart.colorAxis as any)[0].update({}, arguments[2]);
     }
