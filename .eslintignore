@@ -4,6 +4,7 @@ js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/**/*.js
 js/parts-3d/Math.js
+js/parts-3d/SVGRenderer.js
 js/parts-map/**/*.js
 js/parts-more/**/*.js
 samples/data/**/*.js
