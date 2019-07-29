@@ -45,6 +45,19 @@ import H from './Globals.js';
  * @return {void}
  */
 /**
+ * Interface description for a class.
+ *
+ * @interface Highcharts.Class<T>
+ * @extends Function
+ */ /**
+* Class costructor.
+* @function Highcharts.Class<T>#new
+* @param {...Array<*>} args
+*        Constructor arguments.
+* @return {T}
+*         Class instance.
+*/
+/**
  * A style object with camel case property names to define visual appearance of
  * a SVG element or HTML element. The properties can be whatever styles are
  * supported on the given SVG or HTML element.
@@ -1142,21 +1155,21 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  *
  * @function Highcharts.extendClass<T>
  *
- * @param {T} parent
+ * @param {Highcharts.Class<T>} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {T}
+ * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
 H.extendClass = function (parent, members) {
-    var object = (function () { });
-    object.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(object.prototype, members);
-    return object;
+    var obj = (function () { });
+    obj.prototype = new parent(); // eslint-disable-line new-cap
+    H.extend(obj.prototype, members);
+    return obj;
 };
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1243,14 +1256,14 @@ H.wrap = function (obj, method, func) {
  * @private
  * @function Highcharts.datePropsToTimestamps
  *
- * @param {any} object - any object to convert properties of
+ * @param {*} obj - any object to convert properties of
  *
  * @return {void}
  */
-H.datePropsToTimestamps = function (object) {
-    H.objectEach(object, function (val, key) {
+H.datePropsToTimestamps = function (obj) {
+    H.objectEach(obj, function (val, key) {
         if (isObject(val) && typeof val.getTime === 'function') {
-            object[key] = val.getTime();
+            obj[key] = val.getTime();
         }
         else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
@@ -2076,7 +2089,7 @@ H.objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element or object to add a listener to. It can be a
  *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
@@ -2140,7 +2153,7 @@ H.addEvent = function (el, type, fn, options) {
  *
  * @function Highcharts.removeEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element to remove events on.
  *
  * @param {string} [type]

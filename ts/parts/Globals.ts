@@ -94,9 +94,6 @@ declare global {
     type GlobalHighcharts = typeof Highcharts;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
-    interface Class extends Function {
-        new(...args: Array<any>): any;
-    }
     interface Document {
         msHidden: boolean;
         webkitHidden: boolean;
