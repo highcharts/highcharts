@@ -158,7 +158,7 @@ declare global {
         function discardElement(element: Highcharts.HTMLDOMElement): void;
         /** @deprecated */
         function each(arr: Array<any>, fn: Function, ctx?: any): void;
-        function erase(arr: Array<any>, item: any): void;
+        function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
             stop?: boolean,
@@ -1371,7 +1371,7 @@ function isNumber(n: unknown): n is number {
  *
  * @return {void}
  */
-function erase(arr: Array<any>, item: any): void {
+function erase(arr: Array<unknown>, item: unknown): void {
     var i = arr.length;
 
     while (i--) {
