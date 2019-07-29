@@ -49,6 +49,9 @@ declare global {
         interface AnimationStepCallbackFunction {
             (this: SVGElement, ...args: Array<any>): void;
         }
+        interface Class<T = any> extends Function {
+            new(...args: Array<any>): T;
+        }
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
@@ -116,7 +119,7 @@ declare global {
         let timers: Array<any>;
         let timeUnits: Dictionary<number>;
         function addEvent<T>(
-            el: T,
+            el: (Class<T>|T),
             type: string,
             fn: (EventCallbackFunction<T>|Function),
             options?: EventOptionsObject
@@ -149,7 +152,7 @@ declare global {
             el: (HTMLDOMElement|SVGDOMElement),
             styles: CSSObject
         ): void;
-        function datePropsToTimestamps(object: any): void;
+        function datePropsToTimestamps(obj: any): void;
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
@@ -162,10 +165,10 @@ declare global {
             chart?: Chart
         ): void;
         function extend<T extends object>(a: (T|undefined), b: object): T;
-        function extendClass<T extends Class, TReturn extends Class = T>(
-            parent: T,
+        function extendClass<T, TReturn = T>(
+            parent: Class<T>,
             members: unknown
-        ): TReturn;
+        ): Class<TReturn>;
         function find<T>(arr: Array<T>, fn: Function): (T|undefined);
         function fireEvent<T>(
             el: T,
@@ -259,7 +262,7 @@ declare global {
             offset?: number
         ): number;
         function removeEvent<T>(
-            el: T,
+            el: (Class<T>|T),
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
@@ -328,6 +331,20 @@ declare global {
  *        The SVG element to animate.
  *
  * @return {void}
+ */
+
+/**
+ * Interface description for a class.
+ *
+ * @interface Highcharts.Class<T>
+ * @extends Function
+ *//**
+ * Class costructor.
+ * @function Highcharts.Class<T>#new
+ * @param {...Array<*>} args
+ *        Constructor arguments.
+ * @return {T}
+ *         Class instance.
  */
 
 /**
@@ -1509,7 +1526,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T> (a: (T|undefined), b: object): T {
+H.extend = function<T extends object> (a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1630,25 +1647,25 @@ H.createElement = function (
  *
  * @function Highcharts.extendClass<T>
  *
- * @param {T} parent
+ * @param {Highcharts.Class<T>} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {T}
+ * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T extends Class, TReturn extends Class = T> (
-    parent: T,
+H.extendClass = function<T, TReturn = T> (
+    parent: Highcharts.Class<T>,
     members: any
-): TReturn {
-    var object: TReturn = (function (): void {}) as any;
+): Highcharts.Class<TReturn> {
+    var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
-    object.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(object.prototype, members);
-    return object;
+    obj.prototype = new parent(); // eslint-disable-line new-cap
+    H.extend(obj.prototype, members);
+    return obj;
 };
 
 /**
@@ -1755,14 +1772,14 @@ H.wrap = function (
  * @private
  * @function Highcharts.datePropsToTimestamps
  *
- * @param {any} object - any object to convert properties of
+ * @param {*} obj - any object to convert properties of
  *
  * @return {void}
  */
-H.datePropsToTimestamps = function (object: any): void {
-    H.objectEach(object, function (val: any, key: string): void {
+H.datePropsToTimestamps = function (obj: any): void {
+    H.objectEach(obj, function (val: any, key: string): void {
         if (isObject(val) && typeof val.getTime === 'function') {
-            object[key] = val.getTime();
+            obj[key] = val.getTime();
         } else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
@@ -2759,7 +2776,7 @@ H.objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element or object to add a listener to. It can be a
  *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
@@ -2776,7 +2793,7 @@ H.objectEach({
  *         A callback function to remove the added event.
  */
 H.addEvent = function<T> (
-    el: T,
+    el: (Highcharts.Class<T>|T),
     type: string,
     fn: (Highcharts.EventCallbackFunction<T>|Function),
     options: Highcharts.EventOptionsObject = {}
@@ -2841,7 +2858,7 @@ H.addEvent = function<T> (
  *
  * @function Highcharts.removeEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element to remove events on.
  *
  * @param {string} [type]
@@ -2855,7 +2872,7 @@ H.addEvent = function<T> (
  * @return {void}
  */
 H.removeEvent = function<T> (
-    el: T,
+    el: (Highcharts.Class<T>|T),
     type?: string,
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
