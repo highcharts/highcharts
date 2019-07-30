@@ -515,6 +515,15 @@ H.seriesType(
  */
 
 /**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.organization.dataLabels](#series.organization.dataLabels).
+ *
+ * @type    {Highcharts.SeriesOrganizationDataLabelsOptionsObject|Array<Highcharts.SeriesOrganizationDataLabelsOptionsObject>}
+ *
+ * @apioption series.organization.nodes.dataLabels
+ */
+
+/**
  * The job description for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *

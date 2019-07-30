@@ -979,6 +979,15 @@ seriesType('sankey', 'column',
  */
 
 /**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
+ *
+ * @type    {Highcharts.SeriesSankeyDataLabelsOptionsObject|Array<Highcharts.SeriesSankeyDataLabelsOptionsObject>}
+ *
+ * @apioption series.sankey.nodes.dataLabels
+ */
+
+/**
  * An optional level index of where to place the node. The default behaviour is
  * to place it next to the preceding node. Alias of `nodes.column`, but in
  * inverted sankeys and org charts, the levels are laid out as rows.
