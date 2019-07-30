@@ -1314,14 +1314,20 @@ H.Tooltip.prototype = {
                 }
 
                 // Prepare for distribution
-                target = (point.series && point.series.yAxis &&
-                    (point.series.yAxis.pos as any)) + (point.plotY || 0);
-                target -= distributionBoxTop;
-
                 if ((point as any).isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         chart.plotHeight + headerHeight;
+                } else {
+                    const yAxis = (series.yAxis as any);
+                    const tooltipHeight = tt.getBBox().height;
+                    target = yAxis.pos - distributionBoxTop + Math.max(
+                        (tooltipHeight / 2),
+                        Math.min(
+                            (point.plotY || 0),
+                            yAxis.len - (tooltipHeight / 2)
+                        )
+                    ); // Limit target position to within yAxis
                 }
                 boxes.push({
                     target: target,
@@ -1357,7 +1363,8 @@ H.Tooltip.prototype = {
         (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             var point = box.point,
-                series = point.series;
+                series = point.series,
+                yAxis = series && series.yAxis;
 
             // Put the label in place
             box.tt.attr({
@@ -1371,7 +1378,7 @@ H.Tooltip.prototype = {
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
                     chart.plotTop + chart.plotHeight / 2 :
-                    point.plotY + series.yAxis.pos
+                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
     },

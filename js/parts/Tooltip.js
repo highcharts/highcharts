@@ -905,13 +905,15 @@ H.Tooltip.prototype = {
                     rightAligned = false;
                 }
                 // Prepare for distribution
-                target = (point.series && point.series.yAxis &&
-                    point.series.yAxis.pos) + (point.plotY || 0);
-                target -= distributionBoxTop;
                 if (point.isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         chart.plotHeight + headerHeight;
+                }
+                else {
+                    var yAxis = series.yAxis;
+                    var tooltipHeight = tt.getBBox().height;
+                    target = yAxis.pos - distributionBoxTop + Math.max((tooltipHeight / 2), Math.min((point.plotY || 0), yAxis.len - (tooltipHeight / 2))); // Limit target position to within yAxis
                 }
                 boxes.push({
                     target: target,
@@ -937,7 +939,7 @@ H.Tooltip.prototype = {
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box) {
-            var point = box.point, series = point.series;
+            var point = box.point, series = point.series, yAxis = series && series.yAxis;
             // Put the label in place
             box.tt.attr({
                 visibility: box.pos === undefined ? 'hidden' : 'inherit',
@@ -950,7 +952,7 @@ H.Tooltip.prototype = {
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
                     chart.plotTop + chart.plotHeight / 2 :
-                    point.plotY + series.yAxis.pos
+                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
     },
