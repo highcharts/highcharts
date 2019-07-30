@@ -763,10 +763,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
             }
             if (stateMarkerGraphic) {
-                stateMarkerGraphic[state &&
-                    chart.isInsidePlot(plotX, plotY, chart.inverted) ?
-                    'show' :
-                    'hide'](); // #2450
+                stateMarkerGraphic[state && point.isInside ? 'show' : 'hide'](); // #2450
                 stateMarkerGraphic.element.point = point; // #4310
             }
         }
@@ -786,6 +783,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
+                'visibility': (point.graphic || stateMarkerGraphic).visibility,
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
