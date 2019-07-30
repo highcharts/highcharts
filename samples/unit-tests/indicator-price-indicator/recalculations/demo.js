@@ -77,7 +77,7 @@ QUnit.test('Datagrouping and setExtremes.', function (assert) {
         }),
         series = chart.series[0];
 
-    assert.ok(
+    assert.strictEqual(
         series.points[series.points.length - 1].y,
         series.lastVisiblePrice.y,
         'Indicator should show the close value of the last grouped point.'
@@ -88,7 +88,7 @@ QUnit.test('Datagrouping and setExtremes.', function (assert) {
 
     chart.xAxis[0].setExtremes(min, max);
 
-    assert.ok(
+    assert.strictEqual(
         series.points[series.points.length - 1].y,
         series.lastVisiblePrice.y,
         'Indicator should show the close value of the last non-grouped point.'
