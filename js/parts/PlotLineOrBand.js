@@ -152,7 +152,7 @@ H.PlotLineOrBand.prototype = {
         }
         // the plot band/line label
         if (optionsLabel &&
-            defined(optionsLabel.text) &&
+            (defined(optionsLabel.text) || defined(optionsLabel.formatter)) &&
             path &&
             path.length &&
             axis.width > 0 &&
@@ -186,7 +186,7 @@ H.PlotLineOrBand.prototype = {
      * @return {void}
      */
     renderLabel: function (optionsLabel, path, isBand, zIndex) {
-        var plotLine = this, label = plotLine.label, renderer = plotLine.axis.chart.renderer, attribs, xBounds, yBounds, x, y;
+        var plotLine = this, label = plotLine.label, renderer = plotLine.axis.chart.renderer, attribs, xBounds, yBounds, x, y, labelText;
         // add the SVG element
         if (!label) {
             attribs = {
@@ -196,6 +196,7 @@ H.PlotLineOrBand.prototype = {
                     '-label ' + (optionsLabel.className || '')
             };
             attribs.zIndex = zIndex;
+            labelText = this.getLabelText(optionsLabel);
             /**
              * SVG element of the label.
              *
@@ -203,7 +204,7 @@ H.PlotLineOrBand.prototype = {
              * @type {Highcharts.SVGElement}
              */
             plotLine.label = label = renderer
-                .text(optionsLabel.text, 0, 0, optionsLabel.useHTML)
+                .text(labelText, 0, 0, optionsLabel.useHTML)
                 .attr(attribs)
                 .add();
             if (!this.axis.chart.styledMode) {
@@ -225,6 +226,20 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
+    },
+    /**
+     * Get label's text content.
+     *
+     * @private
+     * @function Highcharts.PlotLineOrBand#getLabelText
+     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
+     * @return {string}
+     */
+    getLabelText: function (optionsLabel) {
+        return defined(optionsLabel.formatter) ?
+            optionsLabel.formatter
+                .call(this) :
+            optionsLabel.text;
     },
     /**
      * Remove the plot line or band.
@@ -269,7 +284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @apioption xAxis.plotBands.borderColor
      */
     /**
@@ -539,7 +554,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */
@@ -655,6 +670,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @default    left
      * @since      2.1
      * @apioption  xAxis.plotLines.label.align
+     */
+    /**
+     * Callback JavaScript function to format the label. Useful properties like
+     * the value of plot line or the range of plot band (`from` & `to`
+     * properties) can be found in `this.options` object.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
+     *         Label formatters for plot line and plot band.
+     * @type      {Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.label.formatter
      */
     /**
      * Rotation of the text label in degrees. Defaults to 0 for horizontal plot
