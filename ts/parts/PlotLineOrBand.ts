@@ -41,7 +41,7 @@ declare global {
         }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
-            formatter?: PlotLineOrBandLabelFormatterCallbackFunction;
+            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -53,7 +53,7 @@ declare global {
         }
         interface AxisPlotBandsOptions {
             acrossPanes?: boolean;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: ColorString;
             borderWidth?: number;
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
@@ -66,7 +66,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
-            formatter?: PlotLineOrBandLabelFormatterCallbackFunction;
+            formatter?: FormatterCallbackFunction<PlotLineOrBand>;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -82,7 +82,7 @@ declare global {
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorString;
             dashStyle?: DashStyleValue;
             events?: any;
             id?: string;
@@ -242,7 +242,7 @@ H.PlotLineOrBand.prototype = {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs.stroke = (color as any) || '${palette.neutralColor40}';
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -253,7 +253,7 @@ H.PlotLineOrBand.prototype = {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = color || '${palette.highlightColor10}';
+                attribs.fill = (color as any) || '${palette.highlightColor10}';
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions
@@ -455,7 +455,7 @@ H.PlotLineOrBand.prototype = {
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              Highcharts.PlotLineOrBandLabelFormatterCallbackFunction)
+              Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
                 .call(this) :
             optionsLabel.text;
     },
@@ -509,7 +509,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @apioption xAxis.plotBands.borderColor
      */
 
@@ -805,7 +805,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */
@@ -942,7 +942,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
      *         Label formatters for plot line and plot band.
-     * @type      {Highcharts.PlotLineOrBandLabelFormatterCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @type      {Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>}
      * @apioption xAxis.plotLines.label.formatter
      */
 
