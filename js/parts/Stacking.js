@@ -247,7 +247,7 @@ H.StackItem.prototype = {
  * @return {void}
  */
 Chart.prototype.getStacks = function () {
-    var chart = this;
+    var chart = this, inverted = chart.inverted;
     // reset stacks for each yAxis
     chart.yAxis.forEach(function (axis) {
         if (axis.stacks && axis.hasVisibleSeries) {
@@ -255,10 +255,16 @@ Chart.prototype.getStacks = function () {
         }
     });
     chart.series.forEach(function (series) {
+        var xAxis = series.xAxis;
         if (series.options.stacking &&
             (series.visible === true ||
                 chart.options.chart.ignoreHiddenSeries === false)) {
-            series.stackKey = series.type + pick(series.options.stack, '');
+            series.stackKey = [
+                series.type,
+                pick(series.options.stack, ''),
+                inverted ? xAxis.options.top : xAxis.options.left,
+                inverted ? xAxis.options.height : xAxis.options.width
+            ].join(',');
         }
     });
 };

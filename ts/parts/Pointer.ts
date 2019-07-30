@@ -69,6 +69,7 @@ declare global {
             public options: Options;
             public pinchDown: Array<any>;
             public runChartClick: boolean;
+            public applyInactiveState(points: Array<Point>): void;
             public destroy(): void;
             public drag(e: PointerEventObject): void;
             public dragStart(e: PointerEventObject): void;
@@ -78,7 +79,6 @@ declare global {
                 shared: (boolean|undefined),
                 e: PointerEventObject
             ): (Point|undefined);
-            public getActiveSeries(points: Array<Point>): Array<Series>;
             public getChartCoordinatesFromPoint(
                 point: Point,
                 inverted?: boolean
@@ -221,6 +221,7 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
+    isObject,
     splat
 } = U;
 
@@ -236,7 +237,6 @@ var H = Highcharts,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     offset = H.offset,
     pick = H.pick,
     Tooltip = H.Tooltip;
@@ -386,9 +386,20 @@ Highcharts.Pointer.prototype = {
             this.chartPosition = chartPosition = offset(this.chart.container);
         }
 
+        let chartX = ePos.pageX - chartPosition.left,
+            chartY = ePos.pageY - chartPosition.top;
+
+        // #11329 - when there is scaling on a parent element, we need to take
+        // this into account
+        const containerScaling = this.chart.containerScaling;
+        if (containerScaling) {
+            chartX /= containerScaling.scaleX;
+            chartY /= containerScaling.scaleY;
+        }
+
         return extend(e, {
-            chartX: Math.round(ePos.pageX - chartPosition.left),
-            chartY: Math.round(ePos.pageY - chartPosition.top)
+            chartX: Math.round(chartX),
+            chartY: Math.round(chartY)
         }) as any;
     },
 
@@ -757,19 +768,7 @@ Highcharts.Pointer.prototype = {
                 hoverSeries.onMouseOver();
             }
 
-            // Set inactive state for all points
-            activeSeries = pointer.getActiveSeries(points);
-
-            chart.series.forEach(function (
-                inactiveSeries: Highcharts.Series
-            ): void {
-                if (
-                    inactiveSeries.options.inactiveOtherPoints ||
-                    activeSeries.indexOf(inactiveSeries) === -1
-                ) {
-                    inactiveSeries.setState('inactive', true);
-                }
-            });
+            pointer.applyInactiveState(points);
 
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p: Highcharts.Point): void {
@@ -855,27 +854,26 @@ Highcharts.Pointer.prototype = {
     },
 
     /**
-     * Get currently active series, in opposite to `inactive` series.
-     * Active series includes also it's parents/childs (via linkedTo) option
-     * and navigator series
+     * Set inactive state to all series that are not currently hovered,
+     * or, if `inactiveOtherPoints` is set to true, set inactive state to
+     * all points within that series.
      *
-     * @function Highcharts.Pointer#getActiveSeries
+     * @function Highcharts.Pointer#applyInactiveState
      *
      * @private
      *
      * @param {Array<Highcharts.Point>} points
      *        Currently hovered points
      *
-     * @return {Array<Highcharts.Series>}
-     *         Array of series
      */
-    getActiveSeries: function (
+    applyInactiveState: function (
         this: Highcharts.Pointer,
         points: Array<Highcharts.Point>
-    ): Array<Highcharts.Series> {
+    ): void {
         var activeSeries = [] as Array<Highcharts.Series>,
             series: Highcharts.Series;
 
+        // Get all active series from the hovered points
         (points || []).forEach(function (item: Highcharts.Point): void {
             series = item.series;
 
@@ -899,8 +897,18 @@ Highcharts.Pointer.prototype = {
                 activeSeries.push(series.navigatorSeries);
             }
         });
-
-        return activeSeries;
+        // Now loop over all series, filtering out active series
+        this.chart.series.forEach(function (
+            inactiveSeries: Highcharts.Series
+        ): void {
+            if (activeSeries.indexOf(inactiveSeries) === -1) {
+                // Inactive series
+                inactiveSeries.setState('inactive', true);
+            } else if (inactiveSeries.options.inactiveOtherPoints) {
+                // Active series, but other points should be inactivated
+                inactiveSeries.setAllPointsToState('inactive');
+            }
+        });
     },
 
     /**

@@ -31,8 +31,8 @@ import Axis from './Axis.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from './Utilities.js';
-var defined = U.defined;
-var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, merge = H.merge, pick = H.pick;
+var defined = U.defined, erase = U.erase;
+var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -269,7 +269,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption xAxis.plotBands.borderColor
      */
     /**
@@ -539,7 +539,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */

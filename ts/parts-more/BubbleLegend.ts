@@ -38,12 +38,12 @@ declare global {
             y?: number;
         }
         interface BubbleLegendOptions {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
             connectorClassName?: string;
-            connectorColor?: ColorString;
+            connectorColor?: (ColorString|GradientColorObject|PatternObject);
             connectorDistance?: number;
             connectorWidth?: number;
             enabled?: boolean;
@@ -63,9 +63,9 @@ declare global {
             extends Partial<BubbleLegendFormatterContextObject>
         {
             autoRanges?: boolean;
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             color?: (ColorString|GradientColorObject|PatternObject);
-            connectorColor?: ColorString;
+            connectorColor?: (ColorString|GradientColorObject|PatternObject);
             bubbleStyle?: CSSObject;
             connectorStyle?: CSSObject;
             labelStyle?: CSSObject;
@@ -187,7 +187,7 @@ setOptions({ // Set default bubble legend options
              * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             borderColor: undefined,
             /**
@@ -233,7 +233,7 @@ setOptions({ // Set default bubble legend options
              * The color of the connector, can be also defined
              * for an individual range.
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             connectorColor: undefined,
             /**
@@ -365,7 +365,7 @@ setOptions({ // Set default bubble legend options
                 value: undefined,
                 /**
                  * The color of the border for individual range.
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 borderColor: undefined,
                 /**
@@ -375,7 +375,7 @@ setOptions({ // Set default bubble legend options
                 color: undefined,
                 /**
                  * The color of the connector for individual range.
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 connectorColor: undefined
             } as any,
@@ -551,11 +551,11 @@ H.BubbleLegend.prototype = {
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
-            bubbleStyle: Highcharts.CSSObject = {
+            bubbleStyle: Highcharts.SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
             },
-            connectorStyle: Highcharts.CSSObject = {
+            connectorStyle: Highcharts.SVGAttributes = {
                 'z-index': options.zIndex,
                 'stroke-width': options.connectorWidth
             },
@@ -576,10 +576,10 @@ H.BubbleLegend.prototype = {
                     series.color
                 );
                 bubbleStyle.fill = pick(
-                    range.color as any,
-                    options.color as any,
+                    range.color,
+                    options.color,
                     fillOpacity !== 1 ?
-                        color(series.color as any).setOpacity(fillOpacity)
+                        color(series.color).setOpacity(fillOpacity)
                             .get('rgba') :
                         series.color
                 );
@@ -1121,7 +1121,7 @@ H.BubbleLegend.prototype = {
 } as any;
 
 // Start the bubble legend creation process.
-addEvent(H.Legend as any, 'afterGetAllItems', function (
+addEvent(H.Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
 ): void {
@@ -1274,9 +1274,7 @@ Legend.prototype.retranslateItems = function (
 };
 
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(Series as any, 'legendItemClick', function (
-    this: Highcharts.Series
-): void {
+addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
     var series = this,
         chart = series.chart,
         visible = series.visible,

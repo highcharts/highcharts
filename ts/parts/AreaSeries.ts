@@ -148,7 +148,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
          * @sample {highcharts} highcharts/plotoptions/area-linecolor/
          *         Dark gray line
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product   highcharts highstock
          * @apioption plotOptions.area.lineColor
          */
@@ -597,7 +597,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
 
                 if (!series.chart.styledMode) {
                     attribs.fill = pick(
-                        prop[3] as any,
+                        prop[3],
                         color(prop[2])
                             .setOpacity(pick(options.fillOpacity, 0.75))
                             .get()

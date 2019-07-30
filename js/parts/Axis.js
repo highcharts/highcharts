@@ -310,7 +310,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/alternategridcolor/
          *         Alternate grid color on the Y axis
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption xAxis.alternateGridColor
          */
         /**
@@ -454,7 +454,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
          *         Customized crosshairs
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #cccccc
          * @since     4.1
          * @apioption xAxis.crosshair.color
@@ -511,7 +511,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         /**
          * The border color for the crosshair label
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderColor
@@ -616,6 +616,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @default   2
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
+         */
+        /**
+         * Whether to zoom axis. If `chart.zoomType` is set, the option allows
+         * to disable zooming on an individual axis.
+         *
+         * @sample {highcharts} highcharts/xaxis/xaxis/zoomenabled/
+         *         Zoom enabled is false
+         *
+         *
+         * @type      {boolean}
+         * @default   enabled
+         * @apioption xAxis.zoomEnabled
          */
         /**
          * For a datetime axis, the scale will automatically adjust to the
@@ -2074,7 +2086,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/minorgridlinecolor/
          *         Bright grey lines from Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #f2f2f2
          */
         minorGridLineColor: '${palette.neutralColor5}',
@@ -2100,7 +2112,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/minorticks/
          *         Black tick marks on Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #999999
          */
         minorTickColor: '${palette.neutralColor40}',
@@ -2121,7 +2133,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/linecolor/
          *         A red line on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         lineColor: '${palette.highlightColor20}',
@@ -2158,7 +2170,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/gridlinecolor/
          *         Green lines
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #e6e6e6
          */
         gridLineColor: '${palette.neutralColor10}',
@@ -2194,7 +2206,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highstock} stock/xaxis/ticks/
          *         Formatted ticks on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         tickColor: '${palette.highlightColor20}'
@@ -2291,7 +2303,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -2304,7 +2316,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -2511,7 +2523,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption yAxis.lineColor
          */
         /**

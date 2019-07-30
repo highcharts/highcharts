@@ -40,7 +40,7 @@ declare global {
             y?: any;
         }
         interface WaterfallSeriesOptions extends ColumnSeriesOptions {
-            upColor?: ColorString;
+            upColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface WaterfallStacksObject {
             changed: boolean;
@@ -263,7 +263,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
      *
      * In styled mode, the stroke can be set with the `.highcharts-graph` class.
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
      */
@@ -290,7 +290,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   3.0
      * @product highcharts
      */

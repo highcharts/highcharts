@@ -23,7 +23,7 @@ declare global {
             width: number;
         }
         interface PlotSeriesZonesOptions {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
         }
@@ -46,7 +46,7 @@ declare global {
         interface ColumnSeriesStatesHoverOptions
             extends LineSeriesStatesHoverOptions
         {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
@@ -56,7 +56,7 @@ declare global {
             select?: ColumnSeriesStatesSelectOptions;
         }
         interface ColumnSeriesStatesSelectOptions {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
@@ -431,7 +431,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                  * A specific border color for the hovered point. Defaults to
                  * inherit the normal state border color.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product   highcharts gantt
                  * @apioption plotOptions.column.states.hover.borderColor
                  */
@@ -482,7 +482,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                 /**
                  * A specific border color for the selected point.
                  *
-                 * @type    {Highcharts.ColorString}
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
@@ -571,7 +571,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
          * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
          *         Dark gray border
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #ffffff
          * @product   highcharts highstock gantt
          *
@@ -1298,7 +1298,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
  * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
  *         Dark gray border
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock
  * @apioption series.column.data.borderColor
  */

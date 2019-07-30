@@ -217,7 +217,7 @@ import H from './Globals.js';
 * @type {string|Highcharts.SVGPathArray|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#fill
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#inverted
 * @type {boolean|undefined}
@@ -241,7 +241,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#stroke
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#style
 * @type {string|Highcharts.CSSObject|undefined}
@@ -373,9 +373,9 @@ import H from './Globals.js';
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, pInt = U.pInt, splat = U.splat;
 import './Color.js';
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, erase = H.erase, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isObject = H.isObject, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -3422,12 +3422,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     */
     rect: function (x, y, width, height, r, strokeWidth) {
         r = isObject(x) ? x.r : r;
-        var wrapper = this.createElement('rect'), attribs = isObject(x) ? x : x === undefined ? {} : {
-            x: x,
-            y: y,
-            width: Math.max(width, 0),
-            height: Math.max(height, 0)
-        };
+        var wrapper = this.createElement('rect'), attribs = isObject(x) ?
+            x :
+            x === undefined ?
+                {} :
+                {
+                    x: x,
+                    y: y,
+                    width: Math.max(width, 0),
+                    height: Math.max(height, 0)
+                };
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
                 attribs.strokeWidth = strokeWidth;

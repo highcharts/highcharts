@@ -21,13 +21,13 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    isObject = U.isObject;
 
 var addEvent = H.addEvent,
     color = H.Color,
     columnType = H.seriesTypes.column,
     correctFloat = H.correctFloat,
-    isObject = H.isObject,
     merge = H.merge,
     pick = H.pick,
     seriesType = H.seriesType,

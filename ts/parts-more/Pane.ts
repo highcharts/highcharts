@@ -30,7 +30,7 @@ declare global {
         }
         interface PaneBackgroundOptions {
             backgroundColor?: GradientColorObject;
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             className?: string;
             from?: number;
@@ -366,7 +366,7 @@ extend(Pane.prototype, {
         /**
          * The pane background border color.
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since   2.3.0
          * @product highcharts
          */

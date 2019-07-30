@@ -66,7 +66,7 @@ import H from './Globals.js';
 *      Styled connectors
 *
 * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 * @since 2.1
 * @product highcharts
 */ /**
@@ -395,7 +395,7 @@ seriesType('pie', 'line',
      * try to shrink to make room for data labels in side the plot area,
      *  but only to this size.
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   80
      * @since     3.0
      * @product   highcharts
@@ -486,7 +486,7 @@ seriesType('pie', 'line',
      * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/
      *         Black border
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @product highcharts
      *

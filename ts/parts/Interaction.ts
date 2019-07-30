@@ -77,6 +77,7 @@ declare global {
             onMouseOut(): void;
             onMouseOver(): void;
             select(selected?: boolean): void;
+            setAllPointsToState(state?: string): void;
             setState(state?: string, inherit?: boolean): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
@@ -144,7 +145,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isArray
+    isArray,
+    isObject
 } = U;
 
 import './Chart.js';
@@ -162,7 +164,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
@@ -1527,12 +1528,29 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // Don't loop over points on a series that doesn't apply inactive state
         // to siblings markers (e.g. line, column)
         if (inherit && inactiveOtherPoints && series.points) {
-            series.points.forEach(function (point: Highcharts.Point): void {
-                if (point.setState) {
-                    point.setState(state);
-                }
-            });
+            series.setAllPointsToState(state);
         }
+    },
+
+    /**
+     * Set the state for all points in the series.
+     *
+     * @function Highcharts.Series#setAllPointsToState
+     *
+     * @private
+     *
+     * @param {string} [state]
+     *        Can be either `hover` or undefined to set to normal state.
+     */
+    setAllPointsToState: function (
+        this: Highcharts.Series,
+        state?: string
+    ): void {
+        this.points.forEach(function (point: Highcharts.Point): void {
+            if (point.setState) {
+                point.setState(state);
+            }
+        });
     },
 
     /**

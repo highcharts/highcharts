@@ -52,7 +52,7 @@ declare global {
         }
         interface AxisPlotBandsOptions {
             acrossPanes?: boolean;
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
@@ -77,7 +77,7 @@ declare global {
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
             events?: any;
             id?: string;
@@ -142,13 +142,13 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    erase
 } = U;
 
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     destroyObjectProperties = H.destroyObjectProperties,
-    erase = H.erase,
     merge = H.merge,
     pick = H.pick;
 
@@ -231,7 +231,7 @@ H.PlotLineOrBand.prototype = {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = (color as any) || '${palette.neutralColor40}';
+                attribs.stroke = color || '${palette.neutralColor40}';
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -242,7 +242,7 @@ H.PlotLineOrBand.prototype = {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = (color as any) || '${palette.highlightColor10}';
+                attribs.fill = color || '${palette.highlightColor10}';
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions
@@ -477,7 +477,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption xAxis.plotBands.borderColor
      */
 
@@ -773,7 +773,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */

@@ -125,8 +125,14 @@ seriesType(
     },
     merge(derivedSeriesMixin, {
         setDerivedData: function () {
+            var yData = this.baseSeries.yData;
+
+            if (!yData.length) {
+                return;
+            }
+
             var data = this.derivedData(
-                this.baseSeries.yData,
+                yData,
                 this.binsNumber(),
                 this.options.binWidth
             );

@@ -619,7 +619,7 @@ seriesProto.setCompare = function (compare) {
  * @ignore
  * @function Highcharts.Series#processData
  */
-seriesProto.processData = function () {
+seriesProto.processData = function (force) {
     var series = this, i, keyIndex = -1, processedXData, processedYData, compareStart = series.options.compareStart === true ? 0 : 1, length, compareValue;
     // call base method
     seriesProcessData.apply(this, arguments);
@@ -647,6 +647,7 @@ seriesProto.processData = function () {
             }
         }
     }
+    return; // eslint-disable-line no-useless-return
 };
 // Modify series extremes
 addEvent(Series, 'afterGetExtremes', function () {

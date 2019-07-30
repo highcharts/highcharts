@@ -202,12 +202,12 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, splat = U.splat;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
@@ -784,7 +784,7 @@ null,
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1198,7 +1198,7 @@ null,
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         lineColor: '${palette.backgroundColor}',
         /**
@@ -1353,7 +1353,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
                  */
                 /**
@@ -1445,7 +1445,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 lineColor: '${palette.neutralColor100}',
                 /**
@@ -1597,14 +1597,13 @@ null,
     dataLabels: {
         /** @internal */
         align: 'center',
-        /* eslint-disable valid-jsdoc */
+        // eslint-disable-next-line valid-jsdoc
         /**
          * @internal
          * @default function () { return H.numberFormat(this.y, -1); }
          */
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
-            /* eslint-enable valid-jsdoc */
         },
         /** @internal */
         padding: 5,
@@ -3856,7 +3855,7 @@ null,
                     (zone.className || '')
             ];
             if (!this.chart.styledMode) {
-                propset.push(zone.color || this.color, zone.dashStyle || this.options.dashStyle);
+                propset.push((zone.color || this.color), (zone.dashStyle || this.options.dashStyle));
             }
             props.push(propset);
         }, this);

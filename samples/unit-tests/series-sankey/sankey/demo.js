@@ -514,3 +514,28 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Sankey and minimum line width',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    minLinkWidth: 1,
+                    keys: ['from', 'to', 'weight'],
+                    data: [
+                        ['Brazil', 'England', 1],
+                        ['Canada', 'Portugal', 100000]
+                    ],
+                    type: 'sankey'
+                }]
+            }),
+            path = chart.series[0].data[0].graphic.d.split(' ');
+
+        assert.ok(
+            (parseFloat(path[path.length - 2]) - parseFloat(path[2])) >= 1,
+            true,
+            'Lines are draw with minimal value (#7318).'
+        );
+    }
+);

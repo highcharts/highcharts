@@ -75,7 +75,7 @@ declare global {
         interface SVGAttributes {
             [key: string]: any;
             d?: (string|SVGPathArray);
-            fill?: ColorString;
+            fill?: (ColorString|GradientColorObject|PatternObject);
             inverted?: boolean;
             matrix?: Array<number>;
             rotation?: number;
@@ -83,7 +83,7 @@ declare global {
             rotationOriginY?: number;
             scaleX?: number;
             scaleY?: number;
-            stroke?: ColorString;
+            stroke?: (ColorString|GradientColorObject|PatternObject);
             style?: (string|CSSObject);
             translateX?: number;
             translateY?: number;
@@ -642,7 +642,7 @@ declare global {
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
  * @name Highcharts.SVGAttributes#fill
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}
@@ -666,7 +666,7 @@ declare global {
  * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#style
  * @type {string|Highcharts.CSSObject|undefined}
@@ -810,8 +810,10 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat
@@ -833,11 +835,9 @@ var SVGElement: Highcharts.SVGElement,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
     extend = H.extend,
-    erase = H.erase,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
-    isObject = H.isObject,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
@@ -4562,14 +4562,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
-            }, normalState as any);
+            }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, hoverState as any);
+            }, hoverState);
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
@@ -4580,7 +4580,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, pressedState as any);
+            }, pressedState);
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
@@ -4589,7 +4589,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, disabledState as any);
+            }, disabledState);
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -4935,23 +4935,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         r = isObject(x) ? (x as any).r : r;
 
         var wrapper = this.createElement('rect'),
-            attribs = isObject(x) ? x : x === undefined ? {} : {
-                x: x,
-                y: y,
-                width: Math.max(width as any, 0),
-                height: Math.max(height as any, 0)
-            };
+            attribs: Highcharts.SVGAttributes = isObject(x) ?
+                (x as any) :
+                x === undefined ?
+                    {} :
+                    {
+                        x: x,
+                        y: y,
+                        width: Math.max(width as any, 0),
+                        height: Math.max(height as any, 0)
+                    };
 
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
-                (attribs as any).strokeWidth = strokeWidth;
+                attribs.strokeWidth = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
-            (attribs as any).fill = 'none';
+            attribs.fill = 'none';
         }
 
         if (r) {
-            (attribs as any).r = r;
+            attribs.r = r;
         }
 
         wrapper.rSetter = function (

@@ -126,7 +126,7 @@ var defaultScrollbarOptions = {
     /**
      * The color of the scrollbar's border.
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBorderColor: '${palette.neutralColor20}',
     /**
@@ -153,7 +153,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBorderColor: '${palette.neutralColor20}',
     /**
@@ -184,7 +184,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBorderColor: '${palette.neutralColor5}',
     /**
@@ -215,7 +215,7 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Highcharts.SVGPathArray} path
  *        Path to be rotated.
  *
- * @param {boolean} vertical
+ * @param {boolean} [vertical]
  *        If vertical scrollbar, swap x-y values.
  *
  * @return {Highcharts.SVGPathArray}

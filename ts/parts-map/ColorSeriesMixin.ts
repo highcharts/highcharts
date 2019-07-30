@@ -16,6 +16,7 @@ declare global {
     namespace Highcharts {
         interface ColorPoint extends Point {
             dataLabelOnNull: boolean;
+            series: ColorSeries;
             value: (number|null);
             isValid(): boolean;
             setState(state?: string): void;
@@ -55,7 +56,7 @@ declare global {
             translateColors: ColorSeries['translateColors'];
         }
         interface ColorSeriesOptions extends SeriesOptions {
-            nullColor?: ColorString;
+            nullColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface Point {
             dataLabelOnNull?: ColorPoint['dataLabelOnNull'];

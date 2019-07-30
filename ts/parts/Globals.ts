@@ -24,24 +24,31 @@ declare global {
             getMaxLabelDimensions?: Function; // @todo
         }
         interface Chart {
+            drilldownLevels?: any; // @todo drilldown module
             hasParallelCoordinates?: any; // @todo parallel module
-            is3d?: any; // @todo
-            isBoosting?: any; // @todo
-            isPrinting?: any; // @todo
-            openMenu?: any; // @todo
-            redrawTrigger?: any; // @todo
+            is3d?: any; // @todo highcharts 3d
+            isBoosting?: any; // @todo boost module
+            isPrinting?: any; // @todo exporting module
+            openMenu?: any; // @todo exporting module
+            redrawTrigger?: any; // @todo static-scale module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
         }
         interface ColumnSeries {
+            animateDrillupFrom: Function; // @todo drilldown module
+            animateDrillupTo: Function; // @todo drilldown module
             translate3dPoints: Function; // @todo
             translate3dShapes: Function; // @todo
         }
+        interface NetworkgraphLayout {
+            beforeStep: Function; // @todo networkgraph
+        }
         interface Options {
-            exporting?: any; // @todo
-            navigation?: any; // @todo
+            drilldown?: any; // @todo drilldown module
+            exporting?: any; // @todo exporting module
+            navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
@@ -49,19 +56,16 @@ declare global {
         interface Point {
             startR?: any; // @todo solid-gauge
             tooltipDateKeys?: any; // @todo xrange
-            zoomTo: Function; // @todo map series
         }
         interface Series {
-            colorKey?: any; // @todo color series mixin
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
             invertable?: any; // @todo sankey
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
+            layout?: any; // @todo networkgraph
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
-            valueMax?: any; // @todo (heat)map series
-            valueMin?: any; // @todo (heat)map series
             getPoint: Function; // @todo boost module
         }
         interface Tick {
@@ -94,9 +98,13 @@ declare global {
         msHidden: boolean;
         webkitHidden: boolean;
     }
+    interface Index extends Object {
+        [key: string]: any;
+        [index: number]: any;
+    }
     interface Window {
         Image: typeof Image;
-        opera?: any;
+        opera?: unknown;
         TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable

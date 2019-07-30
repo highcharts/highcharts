@@ -50,3 +50,4 @@ import '../../indicators/wma.src.js';
 import '../../indicators/zigzag.src.js';
 import '../../indicators/regressions.src.js';
 import '../../indicators/acceleration-bands.src.js';
+import '../../indicators/trendline.src.js';

@@ -15,7 +15,8 @@
 import Highcharts from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    isObject = U.isObject;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -800,11 +801,31 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
  * @return {object} The blob object, or undefined if not supported.
  */
 function getBlobFromContent(content, type) {
-    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
-        return new win.Blob(
-            ['\uFEFF' + content], // #7084
-            { type: type }
-        );
+    var nav = win.navigator,
+        webKit = (
+            nav.userAgent.indexOf('WebKit') > -1 &&
+            nav.userAgent.indexOf('Chrome') < 0
+        ),
+        domurl = win.URL || win.webkitURL || win;
+
+    try {
+        // MS specific
+        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
+            var blob = new win.MSBlobBuilder();
+            blob.append(content);
+            return blob.getBlob('image/svg+xml');
+        }
+
+        // Safari requires data URI since it doesn't allow navigation to blob
+        // URLs.
+        if (!webKit) {
+            return domurl.createObjectURL(new win.Blob(
+                ['\uFEFF' + content], // #7084
+                { type: type }
+            ));
+        }
+    } catch (e) {
+        // Ignore
     }
 }
 
@@ -910,7 +931,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
             if (typeof ob[key] === 'function') {
                 delete ob[key];
             }
-            if (Highcharts.isObject(ob[key])) { // object and not an array
+            if (isObject(ob[key])) { // object and not an array
                 removeFunctions(ob[key]);
             }
         });

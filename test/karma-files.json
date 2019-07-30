@@ -38,6 +38,7 @@
 	"code/modules/pattern-fill.src.js",
 	"code/modules/price-indicator.src.js",
 	"code/modules/sankey.src.js",
+	"code/modules/dependency-wheel.src.js",
 	"code/modules/solid-gauge.src.js",
 	"code/modules/sonification.src.js",
     "code/modules/stock-tools.src.js",

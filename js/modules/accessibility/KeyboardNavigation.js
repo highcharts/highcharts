@@ -245,6 +245,10 @@ KeyboardNavigation.prototype = {
      * whenever we want, by setting focus to this div and not preventing the
      * default tab action. We also use this when users come back into the chart
      * by tabbing back, in order to navigate from the end of the chart.
+     *
+     * Screen reader users can also use heading-shortcuts to jump out of the
+     * chart with this.
+     *
      * @private
      */
     addExitAnchor: function () {
@@ -257,6 +261,8 @@ KeyboardNavigation.prototype = {
                 'accessibility.svgContainerEnd', { chart: chart }
             );
 
+        exitAnchor.innerHTML = exitAnchorLabel;
+
         exitAnchorWrapper.setAttribute('aria-hidden', 'false');
         exitAnchorWrapper.setAttribute(
             'class', 'highcharts-exit-anchor-wrapper'
@@ -265,7 +271,6 @@ KeyboardNavigation.prototype = {
         exitAnchorWrapper.style.outline = 'none';
 
         exitAnchor.setAttribute('tabindex', '0');
-        exitAnchor.setAttribute('aria-label', exitAnchorLabel);
         exitAnchor.setAttribute('aria-hidden', false);
 
         // Hide exit anchor

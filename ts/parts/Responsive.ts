@@ -75,11 +75,11 @@ import './Chart.js';
 import U from './Utilities.js';
 const {
     isArray,
+    isObject,
     splat
 } = U;
 
 var Chart = H.Chart,
-    isObject = H.isObject,
     pick = H.pick;
 
 /**

@@ -148,7 +148,7 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemColor
@@ -202,7 +202,7 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerColor
@@ -304,7 +304,8 @@ seriesType('boxplot', 'column', {
                     point.stem.attr(stemAttr);
                     // Whiskers attributes
                     if (whiskerLength) {
-                        whiskersAttr.stroke = (point.whiskerColor || options.whiskerColor ||
+                        whiskersAttr.stroke = (point.whiskerColor ||
+                            options.whiskerColor ||
                             color);
                         whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
                         point.whiskers.attr(whiskersAttr);

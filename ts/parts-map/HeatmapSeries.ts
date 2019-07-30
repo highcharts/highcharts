@@ -22,7 +22,9 @@ declare global {
             pointPadding?: HeatmapPoint['pointPadding'];
             value?: HeatmapPoint['value'];
         }
-        interface HeatmapSeriesOptions extends ScatterSeriesOptions {
+        interface HeatmapSeriesOptions
+            extends ColorSeriesOptions, ScatterSeriesOptions
+        {
             colsize?: number;
             nullColor?: (ColorString|GradientColorObject|PatternObject);
             pointPadding?: HeatmapPoint['pointPadding'];
@@ -39,13 +41,17 @@ declare global {
         {
             hover?: HeatmapSeriesStatesHoverOptions;
         }
-        class HeatmapPoint extends ScatterPoint implements ColorPoint {
-            public dataLabelOnNull: ColorPoint['dataLabelOnNull'];
-            public isValid: ColorPoint['isValid'];
+        interface Series {
+            valueMax?: number;
+            valueMin?: number;
+        }
+        class HeatmapPoint extends ScatterPoint implements ColorPointMixin {
+            public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];
+            public isValid: ColorPointMixin['isValid'];
             public options: HeatmapPointOptions;
             public pointPadding?: number;
             public series: HeatmapSeries;
-            public setVisible: ColorPoint['setVisible'];
+            public setVisible: ColorPointMixin['setVisible'];
             public value: (number|null);
             public x: number;
             public y: number;
@@ -53,16 +59,20 @@ declare global {
         class HeatmapSeries extends ScatterSeries implements ColorSeriesMixin {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
             public colorAttribs: ColorSeriesMixin['colorAttribs'];
+            public colorAxis: ColorAxis;
             public colorKey: ColorSeriesMixin['colorKey'];
             public data: Array<HeatmapPoint>;
             public drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
             public optionalAxis: ColorSeriesMixin['optionalAxis'];
             public options: HeatmapSeriesOptions;
             public pointArrayMap: Array<string>;
+            public pointClass: typeof HeatmapPoint;
             public points: Array<HeatmapPoint>;
             public trackerGroups: Array<string>;
             public translateColors: ColorSeriesMixin['translateColors'];
             public valueData?: Array<number>;
+            public valueMax: number;
+            public valueMin: number;
             public drawPoints(): void;
             public getExtremes(): void;
             public getValidPoints(
@@ -210,8 +220,8 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
         dataLabels: {
             // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
-            formatter: function (): string { // #2945
-                return (this.point as Highcharts.HeatmapPoint).value as any;
+            formatter: function (): (number|null) { // #2945
+                return (this.point as Highcharts.HeatmapPoint).value;
             },
             /** @ignore-option */
             inside: true,

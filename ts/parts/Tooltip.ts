@@ -44,7 +44,7 @@ declare global {
             ): (false|string|Array<string>);
         }
         interface TooltipFormatterContextObject {
-            color: ColorString;
+            color: (ColorString|GradientColorObject|PatternObject);
             colorIndex?: number;
             key: number;
             percentage?: number;
@@ -158,11 +158,11 @@ declare global {
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
  *        Context to format
-
+ *
  * @param {Highcharts.Tooltip} tooltip
  *        The tooltip instance
  *
- * @return {false|string|Array<string>}
+ * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  *         Formatted text or false
  */
 
@@ -170,7 +170,7 @@ declare global {
  * @interface Highcharts.TooltipFormatterContextObject
  *//**
  * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  *//**
  * @name Highcharts.TooltipFormatterContextObject#colorIndex
  * @type {number|undefined}
@@ -246,6 +246,8 @@ declare global {
 /**
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
+
+''; // separates doclets above from variables below
 
 var doc = H.doc,
     extend = H.extend,
@@ -537,7 +539,7 @@ H.Tooltip.prototype = {
                 if (!styledMode) {
                     this.label
                         .attr({
-                            'fill': options.backgroundColor as any,
+                            fill: options.backgroundColor,
                             'stroke-width': options.borderWidth
                         })
                         // #2301, #2657
@@ -832,24 +834,43 @@ H.Tooltip.prototype = {
                 ) :
                 chart.chartHeight,
             chartPosition = chart.pointer.chartPosition,
-            first = [
-                'y',
-                outerHeight,
-                boxHeight,
-                (outside ? chartPosition.top - distance : 0) +
-                    (point.plotY as any) + chart.plotTop,
-                outside ? 0 : chart.plotTop,
-                outside ? outerHeight : chart.plotTop + chart.plotHeight
-            ],
-            second = [
-                'x',
-                outerWidth,
-                boxWidth,
-                (outside ? chartPosition.left - distance : 0) +
-                    (point.plotX as any) + chart.plotLeft,
-                outside ? 0 : chart.plotLeft,
-                outside ? outerWidth : chart.plotLeft + chart.plotWidth
-            ],
+            containerScaling = chart.containerScaling,
+            scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+                containerScaling ? val * containerScaling.scaleX : val
+            ),
+            scaleY = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+                containerScaling ? val * containerScaling.scaleY : val
+            ),
+            // Build parameter arrays for firstDimension()/secondDimension()
+            buildDimensionArray = (dim: 'x' | 'y'): Array<number|string> => {
+                const isX = dim === 'x';
+                return [
+                    dim, // Dimension - x or y
+                    isX ? outerWidth : outerHeight,
+                    isX ? boxWidth : boxHeight
+                ].concat(outside ? [
+                    // If we are using tooltip.outside, we need to scale the
+                    // position to match scaling of the container in case there
+                    // is a transform/zoom on the container. #11329
+                    isX ? scaleX(boxWidth) : scaleY(boxHeight),
+                    isX ? chartPosition.left - distance +
+                            scaleX((point.plotX as any) + chart.plotLeft) :
+                        chartPosition.top - distance +
+                            scaleY((point.plotY as any) + chart.plotTop),
+                    0,
+                    isX ? outerWidth : outerHeight
+                ] : [
+                    // Not outside, no scaling is needed
+                    isX ? boxWidth : boxHeight,
+                    isX ? (point.plotX as any) + chart.plotLeft :
+                        (point.plotY as any) + chart.plotTop,
+                    isX ? chart.plotLeft : chart.plotTop,
+                    isX ? chart.plotLeft + chart.plotWidth :
+                        chart.plotTop + chart.plotHeight
+                ]);
+            },
+            first = buildDimensionArray('y'),
+            second = buildDimensionArray('x'),
             // The far side is right or bottom
             preferFarSide = !this.followPointer && pick(
                 point.ttBelow,
@@ -867,14 +888,18 @@ H.Tooltip.prototype = {
                 dim: string,
                 outerSize: number,
                 innerSize: number,
+                scaledInnerSize: number, // #11329
                 point: number,
                 min: number,
                 max: number
             ): (boolean|undefined) {
-                var roomLeft = innerSize < point - distance,
-                    roomRight = point + distance + innerSize < outerSize,
-                    alignedLeft = point - distance - innerSize,
-                    alignedRight = point + distance;
+                const scaledDist = dim === 'y' ?
+                        scaleY(distance) : scaleX(distance),
+                    scaleDiff = (innerSize - scaledInnerSize) / 2,
+                    roomLeft = scaledInnerSize < point - distance,
+                    roomRight = point + distance + scaledInnerSize < outerSize,
+                    alignedLeft = point - scaledDist - innerSize + scaleDiff,
+                    alignedRight = point + scaledDist - scaleDiff;
 
                 if (preferFarSide && roomRight) {
                     ret[dim] = alignedRight;
@@ -882,7 +907,7 @@ H.Tooltip.prototype = {
                     ret[dim] = alignedLeft;
                 } else if (roomLeft) {
                     ret[dim] = Math.min(
-                        max - innerSize,
+                        max - scaledInnerSize,
                         alignedLeft - h < 0 ? alignedLeft : alignedLeft - h
                     );
                 } else if (roomRight) {
@@ -909,10 +934,10 @@ H.Tooltip.prototype = {
                 dim: number,
                 outerSize: number,
                 innerSize: number,
+                scaledInnerSize: number, // #11329
                 point: number
             ): (boolean|undefined) {
                 var retVal;
-
                 // Too close to the edge, return false and swap dimensions
                 if (point < distance || point > outerSize - distance) {
                     retVal = false;
@@ -920,8 +945,8 @@ H.Tooltip.prototype = {
                 } else if (point < innerSize / 2) {
                     ret[dim] = 1;
                 // Align right/bottom
-                } else if (point > outerSize - innerSize / 2) {
-                    ret[dim] = outerSize - innerSize - 2;
+                } else if (point > outerSize - scaledInnerSize / 2) {
+                    ret[dim] = outerSize - scaledInnerSize - 2;
                 // Align center
                 } else {
                     ret[dim] = point - innerSize / 2;
@@ -1049,19 +1074,7 @@ H.Tooltip.prototype = {
             !((point as any).series &&
             (point as any).series.noSharedTooltip)
         ) {
-            // Set inactive state for all points
-            activeSeries = chart.pointer.getActiveSeries(point as any);
-
-            chart.series.forEach(function (
-                inactiveSeries: Highcharts.Series
-            ): void {
-                if (
-                    inactiveSeries.options.inactiveOtherPoints ||
-                    activeSeries.indexOf(inactiveSeries) === -1
-                ) {
-                    inactiveSeries.setState('inactive', true);
-                }
-            });
+            chart.pointer.applyInactiveState(point as any);
 
             // Now set hover state for the choosen ones:
             (point as any).forEach(function (item: Highcharts.Point): void {
@@ -1222,7 +1235,7 @@ H.Tooltip.prototype = {
                     };
 
                     if (!chart.styledMode) {
-                        attribs.fill = options.backgroundColor as any;
+                        attribs.fill = options.backgroundColor;
                         attribs['stroke-width'] = options.borderWidth;
                     }
 
@@ -1255,8 +1268,8 @@ H.Tooltip.prototype = {
                         .attr({
                             stroke: (
                                 options.borderColor ||
-                                (point.color as any) ||
-                                (series.color as any) ||
+                                point.color ||
+                                series.color ||
                                 '${palette.neutralColor80}'
                             )
                         });
@@ -1396,6 +1409,22 @@ H.Tooltip.prototype = {
                 label.height + pad,
                 false
             );
+
+            // Anchor and tooltip container need scaling if chart container has
+            // scale transform/css zoom. #11329.
+            const containerScaling = chart.containerScaling;
+            if (containerScaling) {
+                H.css(this.container as Highcharts.HTMLDOMElement, {
+                    transform: `scale(${
+                        containerScaling.scaleX
+                    }, ${
+                        containerScaling.scaleY
+                    })`
+                });
+                anchorX *= containerScaling.scaleX;
+                anchorY *= containerScaling.scaleY;
+            }
+
             anchorX += chart.pointer.chartPosition.left - pos.x;
             anchorY += chart.pointer.chartPosition.top - pos.y;
         }

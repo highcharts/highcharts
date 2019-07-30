@@ -56,10 +56,12 @@ declare global {
             public series: BoxPlotSeries;
             public shapeArgs: SVGAttributes;
             public stem: SVGElement;
-            public stemColor: ColorString;
+            public stemColor: (ColorString|GradientColorObject|PatternObject);
             public stemDashStyle: DashStyleValue;
             public stemWidth: number;
-            public whiskerColor: ColorString;
+            public whiskerColor: (
+                ColorString|GradientColorObject|PatternObject
+            );
             public whiskers: SVGElement;
             public whiskerLength: (number|string);
             public whiskerWidth: number;
@@ -233,7 +235,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemColor
@@ -290,7 +292,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerColor
@@ -441,7 +443,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
 
                     // Stem attributes
                     stemAttr.stroke =
-                        point.stemColor || options.stemColor || (color as any);
+                        point.stemColor || options.stemColor || color;
                     stemAttr['stroke-width'] = pick(
                         point.stemWidth,
                         options.stemWidth,
@@ -454,8 +456,9 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
                     // Whiskers attributes
                     if (whiskerLength) {
                         whiskersAttr.stroke = (
-                            point.whiskerColor || options.whiskerColor ||
-                            (color as any)
+                            point.whiskerColor ||
+                            options.whiskerColor ||
+                            color
                         );
                         whiskersAttr['stroke-width'] = pick(
                             point.whiskerWidth,
@@ -467,11 +470,11 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
 
                     if (doQuartiles) {
                         boxAttr.fill = (
-                            (point.fillColor as any) ||
-                            (options.fillColor as any) ||
-                            (color as any)
+                            point.fillColor ||
+                            options.fillColor ||
+                            color
                         );
-                        boxAttr.stroke = options.lineColor || (color as any);
+                        boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
                         point.box.attr(boxAttr);
                     }
@@ -479,9 +482,9 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
 
                     // Median attributes
                     medianAttr.stroke = (
-                        (point.medianColor as any) ||
-                        (options.medianColor as any) ||
-                        (color as any)
+                        point.medianColor ||
+                        options.medianColor ||
+                        color
                     );
                     medianAttr['stroke-width'] = pick(
                         point.medianWidth,

@@ -37,7 +37,9 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): (string|undefined);
+            (this: DataLabelsFormatterContextObject): (
+                number|string|null|undefined
+            );
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -51,11 +53,11 @@ declare global {
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;
@@ -70,14 +72,14 @@ declare global {
             shadow?: (boolean|ShadowOptionsObject);
             shape?: string;
             style?: CSSObject;
-            textPath?: DataLabelsTextPath;
+            textPath?: DataLabelsTextPathOptionsObject;
             useHTML?: boolean;
             verticalAlign?: (VerticalAlignValue|null);
             x?: number;
             y?: (number|null);
             zIndex?: number;
         }
-        interface DataLabelsTextPath {
+        interface DataLabelsTextPathOptionsObject {
             attributes?: SVGAttributes;
             enabled?: boolean;
         }
@@ -214,7 +216,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string|undefined}
+ * @return {number|string|null|undefined}
  *         Formatted data label text
  */
 
@@ -313,7 +315,7 @@ declare global {
  *      Data labels box options
  *
  * @name Highcharts.DataLabelsOptionsObject#borderColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  * @since 2.2.1
  *//**
  * The border radius in pixels for the data label.
@@ -365,7 +367,7 @@ declare global {
  *      White data labels
  *
  * @name Highcharts.DataLabelsOptionsObject#color
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * Whether to hide data labels that are outside the plot area. By default, the
  * data label is moved inside the plot area according to the
@@ -1091,7 +1093,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
                             point.contrastColor = renderer.getContrast(
-                                (point.color as any) || (series.color as any)
+                                (point.color || series.color) as any
                             );
                             (style as any).color = (
                                 !defined(labelDistance) &&
@@ -2073,13 +2075,13 @@ if (seriesTypes.pie) {
             // Handle horizontal size and center
             if ((centerOption as any)[0] !== null) { // Fixed center
                 newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize);
+                    Math.max(overflow[1], overflow[3]), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
                     // horizontal overflow
                     center[2] - overflow[1] - overflow[3],
-                    minSize
+                    minSize as any
                 );
                 // horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
@@ -2088,7 +2090,7 @@ if (seriesTypes.pie) {
             // Handle vertical size and center
             if ((centerOption as any)[1] !== null) { // Fixed center
                 newSize = Math.max(Math.min(newSize, center[2] -
-                    Math.max(overflow[0], overflow[2])), minSize);
+                    Math.max(overflow[0], overflow[2])), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
@@ -2097,7 +2099,7 @@ if (seriesTypes.pie) {
                         // vertical overflow
                         center[2] - overflow[0] - overflow[2]
                     ),
-                    minSize
+                    minSize as any
                 );
                 // vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;

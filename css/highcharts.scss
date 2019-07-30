@@ -229,13 +229,23 @@ $indicator-negative-line: #F21313;
 .highcharts-state-hover .highcharts-graph {
     stroke-width: 3;
 }
+
+.highcharts-point-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
+.highcharts-series-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
 .highcharts-state-hover path {
-    transition: stroke-width 50; /* quick in */
+    transition: stroke-width 50ms; /* quick in */
 }
 .highcharts-state-normal path {
     transition: stroke-width 250ms; /* slow out */
 }
-
 /* Legend hover affects points and series */
 g.highcharts-series,
 .highcharts-point,

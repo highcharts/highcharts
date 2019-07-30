@@ -45,6 +45,19 @@ import H from './Globals.js';
  * @return {void}
  */
 /**
+ * Interface description for a class.
+ *
+ * @interface Highcharts.Class<T>
+ * @extends Function
+ */ /**
+* Class costructor.
+* @function Highcharts.Class<T>#new
+* @param {...Array<*>} args
+*        Constructor arguments.
+* @return {T}
+*         Class instance.
+*/
+/**
  * A style object with camel case property names to define visual appearance of
  * a SVG element or HTML element. The properties can be whatever styles are
  * supported on the given SVG or HTML element.
@@ -723,7 +736,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object|undefined>} [...n]
+ * @param {...Array<object|undefined>} [n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -740,7 +753,7 @@ H.Fx.prototype = {
 *        The first object to extend. When only this is given, the function
 *        returns a deep copy.
 *
-* @param {Array<object|undefined>} [...n]
+* @param {...Array<object|undefined>} [n]
 *        An object to merge into the previous one.
 *
 * @return {T}
@@ -756,9 +769,9 @@ H.merge = function () {
         }
         H.objectEach(original, function (value, key) {
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (H.isObject(value, true) &&
-                !H.isClass(value) &&
-                !H.isDOMElement(value)) {
+            if (isObject(value, true) &&
+                !isClass(value) &&
+                !isDOMElement(value)) {
                 copy[key] = doCopy(copy[key] || {}, value);
                 // Primitives and arrays are copied over directly
             }
@@ -842,9 +855,9 @@ function isArray(obj) {
  * @return {boolean}
  *         True if the argument is an object.
  */
-H.isObject = function (obj, strict) {
+function isObject(obj, strict) {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
-};
+}
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -856,26 +869,26 @@ H.isObject = function (obj, strict) {
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-H.isDOMElement = function (obj) {
-    return H.isObject(obj) && typeof obj.nodeType === 'number';
-};
+function isDOMElement(obj) {
+    return isObject(obj) && typeof obj.nodeType === 'number';
+}
 /**
- * Utility function to check if an Object is an class.
+ * Utility function to check if an Object is a class.
  *
  * @function Highcharts.isClass
  *
- * @param {*} obj
+ * @param {object|undefined} obj
  *        The item to check.
  *
  * @return {boolean}
- *         True if the argument is an class.
+ *         True if the argument is a class.
  */
-H.isClass = function (obj) {
+function isClass(obj) {
     var c = obj && obj.constructor;
-    return !!(H.isObject(obj, true) &&
-        !H.isDOMElement(obj) &&
+    return !!(isObject(obj, true) &&
+        !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
-};
+}
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
  * Infinity or -Infinity).
@@ -904,7 +917,7 @@ function isNumber(n) {
  *
  * @return {void}
  */
-H.erase = function (arr, item) {
+function erase(arr, item) {
     var i = arr.length;
     while (i--) {
         if (arr[i] === item) {
@@ -912,7 +925,7 @@ H.erase = function (arr, item) {
             break;
         }
     }
-};
+}
 /**
  * Check if an object is null or undefined.
  *
@@ -964,7 +977,7 @@ H.attr = function (elem, prop, value) {
         }
         // else if prop is defined, it is a hash of key/value pairs
     }
-    else if (defined(prop) && H.isObject(prop)) {
+    else if (defined(prop) && isObject(prop)) {
         H.objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
@@ -1033,7 +1046,7 @@ H.clearTimeout = function (id) {
  *
  * @function Highcharts.extend<T>
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The object to be extended.
  *
  * @param {object} b
@@ -1136,26 +1149,27 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
     }
     return el;
 };
+// eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
  *
- * @function Highcharts.extendClass
+ * @function Highcharts.extendClass<T>
  *
- * @param {*} parent
+ * @param {Highcharts.Class<T>} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {*}
+ * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
 H.extendClass = function (parent, members) {
-    var object = function () { };
-    object.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(object.prototype, members);
-    return object;
+    var obj = (function () { });
+    obj.prototype = new parent(); // eslint-disable-line new-cap
+    H.extend(obj.prototype, members);
+    return obj;
 };
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1242,16 +1256,16 @@ H.wrap = function (obj, method, func) {
  * @private
  * @function Highcharts.datePropsToTimestamps
  *
- * @param {any} object - any object to convert properties of
+ * @param {*} obj - any object to convert properties of
  *
  * @return {void}
  */
-H.datePropsToTimestamps = function (object) {
-    H.objectEach(object, function (val, key) {
-        if (H.isObject(val) && typeof val.getTime === 'function') {
-            object[key] = val.getTime();
+H.datePropsToTimestamps = function (obj) {
+    H.objectEach(obj, function (val, key) {
+        if (isObject(val) && typeof val.getTime === 'function') {
+            obj[key] = val.getTime();
         }
-        else if (H.isObject(val) || isArray(val)) {
+        else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -1636,7 +1650,7 @@ H.setAnimation = function (animation, chart) {
  *         An object with at least a duration property.
  */
 H.animObject = function (animation) {
-    return H.isObject(animation) ?
+    return isObject(animation) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
 };
@@ -2075,7 +2089,7 @@ H.objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element or object to add a listener to. It can be a
  *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
@@ -2139,7 +2153,7 @@ H.addEvent = function (el, type, fn, options) {
  *
  * @function Highcharts.removeEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element to remove events on.
  *
  * @param {string} [type]
@@ -2322,7 +2336,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  */
 H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
-    if (!H.isObject(opt)) { // Number or undefined/null
+    if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
         opt = {
             duration: args[2],
@@ -2400,8 +2414,7 @@ H.seriesType = function (type, parent, options, props, pointProps) {
     // Merge the options
     defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] ||
-        function () { }, props);
+    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
     // Create the point class if needed
     if (pointProps) {
@@ -2487,8 +2500,12 @@ if (win.jQuery) {
 // TODO use named exports when supported.
 var utils = {
     defined: defined,
+    erase: erase,
     isArray: isArray,
+    isClass: isClass,
+    isDOMElement: isDOMElement,
     isNumber: isNumber,
+    isObject: isObject,
     isString: isString,
     pInt: pInt,
     splat: splat

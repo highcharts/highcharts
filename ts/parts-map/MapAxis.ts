@@ -28,13 +28,6 @@ declare global {
         interface MapChart extends Chart {
             xAxis: Array<MapAxis>;
         }
-        interface MapSeries extends Series {
-            chart: MapChart;
-            maxX?: number;
-            minX?: number;
-            preserveAspectRatio?: boolean;
-            useMapGeometry?: boolean;
-        }
     }
 }
 

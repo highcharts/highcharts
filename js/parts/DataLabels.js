@@ -59,7 +59,7 @@ import H from './Globals.js';
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string|undefined}
+ * @return {number|string|null|undefined}
  *         Formatted data label text
  */
 /**
@@ -156,7 +156,7 @@ import H from './Globals.js';
 *      Data labels box options
 *
 * @name Highcharts.DataLabelsOptionsObject#borderColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 * @since 2.2.1
 */ /**
 * The border radius in pixels for the data label.
@@ -208,7 +208,7 @@ import H from './Globals.js';
 *      White data labels
 *
 * @name Highcharts.DataLabelsOptionsObject#color
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * Whether to hide data labels that are outside the plot area. By default, the
 * data label is moved inside the plot area according to the
@@ -745,7 +745,7 @@ Series.prototype.drawDataLabels = function () {
                         style.color = pick(labelOptions.color, style.color, series.color, '${palette.neutralColor100}');
                         // Get automated contrast color
                         if (style.color === 'contrast') {
-                            point.contrastColor = renderer.getContrast(point.color || series.color);
+                            point.contrastColor = renderer.getContrast((point.color || series.color));
                             style.color = (!defined(labelDistance) &&
                                 labelOptions.inside) ||
                                 labelDistance < 0 ||

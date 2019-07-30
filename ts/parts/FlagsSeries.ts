@@ -36,7 +36,7 @@ declare global {
             allowOverlapX?: boolean;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             height?: number;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             onKey?: string;
             onSeries?: string;
@@ -54,7 +54,7 @@ declare global {
             extends ColumnSeriesStatesHoverOptions
         {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             shape?: FlagsShapeValue;
         }
         interface FlagsSeriesStatesOptions extends ColumnSeriesStatesOptions {
@@ -306,7 +306,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
          * In styled mode, the stroke is set in the
          * `.highcharts-flag-series.highcharts-point` rule.
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #000000
          * @product   highstock
          * @apioption plotOptions.flags.lineColor
@@ -330,7 +330,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
                 /**
                  * The color of the line/border of the flag.
                  *
-                 * @type    {Highcharts.ColorString}
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
                 lineColor: '${palette.neutralColor100}',
@@ -414,8 +414,8 @@ seriesType<Highcharts.FlagsSeriesOptions>(
             }
 
             return {
-                fill: (fill as any) || (color as any),
-                stroke: lineColor || (color as any),
+                fill: fill || color,
+                stroke: lineColor || color,
                 'stroke-width': lineWidth || options.lineWidth || 0
             };
         },

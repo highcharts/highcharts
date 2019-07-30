@@ -102,7 +102,7 @@ declare global {
         interface XAxisCrosshairLabelOptions {
             align?: AlignValue;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             format?: string;
@@ -113,7 +113,7 @@ declare global {
         }
         interface XAxisCrosshairOptions {
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
             label?: XAxisCrosshairLabelOptions;
             snap?: boolean;
@@ -140,7 +140,7 @@ declare global {
         interface XAxisCurrentDateIndicatorOptions {
             acrossPanes?: boolean;
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
             events?: any;
             id?: string;
@@ -156,7 +156,7 @@ declare global {
             setExtremes?: AxisSetExtremesEventCallbackFunction;
         }
         interface XAxisGridOptions {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             cellHeight?: number;
             columns?: Array<XAxisOptions>;
@@ -192,7 +192,9 @@ declare global {
             accessibility?: (object|XAxisAccessibilityOptions);
             alignTicks?: boolean;
             allowDecimals?: boolean;
-            alternateGridColor?: ColorString;
+            alternateGridColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
             breaks?: Array<XAxisBreaksOptions>;
             categories?: Array<string>;
             ceiling?: number;
@@ -203,7 +205,7 @@ declare global {
             events?: XAxisEventsOptions;
             floor?: number;
             grid?: XAxisGridOptions;
-            gridLineColor?: ColorString;
+            gridLineColor?: (ColorString|GradientColorObject|PatternObject);
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
             gridZIndex?: number;
@@ -213,7 +215,7 @@ declare global {
             labels?: XAxisLabelsOptions;
             left?: (number|string);
             linearToLogConverter?: undefined;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             linkedTo?: number;
             margin?: number;
@@ -222,10 +224,12 @@ declare global {
             maxRange?: number;
             maxZoom?: number;
             min?: (null|number);
-            minorGridLineColor?: ColorString;
+            minorGridLineColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
             minorGridLineDashStyle?: DashStyleValue;
             minorGridLineWidth?: number;
-            minorTickColor?: ColorString;
+            minorTickColor?: (ColorString|GradientColorObject|PatternObject);
             minorTickInterval?: ('auto'|null|number);
             minorTickLength?: number;
             minorTickPosition?: AxisMinorTickPositionValue;
@@ -252,7 +256,7 @@ declare global {
             startOfWeek?: number;
             startOnTick?: boolean;
             tickAmount?: number;
-            tickColor?: ColorString;
+            tickColor?: (ColorString|GradientColorObject|PatternObject);
             tickInterval?: number;
             tickLength?: number;
             tickmarkPlacement?: AxisTickmarkPlacementValue;
@@ -269,7 +273,7 @@ declare global {
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
-            zoomEnabled?: undefined;
+            zoomEnabled?: boolean;
         }
         interface XAxisTitleOptions {
             align?: AxisTitleAlignValue;
@@ -290,13 +294,16 @@ declare global {
         interface YAxisOptions extends XAxisOptions {
             angle?: number;
             gridLineInterpolation?: AxisGridLineInterpolationValue;
-            maxColor?: ColorString;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
             maxLength?: (number|string);
-            minColor?: ColorString;
+            minColor?: (ColorString|GradientColorObject|PatternObject);
             minLength?: (number|string);
             resize?: YAxisResizeOptions;
             staticScale?: number;
-            stops?: Array<[number, ColorString]>;
+            stops?: Array<[
+                number,
+                (ColorString|GradientColorObject|PatternObject)
+            ]>;
             tooltipValueFormat?: string;
         }
         interface YAxisResizeControlledAxisOptions {
@@ -307,7 +314,7 @@ declare global {
             controlledAxis?: YAxisResizeControlledAxisOptions;
             cursor?: string;
             enabled?: boolean;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineDashStyle?: string;
             lineWidth?: number;
             x?: number;
@@ -864,7 +871,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/alternategridcolor/
          *         Alternate grid color on the Y axis
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption xAxis.alternateGridColor
          */
 
@@ -1019,7 +1026,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
          *         Customized crosshairs
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #cccccc
          * @since     4.1
          * @apioption xAxis.crosshair.color
@@ -1081,7 +1088,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * The border color for the crosshair label
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderColor
@@ -1196,6 +1203,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default   2
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
+         */
+
+        /**
+         * Whether to zoom axis. If `chart.zoomType` is set, the option allows
+         * to disable zooming on an individual axis.
+         *
+         * @sample {highcharts} highcharts/xaxis/xaxis/zoomenabled/
+         *         Zoom enabled is false
+         *
+         *
+         * @type      {boolean}
+         * @default   enabled
+         * @apioption xAxis.zoomEnabled
          */
 
         /**
@@ -2747,7 +2767,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorgridlinecolor/
          *         Bright grey lines from Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #f2f2f2
          */
         minorGridLineColor: '${palette.neutralColor5}',
@@ -2775,7 +2795,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorticks/
          *         Black tick marks on Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #999999
          */
         minorTickColor: '${palette.neutralColor40}',
@@ -2797,7 +2817,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/linecolor/
          *         A red line on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         lineColor: '${palette.highlightColor20}',
@@ -2836,7 +2856,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/gridlinecolor/
          *         Green lines
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #e6e6e6
          */
         gridLineColor: '${palette.neutralColor10}',
@@ -2875,7 +2895,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/ticks/
          *         Formatted ticks on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         tickColor: '${palette.highlightColor20}'
@@ -2979,7 +2999,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -2993,7 +3013,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -3215,7 +3235,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption yAxis.lineColor
          */
 

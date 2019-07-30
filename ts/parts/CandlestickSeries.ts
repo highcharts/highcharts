@@ -19,13 +19,13 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         interface CandlestickPointOptions extends OHLCPointOptions {
-            lineColor?: ColorString;
-            upLineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            upLineColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface CandlestickSeriesOptions extends OHLCSeriesOptions {
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             states?: CandlestickSeriesStatesOptions;
-            upLineColor?: ColorString;
+            upLineColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface CandlestickSeriesStatesOptions
             extends OHLCSeriesStatesOptions
@@ -35,8 +35,8 @@ declare global {
         interface CandlestickSeriesStatesHoverOptions
             extends OHLCSeriesStatesHoverOptions
         {
-            lineColor?: ColorString;
-            upLineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            upLineColor?: (ColorString|GradientColorObject|PatternObject);
         }
         class CandlestickPoint extends OHLCPoint {
             public close: number;
@@ -81,7 +81,7 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     1.3.6
      * @product   highstock
      * @apioption plotOptions.candlestick.upLineColor
@@ -133,7 +133,7 @@ var candlestickOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #000000
      * @product highstock
      */
@@ -224,9 +224,9 @@ seriesType(
 
             attribs['stroke-width'] = options.lineWidth;
 
-            attribs.fill = (point.options.color as any) ||
+            attribs.fill = point.options.color ||
                 (isUp ? (options.upColor || this.color) : this.color);
-            attribs.stroke = (point.options.lineColor as any) ||
+            attribs.stroke = point.options.lineColor ||
                 (isUp ? (options.upLineColor || stroke) : stroke);
 
             // Select or hover states

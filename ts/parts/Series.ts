@@ -44,7 +44,14 @@ declare global {
         }
         interface LineSeriesStatesHoverOptions
             extends SeriesStatesHoverOptions
-        {}
+        {
+            // only for inheritance
+        }
+        interface LineSeriesStatesInactiveOptions
+            extends SeriesStatesInactiveOptions
+        {
+            // only for inheritance
+        }
         interface LineSeriesStatesOptions extends SeriesStatesOptions {
             hover?: LineSeriesStatesHoverOptions;
         }
@@ -58,7 +65,7 @@ declare global {
             animationLimit?: number;
             boostBlending?: SeriesBlendingValue;
             boostThreshold?: number;
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             className?: string;
             clip?: boolean;
@@ -89,7 +96,7 @@ declare global {
             linkedTo?: string;
             marker?: PointMarkerOptionsObject;
             navigatorOptions?: SeriesOptions;
-            negativeColor?: ColorString;
+            negativeColor?: (ColorString|GradientColorObject|PatternObject);
             opacity?: number;
             point?: PlotSeriesPointOptions;
             pointDescriptionFormatter?: Function;
@@ -206,7 +213,7 @@ declare global {
             index?: number;
             kdNow?: boolean;
             legendIndex?: number;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             name?: string;
             selected?: boolean;
             stack?: (object|string);
@@ -272,7 +279,7 @@ declare global {
             public closestPointRange?: number;
             public closestPointRangePx?: number;
             public coll: 'series';
-            public color?: ColorString;
+            public color?: (ColorString|GradientColorObject|PatternObject);
             public colorCounter: number;
             public colorIndex?: number;
             public cropped?: boolean;
@@ -337,7 +344,7 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<number>,
+                yData: Array<(number|null|undefined)>,
                 min: number,
                 max: number,
                 cropShoulder?: number
@@ -634,6 +641,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     isString,
@@ -652,7 +660,6 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
@@ -1276,7 +1283,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
          *         Arearange
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     3.0
          * @apioption plotOptions.series.negativeColor
          */
@@ -1717,7 +1724,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
              * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
              *         Inherit from series color (undefined)
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             lineColor: '${palette.backgroundColor}',
 
@@ -1886,7 +1893,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                      * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                      *         White fill color, black line color
                      *
-                     * @type      {Highcharts.ColorString}
+                     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      * @apioption plotOptions.series.marker.states.hover.lineColor
                      */
 
@@ -1987,7 +1994,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                      *         Red line color for selected points
                      *
-                     * @type {Highcharts.ColorString}
+                     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      */
                     lineColor: '${palette.neutralColor100}',
 
@@ -2150,7 +2157,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         dataLabels: {
             /** @internal */
             align: 'center',
-            /* eslint-disable valid-jsdoc */
+            // eslint-disable-next-line valid-jsdoc
             /**
              * @internal
              * @default function () { return H.numberFormat(this.y, -1); }
@@ -2159,7 +2166,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
-                /* eslint-enable valid-jsdoc */
             },
             /** @internal */
             padding: 5,
@@ -4826,7 +4832,12 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     (pointOptions && pointOptions.marker) || {}
                 ),
                 pointStateOptions,
-                color = this.color,
+                color: (
+                    Highcharts.ColorString|
+                    Highcharts.GradientColorObject|
+                    Highcharts.PatternObject|
+                    undefined
+                ) = this.color,
                 pointColorOption = pointOptions && pointOptions.color,
                 pointColor = point && point.color,
                 strokeWidth = pick(
@@ -4840,7 +4851,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
             color = (
                 pointColorOption ||
-                (zoneColor as any) ||
+                zoneColor ||
                 pointColor ||
                 color
             );
@@ -4862,7 +4873,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 seriesStateOptions = (seriesMarkerOptions as any).states[state];
                 pointStateOptions = (
                     pointMarkerOptions.states &&
-                    (pointMarkerOptions as any).states[state]
+                    (pointMarkerOptions.states as any)[state]
                 ) || {};
                 strokeWidth = pick(
                     pointStateOptions.lineWidth,
@@ -5168,7 +5179,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         options.lineColor ||
                         this.color ||
                         '${palette.neutralColor20}' // when colorByPoint = true
-                    ),
+                    ) as any,
                     options.dashStyle as any
                 );
             }
@@ -5275,8 +5286,8 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
                 if (!this.chart.styledMode) {
                     propset.push(
-                        (zone.color as any) || this.color,
-                        (zone.dashStyle as any) || this.options.dashStyle
+                        (zone.color || this.color) as any,
+                        (zone.dashStyle || this.options.dashStyle) as any
                     );
                 }
                 props.push(propset);

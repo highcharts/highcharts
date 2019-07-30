@@ -57,13 +57,13 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, attr = H.attr, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, isObject = H.isObject, Legend = H.Legend, // @todo add as requirement
+createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, objectEach = H.objectEach, Pointer = H.Pointer, // @todo add as requirement
 pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, syncTimeout = H.syncTimeout, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -1643,6 +1643,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive();
         }
+        // Handle scaling
+        chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
     },
@@ -1696,6 +1698,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
     },
     /**
+     * Handle scaling, #11329 - when there is scaling/transform on the container
+     * or on a parent element, we need to take this into account. We calculate
+     * the scaling once here and it is picked up where we need to use it
+     * (Pointer, Tooltip).
+     *
+     * @private
+     * @function Highcharts.Chart#updateContainerScaling
+     * @return {void}
+     */
+    updateContainerScaling: function () {
+        var container = this.container;
+        if (container.offsetWidth &&
+            container.offsetHeight &&
+            container.getBoundingClientRect) {
+            var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
+            if (scaleX !== 1 || scaleY !== 1) {
+                this.containerScaling = { scaleX: scaleX, scaleY: scaleY };
+            }
+            else {
+                delete this.containerScaling;
+            }
+        }
+    },
+    /**
      * Remove the chart and purge memory. This method is called internally
      * before adding a second chart into the same container, as well as on
      * window unload to prevent leaks.
@@ -1717,7 +1743,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(chart, 'destroy');
         // Delete the chart from charts lookup array
         if (chart.renderer.forExport) {
-            H.erase(charts, chart); // #6569
+            erase(charts, chart); // #6569
         }
         else {
             charts[chart.index] = undefined;

@@ -72,6 +72,7 @@ declare global {
             public colorCounter: number;
             public container: HTMLDOMElement;
             public containerHeight?: string;
+            public containerScaling?: { scaleX: number; scaleY: number };
             public containerWidth?: string;
             public credits?: SVGElement;
             public hasCartesianSeries?: boolean;
@@ -165,6 +166,7 @@ declare global {
                 redraw?: boolean
             ): void;
             public temporaryDisplay(revert?: boolean): void;
+            public updateContainerScaling(): void;
         }
         function chart(
             options: Options,
@@ -231,8 +233,10 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat
@@ -257,7 +261,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
@@ -2019,7 +2022,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
             mgn,
-            bgAttr: Highcharts.CSSObject,
+            bgAttr: Highcharts.SVGAttributes,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -2043,7 +2046,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
             bgAttr = {
-                fill: (chartBackgroundColor as any) || 'none'
+                fill: chartBackgroundColor || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2080,7 +2083,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Presentational attributes for the background
             plotBackground
                 .attr({
-                    fill: (plotBackgroundColor as any) || 'none'
+                    fill: plotBackgroundColor || 'none'
                 })
                 .shadow(optionsChart.plotShadow);
 
@@ -2408,6 +2411,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive();
         }
 
+        // Handle scaling
+        chart.updateContainerScaling();
+
         // Set flag
         chart.hasRendered = true;
 
@@ -2481,6 +2487,34 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     },
 
     /**
+     * Handle scaling, #11329 - when there is scaling/transform on the container
+     * or on a parent element, we need to take this into account. We calculate
+     * the scaling once here and it is picked up where we need to use it
+     * (Pointer, Tooltip).
+     *
+     * @private
+     * @function Highcharts.Chart#updateContainerScaling
+     * @return {void}
+     */
+    updateContainerScaling: function (this: Highcharts.Chart): void {
+        const container = this.container;
+        if (
+            container.offsetWidth &&
+            container.offsetHeight &&
+            container.getBoundingClientRect
+        ) {
+            const bb = container.getBoundingClientRect(),
+                scaleX = bb.width / container.offsetWidth,
+                scaleY = bb.height / container.offsetHeight;
+            if (scaleX !== 1 || scaleY !== 1) {
+                this.containerScaling = { scaleX, scaleY };
+            } else {
+                delete this.containerScaling;
+            }
+        }
+    },
+
+    /**
      * Remove the chart and purge memory. This method is called internally
      * before adding a second chart into the same container, as well as on
      * window unload to prevent leaks.
@@ -2509,7 +2543,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Delete the chart from charts lookup array
         if (chart.renderer.forExport) {
-            H.erase(charts, chart); // #6569
+            erase(charts, chart); // #6569
         } else {
             charts[chart.index] = undefined;
         }
