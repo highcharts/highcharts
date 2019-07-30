@@ -779,9 +779,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
     destroyElements: function (this: Highcharts.AreaRangePoint): void {
         var graphics = ['lowerGraphic', 'upperGraphic'];
 
-        graphics.forEach(function (
-            this: Highcharts.AreaRangePoint,
-            graphicName): void {
+        graphics.forEach(function (graphicName): void {
             if ((this as any)[graphicName]) {
                 (this as any)[graphicName] =
                     (this as any)[graphicName].destroy() as any;

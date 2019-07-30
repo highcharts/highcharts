@@ -599,7 +599,6 @@ Highcharts.Legend.prototype = {
         if (alignAttr) {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (
-                this: Highcharts.Legend,
                 item: (
                     Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
                 )
@@ -1580,7 +1579,6 @@ Highcharts.Legend.prototype = {
                 text: currentPage + '/' + pageCount
             });
             [this.down, this.downTracker].forEach(function (
-                this: Highcharts.Legend,
                 elem: (Highcharts.SVGElement|undefined)
             ): void {
                 (elem as any).attr({

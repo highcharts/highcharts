@@ -395,7 +395,6 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
             seriesTypes.column.prototype.drawPoints.call(this);
 
             this.points.forEach(function (
-                this: Highcharts.HeatmapSeries,
                 point: Highcharts.HeatmapPoint
             ): void {
                 (point.graphic as any)[func](this.colorAttribs(point));

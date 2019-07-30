@@ -477,10 +477,7 @@ extend(Pane.prototype, {
 
         this.setOptions(this.options);
         this.render();
-        this.chart.axes.forEach(function (
-            this: Highcharts.Pane,
-            axis: Highcharts.Axis
-        ): void {
+        this.chart.axes.forEach(function (axis: Highcharts.Axis): void {
             if (axis.pane === this) {
                 axis.pane = null as any;
                 axis.update({}, redraw);

@@ -221,10 +221,7 @@ H.NodesMixin = {
         });
 
         // Create the node list and set up links
-        this.points.forEach(function (
-            this: Highcharts.NodesSeries,
-            point: Highcharts.NodesPoint
-        ): void {
+        this.points.forEach(function (point: Highcharts.NodesPoint): void {
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);

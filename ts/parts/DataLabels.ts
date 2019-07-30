@@ -2004,10 +2004,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.placeDataLabels = function (
         this: Highcharts.PieSeries
     ): void {
-        this.points.forEach(function (
-            this: Highcharts.Series,
-            point: Highcharts.Point
-        ): void {
+        this.points.forEach(function (point: Highcharts.Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
 

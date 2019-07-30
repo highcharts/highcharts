@@ -981,11 +981,7 @@ extend((
         } else {
             this.attr(params, undefined, complete);
             // Call the end step synchronously
-            H.objectEach(params, function (
-                this: Highcharts.SVGElement,
-                val: any,
-                prop: string
-            ): void {
+            H.objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
                     animOptions.step.call(this, val, { prop: prop, pos: 1 });
                 }
@@ -1383,7 +1379,6 @@ extend((
         } else {
 
             objectEach(hash, function eachAttribute(
-                this: Highcharts.SVGElement,
                 val: any,
                 key: string
             ): void {
@@ -2771,7 +2766,6 @@ extend((
         this: Highcharts.SVGElement
     ): void {
         (this.shadows || []).forEach(function (
-            this: Highcharts.SVGElement,
             shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
         ): void {
             this.safeRemoveChild(shadow);

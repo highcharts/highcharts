@@ -892,7 +892,6 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 this: Highcharts.PackedBubbleSeries
             ): void {
                 this.chart.series.forEach(function (
-                    this: Highcharts.PackedBubbleSeries,
                     s: Highcharts.Series
                 ): void {
                     if (s.type === this.type) {

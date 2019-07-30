@@ -371,10 +371,7 @@ H.extend(
             this: Highcharts.QuadTree,
             points: Array<Highcharts.Point>
         ): void {
-            points.forEach(function (
-                this: Highcharts.QuadTree,
-                point: Highcharts.Point
-            ): void {
+            points.forEach(function (point: Highcharts.Point): void {
                 this.root.insert(point, this.maxDepth);
             }, this);
         },

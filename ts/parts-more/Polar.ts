@@ -755,7 +755,6 @@ H.addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
         this.pane = [];
     }
     splat(this.options.pane).forEach(function (
-        this: Highcharts.Chart,
         paneOptions: Highcharts.PaneOptions
     ): void {
         new H.Pane( // eslint-disable-line no-new

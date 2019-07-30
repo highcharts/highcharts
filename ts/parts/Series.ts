@@ -3348,7 +3348,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
             // Iterate the new data
             data.forEach(function (
-                this: Highcharts.Series,
                 pointOptions: Highcharts.PointOptionsType,
                 i: number
             ): void {
@@ -3461,10 +3460,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             }
 
             // Add new points
-            pointsToAdd.forEach(function (
-                this: Highcharts.Series,
-                point
-            ): void {
+            pointsToAdd.forEach(function (point): void {
                 this.addPoint(point, false, null as any, null as any, false);
             }, this);
 
@@ -5274,7 +5270,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         ): Array<Array<string>> {
             // Add the zone properties if any
             this.zones.forEach(function (
-                this: Highcharts.Series,
                 zone: Highcharts.PlotSeriesZonesOptions,
                 i: number
             ): void {

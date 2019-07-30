@@ -301,10 +301,7 @@ H.extend(
             this: Highcharts.NetworkgraphLayout,
             nodes: Array<Highcharts.Point>
         ): void {
-            nodes.forEach(function (
-                this: Highcharts.NetworkgraphLayout,
-                node: Highcharts.Point
-            ): void {
+            nodes.forEach(function (node: Highcharts.Point): void {
                 if (this.nodes.indexOf(node) === -1) {
                     this.nodes.push(node);
                 }
@@ -334,10 +331,7 @@ H.extend(
             this: Highcharts.NetworkgraphLayout,
             links: Array<Highcharts.NetworkgraphPoint>
         ): void {
-            links.forEach(function (
-                this: Highcharts.NetworkgraphLayout,
-                link: Highcharts.NetworkgraphPoint
-            ): void {
+            links.forEach(function (link: Highcharts.NetworkgraphPoint): void {
                 if (this.links.indexOf(link) === -1) {
                     this.links.push(link);
                 }

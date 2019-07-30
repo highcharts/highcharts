@@ -506,10 +506,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
             !init &&
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
-            this.points.forEach(function (
-                this: Highcharts.BubbleSeries,
-                point: Highcharts.BubblePoint
-            ): void {
+            this.points.forEach(function (point: Highcharts.BubblePoint): void {
                 var graphic = point.graphic,
                     animationTarget;
 
