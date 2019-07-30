@@ -174,7 +174,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         loadingDiv.className = 'highcharts-loading';
         // Update text
         chart.loadingSpan.innerHTML =
-            str || options.lang.loading;
+            pick(str, options.lang.loading, '');
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend(loadingOptions.style, {

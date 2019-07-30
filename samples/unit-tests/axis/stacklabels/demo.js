@@ -21,18 +21,18 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
     });
 
 
-    assert.strictEqual(
+    assert.notStrictEqual(
         chart.container.querySelector('.highcharts-stack-labels text')
-            .getAttribute('y') !== null,
-        true,
-        'Y attribute is set (#8834)'
+            .getAttribute('y'),
+        null,
+        'Y attribute should be set (#8834)'
     );
 
     assert.strictEqual(
         chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
-        'Stack label is hidden (#8834)'
+        'Stack label should be hidden (#8834)'
     );
 });
 
