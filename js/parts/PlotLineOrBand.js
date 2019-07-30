@@ -284,7 +284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @apioption xAxis.plotBands.borderColor
      */
     /**
@@ -554,7 +554,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorString}
      * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */
@@ -678,7 +678,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
      *         Label formatters for plot line and plot band.
-     * @type      {Highcharts.PlotLineOrBandLabelFormatterCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @type      {Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>}
      * @apioption xAxis.plotLines.label.formatter
      */
     /**
