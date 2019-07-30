@@ -8,7 +8,7 @@ Highcharts.chart('container', {
         text: 'Browser<br>shares<br>2017',
         align: 'center',
         verticalAlign: 'middle',
-        y: 40
+        y: 60
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
