@@ -1060,7 +1060,7 @@ seriesType('networkgraph', 'line',
  * Individual data label for each node. The options are the same as
  * the ones for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
  *
- * @type      {Highcharts.SeriesNetworkDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkDataLabelsOptionsObject>}
+ * @type      {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
  *
  * @apioption series.networkgraph.nodes.dataLabels
  */

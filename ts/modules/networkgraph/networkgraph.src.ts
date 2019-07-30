@@ -1468,4 +1468,13 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
  * @apioption series.networkgraph.nodes.mass
  */
 
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
+ *
+ * @type      {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
+ *
+ * @apioption series.networkgraph.nodes.dataLabels
+ */
+
 ''; // adds doclets above to transpiled file
