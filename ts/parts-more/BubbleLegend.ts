@@ -565,7 +565,6 @@ H.BubbleLegend.prototype = {
 
         // Allow to parts of styles be used individually for range
         ranges.forEach(function (
-            this: Highcharts.BubbleLegend,
             range: Highcharts.BubbleLegendRangesOptions,
             i: number
         ): void {
@@ -715,7 +714,6 @@ H.BubbleLegend.prototype = {
         this.legendSymbol.translateY = 0;
 
         this.ranges.forEach(function (
-            this: Highcharts.BubbleLegend,
             range: Highcharts.BubbleLegendRangesOptions
         ): void {
             if (range.value >= (zThreshold as any)) {

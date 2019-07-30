@@ -28,9 +28,9 @@ declare global {
             callbackfn: ArraySomeCallbackFunction<T>,
             thisArg?: unknown
         ): boolean;
-        forEach(
-            callbackfn: ArrayForEachCallbackFunction<T>,
-            thisArg?: unknown
+        forEach<TScope = any>(
+            callbackfn: ArrayForEachCallbackFunction<T, TScope>,
+            thisArg?: TScope
         ): void;
         indexOf(searchElement: T, fromIndex?: number): number;
         map<TOutput>(
@@ -41,8 +41,8 @@ declare global {
     interface ArrayFilterCallbackFunction<T> {
         (value: T, index: number, array: Array<T>): boolean;
     }
-    interface ArrayForEachCallbackFunction<T> {
-        (value: T, index: number, array: Array<T>): void;
+    interface ArrayForEachCallbackFunction<T, TScope = any> {
+        (this: TScope, value: T, index: number, array: Array<T>): void;
     }
     interface ArrayMapCallbackFunction<TInput, TOutput> {
         (value: TInput, index: number, array: Array<TInput>): TOutput;

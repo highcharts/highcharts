@@ -1994,11 +1994,7 @@ RangeSelector.prototype = {
         }
 
         // Destroy HTML and SVG elements
-        H.objectEach(rSelector, function (
-            this: Highcharts.RangeSelector,
-            val: unknown,
-            key: string
-        ): void {
+        H.objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
                 if ((val as Highcharts.SVGElement).destroy) {
                     // SVGElement

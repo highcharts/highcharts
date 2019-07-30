@@ -1803,10 +1803,7 @@ Navigator.prototype = {
 
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                baseSeries.forEach(function (
-                    this: Highcharts.Navigator,
-                    series: Highcharts.Series
-                ): void {
+                baseSeries.forEach(function (series: Highcharts.Series): void {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }
@@ -2330,10 +2327,7 @@ Navigator.prototype = {
             );
         }
 
-        baseSeries.forEach(function (
-            this: Highcharts.Navigator,
-            base: Highcharts.Series
-        ): void {
+        baseSeries.forEach(function (base: Highcharts.Series): void {
             // Link base series show/hide to navigator series visibility
             addEvent(base, 'show', function (this: Highcharts.Series): void {
                 if (this.navigatorSeries) {
@@ -2613,7 +2607,7 @@ Navigator.prototype = {
             'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
             'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
             'rendered'
-        ].forEach(function (this: Highcharts.Navigator, prop: string): void {
+        ].forEach(function (prop: string): void {
             if ((this as any)[prop] && (this as any)[prop].destroy) {
                 (this as any)[prop].destroy();
             }
@@ -2622,7 +2616,6 @@ Navigator.prototype = {
 
         // Destroy elements in collection
         [this.handles].forEach(function (
-            this: Highcharts.Navigator,
             coll: Array<Highcharts.SVGElement>
         ): void {
             destroyObjectProperties(coll);

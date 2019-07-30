@@ -1182,10 +1182,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
 
         // Lay out the title and the subtitle respectively
-        ['title', 'subtitle'].forEach(function (
-            this: Highcharts.Chart,
-            key: string
-        ): void {
+        ['title', 'subtitle'].forEach(function (key: string): void {
             var title = (this as any)[key],
                 titleOptions = (this as any).options[key],
                 offset = key === 'title' ? -3 :
@@ -2691,7 +2688,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Run callbacks, first the ones registered by modules, then user's one
         this.callbacks.concat([this.callback]).forEach(function (
-            this: Highcharts.Chart,
             fn: Highcharts.ChartCallbackFunction
         ): void {
             // Chart destroyed in its own callback (#3600)

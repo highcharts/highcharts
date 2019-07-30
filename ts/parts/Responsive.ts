@@ -225,7 +225,6 @@ Chart.prototype.setResponsive = function (
 
     if (!reset && options && options.rules) {
         options.rules.forEach(function (
-            this: Highcharts.Chart,
             rule: Highcharts.ResponsiveRulesOptions
         ): void {
             if (rule._id === undefined) {
