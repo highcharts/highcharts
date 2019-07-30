@@ -26,6 +26,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var isArray = U.isArray,
     isNumber = U.isNumber,
+    isObject = U.isObject,
     isString = U.isString;
 
 import '../parts/Series.js';
@@ -41,7 +42,6 @@ var addEvent = H.addEvent,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
-    isObject = H.isObject,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
     isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,

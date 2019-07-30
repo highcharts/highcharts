@@ -34,6 +34,29 @@ declare global {
             theta?: number;
             type?: string;
         }
+        interface NetworkgraphPoint {
+            dispX?: number;
+            dispY?: number;
+            prevX?: number;
+            prevY?: number;
+        }
+        interface NetworkgraphSeriesOptions {
+            layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
+        }
+        interface Point {
+            dispX?: number;
+            dispY?: number;
+            fromNode?: Point;
+            linksFrom?: Array<Point>;
+            linksTo?: Array<Point>;
+            mass?: number;
+            prevX?: number;
+            prevY?: number;
+            toNode?: Point;
+        }
+        interface Series {
+            forces?: Array<string>;
+        }
         class NetworkgraphLayout {
             public constructor();
             public approximation?: string;
@@ -47,30 +70,27 @@ declare global {
             public initialRendering: boolean;
             public integration: NetworkgraphIntegrationObject;
             public k?: number;
-            public links: Array<NetworkgraphPoint>;
+            public links: Array<Point>;
             public maxIterations?: number;
-            public nodes: Array<NetworkgraphPoint>;
+            public nodes: Array<Point>;
             public options: NetworkgraphLayoutAlgorithmOptions;
             public prevSystemTemperature?: number;
             public prototype: NetworkgraphLayout;
             public quadTree: QuadTree;
             public repulsiveForce: Function;
-            public series: Array<NetworkgraphSeries>;
+            public series: Array<Series>;
             public simulation: (boolean|number);
             public startTemperature?: number;
             public systemTemperature?: number;
             public temperature?: number;
             public addLinks(links: Array<NetworkgraphPoint>): void;
-            public addNodes(nodes: Array<NetworkgraphPoint>): void;
-            public addSeries(series: NetworkgraphSeries): void;
-            public applyLimitBox(
-                node: NetworkgraphPoint,
-                box: Dictionary<number>
-            ): void;
+            public addNodes(nodes: Array<Point>): void;
+            public addSeries(series: Series): void;
+            public applyLimitBox(node: Point, box: Dictionary<number>): void;
             public applyLimits(): void;
             public attractiveForces(): void;
             public barnesHutApproximation(
-                node: NetworkgraphPoint,
+                node: Point,
                 quadNode: QuadTreeNode
             ): (boolean|undefined);
             public barycenterForces(): void;
@@ -85,18 +105,18 @@ declare global {
             public getBarycenter(): Dictionary<number>;
             public getDistR(
                 nodeA: NetworkgraphPoint,
-                nodeB: NetworkgraphPoint
+                nodeB: (NetworkgraphPoint|QuadTreeNode)
             ): number;
             public getDistXY(
-                nodeA: NetworkgraphPoint,
-                nodeB: NetworkgraphPoint
+                nodeA: Point,
+                nodeB: (Point|QuadTreeNode)
             ): Dictionary<number>;
             public getSystemTemperature(): number;
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
-            public removeLink(link: NetworkgraphPoint): void;
-            public removeNode(node: NetworkgraphPoint): void;
+            public removeLink(link: Point): void;
+            public removeNode(node: Point): void;
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
@@ -112,7 +132,7 @@ declare global {
             public setTemperature(): void;
             public vectorLength(vector: Dictionary<number>): number;
         }
-        let layouts: Dictionary<NetworkgraphLayout>;
+        let layouts: Dictionary<(typeof NetworkgraphLayout)>;
     }
 }
 
@@ -228,9 +248,7 @@ H.extend(
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
             if (options.enableSimulation) {
-                series.forEach(function (         
-                    s: Highcharts.NetworkgraphSeries
-                ): void {
+                series.forEach(function (s: Highcharts.Series): void {
                     // Chart could be destroyed during the simulation
                     if (s.chart) {
                         s.render();
@@ -281,11 +299,11 @@ H.extend(
         },
         addNodes: function (
             this: Highcharts.NetworkgraphLayout,
-            nodes: Array<Highcharts.NetworkgraphPoint>
+            nodes: Array<Highcharts.Point>
         ): void {
             nodes.forEach(function (
                 this: Highcharts.NetworkgraphLayout,
-                node: Highcharts.NetworkgraphPoint
+                node: Highcharts.Point
             ): void {
                 if (this.nodes.indexOf(node) === -1) {
                     this.nodes.push(node);
@@ -294,7 +312,7 @@ H.extend(
         },
         removeNode: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.NetworkgraphPoint
+            node: Highcharts.Point
         ): void {
             var index = this.nodes.indexOf(node);
 
@@ -304,7 +322,7 @@ H.extend(
         },
         removeLink: function (
             this: Highcharts.NetworkgraphLayout,
-            link: Highcharts.NetworkgraphPoint
+            link: Highcharts.Point
         ): void {
             var index = this.links.indexOf(link);
 
@@ -327,7 +345,7 @@ H.extend(
         },
         addSeries: function (
             this: Highcharts.NetworkgraphLayout,
-            series: Highcharts.NetworkgraphSeries
+            series: Highcharts.Series
         ): void {
             if (this.series.indexOf(series) === -1) {
                 this.series.push(series);
@@ -419,22 +437,23 @@ H.extend(
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
                 angle = 2 * Math.PI / nodesLength,
-                rootNodes = nodes.filter(function (node) {
-                    return node.linksTo.length === 0;
+                rootNodes = nodes.filter(function (
+                    node: Highcharts.Point
+                ): boolean {
+                    return (node.linksTo as any).length === 0;
                 }),
-                sortedNodes = [] as Array<Highcharts.NetworkgraphPoint>,
-                visitedNodes =
-                    {} as Highcharts.Dictionary<Highcharts.NetworkgraphPoint>,
+                sortedNodes = [] as Array<Highcharts.Point>,
+                visitedNodes = {} as Highcharts.Dictionary<boolean>,
                 radius = this.options.initialPositionRadius;
 
-            function addToNodes(node: Highcharts.NetworkgraphPoint): void {
-                node.linksFrom.forEach(function (
-                    link: Highcharts.NetworkgraphPoint
+            function addToNodes(node: Highcharts.Point): void {
+                (node.linksFrom as any).forEach(function (
+                    link: Highcharts.Point
                 ): void {
-                    if (!visitedNodes[link.toNode.id]) {
-                        visitedNodes[link.toNode.id] = true;
-                        sortedNodes.push(link.toNode);
-                        addToNodes(link.toNode);
+                    if (!visitedNodes[(link.toNode as any).id]) {
+                        visitedNodes[(link.toNode as any).id] = true;
+                        sortedNodes.push(link.toNode as any);
+                        addToNodes(link.toNode as any);
                     }
                 });
             }
@@ -443,7 +462,7 @@ H.extend(
             // hierarchy. In trees, this ensures that branches don't cross
             // eachother.
             rootNodes.forEach(function (
-                rootNode: Highcharts.NetworkgraphPoint
+                rootNode: Highcharts.Point
             ): void {
                 sortedNodes.push(rootNode);
                 addToNodes(rootNode);
@@ -455,9 +474,7 @@ H.extend(
 
             // Dangling, cyclic trees
             } else {
-                nodes.forEach(function (
-                    node: Highcharts.NetworkgraphPoint
-                ): void {
+                nodes.forEach(function (node: Highcharts.Point): void {
                     if (sortedNodes.indexOf(node) === -1) {
                         sortedNodes.push(node);
                     }
@@ -467,7 +484,7 @@ H.extend(
             // Initial positions are laid out along a small circle, appearing
             // as a cluster in the middle
             sortedNodes.forEach(function (
-                node: Highcharts.NetworkgraphPoint,
+                node: Highcharts.Point,
                 index: number
             ): void {
                 node.plotX = node.prevX = pick(
@@ -484,7 +501,7 @@ H.extend(
             });
         },
         setRandomPositions: function (
-            this: Highcharts.NetworkgraphPoint
+            this: Highcharts.NetworkgraphLayout
         ): void {
             var box = this.box,
                 nodes = this.nodes,
@@ -502,7 +519,7 @@ H.extend(
             // Initial positions:
             nodes.forEach(
                 function (
-                    node: Highcharts.NetworkgraphPoint,
+                    node: Highcharts.Point,
                     index: number
                 ): void {
                     node.plotX = node.prevX = pick(
@@ -540,10 +557,10 @@ H.extend(
                 cy = 0;
 
             this.nodes.forEach(function (node) {
-                cx += node.plotX * node.mass;
-                cy += node.plotY * node.mass;
+                cx += (node.plotX as any) * (node.mass as any);
+                cy += (node.plotY as any) * (node.mass as any);
 
-                systemMass += node.mass;
+                systemMass += (node.mass as any);
             });
 
             this.barycenter = {
@@ -557,7 +574,7 @@ H.extend(
         },
         barnesHutApproximation: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.NetworkgraphPoint,
+            node: Highcharts.Point,
             quadNode: Highcharts.QuadTreeNode
         ): (boolean|undefined) {
             var layout = this,
@@ -566,7 +583,7 @@ H.extend(
                 goDeeper,
                 force;
 
-            if (node !== quadNode && distanceR !== 0) {
+            if ((node as any) !== quadNode && distanceR !== 0) {
                 if (quadNode.isInternal) {
                     // Internal node:
                     if (
@@ -624,10 +641,10 @@ H.extend(
                 });
             } else {
                 layout.nodes.forEach(function (
-                    node: Highcharts.NetworkgraphPoint
+                    node: Highcharts.Point
                 ): void {
                     layout.nodes.forEach(function (
-                        repNode: Highcharts.NetworkgraphPoint
+                        repNode: Highcharts.Point
                     ): void {
                         var force,
                             distanceR,
@@ -639,7 +656,7 @@ H.extend(
                             // Only close nodes affect each other:
                             /* layout.getDistR(node, repNode) < 2 * k && */
                             // Not dragged:
-                            !node.fixedPosition
+                            !(node as any).fixedPosition
                         ) {
                             distanceXY = layout.getDistXY(node, repNode);
                             distanceR = layout.vectorLength(distanceXY);
@@ -652,7 +669,7 @@ H.extend(
                                 layout.force(
                                     'repulsive',
                                     node,
-                                    force * repNode.mass,
+                                    force * (repNode.mass as any),
                                     distanceXY,
                                     distanceR
                                 );
@@ -669,7 +686,7 @@ H.extend(
                 force;
 
             layout.links.forEach(function (
-                link: Highcharts.NetworkgraphPoint
+                link: Highcharts.Point
             ): void {
                 if (link.fromNode && link.toNode) {
                     distanceXY = layout.getDistXY(
@@ -696,8 +713,8 @@ H.extend(
             var layout = this,
                 nodes = layout.nodes;
 
-            nodes.forEach(function (node) {
-                if (node.fixedPosition) {
+            nodes.forEach(function (node: Highcharts.Point): void {
+                if ((node as any).fixedPosition) {
                     return;
                 }
 
@@ -717,7 +734,7 @@ H.extend(
          */
         applyLimitBox: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.NetworkgraphPoint,
+            node: Highcharts.Point,
             box: Highcharts.Dictionary<number>
         ): void {
             var radius = node.marker && node.marker.radius || 0;
@@ -756,7 +773,7 @@ H.extend(
             // Limit X-coordinates:
             node.plotX = Math.max(
                 Math.min(
-                    node.plotX,
+                    node.plotX as any,
                     box.width - radius
                 ),
                 box.left + radius
@@ -765,7 +782,7 @@ H.extend(
             // Limit Y-coordinates:
             node.plotY = Math.max(
                 Math.min(
-                    node.plotY,
+                    node.plotY as any,
                     box.height - radius
                 ),
                 box.top + radius
@@ -810,9 +827,9 @@ H.extend(
         ): number {
             return this.nodes.reduce(function (
                 value: number,
-                node: Highcharts.NetworkgraphPoint
+                node: Highcharts.Point
             ): number {
-                return value + (node.temperature as any);
+                return value + (node as any).temperature;
             }, 0);
         },
         vectorLength: function (
@@ -824,7 +841,7 @@ H.extend(
         getDistR: function (
             this: Highcharts.NetworkgraphLayout,
             nodeA: Highcharts.NetworkgraphPoint,
-            nodeB: Highcharts.NetworkgraphPoint
+            nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
         ): number {
             var distance = this.getDistXY(nodeA, nodeB);
 
@@ -832,11 +849,11 @@ H.extend(
         },
         getDistXY: function (
             this: Highcharts.NetworkgraphLayout,
-            nodeA: Highcharts.NetworkgraphPoint,
-            nodeB: Highcharts.NetworkgraphPoint
+            nodeA: Highcharts.Point,
+            nodeB: (Highcharts.Point|Highcharts.QuadTreeNode)
         ): Highcharts.Dictionary<number> {
-            var xDist = nodeA.plotX - nodeB.plotX,
-                yDist = nodeA.plotY - nodeB.plotY;
+            var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
+                yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
 
             return {
                 x: xDist,
@@ -852,7 +869,9 @@ H.extend(
  * Multiple series support:
  * ************************************************************************** */
 // Clear previous layouts
-addEvent(Chart as any, 'predraw', function (this: Highcharts.Chart): void {
+addEvent(Chart as any, 'predraw', function (
+    this: Highcharts.NetworkgraphChart
+): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {
@@ -861,7 +880,9 @@ addEvent(Chart as any, 'predraw', function (this: Highcharts.Chart): void {
         );
     }
 });
-addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+addEvent(Chart as any, 'render', function (
+    this: Highcharts.NetworkgraphChart
+): void {
     var systemsStable,
         afterRender = false;
 

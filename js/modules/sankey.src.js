@@ -107,7 +107,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    isObject = U.isObject;
 
 import '../parts/Options.js';
 import '../mixins/nodes.js';
@@ -117,7 +118,6 @@ var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 
 var find = H.find,
-    isObject = H.isObject,
     merge = H.merge,
     seriesType = H.seriesType,
     pick = H.pick,
@@ -168,7 +168,7 @@ seriesType('sankey', 'column',
      *               maxPointWidth, negativeColor, pointInterval,
      *               pointIntervalUnit, pointPadding, pointPlacement,
      *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones
+     *               stacking, threshold, zoneAxis, zones, minPointLength
      * @optionparent plotOptions.sankey
      */
     {
@@ -301,6 +301,20 @@ seriesType('sankey', 'column',
          * @private
          */
         linkOpacity: 0.5,
+        /**
+         * The minimal width for a line of a sankey. By default,
+         * 0 values are not shown.
+         *
+         * @type      {number}
+         * @default {0}
+         * @apioption plotOptions.sankey.minLinkWidth
+         * @sample highcharts/plotoptions/sankey-minlinkwidth
+         *         Sankey diagram with minimal link height
+         *
+         * @since        7.1.3
+         *
+         */
+        minLinkWidth: 0,
         /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
@@ -647,7 +661,10 @@ seriesType('sankey', 'column',
                 toNode = point.toNode,
                 chart = this.chart,
                 translationFactor = this.translationFactor,
-                linkHeight = point.weight * translationFactor,
+                linkHeight = Math.max(
+                    point.weight * translationFactor,
+                    this.options.minLinkWidth
+                ),
                 options = this.options,
                 fromLinkTop = fromNode.offset(point, 'linksFrom') *
                     translationFactor,

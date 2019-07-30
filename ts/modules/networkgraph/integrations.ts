@@ -24,20 +24,21 @@ declare global {
             extends NetworkgraphIntegrationObject
         {
             attractive(
-                this: NetworkgraphSeries,
+                this: NetworkgraphLayout,
                 link: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject,
                 distanceR: number
             ): void;
             attractiveForceFunction(d: number, k: number): number;
-            barycenter(this: NetworkgraphSeries): void;
+            barycenter(this: NetworkgraphLayout): void;
             getK(layout: NetworkgraphLayout): number;
             integrate(
                 layout: NetworkgraphLayout,
                 node: NetworkgraphPoint
             ): void;
             repulsive(
+                this: NetworkgraphLayout,
                 node: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject,
@@ -60,24 +61,27 @@ declare global {
             repulsive: Function;
             repulsiveForceFunction: Function;
         }
+        interface NetworkgraphPoint {
+            temperature?: number;
+        }
         interface NetworkgraphVerletIntegrationObject
             extends NetworkgraphIntegrationObject
         {
             attractive(
-                this: NetworkgraphSeries,
+                this: NetworkgraphLayout,
                 link: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject
             ): void;
             attractiveForceFunction(d: number, k: number): number;
-            barycenter(this: NetworkgraphSeries): void;
+            barycenter(this: NetworkgraphLayout): void;
             getK(layout: NetworkgraphLayout): number;
             integrate(
                 layout: NetworkgraphLayout,
                 node: NetworkgraphPoint
             ): void;
             repulsive(
-                this: NetworkgraphSeries,
+                this: NetworkgraphLayout,
                 node: NetworkgraphPoint,
                 force: number,
                 distanceXY: PositionObject
@@ -126,23 +130,23 @@ H.networkgraphIntegrations = {
          * @private
          * @return {void}
          */
-        barycenter: function (this: Highcharts.NetworkgraphSeries): void {
+        barycenter: function (this: Highcharts.NetworkgraphLayout): void {
             var gravitationalConstant = this.options.gravitationalConstant,
-                xFactor = this.barycenter.xFactor,
-                yFactor = this.barycenter.yFactor;
+                xFactor = (this.barycenter as any).xFactor,
+                yFactor = (this.barycenter as any).yFactor;
 
             // To consider:
             xFactor = (xFactor - (this.box.left + this.box.width) / 2) *
-                gravitationalConstant;
+                (gravitationalConstant as any);
             yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
-                gravitationalConstant;
+                (gravitationalConstant as any);
 
-            this.nodes.forEach(function (
-                node: Highcharts.NetworkgraphPoint
-            ): void {
-                if (!node.fixedPosition) {
-                    node.plotX -= xFactor / node.mass / node.degree;
-                    node.plotY -= yFactor / node.mass / node.degree;
+            this.nodes.forEach(function (node: Highcharts.Point): void {
+                if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    (node.plotX as any) -=
+                        xFactor / (node.mass as any) / (node.degree as any);
+                    (node.plotY as any) -=
+                        yFactor / (node.mass as any) / (node.degree as any);
                 }
             });
         },
@@ -162,16 +166,17 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         repulsive: function (
-            this: Highcharts.NetworkgraphSeries,
+            this: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint,
             force: number,
             distanceXY: Highcharts.PositionObject
         ): void {
-            var factor = force * this.diffTemperature / node.mass / node.degree;
+            var factor =
+                force * (this.diffTemperature as any) / node.mass / node.degree;
 
             if (!node.fixedPosition) {
-                node.plotX += distanceXY.x * factor;
-                node.plotY += distanceXY.y * factor;
+                (node.plotX as any) += distanceXY.x * factor;
+                (node.plotY as any) += distanceXY.y * factor;
             }
         },
         /**
@@ -190,26 +195,28 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         attractive: function (
-            this: Highcharts.NetworkgraphSeries,
+            this: Highcharts.NetworkgraphLayout,
             link: Highcharts.NetworkgraphPoint,
             force: number,
             distanceXY: Highcharts.PositionObject
         ): void {
             var massFactor = link.getMass(),
-                translatedX = -distanceXY.x * force * this.diffTemperature,
-                translatedY = -distanceXY.y * force * this.diffTemperature;
+                translatedX =
+                    -distanceXY.x * force * (this.diffTemperature as any),
+                translatedY =
+                    -distanceXY.y * force * (this.diffTemperature as any);
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.plotX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.plotY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                (link.fromNode.plotX as any) -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                (link.fromNode.plotY as any) -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.plotX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.plotY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                (link.toNode.plotX as any) +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                (link.toNode.plotY as any) +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -253,8 +260,14 @@ H.networkgraphIntegrations = {
                 prevX = node.prevX,
                 prevY = node.prevY,
                 // Apply friciton:
-                diffX = (node.plotX + node.dispX - prevX) * friction,
-                diffY = (node.plotY + node.dispY - prevY) * friction,
+                diffX = (
+                    ((node.plotX as any) + (node.dispX as any) -
+                    (prevX as any)) * friction
+                ),
+                diffY = (
+                    ((node.plotY as any) + (node.dispY as any) -
+                    (prevY as any)) * friction
+                ),
                 abs = Math.abs,
                 signX = abs(diffX) / (diffX || 1), // need to deal with 0
                 signY = abs(diffY) / (diffY || 1);
@@ -264,12 +277,12 @@ H.networkgraphIntegrations = {
             diffY = signY * Math.min(maxSpeed as any, Math.abs(diffY));
 
             // Store for the next iteration:
-            node.prevX = node.plotX + node.dispX;
-            node.prevY = node.plotY + node.dispY;
+            node.prevX = (node.plotX as any) + (node.dispX as any);
+            node.prevY = (node.plotY as any) + (node.dispY as any);
 
             // Update positions:
-            node.plotX += diffX;
-            node.plotY += diffY;
+            (node.plotX as any) += diffX;
+            (node.plotY as any) += diffY;
 
             node.temperature = layout.vectorLength({
                 x: diffX,
@@ -342,22 +355,27 @@ H.networkgraphIntegrations = {
          * @private
          * @return {void}
          */
-        barycenter: function (this: Highcharts.NetworkgraphSeries): void {
+        barycenter: function (this: Highcharts.NetworkgraphLayout): void {
             var gravitationalConstant = this.options.gravitationalConstant,
-                xFactor = this.barycenter.xFactor,
-                yFactor = this.barycenter.yFactor;
+                xFactor = (this.barycenter as any).xFactor,
+                yFactor = (this.barycenter as any).yFactor;
 
-            this.nodes.forEach(function (
-                node: Highcharts.NetworkgraphPoint
-            ): void {
-                if (!node.fixedPosition) {
-                    var degree = node.getDegree(),
+            this.nodes.forEach(function (node: Highcharts.Point): void {
+                if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    var degree =
+                            (node as Highcharts.NetworkgraphPoint).getDegree(),
                         phi = degree * (1 + degree / 2);
 
-                    node.dispX += (xFactor - node.plotX) *
-                        gravitationalConstant * phi / node.degree;
-                    node.dispY += (yFactor - node.plotY) *
-                        gravitationalConstant * phi / node.degree;
+                    (node.dispX as any) += (
+                        (xFactor - (node.plotX as any)) *
+                        (gravitationalConstant as any) *
+                        phi / (node.degree as any)
+                    );
+                    (node.dispY as any) += (
+                        (yFactor - (node.plotY as any)) *
+                        (gravitationalConstant as any) *
+                        phi / (node.degree as any)
+                    );
                 }
             });
         },
@@ -379,8 +397,8 @@ H.networkgraphIntegrations = {
             distanceXY: Highcharts.PositionObject,
             distanceR: number
         ): void {
-            node.dispX += (distanceXY.x / distanceR) * force / node.degree;
-            node.dispY += (distanceXY.y / distanceR) * force / node.degree;
+            (node.dispX as any) += (distanceXY.x / distanceR) * force / node.degree;
+            (node.dispY as any) += (distanceXY.y / distanceR) * force / node.degree;
         },
         /**
          * Attractive force.
@@ -409,17 +427,17 @@ H.networkgraphIntegrations = {
                 translatedY = (distanceXY.y / distanceR) * force;
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.dispX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.dispY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                (link.fromNode.dispX as any) -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                (link.fromNode.dispY as any) -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
 
             if (!link.toNode.fixedPosition) {
-                link.toNode.dispX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.dispY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                (link.toNode.dispX as any) +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                (link.toNode.dispY as any) +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -468,19 +486,31 @@ H.networkgraphIntegrations = {
         ): void {
             var distanceR: number;
 
-            node.dispX += node.dispX * (layout.options.friction as any);
-            node.dispY += node.dispY * (layout.options.friction as any);
+            (node.dispX as any) +=
+                (node.dispX as any) * (layout.options.friction as any);
+            (node.dispY as any) +=
+                (node.dispY as any) * (layout.options.friction as any);
 
             distanceR = node.temperature = layout.vectorLength({
-                x: node.dispX,
-                y: node.dispY
+                x: node.dispX as any,
+                y: node.dispY as any
             });
 
             if (distanceR !== 0) {
-                node.plotX += node.dispX / distanceR *
-                    Math.min(Math.abs(node.dispX), layout.temperature as any);
-                node.plotY += node.dispY / distanceR *
-                    Math.min(Math.abs(node.dispY), layout.temperature as any);
+                (node.plotX as any) += (
+                    (node.dispX as any) / distanceR *
+                    Math.min(
+                        Math.abs(node.dispX as any),
+                        layout.temperature as any
+                    )
+                );
+                (node.plotY as any) += (
+                    (node.dispY as any) / distanceR *
+                    Math.min(
+                        Math.abs(node.dispY as any),
+                        layout.temperature as any
+                    )
+                );
             }
         },
         /**

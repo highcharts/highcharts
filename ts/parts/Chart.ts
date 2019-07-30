@@ -233,8 +233,10 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat
@@ -259,7 +261,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
@@ -2542,7 +2543,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Delete the chart from charts lookup array
         if (chart.renderer.forExport) {
-            H.erase(charts, chart); // #6569
+            erase(charts, chart); // #6569
         } else {
             charts[chart.index] = undefined;
         }

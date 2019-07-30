@@ -635,14 +635,15 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
-    isNumber
+    isNumber,
+    isObject
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     extend = H.extend,
-    erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
     pick = H.pick,
@@ -908,7 +909,7 @@ Highcharts.Point.prototype = {
             result[key] = (
                 isLastKey ?
                     value :
-                    H.isObject(result[key], true) ?
+                    isObject(result[key], true) ?
                         result[key] :
                         {}
             );

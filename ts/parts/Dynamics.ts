@@ -108,8 +108,10 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     isString,
     splat
 } = U;
@@ -125,10 +127,8 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     merge = H.merge,
     objectEach = H.objectEach,
     pick = H.pick,

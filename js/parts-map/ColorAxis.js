@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var erase = U.erase, isNumber = U.isNumber;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
@@ -924,7 +924,7 @@ addEvent(Legend, 'afterGetAllItems', function (e) {
             }
             // Don't add the color axis' series
             colorAxis.series.forEach(function (series) {
-                H.erase(e.allItems, series);
+                erase(e.allItems, series);
             });
         }
     }

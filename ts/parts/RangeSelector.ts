@@ -2086,7 +2086,7 @@ Axis.prototype.minFromRange = function (
 
 if (!H.RangeSelector) {
     // Initialize rangeselector for stock charts
-    addEvent(Chart as any, 'afterGetContainer', function (
+    addEvent(Chart, 'afterGetContainer', function (
         this: Highcharts.Chart
     ): void {
         if ((this.options.rangeSelector as any).enabled) {
@@ -2094,9 +2094,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart as any, 'beforeRender', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
 
         var chart = this,
             axes = chart.axes,
@@ -2131,7 +2129,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart as any, 'update', function (
+    addEvent(Chart, 'update', function (
         this: Highcharts.Chart,
         e: Highcharts.Chart
     ): void {
@@ -2187,7 +2185,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
         var chart = this,
             rangeSelector = chart.rangeSelector,
             verticalAlign;
@@ -2205,7 +2203,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart as any, 'getMargins', function (
+    addEvent(Chart, 'getMargins', function (
         this: Highcharts.Chart
     ): void {
         var rangeSelector = this.rangeSelector,

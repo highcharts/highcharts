@@ -618,11 +618,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @apioption xAxis.crosshair.zIndex
          */
         /**
-         * Whether to zoom axis. If chart.zoom is enabled, the option allows
-         * to disable zooming on axis.
+         * Whether to zoom axis. If `chart.zoomType` is set, the option allows
+         * to disable zooming on an individual axis.
          *
          * @sample {highcharts} highcharts/xaxis/xaxis/zoomenabled/
-         *         Zoom enabled
+         *         Zoom enabled is false
          *
          *
          * @type      {boolean}

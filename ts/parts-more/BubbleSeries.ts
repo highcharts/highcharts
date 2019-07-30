@@ -41,6 +41,7 @@ declare global {
             minPxSize?: BubbleSeries['minPxSize'];
             specialGroup?: BubbleSeries['specialGroup'];
             zData?: BubbleSeries['zData'];
+            yData?: BubbleSeries['yData'];
         }
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
@@ -61,7 +62,8 @@ declare global {
             public points: Array<BubblePoint>;
             public radii: Array<(number|null)>;
             public specialGroup: string;
-            public zData: Array<number>;
+            public zData: Array<(number|null|undefined)>;
+            public yData: Array<(number|null|undefined)>;
             public zMax: BubbleSeriesOptions['zMax'];
             public zMin: BubbleSeriesOptions['zMin'];
             public zoneAxis: string;
@@ -76,7 +78,8 @@ declare global {
                 zMax: number,
                 minSize: number,
                 maxSize: number,
-                value: number
+                value: (number|null|undefined),
+                yValue?: (number|null|undefined)
             ): (number|null);
             public hasData(): boolean;
             public pointAttribs(
@@ -418,6 +421,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         var len: number,
             i: number,
             zData = this.zData,
+            yData = this.yData,
             minSize = series.minPxSize,
             maxSize = series.maxPxSize,
             radii = [] as Array<(number|null)>,
@@ -432,7 +436,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
                 zMax,
                 minSize as any,
                 maxSize as any,
-                value
+                value,
+                yData[i]
             ));
         }
         this.radii = radii;
@@ -448,42 +453,48 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
         zMax: number,
         minSize: number,
         maxSize: number,
-        value: number
+        value: (number|null|undefined),
+        yValue?: (number|null|undefined)
     ): (number|null) {
         var options = this.options,
             sizeByArea = options.sizeBy !== 'width',
             zThreshold = options.zThreshold,
-            pos,
             zRange = zMax - zMin,
-            radius;
+            pos = 0.5;
 
-        // When sizing by threshold, the absolute value of z determines
-        // the size of the bubble.
-        if (options.sizeByAbsoluteValue && value !== null) {
-            value = Math.abs(value - (zThreshold as any));
-            zMax = zRange = Math.max(
-                zMax - (zThreshold as any),
-                Math.abs(zMin - (zThreshold as any))
-            );
-            zMin = 0;
+        // #8608 - bubble should be visible when z is undefined
+        if (yValue === null || value === null) {
+            return null;
         }
 
-        if (!isNumber(value)) {
-            radius = null;
-        // Issue #4419 - if value is less than zMin, push a radius that's
-        // always smaller than the minimum size
-        } else if (value < zMin) {
-            radius = minSize / 2 - 1;
-        } else {
-            // Relative size, a number between 0 and 1
-            pos = zRange > 0 ? (value - zMin) / zRange : 0.5;
-
-            if (sizeByArea && pos >= 0) {
-                pos = Math.sqrt(pos);
+        if (isNumber(value)) {
+            // When sizing by threshold, the absolute value of z determines
+            // the size of the bubble.
+            if (options.sizeByAbsoluteValue) {
+                value = Math.abs(value - (zThreshold as any));
+                zMax = zRange = Math.max(
+                    zMax - (zThreshold as any),
+                    Math.abs(zMin - (zThreshold as any))
+                );
+                zMin = 0;
             }
-            radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+            // Issue #4419 - if value is less than zMin, push a radius that's
+            // always smaller than the minimum size
+            if (value < zMin) {
+                return minSize / 2 - 1;
+            }
+
+            // Relative size, a number between 0 and 1
+            if (zRange > 0) {
+                pos = (value - zMin) / zRange;
+            }
         }
-        return radius;
+
+        if (sizeByArea && pos >= 0) {
+            pos = Math.sqrt(pos);
+        }
+
+        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
     },
 
     /**

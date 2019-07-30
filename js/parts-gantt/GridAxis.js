@@ -11,6 +11,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
+    erase = U.erase,
     isArray = U.isArray,
     isNumber = U.isNumber;
 
@@ -21,7 +22,7 @@ var addEvent = H.addEvent,
     dateFormat = H.dateFormat,
     isObject = function (x) {
         // Always use strict mode
-        return H.isObject(x, true);
+        return U.isObject(x, true);
     },
     merge = H.merge,
     pick = H.pick,
@@ -946,8 +947,8 @@ var onGridAxisAfterInit = function onGridAxisAfterInit() {
 
             // Remove column axis from chart axes array, and place it
             // in the columns array.
-            H.erase(chart.axes, column);
-            H.erase(chart[axis.coll], column);
+            erase(chart.axes, column);
+            erase(chart[axis.coll], column);
             columns.push(column);
         }
     }

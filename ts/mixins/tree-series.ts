@@ -29,8 +29,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    isArray,
+    isNumber,
+    isObject
+} = U;
 
 var extend = H.extend,
     isBoolean = function (x: unknown): x is boolean {
@@ -39,7 +42,6 @@ var extend = H.extend,
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
     },
-    isObject = H.isObject,
     merge = H.merge,
     pick = H.pick;
 

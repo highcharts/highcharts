@@ -189,6 +189,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     splat
@@ -207,7 +208,6 @@ var addEvent = H.addEvent,
     color = H.color,
     defaultOptions = H.defaultOptions,
     destroyObjectProperties = H.destroyObjectProperties,
-    erase = H.erase,
     extend = H.extend,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -2636,7 +2636,7 @@ if (!H.Navigator) {
     // For Stock charts, override selection zooming with some special features
     // because X axis zooming is already allowed by the Navigator and Range
     // selector.
-    addEvent(Axis as any, 'zoom', function (
+    addEvent(Axis, 'zoom', function (
         this: Highcharts.Axis,
         e: Highcharts.Dictionary<any>
     ): void {
@@ -2686,7 +2686,7 @@ if (!H.Navigator) {
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)
-    addEvent(Chart as any, 'beforeShowResetZoom', function (
+    addEvent(Chart, 'beforeShowResetZoom', function (
         this: Highcharts.Chart
     ): (boolean|undefined) {
         var chartOptions = this.options,
@@ -2703,9 +2703,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator for stock charts
-    addEvent(Chart as any, 'beforeRender', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
         var options = this.options;
 
         if ((options.navigator as any).enabled ||
@@ -2719,7 +2717,7 @@ if (!H.Navigator) {
     // the final top position of the navigator once the height of the chart,
     // including the legend, is determined. #367. We can't use Chart.getMargins,
     // because labels offsets are not calculated yet.
-    addEvent(Chart as any, 'afterSetChartSize', function (
+    addEvent(Chart, 'afterSetChartSize', function (
         this: Highcharts.Chart
     ): void {
 
@@ -2783,7 +2781,7 @@ if (!H.Navigator) {
     });
 
     // Merge options, if no scrolling exists yet
-    addEvent(Chart as any, 'update', function (
+    addEvent(Chart, 'update', function (
         this: Highcharts.Chart,
         e: Highcharts.Chart
     ): void {
@@ -2803,7 +2801,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator, if no scrolling exists yet
-    addEvent(Chart as any, 'afterUpdate', function (
+    addEvent(Chart, 'afterUpdate', function (
         this: Highcharts.Chart,
         event: Highcharts.ChartAfterUpdateEventObject
     ): void {
@@ -2822,9 +2820,7 @@ if (!H.Navigator) {
     });
 
     // Handle adding new series
-    addEvent(Chart as any, 'afterAddSeries', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterAddSeries', function (this: Highcharts.Chart): void {
         if (this.navigator) {
             // Recompute which series should be shown in navigator, and add them
             this.navigator.setBaseSeries(null as any, false);
@@ -2832,9 +2828,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(Series as any, 'afterUpdate', function (
-        this: Highcharts.Series
-    ): void {
+    addEvent(Series, 'afterUpdate', function (this: Highcharts.Series): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

@@ -49,6 +49,9 @@ declare global {
         interface AnimationStepCallbackFunction {
             (this: SVGElement, ...args: Array<any>): void;
         }
+        interface Class<T = any> extends Function {
+            new(...args: Array<any>): T;
+        }
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
@@ -116,7 +119,7 @@ declare global {
         let timers: Array<any>;
         let timeUnits: Dictionary<number>;
         function addEvent<T>(
-            el: T,
+            el: (Class<T>|T),
             type: string,
             fn: (EventCallbackFunction<T>|Function),
             options?: EventOptionsObject
@@ -149,23 +152,23 @@ declare global {
             el: (HTMLDOMElement|SVGDOMElement),
             styles: CSSObject
         ): void;
-        function datePropsToTimestamps(object: any): void;
+        function datePropsToTimestamps(obj: any): void;
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
         /** @deprecated */
         function each(arr: Array<any>, fn: Function, ctx?: any): void;
-        function erase(arr: Array<any>, item: any): void;
+        function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
             stop?: boolean,
             chart?: Chart
         ): void;
-        function extend<T>(a: T, b: object): T;
-        function extendClass(
-            parent: any,
-            members: Dictionary<any>
-        ): any;
+        function extend<T extends object>(a: (T|undefined), b: object): T;
+        function extendClass<T, TReturn = T>(
+            parent: Class<T>,
+            members: unknown
+        ): Class<TReturn>;
         function find<T>(arr: Array<T>, fn: Function): (T|undefined);
         function fireEvent<T>(
             el: T,
@@ -176,10 +179,6 @@ declare global {
         function format(str: string, ctx: any, time?: Time): string;
         function formatSingle(format: string, val: any, time?: Time): string;
         function getMagnitude(num: number): number;
-        function isIntersectRect(
-            box1: BBoxObject,
-            box2: BBoxObject
-        ): boolean;
         function getStyle(
             el: HTMLDOMElement,
             prop: string,
@@ -193,9 +192,13 @@ declare global {
             fromIndex?: number
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
-        function isClass(obj: any): boolean;
-        function isDOMElement(obj: any): boolean;
+        function isClass(obj: (object|undefined)): obj is Class;
+        function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
+        function isIntersectRect(
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean;
         function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
         function isString(s: unknown): s is string;
@@ -203,15 +206,32 @@ declare global {
         function keys(obj: any): Array<string>;
         /** @deprecated */
         function map(arr: Array<any>, fn: Function): Array<any>;
-        function merge<T>(
+        function merge<T1, T2 = object>(
             extend: boolean,
-            a: (T|undefined),
-            ...n: Array<object|undefined>
-        ): T;
-        function merge<T>(
-            a: (T|undefined),
-            ...n: Array<object|undefined>
-        ): T;
+            a?: T1,
+            ...n: Array<T2|undefined>
+        ): (T1&T2);
+        function merge<
+            T1 extends object = object,
+            T2 = unknown,
+            T3 = unknown,
+            T4 = unknown,
+            T5 = unknown,
+            T6 = unknown,
+            T7 = unknown,
+            T8 = unknown,
+            T9 = unknown
+        >(
+            a?: T1,
+            b?: T2,
+            c?: T3,
+            d?: T4,
+            e?: T5,
+            f?: T6,
+            g?: T7,
+            h?: T8,
+            i?: T9,
+        ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,
@@ -242,7 +262,7 @@ declare global {
             offset?: number
         ): number;
         function removeEvent<T>(
-            el: T,
+            el: (Class<T>|T),
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
@@ -311,6 +331,20 @@ declare global {
  *        The SVG element to animate.
  *
  * @return {void}
+ */
+
+/**
+ * Interface description for a class.
+ *
+ * @interface Highcharts.Class<T>
+ * @extends Function
+ *//**
+ * Class costructor.
+ * @function Highcharts.Class<T>#new
+ * @param {...Array<*>} args
+ *        Constructor arguments.
+ * @return {T}
+ *         Class instance.
  */
 
 /**
@@ -1134,7 +1168,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object|undefined>} [...n]
+ * @param {...Array<object|undefined>} [n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -1151,7 +1185,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object|undefined>} [...n]
+ * @param {...Array<object|undefined>} [n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -1173,9 +1207,9 @@ H.merge = function<T> (): T {
             H.objectEach(original, function (value: any, key: string): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (H.isObject(value, true) &&
-                    !H.isClass(value) &&
-                    !H.isDOMElement(value)
+                if (isObject(value, true) &&
+                    !isClass(value) &&
+                    !isDOMElement(value)
                 ) {
                     copy[key] = doCopy(copy[key] || {}, value);
 
@@ -1268,9 +1302,9 @@ function isArray(obj: unknown): obj is Array<unknown> {
  * @return {boolean}
  *         True if the argument is an object.
  */
-H.isObject = function (obj: any, strict?: boolean): boolean {
+function isObject(obj: any, strict?: boolean): boolean {
     return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
-};
+}
 
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1283,30 +1317,30 @@ H.isObject = function (obj: any, strict?: boolean): boolean {
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-H.isDOMElement = function (obj: any): boolean {
-    return H.isObject(obj) && typeof obj.nodeType === 'number';
-};
+function isDOMElement(obj: unknown): obj is HTMLElement {
+    return isObject(obj) && typeof (obj as any).nodeType === 'number';
+}
 
 /**
- * Utility function to check if an Object is an class.
+ * Utility function to check if an Object is a class.
  *
  * @function Highcharts.isClass
  *
- * @param {*} obj
+ * @param {object|undefined} obj
  *        The item to check.
  *
  * @return {boolean}
- *         True if the argument is an class.
+ *         True if the argument is a class.
  */
-H.isClass = function (obj: any): boolean {
+function isClass(obj: (object|undefined)): boolean {
     var c = obj && obj.constructor;
 
     return !!(
-        H.isObject(obj, true) &&
-        !H.isDOMElement(obj) &&
+        isObject(obj, true) &&
+        !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object')
     );
-};
+}
 
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
@@ -1337,7 +1371,7 @@ function isNumber(n: unknown): n is number {
  *
  * @return {void}
  */
-H.erase = function (arr: Array<any>, item: any): void {
+function erase(arr: Array<unknown>, item: unknown): void {
     var i = arr.length;
 
     while (i--) {
@@ -1346,7 +1380,7 @@ H.erase = function (arr: Array<any>, item: any): void {
             break;
         }
     }
-};
+}
 
 /**
  * Check if an object is null or undefined.
@@ -1406,7 +1440,7 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (defined(prop) && H.isObject(prop)) {
+    } else if (defined(prop) && isObject(prop)) {
         H.objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
@@ -1483,7 +1517,7 @@ H.clearTimeout = function (id: number): void {
  *
  * @function Highcharts.extend<T>
  *
- * @param {T} a
+ * @param {T|undefined} a
  *        The object to be extended.
  *
  * @param {object} b
@@ -1492,12 +1526,12 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T> (a: T, b: object): T {
+H.extend = function<T extends object> (a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
     if (!a) {
-        a = {} as any;
+        a = {} as T;
     }
     for (n in b) { // eslint-disable-line guard-for-in
         (a as any)[n] = (b as any)[n];
@@ -1607,30 +1641,31 @@ H.createElement = function (
     return el;
 };
 
+// eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
  *
- * @function Highcharts.extendClass
+ * @function Highcharts.extendClass<T>
  *
- * @param {*} parent
+ * @param {Highcharts.Class<T>} parent
  *        The parent prototype to inherit.
  *
  * @param {Highcharts.Dictionary<*>} members
  *        A collection of prototype members to add or override compared to the
  *        parent prototype.
  *
- * @return {*}
+ * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function (
-    parent: any,
-    members: Highcharts.Dictionary<any>
-): any {
-    var object = function (): void {};
+H.extendClass = function<T, TReturn = T> (
+    parent: Highcharts.Class<T>,
+    members: any
+): Highcharts.Class<TReturn> {
+    var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
-    object.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(object.prototype, members);
-    return object;
+    obj.prototype = new parent(); // eslint-disable-line new-cap
+    H.extend(obj.prototype, members);
+    return obj;
 };
 
 /**
@@ -1737,15 +1772,15 @@ H.wrap = function (
  * @private
  * @function Highcharts.datePropsToTimestamps
  *
- * @param {any} object - any object to convert properties of
+ * @param {*} obj - any object to convert properties of
  *
  * @return {void}
  */
-H.datePropsToTimestamps = function (object: any): void {
-    H.objectEach(object, function (val: any, key: string): void {
-        if (H.isObject(val) && typeof val.getTime === 'function') {
-            object[key] = val.getTime();
-        } else if (H.isObject(val) || isArray(val)) {
+H.datePropsToTimestamps = function (obj: any): void {
+    H.objectEach(obj, function (val: any, key: string): void {
+        if (isObject(val) && typeof val.getTime === 'function') {
+            obj[key] = val.getTime();
+        } else if (isObject(val) || isArray(val)) {
             H.datePropsToTimestamps(val);
         }
     });
@@ -2230,7 +2265,7 @@ H.setAnimation = function (
 H.animObject = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
-    return H.isObject(animation) ?
+    return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
 };
@@ -2741,7 +2776,7 @@ H.objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element or object to add a listener to. It can be a
  *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
@@ -2758,7 +2793,7 @@ H.objectEach({
  *         A callback function to remove the added event.
  */
 H.addEvent = function<T> (
-    el: T,
+    el: (Highcharts.Class<T>|T),
     type: string,
     fn: (Highcharts.EventCallbackFunction<T>|Function),
     options: Highcharts.EventOptionsObject = {}
@@ -2823,7 +2858,7 @@ H.addEvent = function<T> (
  *
  * @function Highcharts.removeEvent<T>
  *
- * @param {T} el
+ * @param {Highcharts.Class<T>|T} el
  *        The element to remove events on.
  *
  * @param {string} [type]
@@ -2837,7 +2872,7 @@ H.addEvent = function<T> (
  * @return {void}
  */
 H.removeEvent = function<T> (
-    el: T,
+    el: (Highcharts.Class<T>|T),
     type?: string,
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
@@ -3066,7 +3101,7 @@ H.animate = function (
         fx,
         args;
 
-    if (!H.isObject(opt)) { // Number or undefined/null
+    if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
         opt = {
             duration: args[2],
@@ -3163,8 +3198,10 @@ H.seriesType = function (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] ||
-        function (): void {}, props);
+    seriesTypes[type] = H.extendClass(
+        seriesTypes[parent] || function (): void {},
+        props
+    );
     seriesTypes[type].prototype.type = type;
 
     // Create the point class if needed
@@ -3265,8 +3302,12 @@ if ((win as any).jQuery) {
 // TODO use named exports when supported.
 const utils = {
     defined,
+    erase,
     isArray,
+    isClass,
+    isDOMElement,
     isNumber,
+    isObject,
     isString,
     pInt,
     splat

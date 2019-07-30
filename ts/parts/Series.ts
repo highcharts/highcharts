@@ -44,7 +44,14 @@ declare global {
         }
         interface LineSeriesStatesHoverOptions
             extends SeriesStatesHoverOptions
-        {}
+        {
+            // only for inheritance
+        }
+        interface LineSeriesStatesInactiveOptions
+            extends SeriesStatesInactiveOptions
+        {
+            // only for inheritance
+        }
         interface LineSeriesStatesOptions extends SeriesStatesOptions {
             hover?: LineSeriesStatesHoverOptions;
         }
@@ -337,7 +344,7 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<number>,
+                yData: Array<(number|null|undefined)>,
                 min: number,
                 max: number,
                 cropShoulder?: number
@@ -634,6 +641,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    erase,
     isArray,
     isNumber,
     isString,
@@ -652,7 +660,6 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement

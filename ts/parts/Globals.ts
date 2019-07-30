@@ -17,8 +17,6 @@
 declare global {
     namespace Highcharts {
         type NavigationOptions = any; // @todo exporting module
-        type NetworkgraphPoint = any; // @todo networkgraph
-        type NetworkgraphSeries = any; // @todo networkgraph
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
@@ -27,7 +25,6 @@ declare global {
         }
         interface Chart {
             drilldownLevels?: any; // @todo drilldown module
-            graphLayoutsLookup?: any; // @todo networkgraph
             hasParallelCoordinates?: any; // @todo parallel module
             is3d?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
@@ -101,9 +98,13 @@ declare global {
         msHidden: boolean;
         webkitHidden: boolean;
     }
+    interface Index extends Object {
+        [key: string]: any;
+        [index: number]: any;
+    }
     interface Window {
         Image: typeof Image;
-        opera?: any;
+        opera?: unknown;
         TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable

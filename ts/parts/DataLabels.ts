@@ -72,14 +72,14 @@ declare global {
             shadow?: (boolean|ShadowOptionsObject);
             shape?: string;
             style?: CSSObject;
-            textPath?: DataLabelsTextPath;
+            textPath?: DataLabelsTextPathOptionsObject;
             useHTML?: boolean;
             verticalAlign?: (VerticalAlignValue|null);
             x?: number;
             y?: (number|null);
             zIndex?: number;
         }
-        interface DataLabelsTextPath {
+        interface DataLabelsTextPathOptionsObject {
             attributes?: SVGAttributes;
             enabled?: boolean;
         }
@@ -2075,13 +2075,13 @@ if (seriesTypes.pie) {
             // Handle horizontal size and center
             if ((centerOption as any)[0] !== null) { // Fixed center
                 newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize);
+                    Math.max(overflow[1], overflow[3]), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
                     // horizontal overflow
                     center[2] - overflow[1] - overflow[3],
-                    minSize
+                    minSize as any
                 );
                 // horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
@@ -2090,7 +2090,7 @@ if (seriesTypes.pie) {
             // Handle vertical size and center
             if ((centerOption as any)[1] !== null) { // Fixed center
                 newSize = Math.max(Math.min(newSize, center[2] -
-                    Math.max(overflow[0], overflow[2])), minSize);
+                    Math.max(overflow[0], overflow[2])), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
@@ -2099,7 +2099,7 @@ if (seriesTypes.pie) {
                         // vertical overflow
                         center[2] - overflow[0] - overflow[2]
                     ),
-                    minSize
+                    minSize as any
                 );
                 // vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;

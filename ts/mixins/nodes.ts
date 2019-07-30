@@ -33,17 +33,17 @@ declare global {
         }
         interface NodesPointOptions extends PointOptionsObject {
             id?: string;
-            mass?: unknown;
+            mass?: number;
             outgoing?: boolean;
             weight?: number;
         }
         interface NodesSeriesOptions extends SeriesOptions {
-            mass?: unknown;
+            mass?: number;
             nodes?: Array<NodesPointOptions>;
         }
         class NodesPoint extends Point {
-            public className: 'highcharts-node';
-            public formatPrefix: 'node';
+            public className: string;
+            public formatPrefix: string;
             public from: string;
             public fromNode: NodesPoint;
             public id: string;
@@ -51,13 +51,13 @@ declare global {
             public level?: unknown;
             public linksFrom: Array<NodesPoint>;
             public linksTo: Array<NodesPoint>;
-            public mass: unknown;
+            public mass: number;
             public options: NodesPointOptions;
             public series: NodesSeries;
             public setNodeState: NodesMixin['setNodeState'];
             public to: string;
             public toNode: NodesPoint;
-            public y: 1;
+            public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
             public init(series: Series, options: NodesPointOptions): NodesPoint;

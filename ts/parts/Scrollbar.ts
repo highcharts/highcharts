@@ -1164,7 +1164,7 @@ if (!H.Scrollbar) {
     /* *
      * Wrap axis initialization and create scrollbar if enabled:
      */
-    addEvent(Axis as any, 'afterInit', function (this: Highcharts.Axis): void {
+    addEvent(Axis, 'afterInit', function (this: Highcharts.Axis): void {
         var axis = this;
 
         if (
@@ -1242,9 +1242,7 @@ if (!H.Scrollbar) {
     /* *
     * Wrap rendering axis, and update scrollbar if one is created:
     */
-    addEvent(Axis as any, 'afterRender', function (
-        this: Highcharts.Axis
-    ): void {
+    addEvent(Axis, 'afterRender', function (this: Highcharts.Axis): void {
         var axis = this,
             scrollMin = Math.min(
                 pick(axis.options.min, axis.min),
@@ -1346,9 +1344,7 @@ if (!H.Scrollbar) {
      * Make space for a scrollbar
      * @private
      */
-    addEvent(Axis as any, 'afterGetOffset', function (
-        this: Highcharts.Axis
-    ): void {
+    addEvent(Axis, 'afterGetOffset', function (this: Highcharts.Axis): void {
         var axis = this,
             index = axis.horiz ? 2 : 1,
             scrollbar = axis.scrollbar;
