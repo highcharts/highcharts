@@ -176,10 +176,8 @@ declare global {
             maxStaggerLines?: number;
             overflow?: OptionsOverflowValue;
             padding?: number;
-            position3d?: OptionsPosition3dValue;
             reserveSpace?: boolean;
             rotation?: number;
-            skew3d?: boolean;
             staggerLines?: number;
             step?: number;
             style?: CSSObject;
@@ -280,10 +278,8 @@ declare global {
             enabled?: boolean;
             margin?: number;
             offset?: number;
-            position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
             reserveSpace?: boolean;
             rotation?: number;
-            skew3d?: (boolean|null);
             style?: CSSObject;
             text?: (string|null);
             textAlign?: AlignValue;
