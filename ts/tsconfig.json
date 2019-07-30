@@ -23,6 +23,8 @@
     // "composite": true,                     /* Enable project compilation */
     // "removeComments": true,                /* Do not emit comments to output. */
     // "noEmit": true,                        /* Do not emit outputs. */
+    // "noEmitOnError": true,                 /* Do not emit outputs on error. */
+    "noEmitOnError": true,
     // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
     // "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
@@ -40,6 +42,7 @@
 
     /* Additional Checks */
     // "noUnusedLocals": true,                /* Report errors on unused locals. */
+    "noUnusedLocals": true,
     // "noUnusedParameters": true,            /* Report errors on unused parameters. */
     // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
     "noFallthroughCasesInSwitch": true,       /* Report errors for fallthrough cases in switch statement. */

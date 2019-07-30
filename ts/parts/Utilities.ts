@@ -2878,8 +2878,7 @@ H.removeEvent = function<T> (
 ): void {
     /* eslint-enable valid-jsdoc */
 
-    var events,
-        index;
+    var events;
 
     /**
      * @private
@@ -2990,10 +2989,7 @@ H.fireEvent = function<T> (
 ): void {
     /* eslint-enable valid-jsdoc */
     var e,
-        events,
-        len,
-        i,
-        fn;
+        i;
 
     eventArguments = eventArguments || {};
 

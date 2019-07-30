@@ -30,7 +30,7 @@ declare global {
             zAxis?: Array<ZAxis>;
         }
         interface Options {
-            zAxis?: (Array<ZAxisOptions>|ZAxisOptions);
+            zAxis?: (ZAxisOptions|Array<ZAxisOptions>);
         }
         interface Point {
             crosshairPos?: number;

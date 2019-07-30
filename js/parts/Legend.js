@@ -632,7 +632,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     adjustMargins: function (margin, spacing) {
-        var legend = this, chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
+        var chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
             chart.titleOffset[0] + titleMarginOption :
             0, titleMarginBottom = titleMarginOption !== undefined ?
             chart.titleOffset[2] + titleMarginOption :
