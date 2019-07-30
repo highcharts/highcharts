@@ -1298,14 +1298,19 @@ Highcharts.Legend.prototype = {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
             const margin: number = (chart.options.title as any).margin;
-            const vAlign = legend.getAlignment().charAt(1);
             let alignTo = chart.spacingBox;
             let y = alignTo.y;
 
-            if (vAlign === 't' && chart.titleOffset[0] > 0) {
+            if (
+                /(lth|ct|rth)/.test(legend.getAlignment()) &&
+                chart.titleOffset[0] > 0
+            ) {
                 y += chart.titleOffset[0] + margin;
 
-            } else if (vAlign === 'b' && chart.titleOffset[2] > 0) {
+            } else if (
+                /(lbh|cb|rbh)/.test(legend.getAlignment()) &&
+                chart.titleOffset[2] > 0
+            ) {
                 y -= chart.titleOffset[2] + margin;
             }
 
