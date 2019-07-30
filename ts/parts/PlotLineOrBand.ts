@@ -41,6 +41,7 @@ declare global {
         }
         interface AxisPlotBandsLabelOptions {
             align?: AlignValue;
+            formatter?: PlotLineOrBandLabelFormatterCallbackFunction;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -65,6 +66,7 @@ declare global {
         }
         interface AxisPlotLinesLabelOptions {
             align?: AlignValue;
+            formatter?: PlotLineOrBandLabelFormatterCallbackFunction;
             rotation?: number;
             style?: CSSObject;
             text?: string;
@@ -73,6 +75,9 @@ declare global {
             verticalAlign?: VerticalAlignValue;
             x?: number;
             y?: number;
+        }
+        interface PlotLineOrBandLabelFormatterCallbackFunction {
+            (this: PlotLineOrBand, value?: number, format?: string): string;
         }
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
@@ -112,6 +117,12 @@ declare global {
                 isBand?: boolean,
                 zIndex?: number
             ): void;
+            public getLabelText(
+                optionsLabel: (
+                    AxisPlotLinesLabelOptions|
+                    AxisPlotBandsLabelOptions
+                ),
+            ): string
         }
     }
 }
@@ -321,7 +332,7 @@ H.PlotLineOrBand.prototype = {
         // the plot band/line label
         if (
             optionsLabel &&
-            defined(optionsLabel.text) &&
+            (defined(optionsLabel.text) || defined(optionsLabel.formatter)) &&
             path &&
             path.length &&
             axis.width > 0 &&
@@ -375,7 +386,8 @@ H.PlotLineOrBand.prototype = {
             xBounds,
             yBounds,
             x,
-            y;
+            y,
+            labelText;
 
         // add the SVG element
         if (!label) {
@@ -387,6 +399,7 @@ H.PlotLineOrBand.prototype = {
             };
 
             attribs.zIndex = zIndex;
+            labelText = this.getLabelText(optionsLabel);
 
             /**
              * SVG element of the label.
@@ -396,7 +409,7 @@ H.PlotLineOrBand.prototype = {
              */
             plotLine.label = label = renderer
                 .text(
-                    optionsLabel.text as any,
+                    labelText as any,
                     0,
                     0,
                     optionsLabel.useHTML
@@ -426,6 +439,25 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
+    },
+
+    /**
+     * Get label's text content.
+     *
+     * @private
+     * @function Highcharts.PlotLineOrBand#getLabelText
+     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
+     * @return {string}
+     */
+    getLabelText: function (this: Highcharts.PlotLineOrBand, optionsLabel: (
+        Highcharts.AxisPlotLinesLabelOptions|
+        Highcharts.AxisPlotBandsLabelOptions
+    )): string | undefined {
+        return defined(optionsLabel.formatter) ?
+            (optionsLabel.formatter as
+              Highcharts.PlotLineOrBandLabelFormatterCallbackFunction)
+                .call(this) :
+            optionsLabel.text;
     },
 
     /**
@@ -901,6 +933,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @default    left
      * @since      2.1
      * @apioption  xAxis.plotLines.label.align
+     */
+
+    /**
+     * Callback JavaScript function to format the label. Useful properties like
+     * the value of plot line or the range of plot band (`from` & `to`
+     * properties) can be found in `this.options` object.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
+     *         Label formatters for plot line and plot band.
+     * @type      {Highcharts.PlotLineOrBandLabelFormatterCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.label.formatter
      */
 
     /**
