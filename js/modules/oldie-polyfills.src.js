@@ -65,10 +65,10 @@ if (!Array.prototype.filter) {
     };
 }
 if (!Array.prototype.some) {
-    Array.prototype.some = function (fn, ctx) {
+    Array.prototype.some = function (fn, thisArg) {
         var i = 0, len = this.length;
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === true) {
+            if (fn.call(thisArg, this[i], i, this) === true) {
                 return true;
             }
         }
