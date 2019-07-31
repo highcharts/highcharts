@@ -250,7 +250,7 @@ seriesType('columnrange', 'arearange', merge(
         return colProto.translate3dPoints.apply(this, arguments as any);
     },
     translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.translate3dShapes.apply(this, arguments);
+        return colProto.translate3dShapes.apply(this, arguments as any);
     }
 }, {
     setState: colProto.pointClass.prototype.setState

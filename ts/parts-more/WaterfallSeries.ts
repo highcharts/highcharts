@@ -32,7 +32,7 @@ declare global {
             waterfallStacks: WaterfallStacksObject;
             renderWaterfallStackTotals(): void;
         }
-        interface WaterfallChart extends Chart {
+        interface WaterfallChart extends ColumnChart {
             axes: Array<WaterfallAxis>;
         }
         interface WaterfallPointOptions extends ColumnPointOptions {
