@@ -1982,7 +1982,6 @@ function objectEach(obj, fn, ctx) {
         }
     }
 }
-;
 /**
  * Iterate over an array.
  *

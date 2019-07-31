@@ -37,6 +37,10 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
 });
 
 QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
+
+    let firstStackLabel;
+    let lastStackLabel;
+
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
@@ -63,9 +67,17 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }]
     });
 
-    var stacks = chart.yAxis[0].stacks,
-        firstStackLabel = stacks.column[0].label,
-        lastStackLabel = stacks.column[3].label;
+    const getFirstAndLast = () => {
+        const stacks = chart.yAxis[0].stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return [
+            stacks[stackKey][0].label,
+            stacks[stackKey][3].label
+        ];
+    };
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.close(
         firstStackLabel.alignAttr.x -
@@ -90,9 +102,8 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             }
         }
     });
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.visibility,
@@ -115,9 +126,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x -
@@ -138,9 +147,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x +
@@ -163,9 +170,8 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             }
         }
     });
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.visibility,
@@ -188,9 +194,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x -

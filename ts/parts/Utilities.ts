@@ -2659,7 +2659,7 @@ function objectEach<T>(
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
-};
+}
 
 /**
  * Iterate over an array.
