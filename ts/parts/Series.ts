@@ -216,7 +216,7 @@ declare global {
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             name?: string;
             selected?: boolean;
-            stack?: (object|string);
+            stack?: (number|string);
             type?: string;
             visible?: boolean;
             xAxis?: (number|string);
@@ -811,7 +811,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
      * @sample {highcharts} highcharts/series/stack/
      *         Stacked and grouped columns
      *
-     * @type      {string|object}
+     * @type      {number|string}
      * @since     2.1
      * @product   highcharts highstock
      * @apioption series.stack
