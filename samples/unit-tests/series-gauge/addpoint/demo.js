@@ -5,6 +5,14 @@ QUnit.test('Gauge pivot stays on top(#4789)', function (assert) {
             animation: false
         },
 
+        plotOptions: {
+            series: {
+                // #11505, gauge crashed with stacking. Added it here for a
+                // minimum viable test case.
+                stacking: 'normal'
+            }
+        },
+
         series: [{
             data: [0.66],
             dial: {
