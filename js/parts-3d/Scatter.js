@@ -1,20 +1,18 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * Scatter 3D series.
+ *  (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
-
+ *  Scatter 3D series.
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
-
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-
-var Point = H.Point,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
-
+var Point = H.Point, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -22,63 +20,52 @@ var Point = H.Point,
  *
  * @augments Highcharts.Series
  */
-seriesType(
-    'scatter3d',
-    'scatter',
-    /**
-     * A 3D scatter plot uses x, y and z coordinates to display values for three
-     * variables for a set of data.
-     *
-     * @sample {highcharts} highcharts/3d/scatter/
-     *         Simple 3D scatter
-     * @sample {highcharts} highcharts/demo/3d-scatter-draggable
-     *         Draggable 3d scatter
-     *
-     * @extends      plotOptions.scatter
-     * @product      highcharts
-     * @optionparent plotOptions.scatter3d
-     */
-    {
-        tooltip: {
-            pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-        }
-
-    // Series class
-    }, {
-        pointAttribs: function (point) {
-            var attribs = seriesTypes.scatter.prototype.pointAttribs
-                .apply(this, arguments);
-
-            if (this.chart.is3d() && point) {
-                attribs.zIndex = H.pointCameraDistance(point, this.chart);
-            }
-
-            return attribs;
-        },
-        axisTypes: ['xAxis', 'yAxis', 'zAxis'],
-        pointArrayMap: ['x', 'y', 'z'],
-        parallelArrays: ['x', 'y', 'z'],
-
-        // Require direct touch rather than using the k-d-tree, because the
-        // k-d-tree currently doesn't take the xyz coordinate system into
-        // account (#4552)
-        directTouch: true
-
-    // Point class
-    }, {
-        applyOptions: function () {
-            Point.prototype.applyOptions.apply(this, arguments);
-            if (this.z === undefined) {
-                this.z = 0;
-            }
-
-            return this;
-        }
-
+seriesType('scatter3d', 'scatter', 
+/**
+ * A 3D scatter plot uses x, y and z coordinates to display values for three
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/3d/scatter/
+ *         Simple 3D scatter
+ * @sample {highcharts} highcharts/demo/3d-scatter-draggable
+ *         Draggable 3d scatter
+ *
+ * @extends      plotOptions.scatter
+ * @product      highcharts
+ * @optionparent plotOptions.scatter3d
+ */
+{
+    tooltip: {
+        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
     }
-);
-
-
+    // Series class
+}, {
+    pointAttribs: function (point) {
+        var attribs = seriesTypes.scatter.prototype.pointAttribs
+            .apply(this, arguments);
+        if (this.chart.is3d() && point) {
+            attribs.zIndex =
+                H.pointCameraDistance(point, this.chart);
+        }
+        return attribs;
+    },
+    axisTypes: ['xAxis', 'yAxis', 'zAxis'],
+    pointArrayMap: ['x', 'y', 'z'],
+    parallelArrays: ['x', 'y', 'z'],
+    // Require direct touch rather than using the k-d-tree, because the
+    // k-d-tree currently doesn't take the xyz coordinate system into
+    // account (#4552)
+    directTouch: true
+    // Point class
+}, {
+    applyOptions: function () {
+        Point.prototype.applyOptions.apply(this, arguments);
+        if (this.z === undefined) {
+            this.z = 0;
+        }
+        return this;
+    }
+});
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -89,7 +76,6 @@ seriesType(
  * @product   highcharts
  * @apioption series.scatter3d
  */
-
 /**
  * An array of data points for the series. For the `scatter3d` series
  * type, points can be given in the following ways:
@@ -144,7 +130,6 @@ seriesType(
  * @product   highcharts
  * @apioption series.scatter3d.data
  */
-
 /**
  * The z value for each data point.
  *
@@ -152,3 +137,4 @@ seriesType(
  * @product   highcharts
  * @apioption series.scatter3d.data.z
  */
+''; // adds doclets above to transpiled file
