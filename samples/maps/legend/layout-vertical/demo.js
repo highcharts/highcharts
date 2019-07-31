@@ -12,7 +12,7 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
             floating: true,
             align: 'left',
             verticalAlign: 'bottom',
-            y: -120,
+            y: -80,
             x: 60
         },
 
