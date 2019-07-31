@@ -74,7 +74,7 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
     // Tells if the stack is negative
     this.isNegative = isNegative;
     // Save the options to be able to style the label
-    this.options = options;
+    this.options = options = options || {};
     // Save the x value to be able to position the label later
     this.x = x;
     // Initialize total value
