@@ -1053,8 +1053,7 @@ H.Tooltip.prototype = {
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
-            styledMode = chart.styledMode,
-            activeSeries = [] as Array<Highcharts.Series>;
+            styledMode = chart.styledMode;
 
         if (!options.enabled) {
             return;

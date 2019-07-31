@@ -732,7 +732,6 @@ Highcharts.Pointer.prototype = {
                 shared,
                 e
             ),
-            activeSeries = ([] as Array<Highcharts.Series>),
             useSharedTooltip: (boolean|undefined),
             followPointer: (boolean|undefined),
             anchor: Array<number>,
