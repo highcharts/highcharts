@@ -500,17 +500,20 @@ Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
     });
 
     chart.series.forEach(function (series: Highcharts.Series): void {
-        var xAxis = series.xAxis;
+        var xAxisOptions = series.xAxis && series.xAxis.options || {};
 
-        if (series.options.stacking &&
-            (series.visible === true ||
-            (chart.options.chart as any).ignoreHiddenSeries === false)
+        if (
+            series.options.stacking &&
+            (
+                series.visible === true ||
+                (chart.options.chart as any).ignoreHiddenSeries === false
+            )
         ) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
-                inverted ? xAxis.options.top : xAxis.options.left,
-                inverted ? xAxis.options.height : xAxis.options.width
+                inverted ? xAxisOptions.top : xAxisOptions.left,
+                inverted ? xAxisOptions.height : xAxisOptions.width
             ].join(',');
         }
     });
