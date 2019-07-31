@@ -100,8 +100,11 @@ declare global {
  */
 
 import U from './Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber;
+const {
+    defined,
+    isNumber,
+    objectEach
+} = U;
 
 import './Series.js';
 import './SvgRenderer.js';
@@ -573,7 +576,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
 
             // Handle X-dimension overlapping
             if (!options.allowOverlapX) {
-                H.objectEach(boxesMap, function (
+                objectEach(boxesMap, function (
                     box: Highcharts.DataLabelsBoxObject
                 ): void {
                     box.plotX = box.anchorX;

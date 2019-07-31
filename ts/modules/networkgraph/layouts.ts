@@ -147,8 +147,10 @@ var pick = H.pick,
     addEvent = H.addEvent,
     Chart = H.Chart;
 
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
 H.layouts = {
-    'reingold-fruchterman': function () {
+    'reingold-fruchterman': function (): void {
     }
 } as any;
 
@@ -206,7 +208,7 @@ H.extend(
                 layout.initPositions();
 
                 // Render elements in initial positions:
-                series.forEach(function (s) {
+                series.forEach(function (s: Highcharts.Series): void {
                     s.render();
                 });
             }
@@ -406,7 +408,7 @@ H.extend(
 
             if (H.isFunction(initialPositions)) {
                 initialPositions.call(this);
-                this.nodes.forEach(function (node) {
+                this.nodes.forEach(function (node: Highcharts.Point): void {
                     if (!defined(node.prevX)) {
                         node.prevX = node.plotX;
                     }
@@ -440,6 +442,9 @@ H.extend(
                 visitedNodes = {} as Highcharts.Dictionary<boolean>,
                 radius = this.options.initialPositionRadius;
 
+            /**
+             * @private
+             */
             function addToNodes(node: Highcharts.Point): void {
                 (node.linksFrom as any).forEach(function (
                     link: Highcharts.Point
@@ -501,8 +506,11 @@ H.extend(
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1;
 
-            // Return a repeatable, quasi-random number based on an integer
-            // input. For the initial positions
+            /**
+             * Return a repeatable, quasi-random number based on an integer
+             * input. For the initial positions
+             * @private
+             */
             function unrandom(n: number): number {
                 var rand = n * n / Math.PI;
 
@@ -550,7 +558,7 @@ H.extend(
                 cx = 0,
                 cy = 0;
 
-            this.nodes.forEach(function (node) {
+            this.nodes.forEach(function (node: Highcharts.Point): void {
                 cx += (node.plotX as any) * (node.mass as any);
                 cy += (node.plotY as any) * (node.mass as any);
 
@@ -620,7 +628,7 @@ H.extend(
             var layout = this;
 
             if (layout.approximation === 'barnes-hut') {
-                layout.nodes.forEach(function (node) {
+                layout.nodes.forEach(function (node: Highcharts.Point): void {
                     layout.quadTree.visitNodeRecursive(
                         null,
                         function (
@@ -880,6 +888,9 @@ addEvent(Chart as any, 'render', function (
     var systemsStable,
         afterRender = false;
 
+    /**
+     * @private
+     */
     function layoutStep(layout: Highcharts.NetworkgraphLayout): void {
         if (
             (layout.maxIterations as any)-- &&

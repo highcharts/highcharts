@@ -155,10 +155,11 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
 
 var addEvent = H.addEvent,
-    objectEach = H.objectEach,
     pick = H.pick,
     merge = H.merge,
     seriesTypes = H.seriesTypes;

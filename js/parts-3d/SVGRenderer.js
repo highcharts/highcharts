@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined, objectEach = U.objectEach;
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
@@ -210,7 +210,7 @@ element3dMethods = {
             optionsToApply[0] = newAttr;
         }
         else {
-            H.objectEach(values, function (partVal, part) {
+            objectEach(values, function (partVal, part) {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
                 // include zIndexes if provided

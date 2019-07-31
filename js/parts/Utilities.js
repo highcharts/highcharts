@@ -527,7 +527,7 @@ H.Fx.prototype = {
             this.update();
             curAnim[this.prop] = true;
             done = true;
-            H.objectEach(curAnim, function (val) {
+            objectEach(curAnim, function (val) {
                 if (val !== true) {
                     done = false;
                 }
@@ -767,7 +767,7 @@ H.merge = function () {
         if (typeof copy !== 'object') {
             copy = {};
         }
-        H.objectEach(original, function (value, key) {
+        objectEach(original, function (value, key) {
             // Copy the contents of objects, but not arrays or DOM nodes
             if (isObject(value, true) &&
                 !isClass(value) &&
@@ -978,7 +978,7 @@ H.attr = function (elem, prop, value) {
         // else if prop is defined, it is a hash of key/value pairs
     }
     else if (defined(prop) && isObject(prop)) {
-        H.objectEach(prop, function (val, key) {
+        objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
     }
@@ -1261,7 +1261,7 @@ H.wrap = function (obj, method, func) {
  * @return {void}
  */
 H.datePropsToTimestamps = function (obj) {
-    H.objectEach(obj, function (val, key) {
+    objectEach(obj, function (val, key) {
         if (isObject(val) && typeof val.getTime === 'function') {
             obj[key] = val.getTime();
         }
@@ -1566,7 +1566,7 @@ H.arrayMax = function (data) {
  * @return {void}
  */
 H.destroyObjectProperties = function (obj, except) {
-    H.objectEach(obj, function (val, n) {
+    objectEach(obj, function (val, n) {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
             // Invoke the destroy
@@ -1974,14 +1974,14 @@ H.stop = function (el, prop) {
  *
  * @return {void}
  */
-H.objectEach = function (obj, fn, ctx) {
+function objectEach(obj, fn, ctx) {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
-};
+}
 /**
  * Iterate over an array.
  *
@@ -2072,7 +2072,7 @@ H.objectEach = function (obj, fn, ctx) {
  *
  * @return {boolean}
  */
-H.objectEach({
+objectEach({
     map: 'map',
     each: 'forEach',
     grep: 'filter',
@@ -2198,7 +2198,7 @@ H.removeEvent = function (el, type, fn) {
         else {
             types = eventCollection;
         }
-        H.objectEach(types, function (val, n) {
+        objectEach(types, function (val, n) {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
@@ -2351,7 +2351,7 @@ H.animate = function (el, params, opt) {
         opt.easing :
         (Math[opt.easing] || Math.easeInOutSine);
     opt.curAnim = H.merge(params);
-    H.objectEach(params, function (val, prop) {
+    objectEach(params, function (val, prop) {
         // Stop current running animation of this property
         H.stop(el, prop);
         fx = new H.Fx(el, opt, prop);
@@ -2507,6 +2507,7 @@ var utils = {
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    objectEach: objectEach,
     pInt: pInt,
     splat: splat
 };

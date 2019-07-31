@@ -21,27 +21,30 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
     });
 
 
-    assert.close(
+    assert.notStrictEqual(
         chart.container.querySelector('.highcharts-stack-labels text')
-            .getBBox().y,
-        0,
-        1,
-        'The y attribute is around to 0.'
+            .getAttribute('y'),
+        null,
+        'Y attribute should be set (#8834)'
     );
 
     assert.strictEqual(
         chart.container.querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
-        'Stack label is hidden.'
+        'Stack label should be hidden (#8834)'
     );
 });
 
-QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
+QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
+
+    let firstStackLabel;
+    let lastStackLabel;
+
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            width: 300,
+            width: 280,
             height: 260
         },
 
@@ -64,20 +67,31 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
         }]
     });
 
-    var stacks = chart.yAxis[0].stacks,
-        firstStackLabel = stacks.column[0].label,
-        lastStackLabel = stacks.column[3].label;
+    const getFirstAndLast = () => {
+        const stacks = chart.yAxis[0].stacks,
+            stackKey = Object.keys(stacks)[0];
 
-    assert.strictEqual(
+        return [
+            stacks[stackKey][0].label,
+            stacks[stackKey][3].label
+        ];
+    };
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
+
+    assert.close(
         firstStackLabel.alignAttr.x -
-        (firstStackLabel.getBBox().width / 2) >= 0,
-        true,
+        (firstStackLabel.getBBox().width / 2),
+        0,
+        0.5,
         'Stack label should be inside plot area left'
+        //0.5 is a value arised from difference between fonts
     );
-    assert.strictEqual(
+    assert.close(
         lastStackLabel.alignAttr.x +
-        (lastStackLabel.getBBox().width / 2) <= chart.plotWidth,
-        true,
+        (lastStackLabel.getBBox().width / 2),
+        chart.plotWidth,
+        0.5,
         'Stack label should be inside plot area right'
     );
 
@@ -88,9 +102,8 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
             }
         }
     });
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.visibility,
@@ -113,9 +126,7 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x -
@@ -136,9 +147,7 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x +
@@ -161,9 +170,8 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
             }
         }
     });
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.visibility,
@@ -186,9 +194,7 @@ QUnit.skip('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stacks = chart.yAxis[0].stacks;
-    firstStackLabel = stacks.column[0].label;
-    lastStackLabel = stacks.column[3].label;
+    [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
         firstStackLabel.alignAttr.x -

@@ -495,7 +495,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, splat = U.splat;
+var defined = U.defined, isArray = U.isArray, objectEach = U.objectEach, splat = U.splat;
 import './Series.js';
 var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
@@ -769,7 +769,7 @@ Series.prototype.drawDataLabels = function () {
                         attr['stroke-width'] = labelOptions.borderWidth;
                     }
                     // Remove unused attributes (#947)
-                    H.objectEach(attr, function (val, name) {
+                    objectEach(attr, function (val, name) {
                         if (val === undefined) {
                             delete attr[name];
                         }

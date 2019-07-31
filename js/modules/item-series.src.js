@@ -14,7 +14,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    objectEach = U.objectEach;
 
 import '../parts/Series.js';
 
@@ -438,7 +439,7 @@ H.seriesType(
                         i++;
                     }
                 }
-                H.objectEach(graphics, function (graphic, key) {
+                objectEach(graphics, function (graphic, key) {
                     if (!graphic.isActive) {
                         graphic.destroy();
                         delete graphics[key];

@@ -661,6 +661,7 @@ import U from './Utilities.js';
 const {
     defined,
     isArray,
+    objectEach,
     splat
 } = U;
 
@@ -1123,7 +1124,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                     }
 
                     // Remove unused attributes (#947)
-                    H.objectEach(attr, function (val: any, name: string): void {
+                    objectEach(attr, function (val: any, name: string): void {
                         if (val === undefined) {
                             delete attr[name];
                         }

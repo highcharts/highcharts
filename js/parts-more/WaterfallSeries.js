@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber, objectEach = U.objectEach;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
-var correctFloat = H.correctFloat, pick = H.pick, objectEach = H.objectEach, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /* eslint-disable no-invalid-this */
 addEvent(Axis, 'afterInit', function () {
     if (!this.isXAxis) {

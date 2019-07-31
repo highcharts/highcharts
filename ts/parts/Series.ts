@@ -645,6 +645,7 @@ const {
     isArray,
     isNumber,
     isString,
+    objectEach,
     splat
 } = U;
 
@@ -664,7 +665,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    objectEach = H.objectEach,
     pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,

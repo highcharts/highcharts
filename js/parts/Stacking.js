@@ -49,11 +49,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined;
+var defined = U.defined, objectEach = U.objectEach;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, objectEach = H.objectEach, pick = H.pick, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, pick = H.pick, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -74,7 +74,7 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
     // Tells if the stack is negative
     this.isNegative = isNegative;
     // Save the options to be able to style the label
-    this.options = options;
+    this.options = options = options || {};
     // Save the x value to be able to position the label later
     this.x = x;
     // Initialize total value
@@ -189,6 +189,7 @@ H.StackItem.prototype = {
                 Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
+            label.alignAttr = alignAttr;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y

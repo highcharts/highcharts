@@ -42,12 +42,12 @@ module.exports = async () => {
     );
     const after = Date.parse(commit.headers['last-modified']);
 
-    while (page < 5) {
+    while (page < 20) {
         const allPulls = await octokit.pulls.list({
             owner: 'highcharts',
             repo: 'highcharts',
             state: 'closed',
-            base: 'master',
+            // base: 'master',
             page
         }).catch(error);
 

@@ -1,5 +1,6 @@
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
 
 var fireEvent = H.fireEvent;
 
@@ -29,7 +30,7 @@ var eventEmitterMixin = {
             }
         );
 
-        H.objectEach(emitter.options.events, function (event, type) {
+        objectEach(emitter.options.events, function (event, type) {
             var eventHandler = function (e) {
                 if (type !== 'click' || !emitter.cancelClick) {
                     event.call(

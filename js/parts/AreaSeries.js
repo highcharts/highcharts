@@ -9,7 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var objectEach = U.objectEach;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
@@ -177,7 +178,7 @@ seriesType('area', 'line',
                 pointMap[points[i].x] = points[i];
             }
             // Sort the keys (#1651)
-            H.objectEach(stack, function (stackX, x) {
+            objectEach(stack, function (stackX, x) {
                 // nulled after switching between
                 // grouping and not (#1651, #2336)
                 if (stackX.total !== null) {

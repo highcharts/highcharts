@@ -96,8 +96,7 @@ declare global {
         }
         class NetworkgraphPoint
             extends LinePoint
-            implements DragNodesPoint, NodesPoint
-        {
+            implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -133,8 +132,7 @@ declare global {
         }
         class NetworkgraphSeries
             extends LineSeries
-            implements DragNodesSeries, NodesSeries
-        {
+            implements DragNodesSeries, NodesSeries {
             public chart: NetworkgraphChart;
             public createNode: NodesMixin['createNode'];
             public data: Array<NetworkgraphPoint>;
@@ -380,6 +378,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          * @private
          */
         dataLabels: {
+            // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
             formatter: function (
                 this: (
@@ -393,6 +392,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                     )
                 ).key;
             },
+            // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
             linkFormatter: function (
                 this: (
@@ -657,6 +657,8 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
         createNode: H.NodesMixin.createNode,
         destroy: H.NodesMixin.destroy,
 
+        /* eslint-disable no-invalid-this, valid-jsdoc */
+
         /**
          * Extend init with base event, which should stop simulation during
          * update. After data is updated, `chart.render` resumes the simulation.
@@ -668,7 +670,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
 
             Series.prototype.init.apply(this, arguments as any);
 
-            addEvent(this, 'updatedData', function () {
+            addEvent(this, 'updatedData', function (): void {
                 if (this.layout) {
                     this.layout.stop();
                 }
@@ -692,10 +694,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             // them:
             if (this.options.nodes) {
                 this.options.nodes.forEach(
-                    function (
-                        this: Highcharts.NetworkgraphSeries,
-                        nodeOptions: Highcharts.NodesPointOptions
-                    ) {
+                    function (nodeOptions: Highcharts.NodesPointOptions): void {
                         if (!this.nodeLookup[nodeOptions.id as any]) {
                             this.nodeLookup[nodeOptions.id as any] =
                                 this.createNode(nodeOptions.id as any);
@@ -718,7 +717,9 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             }
 
 
-            this.data.forEach(function (link) {
+            this.data.forEach(function (
+                link: Highcharts.NetworkgraphPoint
+            ): void {
                 link.formatPrefix = 'link';
             });
 
@@ -776,10 +777,14 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
 
             this.deferLayout();
 
-            this.nodes.forEach(function (node) {
+            this.nodes.forEach(function (
+                node: Highcharts.NetworkgraphPoint
+            ): void {
                 // Draw the links from this node
                 node.isInside = true;
-                node.linksFrom.forEach(function (point) {
+                node.linksFrom.forEach(function (
+                    point: Highcharts.NetworkgraphPoint
+                ): void {
 
                     point.shapeType = 'path';
 
@@ -1008,22 +1013,14 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                 this.series.options.draggable &&
                 !this.series.chart.styledMode
             ) {
-                addEvent(
-                    this,
-                    'mouseOver',
-                    function () {
-                        H.css(this.series.chart.container, { cursor: 'move' });
-                    }
-                );
-                addEvent(
-                    this,
-                    'mouseOut',
-                    function () {
-                        H.css(
-                            this.series.chart.container, { cursor: 'default' }
-                        );
-                    }
-                );
+                addEvent(this, 'mouseOver', function (): void {
+                    H.css(this.series.chart.container, { cursor: 'move' });
+                });
+                addEvent(this, 'mouseOut', function (): void {
+                    H.css(
+                        this.series.chart.container, { cursor: 'default' }
+                    );
+                });
             }
 
             return this;
@@ -1064,7 +1061,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                 dashstyle: (
                     pointOptions.dashStyle || (linkOptions as any).dashStyle
                 ),
-                opacity: pick(pointOptions.opacity, (linkOptions as any).opacity, 1)
+                opacity: pick(
+                    pointOptions.opacity,
+                    (linkOptions as any).opacity,
+                    1
+                )
             };
         },
         /**
@@ -1085,7 +1086,9 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                     attribs = this.series.pointAttribs(this);
                     this.graphic.attr(attribs);
 
-                    (this.dataLabels || []).forEach(function (label) {
+                    (this.dataLabels || []).forEach(function (
+                        label: Highcharts.SVGElement
+                    ): void {
                         if (label) {
                             label.attr({
                                 opacity: attribs.opacity
@@ -1112,7 +1115,9 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                     attribs = this.series.pointAttribs(this);
                     this.graphic.attr(attribs);
 
-                    (this.dataLabels || []).forEach(function (label) {
+                    (this.dataLabels || []).forEach(function (
+                        label: Highcharts.SVGElement
+                    ): void {
                         if (label) {
                             label.attr({
                                 opacity: attribs.opacity
@@ -1132,7 +1137,8 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          * default, when mass is equal to `1`, mass fraction for both nodes
          * equal to 0.5.
          * @private
-         * @return {Highcharts.Dictionary<number>} For example `{ fromNode: 0.5, toNode: 0.5 }`
+         * @return {Highcharts.Dictionary<number>}
+         *         For example `{ fromNode: 0.5, toNode: 0.5 }`
          */
         getMass: function (
             this: Highcharts.NetworkgraphPoint
@@ -1307,7 +1313,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
         destroy: function (this: Highcharts.NetworkgraphPoint): void {
             if (this.isNode) {
                 this.linksFrom.concat(this.linksTo).forEach(
-                    function (link) {
+                    function (link: Highcharts.NetworkgraphPoint): void {
                         // Removing multiple nodes at the same time
                         // will try to remove link between nodes twice
                         if (link.destroyElements) {
@@ -1466,6 +1472,15 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
  * @type      {number}
  * @product   highcharts
  * @apioption series.networkgraph.nodes.mass
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
+ *
+ * @type      {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
+ *
+ * @apioption series.networkgraph.nodes.dataLabels
  */
 
 ''; // adds doclets above to transpiled file

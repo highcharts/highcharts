@@ -144,7 +144,10 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    objectEach
+} = U;
 
 var Series = H.Series,
     Legend = H.Legend,
@@ -154,7 +157,6 @@ var Series = H.Series,
     wrap = H.wrap,
     color = H.color,
     numberFormat = H.numberFormat,
-    objectEach = H.objectEach,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,

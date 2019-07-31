@@ -76,6 +76,7 @@ import U from './Utilities.js';
 const {
     isArray,
     isObject,
+    objectEach,
     splat
 } = U;
 
@@ -342,7 +343,7 @@ Chart.prototype.currentOptions = function (
     ): void {
         var i;
 
-        H.objectEach(options, function (
+        objectEach(options, function (
             val: Highcharts.Dictionary<any>,
             key: string
         ): void {

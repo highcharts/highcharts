@@ -178,7 +178,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    objectEach
 } = U;
 
 import './Axis.js';
@@ -190,7 +191,6 @@ var Axis = H.Axis,
     correctFloat = H.correctFloat,
     destroyObjectProperties = H.destroyObjectProperties,
     format = H.format,
-    objectEach = H.objectEach,
     pick = H.pick,
     Series = H.Series;
 
@@ -226,7 +226,7 @@ H.StackItem = function (
     this.isNegative = isNegative;
 
     // Save the options to be able to style the label
-    this.options = options;
+    this.options = options = options || {};
 
     // Save the x value to be able to position the label later
     this.x = x;
@@ -407,7 +407,7 @@ H.StackItem.prototype = {
                     label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-
+            label.alignAttr = alignAttr;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y

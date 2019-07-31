@@ -98,7 +98,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    objectEach
+} = U;
 
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
@@ -450,7 +453,7 @@ element3dMethods = {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
         } else {
-            H.objectEach(values, function (partVal: any, part: string): void {
+            objectEach(values, function (partVal: any, part: string): void {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
 

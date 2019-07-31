@@ -60,7 +60,11 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    objectEach
+} = U;
+
 import './Color.js';
 import './Legend.js';
 import './Series.js';
@@ -271,7 +275,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                 }
 
                 // Sort the keys (#1651)
-                H.objectEach(stack, function (
+                objectEach(stack, function (
                     stackX: Highcharts.StackItem,
                     x: string
                 ): void {

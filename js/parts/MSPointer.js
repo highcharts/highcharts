@@ -10,7 +10,8 @@
 'use strict';
 import H from './Globals.js';
 /* globals MSPointerEvent, PointerEvent */
-import './Utilities.js';
+import U from './Utilities.js';
+var objectEach = U.objectEach;
 import './Pointer.js';
 var addEvent = H.addEvent, charts = H.charts, css = H.css, doc = H.doc, extend = H.extend, hasTouch = H.hasTouch, noop = H.noop, Pointer = H.Pointer, removeEvent = H.removeEvent, win = H.win, wrap = H.wrap;
 if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
@@ -20,7 +21,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
         fake.item = function (i) {
             return this[i];
         };
-        H.objectEach(touches, function (touch) {
+        objectEach(touches, function (touch) {
             fake.push({
                 pageX: touch.pageX,
                 pageY: touch.pageY,

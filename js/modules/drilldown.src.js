@@ -128,7 +128,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var objectEach = U.objectEach;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -141,7 +144,6 @@ var animObject = H.animObject,
     defaultOptions = H.defaultOptions,
     extend = H.extend,
     format = H.format,
-    objectEach = H.objectEach,
     pick = H.pick,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,

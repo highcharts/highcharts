@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, isObject = U.isObject, splat = U.splat;
+var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -506,7 +506,7 @@ Highcharts.Time.prototype = {
             L: pad(Math.floor(timestamp % 1000), 3)
         }, H.dateFormats);
         // Do the replaces
-        H.objectEach(replacements, function (val, key) {
+        objectEach(replacements, function (val, key) {
             // Regex would do it in one line, but this is faster
             while (format.indexOf('%' + key) !== -1) {
                 format = format.replace('%' + key, typeof val === 'function' ? val.call(time, timestamp) : val);
