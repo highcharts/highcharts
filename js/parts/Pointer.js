@@ -449,7 +449,7 @@ Highcharts.Pointer.prototype = {
             false), hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
         // onMouseOver or already hovering a series with directTouch
         isDirectTouch = e.type !== 'touchmove' && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
-            pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e), activeSeries = [], useSharedTooltip, followPointer, anchor, points;
+            pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e), useSharedTooltip, followPointer, anchor, points;
         // Update variables from hoverData.
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;

@@ -25,6 +25,8 @@ declare global {
         }
         interface Chart {
             drilldownLevels?: any; // @todo drilldown module
+            frame3d?: any; // @todo highcharts 3d
+            frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
             is3d?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
@@ -39,7 +41,6 @@ declare global {
         interface ColumnSeries {
             animateDrillupFrom: Function; // @todo drilldown module
             animateDrillupTo: Function; // @todo drilldown module
-            translate3dPoints: Function; // @todo
             translate3dShapes: Function; // @todo
         }
         interface NetworkgraphLayout {

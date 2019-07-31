@@ -765,13 +765,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     y: bottomAlign ? titleSize : offset + titleSize,
                     height: height
                 }, titleOptions), false, 'spacingBox');
-                if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                    titleOffset[0] = Math.ceil(titleOffset[0] +
-                        height);
-                }
-                if (key === 'subtitle' &&
-                    titleOptions.verticalAlign === 'bottom') {
-                    titleOffset[2] = height;
+                if (!titleOptions.floating) {
+                    if (!titleOptions.verticalAlign) {
+                        titleOffset[0] = Math.ceil(titleOffset[0] +
+                            height);
+                    }
+                    else if (bottomAlign) {
+                        titleOffset[2] = height;
+                    }
                 }
             }
         }, this);

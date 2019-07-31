@@ -55,17 +55,17 @@ interface ArraySomeCallbackFunction<T, TScope = any> {
 /* eslint-disable no-extend-native */
 
 if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function<T> (
+    Array.prototype.forEach = function<T, TScope = any> (
         this: Array<T>,
         fn: ArrayForEachCallbackFunction<T>,
-        ctx?: any
+        thisArg?: TScope
     ): void {
         var i = 0,
             len = this.length;
 
         for (; i < len; i++) {
             if (this[i] !== undefined && // added check
-                fn.call(ctx, this[i], i, this) as any === false
+                fn.call(thisArg, this[i], i, this) as any === false
             ) {
                 return i as any;
             }
@@ -136,7 +136,7 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    Array.prototype.some = function<T, TScope> (
+    Array.prototype.some = function<T, TScope = any> (
         this: Array<T>,
         fn: ArraySomeCallbackFunction<T>,
         thisArg?: TScope

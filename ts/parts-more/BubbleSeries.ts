@@ -46,7 +46,6 @@ declare global {
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
             public series: BubbleSeries;
-            public z?: (number|null);
             public haloPath(size: number): SVGElement;
         }
         class BubbleSeries extends ScatterSeries {

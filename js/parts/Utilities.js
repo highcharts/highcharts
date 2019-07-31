@@ -2168,7 +2168,7 @@ H.addEvent = function (el, type, fn, options) {
  */
 H.removeEvent = function (el, type, fn) {
     /* eslint-enable valid-jsdoc */
-    var events, index;
+    var events;
     /**
      * @private
      * @param {string} type - event type
@@ -2255,7 +2255,7 @@ H.removeEvent = function (el, type, fn) {
  */
 H.fireEvent = function (el, type, eventArguments, defaultFunction) {
     /* eslint-enable valid-jsdoc */
-    var e, events, len, i, fn;
+    var e, i;
     eventArguments = eventArguments || {};
     if (doc.createEvent &&
         (el.dispatchEvent || el.fireEvent)) {

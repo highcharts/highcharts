@@ -18,13 +18,8 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart3d extends Chart {
+        interface Chart {
             scale3d?: number;
-        }
-        interface Chart3dOptions {
-        }
-        interface ChartOptions {
-            options3d?: Chart3dOptions;
         }
         interface Position3dObject extends PositionObject {
             z: number;
@@ -47,12 +42,12 @@ declare global {
         ): PositionObject;
         function pointCameraDistance(
             coordinates: Dictionary<number>,
-            chart: Chart3d
+            chart: Chart
         ): number;
         function shapeArea(vertexes: Array<PositionObject>): number;
         function shapeArea3d(
             vertexes: Array<Position3dObject>,
-            chart: Chart3d,
+            chart: Chart,
             insidePlotArea?: boolean
         ): number;
     }
@@ -167,7 +162,7 @@ H.perspective3D = function (
  */
 H.perspective = function (
     points: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart3d,
+    chart: Highcharts.Chart,
     insidePlotArea?: boolean
 ): Array<Highcharts.Position3dObject> {
     var options3d = (chart.options.chart as any).options3d,
@@ -235,7 +230,7 @@ H.perspective = function (
  */
 H.pointCameraDistance = function (
     coordinates: Highcharts.Dictionary<number>,
-    chart: Highcharts.Chart3d
+    chart: Highcharts.Chart
 ): number {
     var options3d = (chart.options.chart as any).options3d,
         cameraPosition = {
@@ -292,7 +287,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  */
 H.shapeArea3d = function (
     vertexes: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart3d,
+    chart: Highcharts.Chart,
     insidePlotArea?: boolean
 ): number {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));

@@ -26,7 +26,6 @@ declare global {
         class MapBubblePoint extends BubblePoint {
             public options: MapBubblePointOptions;
             public series: MapBubbleSeries;
-            public z?: (number|null);
             public applyOptions(
                 options: MapBubblePointOptions,
                 x?: number

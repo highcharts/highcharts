@@ -36,7 +36,8 @@ H.cleanRecursively = function (newer, older) {
             }
             // Arrays, primitives and DOM nodes are copied directly
         }
-        else if (isObject(newer[key]) || newer[key] !== older[key]) {
+        else if (isObject(newer[key]) ||
+            newer[key] !== older[key]) {
             result[key] = newer[key];
         }
     });

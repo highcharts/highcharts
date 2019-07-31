@@ -94,10 +94,12 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
         if (creditsEl) {
             if (chart.credits.textStr) {
                 creditsEl.setAttribute(
-                    'aria-label', chart.langFormat(
-                        'accessibility.credits', {
-                            creditsStr: chart.credits.textStr
-                        }
+                    'aria-label', this.stripTags(
+                        chart.langFormat(
+                            'accessibility.credits', {
+                                creditsStr: chart.credits.textStr
+                            }
+                        )
                     )
                 );
             }

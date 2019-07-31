@@ -162,7 +162,9 @@ QUnit.test('Pattern fills set on points', function (assert) {
         }),
         points = chart.series[0].points,
         doc = Highcharts.win.document,
-        firstPattern = doc.getElementById('highcharts-default-pattern-0'),
+        firstPattern =
+            doc.getElementById('highcharts-default-pattern-0') ||
+            doc.getElementById(`highcharts-default-pattern-${chart.index}-0`),
         secondPattern = doc.getElementById('custom-1'),
         thirdPattern = doc.getElementById('custom-2');
 
