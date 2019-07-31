@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.

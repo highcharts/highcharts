@@ -14,6 +14,7 @@ var defined = U.defined;
 import 'integrations.js';
 import 'QuadTree.js';
 var pick = H.pick, addEvent = H.addEvent, Chart = H.Chart;
+/* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
     'reingold-fruchterman': function () {
     }
@@ -205,6 +206,9 @@ H.layouts['reingold-fruchterman'].prototype, {
         var box = this.box, nodes = this.nodes, nodesLength = nodes.length + 1, angle = 2 * Math.PI / nodesLength, rootNodes = nodes.filter(function (node) {
             return node.linksTo.length === 0;
         }), sortedNodes = [], visitedNodes = {}, radius = this.options.initialPositionRadius;
+        /**
+         * @private
+         */
         function addToNodes(node) {
             node.linksFrom.forEach(function (link) {
                 if (!visitedNodes[link.toNode.id]) {
@@ -244,8 +248,11 @@ H.layouts['reingold-fruchterman'].prototype, {
     },
     setRandomPositions: function () {
         var box = this.box, nodes = this.nodes, nodesLength = nodes.length + 1;
-        // Return a repeatable, quasi-random number based on an integer
-        // input. For the initial positions
+        /**
+         * Return a repeatable, quasi-random number based on an integer
+         * input. For the initial positions
+         * @private
+         */
         function unrandom(n) {
             var rand = n * n / Math.PI;
             rand = rand - Math.floor(rand);
@@ -469,6 +476,9 @@ addEvent(Chart, 'predraw', function () {
 });
 addEvent(Chart, 'render', function () {
     var systemsStable, afterRender = false;
+    /**
+     * @private
+     */
     function layoutStep(layout) {
         if (layout.maxIterations-- &&
             isFinite(layout.temperature) &&

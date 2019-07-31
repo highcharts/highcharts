@@ -67,6 +67,8 @@ declare global {
 var Chart = H.Chart,
     addEvent = H.addEvent;
 
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
 H.dragNodesMixin = {
     /**
      * Mouse down action, initializing drag&drop mode.
@@ -212,7 +214,7 @@ addEvent(
             mousedownUnbinder = addEvent(
                 chart.container,
                 'mousedown',
-                function (event: Highcharts.PointerEventObject) {
+                function (event: Highcharts.PointerEventObject): void {
                     var point = chart.hoverPoint;
                     if (
                         point &&
@@ -224,7 +226,7 @@ addEvent(
                         mousemoveUnbinder = addEvent(
                             chart.container,
                             'mousemove',
-                            function (e: Highcharts.PointerEventObject) {
+                            function (e: Highcharts.PointerEventObject): void {
                                 return point &&
                                     point.series &&
                                     point.series.onMouseMove(point, e);
@@ -233,7 +235,7 @@ addEvent(
                         mouseupUnbinder = addEvent(
                             chart.container.ownerDocument,
                             'mouseup',
-                            function (e: Highcharts.PointerEventObject) {
+                            function (e: Highcharts.PointerEventObject): void {
                                 mousemoveUnbinder();
                                 mouseupUnbinder();
                                 return point &&
@@ -246,7 +248,7 @@ addEvent(
             );
         }
 
-        addEvent(chart, 'destroy', function () {
+        addEvent(chart, 'destroy', function (): void {
             mousedownUnbinder();
         });
     }

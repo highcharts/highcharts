@@ -92,6 +92,8 @@ declare global {
     }
 }
 
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
 H.networkgraphIntegrations = {
     verlet: {
         /**
@@ -397,8 +399,10 @@ H.networkgraphIntegrations = {
             distanceXY: Highcharts.PositionObject,
             distanceR: number
         ): void {
-            (node.dispX as any) += (distanceXY.x / distanceR) * force / node.degree;
-            (node.dispY as any) += (distanceXY.y / distanceR) * force / node.degree;
+            (node.dispX as any) +=
+                (distanceXY.x / distanceR) * force / node.degree;
+            (node.dispY as any) +=
+                (distanceXY.y / distanceR) * force / node.degree;
         },
         /**
          * Attractive force.
