@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+/* eslint-disable no-invalid-this, valid-jsdoc */
 H.networkgraphIntegrations = {
     verlet: {
         /**
@@ -260,8 +261,10 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         repulsive: function (node, force, distanceXY, distanceR) {
-            node.dispX += (distanceXY.x / distanceR) * force / node.degree;
-            node.dispY += (distanceXY.y / distanceR) * force / node.degree;
+            node.dispX +=
+                (distanceXY.x / distanceR) * force / node.degree;
+            node.dispY +=
+                (distanceXY.y / distanceR) * force / node.degree;
         },
         /**
          * Attractive force.

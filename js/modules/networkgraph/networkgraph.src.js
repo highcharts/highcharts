@@ -191,10 +191,12 @@ seriesType('networkgraph', 'line',
      * @private
      */
     dataLabels: {
+        // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         formatter: function () {
             return this.key;
         },
+        // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         linkFormatter: function () {
             return (this.point.fromNode.name +
@@ -447,6 +449,7 @@ seriesType('networkgraph', 'line',
      */
     createNode: H.NodesMixin.createNode,
     destroy: H.NodesMixin.destroy,
+    /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Extend init with base event, which should stop simulation during
      * update. After data is updated, `chart.render` resumes the simulation.
@@ -789,7 +792,8 @@ seriesType('networkgraph', 'line',
      * default, when mass is equal to `1`, mass fraction for both nodes
      * equal to 0.5.
      * @private
-     * @return {Highcharts.Dictionary<number>} For example `{ fromNode: 0.5, toNode: 0.5 }`
+     * @return {Highcharts.Dictionary<number>}
+     *         For example `{ fromNode: 0.5, toNode: 0.5 }`
      */
     getMass: function () {
         var m1 = this.fromNode.mass, m2 = this.toNode.mass, sum = m1 + m2;
