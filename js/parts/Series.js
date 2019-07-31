@@ -343,7 +343,7 @@ H.Series = H.seriesType('line',
  * @sample {highcharts} highcharts/series/stack/
  *         Stacked and grouped columns
  *
- * @type      {string|object}
+ * @type      {number|string}
  * @since     2.1
  * @product   highcharts highstock
  * @apioption series.stack

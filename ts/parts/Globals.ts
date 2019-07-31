@@ -28,7 +28,6 @@ declare global {
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
-            is3d?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
             isPrinting?: any; // @todo exporting module
             openMenu?: any; // @todo exporting module
