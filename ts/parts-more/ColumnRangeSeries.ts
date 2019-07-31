@@ -247,7 +247,7 @@ seriesType('columnrange', 'arearange', merge(
         return (colProto as any).polarArc.apply(this, arguments);
     },
     translate3dPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.translate3dPoints.apply(this, arguments);
+        return colProto.translate3dPoints.apply(this, arguments as any);
     },
     translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.translate3dShapes.apply(this, arguments);
