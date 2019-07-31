@@ -23,7 +23,7 @@ declare global {
         interface Chart {
             get3dFrame(): Chart3dFrameObject;
             is3d(): boolean;
-            retrieveStacks(stacking?: boolean): Stack3dDictionary;
+            retrieveStacks(stacking?: string): Stack3dDictionary;
         }
         interface Chart3dFrameObject extends Chart3dFrameOptions {
             axes: Dictionary<Dictionary<(Edge3dObject|null)>>;
@@ -1398,7 +1398,7 @@ addEvent(Chart, 'afterDrawChartBox', function (): void {
 });
 
 Chart.prototype.retrieveStacks = function (
-    stacking?: boolean
+    stacking?: string
 ): Highcharts.Stack3dDictionary {
     var series = this.series,
         stacks = {} as Highcharts.Stack3dDictionary,

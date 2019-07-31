@@ -40,7 +40,6 @@ declare global {
         interface ColumnSeries {
             animateDrillupFrom: Function; // @todo drilldown module
             animateDrillupTo: Function; // @todo drilldown module
-            translate3dShapes: Function; // @todo
         }
         interface NetworkgraphLayout {
             beforeStep: Function; // @todo networkgraph
