@@ -15,49 +15,41 @@
 
 'use strict';
 
-import H from '../parts/Globals';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    interface Array<T> {
-        filter(callbackfn: ArrayFilterCallbackFunction<T>): Array<T>;
-        some(
-            callbackfn: ArraySomeCallbackFunction<T>,
-            thisArg?: unknown
-        ): boolean;
-        forEach<TScope = any>(
-            callbackfn: ArrayForEachCallbackFunction<T, TScope>,
-            thisArg?: TScope
-        ): void;
-        indexOf(searchElement: T, fromIndex?: number): number;
-        map<TOutput>(
-            callbackfn: ArrayMapCallbackFunction<T, TOutput>
-        ): Array<TOutput>;
-        reduce(callbackfn: ArrayReduceCallbackFunction<T>, initialValue?: T): T;
-    }
-    interface ArrayFilterCallbackFunction<T> {
-        (value: T, index: number, array: Array<T>): boolean;
-    }
-    interface ArrayForEachCallbackFunction<T, TScope = any> {
-        (this: TScope, value: T, index: number, array: Array<T>): void;
-    }
-    interface ArrayMapCallbackFunction<TInput, TOutput> {
-        (value: TInput, index: number, array: Array<TInput>): TOutput;
-    }
-    interface ArrayReduceCallbackFunction<T> {
-        (
-            previousValue: T,
-            currentValue: T,
-            currentIndex: number,
-            array: Array<T>
-        ): T;
-    }
-    interface ArraySomeCallbackFunction<T> {
-        (value: T, index: number, array: Array<T>): boolean;
-    }
+interface Array<T> {
+    filter(callbackfn: ArrayFilterCallbackFunction<T>): Array<T>;
+    some<TScope = any>(
+        callbackfn: ArraySomeCallbackFunction<T, TScope>,
+        thisArg?: TScope
+    ): boolean;
+    forEach<TScope = any>(
+        callbackfn: ArrayForEachCallbackFunction<T, TScope>,
+        thisArg?: TScope
+    ): void;
+    indexOf(searchElement: T, fromIndex?: number): number;
+    map<TOutput>(
+        callbackfn: ArrayMapCallbackFunction<T, TOutput>
+    ): Array<TOutput>;
+    reduce(callbackfn: ArrayReduceCallbackFunction<T>, initialValue?: T): T;
+}
+interface ArrayFilterCallbackFunction<T> {
+    (value: T, index: number, array: Array<T>): boolean;
+}
+interface ArrayForEachCallbackFunction<T, TScope = any> {
+    (this: TScope, value: T, index: number, array: Array<T>): void;
+}
+interface ArrayMapCallbackFunction<TInput, TOutput> {
+    (value: TInput, index: number, array: Array<TInput>): TOutput;
+}
+interface ArrayReduceCallbackFunction<T> {
+    (
+        previousValue: T,
+        currentValue: T,
+        currentIndex: number,
+        array: Array<T>
+    ): T;
+}
+interface ArraySomeCallbackFunction<T, TScope = any> {
+    (this: TScope, value: T, index: number, array: Array<T>): boolean;
 }
 
 /* eslint-disable no-extend-native */
@@ -144,16 +136,16 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    Array.prototype.some = function<T> (
+    Array.prototype.some = function<T, TScope> (
         this: Array<T>,
         fn: ArraySomeCallbackFunction<T>,
-        ctx?: any
+        thisArg?: TScope
     ): boolean { // legacy
         var i = 0,
             len = this.length;
 
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === true) {
+            if (fn.call(thisArg, this[i], i, this) === true) {
                 return true;
             }
         }
