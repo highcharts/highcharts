@@ -17,9 +17,9 @@
 
 interface Array<T> {
     filter(callbackfn: ArrayFilterCallbackFunction<T>): Array<T>;
-    some(
-        callbackfn: ArraySomeCallbackFunction<T>,
-        thisArg?: unknown
+    some<TScope = any>(
+        callbackfn: ArraySomeCallbackFunction<T, TScope>,
+        thisArg?: TScope
     ): boolean;
     forEach<TScope = any>(
         callbackfn: ArrayForEachCallbackFunction<T, TScope>,
@@ -48,24 +48,24 @@ interface ArrayReduceCallbackFunction<T> {
         array: Array<T>
     ): T;
 }
-interface ArraySomeCallbackFunction<T> {
-    (value: T, index: number, array: Array<T>): boolean;
+interface ArraySomeCallbackFunction<T, TScope = any> {
+    (this: TScope, value: T, index: number, array: Array<T>): boolean;
 }
 
 /* eslint-disable no-extend-native */
 
 if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function<T> (
+    Array.prototype.forEach = function<T, TScope = any> (
         this: Array<T>,
         fn: ArrayForEachCallbackFunction<T>,
-        ctx?: any
+        thisArg?: TScope
     ): void {
         var i = 0,
             len = this.length;
 
         for (; i < len; i++) {
             if (this[i] !== undefined && // added check
-                fn.call(ctx, this[i], i, this) as any === false
+                fn.call(thisArg, this[i], i, this) as any === false
             ) {
                 return i as any;
             }
@@ -136,16 +136,16 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    Array.prototype.some = function<T> (
+    Array.prototype.some = function<T, TScope = any> (
         this: Array<T>,
         fn: ArraySomeCallbackFunction<T>,
-        ctx?: any
+        thisArg?: TScope
     ): boolean { // legacy
         var i = 0,
             len = this.length;
 
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === true) {
+            if (fn.call(thisArg, this[i], i, this) === true) {
                 return true;
             }
         }
