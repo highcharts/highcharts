@@ -70,6 +70,7 @@ declare global {
             options: YAxisStackLabelsOptions;
             overflow?: OptionsOverflowValue;
             padding: number;
+            rotation: number;
             total: number;
             x: number;
         }
@@ -313,6 +314,7 @@ H.StackItem.prototype = {
             attr = {
                 text: str,
                 align: this.textAlign,
+                rotation: (options as any).rotation,
                 padding: pick((options as any).padding, 0),
                 visibility: 'hidden' // hidden until setOffset is called
             };
