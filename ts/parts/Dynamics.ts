@@ -100,7 +100,7 @@ declare global {
         interface XAxisOptions {
             index?: number;
         }
-        function cleanRecursively<T>(newer: T, older: T): T;
+        function cleanRecursively<T>(newer: T, older: unknown): T;
     }
 }
 
@@ -144,29 +144,32 @@ var addEvent = H.addEvent,
  * computing (#9197).
  * @private
  */
-H.cleanRecursively = function<T extends Highcharts.Dictionary<any>> (
-    newer: T,
-    older: T
-): T {
+H.cleanRecursively = function<T> (newer: T, older: unknown): T {
     var result = {} as T;
 
-    objectEach(newer, function (val: any, key: string): void {
+    objectEach(newer, function (val: unknown, key: (number|string)): void {
         var ob;
 
         // Dive into objects (except DOM nodes)
         if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
+            isObject((newer as any)[key], true) &&
+            !(newer as any).nodeType && // #10044
+            (older as any)[key]
         ) {
-            ob = H.cleanRecursively(newer[key], older[key]);
+            ob = H.cleanRecursively(
+                (newer as any)[key],
+                (older as any)[key]
+            );
             if (Object.keys(ob).length) {
-                result[key] = ob;
+                (result as any)[key] = ob;
             }
 
         // Arrays, primitives and DOM nodes are copied directly
-        } else if (isObject(newer[key]) || newer[key] !== older[key]) {
-            result[key] = newer[key];
+        } else if (
+            isObject((newer as any)[key]) ||
+            (newer as any)[key] !== (older as any)[key]
+        ) {
+            (result as any)[key] = (newer as any)[key];
         }
     });
 
