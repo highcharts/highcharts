@@ -4,6 +4,7 @@ js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/parts/**/*.js
 js/parts-3d/**/*.js
+js/parts-gantt/CurrentDateIndicator.js
 js/parts-gantt/PathfinderAlgorithms.js
 js/parts-map/**/*.js
 js/parts-more/**/*.js
