@@ -656,7 +656,11 @@ Highcharts.Pointer.prototype = {
                     var point = find(s.points, function (
                         p: Highcharts.Point
                     ): boolean {
-                        return p.x === hoverPoint.x && !p.isNull;
+                        return (
+                            p.x === hoverPoint.x &&
+                            !p.isNull &&
+                            p.isInside !== false
+                        );
                     });
 
                     if (isObject(point)) {
