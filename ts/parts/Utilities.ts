@@ -195,10 +195,6 @@ declare global {
         function isClass(obj: (object|undefined)): obj is Class;
         function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
-        function isIntersectRect(
-            box1: BBoxObject,
-            box2: BBoxObject
-        ): boolean;
         function isNumber(n: unknown): n is number;
         function isObject(obj: any, strict?: boolean): boolean;
         function isString(s: unknown): s is string;
@@ -1928,31 +1924,6 @@ H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
  */
 H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-};
-
-/**
- * Check if two boxes are intersecting.
- *
- * @function Highcharts.isIntersectRect
- *
- * @param {Highcharts.BBoxObject} box1
- *        First box
- * @param {Highcharts.BBoxObject} box2
- *        Second box
- *
- * @return {boolean}
- *         Boolean whether rects overlap.
- */
-H.isIntersectRect = function (
-    box1: Highcharts.BBoxObject,
-    box2: Highcharts.BBoxObject
-): boolean {
-    return !(
-        box2.x > box1.x + box1.width ||
-        box2.x + box2.width < box1.x ||
-        box2.y > box1.y + box1.height ||
-        box2.y + box2.height < box1.y
-    );
 };
 
 /**
