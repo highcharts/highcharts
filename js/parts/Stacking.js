@@ -134,6 +134,7 @@ H.StackItem.prototype = {
             attr = {
                 text: str,
                 align: this.textAlign,
+                rotation: options.rotation,
                 padding: pick(options.padding, 0),
                 visibility: 'hidden' // hidden until setOffset is called
             };
