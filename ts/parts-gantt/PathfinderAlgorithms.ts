@@ -19,33 +19,45 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface PathfinderAlgorithmFunction {
+            (...args: Array<any>): PathfinderAlgorithmResultObject;
+            requiresObstacles?: boolean;
+        }
         interface PathfinderAlgorithmResultObject {
             obstacles: Array<any>;
             path: SVGPathArray;
         }
         interface PathfinderAlgorithmsObject {
+            [key: string]: PathfinderAlgorithmFunction;
             fastAvoid: PathfinderFastAvoidAlgorithmFunction;
             simpleConnect: PathfinderSimpleConnectAlgorithmFunction;
-            straight(
+            straight: PathfinderStraightAlgorithmFunction;
+        }
+        interface PathfinderFastAvoidAlgorithmFunction
+            extends PathfinderAlgorithmFunction
+        {
+            (
+                start: PositionObject,
+                end: PositionObject,
+                options: any
+            ): PathfinderAlgorithmResultObject;
+        }
+        interface PathfinderSimpleConnectAlgorithmFunction
+            extends PathfinderAlgorithmFunction
+        {
+            (
+                start: PositionObject,
+                end: PositionObject,
+                options: any
+            ): PathfinderAlgorithmResultObject;
+        }
+        interface PathfinderStraightAlgorithmFunction
+            extends PathfinderAlgorithmFunction
+        {
+            (
                 start: PositionObject,
                 end: PositionObject
             ): PathfinderAlgorithmResultObject;
-        }
-        interface PathfinderFastAvoidAlgorithmFunction {
-            (
-                start: PositionObject,
-                end: PositionObject,
-                options: any
-            ): PathfinderAlgorithmResultObject;
-            requiresObstacles?: boolean;
-        }
-        interface PathfinderSimpleConnectAlgorithmFunction {
-            (
-                start: PositionObject,
-                end: PositionObject,
-                options: any
-            ): PathfinderAlgorithmResultObject;
-            requiresObstacles?: boolean;
         }
     }
 }

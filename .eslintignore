@@ -6,6 +6,7 @@ js/parts/**/*.js
 js/parts-3d/**/*.js
 js/parts-gantt/ArrowSymbols.js
 js/parts-gantt/CurrentDateIndicator.js
+js/parts-gantt/Pathfinder.js
 js/parts-gantt/PathfinderAlgorithms.js
 js/parts-map/**/*.js
 js/parts-more/**/*.js
