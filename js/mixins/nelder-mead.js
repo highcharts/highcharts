@@ -19,11 +19,11 @@ var getCentroid = function (simplex) {
  * @todo add unit tests.
  * @todo add constraints to optimize the algorithm.
  * @private
- * @param {Highcharts.NelderMearTestFunction} fn
+ * @param {Highcharts.NelderMeadTestFunction} fn
  *        The function to test a point.
- * @param {Highcharts.NelderMearPointArray} initial
+ * @param {Highcharts.NelderMeadPointArray} initial
  *        The initial point to optimize.
- * @return {Highcharts.NelderMearPointArray}
+ * @return {Highcharts.NelderMeadPointArray}
  *         Returns the opimized position of a point.
  */
 var nelderMead = function nelderMead(fn, initial) {

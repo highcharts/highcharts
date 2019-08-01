@@ -1329,12 +1329,12 @@ function isDOMElement(obj: unknown): obj is HTMLElement {
  *         True if the argument is a class.
  */
 function isClass(obj: (object|undefined)): boolean {
-    var c = obj && obj.constructor;
+    var c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && c.name && c.name !== 'Object')
+        (c && (c as any).name && (c as any).name !== 'Object')
     );
 }
 
@@ -2509,10 +2509,10 @@ H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = Array.prototype.find ?
+H.find = (Array.prototype as any).find ?
     /* eslint-enable valid-jsdoc */
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
-        return arr.find(callback as any);
+        return (arr as any).find(callback as any);
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
