@@ -94,7 +94,6 @@ declare global {
             dlBox?: BBoxObject;
             dlOptions?: DataLabelsOptionsObject;
             graphic?: SVGElement;
-            isLabelJustified?: boolean;
             /** @deprecated */
             positionIndex?: unknown;
             top?: number;
@@ -673,7 +672,6 @@ var arrayMax = H.arrayMax,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    isIntersectRect = H.isIntersectRect,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -1367,7 +1365,7 @@ Series.prototype.alignDataLabel = function (
 
         // Handle justify or crop
         if (justify && alignTo.height >= 0) { // #8830
-            point.isLabelJustified = this.justifyDataLabel(
+            this.justifyDataLabel(
                 dataLabel,
                 options,
                 alignAttr,
@@ -1446,6 +1444,7 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
+            options.inside = true;
         } else {
             options.x = -off;
         }
@@ -1457,6 +1456,7 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
+            options.inside = true;
         } else {
             options.x = chart.plotWidth - off;
         }
@@ -1468,6 +1468,7 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
+            options.inside = true;
         } else {
             options.y = -off;
         }
@@ -1479,6 +1480,7 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
+            options.inside = true;
         } else {
             options.y = chart.plotHeight - off;
         }
@@ -2219,19 +2221,7 @@ if (seriesTypes.column) {
         );
 
         // If label was justified and we have contrast, set it:
-        if (
-            point.contrastColor &&
-            point.shapeArgs &&
-            isIntersectRect(
-                {
-                    x: dataLabel.x,
-                    y: dataLabel.y,
-                    width: dataLabel.width - dataLabel.padding,
-                    height: dataLabel.height - dataLabel.padding
-                },
-                point.shapeArgs as any
-            )
-        ) {
+        if (options.inside && point.contrastColor) {
             dataLabel.css({
                 color: point.contrastColor
             });

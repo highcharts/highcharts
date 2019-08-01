@@ -497,7 +497,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 var defined = U.defined, isArray = U.isArray, objectEach = U.objectEach, splat = U.splat;
 import './Series.js';
-var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
+var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -935,7 +935,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
         }
         // Handle justify or crop
         if (justify && alignTo.height >= 0) { // #8830
-            point.isLabelJustified = this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+            this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
             // Now check that the data label is within the plot area
         }
         else if (pick(options.crop, true)) {
@@ -983,6 +983,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
+            options.inside = true;
         }
         else {
             options.x = -off;
@@ -994,6 +995,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
+            options.inside = true;
         }
         else {
             options.x = chart.plotWidth - off;
@@ -1005,6 +1007,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
+            options.inside = true;
         }
         else {
             options.y = -off;
@@ -1016,6 +1019,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
+            options.inside = true;
         }
         else {
             options.y = chart.plotHeight - off;
@@ -1522,14 +1526,7 @@ if (seriesTypes.column) {
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         // If label was justified and we have contrast, set it:
-        if (point.contrastColor &&
-            point.shapeArgs &&
-            isIntersectRect({
-                x: dataLabel.x,
-                y: dataLabel.y,
-                width: dataLabel.width - dataLabel.padding,
-                height: dataLabel.height - dataLabel.padding
-            }, point.shapeArgs)) {
+        if (options.inside && point.contrastColor) {
             dataLabel.css({
                 color: point.contrastColor
             });
