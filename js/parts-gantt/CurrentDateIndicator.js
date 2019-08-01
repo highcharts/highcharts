@@ -6,18 +6,12 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import H from '../parts/Globals.js';
-
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    PlotLineOrBand = H.PlotLineOrBand,
-    merge = H.merge,
-    wrap = H.wrap;
-
+var addEvent = H.addEvent, Axis = H.Axis, PlotLineOrBand = H.PlotLineOrBand, merge = H.merge, wrap = H.wrap;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a
@@ -59,26 +53,19 @@ var defaultConfig = {
         }
     }
 };
-
+/* eslint-disable no-invalid-this */
 addEvent(Axis, 'afterSetOptions', function () {
-    var options = this.options,
-        cdiOptions = options.currentDateIndicator;
-
+    var options = this.options, cdiOptions = options.currentDateIndicator;
     if (cdiOptions) {
         cdiOptions = typeof cdiOptions === 'object' ?
             merge(defaultConfig, cdiOptions) : merge(defaultConfig);
-
         cdiOptions.value = new Date();
-
         if (!options.plotLines) {
             options.plotLines = [];
         }
-
         options.plotLines.push(cdiOptions);
     }
-
 });
-
 addEvent(PlotLineOrBand, 'render', function () {
     // If the label already exists, update its text
     if (this.label) {
@@ -87,14 +74,10 @@ addEvent(PlotLineOrBand, 'render', function () {
         });
     }
 });
-
-wrap(PlotLineOrBand.prototype, 'getLabelText', function (defaultMethod,
-    defaultLabelOptions) {
+wrap(PlotLineOrBand.prototype, 'getLabelText', function (defaultMethod, defaultLabelOptions) {
     var options = this.options;
-
     if (options.currentDateIndicator && options.label &&
         typeof options.label.formatter === 'function') {
-
         options.value = new Date();
         return options.label.formatter
             .call(this, options.value, options.label.format);
