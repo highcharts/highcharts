@@ -20,8 +20,8 @@ declare global {
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
+            rightWall?: any; // @todo
             beforePadding?: Function; // @todo
-            getMaxLabelDimensions?: Function; // @todo
         }
         interface Chart {
             drilldownLevels?: any; // @todo drilldown module

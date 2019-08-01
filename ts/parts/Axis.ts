@@ -77,7 +77,11 @@ declare global {
         interface AxisTickPositionsArray extends Array<number> {
         }
         interface AxisTickPositionerCallbackFunction {
-            (this: Axis): Array<number>;
+            (
+                this: Axis,
+                min: number,
+                max: number
+            ): (AxisTickPositionsArray|undefined);
         }
         interface ExtremesObject {
             dataMax: number;
@@ -468,7 +472,7 @@ declare global {
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
-            public tickSize(prefix: string): Array<number>;
+            public tickSize(prefix?: string): Array<number>;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
             public translate(
@@ -6008,10 +6012,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * Get the tick length and width for the axis based on axis options.
      * @private
-     * @param {string} prefix 'tick' or 'minorTick'
-     * @return {Array<number>} An array of tickLength and tickWidth
+     * @param {string} [prefix]
+     *        'tick' or 'minorTick'
+     * @return {Array<number>}
+     *         An array of tickLength and tickWidth
      */
-    tickSize: function (this: Highcharts.Axis, prefix: string): Array<number> {
+    tickSize: function (this: Highcharts.Axis, prefix?: string): Array<number> {
         var options = this.options,
             tickLength = (options as any)[prefix + 'Length'],
             tickWidth = pick(
@@ -6020,7 +6026,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
-            tickSize;
+            tickSize: (Array<number>|undefined);
 
         if (tickWidth && tickLength) {
             // Negate the length
@@ -6812,7 +6818,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            titlePosition = {
+            titlePosition: Highcharts.PositionObject = {
                 x: horiz ?
                     alongAxis + xOption :
                     offAxis + (opposite ? this.width : 0) + offset + xOption,
