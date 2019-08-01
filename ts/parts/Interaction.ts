@@ -1060,8 +1060,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         move?: boolean
     ): void {
         var point = this,
-            plotX = Math.floor(point.plotX as any), // #4586
-            plotY = point.plotY,
             series = point.series,
             previousState = point.state,
             stateOptions = (

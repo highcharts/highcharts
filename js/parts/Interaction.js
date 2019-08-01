@@ -661,8 +661,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @fires Highcharts.Point#event:afterSetState
      */
     setState: function (state, move) {
-        var point = this, plotX = Math.floor(point.plotX), // #4586
-        plotY = point.plotY, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
+        var point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
             {}), markerOptions = (defaultPlotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
