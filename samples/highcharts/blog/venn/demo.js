@@ -27,65 +27,42 @@ Highcharts.chart('container', {
         data: [{
             sets: ['Knows If You Have Been Naughty Or Nice'],
             value: 4,
-            color: "#b3e5fc",
-            dataLabels: {
-                x: -40,
-                y: 10
-            }
+            color: "#b3e5fc"
         }, {
             sets: ['Great Power Great Responsibility'],
             value: 4,
-            color: '#bee175',
-            dataLabels: {
-                x: -20,
-                y: 10
-            }
+            color: '#bee175'
         }, {
             sets: ['Wears Red Suit'],
             value: 4,
-            color: "#ff3232",
-            dataLabels: {
-                x: 0,
-                y: 0,
-                style: {
-                    width: 200
-                }
-            }
+            color: "#ff3232"
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit'],
             value: 1,
             name: 'Spider Man',
             dataLabels: {
-                color: "white",
-                x: -20,
-                y: 30
+                color: "white"
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'GOD',
             dataLabels: {
-                color: "white",
-                x: -20,
-                y: -20
+                color: "white"
             }
         }, {
             sets: ['Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'Spanish Inquisition',
             dataLabels: {
-                color: "white",
-                x: 20,
-                y: 20
+                color: "white"
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'Santa',
             dataLabels: {
-                color: "white",
-                x: 0,
-                y: -20
+                color: "white"
             }
         }]
     }],

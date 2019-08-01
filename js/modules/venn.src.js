@@ -875,7 +875,8 @@ var vennSeries = {
                 shapeArgs,
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
                 dataLabelWidth = dataLabelValues.width,
-                dataLabelPosition = dataLabelValues.position;
+                dataLabelPosition = dataLabelValues.position,
+                dlOptions = point.options && point.options.dataLabels;
 
             if (shape) {
                 if (shape.r) {
@@ -928,11 +929,15 @@ var vennSeries = {
 
             // Add width for the data label
             if (dataLabelWidth && shapeArgs) {
-                point.dlOptions = {
-                    style: {
-                        width: dataLabelWidth
-                    }
-                };
+                point.dlOptions = merge(
+                    true,
+                    {
+                        style: {
+                            width: dataLabelWidth
+                        }
+                    },
+                    isObject(dlOptions) && dlOptions
+                );
             }
 
             // Set name for usage in tooltip and in data label.
