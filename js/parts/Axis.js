@@ -3750,7 +3750,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         var axis = this, names = this.names, i = names.length;
         if (i > 0) {
             Object.keys(names.keys).forEach(function (key) {
-                delete names.keys[key];
+                delete (names.keys)[key];
             });
             names.length = 0;
             this.minRange = this.userMinRange; // Reset

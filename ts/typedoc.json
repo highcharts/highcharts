@@ -1,0 +1,12 @@
+{
+    "excludeExternals": true,
+    "excludeNotExported": false,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "ignoreCompilerErrors": false,
+    "includeDeclarations": false,
+    "gitRevision": "master",
+    "mode": "file",
+    "name": "Highcharts Internals",
+    "plugin": "none"
+}

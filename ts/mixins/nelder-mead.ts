@@ -10,18 +10,18 @@
  */
 declare global {
     namespace Highcharts {
-        interface NelderMearMixin {
-            getCentroid(simplex: Array<NelderMearPointArray>): Array<number>;
+        interface NelderMeadMixin {
+            getCentroid(simplex: Array<NelderMeadPointArray>): Array<number>;
             nelderMead(
-                fn: NelderMearTestFunction,
-                initial: NelderMearPointArray
-            ): NelderMearPointArray;
+                fn: NelderMeadTestFunction,
+                initial: NelderMeadPointArray
+            ): NelderMeadPointArray;
         }
-        interface NelderMearPointArray extends Array<number> {
+        interface NelderMeadPointArray extends Array<number> {
             fx: number;
         }
-        interface NelderMearTestFunction {
-            (point: NelderMearPointArray): number;
+        interface NelderMeadTestFunction {
+            (point: NelderMeadPointArray): number;
         }
     }
 }
@@ -34,7 +34,7 @@ declare interface NelderMearCentroidObject {
 /* eslint-disable valid-jsdoc */
 
 var getCentroid = function (
-    simplex: Array<Highcharts.NelderMearPointArray>
+    simplex: Array<Highcharts.NelderMeadPointArray>
 ): Array<number> {
     var arr = simplex.slice(0, -1),
         length = arr.length,
@@ -58,21 +58,21 @@ var getCentroid = function (
  * @todo add unit tests.
  * @todo add constraints to optimize the algorithm.
  * @private
- * @param {Highcharts.NelderMearTestFunction} fn
+ * @param {Highcharts.NelderMeadTestFunction} fn
  *        The function to test a point.
- * @param {Highcharts.NelderMearPointArray} initial
+ * @param {Highcharts.NelderMeadPointArray} initial
  *        The initial point to optimize.
- * @return {Highcharts.NelderMearPointArray}
+ * @return {Highcharts.NelderMeadPointArray}
  *         Returns the opimized position of a point.
  */
 var nelderMead = function nelderMead(
-    fn: Highcharts.NelderMearTestFunction,
-    initial: Highcharts.NelderMearPointArray
-): Highcharts.NelderMearPointArray {
+    fn: Highcharts.NelderMeadTestFunction,
+    initial: Highcharts.NelderMeadPointArray
+): Highcharts.NelderMeadPointArray {
     var maxIterations = 100,
         sortByFx = function (
-            a: Highcharts.NelderMearPointArray,
-            b: Highcharts.NelderMearPointArray
+            a: Highcharts.NelderMeadPointArray,
+            b: Highcharts.NelderMeadPointArray
         ): number {
             return a.fx - b.fx;
         },
@@ -100,10 +100,10 @@ var nelderMead = function nelderMead(
      * @private
      */
     var getSimplex = function getSimplex(
-        initial: Highcharts.NelderMearPointArray
-    ): Array<Highcharts.NelderMearPointArray> {
+        initial: Highcharts.NelderMeadPointArray
+    ): Array<Highcharts.NelderMeadPointArray> {
         var n = initial.length,
-            simplex: Array<Highcharts.NelderMearPointArray> =
+            simplex: Array<Highcharts.NelderMeadPointArray> =
                 new Array(n + 1);
 
         // Initial point to the simplex.
@@ -112,7 +112,7 @@ var nelderMead = function nelderMead(
 
         // Create a set of extra points based on the initial.
         for (var i = 0; i < n; ++i) {
-            var point = initial.slice() as Highcharts.NelderMearPointArray;
+            var point = initial.slice() as Highcharts.NelderMeadPointArray;
 
             point[i] = point[i] ? point[i] * 1.05 : 0.001;
             point.fx = fn(point);
@@ -122,24 +122,24 @@ var nelderMead = function nelderMead(
     };
 
     var updateSimplex = function (
-        simplex: Array<Highcharts.NelderMearPointArray>,
-        point: Highcharts.NelderMearPointArray
-    ): Array<Highcharts.NelderMearPointArray> {
+        simplex: Array<Highcharts.NelderMeadPointArray>,
+        point: Highcharts.NelderMeadPointArray
+    ): Array<Highcharts.NelderMeadPointArray> {
         point.fx = fn(point);
         simplex[simplex.length - 1] = point;
         return simplex;
     };
 
     var shrinkSimplex = function (
-        simplex: Array<Highcharts.NelderMearPointArray>
-    ): Array<Highcharts.NelderMearPointArray> {
+        simplex: Array<Highcharts.NelderMeadPointArray>
+    ): Array<Highcharts.NelderMeadPointArray> {
         var best = simplex[0];
 
         return simplex.map(function (
-            point: Highcharts.NelderMearPointArray
-        ): Highcharts.NelderMearPointArray {
+            point: Highcharts.NelderMeadPointArray
+        ): Highcharts.NelderMeadPointArray {
             var p = weightedSum(1 - pShrink, best, pShrink, point) as (
-                Highcharts.NelderMearPointArray
+                Highcharts.NelderMeadPointArray
             );
 
             p.fx = fn(p);
@@ -152,9 +152,9 @@ var nelderMead = function nelderMead(
         worst: Array<number>,
         a: number,
         b: number
-    ): Highcharts.NelderMearPointArray {
+    ): Highcharts.NelderMeadPointArray {
         var point = weightedSum(a, centroid, b, worst) as (
-            Highcharts.NelderMearPointArray
+            Highcharts.NelderMeadPointArray
         );
 
         point.fx = fn(point);
@@ -215,7 +215,7 @@ var nelderMead = function nelderMead(
     return simplex[0];
 };
 
-var content: Highcharts.NelderMearMixin = {
+var content: Highcharts.NelderMeadMixin = {
     getCentroid: getCentroid,
     nelderMead: nelderMead
 };

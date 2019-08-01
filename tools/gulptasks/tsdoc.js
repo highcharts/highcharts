@@ -11,15 +11,11 @@ const path = require('path');
  *
  * */
 
-const SOURCE_CONFIGS = [
-    'tsconfig-bullet.json'
-].map(
-    fileName => path.join('ts', 'masters-not-in-use-yet', fileName)
-);
+// const SOURCE_CONFIG = path.join('ts', 'tsconfig.json');
 
-const TARGET_JSON = 'tree-typescript.json';
+const TARGET_DIRECTORY = path.join('build', 'api-internals');
 
-const TARGET_DIRECTORY = path.join('build', 'api');
+// const TARGET_JSON = path.join(TARGET_DIRECTORY, 'tree-typescript.json');
 
 /* *
  *
@@ -33,6 +29,10 @@ const TARGET_DIRECTORY = path.join('build', 'api');
  */
 function task() {
 
+    const processLib = require('./lib/process');
+
+    return processLib.exec('cd ts && npx typedoc --out ../' + TARGET_DIRECTORY);
+    /*
     const generators = require('highcharts-documentation-generators');
     const log = require('./lib/log');
 
@@ -41,10 +41,11 @@ function task() {
         log.message('Generating', TARGET_DIRECTORY + '...');
 
         generators.TypeDoc
-            .task(SOURCE_CONFIGS[0], TARGET_DIRECTORY, TARGET_JSON)
+            .task(SOURCE_CONFIG, TARGET_DIRECTORY, TARGET_JSON)
             .then(() => log.success('Created', TARGET_DIRECTORY))
             .then(resolve);
     });
+    */
 }
 
 gulp.task('tsdoc', gulp.series('clean-api', task));
