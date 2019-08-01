@@ -126,28 +126,6 @@ declare global {
             repeat?: number;
             to?: number;
         }
-        interface XAxisCurrentDateIndicatorLabelOptions {
-            align?: AlignValue;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface XAxisCurrentDateIndicatorOptions {
-            acrossPanes?: boolean;
-            className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-            events?: any;
-            id?: string;
-            label?: XAxisCurrentDateIndicatorLabelOptions;
-            width?: number;
-            zIndex?: number;
-        }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
             afterSetExtremes?: AxisSetExtremesEventCallbackFunction;
@@ -198,7 +176,6 @@ declare global {
             ceiling?: number;
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
-            currentDateIndicator?: (boolean|XAxisCurrentDateIndicatorOptions);
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
