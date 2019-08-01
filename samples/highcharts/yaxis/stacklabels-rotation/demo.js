@@ -7,12 +7,8 @@ Highcharts.chart('container', {
     },
     yAxis: {
         stackLabels: {
-            style: {
-                color: 'black'
-            },
             enabled: true,
-            rotation: -45,
-            y: -20
+            rotation: -45
         }
     },
     plotOptions: {
