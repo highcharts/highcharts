@@ -4598,8 +4598,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Get the tick length and width for the axis based on axis options.
      * @private
-     * @param {string} prefix 'tick' or 'minorTick'
-     * @return {Array<number>} An array of tickLength and tickWidth
+     * @param {string} [prefix]
+     *        'tick' or 'minorTick'
+     * @return {Array<number>}
+     *         An array of tickLength and tickWidth
      */
     tickSize: function (prefix) {
         var options = this.options, tickLength = options[prefix + 'Length'], tickWidth = pick(options[prefix + 'Width'], 
