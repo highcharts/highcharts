@@ -45,6 +45,9 @@ declare global {
             valueMax?: number;
             valueMin?: number;
         }
+        interface SeriesTypesDictionary {
+            heatmap: typeof HeatmapSeries;
+        }
         class HeatmapPoint extends ScatterPoint implements ColorPointMixin {
             public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];
             public isValid: ColorPointMixin['isValid'];

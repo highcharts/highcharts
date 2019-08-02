@@ -68,6 +68,9 @@ declare global {
             flag: SymbolFunction<SVGPathArray>;
             squarepin: SymbolFunction<SVGPathArray>;
         }
+        interface SeriesTypesDictionary {
+            flags: typeof FlagsSeries;
+        }
         class FlagsPoint extends ColumnPoint {
             public _y?: number;
             public anchorX?: number;

@@ -22,6 +22,9 @@ declare global {
         }
         interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            columnpyramid: typeof ColumnPyramidSeries;
+        }
         class ColumnPyramidPoint extends ColumnPoint {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;

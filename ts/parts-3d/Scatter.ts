@@ -25,6 +25,9 @@ declare global {
         }
         interface Scatter3dSeriesOptions extends ScatterSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            scatter3d: typeof Scatter3dSeries;
+        }
         class Scatter3dPoint extends ScatterPoint {
             public options: Scatter3dPointOptions;
             public series: Scatter3dSeries;

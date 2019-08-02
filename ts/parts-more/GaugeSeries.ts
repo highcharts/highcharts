@@ -45,6 +45,9 @@ declare global {
             fixedBox?: boolean;
             forceDL?: boolean;
         }
+        interface SeriesTypesDictionary {
+            gauge: typeof GaugeSeries;
+        }
         class GaugePoint extends LinePoint {
             public dial?: SVGElement;
             public option: GaugePointOptions;

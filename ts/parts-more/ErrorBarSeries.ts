@@ -22,6 +22,9 @@ declare global {
         }
         interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            errorbar: typeof ErrorBarSeries;
+        }
         class ErrorBarPoint extends BoxPlotPoint {
             public options: ErrorBarPointOptions;
             public series: ErrorBarSeries;

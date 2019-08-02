@@ -87,7 +87,7 @@ declare global {
         const noop: Function;
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
-        const seriesTypes: Dictionary<typeof Series>;
+        const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
     }
     type GlobalHighcharts = typeof Highcharts;

@@ -43,6 +43,9 @@ declare global {
             zData?: BubbleSeries['zData'];
             yData?: BubbleSeries['yData'];
         }
+        interface SeriesTypesDictionary {
+            bubble: typeof BubbleSeries;
+        }
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
             public series: BubbleSeries;

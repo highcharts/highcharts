@@ -24,6 +24,9 @@ declare global {
         interface MapLineSeriesOptions extends MapSeriesOptions {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
         }
+        interface SeriesTypesDictionary {
+            mapline: typeof MapLineSeries;
+        }
         class MapLinePoint extends MapPoint {
             public options: MapLinePointOptions;
             public series: MapLineSeries;
@@ -112,7 +115,7 @@ seriesType<Highcharts.MapLineSeriesOptions>(
          */
         pointAttribs: function (
             this: Highcharts.MapLineSeries,
-            point: Highcharts.Point,
+            point: Highcharts.MapLinePoint,
             state: string
         ): Highcharts.SVGAttributes {
             var attr = seriesTypes.map.prototype.pointAttribs.call(

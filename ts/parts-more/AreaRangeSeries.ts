@@ -41,6 +41,9 @@ declare global {
             plotHigh?: AreaRangePoint['plotHigh'];
             plotLow?: AreaRangePoint['plotLow'];
         }
+        interface SeriesTypesDictionary {
+            arearange: typeof AreaRangeSeries;
+        }
         class AreaRangePoint extends AreaPoint {
             public _plotY?: number;
             public below?: boolean;

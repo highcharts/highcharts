@@ -36,6 +36,9 @@ declare global {
             whiskerLength?: BoxPlotPoint['whiskerLength'];
             whiskerWidth?: BoxPlotPoint['whiskerWidth'];
         }
+        interface SeriesTypesDictionary {
+            boxplot: typeof BoxPlotSeries;
+        }
         class BoxPlotPoint extends ColumnPoint {
             public box: SVGElement;
             public fillColor: (ColorString|GradientColorObject|PatternObject);

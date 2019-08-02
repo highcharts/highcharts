@@ -256,6 +256,10 @@ declare global {
             inactive?: SeriesStatesInactiveOptions;
             normal?: SeriesStatesNormalOptions;
         }
+        interface SeriesTypesDictionary {
+            [key: string]: typeof Series;
+            line: typeof LineSeries;
+        }
         class LinePoint extends Point {
             public options: LinePointOptions;
             public series: LineSeries;

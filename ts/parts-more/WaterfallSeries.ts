@@ -55,6 +55,9 @@ declare global {
             stackState: Array<string>;
             label?: SVGElement;
         }
+        interface SeriesTypesDictionary {
+            waterfall: typeof WaterfallSeries;
+        }
         class WaterfallPoint extends ColumnPoint {
             public below?: boolean;
             public isIntermediateSum?: boolean;
