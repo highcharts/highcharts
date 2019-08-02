@@ -3834,7 +3834,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.categories = (options.categories as any) || axis.hasNames;
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
-            axis.names.keys = {} as any;
+            (axis.names as any).keys = {};
         }
 
 
@@ -4777,7 +4777,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (x !== undefined) {
             this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
-            (this.names.keys as any)[point.name as any] = x;
+            (this.names as any).keys[point.name as any] = x;
         }
 
         return x;
@@ -4793,8 +4793,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             i = names.length;
 
         if (i > 0) {
-            Object.keys(names.keys).forEach(function (key: string): void {
-                delete (names.keys as any)[key];
+            Object.keys((names as any).keys).forEach(function (
+                key: string
+            ): void {
+                delete ((names as any).keys)[key];
             });
             names.length = 0;
 
