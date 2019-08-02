@@ -25,8 +25,7 @@ declare global {
         }
     }
 }
-/** @private */
-declare interface NelderMearCentroidObject {
+interface NelderMeadCentroidObject {
     i: number;
     sum: number;
 }
@@ -40,9 +39,9 @@ var getCentroid = function (
         length = arr.length,
         result = [] as Array<number>,
         sum = function (
-            data: NelderMearCentroidObject,
+            data: NelderMeadCentroidObject,
             point: Array<number>
-        ): NelderMearCentroidObject {
+        ): NelderMeadCentroidObject {
             data.sum += point[data.i];
             return data;
         };
