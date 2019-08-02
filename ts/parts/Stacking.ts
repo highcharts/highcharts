@@ -39,6 +39,7 @@ declare global {
         interface Series {
             negStacks?: any; // @todo
             singleStacks?: any; // @todo
+            stack?: OptionsStackingValue;
             stackedYData?: Array<number>;
             stackKey?: string;
             getStackIndicator(
