@@ -38,7 +38,7 @@ seriesType('funnel', 'pie',
  *         Funnel demo
  *
  * @extends      plotOptions.pie
- * @excluding    size
+ * @excluding    innerSize,size
  * @product      highcharts
  * @optionparent plotOptions.funnel
  */
