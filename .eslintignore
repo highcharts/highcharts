@@ -11,6 +11,7 @@ js/parts-gantt/GridAxis.js
 js/parts-gantt/Pathfinder.js
 js/parts-gantt/PathfinderAlgorithms.js
 js/parts-gantt/Tree.js
+js/parts-gantt/TreeGrid.js
 js/parts-map/**/*.js
 js/parts-more/**/*.js
 samples/data/**/*.js
