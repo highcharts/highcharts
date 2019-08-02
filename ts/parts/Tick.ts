@@ -311,7 +311,7 @@ H.Tick.prototype = {
             if (
                 label.textWidth &&
                 !(labelOptions.style && labelOptions.style.width) &&
-                !label.styles.width
+                !(label.styles as any).width
             ) {
                 label.css({ width: null as any });
             }

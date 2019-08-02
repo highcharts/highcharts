@@ -132,6 +132,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
+            public styles?: CSSObject;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
                 value: string,
@@ -1739,7 +1740,7 @@ extend((
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (style: string, n: string): void {
-                if (style !== oldStyles[n]) {
+                if (style !== (oldStyles as any)[n]) {
                     newStyles[n] = style;
                     hasNew = true;
                 }
@@ -2374,7 +2375,8 @@ extend((
                             '11px,17': 14,
                             '13px,20': 16
                         } as Highcharts.Dictionary<number>)[
-                            styles && styles.fontSize + ',' + Math.round(height)
+                            (styles as any) &&
+                            (styles as any).fontSize + ',' + Math.round(height)
                         ] ||
                         height
                     );
@@ -4080,7 +4082,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 return textLineHeight ?
                     pInt(textLineHeight) :
                     renderer.fontMetrics(
-                        fontSizeStyle,
+                        fontSizeStyle as any,
                         // Get the computed size from parent if not explicit
                         (tspan.getAttribute('style') ? tspan : textNode) as any
                     ).h;
@@ -4332,7 +4334,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                             0,
                                             // Substract the font face to make
                                             // room for the ellipsis itself
-                                            width - parseInt(fontSize || 12, 10)
+                                            width - parseInt(
+                                                (fontSize as any) || 12,
+                                                10
+                                            )
                                         ),
                                         // Build the text to test for
                                         function (
@@ -4438,7 +4443,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
             // Apply the text outline
             if (textOutline && wrapper.applyTextOutline) {
-                wrapper.applyTextOutline(textOutline);
+                wrapper.applyTextOutline(textOutline as any);
             }
         }
     },

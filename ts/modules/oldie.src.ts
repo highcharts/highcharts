@@ -2097,7 +2097,7 @@ SVGRenderer.prototype.getSpanWidth = function (
     if (!svg && renderer.forExport) {
         actualWidth = renderer.measureSpanWidth(
             (tspan.firstChild as any).data,
-            wrapper.styles
+            wrapper.styles as any
         );
     }
     return actualWidth;
