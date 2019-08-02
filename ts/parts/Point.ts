@@ -46,7 +46,7 @@ declare global {
         interface PointLabelObject {
             x?: string;
             y?: (number|null);
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             colorIndex: number;
             key?: string;
             series: Series;
@@ -57,9 +57,9 @@ declare global {
         interface PointMarkerOptionsObject {
             enabled?: boolean;
             enabledThreshold?: number;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             height?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            lineColor?: ColorType;
             lineWidth?: number;
             radius?: number;
             radiusPlus?: number;
@@ -75,7 +75,7 @@ declare global {
         }
         interface PointOptionsObject {
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             colorIndex?: number;
             drilldown?: string;
             events?: PointEventsOptionsObject;
@@ -95,8 +95,8 @@ declare global {
         interface PointStatesHoverOptionsObject {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             lineWidth?: number;
             lineWidthPlus?: number;
             radius?: number;
@@ -116,8 +116,8 @@ declare global {
         }
         interface PointStatesSelectOptionsObject {
             enabled?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             lineWidth?: number;
             radius?: number;
         }
@@ -139,7 +139,7 @@ declare global {
         }
         class Point {
             public constructor();
-            public color?: (ColorString|GradientColorObject|PatternObject);
+            public color?: ColorType;
             public colorIndex: number;
             public formatPrefix: string;
             public id: string;
