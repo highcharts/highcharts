@@ -1529,7 +1529,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     bBox.height = height = ({
                         '11px,17': 14,
                         '13px,20': 16
-                    }[styles && styles.fontSize + ',' + Math.round(height)] ||
+                    }[styles &&
+                        styles.fontSize + ',' + Math.round(height)] ||
                         height);
                 }
                 // Adjust for rotated text
