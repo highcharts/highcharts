@@ -155,6 +155,30 @@ seriesType('heatmap', 'scatter',
              * rule.
              */
             brightness: 0.2
+        },
+        inactive: {
+            /**
+             * When hovering over a cell, decide which **other** cells
+             * should not apply an inactive state.
+             * For example `'column-row'` will apply inactive state to all
+             * other cells except cells within the same row or column.
+             *
+             * Possible options:
+             * - `'all'`- all cells (aka disabled)
+             * - `'column'` - all cells within the same row
+             * - `'row'` - all cells within the same column
+             * - `'column-row'` - all cells within the same row or column
+             * - `'self'` - only current cell
+             * Point padding for a single point.
+             *
+             * @sample         highcharts/series-heatmap/inactive-except/
+             *                 Compare different `except` options
+             *
+             * @validvalue     ["all", column", "row", "column-row", "self"]
+             * @since          7.1.4
+             * @product        highcharts highmaps
+             */
+            except: 'column-row'
         }
     }
 }, merge(colorSeriesMixin, {
@@ -264,9 +288,31 @@ seriesType('heatmap', 'scatter',
         this.valueMax = this.dataMax;
         // Get the extremes from the y data
         Series.prototype.getExtremes.call(this);
+    },
+    /**
+     * Mapping object between `inactive.except` and built-in methods
+     */
+    inactiveFilters: {
+        all: function () {
+            return true;
+        },
+        column: function (activePoint, otherPoint) {
+            return activePoint.x === otherPoint.x;
+        },
+        'column-row': function (activePoint, otherPoint) {
+            return activePoint.x === otherPoint.x ||
+                activePoint.y === otherPoint.y;
+        },
+        row: function (activePoint, otherPoint) {
+            return activePoint.y === otherPoint.y;
+        },
+        self: function (activePoint, otherPoint) {
+            return activePoint.x === otherPoint.x &&
+                activePoint.y === otherPoint.y;
+        }
     }
     /* eslint-enable valid-jsdoc */
-}), H.extend({
+}), merge({
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding
@@ -305,7 +351,27 @@ seriesType('heatmap', 'scatter',
         ];
     }
     /* eslint-enable valid-jsdoc */
-}, colorPointMixin));
+}, colorPointMixin, {
+    setState: function (state) {
+        var point = this, series = this.series, points = series.points, inactiveException = series.options.states
+            .inactive.except, filterFunction = series.inactiveFilters[inactiveException], i = 0;
+        if (filterFunction) {
+            series.options.inactiveOtherPoints = true;
+            for (; i < points.length; i++) {
+                // Check if points are not being destroyed
+                if (points[i] && points[i].series) {
+                    colorPointMixin.setState.call(points[i], state !== 'hover' ||
+                        (state === 'hover' &&
+                            filterFunction(point, points[i])) ?
+                        '' : 'inactive');
+                }
+            }
+            series.options.inactiveOtherPoints = true;
+        }
+        // Apply default state for current point:
+        colorPointMixin.setState.apply(this, arguments);
+    }
+}));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

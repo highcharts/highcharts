@@ -1,0 +1,23 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div>
+  <input type="radio" id="all" name="inactive-except" value="all">
+  <label for="all">All (disabled)</label>
+
+  <input type="radio" id="column" name="inactive-except" value="column">
+  <label for="column">Column</label>
+
+  <input type="radio" id="column-row" name="inactive-except" value="column-row" checked>
+  <label for="column-row">Column-row</label>
+
+  <input type="radio" id="row" name="inactive-except" value="row">
+  <label for="row">Row</label>
+
+  <input type="radio" id="self" name="inactive-except" value="self">
+  <label for="self">Self</label>
+</div>
+<div id="container"></div>

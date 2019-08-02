@@ -18,6 +18,10 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        type HeatmapSeriesStatesInactiveExceptValue = (
+            'row'|'column'|'column-row'|'self'|'all'
+        );
+
         interface HeatmapPointOptions extends ScatterPointOptions {
             pointPadding?: HeatmapPoint['pointPadding'];
             value?: HeatmapPoint['value'];
@@ -40,6 +44,34 @@ declare global {
             extends ScatterSeriesStatesOptions
         {
             hover?: HeatmapSeriesStatesHoverOptions;
+            inactive?: HeatmapSeriesStatesInactiveOptions;
+        }
+        interface HeatmapSeriesStatesInactiveOptions
+            extends SeriesStatesInactiveOptions
+        {
+            except?: HeatmapSeriesStatesInactiveExceptValue;
+        }
+        interface HeatmapInactiveFiltersObject {
+            all(
+                activePoint: HeatmapPoint,
+                otherPoint: HeatmapPoint
+            ): boolean;
+            column(
+                activePoint: HeatmapPoint,
+                otherPoint: HeatmapPoint
+            ): boolean;
+            'column-row'(
+                activePoint: HeatmapPoint,
+                otherPoint: HeatmapPoint
+            ): boolean;
+            row(
+                activePoint: HeatmapPoint,
+                otherPoint: HeatmapPoint
+            ): boolean;
+            self(
+                activePoint: HeatmapPoint,
+                otherPoint: HeatmapPoint
+            ): boolean;
         }
         interface Series {
             valueMax?: number;
@@ -63,6 +95,7 @@ declare global {
             public colorKey: ColorSeriesMixin['colorKey'];
             public data: Array<HeatmapPoint>;
             public drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+            public inactiveFilters: HeatmapInactiveFiltersObject;
             public optionalAxis: ColorSeriesMixin['optionalAxis'];
             public options: HeatmapSeriesOptions;
             public pointArrayMap: Array<string>;
@@ -261,6 +294,30 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                  * rule.
                  */
                 brightness: 0.2
+            },
+            inactive: {
+                /**
+                 * When hovering over a cell, decide which **other** cells
+                 * should not apply an inactive state.
+                 * For example `'column-row'` will apply inactive state to all
+                 * other cells except cells within the same row or column.
+                 *
+                 * Possible options:
+                 * - `'all'`- all cells (aka disabled)
+                 * - `'column'` - all cells within the same row
+                 * - `'row'` - all cells within the same column
+                 * - `'column-row'` - all cells within the same row or column
+                 * - `'self'` - only current cell
+                 * Point padding for a single point.
+                 *
+                 * @sample         highcharts/series-heatmap/inactive-except/
+                 *                 Compare different `except` options
+                 *
+                 * @validvalue     ["all", column", "row", "column-row", "self"]
+                 * @since          7.1.4
+                 * @product        highcharts highmaps
+                 */
+                except: 'column-row'
             }
 
         }
@@ -461,11 +518,46 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
             // Get the extremes from the y data
             Series.prototype.getExtremes.call(this);
+        },
+
+        /**
+         * Mapping object between `inactive.except` and built-in methods
+         */
+        inactiveFilters: {
+            all: function (): boolean {
+                return true;
+            },
+            column: function (
+                activePoint: Highcharts.HeatmapPoint,
+                otherPoint: Highcharts.HeatmapPoint
+            ): boolean {
+                return activePoint.x === otherPoint.x;
+            },
+            'column-row': function (
+                activePoint: Highcharts.HeatmapPoint,
+                otherPoint: Highcharts.HeatmapPoint
+            ): boolean {
+                return activePoint.x === otherPoint.x ||
+                    activePoint.y === otherPoint.y;
+            },
+            row: function (
+                activePoint: Highcharts.HeatmapPoint,
+                otherPoint: Highcharts.HeatmapPoint
+            ): boolean {
+                return activePoint.y === otherPoint.y;
+            },
+            self: function (
+                activePoint: Highcharts.HeatmapPoint,
+                otherPoint: Highcharts.HeatmapPoint
+            ): boolean {
+                return activePoint.x === otherPoint.x &&
+                    activePoint.y === otherPoint.y;
+            }
         }
 
         /* eslint-enable valid-jsdoc */
 
-    }), H.extend({
+    }), merge({
 
         /**
          * Heatmap series only. Padding between the points in the heatmap.
@@ -514,7 +606,47 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
         /* eslint-enable valid-jsdoc */
 
-    }, colorPointMixin)
+    },
+    colorPointMixin,
+    {
+        setState: function (
+            this: Highcharts.HeatmapPoint,
+            state?: string
+        ): void {
+            var point = this,
+                series = this.series,
+                points = series.points,
+                inactiveException = (series.options.states as any)
+                    .inactive.except as Highcharts
+                    .HeatmapSeriesStatesInactiveExceptValue,
+                filterFunction = series.inactiveFilters[inactiveException],
+                i = 0;
+
+            if (filterFunction) {
+                series.options.inactiveOtherPoints = true;
+
+                for (; i < points.length; i++) {
+                    // Check if points are not being destroyed
+                    if (points[i] && points[i].series) {
+                        colorPointMixin.setState.call(
+                            points[i],
+                            state !== 'hover' ||
+                            (
+                                state === 'hover' &&
+                                filterFunction(point, points[i])
+                            ) ?
+                                '' : 'inactive'
+                        );
+                    }
+                }
+
+                series.options.inactiveOtherPoints = true;
+            }
+
+            // Apply default state for current point:
+            colorPointMixin.setState.apply(this, arguments as any);
+        }
+    })
 );
 
 /**
