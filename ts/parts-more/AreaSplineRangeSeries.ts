@@ -22,6 +22,9 @@ declare global {
         }
         interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            areasplinerange: typeof AreaSplineRangeSeries;
+        }
         class AreaSplineRangePoint extends AreaRangePoint {
             public option: AreaSplineRangePointOptions;
             public series: AreaSplineRangeSeries;

@@ -42,6 +42,9 @@ declare global {
         interface PlotSeriesOptions {
             negativeFillColor?: AreaSeriesOptions['negativeFillColor'];
         }
+        interface SeriesTypesDictionary {
+            area: typeof AreaSeries;
+        }
         class AreaPoint extends LinePoint {
             public isCliff?: boolean;
             public leftNull?: boolean;

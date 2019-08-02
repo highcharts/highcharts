@@ -71,6 +71,9 @@ declare global {
             barW?: number;
             pointXOffset?: number;
         }
+        interface SeriesTypesDictionary {
+            column: typeof ColumnSeries;
+        }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
             public barX: number;

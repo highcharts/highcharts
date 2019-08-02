@@ -38,6 +38,9 @@ declare global {
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             upLineColor?: (ColorString|GradientColorObject|PatternObject);
         }
+        interface SeriesTypesDictionary {
+            candlestick: typeof CandlestickSeries;
+        }
         class CandlestickPoint extends OHLCPoint {
             public close: number;
             public open: number;

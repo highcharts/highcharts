@@ -23,6 +23,9 @@ declare global {
         }
         interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            mapbubble: typeof MapBubbleSeries;
+        }
         class MapBubblePoint extends BubblePoint {
             public options: MapBubblePointOptions;
             public series: MapBubbleSeries;
@@ -214,13 +217,9 @@ if (seriesTypes.bubble) {
             pointArrayMap: ['z'],
             // Return the map area identified by the dataJoinBy option
             getMapData: (seriesTypes.map.prototype as any).getMapData,
-            getBox: (seriesTypes.map.prototype as Highcharts.MapSeries).getBox,
-            setData: (
-                seriesTypes.map.prototype as Highcharts.MapSeries
-            ).setData,
-            setOptions: (
-                seriesTypes.map.prototype as Highcharts.MapSeries
-            ).setOptions
+            getBox: seriesTypes.map.prototype.getBox,
+            setData: seriesTypes.map.prototype.setData,
+            setOptions: seriesTypes.map.prototype.setOptions
 
             // Point class
         }, {
@@ -247,8 +246,8 @@ if (seriesTypes.bubble) {
                 } else {
                     point = seriesTypes.map.prototype.pointClass.prototype
                         .applyOptions.call(
-                            this, options, x
-                        ) as Highcharts.MapBubblePoint;
+                            this, options as any, x as any
+                        ) as any;
                 }
                 return point;
             },

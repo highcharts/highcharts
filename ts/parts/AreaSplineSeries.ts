@@ -22,6 +22,9 @@ declare global {
         }
         interface AreaSplineSeriesOptions extends SplineSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            areaspline: typeof AreaSplineSeries;
+        }
         class AreaSplinePoint extends SplinePoint {
             public isCliff?: AreaPoint['isCliff'];
             public options: AreaSplinePointOptions;

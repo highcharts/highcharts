@@ -115,6 +115,9 @@ declare global {
         interface Point {
             degree?: number;
         }
+        interface SeriesTypesDictionary {
+            packedbubble: typeof PackedBubbleSeries;
+        }
         class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             public collisionNmb?: number;
             public dataLabelOnNull?: boolean;

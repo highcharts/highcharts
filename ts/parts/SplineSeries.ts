@@ -22,6 +22,9 @@ declare global {
         }
         interface SplineSeriesOptions extends LineSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            spline: typeof SplineSeries;
+        }
         class SplinePoint extends LinePoint {
             public doCurve?: boolean;
             public options: SplinePointOptions;

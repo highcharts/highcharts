@@ -40,6 +40,9 @@ declare global {
         interface Series {
             takeOrdinalPosition?: boolean;
         }
+        interface SeriesTypesDictionary {
+            scatter: typeof ScatterSeries;
+        }
         class ScatterPoint extends LinePoint {
             public options: ScatterPointOptions;
             public series: ScatterSeries;

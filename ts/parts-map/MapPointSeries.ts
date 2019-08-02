@@ -26,6 +26,9 @@ declare global {
         }
         interface MapPointSeriesOptions extends ScatterSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            mappoint: typeof MapPointSeries;
+        }
         class MapPointPoint extends ScatterPoint {
             public options: MapPointPointOptions;
             public series: MapPointSeries;

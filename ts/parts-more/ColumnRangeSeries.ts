@@ -23,6 +23,9 @@ declare global {
         interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
             minPointLength?: number;
         }
+        interface SeriesTypesDictionary {
+            columnrange: typeof ColumnRangeSeries;
+        }
         class ColumnRangePoint extends AreaRangePoint {
             public barX: ColumnPoint['barX'];
             public options: ColumnRangePointOptions;

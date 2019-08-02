@@ -79,6 +79,9 @@ declare global {
             minSize?: PieSeriesOptions['minSize'];
             size?: PieSeriesOptions['size'];
         }
+        interface SeriesTypesDictionary {
+            pie: typeof PieSeries;
+        }
         class PiePoint extends LinePoint {
             public angle?: number;
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;

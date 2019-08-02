@@ -37,6 +37,9 @@ declare global {
         interface Series {
             pointArrayMap?: OHLCSeries['pointArrayMap'];
         }
+        interface SeriesTypesDictionary {
+            ohlc: typeof OHLCSeries;
+        }
         class OHLCPoint extends ColumnPoint {
             public close: number;
             public high: number;

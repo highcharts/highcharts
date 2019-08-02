@@ -74,6 +74,9 @@ declare global {
             /** @requires highcharts/modules/map */
             mapData?: (Array<MapPointOptions>|any);
         }
+        interface SeriesTypesDictionary {
+            map: typeof MapSeries;
+        }
         class MapPoint extends ScatterPoint implements ColorPointMixin {
             public colorInterval?: unknown;
             public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];

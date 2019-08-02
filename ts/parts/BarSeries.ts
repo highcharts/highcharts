@@ -22,6 +22,9 @@ declare global {
         }
         interface BarSeriesOptions extends ColumnSeriesOptions {
         }
+        interface SeriesTypesDictionary {
+            bar: typeof BarSeries;
+        }
         class BarPoint extends ColumnPoint {
             public options: BarPointOptions;
             public series: BarSeries;

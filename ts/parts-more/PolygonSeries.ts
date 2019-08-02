@@ -24,6 +24,9 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             trackByArea?: boolean;
         }
+        interface SeriesTypesDictionary {
+            polygon: typeof PolygonSeries;
+        }
         class PolygonPoint extends ScatterPoint {
             public options: PolygonPointOptions;
             public series: PolygonSeries;
