@@ -8,6 +8,7 @@ js/parts/**/*.js
 js/parts-3d/**/*.js
 js/parts-gantt/ArrowSymbols.js
 js/parts-gantt/CurrentDateIndicator.js
+js/parts-gantt/GanttSeries.js
 js/parts-gantt/GridAxis.js
 js/parts-gantt/Pathfinder.js
 js/parts-gantt/PathfinderAlgorithms.js
