@@ -3,6 +3,7 @@ js/modules/networkgraph/*.js
 js/modules/broken-axis.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
+js/modules/xrange.src.js
 js/parts/**/*.js
 js/parts-3d/**/*.js
 js/parts-gantt/ArrowSymbols.js
