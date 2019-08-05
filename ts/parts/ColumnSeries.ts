@@ -77,7 +77,7 @@ declare global {
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
             public barX: number;
-            public group?: unknown;
+            public group?: SVGElement;
             public options: ColumnPointOptions;
             public pointWidth: number;
             public series: ColumnSeries;

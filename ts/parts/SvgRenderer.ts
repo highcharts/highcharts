@@ -54,11 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject {
-            height: number;
-            width: number;
-            x: number;
-            y: number;
+        interface RectangleObject extends PositionObject, SizeObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {

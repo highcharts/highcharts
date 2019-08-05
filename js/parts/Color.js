@@ -19,6 +19,12 @@ import H from './Globals.js';
  * @typedef {string} Highcharts.ColorString
  */
 /**
+ * A valid color type than can be parsed and handled by Highcharts. It can be a
+ * color string, a gradient object, or a pattern object.
+ *
+ * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
+ */
+/**
  * Gradient options instead of a solid color.
  *
  * @example
@@ -116,7 +122,7 @@ var merge = H.merge;
  * @class
  * @name Highcharts.Color
  *
- * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
+ * @param {Highcharts.ColorType} input
  *        The input color in either rbga or hex format
  */
 H.Color = function (input) {
@@ -160,7 +166,7 @@ H.Color.prototype = {
      * @private
      * @function Highcharts.Color#init
      *
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
+     * @param {Highcharts.ColorType} input
      *        The input color in either rbga or hex format
      *
      * @return {void}
@@ -229,7 +235,7 @@ H.Color.prototype = {
      * @param {string} [format]
      *        Possible values are 'a', 'rgb', 'rgba' (default).
      *
-     * @return {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @return {Highcharts.ColorType}
      *         This color as a string or gradient stops.
      */
     get: function (format) {
@@ -353,7 +359,7 @@ H.Color.prototype = {
  *
  * @function Highcharts.color
  *
- * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} input
+ * @param {Highcharts.ColorType} input
  *        The input color in either rbga or hex format
  *
  * @return {Highcharts.Color}
