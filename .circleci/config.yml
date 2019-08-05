@@ -86,6 +86,13 @@ jobs:
           command: npx gulp jsdoc-dts && npx gulp lint-dts
       - <<: *persist_workspace
 
+  lint:
+    <<: *defaults
+    steps:
+      - << : *load_workspace
+      - run:
+          name: Execute linting
+          command: npx gulp lint
   test:
     <<: *defaults
     steps:
@@ -214,13 +221,16 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
-      - generate_ts_declarations:
+      - lint:
           requires:
             - install_dependencies
+      - generate_ts_declarations:
+          requires:
+            - lint
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - install_dependencies
+            - lint
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Win.Chrome"
