@@ -1,23 +1,20 @@
 /* *
- * (c) 2016 Highsoft AS
- * Authors: Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
- */
-
+ *  (c) 2016-2019 Highsoft AS
+ *
+ *  Author: Lars A. V. Cabrera
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
-
 import H from '../parts/Globals.js';
-
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    splat = U.splat;
-
+var isArray = U.isArray, splat = U.splat;
 import 'GanttSeries.js';
-
-var merge = H.merge,
-    Chart = H.Chart;
-
+var merge = H.merge, Chart = H.Chart;
 /**
  * Factory function for Gantt charts.
  *
@@ -34,7 +31,7 @@ var merge = H.merge,
  *
  * @function Highcharts.ganttChart
  *
- * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+ * @param {string|Highcharts.HTMLDOMElement} renderTo
  *        The DOM element to render to, or its id.
  *
  * @param {Highcharts.Options} options
@@ -50,95 +47,67 @@ var merge = H.merge,
  *         Returns the Chart object.
  */
 H.ganttChart = function (renderTo, options, callback) {
-    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
-        seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
-        defaultLinkedTo,
-        userOptions = options;
-
+    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName, seriesOptions = options.series, defaultOptions = H.getOptions(), defaultLinkedTo, userOptions = options;
     options = arguments[hasRenderToArg ? 1 : 0];
-
     // If user hasn't defined axes as array, make it into an array and add a
     // second axis by default.
     if (!isArray(options.xAxis)) {
         options.xAxis = [options.xAxis || {}, {}];
     }
-
     // apply X axis options to both single and multi x axes
     options.xAxis = options.xAxis.map(function (xAxisOptions, i) {
         if (i === 1) { // Second xAxis
             defaultLinkedTo = 0;
         }
-        return merge(
-            defaultOptions.xAxis,
-            { // defaults
-                grid: {
-                    enabled: true
-                },
-                opposite: true,
-                linkedTo: defaultLinkedTo
+        return merge(defaultOptions.xAxis, {
+            grid: {
+                enabled: true
             },
-            xAxisOptions, // user options
-            { // forced options
-                type: 'datetime'
-            }
-        );
+            opposite: true,
+            linkedTo: defaultLinkedTo
+        }, xAxisOptions, // user options
+        {
+            type: 'datetime'
+        });
     });
-
     // apply Y axis options to both single and multi y axes
     options.yAxis = (splat(options.yAxis || {})).map(function (yAxisOptions) {
-        return merge(
-            defaultOptions.yAxis, // #3802
-            { // defaults
-                grid: {
-                    enabled: true
-                },
-
-                staticScale: 50,
-
-                reversed: true,
-
-                // Set default type treegrid, but only if 'categories' is
-                // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+        return merge(defaultOptions.yAxis, // #3802
+        {
+            grid: {
+                enabled: true
             },
-            yAxisOptions // user options
+            staticScale: 50,
+            reversed: true,
+            // Set default type treegrid, but only if 'categories' is
+            // undefined
+            type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+        }, yAxisOptions // user options
         );
     });
-
     options.series = null;
-
-    options = merge(
-        true,
-        {
-            chart: {
-                type: 'gantt'
-            },
-            title: {
-                text: null
-            },
-            legend: {
-                enabled: false
-            }
+    options = merge(true, {
+        chart: {
+            type: 'gantt'
         },
-
-        options, // user's options
-
-        // forced options
-        {
-            isGantt: true
+        title: {
+            text: null
+        },
+        legend: {
+            enabled: false
         }
-    );
-
+    }, options, // user's options
+    // forced options
+    {
+        isGantt: true
+    });
     options.series = userOptions.series = seriesOptions;
-
     options.series.forEach(function (series) {
         series.data.forEach(function (point) {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
         });
     });
-
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
-        new Chart(options, options);
+        new Chart(options, options); // @todo does not look correct
 };
