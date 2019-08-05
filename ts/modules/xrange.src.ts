@@ -20,6 +20,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface SeriesTypesDictionary {
+            xrange: typeof XRangeSeries;
+        }
         interface XRangePartialFillObject extends PositionObject, SizeObject {
             r?: number;
         }
