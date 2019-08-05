@@ -13,4 +13,4 @@ const gulp = require('gulp');
 require('./lint-js');
 require('./update');
 
-gulp.task('lint', gulp.series('update', 'lint-js'));
+gulp.task('lint', gulp.series('update', 'lint-js', 'lint-ts'));
