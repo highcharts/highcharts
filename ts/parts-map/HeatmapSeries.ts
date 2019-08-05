@@ -313,7 +313,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                  * @sample         highcharts/series-heatmap/inactive-except/
                  *                 Compare different `except` options
                  *
-                 * @validvalue     ["all", column", "row", "column-row", "self"]
+                 * @validvalue     ["all", "column", "row", "column-row", "self"]
                  * @since          7.1.4
                  * @product        highcharts highmaps
                  */
@@ -616,13 +616,15 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
             var point = this,
                 series = this.series,
                 points = series.points,
-                inactiveException = (series.options.states as any)
-                    .inactive.except as Highcharts
-                    .HeatmapSeriesStatesInactiveExceptValue,
-                filterFunction = series.inactiveFilters[inactiveException],
+                inactiveException = series.options.states &&
+                        series.options.states.inactive &&
+                        series.options.states.inactive.except,
+                filterFunction,
                 i = 0;
 
-            if (filterFunction) {
+            if (inactiveException) {
+                filterFunction = series.inactiveFilters[inactiveException];
+
                 series.options.inactiveOtherPoints = true;
 
                 for (; i < points.length; i++) {
