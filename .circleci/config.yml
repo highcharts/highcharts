@@ -75,6 +75,7 @@ jobs:
       - << : *load_workspace
       - run: node --version && npm --version
       - run: npm install --quiet
+      - run: npm run gulp scripts # needed for running the tests
       - <<: *persist_workspace
 
   generate_ts_declarations:
@@ -93,21 +94,6 @@ jobs:
       - run:
           name: Execute linting
           command: npx gulp lint
-  test:
-    <<: *defaults
-    steps:
-      - << : *load_workspace
-      - run: npm test
-      - run: mkdir ../test-results
-      - run:
-          name: Save test results
-          command: |
-            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
-          when: always
-      - store_test_results:
-          path: ../test-results
-      - store_artifacts:
-          path: ../test-results
 
   test_browsers:
     <<: *defaults
@@ -122,9 +108,7 @@ jobs:
         type: integer
         default: 1
     steps:
-      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - << : *load_workspace
-      - run: npm run gulp scripts
       - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
       - run: mkdir ../test-results
       - run:
