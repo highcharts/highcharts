@@ -641,7 +641,7 @@ module.exports = function (config) {
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 30000; // default 2000
+        options.browserDisconnectTimeout = 33000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
@@ -664,7 +664,7 @@ module.exports = function (config) {
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
-            `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}..`
+            `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
 
     }
