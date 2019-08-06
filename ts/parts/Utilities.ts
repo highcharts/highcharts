@@ -742,7 +742,7 @@ H.Fx.prototype = {
                         end[i] :
                         (
                             now *
-                            (parseFloat((end[i] as number) - startVal)) +
+                            parseFloat('' + (end[i] - startVal)) +
                             startVal
                         );
 
@@ -1716,8 +1716,8 @@ H.relativeLength = function (
     offset?: number
 ): number {
     return (/%$/).test(value as any) ?
-        (base * parseFloat(value) / 100) + (offset || 0) :
-        parseFloat(value);
+        (base * parseFloat(value as any) / 100) + (offset || 0) :
+        parseFloat(value as any);
 };
 
 /**
@@ -3104,7 +3104,7 @@ H.animate = function (
         } else if ((el as any).attr) {
             start = (el as any).attr(prop);
         } else {
-            start = parseFloat(H.getStyle(el as any, prop)) || 0;
+            start = parseFloat(H.getStyle(el as any, prop) as any) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }

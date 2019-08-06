@@ -220,7 +220,8 @@ H.Color.prototype = {
     // parsers to Highcharts.Color.prototype.parsers.
     parsers: [{
         // RGBA color
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/, // eslint-disable-line security/detect-unsafe-regex
+        // eslint-disable-next-line max-len
+        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
         parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
             return [
                 pInt(result[1]),

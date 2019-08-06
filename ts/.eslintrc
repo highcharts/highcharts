@@ -28,10 +28,11 @@
             "error",
             {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(\\#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "no-dupe-class-members": 0,
+        "no-prototype-builtins": 1,
         "no-shadow": 0,
         "no-undef": 0,
         "no-undefined": 0,
@@ -53,6 +54,6 @@
         "@typescript-eslint/no-unused-vars": 0,
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
-        "node/no-unsupported-features": 0
+        "node/no-unsupported-features/es-syntax": 0
     }
 }

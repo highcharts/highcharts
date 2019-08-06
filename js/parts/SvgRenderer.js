@@ -2832,8 +2832,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }, unescapeEntities = function (inputStr, except) {
             objectEach(renderer.escapes, function (value, key) {
                 if (!except || except.indexOf(value) === -1) {
-                    inputStr = inputStr.toString().replace(new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
-                    key);
+                    inputStr = inputStr.toString().replace(new RegExp(value, 'g'), key);
                 }
             });
             return inputStr;
