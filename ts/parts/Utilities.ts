@@ -62,6 +62,10 @@ declare global {
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
         }
+        interface ErrorMessageEventObject {
+            code: number;
+            message: string;
+        }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (Dictionary<any>|Event)): (boolean|void);
         }
@@ -672,7 +676,10 @@ H.error = function (
 
     if (chart) {
         H.fireEvent(
-            chart, 'displayError', { code: code, message: msg }, defaultHandler
+            chart,
+            'displayError',
+            { code: code, message: msg } as Highcharts.ErrorMessageEventObject,
+            defaultHandler
         );
     } else {
         defaultHandler();
@@ -2627,7 +2634,7 @@ function objectEach<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }

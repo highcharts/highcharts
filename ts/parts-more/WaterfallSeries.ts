@@ -390,11 +390,21 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                             actualStackX.stackState[actualStackX.stateIndex--];
 
                         y = pointY >= 0 ? total : total - pointY;
-                        if (actualStackX.hasOwnProperty('absolutePos')) {
+                        if (
+                            Object.prototype.hasOwnProperty.call(
+                                actualStackX,
+                                'absolutePos'
+                            )
+                        ) {
                             delete actualStackX.absolutePos;
                         }
 
-                        if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                        if (
+                            Object.prototype.hasOwnProperty.call(
+                                actualStackX,
+                                'absoluteNeg'
+                            )
+                        ) {
                             delete actualStackX.absoluteNeg;
                         }
                     } else {
@@ -413,7 +423,12 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                         }
 
                         if (!actualStackX.posTotal) {
-                            if (actualStackX.hasOwnProperty('absolutePos')) {
+                            if (
+                                Object.prototype.hasOwnProperty.call(
+                                    actualStackX,
+                                    'absolutePos'
+                                )
+                            ) {
                                 actualStackX.posTotal =
                                     actualStackX.absolutePos;
                                 delete actualStackX.absolutePos;
@@ -421,7 +436,12 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                         }
 
                         if (!actualStackX.negTotal) {
-                            if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                            if (
+                                Object.prototype.hasOwnProperty.call(
+                                    actualStackX,
+                                    'absoluteNeg'
+                                )
+                            ) {
                                 actualStackX.negTotal =
                                     actualStackX.absoluteNeg;
                                 delete actualStackX.absoluteNeg;

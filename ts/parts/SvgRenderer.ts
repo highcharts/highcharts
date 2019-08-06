@@ -28,7 +28,7 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'square'|
+            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
             'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
