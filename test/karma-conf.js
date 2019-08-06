@@ -135,28 +135,28 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '72.0',
+        browser_version: '76.0',
         os: 'OS X',
         os_version: 'Mojave'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '65.0',
+        browser_version: '68.0',
         os: 'OS X',
         os_version: 'Mojave'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '12.0',
+        browser_version: '12.1',
         os: 'OS X',
         os_version: 'Mojave'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '72.0',
+        browser_version: '76.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -170,7 +170,7 @@ const browserStackBrowsers = {
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '65.0',
+        browser_version: '68.0',
         os: 'Windows',
         os_version: '10'
     },
