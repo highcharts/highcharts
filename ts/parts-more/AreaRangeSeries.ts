@@ -154,8 +154,11 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray;
+const {
+    defined,
+    isArray,
+    isNumber
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -297,12 +300,10 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
             point: Highcharts.AreaRangePoint
         ): void {
 
-            var low = point.low,
-                high = point.high,
+            var high = point.high,
                 plotY = point.plotY;
 
-            if (high === null || low === null) {
-                point.isNull = true;
+            if (point.isNull) {
                 point.plotY = null as any;
             } else {
                 point.plotLow = plotY as any;
@@ -793,6 +794,9 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
         this.graphic = null as any;
 
         return pointProto.destroyElements.apply(this, arguments as any);
+    },
+    isValid: function (this: Highcharts.AreaRangePoint): boolean {
+        return isNumber(this.low) && isNumber(this.high);
     }
 
     /* eslint-enable valid-jsdoc */

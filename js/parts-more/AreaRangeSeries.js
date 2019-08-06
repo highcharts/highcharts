@@ -77,7 +77,7 @@ import H from '../parts/Globals.js';
 * @product highcharts highstock
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber;
 import '../parts/Options.js';
 import '../parts/Series.js';
 var noop = H.noop, pick = H.pick, extend = H.extend, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
@@ -183,9 +183,8 @@ seriesType('arearange', 'area', {
         seriesTypes.area.prototype.translate.apply(series);
         // Set plotLow and plotHigh
         series.points.forEach(function (point) {
-            var low = point.low, high = point.high, plotY = point.plotY;
-            if (high === null || low === null) {
-                point.isNull = true;
+            var high = point.high, plotY = point.plotY;
+            if (point.isNull) {
                 point.plotY = null;
             }
             else {
@@ -564,6 +563,9 @@ seriesType('arearange', 'area', {
         // Clear graphic for states, removed in the above each:
         this.graphic = null;
         return pointProto.destroyElements.apply(this, arguments);
+    },
+    isValid: function () {
+        return isNumber(this.low) && isNumber(this.high);
     }
     /* eslint-enable valid-jsdoc */
 });

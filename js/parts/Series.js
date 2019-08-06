@@ -3074,7 +3074,7 @@ null,
                 j = y.length;
                 if (j) { // array, like ohlc or range data
                     while (j--) {
-                        if (typeof y[j] === 'number') { // #7380
+                        if (isNumber(y[j])) { // #7380, #11513
                             activeYData[activeCounter++] = y[j];
                         }
                     }
