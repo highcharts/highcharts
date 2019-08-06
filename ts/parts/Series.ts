@@ -4107,7 +4107,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     j = (y as any).length;
                     if (j) { // array, like ohlc or range data
                         while (j--) {
-                            if (typeof (y as any)[j] === 'number') { // #7380
+                            if (isNumber((y as any)[j])) { // #7380, #11513
                                 activeYData[activeCounter++] = (y as any)[j];
                             }
                         }
