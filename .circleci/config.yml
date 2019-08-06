@@ -225,7 +225,7 @@ workflows:
       - checkout_code:
           filters:
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
       - install_dependencies:
           requires:
             - checkout_code
@@ -237,21 +237,21 @@ workflows:
             - lint
           filters:
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
           requires:
             - install_dependencies
           filters:
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
       - generate_visual_test_images:
           requires:
             - install_dependencies
           filters:
             branches:
-              only: feature/ci-visual-tests
+              ignore: /.*/
             tags:
-              only: /^test-v\d+(?:\.\d+)+?$/
+              only: /^v\d+(?:\.\d+)+?$/
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
