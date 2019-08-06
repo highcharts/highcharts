@@ -16,11 +16,12 @@ Highcharts.chart('container', {
                     });
                 }
 
-                document
-                    .querySelectorAll('input[name="inactive-except"]')
-                    .forEach(function (radio) {
+                Array.prototype.forEach.call(
+                    document.querySelectorAll('input[name="inactive-except"]'),
+                    function (radio) {
                         Highcharts.addEvent(radio, 'change', change);
-                    });
+                    }
+                );
             }
         }
     },

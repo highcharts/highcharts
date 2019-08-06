@@ -307,8 +307,7 @@ seriesType('heatmap', 'scatter',
             return activePoint.y === otherPoint.y;
         },
         self: function (activePoint, otherPoint) {
-            return activePoint.x === otherPoint.x &&
-                activePoint.y === otherPoint.y;
+            return false;
         }
     }
     /* eslint-enable valid-jsdoc */

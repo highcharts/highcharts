@@ -22,6 +22,11 @@ declare global {
             'row'|'column'|'column-row'|'self'|'all'
         );
 
+        type HeatmapInactiveFilterFunction = (
+            activePoint: HeatmapPoint,
+            otherPoint: HeatmapPoint
+        ) => boolean;
+
         interface HeatmapPointOptions extends ScatterPointOptions {
             pointPadding?: HeatmapPoint['pointPadding'];
             value?: HeatmapPoint['value'];
@@ -52,26 +57,11 @@ declare global {
             except?: HeatmapSeriesStatesInactiveExceptValue;
         }
         interface HeatmapInactiveFiltersObject {
-            all(
-                activePoint: HeatmapPoint,
-                otherPoint: HeatmapPoint
-            ): boolean;
-            column(
-                activePoint: HeatmapPoint,
-                otherPoint: HeatmapPoint
-            ): boolean;
-            'column-row'(
-                activePoint: HeatmapPoint,
-                otherPoint: HeatmapPoint
-            ): boolean;
-            row(
-                activePoint: HeatmapPoint,
-                otherPoint: HeatmapPoint
-            ): boolean;
-            self(
-                activePoint: HeatmapPoint,
-                otherPoint: HeatmapPoint
-            ): boolean;
+            all: HeatmapInactiveFilterFunction;
+            column: HeatmapInactiveFilterFunction;
+            'column-row': HeatmapInactiveFilterFunction;
+            row: HeatmapInactiveFilterFunction;
+            self: HeatmapInactiveFilterFunction;
         }
         interface Series {
             valueMax?: number;
@@ -550,8 +540,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                 activePoint: Highcharts.HeatmapPoint,
                 otherPoint: Highcharts.HeatmapPoint
             ): boolean {
-                return activePoint.x === otherPoint.x &&
-                    activePoint.y === otherPoint.y;
+                return false;
             }
         }
 
