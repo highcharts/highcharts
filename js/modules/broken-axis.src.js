@@ -151,6 +151,10 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
     axis.isBroken = isBroken;
     axis.options.breaks = axis.userOptions.breaks = breaks;
     axis.forceRedraw = true; // Force recalculation in setScale
+    // Recalculate series related to the axis.
+    axis.series.forEach(function (series) {
+        series.isDirty = true;
+    });
     if (!isBroken && axis.val2lin === breakVal2Lin) {
         // Revert to prototype functions
         delete axis.val2lin;
@@ -281,11 +285,7 @@ addEvent(Series, 'afterGeneratePoints', function () {
             if (!nullGap &&
                 (xAxis.isInAnyBreak(point.x, true) ||
                     yAxis.isInAnyBreak(point.y, true))) {
-                points.splice(i, 1);
-                if (this.data[i]) {
-                    // Removes the graphics for this point if they exist
-                    this.data[i].destroyElements();
-                }
+                point.isNull = true;
             }
         }
     }
