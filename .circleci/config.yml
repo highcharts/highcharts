@@ -121,6 +121,26 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
+  generate_visual_test_images:
+    <<: *defaults
+    description: Generate visual tests reference image
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate visual references if tag
+          command: npx gulp test --tests highcharts/demo/area-* --reference --browsercount 1
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - run:
+          name: Commit reference images for tests
+          command: |
+            if [ -n "$CIRCLE_TAG" ]; then
+              git add *.svg && git commit -m"Added new test reference images for new tag." && git push -u origin master
+            else
+              git add *.svg && git commit -m"Added new test reference images for new tag." && git push -u origin ${CIRCLE_BRANCH}
+            fi
+      - <<: *persist_workspace
+
   build_dist:
     <<: *defaults
     steps:
@@ -201,7 +221,10 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            tags:
+              only: /^test-v\d+(?:\.\d+)+?$/
       - install_dependencies:
           requires:
             - checkout_code
@@ -211,6 +234,23 @@ workflows:
       - generate_ts_declarations:
           requires:
             - lint
+          filters:
+            tags:
+              only: /^test-v\d+(?:\.\d+)+?$/
+      - generate_ts_declarations:
+          requires:
+            - install_dependencies
+          filters:
+            tags:
+              only: /^test-v\d+(?:\.\d+)+?$/
+      - generate_visual_test_images:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              only: feature/ci-visual-tests
+            tags:
+              only: /^test-v\d+(?:\.\d+)+?$/
       - test_browsers:
           name: "test-Win.IE8"
           requires:
@@ -239,13 +279,22 @@ workflows:
           filters:
             branches:
               only:
-                - feature/ci-nightly
+                - feature/ci-visual-tests
                 - master
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
+      - test_browsers:
+          name: "Test visual differences - TODO"
+          requires:
+            - install_dependencies
+          browsers: "--tests highcharts/demo/area-* ChromeHeadless --browsercount 1"
+          filters:
+            branches:
+              only:
+                - feature/ci-visual-tests
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
