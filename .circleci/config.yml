@@ -230,7 +230,7 @@ workflows:
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - lint
+            - install_dependencies
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Win.Chrome"
