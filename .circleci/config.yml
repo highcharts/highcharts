@@ -131,13 +131,14 @@ jobs:
           command: npx gulp test --tests highcharts/demo/area-* --reference --browsercount 1
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
       - run:
           name: Commit reference images for tests
           command: |
             if [ -n "$CIRCLE_TAG" ]; then
-              git add *.svg && git commit -m"Added new test reference images for new tag." && git push -u origin master
+              git add samples/*/reference.svg && git commit -m"Added new test reference images for new tag." && git push -u origin master
             else
-              git add *.svg && git commit -m"Added new test reference images for new tag." && git push -u origin ${CIRCLE_BRANCH}
+              git add samples/*/reference.svg && git commit -m"Added new test reference images for new tag." && git push -u origin ${CIRCLE_BRANCH}
             fi
       - <<: *persist_workspace
 
