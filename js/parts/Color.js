@@ -138,6 +138,7 @@ H.Color.prototype = {
     // parsers to Highcharts.Color.prototype.parsers.
     parsers: [{
             // RGBA color
+            // eslint-disable-next-line max-len
             regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
             parse: function (result) {
                 return [

@@ -415,7 +415,7 @@ H.Fx.prototype = {
                     isNaN(startVal) ? // a letter instruction like M or L
                         end[i] :
                         (now *
-                            (parseFloat(end[i] - startVal)) +
+                            parseFloat('' + (end[i] - startVal)) +
                             startVal);
             }
             // If animation is finished or length not matching, land on right value

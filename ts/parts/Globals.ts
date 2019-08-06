@@ -107,7 +107,6 @@ declare global {
         TouchEvent?: typeof TouchEvent;
     }
     const win: Window; // @todo: UMD variable
-    function parseFloat (value: (number|string)): number;
 }
 
 /* globals Image, window */
