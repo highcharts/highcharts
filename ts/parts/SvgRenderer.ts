@@ -4093,7 +4093,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 ): void {
                     if (!except || except.indexOf(value) === -1) {
                         inputStr = inputStr.toString().replace(
-                            new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
+                            new RegExp(value, 'g'),
                             key
                         );
                     }

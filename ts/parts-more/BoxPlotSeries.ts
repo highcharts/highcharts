@@ -548,7 +548,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
                     highPlot = highPlot + crispCorr;
                     lowPlot = lowPlot + crispCorr;
                     pointWiskerLength = (/%$/).test(whiskerLength as any) ?
-                        halfWidth * parseFloat(whiskerLength) / 100 :
+                        halfWidth * parseFloat(whiskerLength as any) / 100 :
                         (whiskerLength as any) / 2;
                     point.whiskers[verb]({
                         d: [
