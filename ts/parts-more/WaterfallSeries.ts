@@ -123,6 +123,17 @@ var correctFloat = H.correctFloat,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
+/**
+ * Returns true if the key is a direct porperty of the object.
+ * @private
+ * @param {*} obj - Object with property to test
+ * @param {string }key - Property key to test
+ * @return {boolean} - Whether it is a direct property
+ */
+function ownProp(obj: unknown, key: string): boolean {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 /* eslint-disable no-invalid-this */
 
 addEvent(Axis as any, 'afterInit', function (
@@ -390,21 +401,11 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                             actualStackX.stackState[actualStackX.stateIndex--];
 
                         y = pointY >= 0 ? total : total - pointY;
-                        if (
-                            Object.prototype.hasOwnProperty.call(
-                                actualStackX,
-                                'absolutePos'
-                            )
-                        ) {
+                        if (ownProp(actualStackX, 'absolutePos')) {
                             delete actualStackX.absolutePos;
                         }
 
-                        if (
-                            Object.prototype.hasOwnProperty.call(
-                                actualStackX,
-                                'absoluteNeg'
-                            )
-                        ) {
+                        if (ownProp(actualStackX, 'absoluteNeg')) {
                             delete actualStackX.absoluteNeg;
                         }
                     } else {
@@ -423,12 +424,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                         }
 
                         if (!actualStackX.posTotal) {
-                            if (
-                                Object.prototype.hasOwnProperty.call(
-                                    actualStackX,
-                                    'absolutePos'
-                                )
-                            ) {
+                            if (ownProp(actualStackX, 'absolutePos')) {
                                 actualStackX.posTotal =
                                     actualStackX.absolutePos;
                                 delete actualStackX.absolutePos;
@@ -436,12 +432,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
                         }
 
                         if (!actualStackX.negTotal) {
-                            if (
-                                Object.prototype.hasOwnProperty.call(
-                                    actualStackX,
-                                    'absoluteNeg'
-                                )
-                            ) {
+                            if (ownProp(actualStackX, 'absoluteNeg')) {
                                 actualStackX.negTotal =
                                     actualStackX.absoluteNeg;
                                 delete actualStackX.absoluteNeg;
