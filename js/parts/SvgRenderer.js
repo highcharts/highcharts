@@ -1685,7 +1685,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#destroy
      *
-     * @return {void}
+     * @return {undefined}
      */
     destroy: function () {
         var wrapper = this, element = wrapper.element || {}, renderer = wrapper.renderer, parentToClean = (renderer.isSVG &&
@@ -1743,6 +1743,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Delete all properties
             delete wrapper[key];
         });
+        return; // eslint-disable-line no-useless-return
     },
     /**
      * Add a shadow to the element. Must be called after the element is added to

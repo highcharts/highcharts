@@ -171,7 +171,7 @@ declare global {
             ): RectangleObject;
             public css(styles: CSSObject): SVGElement;
             public dashstyleSetter(value: string): void;
-            public destroy(): void;
+            public destroy(): undefined;
             public destroyShadows(): void;
             public destroyTextPath (
                 elem: SVGDOMElement,
@@ -2567,9 +2567,9 @@ extend((
      *
      * @function Highcharts.SVGElement#destroy
      *
-     * @return {void}
+     * @return {undefined}
      */
-    destroy: function (this: Highcharts.SVGElement): void {
+    destroy: function (this: Highcharts.SVGElement): undefined {
         var wrapper = this,
             element = wrapper.element || {},
             renderer = wrapper.renderer,
@@ -2653,6 +2653,8 @@ extend((
             // Delete all properties
             delete wrapper[key];
         });
+
+        return; // eslint-disable-line no-useless-return
     },
 
     /**
