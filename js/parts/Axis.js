@@ -263,6 +263,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type         {*|Array<*>}
      * @optionparent xAxis
+     *
+     * @private
      */
     defaultOptions: {
         /**
@@ -2225,6 +2227,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @extends      xAxis
      * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
+     *
+     * @private
      */
     defaultYAxisOptions: {
         /**
@@ -2949,6 +2953,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @product   highcharts
      * @excluding breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
      * @apioption zAxis
+     *
+     * @private
      */
     // This variable extends the defaultOptions for left axes.
     defaultLeftAxisOptions: {
@@ -3055,12 +3061,24 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         axis.side = userOptions.side || (axis.horiz ?
             (axis.opposite ? 0 : 2) : // top : bottom
             (axis.opposite ? 1 : 3)); // right : left
+        /**
+         * Current options for the axis after merge of defaults and user's
+         * options.
+         *
+         * @name Highcharts.Axis#options
+         * @type {Highcharts.AxisOptions}
+         */
         axis.setOptions(userOptions);
         var options = this.options, type = options.type, isDatetimeAxis = type === 'datetime';
         axis.labelFormatter = options.labels.formatter ||
             // can be overwritten by dynamic format
             axis.defaultLabelFormatter;
-        // Flag, stagger lines or not
+        /**
+         * User's options for this axis without defaults.
+         *
+         * @name Highcharts.Axis#userOptions
+         * @type {Highcharts.AxisOptions}
+         */
         axis.userOptions = userOptions;
         axis.minPixelPadding = 0;
         /**
