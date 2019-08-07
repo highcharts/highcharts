@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es6",
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "checkJs": false,
     "declaration": false,
+    "esModuleInterop": true,
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "module": "es6",
     "outDir": "../js",
     "rootDir": ".",
-    "noEmitOnError": true,
-    "strict": true,
-    "noImplicitThis": true,                   /* Raise error on 'this' expressions with an implied 'any' type. */
-    "noUnusedLocals": true,
-    "noFallthroughCasesInSwitch": true,       /* Report errors for fallthrough cases in switch statement. */
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "target": "es5"
   },
   "include": [
       "**/*.ts"

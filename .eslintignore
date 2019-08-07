@@ -1,6 +1,7 @@
 js/mixins/**/*.js
 js/modules/networkgraph/*.js
 js/modules/broken-axis.src.js
+js/modules/debugger.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/modules/xrange.src.js
