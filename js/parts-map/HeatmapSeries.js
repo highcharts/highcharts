@@ -306,7 +306,7 @@ seriesType('heatmap', 'scatter',
         row: function (activePoint, otherPoint) {
             return activePoint.y === otherPoint.y;
         },
-        self: function (activePoint, otherPoint) {
+        self: function () {
             return false;
         }
     }
