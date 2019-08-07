@@ -16,10 +16,10 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
- * Returns true if the key is a direct porperty of the object.
+ * Returns true if the key is a direct property of the object.
  * @private
  * @param {*} obj - Object with property to test
- * @param {string }key - Property key to test
+ * @param {string} key - Property key to test
  * @return {boolean} - Whether it is a direct property
  */
 function ownProp(obj, key) {
