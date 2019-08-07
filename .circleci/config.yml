@@ -291,7 +291,7 @@ workflows:
           name: "Test visual differences - TODO"
           requires:
             - install_dependencies
-          browsers: "--tests highcharts/demo/area-* ChromeHeadless --browsercount 1"
+          browsers: "ChromeHeadless --tests highcharts/demo/area-*"
           filters:
             branches:
               only:
