@@ -290,7 +290,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *         The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var time = this.time,
+    var hasParallelCoords = this.hasParallelCoordinates,
+        time = this.time,
         csvOptions = (this.options.exporting && this.options.exporting.csv) ||
             {},
         xAxis,
@@ -332,6 +333,35 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
             return item.name + (keyLength > 1 ? ' (' + key + ')' : '');
         },
+        // Map the categories for value axes
+        getCategoryAndDatetimeMap = function (series, pointArrayMap, pIdx) {
+            var categoryMap = {},
+                datetimeValueAxisMap = {};
+
+            pointArrayMap.forEach(function (prop) {
+
+                var axisName = (
+                        (series.keyToAxis && series.keyToAxis[prop]) ||
+                        prop
+                    ) + 'Axis',
+                    // Points in parallel coordinates refers to all yAxis
+                    // not only `series.yAxis`
+                    axis = Highcharts.isNumber(pIdx) ?
+                        series.chart[axisName][pIdx] : series[axisName];
+
+                categoryMap[prop] = (
+                    axis && axis.categories
+                ) || [];
+                datetimeValueAxisMap[prop] = (
+                    axis && axis.isDatetimeAxis
+                );
+            });
+
+            return {
+                categoryMap: categoryMap,
+                datetimeValueAxisMap: datetimeValueAxisMap
+            };
+        },
         xAxisIndices = [];
 
     // Loop the series and index values
@@ -344,28 +374,13 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
             xTaken = !series.requireSorting && {},
-            categoryMap = {},
-            datetimeValueAxisMap = {},
             xAxisIndex = xAxes.indexOf(series.xAxis),
+            categoryAndDatetimeMap = getCategoryAndDatetimeMap(
+                series,
+                pointArrayMap
+            ),
             mockSeries,
             j;
-
-        // Map the categories for value axes
-        pointArrayMap.forEach(function (prop) {
-            var axisName = (
-                (series.keyToAxis && series.keyToAxis[prop]) ||
-                prop
-            ) + 'Axis';
-
-            categoryMap[prop] = (
-                series[axisName] &&
-                series[axisName].categories
-            ) || [];
-            datetimeValueAxisMap[prop] = (
-                series[axisName] &&
-                series[axisName].isDatetimeAxis
-            );
-        });
 
         if (
             series.options.includeInDataExport !== false &&
@@ -418,6 +433,16 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     name,
                     point;
 
+                // In parallel coordinates chart, each data point is connected
+                // to a separate yAxis, conform this
+                if (hasParallelCoords) {
+                    categoryAndDatetimeMap = getCategoryAndDatetimeMap(
+                        series,
+                        pointArrayMap,
+                        pIdx
+                    );
+                }
+
                 point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(
                     point,
@@ -454,12 +479,16 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = point[prop];
                     rows[key][i + j] = pick(
-                        categoryMap[prop][val], // Y axis category if present
-                        datetimeValueAxisMap[prop] ?
+                        // yAxis category if present
+                        categoryAndDatetimeMap.categoryMap[prop][val],
+                        // datetime yAxis
+                        categoryAndDatetimeMap.datetimeValueAxisMap[prop] ?
                             time.dateFormat(csvOptions.dateFormat, val) :
                             null,
+                        // linear/log yAxis
                         val
                     );
+
                     j++;
                 }
 
