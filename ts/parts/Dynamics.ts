@@ -550,7 +550,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             adders = {
                 credits: 'addCredits',
                 title: 'setTitle',
-                subtitle: 'setSubtitle'
+                subtitle: 'setSubtitle',
+                caption: 'setCaption'
             } as Highcharts.Dictionary<string>,
             optionsChart,
             updateAllAxes,
@@ -828,9 +829,32 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     setSubtitle: function (
         this: Highcharts.Chart,
-        options: Highcharts.SubtitleOptions
+        options: Highcharts.SubtitleOptions,
+        redraw?: boolean
     ): void {
-        this.setTitle(undefined, options);
+        this.applyDescription('subtitle', options);
+        this.layOutTitles(redraw);
+    },
+
+    /**
+     * Set the caption options. This can also be done from {@link
+     * Chart#update}.
+     *
+     * @function Highcharts.Chart#setCaption
+     *
+     * @param {Highcharts.CaptionOptions} options
+     *        New caption options. The caption text itself is set by the
+     *        `options.text` property.
+     *
+     * @return {void}
+     */
+    setCaption: function (
+        this: Highcharts.Chart,
+        options: Highcharts.CaptionOptions,
+        redraw?: boolean
+    ): void {
+        this.applyDescription('caption', options);
+        this.layOutTitles(redraw);
     }
 
 });
