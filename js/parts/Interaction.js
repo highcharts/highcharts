@@ -782,7 +782,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
-                'visibility': (point.graphic || stateMarkerGraphic).visibility,
+                'visibility': (point.graphic || stateMarkerGraphic).visibility || 'inherit',
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
