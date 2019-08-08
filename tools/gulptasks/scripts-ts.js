@@ -20,10 +20,18 @@ function task() {
 
     return new Promise((resolve, reject) => {
 
+        processLib.isRunning('scripts-ts', true);
+
         processLib
             .exec('npx tsc --project ts')
-            .then(resolve)
-            .catch(reject);
+            .then(function (output) {
+                processLib.isRunning('scripts-ts', true);
+                resolve(output);
+            })
+            .catch(function (error) {
+                processLib.isRunning('scripts-ts', true);
+                reject(error);
+            });
     });
 }
 
