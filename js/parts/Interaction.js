@@ -768,12 +768,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         }
         // Show me your halo
         haloOptions = stateOptions.halo;
-        if (haloOptions && haloOptions.size) {
+        var markerGraphic = (point.graphic || stateMarkerGraphic);
+        var markerVisibility = (markerGraphic && markerGraphic.visibility || 'inherit');
+        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((point.graphic || stateMarkerGraphic)
-                    .parentGroup);
+                    .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size)
@@ -782,7 +783,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
-                'visibility': (point.graphic || stateMarkerGraphic).visibility || 'inherit',
+                'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055

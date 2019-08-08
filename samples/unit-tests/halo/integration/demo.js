@@ -33,16 +33,12 @@ QUnit.test('visibility', assert => {
     );
     assert.strictEqual(
         series1.halo.visibility,
-        undefined, // equal to "inherit"
+        'inherit',
         'Should have halo on Series 1 with visibility "inherit" after hover'
     );
-    assert.ok(
-        !!series2.halo,
-        'Should have created a halo object on Series 2 after hover'
-    );
     assert.strictEqual(
-        series2.halo.visibility,
-        "hidden",
-        'Should have halo on Series 2 with visibility "hidden" when point is outside plot area. #7650'
+        series2.halo,
+        undefined,
+        'Should not create a halo object on Series 2 after hover'
     );
 });
