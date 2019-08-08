@@ -401,9 +401,7 @@ Highcharts.Pointer.prototype = {
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s) {
                     var point = find(s.points, function (p) {
-                        return (p.x === hoverPoint.x &&
-                            !p.isNull &&
-                            p.isInside !== false);
+                        return p.x === hoverPoint.x && !p.isNull;
                     });
                     if (isObject(point)) {
                         /*
