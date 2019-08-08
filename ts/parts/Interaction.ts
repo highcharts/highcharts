@@ -1261,7 +1261,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     (point.className ? ' ' + point.className : ''),
                 'visibility': (
                     (point.graphic || stateMarkerGraphic) as any
-                ).visibility,
+                ).visibility || 'inherit',
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
