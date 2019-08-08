@@ -28,7 +28,7 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'square'|
+            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
             'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
@@ -171,7 +171,7 @@ declare global {
             ): RectangleObject;
             public css(styles: CSSObject): SVGElement;
             public dashstyleSetter(value: string): void;
-            public destroy(): void;
+            public destroy(): undefined;
             public destroyShadows(): void;
             public destroyTextPath (
                 elem: SVGDOMElement,
@@ -2567,9 +2567,9 @@ extend((
      *
      * @function Highcharts.SVGElement#destroy
      *
-     * @return {void}
+     * @return {undefined}
      */
-    destroy: function (this: Highcharts.SVGElement): void {
+    destroy: function (this: Highcharts.SVGElement): undefined {
         var wrapper = this,
             element = wrapper.element || {},
             renderer = wrapper.renderer,
@@ -2653,6 +2653,8 @@ extend((
             // Delete all properties
             delete wrapper[key];
         });
+
+        return; // eslint-disable-line no-useless-return
     },
 
     /**
@@ -5923,7 +5925,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 .attr({
                     zIndex: 1
                 }) as Highcharts.SVGAttributes,
-            box: Highcharts.SVGElement,
+            box: (Highcharts.SVGElement|undefined),
             bBox: Highcharts.BBoxObject,
             alignFactor = 0,
             padding = 3,
@@ -5940,7 +5942,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             needsBox = styledMode || hasBGImage,
             getCrispAdjust = function (): number {
                 return styledMode ?
-                    box.strokeWidth() % 2 / 2 :
+                    (box as any).strokeWidth() % 2 / 2 :
                     (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
             },
             updateBoxSize: Function,
@@ -6265,7 +6267,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     text = text.destroy();
                 }
                 if (box) {
-                    box = box.destroy() as any;
+                    box = box.destroy();
                 }
                 // Call base implementation to destroy the rest
                 SVGElement.prototype.destroy.call(wrapper);

@@ -110,7 +110,7 @@ var override = function<T> (
         func;
 
     for (method in methods) {
-        if (methods.hasOwnProperty(method)) {
+        if (Object.prototype.hasOwnProperty.call(methods, method)) {
             func = methods[method];
             wrap(obj, method, func);
         }

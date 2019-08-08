@@ -293,7 +293,7 @@ Chart.prototype.fromPointToLatLon = function (
 
     for (transform in transforms) {
         if (
-            transforms.hasOwnProperty(transform) &&
+            Object.prototype.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
             pointInPolygon(
                 { x: point.x, y: -(point.y as any) },
@@ -345,7 +345,7 @@ Chart.prototype.fromLatLonToPoint = function (
 
     for (transform in transforms) {
         if (
-            transforms.hasOwnProperty(transform) &&
+            Object.prototype.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone
         ) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);

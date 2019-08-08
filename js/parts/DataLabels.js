@@ -792,8 +792,7 @@ Series.prototype.drawDataLabels = function () {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        point.connector =
-                            point.connector.destroy();
+                        point.connector = point.connector.destroy();
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {

@@ -1082,7 +1082,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                         graphic &&
                         graphic.element.nodeName !== point.shapeType
                     ) {
-                        graphic = graphic.destroy() as any;
+                        graphic = graphic.destroy();
                     }
 
                     if (graphic) { // update
@@ -1120,7 +1120,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy() as any; // #1269
+                    point.graphic = graphic.destroy(); // #1269
                 }
             });
         },

@@ -336,7 +336,7 @@ SVGRenderer.prototype.polyhedron = function (
 
 
     // destroy all children
-    result.destroy = function (): void {
+    result.destroy = function (): undefined {
         for (var i = 0; i < result.faces.length; i++) {
             result.faces[i].destroy();
         }
@@ -1024,14 +1024,14 @@ H.SVGRenderer.prototype.arc3d = function (
     };
 
     // destroy all children
-    wrapper.destroy = function (this: Highcharts.SVGElement): void {
+    wrapper.destroy = function (this: Highcharts.SVGElement): undefined {
         this.top.destroy();
         this.out.destroy();
         this.inn.destroy();
         this.side1.destroy();
         this.side2.destroy();
 
-        SVGElement.prototype.destroy.call(this);
+        return SVGElement.prototype.destroy.call(this);
     };
     // hide all children
     wrapper.hide = function (this: Highcharts.SVGElement): void {

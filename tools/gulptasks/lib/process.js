@@ -99,11 +99,15 @@ function isRunning(name, runningFlag, keepOnExit) {
     }
 
     if (!runningFlag) {
-        delete config.isRunning[key];
-        writeConfig(config);
+        if (Object.keys(config.isRunning).includes(key)) {
+            delete config.isRunning[key];
+            writeConfig(config);
+        }
     } else {
-        config.isRunning[key] = true;
-        writeConfig(config);
+        if (!Object.keys(config.isRunning).includes(key)) {
+            config.isRunning[key] = true;
+            writeConfig(config);
+        }
         if (!keepOnExit) {
             [
                 'exit', 'uncaughtException',
@@ -111,11 +115,10 @@ function isRunning(name, runningFlag, keepOnExit) {
             ].forEach(
                 evt => process.on(evt, code => {
                     isRunning(key, false, true);
-                    process.exit(code); // eslint-disable-line
+                    process.exit(code); // eslint-disable-line no-process-exit
                 })
             );
         }
-        writeConfig(config);
     }
 
     return (config.isRunning[key] === true);
@@ -132,6 +135,7 @@ function readConfig() {
     const FS = require('fs');
 
     let config = {
+        isProcessing: {},
         isRunning: {}
     };
 

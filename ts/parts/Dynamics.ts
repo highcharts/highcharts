@@ -935,7 +935,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             // Update visuals
             if (point.y === null && graphic) { // #4146
-                point.graphic = graphic.destroy() as any;
+                point.graphic = graphic.destroy();
             }
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
@@ -946,14 +946,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         (options as any).marker &&
                         (options as any).marker.symbol !== undefined
                     ) {
-                        point.graphic = graphic.destroy() as any;
+                        point.graphic = graphic.destroy();
                     }
                 }
                 if (options && (options as any).dataLabels && point.dataLabel) {
-                    point.dataLabel = point.dataLabel.destroy() as any; // #2468
+                    point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
-                    point.connector = point.connector.destroy() as any; // #7243
+                    point.connector = point.connector.destroy(); // #7243
                 }
             }
 
