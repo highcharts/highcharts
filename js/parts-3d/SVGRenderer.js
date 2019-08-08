@@ -599,7 +599,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         this.inn.destroy();
         this.side1.destroy();
         this.side2.destroy();
-        SVGElement.prototype.destroy.call(this);
+        return SVGElement.prototype.destroy.call(this);
     };
     // hide all children
     wrapper.hide = function () {

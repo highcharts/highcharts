@@ -1810,7 +1810,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 this.parentNodeLayout.removeNode(this.parentNode);
                 if (this.parentNode.dataLabel) {
                     this.parentNode.dataLabel =
-                        this.parentNode.dataLabel.destroy() as any;
+                        this.parentNode.dataLabel.destroy();
                 }
             }
             H.Series.prototype.destroy.apply(this, arguments as any);
