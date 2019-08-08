@@ -123,24 +123,32 @@ jobs:
 
   generate_visual_test_images:
     <<: *defaults
-    description: Generate visual tests reference image
+    description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
       - run:
-          name: Generate visual references if tag
+          name: Generate visual references
           command: npx gulp test --tests highcharts/demo/area-* --reference --browsercount 1
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
-      - <<: *add_gh_user_config
-      - run:
-          name: Commit reference images for tests
-          command: |
-            if [ -n "$CIRCLE_TAG" ]; then
-              git add samples/*/reference.svg && git commit -m"Added new test reference images for new tag." && git push -u origin master
-            else
-              git add samples/*/reference.svg && git commit -m"Added new test reference images for new tag." && git push -u origin ${CIRCLE_BRANCH}
-            fi
+      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG}"
       - <<: *persist_workspace
+
+  test_visual_diff:
+    <<: *defaults
+    description: Uploads visual test results to S3
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+      tests:
+        description: "The path to the visual tests to run"
+        type: string
+        default: "highcharts/demo/area-*"
+    steps:
+      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
+      - <<: *load_workspace
+      - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog"
+      - run: "npx gulp dist-testresults"
 
   build_dist:
     <<: *defaults
@@ -287,11 +295,10 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
-      - test_browsers:
-          name: "Test visual differences - TODO"
+      - test_visual_diff:
+          name: "Test visual differences and distribute diff log to S3."
           requires:
             - install_dependencies
-          browsers: "ChromeHeadless --tests highcharts/demo/area-*"
           filters:
             branches:
               only:
