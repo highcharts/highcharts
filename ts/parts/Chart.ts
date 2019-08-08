@@ -128,7 +128,7 @@ declare global {
             public addCredits(credits?: CreditsOptions): void;
             public applyDescription(
                 name: ('title'|'subtitle'|'caption'),
-                options: (DescriptionOptionsType|undefined)
+                options?: DescriptionOptionsType
             ): void;
             public destroy(): void;
             public drawChartBox(): void;
@@ -237,6 +237,27 @@ declare global {
  *
  * @param {boolean} [redraw=true]
  *        Whether to redraw the chart after the subtitle is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
+ */
+
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ *//**
+ * Modify options for the caption.
+ *
+ * @function Highcharts.CaptionObject#update
+ *
+ * @param {Highcharts.CaptionOptions} captionOptions
+ *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the caption is altered. If doing
  *        more operations on the chart, it is a good idea to set redraw to false
  *        and call {@link Chart#redraw} after.
  */
@@ -1089,7 +1110,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     applyDescription: function (
         this: Highcharts.Chart,
         name: ('title'|'subtitle'|'caption'),
-        explicitOptions: (Highcharts.DescriptionOptionsType|undefined)
+        explicitOptions?: Highcharts.DescriptionOptionsType
     ): void {
         const chart = this;
 
@@ -1133,14 +1154,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
             // Chart.setCaption
             elem.update = function (
-                o: (Highcharts.DescriptionOptionsType)
+                updateOptions: (Highcharts.DescriptionOptionsType)
             ): void {
                 const fn = {
                     title: 'setTitle',
                     subtitle: 'setSubtitle',
                     caption: 'setCaption'
                 }[name];
-                (chart as any)[fn](o);
+                (chart as any)[fn](updateOptions);
             };
 
             // Presentational
@@ -1174,7 +1195,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     },
 
     /**
-     * Internal function to lay out the chart title, subtitle and caption and
+     * Internal function to lay out the chart title, subtitle and caption, and
      * cache the full offset height for use in `getMargins`. The result is
      * stored in `this.titleOffset`.
      *
