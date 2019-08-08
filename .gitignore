@@ -31,6 +31,7 @@
 /highcharts.com.site-access.log
 /highcharts.com.site-error.log
 /test/last-run.json
+/test/visual-test-results.json
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
