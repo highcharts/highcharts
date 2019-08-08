@@ -282,7 +282,7 @@ seriesType<Highcharts.GanttSeriesOptions>('gantt', 'xrange'
                             .shadow(seriesOpts.shadow, null, cutOff);
                     }
                 } else if (graphic) {
-                    point.graphic = graphic.destroy() as any; // #1269
+                    point.graphic = graphic.destroy(); // #1269
                 }
             } else {
                 parent.prototype.drawPoint.call(series, point, verb);

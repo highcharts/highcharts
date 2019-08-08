@@ -572,7 +572,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
                     ]; // #6327
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy() as any;
+                    point.graphic = graphic.destroy();
                 }
 
             }
