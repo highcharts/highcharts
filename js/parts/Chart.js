@@ -56,6 +56,26 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ */ /**
+* Modify options for the caption.
+*
+* @function Highcharts.CaptionObject#update
+*
+* @param {Highcharts.CaptionOptions} captionOptions
+*        Options to modify.
+*
+* @param {boolean} [redraw=true]
+*        Whether to redraw the chart after the caption is altered. If doing
+*        more operations on the chart, it is a good idea to set redraw to false
+*        and call {@link Chart#redraw} after.
+*/
 import U from './Utilities.js';
 var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
@@ -712,13 +732,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 .add();
             // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
             // Chart.setCaption
-            elem.update = function (o) {
+            elem.update = function (updateOptions) {
                 var fn = {
                     title: 'setTitle',
                     subtitle: 'setSubtitle',
                     caption: 'setCaption'
                 }[name];
-                chart[fn](o);
+                chart[fn](updateOptions);
             };
             // Presentational
             if (!this.styledMode) {
@@ -747,7 +767,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
     },
     /**
-     * Internal function to lay out the chart title, subtitle and caption and
+     * Internal function to lay out the chart title, subtitle and caption, and
      * cache the full offset height for use in `getMargins`. The result is
      * stored in `this.titleOffset`.
      *
