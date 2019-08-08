@@ -377,7 +377,7 @@ H.layouts['reingold-fruchterman'].prototype, {
      * @private
      */
     applyLimitBox: function (node, box) {
-        var radius = node.marker && node.marker.radius || 0;
+        var radius = node.radius;
         /*
         TO DO: Consider elastic collision instead of stopping.
         o' means end position when hitting plotting area edge:
