@@ -3,6 +3,7 @@ js/modules/networkgraph/*.js
 js/modules/bellcurve.src.js
 js/modules/broken-axis.src.js
 js/modules/bullet.src.js
+js/modules/cylinder.src.js
 js/modules/debugger.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
