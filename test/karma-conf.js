@@ -373,7 +373,7 @@ module.exports = function (config) {
             // Skip the special oldie tests (which don't run QUnit)
             'samples/unit-tests/oldie/*/demo.js'
         ],
-        reporters: ['imagecapture', 'progress'],
+        reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
@@ -388,6 +388,10 @@ module.exports = function (config) {
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
         },
+        jsonLogReporter: {
+            outputPath: 'test/',
+        },
+
 
         formatError: function (s) {
             let ret = s.replace(
@@ -536,33 +540,46 @@ module.exports = function (config) {
                             done();
                         `;
 
-                    // Reference file doens't exist
-                    } else if (!fs.existsSync(
-                        `./samples/${path}/reference.svg`
-                    )) {
-                        console.log(
-                        'Reference file doesn\'t exist: '.yellow +
-                        ` ./samples/${path}/reference.svg`
-
-                        );
-                        file.path = file.originalPath + '.preprocessed';
-                        done(`QUnit.skip('${path}');`);
-                        return;
-
-                    // Reference file exists, run the comparison
                     } else {
+                        if (!fs.existsSync(
+                            `./samples/${path}/reference.svg`
+                        )) {
+                            console.log(
+                                'Reference file doesn\'t exist: '.yellow +
+                                ` ./samples/${path}/reference.svg`
+                            );
+                            file.path = file.originalPath + '.preprocessed';
+                            done(`QUnit.skip('${path}');`);
+                            return;
+                        }
 
                         try {
                             assertion = `
                                 compareToReference(chart, '${path}')
                                     .then(actual => {
-                                        assert.strictEqual(
-                                            actual,
-                                            0,
-                                            'Different pixels\\n' +
-                                            '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                            '- samples/${path}/diff.gif'
-                                        );
+                                        if (${argv.difflog}) {
+                                            var today = new Date().toISOString().slice(0,10);
+                                            var diffLog = {
+                                                name: 'visual-test-results',
+                                                object: {
+                                                    '${path}': actual,
+                                                    meta: {
+                                                        runDate: today,
+                                                        gitSha: __karma__.config.gitSha
+                                                    },
+                                                },
+                                            };
+                                            window.dump(JSON.stringify( diffLog ));
+                                            assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
+                                        } else {
+                                            assert.strictEqual(
+                                                actual,
+                                                0,
+                                                'Different pixels\\n' +
+                                                '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                                '- samples/${path}/diff.gif'
+                                            );
+                                        }
                                         done();
                                     })
                                     .catch(err => {
@@ -578,12 +595,9 @@ module.exports = function (config) {
                         }
                     }
 
-
                     js = `
 
                     QUnit.test('${path}', function (assert) {
-
-                        // console.log('Starting ${path}');
 
                         // Apply demo.html
                         document.getElementById('demo-html').innerHTML =

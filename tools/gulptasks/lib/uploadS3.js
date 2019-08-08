@@ -127,6 +127,11 @@ function uploadFiles(params) {
 
     log.starting(`Uploading ${files.length} files for ${name} to bucket ${s3Bucket}:\n`);
 
+    if (files.length === 0) {
+        log.message('Upload initiated, but no files specified.');
+        return Promise.resolve('No files to upload!');
+    }
+
     const defaultParams = {
         batchSize: 400,
         bucket: s3Bucket,
