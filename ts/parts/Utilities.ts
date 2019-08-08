@@ -12,6 +12,22 @@
 
 import H from './Globals.js';
 
+/** @private */
+type IsObjectConditionalType<TObject, TStrict> = (
+    TObject extends object ?
+        (TObject extends null ?
+            false :
+            (TStrict extends true ?
+                (TObject extends Array<any> ?
+                    false :
+                    true
+                ) :
+                true
+            )
+        ) :
+        false
+);
+
 /**
  * Internal types
  * @private
@@ -162,7 +178,7 @@ declare global {
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
         /** @deprecated */
-        function each(arr: Array<any>, fn: Function, ctx?: any): void;
+        function each<T>(arr: Array<T>, fn: Function, ctx?: any): void;
         function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
@@ -190,7 +206,7 @@ declare global {
             toInt?: boolean
         ): (number|string);
         /** @deprecated */
-        function grep(arr: Array<any>, fn: Function): Array<any>;
+        function grep<T>(arr: Array<T>, fn: Function): Array<T>;
         function inArray(
             item: any,
             arr: Array<any>,
@@ -201,12 +217,15 @@ declare global {
         function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
-        function isObject(obj: any, strict?: boolean): boolean;
+        function isObject<T1, T2 extends boolean = false>(
+            obj: T1,
+            strict?: T2
+        ): IsObjectConditionalType<T1, T2>;
         function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
         /** @deprecated */
-        function map(arr: Array<any>, fn: Function): Array<any>;
+        function map<T>(arr: Array<T>, fn: Function): Array<T>;
         function merge<T1, T2 = object>(
             extend: boolean,
             a?: T1,
@@ -256,7 +275,7 @@ declare global {
         function pick<T>(...args: Array<T|null|undefined>): T;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
-        function reduce(arr: Array<any>, fn: Function, initialValue: any): any;
+        function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
         function relativeLength(
             value: RelativeSize,
             base: number,
@@ -279,7 +298,7 @@ declare global {
             chart: Chart
         ): void
         /** @deprecated */
-        function some(arr: Array<any>, fn: Function, ctx?: any): boolean;
+        function some<T>(arr: Array<T>, fn: Function, ctx?: any): boolean;
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
         function stop(el: SVGElement, prop?: string): void;
@@ -1306,8 +1325,15 @@ function isArray(obj: unknown): obj is Array<unknown> {
  * @return {boolean}
  *         True if the argument is an object.
  */
-function isObject(obj: any, strict?: boolean): boolean {
-    return !!obj && typeof obj === 'object' && (!strict || !isArray(obj));
+function isObject<T1, T2 extends boolean = false>(
+    obj: T1,
+    strict?: T2
+): IsObjectConditionalType<T1, T2> {
+    return (
+        !!obj &&
+        typeof obj === 'object' &&
+        (!strict || !isArray(obj))
+    ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
