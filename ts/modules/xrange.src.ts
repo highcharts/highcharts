@@ -696,7 +696,7 @@ seriesType<Highcharts.XRangeSeriesOptions>('xrange', 'column'
                 }
 
             } else if (graphic) {
-                point.graphic = graphic.destroy() as any; // #1269
+                point.graphic = graphic.destroy(); // #1269
             }
         },
 

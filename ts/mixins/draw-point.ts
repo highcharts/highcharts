@@ -71,7 +71,7 @@ var draw = function draw(
             );
     } else if (graphic) {
         var destroy = function (): void {
-            component.graphic = graphic = (graphic as any).destroy() as any;
+            component.graphic = graphic = (graphic as any).destroy();
             if (isFn(onComplete)) {
                 onComplete();
             }

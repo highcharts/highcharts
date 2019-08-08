@@ -786,7 +786,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
         graphics.forEach(function (graphicName): void {
             if ((this as any)[graphicName]) {
                 (this as any)[graphicName] =
-                    (this as any)[graphicName].destroy() as any;
+                    (this as any)[graphicName].destroy();
             }
         }, this);
 

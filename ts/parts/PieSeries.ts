@@ -1129,7 +1129,7 @@ seriesType<Highcharts.PieSeriesOptions>(
                     graphic.addClass(point.getClassName());
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy() as any;
+                    point.graphic = graphic.destroy();
                 }
             });
 

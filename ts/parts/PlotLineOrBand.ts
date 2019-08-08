@@ -325,7 +325,7 @@ H.PlotLineOrBand.prototype = {
             } else if (svgElem.d) {
                 svgElem.hide();
                 if (label) {
-                    plotLine.label = label = label.destroy() as any;
+                    plotLine.label = label = label.destroy();
                 }
             }
         }

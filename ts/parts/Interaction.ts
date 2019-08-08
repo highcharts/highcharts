@@ -1203,7 +1203,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 if (stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
-                    stateMarkerGraphic = stateMarkerGraphic.destroy() as any;
+                    stateMarkerGraphic = stateMarkerGraphic.destroy();
                 }
 
                 // Add a new state marker graphic
