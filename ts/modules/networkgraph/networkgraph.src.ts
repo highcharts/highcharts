@@ -111,6 +111,7 @@ declare global {
             public mass: NodesPoint['mass'];
             public offset: NodesPoint['offset'];
             public options: NetworkgraphPointOptions;
+            public radius: number;
             public series: NetworkgraphSeries;
             public setNodeState: NodesMixin['setNodeState'];
             public to: NodesPoint['to'];
@@ -708,6 +709,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                 node = this.nodes[i];
 
                 node.degree = node.getDegree();
+                node.radius = pick(
+                    node.marker && node.marker.radius,
+                    this.options.marker && this.options.marker.radius,
+                    0
+                );
 
                 // If node exists, but it's not available in nodeLookup,
                 // then it's leftover from previous runs (e.g. setData)

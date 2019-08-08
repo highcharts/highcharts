@@ -485,6 +485,7 @@ seriesType('networkgraph', 'line',
         for (i = this.nodes.length - 1; i >= 0; i--) {
             node = this.nodes[i];
             node.degree = node.getDegree();
+            node.radius = pick(node.marker && node.marker.radius, this.options.marker && this.options.marker.radius, 0);
             // If node exists, but it's not available in nodeLookup,
             // then it's leftover from previous runs (e.g. setData)
             if (!this.nodeLookup[node.id]) {

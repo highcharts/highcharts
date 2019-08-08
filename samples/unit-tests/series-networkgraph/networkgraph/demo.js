@@ -196,3 +196,58 @@ QUnit.test('Network Graph', function (assert) {
         'Clearing nodes and links in `series.update()` should not throw errors (#11176)'
     );
 });
+
+QUnit.test('Markers', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            margin: [0, 0, 0, 0]
+        },
+        plotOptions: {
+            networkgraph: {
+                layoutAlgorithm: {
+                    gravitationalConstant: 0,
+                    integration: 'verlet'
+                },
+                marker: {
+                    radius: 50
+                }
+            }
+        },
+        title: {
+            text: null
+        },
+        series: [{
+            type: 'networkgraph',
+            keys: ['from', 'to'],
+            data: [
+                [1, 1],
+                [2, 2],
+                [3, 4],
+                [2, 3],
+                [4, 5]
+            ]
+        }]
+    });
+
+    chart.series[0].nodes.forEach(node => {
+        assert.ok(
+            node.plotY - node.radius >= 0,
+            `Node: ${node.id} should be within the plotting area - top edge (#11632).`
+        );
+
+        assert.ok(
+            node.plotX + node.radius <= chart.plotWidth,
+            `Node: ${node.id} should be within the plotting area - right edge (#11632).`
+        );
+
+        assert.ok(
+            node.plotY + node.radius <= chart.plotHeight,
+            `Node: ${node.id} should be within the plotting area - bottom edge (#11632).`
+        );
+
+        assert.ok(
+            node.plotX - node.radius >= 0,
+            `Node: ${node.id} should be within the plotting area - left edge (#11632).`
+        );
+    });
+});

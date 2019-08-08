@@ -736,10 +736,10 @@ H.extend(
          */
         applyLimitBox: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.Point,
+            node: Highcharts.NetworkgraphPoint,
             box: Highcharts.Dictionary<number>
         ): void {
-            var radius = node.marker && node.marker.radius || 0;
+            var radius = node.radius;
             /*
             TO DO: Consider elastic collision instead of stopping.
             o' means end position when hitting plotting area edge:
