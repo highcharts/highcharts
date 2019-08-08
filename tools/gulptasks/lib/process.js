@@ -104,8 +104,10 @@ function isRunning(name, runningFlag, keepOnExit) {
             writeConfig(config);
         }
     } else {
-        config.isRunning[key] = true;
-        writeConfig(config);
+        if (!Object.keys(config.isRunning).includes(key)) {
+            config.isRunning[key] = true;
+            writeConfig(config);
+        }
         if (!keepOnExit) {
             [
                 'exit', 'uncaughtException',
@@ -117,7 +119,6 @@ function isRunning(name, runningFlag, keepOnExit) {
                 })
             );
         }
-        writeConfig(config);
     }
 
     return (config.isRunning[key] === true);
