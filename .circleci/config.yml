@@ -129,7 +129,7 @@ jobs:
       - run:
           name: Generate visual references
           command: npx gulp test --tests highcharts/demo/area-* --reference --browsercount 1
-      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG}"
+      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
       - <<: *persist_workspace
 
   test_visual_diff:
@@ -147,8 +147,11 @@ jobs:
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
-      - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog"
-      - run: "npx gulp dist-testresults"
+      - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog --remotelocation ${HIGHCHARTS_S3_BUCKET}"
+      - run:
+          name: "Upload visual tests assets"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
 
   build_dist:
     <<: *defaults
@@ -260,6 +263,7 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
@@ -303,6 +307,7 @@ workflows:
             branches:
               only:
                 - feature/ci-visual-tests
+          context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
           requires:

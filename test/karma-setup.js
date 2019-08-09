@@ -262,7 +262,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        new Error('Error loading SVG on canvas')
+                        new Error('Error loading SVG on canvas. Is the reference.svg present?')
                     );
                 };
                 img.src = url;
@@ -303,9 +303,16 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        // Handle reference, load SVG from file
+        const remotelocation = __karma__.config.cliArgs.remotelocation;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
+        // Handle reference, load SVG from bucket or file
+        if (remotelocation) {
+            xhr.open('GET',
+                `http://${remotelocation}.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/${path}/reference.svg`,
+                true);
+        } else {
+            xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
+        }
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 var svg = xhr.responseText;

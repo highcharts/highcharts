@@ -122,8 +122,8 @@ function getVersionPaths(version) {
  */
 function uploadFiles(params) {
     const upload = require('../../upload');
-    const { files, name } = params;
-    const s3Bucket = getS3BucketConfig();
+    const { files, name, bucket } = params;
+    const s3Bucket = bucket || getS3BucketConfig();
 
     log.starting(`Uploading ${files.length} files for ${name} to bucket ${s3Bucket}:\n`);
 
