@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, pick = U.pick;
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Series.js';
 var addEvent = H.addEvent, find = H.find, fireEvent = H.fireEvent, Axis = H.Axis, Series = H.Series;
@@ -276,17 +276,19 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
     }
 };
 addEvent(Series, 'afterGeneratePoints', function () {
-    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, points = series.points, point, i = points.length, connectNulls = series.options.connectNulls, nullGap;
+    var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, points = _a.points, connectNulls = _a.options.connectNulls;
     if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
+        var i = points.length;
         while (i--) {
-            point = points[i];
+            var point = points[i];
             // Respect nulls inside the break (#4275)
-            nullGap = point.y === null && connectNulls === false;
-            if (!nullGap &&
+            var nullGap = point.y === null && connectNulls === false;
+            var isPointInBreak = (!nullGap &&
                 (xAxis.isInAnyBreak(point.x, true) ||
-                    yAxis.isInAnyBreak(point.y, true))) {
-                point.isNull = true;
-            }
+                    yAxis.isInAnyBreak(point.y, true)));
+            // Set point.isNull if in any break.
+            // If not in break, reset isNull to original value.
+            point.isNull = isPointInBreak || pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y));
         }
     }
 });
