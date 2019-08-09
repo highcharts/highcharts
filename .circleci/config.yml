@@ -240,18 +240,18 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - lint:
           requires:
             - install_dependencies
-      - generate_ts_declarations:
-          requires:
-            - lint
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
           requires:
-            - install_dependencies
+            - lint
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
