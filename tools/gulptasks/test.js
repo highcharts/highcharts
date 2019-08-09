@@ -298,6 +298,7 @@ Available arguments for 'gulp test':
 
 --difflog
     Produces a JSON file containing the number of different pixels for visual tests.
+    Use --remotelocation to specify remote location of reference.svg files to compare with.
 
 --ts
     Compile TypeScript-based tests.
@@ -329,7 +330,8 @@ Available arguments for 'gulp test':
                     configFile: KARMA_CONFIG_FILE,
                     singleRun: true,
                     client: {
-                        gitSha
+                        gitSha,
+                        cliArgs: argv
                     }
                 },
                 err => {
