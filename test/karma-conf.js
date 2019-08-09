@@ -541,7 +541,7 @@ module.exports = function (config) {
                         `;
 
                     } else {
-                        if (!fs.existsSync(
+                        if (!argv.remotelocation && !fs.existsSync(
                             `./samples/${path}/reference.svg`
                         )) {
                             console.log(
