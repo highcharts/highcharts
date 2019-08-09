@@ -95,7 +95,7 @@ function exec(command, silent) {
  *        If not set get current flag
  *
  * @return {boolean|number|string}
- *         Running flag
+ *         Current flag
  */
 function isRunning(name, runningFlag) {
 
@@ -104,14 +104,13 @@ function isRunning(name, runningFlag) {
     const key = name.replace(/[^-\w]+/g, '_');
 
     if (typeof runningFlag === 'undefined') {
-        return (dictionary[key] === true);
-    }
-
-    if (!runningFlag) {
+        runningFlag = dictionary[key];
+    } else if (!runningFlag) {
         if (typeof dictionary[key] !== 'undefined') {
             delete dictionary[key];
             writeConfig(config);
         }
+        runningFlag = dictionary[key];
     } else {
         if (dictionary[key] !== runningFlag) {
             dictionary[key] = runningFlag;
@@ -127,7 +126,7 @@ function isRunning(name, runningFlag) {
         );
     }
 
-    return (config.isRunning[key] === true);
+    return runningFlag;
 }
 
 /**
