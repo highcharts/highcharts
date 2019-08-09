@@ -65,6 +65,7 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
+    isNumber,
     pick
 } = U;
 
@@ -452,34 +453,35 @@ Axis.prototype.setBreaks = function (
 };
 
 addEvent(Series, 'afterGeneratePoints', function (): void {
-
-    var series = this,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
-        points = series.points,
-        point,
-        i = points.length,
-        connectNulls = series.options.connectNulls,
-        nullGap;
+    const {
+        xAxis,
+        yAxis,
+        points,
+        options: { connectNulls }
+    } = this;
 
     if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
+        let i = points.length;
         while (i--) {
-            point = points[i];
+            const point = points[i];
 
             // Respect nulls inside the break (#4275)
-            nullGap = point.y === null && connectNulls === false;
-            if (
+            const nullGap = point.y === null && connectNulls === false;
+            const isPointInBreak = (
                 !nullGap &&
                 (
                     xAxis.isInAnyBreak(point.x, true) ||
                     yAxis.isInAnyBreak(point.y, true)
                 )
-            ) {
-                point.isNull = true;
-            }
+            );
+            // Set point.isNull if in any break.
+            // If not in break, reset isNull to original value.
+            point.isNull = isPointInBreak || pick(
+                point.isValid && !point.isValid(),
+                point.x === null || !isNumber(point.y)
+            );
         }
     }
-
 });
 
 addEvent(Series, 'afterRender', function drawPointsWrapped(): void {
