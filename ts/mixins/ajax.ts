@@ -23,17 +23,27 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type JSONType = ReturnType<JSON['parse']>;
+        interface AjaxErrorCallbackFunction {
+            (request: XMLHttpRequest, error: (string|Error)): void;
+        }
+        interface AjaxSuccessCallbackFunction {
+            (response: (string|JSONType)): void;
+        }
         interface AjaxSettingsObject {
             data: (string|Dictionary<any>);
-            dataType: ('json'|'xml'|'text'|'octet');
-            error: Function;
+            dataType: string;
+            error: AjaxErrorCallbackFunction;
             headers: Dictionary<string>;
-            success: Function;
+            success: AjaxSuccessCallbackFunction;
             type: ('get'|'post'|'update'|'delete');
             url: string;
         }
         function ajax(attr: Partial<AjaxSettingsObject>): (boolean|undefined);
-        function getJSON(url: string, success: Function): void;
+        function getJSON(
+            url: string,
+            success: AjaxSuccessCallbackFunction
+        ): void;
     }
 }
 
@@ -93,7 +103,7 @@ H.ajax = function (
             data: false as any,
             headers: {}
         } as Highcharts.AjaxSettingsObject, attr),
-        headers = {
+        headers: Highcharts.Dictionary<string> = {
             json: 'application/json',
             xml: 'application/xml',
             text: 'text/plain',
@@ -172,7 +182,10 @@ H.ajax = function (
  *        function instead.
  * @return {void}
  */
-H.getJSON = function (url: string, success: Function): void {
+H.getJSON = function (
+    url: string,
+    success: Highcharts.AjaxSuccessCallbackFunction
+): void {
     H.ajax({
         url: url,
         success: success,
