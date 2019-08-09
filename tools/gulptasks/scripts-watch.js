@@ -36,10 +36,9 @@ function task() {
     const processLib = require('./lib/process');
 
     if (processLib.isRunning('scripts-watch')) {
-        logLib.warn('Running watch process detected. Skipping task...');
-        if (argv.force) {
-            processLib.isRunning('scripts-watch', false, true);
-        } else {
+        logLib.warn('Running watch process detected.');
+        if (!argv.force) {
+            logLib.warn('Skipping task...');
             return Promise.resolve();
         }
     }
