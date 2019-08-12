@@ -30,10 +30,8 @@ FullScreen.prototype = {
     /**
      * Init function
      * @private
-     *
      * @param {Highcharts.HTMLDOMElement} container
-     *        Chart containers parent
-     *
+     *        Chart container's parent
      * @return {void}
      */
     init: function (container) {
