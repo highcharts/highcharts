@@ -131,6 +131,7 @@ declare global {
             public options: PackedBubblePointOptions;
             public prevX?: number;
             public prevY?: number;
+            public radius: number;
             public removed?: any; // @todo
             public series: PackedBubbleSeries;
             public seriesIndex?: number;
@@ -1055,7 +1056,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
 
             if (series.parentNode) {
                 (series.parentNode as any).marker.radius =
-                    series.parentNodeRadius;
+                    series.parentNode.radius = series.parentNodeRadius;
             }
         },
         // Create Background/Parent Nodes for split series.
@@ -1337,6 +1338,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                         width: 2 * (radius as any),
                         height: 2 * (radius as any)
                     });
+                    point.radius = radius as any;
                 }
             }
 
