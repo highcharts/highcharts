@@ -912,8 +912,7 @@ H.Tooltip.prototype = {
                 }
                 else {
                     var yAxis = series.yAxis;
-                    var tooltipHeight = tt.getBBox().height;
-                    target = yAxis.pos - distributionBoxTop + Math.max((tooltipHeight / 2), Math.min((point.plotY || 0), yAxis.len - (tooltipHeight / 2))); // Limit target position to within yAxis
+                    target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min((point.plotY || 0), yAxis.len)); // Limit target position to within yAxis
                 }
                 boxes.push({
                     target: target,

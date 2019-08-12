@@ -1320,13 +1320,9 @@ H.Tooltip.prototype = {
                         chart.plotHeight + headerHeight;
                 } else {
                     const yAxis = (series.yAxis as any);
-                    const tooltipHeight = tt.getBBox().height;
                     target = yAxis.pos - distributionBoxTop + Math.max(
-                        (tooltipHeight / 2),
-                        Math.min(
-                            (point.plotY || 0),
-                            yAxis.len - (tooltipHeight / 2)
-                        )
+                        0,
+                        Math.min((point.plotY || 0), yAxis.len)
                     ); // Limit target position to within yAxis
                 }
                 boxes.push({
