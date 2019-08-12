@@ -641,7 +641,7 @@ module.exports = function (config) {
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 33000; // default 2000
+        options.browserDisconnectTimeout = 20000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
@@ -657,8 +657,8 @@ module.exports = function (config) {
 
         options.reporters = ['progress'];
 
-        if (browsers.some(browser => /(Edge)/.test(browser))) {
-            // fallback to polling for Edge browsers as websockets disconnects a lot.
+        if (browsers.some(browser => /Win\./.test(browser))) {
+            // fallback to polling for Windows browsers as websockets disconnects a lot.
             options.transports = ['polling'];
         }
 
