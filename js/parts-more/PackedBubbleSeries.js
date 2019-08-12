@@ -666,7 +666,7 @@ seriesType('packedbubble', 'bubble',
                 Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding);
         if (series.parentNode) {
             series.parentNode.marker.radius =
-                series.parentNodeRadius;
+                series.parentNode.radius = series.parentNodeRadius;
         }
     },
     // Create Background/Parent Nodes for split series.
@@ -859,6 +859,7 @@ seriesType('packedbubble', 'bubble',
                     width: 2 * radius,
                     height: 2 * radius
                 });
+                point.radius = radius;
             }
         }
         if (useSimulation) {
