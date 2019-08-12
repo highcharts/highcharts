@@ -1,10 +1,14 @@
 /* *
- * (c) 2009-2019 Sebastian Bochann
  *
- * Full screen for Highcharts
+ *  (c) 2009-2019 Sebastian Bochann
  *
- * License: www.highcharts.com/license
- */
+ *  Full screen for Highcharts
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 import H from '../parts/Globals.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -16,27 +20,33 @@ import H from '../parts/Globals.js';
  * @class
  * @name Highcharts.FullScreen
  *
- * @param {Highcharts.HTMLDOMElement} container chart div
+ * @param {Highcharts.HTMLDOMElement} container
+ *        Chart container
  */
 var FullScreen = H.FullScreen = function (container) {
-    // main div of the chart
     this.init(container.parentNode);
 };
 FullScreen.prototype = {
     /**
      * Init function
+     * @private
      *
-     * @param {Highcharts.HTMLDOMElement} - chart div
+     * @param {Highcharts.HTMLDOMElement} container
+     *        Chart containers parent
      *
+     * @return {void}
      */
     init: function (container) {
         if (container.requestFullscreen) {
             container.requestFullscreen();
-        } else if (container.mozRequestFullScreen) {
+        }
+        else if (container.mozRequestFullScreen) {
             container.mozRequestFullScreen();
-        } else if (container.webkitRequestFullscreen) {
+        }
+        else if (container.webkitRequestFullscreen) {
             container.webkitRequestFullscreen();
-        } else if (container.msRequestFullscreen) {
+        }
+        else if (container.msRequestFullscreen) {
             container.msRequestFullscreen();
         }
     }

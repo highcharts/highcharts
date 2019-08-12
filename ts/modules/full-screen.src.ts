@@ -1,10 +1,14 @@
 /* *
- * (c) 2009-2019 Sebastian Bochann
  *
- * Full screen for Highcharts
+ *  (c) 2009-2019 Sebastian Bochann
  *
- * License: www.highcharts.com/license
- */
+ *  Full screen for Highcharts
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 
 import H from '../parts/Globals.js';
 
@@ -16,7 +20,6 @@ declare global {
     namespace Highcharts {
         class FullScreen {
             public constructor(container: HTMLDOMElement);
-
             public init(container: HTMLDOMElement): void;
         }
     }
@@ -33,23 +36,28 @@ declare global {
  * @class
  * @name Highcharts.FullScreen
  *
- * @param {Highcharts.HTMLDOMElement} container chart div
+ * @param {Highcharts.HTMLDOMElement} container
+ *        Chart container
  */
 var FullScreen = H.FullScreen = function (
     this: Highcharts.FullScreen,
-    container: Highcharts.HTMLDOMElement): void {
-    // main div of the chart
-    this.init(container.parentNode as Highcharts.HTMLDOMElement);
+    container: Highcharts.HTMLDOMElement
+): void {
+    this.init(container.parentNode as any);
 } as any;
 
 FullScreen.prototype = {
     /**
      * Init function
-     *
-     * @param {Highcharts.HTMLDOMElement} - chart div
-     *
+     * @private
+     * @param {Highcharts.HTMLDOMElement} container
+     *        Chart container's parent
+     * @return {void}
      */
-    init: function (container: Highcharts.HTMLDOMElement): void {
+    init: function (
+        this: Highcharts.FullScreen,
+        container: Highcharts.HTMLDOMElement
+    ): void {
         if (container.requestFullscreen) {
             container.requestFullscreen();
         } else if (container.mozRequestFullScreen) {
