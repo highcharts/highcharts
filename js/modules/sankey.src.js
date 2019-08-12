@@ -64,6 +64,18 @@
  */
 
 /**
+ * Formatter callback function.
+ *
+ * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ *        Data label context to format
+ *
+ * @return {string}
+ *         Formatted data label text
+ */
+
+/**
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
@@ -109,7 +121,7 @@
  * `nodeFormat` option takes precedence over the `nodeFormatter`.
  *
  * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.SeriesSankeyDataLabelsFormatterContextObject>|undefined}
+ * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction|undefined}
  * @default function () { return this.point.name; }
  * @since 6.0.2
  */
