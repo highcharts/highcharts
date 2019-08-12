@@ -294,9 +294,6 @@ declare global {
     interface HTMLElement {
         /** @deprecated */
         currentStyle: ElementCSSInlineStyle;
-        mozRequestFullScreen: () => void;
-        webkitRequestFullscreen: () => void;
-        msRequestFullscreen: () => void;
     }
     /** @deprecated */
     interface TridentNamespace {
