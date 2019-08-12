@@ -200,7 +200,8 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
                 options: {
                     states: {
                         hover: {},
-                        select: {}
+                        select: {},
+                        inactive: {}
                     }
                 },
                 pointAttribs: pointAttribs,
@@ -211,7 +212,8 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
                             animation: false
                         }
                     }
-                }
+                },
+                inactiveFilters: {}
             },
             options: {}
         };

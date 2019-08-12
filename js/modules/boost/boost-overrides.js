@@ -331,6 +331,21 @@ wrap(Series.prototype, 'processData', function (proceed) {
     }
 });
 
+
+// In heatmap, inactive state tries to modify opacity for other points.
+// Disable this for canvas (where opacity is disabled) to improve performance.
+if (seriesTypes.heatmap) {
+    wrap(
+        seriesTypes.heatmap.prototype.pointClass.prototype,
+        'setState',
+        function (proceed) {
+            if (!this.series.isSeriesBoosting) {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+        }
+    );
+}
+
 addEvent(Series, 'hide', function () {
     if (this.canvas && this.renderTarget) {
         if (this.ogl) {
