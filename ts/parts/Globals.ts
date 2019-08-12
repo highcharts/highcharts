@@ -97,6 +97,11 @@ declare global {
         msHidden: boolean;
         webkitHidden: boolean;
     }
+    interface Element {
+        mozRequestFullScreen: Function;
+        msRequestFullscreen: Function;
+        webkitRequestFullscreen: Function;
+    }
     interface Index extends Object {
         [key: string]: any;
         [index: number]: any;
