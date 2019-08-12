@@ -64,6 +64,18 @@
  */
 
 /**
+ * Context for the node formatter function.
+ *
+ * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
+ * @extends Highcharts.DataLabelsFormatterContextObject
+ *//**
+ * The node object. The node name, if defined, is available through
+ * `this.point.name`.
+ * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
+ * @type {Highcharts.SankeyNodeObject}
+ */
+
+/**
  * Options for the series data labels, appearing next to each data point.
  *
  * Since v6.2.0, multiple data labels can be applied to each single point by
@@ -97,7 +109,7 @@
  * `nodeFormat` option takes precedence over the `nodeFormatter`.
  *
  * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>|undefined}
+ * @type {Highcharts.FormatterCallbackFunction<Highcharts.SeriesSankeyDataLabelsFormatterContextObject>|undefined}
  * @default function () { return this.point.name; }
  * @since 6.0.2
  */
@@ -147,7 +159,9 @@ var getDLOptions = function getDLOptions(params) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sankey', 'column',
+seriesType(
+    'sankey',
+    'column',
     /**
      * A sankey diagram is a type of flow diagram, in which the width of the
      * link between two nodes is shown proportionally to the flow quantity.
@@ -228,7 +242,7 @@ seriesType('sankey', 'column',
 
         /**
          * Set options on specific levels. Takes precedence over series options,
-         * but not point options.
+         * but not node and link options.
          *
          * @sample highcharts/demo/sunburst
          *         Sunburst chart
@@ -239,37 +253,38 @@ seriesType('sankey', 'column',
          */
 
         /**
-         * Can set `borderColor` on all points which lies on the same level.
+         * Can set `borderColor` on all nodes which lay on the same level.
          *
          * @type      {Highcharts.ColorString}
          * @apioption plotOptions.sankey.levels.borderColor
          */
 
         /**
-         * Can set `borderWidth` on all points which lies on the same level.
+         * Can set `borderWidth` on all nodes which lay on the same level.
          *
          * @type      {number}
          * @apioption plotOptions.sankey.levels.borderWidth
          */
 
         /**
-         * Can set `color` on all points which lies on the same level.
+         * Can set `color` on all nodes which lay on the same level.
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.sankey.levels.color
          */
 
         /**
-         * Can set `colorByPoint` on all points which lies on the same level.
+         * Can set `colorByPoint` on all nodes which lay on the same level.
          *
          * @type      {boolean}
+         * @default   true
          * @apioption plotOptions.sankey.levels.colorByPoint
          */
 
         /**
-         * Can set `dataLabels` on all points which lies on the same level.
+         * Can set `dataLabels` on all points which lay on the same level.
          *
-         * @type      {object}
+         * @type      {Highcharts.SeriesSankeyDataLabelsOptionsObject}
          * @apioption plotOptions.sankey.levels.dataLabels
          */
 
@@ -282,16 +297,17 @@ seriesType('sankey', 'column',
          */
 
         /**
-         * Can set `linkOpacity` on all points which lies on the same level.
+         * Can set `linkOpacity` on all points which lay on the same level.
          *
          * @type      {number}
+         * @default   0.5
          * @apioption plotOptions.sankey.levels.linkOpacity
          */
 
         /**
-         * Can set `states` on all points which lies on the same level.
+         * Can set `states` on all nodes and points which lay on the same level.
          *
-         * @type      {object}
+         * @type      {Highcharts.PointStatesOptionsObject}
          * @apioption plotOptions.sankey.levels.states
          */
 
@@ -301,6 +317,7 @@ seriesType('sankey', 'column',
          * @private
          */
         linkOpacity: 0.5,
+
         /**
          * The minimal width for a line of a sankey. By default,
          * 0 values are not shown.
@@ -315,6 +332,7 @@ seriesType('sankey', 'column',
          *
          */
         minLinkWidth: 0,
+
         /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
@@ -322,6 +340,7 @@ seriesType('sankey', 'column',
          * @private
          */
         nodeWidth: 20,
+
         /**
          * The padding between nodes in a sankey diagram or dependency wheel, in
          * pixels.
@@ -329,7 +348,9 @@ seriesType('sankey', 'column',
          * @private
          */
         nodePadding: 10,
+
         showInLegend: false,
+
         states: {
             hover: {
                 /**
@@ -350,8 +371,8 @@ seriesType('sankey', 'column',
                 /**
                  * Opacity of inactive markers.
                  *
+                 * @type      {number}
                  * @apioption plotOptions.series.marker.states.inactive.opacity
-                 * @type {number}
                  */
                 opacity: 0.1,
 
@@ -359,6 +380,7 @@ seriesType('sankey', 'column',
                  * Animation when not hovering over the marker.
                  *
                  * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @apioption plotOptions.series.marker.states.inactive.animation
                  */
                 animation: {
                     duration: 50
@@ -903,7 +925,8 @@ seriesType('sankey', 'column',
         isValid: function () {
             return this.isNode || typeof this.weight === 'number';
         }
-    });
+    }
+);
 
 
 /**
