@@ -315,9 +315,8 @@ QUnit.test('positioning', assert => {
         },
         series: [{ data: data, yAxis: 0 }, { data: data, yAxis: 1 }]
     });
-    const isInsideAxis = ({ pos, len }, { y, height }) => (
-        (pos <= y) &&
-        ((y + height) <= (pos + len))
+    const isInsideAxis = ({ pos, len }, { anchorY }) => (
+        (pos <= anchorY) && (anchorY <= (pos + len))
     );
 
     // Set extremes to 85-90 for yAxis2.
@@ -332,20 +331,20 @@ QUnit.test('positioning', assert => {
     // Test tooltip position when point is inside plot area
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip aligned within yAxis when point is inside plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
     );
 
     // Test tooltip position when point is below plot area
     series1.points[2].onMouseOver();
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip aligned within yAxis when point is below plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is below plot area'
     );
 
     // Test tooltip position when point is above plot area
     series1.points[4].onMouseOver();
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip aligned within yAxis when point is above plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is above plot area'
     );
 });
