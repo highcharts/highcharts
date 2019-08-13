@@ -16,8 +16,11 @@ Highcharts.chart('container', {
         }
     },
     yAxis: {
+        labels: {
+            format: '{value}%'
+        },
         title: {
-            text: 'Percent'
+            enabled: false
         }
     },
     tooltip: {
