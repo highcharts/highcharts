@@ -33,7 +33,7 @@ module.exports = async () => {
     const commit = await octokit.repos.getCommit({
         owner: 'highcharts',
         repo: 'highcharts',
-        commit_sha: tags.data[0].commit.sha
+        ref: tags.data[0].commit.sha
     }).catch(error);
 
     console.log(

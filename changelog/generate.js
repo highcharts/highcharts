@@ -14,6 +14,7 @@
  *                 that are not used in the changelog.
  */
 
+const marked = require('marked');
 const prLog = require('./pr-log');
 const params = require('yargs').argv;
 
@@ -196,14 +197,23 @@ const params = require('yargs').argv;
             if (i === log.startFixes) {
                 outputString += '\n## Bug fixes\n';
             }
+
+            const edit = params.review ?
+                ` [<a href="https://github.com/highcharts/highcharts/pull/${change.number}">Edit</a>]` :
+                '';
+
             // All items
-            outputString += '- ' + addMissingDotToCommitMessage(desc) + '\n';
+            outputString += '- ' + addMissingDotToCommitMessage(desc) +
+                edit + '\n';
 
         });
 
         fs.writeFile(filename, outputString, function () {
             console.log('Wrote draft to ' + filename);
         });
+
+
+        return outputString;
     }
 
     /*
@@ -242,46 +252,13 @@ const params = require('yargs').argv;
         ).join(padder || 0) + number;
     }
 
-    function buildReview(log, products) {
+    function saveReview(md) {
 
         const filename = path.join(__dirname, 'review.html');
 
-        const formatItem = p => {
-
-            const labels = p.labels
-                .map(l => `<span style="background: #${l.color}; padding: 0 0.2em; border-radius: 0.2em">${l.name}</span>`)
-                .join(' ');
-            return `
-            <li>
-                ${p.description}
-                ${labels}
-                [<a href="https://github.com/highcharts/highcharts/pull/${p.number}">Edit</a>]
-            </li>`;
-        };
-
-        let html = '<style>body { font-family: sans-serif }</style>';
-
-        Object.keys(products).forEach(product => {
-            html += `<h2>${product}</h2>`;
-
-            log[product].features.forEach(p => {
-                html += formatItem(p);
-            });
-
-            html += '<h4>Bug Fixes</h4>';
-            log[product].bugfixes.forEach(p => {
-                html += formatItem(p);
-            });
-        });
-
-        html += '<h2>Excluded</h2>';
-        log.excluded.forEach(p => {
-            html += formatItem(p);
-        });
-
         fs.writeFileSync(
             filename,
-            html,
+            marked(md),
             'utf8'
         );
 
@@ -294,6 +271,7 @@ const params = require('yargs').argv;
         const optionKeys = getOptionKeys(tree);
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
+        const review = [];
 
         // Split the log into an array
         if (!params.pr) {
@@ -317,10 +295,6 @@ const params = require('yargs').argv;
                     products = JSON.parse(products);
                 }
 
-                if (params.review && params.pr) {
-                    buildReview(log, products);
-                }
-
                 for (name in products) {
 
                     if (products.hasOwnProperty(name)) {
@@ -332,15 +306,19 @@ const params = require('yargs').argv;
                                 pad(d.getDate(), 2);
                         }
 
-                        buildMarkdown(
+                        review.push(buildMarkdown(
                             name,
                             products[name].nr,
                             products[name].date,
                             log,
                             products,
                             optionKeys
-                        );
+                        ));
                     }
+                }
+
+                if (params.review) {
+                    saveReview(review.join('\n\n___\n'));
                 }
             }
         );
