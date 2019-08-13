@@ -10,6 +10,7 @@ js/modules/dotplot.src.js
 js/modules/full-screen.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
+js/modules/sankey.src.js
 js/modules/xrange.src.js
 js/parts/**/*.js
 js/parts-3d/**/*.js

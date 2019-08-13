@@ -2654,7 +2654,7 @@ extend((
             delete wrapper[key];
         });
 
-        return; // eslint-disable-line no-useless-return
+        return;
     },
 
     /**

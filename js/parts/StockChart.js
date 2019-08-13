@@ -647,7 +647,7 @@ seriesProto.processData = function (force) {
             }
         }
     }
-    return; // eslint-disable-line no-useless-return
+    return;
 };
 // Modify series extremes
 addEvent(Series, 'afterGetExtremes', function () {
