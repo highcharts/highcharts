@@ -826,7 +826,7 @@ H.Toolbar = function (options, langOptions, chart) {
     this.options = options;
     this.lang = langOptions;
     // set url for icons.
-    this.iconsURL = this.chart.options.navigation.iconsURL;
+    this.iconsURL = this.getIconsURL();
     this.guiEnabled = options.enabled;
     this.visible = pick(options.visible, true);
     this.placed = pick(options.placed, false);
@@ -1397,6 +1397,12 @@ H.Toolbar.prototype = {
      */
     redraw: function () {
         this.showHideNavigatorion();
+    },
+
+    getIconsURL: function () {
+        return this.chart.options.navigation.iconsURL ||
+            this.options.iconsURL ||
+            'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
     },
     /*
      * Mapping JSON fields to CSS classes.

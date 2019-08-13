@@ -1903,7 +1903,7 @@ var stockToolsBindings = {
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled,
                 gui = chart.stockTools,
-                iconsURL = chart.options.navigation.iconsURL;
+                iconsURL = gui.getIconsURL();
 
             if (gui && gui.guiEnabled) {
                 if (lastPrice) {
@@ -1989,7 +1989,7 @@ var stockToolsBindings = {
         init: function (button) {
             var chart = this.chart,
                 gui = chart.stockTools,
-                iconsURL = chart.options.navigation.iconsURL;
+                iconsURL = gui.getIconsURL();
 
             this.toggledAnnotations = !this.toggledAnnotations;
 

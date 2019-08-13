@@ -49,8 +49,8 @@ wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
     }
 });
 
-H.Popup = function (parentDiv, options) {
-    this.init(parentDiv, options);
+H.Popup = function (parentDiv, iconsURL) {
+    this.init(parentDiv, iconsURL);
 };
 
 H.Popup.prototype = {
@@ -61,7 +61,7 @@ H.Popup.prototype = {
      * @param {Object} - user options
      * @return {HTMLDOMElement} - return created popup's div
      */
-    init: function (parentDiv, options) {
+    init: function (parentDiv, iconsURL) {
 
         // create popup div
         this.container = createElement(DIV, {
@@ -69,7 +69,7 @@ H.Popup.prototype = {
         }, null, parentDiv);
 
         this.lang = this.getLangpack();
-        this.iconsURL = options.iconsURL;
+        this.iconsURL = iconsURL;
 
         // add close button
         this.addCloseBtn();
@@ -1057,7 +1057,9 @@ addEvent(H.NavigationBindings, 'showPopup', function (config) {
         // Add popup to main container
         this.popup = new H.Popup(
             this.chart.container,
-            this.options
+            this.chart.options.navigation.iconsURL ||
+                this.chart.options.stockTools.gui.iconsURL ||
+                'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
         );
     }
 
