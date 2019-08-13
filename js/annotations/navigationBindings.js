@@ -1383,16 +1383,12 @@ H.setOptions({
          */
         annotationsOptions: {},
         /**
-         * Additional options to popup.
+         * Path where Highcharts will look for icons. Change this to use
+         * icons from a different server.
          *
-         * @apioption navigation.annotationsPopup
+         * @since 7.1.3
+         *
          */
-        annotationsPopup: {
-            /**
-             * Path where Highcharts will look for icons. Change this to use
-             * icons from a different server.
-             */
-            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-        }
+        iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
     }
 });
