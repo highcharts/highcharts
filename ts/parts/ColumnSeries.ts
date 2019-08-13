@@ -44,15 +44,18 @@ declare global {
             states?: ColumnSeriesStatesOptions;
         }
         interface ColumnSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
+            extends LineSeriesStatesHoverOptions {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
         }
+        interface ColumnSeriesStatesInactiveOptions
+            extends LineSeriesStatesInactiveOptions {
+        }
         interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: ColumnSeriesStatesHoverOptions;
+            inactive?: ColumnSeriesStatesInactiveOptions;
             select?: ColumnSeriesStatesSelectOptions;
         }
         interface ColumnSeriesStatesSelectOptions {

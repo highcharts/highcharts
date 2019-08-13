@@ -336,7 +336,7 @@ seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
             }
             columnProto.pointClass.prototype.destroy
                 .apply(this, arguments as any);
-            return; // eslint-disable-line no-useless-return
+            return;
         }
     }
 );

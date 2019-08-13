@@ -17,6 +17,8 @@
 declare global {
     namespace Highcharts {
         type NavigationOptions = any; // @todo exporting module
+        type OrganizationSeries = any; // @todo organization module
+        type OrganizationSeriesOptions = any // @todo organization module
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
@@ -59,7 +61,6 @@ declare global {
         interface Series {
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
-            invertable?: any; // @todo sankey
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
             layout?: any; // @todo networkgraph
