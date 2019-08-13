@@ -29,7 +29,7 @@ declare global {
         interface DotplotSeriesOptions extends ColumnSeriesOptions {
             itemPadding?: number;
         }
-        interface SeriesTypes {
+        interface SeriesTypesDictionary {
             dotplot: typeof DotplotSeries;
         }
         class DotplotPoint extends ColumnPoint {

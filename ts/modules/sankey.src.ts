@@ -18,9 +18,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface SankeyColumnArray extends Array<SankeyPoint> {
+        interface SankeyColumnArray<T = SankeyPoint> extends Array<T> {
             offset(
-                node: SankeyPoint,
+                node: T,
                 factor: number
             ): (Dictionary<number>|undefined);
             sum(): number;
@@ -111,7 +111,7 @@ declare global {
         interface Series {
             invertable?: boolean;
         }
-        interface SeriesTypes {
+        interface SeriesTypesDictionary {
             sankey: typeof SankeySeries;
         }
         class SankeyPoint extends ColumnPoint implements NodesPoint {
