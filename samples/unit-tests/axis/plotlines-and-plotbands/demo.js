@@ -292,13 +292,13 @@ QUnit.test('#8356: support for plot lines & bands labels formatter.', function (
 
     assert.ok(
         plotLine.label &&
-          plotLine.label.element.innerHTML.indexOf(formatterCallback()) > -1,
+          plotLine.label.element.textContent.indexOf(formatterCallback()) > -1,
         "Plot line label is visible."
     );
 
     assert.ok(
         plotBand.label &&
-          plotBand.label.element.innerHTML.indexOf(formatterCallback()) > -1,
+          plotBand.label.element.textContent.indexOf(formatterCallback()) > -1,
         "Plot band label is visible."
     );
 
