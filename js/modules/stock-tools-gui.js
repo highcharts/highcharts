@@ -210,10 +210,12 @@ H.setOptions({
              * Path where Highcharts will look for icons. Change this to use
              * icons from a different server.
              *
-             * See also [iconsURL](#navigation.annotationsOptions.iconsURL) for popup.
+             * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and stocktools.
+             *
+             * @deprecated
+             * @apioption stockTools.gui.iconsURL
              *
              */
-            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/',
             /**
              * A collection of strings pointing to config options for the
              * toolbar items. Each name refers to unique key from definitions
@@ -823,7 +825,8 @@ H.Toolbar = function (options, langOptions, chart) {
     this.chart = chart;
     this.options = options;
     this.lang = langOptions;
-
+    // set url for icons.
+    this.iconsURL = this.chart.options.navigation.iconsURL;
     this.guiEnabled = options.enabled;
     this.visible = pick(options.visible, true);
     this.placed = pick(options.placed, false);
@@ -1060,8 +1063,7 @@ H.Toolbar.prototype = {
      * @return {Object} - references to all created HTML elements
      */
     addButton: function (target, options, btnName, lang) {
-        var guiOptions = this.options,
-            btnOptions = options[btnName],
+        var btnOptions = options[btnName],
             items = btnOptions.items,
             classMapping = H.Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '',
@@ -1091,10 +1093,10 @@ H.Toolbar.prototype = {
             }, null, buttonWrapper);
 
             submenuArrow.style['background-image'] = 'url(' +
-                guiOptions.iconsURL + 'arrow-bottom.svg)';
+                this.iconsURL + 'arrow-bottom.svg)';
         } else {
             mainButton.style['background-image'] = 'url(' +
-                guiOptions.iconsURL + btnOptions.symbol + ')';
+                this.iconsURL + btnOptions.symbol + ')';
         }
 
         return {
@@ -1121,14 +1123,14 @@ H.Toolbar.prototype = {
         }, null, stockToolbar.arrowWrapper);
 
         stockToolbar.arrowUp.style['background-image'] =
-            'url(' + this.options.iconsURL + 'arrow-right.svg)';
+            'url(' + this.iconsURL + 'arrow-right.svg)';
 
         stockToolbar.arrowDown = createElement(DIV, {
             className: PREFIX + 'arrow-down'
         }, null, stockToolbar.arrowWrapper);
 
         stockToolbar.arrowDown.style['background-image'] =
-            'url(' + this.options.iconsURL + 'arrow-right.svg)';
+            'url(' + this.iconsURL + 'arrow-right.svg)';
 
         wrapper.insertBefore(
             stockToolbar.arrowWrapper,
@@ -1249,7 +1251,7 @@ H.Toolbar.prototype = {
         }, null, wrapper);
 
         showhideBtn.style['background-image'] =
-            'url(' + this.options.iconsURL + 'arrow-right.svg)';
+            'url(' + this.iconsURL + 'arrow-right.svg)';
 
         if (!visible) {
             // hide
