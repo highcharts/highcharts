@@ -280,10 +280,15 @@ Chart.prototype.moveFixedElements = function (this: Highcharts.Chart): void {
             '.highcharts-contextbutton',
             '.highcharts-credits',
             '.highcharts-legend',
+            '.highcharts-legend-checkbox',
+            '.highcharts-navigator',
+            '.highcharts-navigator-xaxis',
+            '.highcharts-navigator-yaxis',
+            '.highcharts-navigator-series',
             '.highcharts-reset-zoom',
+            '.highcharts-scrollbar',
             '.highcharts-subtitle',
-            '.highcharts-title',
-            '.highcharts-legend-checkbox'
+            '.highcharts-title'
         ],
         axisClass;
 
