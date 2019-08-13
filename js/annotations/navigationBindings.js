@@ -1362,6 +1362,16 @@ H.setOptions({
          */
 
         /**
+         * Path where Highcharts will look for icons. Change this to use
+         * icons from a different server.
+         *
+         * @since 7.1.3
+         * @apioption @navigation.iconsURL
+         * @default 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+         *
+         */
+
+        /**
          * Events to communicate between Stock Tools and custom GUI.
          *
          * @since        7.0.0
@@ -1381,14 +1391,6 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {},
-        /**
-         * Path where Highcharts will look for icons. Change this to use
-         * icons from a different server.
-         *
-         * @since 7.1.3
-         *
-         */
-        iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+        annotationsOptions: {}
     }
 });
