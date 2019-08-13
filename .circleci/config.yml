@@ -129,7 +129,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Generate visual references
-          command: npx gulp test --tests highcharts/demo/area-* --reference --browsercount 1
+          command: npx gulp test --tests highcharts/demo/* --reference --browsercount 1
       - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
       - <<: *persist_workspace
 
