@@ -46,7 +46,7 @@ function uploadVisualTestResults() {
             to: `${DESTINATION_DIR}/diffs/latest/${[...file.split('/')].pop()}`
         }));
 
-        const resultImageFilesLatest = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.gif|diff.png)`).map(file => ({
+        const resultImageFilesLatest = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.png)`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/diffs/latest/${[...file.split('/')].slice(1).join('/')}`
         }));
@@ -56,7 +56,7 @@ function uploadVisualTestResults() {
             to: `${DESTINATION_DIR}/diffs/${dateString}/${[...file.split('/')].pop()}`
         }));
 
-        const resultImageFiles = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.gif|diff.png)`).map(file => ({
+        const resultImageFiles = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.png)`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/diffs/${dateString}/${[...file.split('/')].slice(1).join('/')}`
         }));

@@ -144,7 +144,7 @@ jobs:
       tests:
         description: "The path to the visual tests to run"
         type: string
-        default: "highcharts/demo/area-*"
+        default: "highcharts/demo/*"
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
@@ -320,10 +320,6 @@ workflows:
           name: "Test visual differences and distribute diff log to S3."
           requires:
             - install_dependencies
-          filters:
-            branches:
-              only:
-                - feature/ci-visual-tests
           context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
