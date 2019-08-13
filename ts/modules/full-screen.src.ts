@@ -58,14 +58,23 @@ FullScreen.prototype = {
         this: Highcharts.FullScreen,
         container: Highcharts.HTMLDOMElement
     ): void {
+
+        let p;
+
         if (container.requestFullscreen) {
-            container.requestFullscreen();
+            p = container.requestFullscreen();
         } else if (container.mozRequestFullScreen) {
-            container.mozRequestFullScreen();
+            p = container.mozRequestFullScreen();
         } else if (container.webkitRequestFullscreen) {
-            container.webkitRequestFullscreen();
+            p = container.webkitRequestFullscreen();
         } else if (container.msRequestFullscreen) {
-            container.msRequestFullscreen();
+            p = container.msRequestFullscreen();
+        }
+
+        if (p) {
+            p.catch((): void => {
+                alert('Full screen is not supported inside a frame'); // eslint-disable-line no-alert
+            });
         }
     }
 };
