@@ -1820,9 +1820,17 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             }
         },
         destroy: function (this: Highcharts.PackedBubbleSeries): void {
+            // Remove the series from all layouts series collections #11469
+            if (this.chart.graphLayoutsLookup) {
+                this.chart.graphLayoutsLookup.forEach(function (layout): void {
+                    layout.removeElementFromCollection(this, layout.series);
+                }, this);
+            }
+
             if (this.parentNode) {
                 this.parentNodeLayout.removeElementFromCollection(
-                    this.parentNode, this.parentNodeLayout.nodes);
+                    this.parentNode, this.parentNodeLayout.nodes
+                );
                 if (this.parentNode.dataLabel) {
                     this.parentNode.dataLabel =
                         this.parentNode.dataLabel.destroy();

@@ -448,7 +448,10 @@ seriesType('networkgraph', 'line',
      * @private
      */
     createNode: H.NodesMixin.createNode,
-    destroy: H.NodesMixin.destroy,
+    destroy: function () {
+        this.layout.removeElementFromCollection(this, this.layout.series);
+        H.NodesMixin.destroy.call(this);
+    },
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Extend init with base event, which should stop simulation during
