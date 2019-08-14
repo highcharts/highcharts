@@ -586,7 +586,7 @@ seriesType('packedbubble', 'bubble',
             else {
                 series.graph.hide();
                 series.parentNodeLayout
-                    .removeNode(series.parentNode);
+                    .removeElementFromCollection(series.parentNode, series.parentNodeLayout.nodes);
                 if (series.parentNode.dataLabel) {
                     series.parentNode.dataLabel.hide();
                 }
@@ -594,11 +594,11 @@ seriesType('packedbubble', 'bubble',
         }
         else if (series.layout) {
             if (series.visible) {
-                series.layout.addNodes(series.points);
+                series.layout.addElementsToCollection(series.points, series.layout.nodes);
             }
             else {
                 series.points.forEach(function (node) {
-                    series.layout.removeNode(node);
+                    series.layout.removeElementFromCollection(node, series.layout.nodes);
                 });
             }
         }
@@ -748,8 +748,8 @@ seriesType('packedbubble', 'bubble',
                 parentNode.plotY = series.parentNode.plotY;
             }
             series.parentNode = parentNode;
-            parentNodeLayout.addSeries(series);
-            parentNodeLayout.addNodes([parentNode]);
+            parentNodeLayout.addElementsToCollection([series], parentNodeLayout.series);
+            parentNodeLayout.addElementsToCollection([parentNode], parentNodeLayout.nodes);
         }
     },
     /**
@@ -799,8 +799,8 @@ seriesType('packedbubble', 'bubble',
             node.collisionNmb = 1;
         });
         layout.setArea(0, 0, series.chart.plotWidth, series.chart.plotHeight);
-        layout.addSeries(series);
-        layout.addNodes(series.points);
+        layout.addElementsToCollection([series], layout.series);
+        layout.addElementsToCollection(series.points, layout.nodes);
     },
     /**
      * Function responsible for adding all the layouts to the chart.
@@ -1162,7 +1162,7 @@ seriesType('packedbubble', 'bubble',
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
-                            layout.removeNode(point);
+                            layout.removeElementFromCollection(point, layout.nodes);
                             point.remove();
                         }
                     }
@@ -1173,7 +1173,7 @@ seriesType('packedbubble', 'bubble',
     },
     destroy: function () {
         if (this.parentNode) {
-            this.parentNodeLayout.removeNode(this.parentNode);
+            this.parentNodeLayout.removeElementFromCollection(this.parentNode, this.parentNodeLayout.nodes);
             if (this.parentNode.dataLabel) {
                 this.parentNode.dataLabel =
                     this.parentNode.dataLabel.destroy();
@@ -1191,7 +1191,7 @@ seriesType('packedbubble', 'bubble',
      */
     destroy: function () {
         if (this.series.layout) {
-            this.series.layout.removeNode(this);
+            this.series.layout.removeElementFromCollection(this, this.series.layout.nodes);
         }
         return Point.prototype.destroy.apply(this, arguments);
     }

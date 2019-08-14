@@ -118,6 +118,19 @@ H.layouts['reingold-fruchterman'].prototype, {
         // available space around the node:
         this.k = this.options.linkLength || this.integration.getK(this);
     },
+    addElementsToCollection: function (elements, collection) {
+        elements.forEach(function (elem) {
+            if (collection.indexOf(elem) === -1) {
+                collection.push(elem);
+            }
+        });
+    },
+    removeElementFromCollection: function (element, collection) {
+        var index = collection.indexOf(element);
+        if (index !== -1) {
+            collection.splice(index, 1);
+        }
+    },
     addNodes: function (nodes) {
         nodes.forEach(function (node) {
             if (this.nodes.indexOf(node) === -1) {
