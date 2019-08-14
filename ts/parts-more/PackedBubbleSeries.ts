@@ -940,19 +940,25 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 } else {
                     series.graph.hide();
                     series.parentNodeLayout
-                        .removeNode(series.parentNode as any);
+                        .removeElementFromCollection(
+                            series.parentNode, series.parentNodeLayout.nodes
+                        );
                     if ((series.parentNode as any).dataLabel) {
                         (series.parentNode as any).dataLabel.hide();
                     }
                 }
             } else if (series.layout) {
                 if (series.visible) {
-                    series.layout.addNodes(series.points);
+                    series.layout.addElementsToCollection(
+                        series.points, series.layout.nodes
+                    );
                 } else {
                     series.points.forEach(function (
                         node: Highcharts.PackedBubblePoint
                     ): void {
-                        series.layout.removeNode(node);
+                        series.layout.removeElementFromCollection(
+                            node, series.layout.nodes
+                        );
                     });
                 }
             }
@@ -1169,8 +1175,12 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                     (parentNode as any).plotY = series.parentNode.plotY;
                 }
                 series.parentNode = parentNode;
-                parentNodeLayout.addSeries(series);
-                parentNodeLayout.addNodes([parentNode as any]);
+                parentNodeLayout.addElementsToCollection(
+                    [series], parentNodeLayout.series
+                );
+                parentNodeLayout.addElementsToCollection(
+                    [parentNode as any], parentNodeLayout.nodes
+                );
             }
         },
         /**
@@ -1256,8 +1266,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             layout.setArea(
                 0, 0, series.chart.plotWidth, series.chart.plotHeight
             );
-            layout.addSeries(series);
-            layout.addNodes(series.points);
+            layout.addElementsToCollection([series], layout.series);
+            layout.addElementsToCollection(series.points, layout.nodes);
         },
         /**
          * Function responsible for adding all the layouts to the chart.
@@ -1798,7 +1808,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                                     plotX: point.plotX,
                                     plotY: point.plotY
                                 }), false);
-                                layout.removeNode(point);
+                                layout.removeElementFromCollection(
+                                    point, layout.nodes
+                                );
                                 point.remove();
                             }
                         }
@@ -1809,7 +1821,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
         },
         destroy: function (this: Highcharts.PackedBubbleSeries): void {
             if (this.parentNode) {
-                this.parentNodeLayout.removeNode(this.parentNode);
+                this.parentNodeLayout.removeElementFromCollection(
+                    this.parentNode, this.parentNodeLayout.nodes);
                 if (this.parentNode.dataLabel) {
                     this.parentNode.dataLabel =
                         this.parentNode.dataLabel.destroy();
@@ -1827,7 +1840,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
          */
         destroy: function (this: Highcharts.PackedBubblePoint): void {
             if (this.series.layout) {
-                this.series.layout.removeNode(this);
+                this.series.layout.removeElementFromCollection(
+                    this, this.series.layout.nodes
+                );
             }
             return Point.prototype.destroy.apply(this, arguments as any);
         }

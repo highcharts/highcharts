@@ -576,9 +576,9 @@ seriesType('networkgraph', 'line',
         }
         this.layout = layout;
         layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-        layout.addSeries(this);
-        layout.addNodes(this.nodes);
-        layout.addLinks(this.points);
+        layout.addElementsToCollection([this], layout.series);
+        layout.addElementsToCollection(this.nodes, layout.nodes);
+        layout.addElementsToCollection(this.points, layout.links);
     },
     /**
      * Extend the render function to also render this.nodes together with
@@ -922,11 +922,8 @@ seriesType('networkgraph', 'line',
                     link.destroyElements();
                 }
             });
-            this.series.layout.removeNode(this);
         }
-        else {
-            this.series.layout.removeLink(this);
-        }
+        this.series.layout.removeElementFromCollection(this, this.series.layout[this.isNode ? 'nodes' : 'links']);
         return Point.prototype.destroy.apply(this, arguments);
     }
 });

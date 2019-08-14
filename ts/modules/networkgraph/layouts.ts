@@ -83,9 +83,10 @@ declare global {
             public startTemperature?: number;
             public systemTemperature?: number;
             public temperature?: number;
-            public addLinks(links: Array<NetworkgraphPoint>): void;
-            public addNodes(nodes: Array<Point>): void;
-            public addSeries(series: Series): void;
+            public addElementsToCollection<T, C extends T>(
+                elements: Array<C>,
+                collection: Array<T>
+            ): void;
             public applyLimitBox(node: Point, box: Dictionary<number>): void;
             public applyLimits(): void;
             public attractiveForces(): void;
@@ -115,8 +116,9 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
-            public removeLink(link: Point): void;
-            public removeNode(node: Point): void;
+            public removeElementFromCollection<T>(
+                element: T, collection: Array<T>
+            ): void
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
@@ -298,6 +300,28 @@ H.extend(
             // Optimal distance between nodes,
             // available space around the node:
             this.k = this.options.linkLength || this.integration.getK(this);
+        },
+        addElementsToCollection: function<T, C extends T> (
+            this: Highcharts.NetworkgraphLayout,
+            elements: Array<C>,
+            collection: Array<T>
+        ): void {
+            elements.forEach(function (elem): void {
+                if (collection.indexOf(elem) === -1) {
+                    collection.push(elem);
+                }
+            });
+        },
+        removeElementFromCollection: function<T> (
+            this: Highcharts.NetworkgraphLayout,
+            element: T,
+            collection: Array<T>
+        ): void {
+            var index = collection.indexOf(element);
+
+            if (index !== -1) {
+                collection.splice(index, 1);
+            }
         },
         addNodes: function (
             this: Highcharts.NetworkgraphLayout,
