@@ -137,7 +137,7 @@ declare global {
             public chart: NetworkgraphChart;
             public createNode: NodesMixin['createNode'];
             public data: Array<NetworkgraphPoint>;
-            public destroy: NodesMixin['destroy'];
+            public destroy(): void;
             public directTouch: boolean;
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public forces: Array<string>;
@@ -656,7 +656,10 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          * @private
          */
         createNode: H.NodesMixin.createNode,
-        destroy: H.NodesMixin.destroy,
+        destroy: function (this: Highcharts.NetworkgraphSeries): void {
+            this.layout.removeElementFromCollection(this, this.layout.series);
+            H.NodesMixin.destroy.call(this);
+        },
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
