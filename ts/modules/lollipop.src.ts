@@ -1,0 +1,100 @@
+/* *
+ *
+ *  (c) 2010-2019 Sebastian Bochan, Rafal Sebestjanski
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+	namespace Highcharts {
+		interface LollipopPointOptions extends DumbbellPointOptions {
+		}
+		interface LollipopSeriesOptions extends DumbbellSeriesOptions {
+			startColor: any;
+		}
+		class LollipopPoint extends DumbbellPoint {
+			public series: LollipopSeries;
+			public options: LollipopPointOptions;
+		}
+		class LollipopSeries extends DumbbellSeries {
+			public data: Array<LollipopPoint>;
+			public options: LollipopSeriesOptions;
+			public points: Array<LollipopPoint>;
+			public toYData: AreaSeries['toYData'];
+			public translatePoint: AreaSeries['translate'];
+			public drawPoint: AreaSeries['drawPoints'];
+			public drawDataLabels: ColumnSeries['drawDataLabels'];
+			public alignDataLabel: ColumnSeries['alignDataLabel'];
+			public setShapeArgs: ColumnSeries['translate'];
+		}
+	}
+}
+
+var seriesType = H.seriesType,
+	areaProto = H.seriesTypes.area.prototype,
+	colProto = H.seriesTypes.column.prototype;
+
+/**
+ * The lollipop series is a carteseian series with a line anchored from
+ * the x axis and a dot at the end to mark the value.
+ * Requires `highcharts-more.js`, `modules/dumbbell.js` and `modules/lollipop.js`.
+ *
+ * @sample {highcharts} highcharts/demo/lollipop/
+ *         Lollipop chart
+ * @sample {highstock} stock/demo/lollipop/
+ *         Lollipop chart
+ * @sample {highcharts} highcharts/css/lollipop/
+ *         Styled mode
+ *
+ * @extends      plotOptions.dumbbell
+ * @product      highcharts highstock
+ * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, startColor,
+ *               stickyTracking, trackByArea
+ * @since        7.1.3
+ * @optionparent plotOptions.lollipop
+ */
+seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
+	/** @ignore-option */
+	startColor: undefined,
+	/** @ignore-option */
+	threshold: 0,
+	/** @ignore-option */
+	connectorWidth: 1,
+	/** @ignore-option */
+	groupPadding: 0.2,
+	/** @ignore-option */
+	pointPadding: 0.1,
+	/** @ignore-option */
+	states: {
+		hover: {
+			/** @ignore-option */
+			lineWidthPlus: 0,
+			/** @ignore-option */
+			connectorWidthPlus: 1,
+			/** @ignore-option */
+			halo: false
+		}
+	}
+  }, {
+	toYData: areaProto.toYData,
+	setStackedPoints: areaProto.setStackedPoints,
+	translatePoint: areaProto.translate,
+	drawPoint: areaProto.drawPoints,
+	drawDataLabels: colProto.drawDataLabels,
+	alignDataLabel: colProto.alignDataLabel,
+	setShapeArgs: colProto.translate,
+  }, {
+	pointSetState: areaProto.pointClass.prototype.setState,
+	setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState
+  });
