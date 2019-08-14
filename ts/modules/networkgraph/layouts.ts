@@ -323,54 +323,6 @@ H.extend(
                 collection.splice(index, 1);
             }
         },
-        addNodes: function (
-            this: Highcharts.NetworkgraphLayout,
-            nodes: Array<Highcharts.Point>
-        ): void {
-            nodes.forEach(function (node: Highcharts.Point): void {
-                if (this.nodes.indexOf(node) === -1) {
-                    this.nodes.push(node);
-                }
-            }, this);
-        },
-        removeNode: function (
-            this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.Point
-        ): void {
-            var index = this.nodes.indexOf(node);
-
-            if (index !== -1) {
-                this.nodes.splice(index, 1);
-            }
-        },
-        removeLink: function (
-            this: Highcharts.NetworkgraphLayout,
-            link: Highcharts.Point
-        ): void {
-            var index = this.links.indexOf(link);
-
-            if (index !== -1) {
-                this.links.splice(index, 1);
-            }
-        },
-        addLinks: function (
-            this: Highcharts.NetworkgraphLayout,
-            links: Array<Highcharts.NetworkgraphPoint>
-        ): void {
-            links.forEach(function (link: Highcharts.NetworkgraphPoint): void {
-                if (this.links.indexOf(link) === -1) {
-                    this.links.push(link);
-                }
-            }, this);
-        },
-        addSeries: function (
-            this: Highcharts.NetworkgraphLayout,
-            series: Highcharts.Series
-        ): void {
-            if (this.series.indexOf(series) === -1) {
-                this.series.push(series);
-            }
-        },
         clear: function (this: Highcharts.NetworkgraphLayout): void {
             this.nodes.length = 0;
             this.links.length = 0;
