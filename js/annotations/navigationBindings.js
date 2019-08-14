@@ -1324,6 +1324,15 @@ H.setOptions({
             }
         },
         /**
+         * Path where Highcharts will look for icons. Change this to use
+         * icons from a different server.
+         *
+         * @since     7.1.3
+         * @apioption navigation.iconsURL
+         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         */
+
+        /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *
          * @type      {Function}
@@ -1381,18 +1390,6 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {},
-        /**
-         * Additional options to popup.
-         *
-         * @apioption navigation.annotationsPopup
-         */
-        annotationsPopup: {
-            /**
-             * Path where Highcharts will look for icons. Change this to use
-             * icons from a different server.
-             */
-            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-        }
+        annotationsOptions: {}
     }
 });
