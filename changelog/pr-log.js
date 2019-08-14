@@ -18,7 +18,7 @@ const log = {
     'Highcharts Gantt': {}
 };
 
-module.exports = async () => {
+module.exports = async since => {
 
     const included = [];
 
@@ -33,7 +33,7 @@ module.exports = async () => {
     const commit = await octokit.repos.getCommit({
         owner: 'highcharts',
         repo: 'highcharts',
-        ref: tags.data[0].commit.sha
+        ref: since || tags.data[0].commit.sha
     }).catch(error);
 
     console.log(
