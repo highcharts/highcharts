@@ -234,6 +234,23 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 }
 
 /**
+ * Vanilla request for fetching an url using GET.
+ * @param {String} url to fetch
+ * @param {Function} callback to call when done.
+ */
+function xhrLoad(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+}
+
+/**
  * Get a PNG image or image data from the chart SVG.
  * @param  {Object} chart The chart instance
  * @param  {String} path  The sample path
@@ -262,7 +279,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        new Error('Error loading SVG on canvas. Is the reference.svg present?')
+                        new Error('Error loading SVG on canvas.')
                     );
                 };
                 img.src = url;
@@ -304,29 +321,25 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         }
 
         var remotelocation = __karma__.config.cliArgs.remotelocation;
-        var xhr = new XMLHttpRequest();
         // Handle reference, load SVG from bucket or file
+        var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {
-            xhr.open('GET',
-                'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg',
-                true);
-        } else {
-            xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
         }
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
+        xhrLoad(url, function onXHRDone(xhr) {
+            if (xhr.status == 200) {
                 var svg = xhr.responseText;
-
                 svgToPixels(svg, function (data) {
                     referenceData = data;
                     doComparison();
-                });
+                })
+            } else {
+                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
+                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
+                resolve();
             }
-        };
-        xhr.send();
-
+        });
     });
-
 }
 
 // De-randomize Math.random in tests
