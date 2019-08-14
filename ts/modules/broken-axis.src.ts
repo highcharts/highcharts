@@ -65,7 +65,6 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
-    isNumber,
     pick
 } = U;
 
@@ -454,13 +453,16 @@ Axis.prototype.setBreaks = function (
 
 addEvent(Series, 'afterGeneratePoints', function (): void {
     const {
-        xAxis,
-        yAxis,
+        isDirty,
+        options: { connectNulls },
         points,
-        options: { connectNulls }
+        xAxis,
+        yAxis
     } = this;
 
-    if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
+    /* Set, or reset visibility of the points. Axis.setBreaks marks the series
+    as isDirty */
+    if (isDirty) {
         let i = points.length;
         while (i--) {
             const point = points[i];
@@ -470,16 +472,15 @@ addEvent(Series, 'afterGeneratePoints', function (): void {
             const isPointInBreak = (
                 !nullGap &&
                 (
-                    xAxis.isInAnyBreak(point.x, true) ||
-                    yAxis.isInAnyBreak(point.y, true)
+                    xAxis && xAxis.isInAnyBreak(point.x, true) ||
+                    yAxis && yAxis.isInAnyBreak(point.y, true)
                 )
             );
-            // Set point.isNull if in any break.
-            // If not in break, reset isNull to original value.
-            point.isNull = isPointInBreak || pick(
-                point.isValid && !point.isValid(),
-                point.x === null || !isNumber(point.y)
-            );
+            // Set point.visible if in any break.
+            // If not in break, reset visible to original value.
+            point.visible = isPointInBreak ?
+                false :
+                point.options.visible !== false;
         }
     }
 });
@@ -572,7 +573,6 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
         points = this.points.slice(),
         i = points.length - 1,
         yAxis = this.yAxis,
-        xRange: number,
         stack: Highcharts.StackItem;
 
     /**
@@ -646,9 +646,20 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
         }
 
         // extension for ordinal breaks
+        let current, next;
         while (i--) {
-            if ((points[i + 1].x as any) - (points[i].x as any) > gapSize) {
-                xRange = ((points[i].x as any) + (points[i + 1].x as any)) / 2;
+            // Reassign next if it is not visible
+            if (!(next && next.visible !== false)) {
+                next = points[i + 1];
+            }
+            current = points[i];
+            // Skip iteration if one of the points is not visible
+            if (next.visible === false || current.visible === false) {
+                continue;
+            }
+
+            if ((next.x as any) - (current.x as any) > gapSize) {
+                const xRange = ((current.x as any) + (next.x as any)) / 2;
 
                 points.splice( // insert after this one
                     i + 1,
@@ -675,6 +686,8 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
                     stack.total = 0;
                 }
             }
+            // Assign current to next for the upcoming iteration
+            next = current;
         }
     }
 

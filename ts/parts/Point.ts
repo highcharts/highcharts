@@ -123,6 +123,7 @@ declare global {
             name?: string;
             selected?: boolean;
             states?: PointStatesOptionsObject;
+            visible?: boolean;
             x?: number;
             y?: (null|number);
         }
