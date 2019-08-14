@@ -35,21 +35,21 @@ FullScreen.prototype = {
      * @return {void}
      */
     init: function (container) {
-        var p;
+        var promise;
         if (container.requestFullscreen) {
-            p = container.requestFullscreen();
+            promise = container.requestFullscreen();
         }
         else if (container.mozRequestFullScreen) {
-            p = container.mozRequestFullScreen();
+            promise = container.mozRequestFullScreen();
         }
         else if (container.webkitRequestFullscreen) {
-            p = container.webkitRequestFullscreen();
+            promise = container.webkitRequestFullscreen();
         }
         else if (container.msRequestFullscreen) {
-            p = container.msRequestFullscreen();
+            promise = container.msRequestFullscreen();
         }
-        if (p) {
-            p.catch(function () {
+        if (promise) {
+            promise['catch'](function () {
                 alert('Full screen is not supported inside a frame'); // eslint-disable-line no-alert
             });
         }
