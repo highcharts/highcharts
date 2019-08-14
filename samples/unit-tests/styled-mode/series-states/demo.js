@@ -29,7 +29,7 @@ QUnit.test('Inactive state and styledMode', function (assert) {
 
     assert.strictEqual(
         inactivePoints.length,
-        2,
+        1,
         'Exactly one point should have inactive state.'
     );
 

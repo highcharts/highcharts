@@ -136,6 +136,8 @@ seriesType('heatmap', 'scatter',
         padding: 0 // #3837
     },
     /** @ignore-option */
+    inactiveOtherPoints: true,
+    /** @ignore-option */
     marker: null,
     /** @ignore-option */
     pointRange: null,
@@ -311,7 +313,7 @@ seriesType('heatmap', 'scatter',
         }
     }
     /* eslint-enable valid-jsdoc */
-}), merge({
+}), H.extend({
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding
@@ -350,29 +352,7 @@ seriesType('heatmap', 'scatter',
         ];
     }
     /* eslint-enable valid-jsdoc */
-}, colorPointMixin, {
-    setState: function (state) {
-        var point = this, series = this.series, points = series.points, inactiveException = series.options.states &&
-            series.options.states.inactive &&
-            series.options.states.inactive.except, filterFunction, i = 0;
-        if (inactiveException) {
-            filterFunction = series.inactiveFilters[inactiveException];
-            series.options.inactiveOtherPoints = true;
-            for (; i < points.length; i++) {
-                // Check if points are not being destroyed
-                if (points[i] && points[i].series) {
-                    colorPointMixin.setState.call(points[i], state !== 'hover' ||
-                        (state === 'hover' &&
-                            filterFunction(point, points[i])) ?
-                        '' : 'inactive');
-                }
-            }
-            series.options.inactiveOtherPoints = true;
-        }
-        // Apply default state for current point:
-        colorPointMixin.setState.apply(this, arguments);
-    }
-}));
+}, colorPointMixin));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

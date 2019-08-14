@@ -342,6 +342,7 @@ seriesType('sankey', 'column',
              * The opposite state of a hover for a single point node/link.
              */
             inactive: {
+                except: 'from-to',
                 /**
                  * Opacity for the links between nodes in the sankey diagram in
                  * inactive mode.
@@ -404,6 +405,7 @@ seriesType('sankey', 'column',
         createNode: H.NodesMixin.createNode,
         setData: H.NodesMixin.setData,
         destroy: H.NodesMixin.destroy,
+        inactiveFilters: H.NodesMixin.inactiveFilters,
 
         // Overridable function to get node padding, overridden in dependency
         // wheel series type
@@ -895,7 +897,6 @@ seriesType('sankey', 'column',
             }
             return this;
         },
-        setState: H.NodesMixin.setNodeState,
         getClassName: function () {
             return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
             Point.prototype.getClassName.call(this);

@@ -977,11 +977,40 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *        Can be either `hover` or undefined to set to normal state.
      */
     setAllPointsToState: function (state) {
-        this.points.forEach(function (point) {
-            if (point.setState) {
-                point.setState(state);
+        var series = this, points = series.points, inactiveException = series.options.states &&
+            series.options.states.inactive &&
+            series.options.states.inactive.except, 
+        // Get hovered points for this series:
+        activePoints = (series.chart.hoverPoints || [])
+            .filter(function (p) {
+            return p.series === series;
+        }), i = 0;
+        if (series.inactiveFilters &&
+            inactiveException &&
+            state === 'inactive') {
+            if (activePoints && activePoints[0]) {
+                for (; i < points.length; i++) {
+                    // Check if points are not being destroyed
+                    if (points[i]) {
+                        points[i].setState(series.inactiveFilters[inactiveException](activePoints[0], points[i]) ?
+                            // Set normal state in case we have switch
+                            // from 'inactive' state to 'normal'
+                            '' : state);
+                    }
+                }
+                activePoints[0].setState('hover');
             }
-        });
+        }
+        else {
+            // For example reset all points from inactive to normal state
+            // after mouseOut event or when filters don't exist:
+            this.points.forEach(function (point) {
+                if (point.setState &&
+                    activePoints.indexOf(point) === -1) {
+                    point.setState(state);
+                }
+            });
+        }
     },
     /**
      * Show or hide the series.

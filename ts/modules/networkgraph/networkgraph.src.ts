@@ -88,6 +88,7 @@ declare global {
         {
             animation?: (boolean|AnimationOptionsObject);
             linkOpacity?: number;
+            except?: string;
         }
         interface NetworkgraphSeriesStatesOptions
             extends LineSeriesStatesOptions
@@ -112,7 +113,6 @@ declare global {
             public offset: NodesPoint['offset'];
             public options: NetworkgraphPointOptions;
             public series: NetworkgraphSeries;
-            public setNodeState: NodesMixin['setNodeState'];
             public to: NodesPoint['to'];
             public toNode: NetworkgraphPoint;
             public destroy(): void;
@@ -172,7 +172,6 @@ declare global {
                 state?: string
             ): SVGAttributes;
             public render(): void;
-            public setState(state: string, inherit?: boolean): void;
             public translate(): void;
         }
     }
@@ -347,6 +346,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
              * to all links that are not comming from the hovered node.
              */
             inactive: {
+                except: 'from-to',
                 /**
                  * Opacity of inactive links.
                  */
@@ -656,6 +656,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          */
         createNode: H.NodesMixin.createNode,
         destroy: H.NodesMixin.destroy,
+        inactiveFilters: H.NodesMixin.inactiveFilters,
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -996,9 +997,20 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             if (!this.layout.simulation && !state) {
                 this.render();
             }
+        },
+        setAllPointsToState: function (
+            this: Highcharts.NetworkgraphSeries,
+            state?: string
+        ): void {
+            var points = this.points;
+
+            this.points = this.data.concat(this.nodes);
+
+            Series.prototype.setAllPointsToState.call(this, state);
+
+            this.points = points;
         }
     }, {
-        setState: H.NodesMixin.setNodeState,
         /**
          * Basic `point.init()` and additional styles applied when
          * `series.draggable` is enabled.

@@ -768,13 +768,6 @@ Highcharts.Pointer.prototype = {
                 hoverSeries.onMouseOver();
             }
 
-            pointer.applyInactiveState(points);
-
-            // Do mouseover on all points (#3919, #3985, #4410, #5622)
-            (points || []).forEach(function (p: Highcharts.Point): void {
-                p.setState('hover');
-            });
-
             // If tracking is on series in stead of on each point,
             // fire mouseOver on hover point. // #4448
             if (chart.hoverPoint) {
@@ -808,6 +801,15 @@ Highcharts.Pointer.prototype = {
             if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
+
+            // Once `hoverPoints` is set, apply inactive state:
+            pointer.applyInactiveState(points);
+
+            // Do mouseover on all points (#3919, #3985, #4410, #5622)
+            (points || []).forEach(function (p: Highcharts.Point): void {
+                p.setState('hover');
+            });
+
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
             anchor = tooltip.getAnchor([{} as any], e);

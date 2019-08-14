@@ -57,6 +57,7 @@ H.seriesType(
     }, {
         orderNodes: false,
         getCenter: H.seriesTypes.pie.prototype.getCenter,
+        inactiveFilters: H.NodesMixin.inactiveFilters,
 
         // Dependency wheel has only one column, it runs along the perimeter
         createNodeColumns: function () {
@@ -269,7 +270,6 @@ H.seriesType(
 
     // Point class
     {
-        setState: H.NodesMixin.setNodeState,
         // Return a text path that the data label uses
         getDataLabelPath: function (label) {
             var renderer = this.series.chart.renderer,

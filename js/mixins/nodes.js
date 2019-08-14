@@ -4,9 +4,10 @@
  *
  * */
 import H from '../parts/Globals.js';
+var inArray = H.inArray;
 import U from '../parts/Utilities.js';
 var defined = U.defined;
-var pick = H.pick, Point = H.Point;
+var pick = H.pick;
 H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
     /**
@@ -151,28 +152,35 @@ H.NodesMixin = {
         return H.Series.prototype.destroy.apply(this, arguments);
     },
     /**
-     * When hovering node, highlight all connected links. When hovering a link,
-     * highlight all connected nodes.
+     * Mapping object between `inactive.except` and built-in methods
      */
-    setNodeState: function (state) {
-        var args = arguments, others = this.isNode ? this.linksTo.concat(this.linksFrom) :
-            [this.fromNode, this.toNode];
-        if (state !== 'select') {
-            others.forEach(function (linkOrNode) {
-                if (linkOrNode.series) {
-                    Point.prototype.setState.apply(linkOrNode, args);
-                    if (!linkOrNode.isNode) {
-                        if (linkOrNode.fromNode.graphic) {
-                            Point.prototype.setState.apply(linkOrNode.fromNode, args);
-                        }
-                        if (linkOrNode.toNode.graphic) {
-                            Point.prototype.setState.apply(linkOrNode.toNode, args);
-                        }
-                    }
-                }
-            });
+    inactiveFilters: {
+        all: function () {
+            return true;
+        },
+        from: function (activePoint, otherPoint) {
+            var from = activePoint.linksFrom &&
+                (inArray(otherPoint, activePoint.linksFrom) > -1 ||
+                    activePoint.linksFrom.filter(function (linkFrom) {
+                        return linkFrom.to === otherPoint.id;
+                    }).length > 0);
+            return defined(from) && from;
+        },
+        'from-to': function (activePoint, otherPoint) {
+            return this.from(activePoint, otherPoint) ||
+                this.to(activePoint, otherPoint);
+        },
+        to: function (activePoint, otherPoint) {
+            var to = activePoint.linksTo &&
+                (inArray(otherPoint, activePoint.linksTo) > -1 ||
+                    activePoint.linksTo.filter(function (linkTo) {
+                        return linkTo.from === otherPoint.id;
+                    }).length > 0);
+            return defined(to) && to;
+        },
+        self: function () {
+            return false;
         }
-        Point.prototype.setState.apply(this, args);
     }
     /* eslint-enable valid-jsdoc */
 };

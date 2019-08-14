@@ -335,15 +335,6 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[0].points[0].graphic.element,
-                'opacity'
-            ),
-            '0.3',
-            'Legend hover: correct inactive series point opacity'
-        );
-
-        assert.strictEqual(
-            Highcharts.attr(
                 chart.series[1].points[0].graphic.element,
                 'opacity'
             ),

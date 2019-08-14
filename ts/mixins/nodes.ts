@@ -6,6 +6,8 @@
 
 import H from '../parts/Globals.js';
 
+const inArray = H.inArray;
+
 /**
  * Internal types
  * @private
@@ -13,6 +15,8 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface NodesMixin {
+            inactiveFilters: NodesMixinStatesInactiveFilterDictionary;
+
             createNode(this: NodesSeries, id: string): NodesPoint;
             destroy(this: Highcharts.NodesSeries): void;
             generatePoints(this: NodesSeries): void;
@@ -23,8 +27,18 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject),
                 updatePoints?: boolean
             ): void;
-            setNodeState(this: Highcharts.NodesPoint, state: string): void;
         }
+
+        interface NodesMixinStatesInactiveFilterDictionary
+            extends SeriesStatesInactiveFilterDictionary
+        {
+            'all': SeriesStatesInactiveFilterFunction;
+            'from': SeriesStatesInactiveFilterFunction;
+            'from-to': SeriesStatesInactiveFilterFunction;
+            'to': SeriesStatesInactiveFilterFunction;
+            'self': SeriesStatesInactiveFilterFunction;
+        }
+
         interface Point {
             name?: string;
         }
@@ -54,7 +68,6 @@ declare global {
             public mass: number;
             public options: NodesPointOptions;
             public series: NodesSeries;
-            public setNodeState: NodesMixin['setNodeState'];
             public to: string;
             public toNode: NodesPoint;
             public y?: (number|null);
@@ -81,8 +94,7 @@ declare global {
 import U from '../parts/Utilities.js';
 var defined = U.defined;
 
-var pick = H.pick,
-    Point = H.Point;
+var pick = H.pick;
 
 H.NodesMixin = {
 
@@ -276,39 +288,59 @@ H.NodesMixin = {
         return H.Series.prototype.destroy.apply(this, arguments as any);
     },
 
+
     /**
-     * When hovering node, highlight all connected links. When hovering a link,
-     * highlight all connected nodes.
+     * Mapping object between `inactive.except` and built-in methods
      */
-    setNodeState: function (this: Highcharts.NodesPoint, state: string): void {
-        var args = arguments,
-            others = this.isNode ? this.linksTo.concat(this.linksFrom) :
-                [this.fromNode, this.toNode];
+    inactiveFilters: {
+        all: function (): boolean {
+            return true;
+        },
+        from: function (
+            this: Highcharts.NodesMixinStatesInactiveFilterDictionary,
+            activePoint: Highcharts.Point,
+            otherPoint: Highcharts.Point | Highcharts.NodesPoint
+        ): boolean {
+            var from = activePoint.linksFrom &&
+                    (
+                        inArray(otherPoint, activePoint.linksFrom) > -1 ||
+                        activePoint.linksFrom.filter(
+                            function (linkFrom): boolean {
+                                return (linkFrom as any).to === otherPoint.id;
+                            }
+                        ).length > 0
+                    );
 
-        if (state !== 'select') {
-            others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
-                if (linkOrNode.series) {
-                    Point.prototype.setState.apply(linkOrNode, args as any);
+            return defined(from) && from;
+        },
+        'from-to': function (
+            this: Highcharts.NodesMixinStatesInactiveFilterDictionary,
+            activePoint: Highcharts.Point,
+            otherPoint: Highcharts.Point | Highcharts.NodesPoint
+        ): boolean {
+            return this.from(activePoint, otherPoint) ||
+                this.to(activePoint, otherPoint);
+        },
+        to: function (
+            this: Highcharts.NodesMixinStatesInactiveFilterDictionary,
+            activePoint: Highcharts.Point,
+            otherPoint: Highcharts.Point | Highcharts.NodesPoint
+        ): boolean {
+            var to = activePoint.linksTo &&
+                    (
+                        inArray(otherPoint, activePoint.linksTo) > -1 ||
+                        activePoint.linksTo.filter(
+                            function (linkTo): boolean {
+                                return (linkTo as any).from === otherPoint.id;
+                            }
+                        ).length > 0
+                    );
 
-                    if (!linkOrNode.isNode) {
-                        if (linkOrNode.fromNode.graphic) {
-                            Point.prototype.setState.apply(
-                                linkOrNode.fromNode,
-                                args as any
-                            );
-                        }
-                        if (linkOrNode.toNode.graphic) {
-                            Point.prototype.setState.apply(
-                                linkOrNode.toNode,
-                                args as any
-                            );
-                        }
-                    }
-                }
-            });
+            return defined(to) && to;
+        },
+        self: function (): boolean {
+            return false;
         }
-
-        Point.prototype.setState.apply(this, args as any);
     }
 
     /* eslint-enable valid-jsdoc */

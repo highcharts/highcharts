@@ -161,6 +161,7 @@ seriesType('networkgraph', 'line',
          * to all links that are not comming from the hovered node.
          */
         inactive: {
+            except: 'from-to',
             /**
              * Opacity of inactive links.
              */
@@ -449,6 +450,7 @@ seriesType('networkgraph', 'line',
      */
     createNode: H.NodesMixin.createNode,
     destroy: H.NodesMixin.destroy,
+    inactiveFilters: H.NodesMixin.inactiveFilters,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Extend init with base event, which should stop simulation during
@@ -689,9 +691,14 @@ seriesType('networkgraph', 'line',
         if (!this.layout.simulation && !state) {
             this.render();
         }
+    },
+    setAllPointsToState: function (state) {
+        var points = this.points;
+        this.points = this.data.concat(this.nodes);
+        Series.prototype.setAllPointsToState.call(this, state);
+        this.points = points;
     }
 }, {
-    setState: H.NodesMixin.setNodeState,
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.

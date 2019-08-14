@@ -246,8 +246,16 @@ declare global {
             opacity?: SeriesOptions['opacity'];
         }
         interface SeriesStatesInactiveOptions {
+            except?: string;
             opacity?: number;
         }
+        interface SeriesStatesInactiveFilterFunction {
+            (activePoint: Point, otherPoint: Point | NodesPoint): boolean;
+        }
+        interface SeriesStatesInactiveFilterDictionary
+            extends Dictionary<SeriesStatesInactiveFilterFunction> {
+        }
+
         interface SeriesStatesNormalOptions {
             animation?: (boolean|AnimationOptionsObject);
         }
@@ -306,6 +314,7 @@ declare global {
             public isCartesian: boolean;
             public isDirty: boolean;
             public isDirtyData: boolean;
+            public inactiveFilters?: SeriesStatesInactiveFilterDictionary;
             public kdAxisArray: Array<string>;
             public kdTree?: KDNode;
             public linkedSeries: Array<Series>;
