@@ -1329,8 +1329,8 @@ H.setOptions({
          * icons from a different server.
          *
          * @since     7.1.3
-         * @apioption navigation.iconsURL
          * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @apioption navigation.iconsURL
          */
 
         /**
