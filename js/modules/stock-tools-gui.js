@@ -210,7 +210,8 @@ H.setOptions({
              * Path where Highcharts will look for icons. Change this to use
              * icons from a different server.
              *
-             * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and stocktools.
+             * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and
+             * stock tools.
              *
              * @deprecated
              * @apioption stockTools.gui.iconsURL
