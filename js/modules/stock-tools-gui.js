@@ -182,6 +182,17 @@ H.setOptions({
          */
         gui: {
             /**
+             * Path where Highcharts will look for icons. Change this to use
+             * icons from a different server.
+             *
+             * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and
+             * stock tools.
+             *
+             * @deprecated
+             * @apioption stockTools.gui.iconsURL
+             *
+             */
+            /**
              * Enable or disable the stockTools gui.
              *
              * @type      {boolean}
@@ -206,17 +217,6 @@ H.setOptions({
              *
              */
             toolbarClassName: 'stocktools-toolbar',
-            /**
-             * Path where Highcharts will look for icons. Change this to use
-             * icons from a different server.
-             *
-             * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and
-             * stock tools.
-             *
-             * @deprecated
-             * @apioption stockTools.gui.iconsURL
-             *
-             */
             /**
              * A collection of strings pointing to config options for the
              * toolbar items. Each name refers to unique key from definitions
