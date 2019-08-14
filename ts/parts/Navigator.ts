@@ -1404,14 +1404,14 @@ Navigator.prototype = {
         // because Navigator.grabbedSomething flags are stored in mousedown
         // events
         eventsToUnbind.push(
-            addEvent(container, 'mousemove', mouseMoveHandler),
+            addEvent(chart.renderTo, 'mousemove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
         );
 
         // Touch events
         if (hasTouch) {
             eventsToUnbind.push(
-                addEvent(container, 'touchmove', mouseMoveHandler),
+                addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
                 addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
             );
             eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
