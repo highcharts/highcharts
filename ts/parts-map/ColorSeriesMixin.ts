@@ -63,7 +63,7 @@ H.colorPointMixin = {
         var point = this,
             method = vis ? 'show' : 'hide';
 
-        point.visible = Boolean(vis);
+        point.visible = point.options.visible = Boolean(vis);
 
         // Show and hide associated elements
         ['graphic', 'dataLabel'].forEach(function (key: string): void {

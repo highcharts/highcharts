@@ -1,14 +1,16 @@
 QUnit.test('Axis.setBreaks', assert => {
     const {
+        series: [series],
         series: [{ points }],
         xAxis: [axis]
     } = Highcharts.chart('container', {
         series: [{
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            connectNulls: true,
+            data: [1, 2, 3, 4, null, 6, 7, 8, 9, 10]
         }]
     });
-    const getXValuesOfNullPoints = points => points
-        .filter(point => point.isNull)
+    const getXValuesOfInvisiblePoints = points => points
+        .filter(point => !point.visible)
         .map(point => point.x);
 
     axis.setBreaks([{
@@ -17,15 +19,24 @@ QUnit.test('Axis.setBreaks', assert => {
     }]);
 
     assert.deepEqual(
-        getXValuesOfNullPoints(points),
+        getXValuesOfInvisiblePoints(points),
         [4, 5],
-        'Should set points with x-values above 3 and below 6 as null points.'
+        'Should set point.visible to false for points with x-values above 3 and below 6.'
+    );
+
+    series.update({
+        connectNulls: false
+    });
+    assert.deepEqual(
+        getXValuesOfInvisiblePoints(points),
+        [5],
+        'Should set point.visible to false for points with x-values above 3 and below 6, except for null points when series connectNulls is false.'
     );
 
     axis.setBreaks([]);
     assert.deepEqual(
-        getXValuesOfNullPoints(points),
+        getXValuesOfInvisiblePoints(points),
         [],
-        'Should have no null points after unsetting breaks. #11642'
+        'Should all points should have point.visible equals true after unsetting breaks. #11642'
     );
 });

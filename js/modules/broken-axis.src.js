@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var extend = U.extend, isArray = U.isArray, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Series.js';
 var addEvent = H.addEvent, find = H.find, fireEvent = H.fireEvent, Axis = H.Axis, Series = H.Series;
@@ -276,19 +276,23 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
     }
 };
 addEvent(Series, 'afterGeneratePoints', function () {
-    var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, points = _a.points, connectNulls = _a.options.connectNulls;
-    if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
+    var _a = this, isDirty = _a.isDirty, connectNulls = _a.options.connectNulls, points = _a.points, xAxis = _a.xAxis, yAxis = _a.yAxis;
+    /* Set, or reset visibility of the points. Axis.setBreaks marks the series
+    as isDirty */
+    if (isDirty) {
         var i = points.length;
         while (i--) {
             var point = points[i];
             // Respect nulls inside the break (#4275)
             var nullGap = point.y === null && connectNulls === false;
             var isPointInBreak = (!nullGap &&
-                (xAxis.isInAnyBreak(point.x, true) ||
-                    yAxis.isInAnyBreak(point.y, true)));
-            // Set point.isNull if in any break.
-            // If not in break, reset isNull to original value.
-            point.isNull = isPointInBreak || pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y));
+                (xAxis && xAxis.isInAnyBreak(point.x, true) ||
+                    yAxis && yAxis.isInAnyBreak(point.y, true)));
+            // Set point.visible if in any break.
+            // If not in break, reset visible to original value.
+            point.visible = isPointInBreak ?
+                false :
+                point.options.visible !== false;
         }
     }
 });
@@ -344,7 +348,7 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
  *         Gapped path
  */
 H.Series.prototype.gappedPath = function () {
-    var currentDataGrouping = this.currentDataGrouping, groupingSize = currentDataGrouping && currentDataGrouping.gapSize, gapSize = this.options.gapSize, points = this.points.slice(), i = points.length - 1, yAxis = this.yAxis, xRange, stack;
+    var currentDataGrouping = this.currentDataGrouping, groupingSize = currentDataGrouping && currentDataGrouping.gapSize, gapSize = this.options.gapSize, points = this.points.slice(), i = points.length - 1, yAxis = this.yAxis, stack;
     /**
      * Defines when to display a gap in the graph, together with the
      * [gapUnit](plotOptions.series.gapUnit) option.
@@ -409,9 +413,19 @@ H.Series.prototype.gappedPath = function () {
             gapSize = groupingSize;
         }
         // extension for ordinal breaks
+        var current = void 0, next = void 0;
         while (i--) {
-            if (points[i + 1].x - points[i].x > gapSize) {
-                xRange = (points[i].x + points[i + 1].x) / 2;
+            // Reassign next if it is not visible
+            if (!(next && next.visible !== false)) {
+                next = points[i + 1];
+            }
+            current = points[i];
+            // Skip iteration if one of the points is not visible
+            if (next.visible === false || current.visible === false) {
+                continue;
+            }
+            if (next.x - current.x > gapSize) {
+                var xRange = (current.x + next.x) / 2;
                 points.splice(// insert after this one
                 i + 1, 0, {
                     isNull: true,
@@ -425,6 +439,8 @@ H.Series.prototype.gappedPath = function () {
                     stack.total = 0;
                 }
             }
+            // Assign current to next for the upcoming iteration
+            next = current;
         }
     }
     // Call base method
