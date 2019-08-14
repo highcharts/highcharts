@@ -378,6 +378,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/euler-diagram/demo.js',
             'samples/highcharts/demo/funnel/demo.js',
             'samples/highcharts/demo/funnel3d/demo.js',
+            'samples/highcharts/demo/network-graph/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/packed-bubble/demo.js',
             'samples/highcharts/demo/packed-bubble-split/demo.js',
@@ -385,7 +386,10 @@ module.exports = function (config) {
             'samples/highcharts/demo/pyramid/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
-            'samples/highcharts/demo/treemap-large-dataset/demo.js'
+            'samples/highcharts/demo/treemap-large-dataset/demo.js',
+            'samples/highcharts/demo/combo-timeline/demo.js',
+            'samples/highcharts/demo/dependency-wheel/demo.js',
+            'samples/highcharts/demo/spline-symbols/demo.js'
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
@@ -583,7 +587,9 @@ module.exports = function (config) {
                                                     },
                                                 },
                                             };
-                                            window.dump(JSON.stringify( diffLog ));
+                                            if (actual || actual === 0) {
+                                                window.dump(JSON.stringify( diffLog ));
+                                            }
                                             assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
                                         } else {
                                             assert.strictEqual(
