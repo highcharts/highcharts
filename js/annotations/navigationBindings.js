@@ -1324,6 +1324,15 @@ H.setOptions({
             }
         },
         /**
+         * Path where Highcharts will look for icons. Change this to use
+         * icons from a different server.
+         *
+         * @since     7.1.3
+         * @apioption navigation.iconsURL
+         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         */
+
+        /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *
          * @type      {Function}
@@ -1359,15 +1368,6 @@ H.setOptions({
          * @sample    highcharts/annotations/gui-buttons/
          *            Change button class on event
          * @apioption navigation.events.deselectButton
-         */
-
-        /**
-         * Path where Highcharts will look for icons. Change this to use
-         * icons from a different server.
-         *
-         * @since     7.1.3
-         * @apioption navigation.iconsURL
-         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
          */
 
         /**
