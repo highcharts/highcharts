@@ -26,7 +26,6 @@ declare global {
             beforePadding?: Function; // @todo
         }
         interface Chart {
-            drilldownLevels?: any; // @todo drilldown module
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
@@ -39,15 +38,7 @@ declare global {
         interface ChartOptions {
             forExport?: any; // @todo
         }
-        interface ColumnSeries {
-            animateDrillupFrom: Function; // @todo drilldown module
-            animateDrillupTo: Function; // @todo drilldown module
-        }
-        interface NetworkgraphLayout {
-            beforeStep: Function; // @todo networkgraph
-        }
         interface Options {
-            drilldown?: any; // @todo drilldown module
             exporting?: any; // @todo exporting module
             navigation?: any; // @todo exporting module
         }
@@ -63,7 +54,6 @@ declare global {
             gappedPath?: any; // @todo broken axis module
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
-            layout?: any; // @todo networkgraph
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
