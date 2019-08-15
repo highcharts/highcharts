@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
     Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 2
