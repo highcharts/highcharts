@@ -26,6 +26,9 @@ declare global {
             number,
             PackedBubblePointOptions
         ];
+        interface NetworkgraphLayout {
+            beforeStep?(): void;
+        }
         interface NetworkgraphPackedBubbleIntegrationObject
             extends NetworkgraphIntegrationObject
         {
@@ -146,6 +149,7 @@ declare global {
             public hoverPoint: PackedBubblePoint;
             public index: number;
             public isCartesian: boolean;
+            public layout: PackedBubbleLayout;
             public noSharedTooltip: boolean;
             public onMouseDown: DragNodesMixin['onMouseDown'];
             public onMouseMove: DragNodesMixin['onMouseMove'];
@@ -1076,7 +1080,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             var series = this,
                 chart = series.chart,
                 parentAttribs = {} as Highcharts.SVGAttributes,
-                nodeMarker = this.layout.options.parentNodeOptions.marker,
+                nodeMarker: Highcharts.BubblePointMarkerOptions =
+                    (this.layout.options.parentNodeOptions as any).marker,
                 parentOptions: Highcharts.SVGAttributes = {
                     fill: nodeMarker.fillColor ||
                         (color as any)(series.color).brighten(0.4).get(),
