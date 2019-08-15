@@ -4666,7 +4666,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Guard for very small or negative angles (#9835)
             if (step * tickInterval > range &&
                 spaceNeeded !== Infinity &&
-                slotSize !== Infinity) {
+                slotSize !== Infinity &&
+                range) {
                 step = Math.ceil(range / tickInterval);
             }
             return correctFloat(step * tickInterval);
