@@ -212,25 +212,25 @@ workflows:
           requires:
             - lint
       - test_browsers:
-          name: "test-Mac.Safari"
+          name: "test-Win.IE8"
           requires:
             - install_dependencies
-          browsers: "Mac.Safari"
+          browsers: "Win.IE8 --oldie"
       - test_browsers:
-          name: "test-Win.Chrome"
+          name: "test-Mac.Safari"
           requires:
-            - "test-Mac.Safari"
-          browsers: "Win.Chrome"
+            - "test-Win.IE8"
+          browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
-            - "test-Win.Chrome"
+            - "test-Mac.Safari"
           browsers: "Mac.Firefox"
       - test_browsers:
-          name: "test-Win.IE8"
+          name: "test-Win.Chrome"
           requires:
             - "test-Mac.Firefox"
-          browsers: "Win.IE8 --oldie"
+          browsers: "Win.Chrome"
 
   nightly:
     triggers:
@@ -288,4 +288,3 @@ workflows:
           requires:
             - build_dist
           context: highcharts-staging
-
