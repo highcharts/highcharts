@@ -65,6 +65,7 @@ declare global {
             public box: Dictionary<number>;
             public currentStep?: number;
             public diffTemperature?: number;
+            public enableSimulation?: boolean;
             public forcedStop?: boolean;
             public forces?: Array<string>;
             public initialRendering: boolean;

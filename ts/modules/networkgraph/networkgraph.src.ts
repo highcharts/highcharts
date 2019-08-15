@@ -94,6 +94,12 @@ declare global {
         {
             inactive?: NetworkgraphSeriesStatesInactiveOptions;
         }
+        interface Series {
+            layout?: NetworkgraphLayout;
+        }
+        interface SeriesTypesDictionary {
+            networkgraph: typeof NetworkgraphSeries;
+        }
         class NetworkgraphPoint
             extends LinePoint
             implements DragNodesPoint, NodesPoint {
@@ -143,6 +149,7 @@ declare global {
             public forces: Array<string>;
             public hasDraggableNodes: boolean;
             public isCartesian: boolean;
+            public layout: NetworkgraphLayout;
             public nodeLookup: NodesSeries['nodeLookup'];
             public nodes: Array<NetworkgraphPoint>;
             public noSharedTooltip: boolean;
@@ -657,7 +664,10 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          */
         createNode: H.NodesMixin.createNode,
         destroy: function (this: Highcharts.NetworkgraphSeries): void {
-            this.layout.removeElementFromCollection(this, this.layout.series);
+            this.layout.removeElementFromCollection<Highcharts.Series>(
+                this,
+                this.layout.series
+            );
             H.NodesMixin.destroy.call(this);
         },
 
@@ -1333,7 +1343,8 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             }
 
             this.series.layout.removeElementFromCollection(
-                this, this.series.layout[this.isNode ? 'nodes' : 'links']
+                this,
+                (this.series.layout as any)[this.isNode ? 'nodes' : 'links']
             );
 
             return Point.prototype.destroy.apply(this, arguments as any);
