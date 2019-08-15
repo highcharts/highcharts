@@ -9,6 +9,9 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
     };
 
     var chart1 = Highcharts.chart('container', {
+        chart: {
+            width: 400
+        },
         xAxis: {
             type: "category"
         },
@@ -17,6 +20,9 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
     var textWidth = chart1.xAxis[0].ticks['0'].label.styles.width;
 
     var chart2 = Highcharts.chart('container', {
+        chart: {
+            width: 400
+        },
         xAxis: {
             type: "category"
         }
