@@ -6101,7 +6101,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     step * tickInterval > range &&
                     spaceNeeded !== Infinity &&
-                    slotSize !== Infinity
+                    slotSize !== Infinity &&
+                    range
                 ) {
                     step = Math.ceil(range / tickInterval);
                 }
