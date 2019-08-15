@@ -156,7 +156,6 @@ jobs:
       - aws-s3/sync: # fetch reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: 'samples/'
-          overwrite: true
       - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog"
       - run: "sudo apt-get install -y librsvg2-bin"
       - run:
