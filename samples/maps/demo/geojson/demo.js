@@ -18,7 +18,7 @@ var data = [
     ['DE.', 361]
 ];
 
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json', function (geojson) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json', function (geojson) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {

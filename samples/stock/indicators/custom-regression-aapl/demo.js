@@ -61,7 +61,7 @@ Highcharts.seriesType(
     }
 );
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
 
     Highcharts.stockChart('container', {
 

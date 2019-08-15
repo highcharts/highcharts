@@ -103,7 +103,7 @@ function addPopupEvents(chart) {
     );
 }
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
     // split the data set into ohlc and volume
     var ohlc = [],
