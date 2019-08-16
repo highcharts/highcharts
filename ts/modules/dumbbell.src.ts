@@ -46,6 +46,7 @@ declare global {
             public options: DumbbellPointOptions;
             public connector: SVGElement;
             public pointWidth: number;
+            public pointSetState: any;
         }
         class DumbbellSeries extends AreaRangeSeries {
             public data: Array<DumbbellPoint>;
