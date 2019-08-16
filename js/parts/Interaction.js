@@ -741,21 +741,23 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     stateMarkerGraphic = stateMarkerGraphic.destroy();
                 }
                 // Add a new state marker graphic
-                if (!stateMarkerGraphic) {
-                    if (newSymbol) {
-                        series.stateMarkerGraphic = stateMarkerGraphic =
-                            chart.renderer
-                                .symbol(newSymbol, markerAttribs.x, markerAttribs.y, markerAttribs.width, markerAttribs.height)
-                                .add(series.markerGroup);
-                        stateMarkerGraphic.currentSymbol = newSymbol;
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(newSymbol, markerAttribs.x, markerAttribs.y, markerAttribs.width, markerAttribs.height)
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
+                        // Move the existing graphic
                     }
-                    // Move the existing graphic
-                }
-                else {
-                    stateMarkerGraphic[move ? 'animate' : 'attr']({
-                        x: markerAttribs.x,
-                        y: markerAttribs.y
-                    });
+                    else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
                 }
                 if (!chart.styledMode && stateMarkerGraphic) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));

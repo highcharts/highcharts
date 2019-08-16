@@ -1205,27 +1205,29 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
 
                 // Add a new state marker graphic
-                if (!stateMarkerGraphic) {
-                    if (newSymbol) {
-                        series.stateMarkerGraphic = stateMarkerGraphic =
-                            chart.renderer
-                                .symbol(
-                                    newSymbol,
-                                    (markerAttribs as any).x,
-                                    (markerAttribs as any).y,
-                                    (markerAttribs as any).width,
-                                    (markerAttribs as any).height
-                                )
-                                .add(series.markerGroup);
-                        stateMarkerGraphic.currentSymbol = newSymbol;
-                    }
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(
+                                        newSymbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height
+                                    )
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
 
-                // Move the existing graphic
-                } else {
-                    stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-                        x: (markerAttribs as any).x,
-                        y: (markerAttribs as any).y
-                    });
+                    // Move the existing graphic
+                    } else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
                 }
 
                 if (!chart.styledMode && stateMarkerGraphic) {

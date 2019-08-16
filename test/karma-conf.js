@@ -343,6 +343,9 @@ module.exports = function (config) {
 
             // --- VISUAL TESTS ---
 
+            // Custom data source
+            'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+
             // Error #13, renders to other divs than #container. Sets global
             // options.
             'samples/highcharts/demo/bullet-graph/demo.js',
@@ -376,10 +379,12 @@ module.exports = function (config) {
 
             // Various
             'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
+            'samples/highcharts/data/delimiters/demo.js', // data island
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
-
+            'samples/highcharts/studies/logistics/demo.js', // overriding
+            
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
 
@@ -387,11 +392,13 @@ module.exports = function (config) {
             'samples/unit-tests/oldie/*/demo.js',
 
             // visual tests excluded for now due to failure
+            'samples/highcharts/series-networkgraph/barnes-hut-approximation/demo.js', // disconnects/timeout
             'samples/highcharts/demo/funnel3d/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js'
+
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
@@ -452,7 +459,7 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-,]+)\/demo.js$/g,
                         '$1/$2'
                     );
 
@@ -560,7 +567,7 @@ module.exports = function (config) {
                             } else {
                                 assert.ok(
                                     false,
-                                    '${path}: SVG not generated'
+                                    '${path}: SVG should be generated'
                                 );                
                             }
                             done();
@@ -638,6 +645,7 @@ module.exports = function (config) {
                             Highcharts.charts.length - 1
                         ];
 
+                        //console.log(assert.test.module.unskippedTestsRun, '${path}');
                         ${assertion}
 
                         ${reset}
