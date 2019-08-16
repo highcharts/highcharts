@@ -33,6 +33,8 @@
 	"code/modules/histogram-bellcurve.src.js",
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",
+	"code/modules/funnel3d.src.js",
+	"code/modules/pyramid3d.src.js",
 	"code/modules/networkgraph.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
@@ -54,6 +56,8 @@
 	"code/modules/no-data-to-display.src.js",
 	"code/modules/drag-panes.src.js",
 	"code/modules/debugger.src.js",
+	"code/modules/cylinder.src.js",
+	"code/modules/organization.src.js",
 
 	"code/indicators/indicators-all.src.js",
 
