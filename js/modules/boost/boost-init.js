@@ -193,8 +193,8 @@ function init() {
 
                 if (!chartDestroyed) {
                     if (useRaw) {
-                        x = d[0];
-                        y = d[1];
+                        x = H.pick(d[0], d.x);
+                        y = H.pick(d[1], d.y);
                     } else {
                         x = d;
                         y = yData[i];
