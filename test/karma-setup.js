@@ -86,6 +86,9 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
+Highcharts.getJSON = function (url, callback) {
+    callback(window.JSONSources[url]);
+};
 
 if (window.QUnit) {
     /*
@@ -184,7 +187,11 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0].points[0] &&
         typeof chart.series[0].points[0].onMouseOver === 'function'
     ) {
-        chart.series[0].points[0].onMouseOver();
+        try {
+            chart.series[0].points[0].onMouseOver();
+        } catch (e) {
+            console.log('Tooltip failed');
+        }
     }
 };
 
@@ -267,6 +274,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         function svgToPixels(svg, callback) { // eslint-disable-line require-jsdoc
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
+
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
 
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),

@@ -2,6 +2,7 @@
 /* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
+const path = require('path');
 
 // Internal reference
 const hasJSONSources = {};
@@ -65,39 +66,51 @@ function getHTML(path) {
 }
 
 /**
- * Look for $.getJSON calls in the demos and add hook to local sample data.
+ * Look for Highcharts.getJSON calls in the demos and add hook to local sample data.
  * @param  {String} js
  *         The contents of demo.js
  * @return {String}
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const match = js.match(/\$\.getJSON\('([^']+)/);
+
+    const match = js.match(/(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/);
+
     if (match) {
-        let src = match[1];
-        if (!hasJSONSources[src]) {
-            let innerMatch = src.match(/filename=([^&']+)/);
-            if (innerMatch) {
-                let data = fs.readFileSync(
-                    'samples/data/' + innerMatch[1],
-                    'utf8'
-                );
+        let src = match[2];
 
-                if (data) {
-                    hasJSONSources[src] = true;
+            
+        let innerMatch = src.match(
+            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+        );
 
-                    if (/json$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = ${data};
-                        ${js}
-                        `;
-                    }
-                    if (/csv$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = \`${data}\`;
-                        ${js}
-                        `;
-                    }
+        if (innerMatch) {
+
+            let filename = innerMatch[2];
+
+            let data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'samples/data',
+                    filename
+                ),
+                'utf8'
+            );
+
+            if (data) {
+    
+                if (/json$/.test(filename)) {
+                    return `
+                    window.JSONSources['${src}'] = ${data};
+                    ${js}
+                    `;
+                }
+                if (/csv$/.test(filename)) {
+                    return `
+                    window.JSONSources['${src}'] = \`${data}\`;
+                    ${js}
+                    `;
                 }
             }
         }
@@ -374,22 +387,11 @@ module.exports = function (config) {
             'samples/unit-tests/oldie/*/demo.js',
 
             // visual tests excluded for now due to failure
-            'samples/highcharts/demo/cylinder/demo.js',
-            'samples/highcharts/demo/euler-diagram/demo.js',
-            'samples/highcharts/demo/funnel/demo.js',
             'samples/highcharts/demo/funnel3d/demo.js',
-            'samples/highcharts/demo/network-graph/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
-            'samples/highcharts/demo/packed-bubble/demo.js',
-            'samples/highcharts/demo/packed-bubble-split/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
-            'samples/highcharts/demo/pyramid/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
-            'samples/highcharts/demo/synchronized-charts/demo.js',
-            'samples/highcharts/demo/treemap-large-dataset/demo.js',
-            'samples/highcharts/demo/combo-timeline/demo.js',
-            'samples/highcharts/demo/dependency-wheel/demo.js',
-            'samples/highcharts/demo/spline-symbols/demo.js'
+            'samples/highcharts/demo/synchronized-charts/demo.js'
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
@@ -500,7 +502,7 @@ module.exports = function (config) {
 
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
-                        file.path = file.originalPath + '.preprocessed';
+                        file.path = file.originalPath + '.preprocessed.js';
                         done(`QUnit.skip('${path}');`);
                         return;
                     }
@@ -512,6 +514,12 @@ module.exports = function (config) {
                     // Don't do intervals (typically for gauge samples, add
                     // point etc)
                     js = js.replace('setInterval', 'Highcharts.noop');
+
+                    // Force enableSimulation: false
+                    js = js.replace(
+                        'enableSimulation: true',
+                        'enableSimulation: false'
+                    );
 
                     // Reset global options
                     let reset = (
@@ -552,7 +560,7 @@ module.exports = function (config) {
                             } else {
                                 assert.ok(
                                     false,
-                                    '${path}: ' + err
+                                    '${path}: SVG not generated'
                                 );                
                             }
                             done();
@@ -566,7 +574,7 @@ module.exports = function (config) {
                                 'Reference file doesn\'t exist: '.yellow +
                                 ` ./samples/${path}/reference.svg`
                             );
-                            file.path = file.originalPath + '.preprocessed';
+                            file.path = file.originalPath + '.preprocessed.js';
                             done(`QUnit.skip('${path}');`);
                             return;
                         }
@@ -636,7 +644,7 @@ module.exports = function (config) {
                     });
                     `;
 
-                    file.path = file.originalPath + '.preprocessed';
+                    file.path = file.originalPath + '.preprocessed.js';
 
                     done(js);
                 }
