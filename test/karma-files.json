@@ -58,6 +58,7 @@
 	"code/modules/debugger.src.js",
 	"code/modules/cylinder.src.js",
 	"code/modules/organization.src.js",
+	"code/modules/dotplot.src.js",
 
 	"code/indicators/indicators-all.src.js",
 
@@ -70,6 +71,8 @@
 	"samples/data/maps/world.js",
 
 	"samples/data/usdeur.js",
-	"samples/data/ohlc.js"
+	"samples/data/ohlc.js",
+	"samples/data/three-series-1000-points.js",
+	"samples/data/large-dataset.js"
 
 ]

@@ -187,11 +187,7 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0].points[0] &&
         typeof chart.series[0].points[0].onMouseOver === 'function'
     ) {
-        try {
-            chart.series[0].points[0].onMouseOver();
-        } catch (e) {
-            console.log('Tooltip failed');
-        }
+        chart.series[0].points[0].onMouseOver({});
     }
 };
 
