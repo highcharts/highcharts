@@ -7,6 +7,10 @@ Highcharts.chart('container', {
         text: 'Desktop screen readers'
     },
 
+    caption: {
+        text: 'Basic bar chart demo'
+    },
+
     xAxis: {
         type: 'category'
     },

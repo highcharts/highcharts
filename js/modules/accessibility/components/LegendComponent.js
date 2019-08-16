@@ -13,6 +13,9 @@
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import A11yUtilities from '../utilities.js';
+
+var stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
 /**
@@ -131,7 +134,7 @@ H.extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                             'accessibility.legendItem',
                             {
                                 chart: chart,
-                                itemName: component.stripTags(item.name)
+                                itemName: stripHTMLTags(item.name)
                             }
                         )
                     },
