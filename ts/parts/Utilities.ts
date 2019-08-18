@@ -2683,7 +2683,7 @@ function objectEach<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }

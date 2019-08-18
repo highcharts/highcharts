@@ -16,6 +16,7 @@
  */
 declare global {
     namespace Highcharts {
+        type ExportingErrorCallbackFunction = any; // @todo offline exporting
         type NavigationOptions = any; // @todo exporting module
         type OrganizationSeries = any; // @todo organization module
         type OrganizationSeriesOptions = any // @todo organization module
@@ -33,13 +34,13 @@ declare global {
             isPrinting?: any; // @todo exporting module
             openMenu?: any; // @todo exporting module
             redrawTrigger?: any; // @todo static-scale module
+            getFilename: Function; // @todo exporting module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
         }
         interface Options {
-            exporting?: any; // @todo exporting module
             navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {

@@ -28,7 +28,7 @@ var addEvent = H.addEvent, argsToArray = function (args) {
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {
-        if (Object.prototype.hasOwnProperty.call(methods, method)) {
+        if (Object.hasOwnProperty.call(methods, method)) {
             func = methods[method];
             wrap(obj, method, func);
         }

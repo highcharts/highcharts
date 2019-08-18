@@ -23,7 +23,7 @@ var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMa
  * @return {boolean} - Whether it is a direct property
  */
 function ownProp(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
+    return Object.hasOwnProperty.call(obj, key);
 }
 /* eslint-disable no-invalid-this */
 addEvent(Axis, 'afterInit', function () {
