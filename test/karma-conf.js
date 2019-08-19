@@ -446,7 +446,9 @@ module.exports = function (config) {
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic'],
             '**/maps/*/*/demo.js': ['generic'],
-            '**/stock/*/*/demo.js': ['generic']
+            '**/stock/*/*/demo.js': ['generic'],
+            '**/gantt/*/*/demo.js': ['generic'],
+            '**/issues/*/*/demo.js': ['generic']
         },
 
         /*
@@ -458,7 +460,7 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps|unit-tests|issues)\/([a-z0-9\-]+\/[a-z0-9\-,]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|gantt|unit-tests|issues)\/([a-z0-9\-\.]+\/[a-z0-9\-,]+)\/demo.js$/g,
                         '$1/$2'
                     );
 
