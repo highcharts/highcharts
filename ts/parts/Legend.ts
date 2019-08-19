@@ -107,7 +107,9 @@ declare global {
                 visible?: boolean
             ): void;
             public destroy(): void;
-            public destroyItem(item: (BubbleLegend|Point|Series)): void;
+            public destroyItem(
+                item: (BubbleLegend|Point|Series|ColorAxis)
+            ): void;
             public getAlignment(): string;
             public getAllItems(): Array<(BubbleLegend|Point|Series)>;
             public handleOverflow(legendHeight: number): number;
@@ -524,7 +526,12 @@ Highcharts.Legend.prototype = {
      */
     destroyItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: (
+            Highcharts.BubbleLegend |
+            Highcharts.Point |
+            Highcharts.Series |
+            Highcharts.ColorAxis
+        )
     ): void {
         var checkbox = item.checkbox;
 

@@ -307,10 +307,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
      *               Networkgraph
      * @since        7.0.0
      * @excluding    boostThreshold, animation, animationLimit, connectEnds,
-     *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
-     *               negativeColor, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, softThreshold, stack, stacking,
-     *               step, threshold, xAxis, yAxis, zoneAxis
+     *               colorAxis, colorKey, connectNulls, dragDrop,
+     *               getExtremesFromAll, label, linecap, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stack, stacking, step,
+     *               threshold, xAxis, yAxis, zoneAxis
      * @optionparent plotOptions.networkgraph
      */
     {

@@ -81,6 +81,7 @@ $('#map-container').highcharts('Map', {
     }, {
         // Specify the points here
         type: 'mappoint',
+        colorAxis: false,
         name: 'Points',
         showInLegend: false,
         data: [{
@@ -99,6 +100,7 @@ $('#map-container').highcharts('Map', {
     }, {
         // Specify the lines here. The design of the arrowheads is defined in SVG (see HTML). Which line gets which marker is set with CSS.
         type: 'mapline',
+        colorAxis: false,
         name: 'Lines',
         color: 'black',
         data: [{

@@ -1053,14 +1053,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getAxisMargins: function () {
         var chart = this, 
         // [top, right, bottom, left]
-        axisOffset = chart.axisOffset = [0, 0, 0, 0], margin = chart.margin;
-        // pre-render axes to get labels offset width
-        if (chart.hasCartesianSeries) {
-            chart.axes.forEach(function (axis) {
+        axisOffset = chart.axisOffset = [0, 0, 0, 0], colorAxis = chart.colorAxis, margin = chart.margin, getOffset = function (axes) {
+            axes.forEach(function (axis) {
                 if (axis.visible) {
                     axis.getOffset();
                 }
             });
+        };
+        // pre-render axes to get labels offset width
+        if (chart.hasCartesianSeries) {
+            getOffset(chart.axes);
+        }
+        else if (colorAxis && colorAxis.length) {
+            getOffset(colorAxis);
         }
         // Add the axis offsets
         marginNames.forEach(function (m, side) {
@@ -1566,8 +1571,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     render: function () {
-        var chart = this, axes = chart.axes, renderer = chart.renderer, options = chart.options, correction = 0, // correction for X axis labels
-        tempWidth, tempHeight, redoHorizontal, redoVertical;
+        var chart = this, axes = chart.axes, colorAxis = chart.colorAxis, renderer = chart.renderer, options = chart.options, correction = 0, // correction for X axis labels
+        tempWidth, tempHeight, redoHorizontal, redoVertical, renderAxes = function (axes) {
+            axes.forEach(function (axis) {
+                if (axis.visible) {
+                    axis.render();
+                }
+            });
+        };
         // Title
         chart.setTitle();
         /**
@@ -1623,11 +1634,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.drawChartBox();
         // Axes
         if (chart.hasCartesianSeries) {
-            axes.forEach(function (axis) {
-                if (axis.visible) {
-                    axis.render();
-                }
-            });
+            renderAxes(axes);
+        }
+        else if (colorAxis && colorAxis.length) {
+            renderAxes(colorAxis);
         }
         // The series
         if (!chart.seriesGroup) {

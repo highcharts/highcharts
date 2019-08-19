@@ -1598,15 +1598,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             // [top, right, bottom, left]
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
-            margin = chart.margin;
+            colorAxis = chart.colorAxis,
+            margin = chart.margin,
+            getOffset = function (axes: Array<Highcharts.Axis>): void {
+                axes.forEach(function (axis: Highcharts.Axis): void {
+                    if (axis.visible) {
+                        axis.getOffset();
+                    }
+                });
+            };
 
         // pre-render axes to get labels offset width
         if (chart.hasCartesianSeries) {
-            chart.axes.forEach(function (axis: Highcharts.Axis): void {
-                if (axis.visible) {
-                    axis.getOffset();
-                }
-            });
+            getOffset(chart.axes);
+
+        } else if (colorAxis && colorAxis.length) {
+            getOffset(colorAxis);
         }
 
         // Add the axis offsets
@@ -2300,13 +2307,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     render: function (this: Highcharts.Chart): void {
         var chart = this,
             axes = chart.axes,
+            colorAxis = chart.colorAxis,
             renderer = chart.renderer,
             options = chart.options,
             correction = 0, // correction for X axis labels
             tempWidth,
             tempHeight,
             redoHorizontal: boolean,
-            redoVertical: boolean;
+            redoVertical: boolean,
+            renderAxes = function (axes: Array<Highcharts.Axis>): void {
+                axes.forEach(function (axis: Highcharts.Axis): void {
+                    if (axis.visible) {
+                        axis.render();
+                    }
+                });
+            };
 
         // Title
         chart.setTitle();
@@ -2380,11 +2395,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Axes
         if (chart.hasCartesianSeries) {
-            axes.forEach(function (axis: Highcharts.Axis): void {
-                if (axis.visible) {
-                    axis.render();
-                }
-            });
+            renderAxes(axes);
+
+        } else if (colorAxis && colorAxis.length) {
+            renderAxes(colorAxis);
         }
 
         // The series

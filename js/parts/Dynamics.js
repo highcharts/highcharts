@@ -119,14 +119,67 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     addAxis: function (options, isX, redraw, animation) {
-        var key = isX ? 'xAxis' : 'yAxis', chartOptions = this.options, userOptions = merge(options, {
-            index: this[key].length,
-            isX: isX
+        return this.createAxis(isX ? 'xAxis' : 'yAxis', { options: options, redraw: redraw, animation: animation });
+    },
+    /**
+     * Add a color axis to the chart after render time. Note that this method
+     * should never be used when adding data synchronously at chart render time,
+     * as it adds expense to the calculations and rendering. When adding data at
+     * the same time as the chart is initialized, add the axis as a
+     * configuration option instead.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Chart#addColorAxis
+     *
+     * @param {Highcharts.ColorAxisOptions} options
+     *        The axis options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after adding.
+     *
+     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     *        Whether and how to apply animation in the redraw.
+     *
+     * @return {Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    addColorAxis: function (options, redraw, animation) {
+        return this.createAxis('colorAxis', { options: options, redraw: redraw, animation: animation });
+    },
+    /**
+     * Factory for creating different axis types.
+     *
+     * @private
+     * @function Highcharts.Chart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {...Array<*>} arguments
+     *        All arguments for the constructor.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    createAxis: function (type, args) {
+        var chartOptions = this.options, isColorAxis = type === 'colorAxis', options = args.options, redraw = args.redraw, animation = args.animation, userOptions = merge(options, {
+            index: this[type].length,
+            isX: type === 'xAxis'
         }), axis;
-        axis = new Axis(this, userOptions);
+        if (isColorAxis) {
+            axis = new H.ColorAxis(this, userOptions);
+        }
+        else {
+            axis = new Axis(this, userOptions);
+        }
         // Push the new axis options to the chart options
-        chartOptions[key] = splat(chartOptions[key] || {});
-        chartOptions[key].push(userOptions);
+        chartOptions[type] = splat(chartOptions[type] || {});
+        chartOptions[type].push(userOptions);
+        if (isColorAxis) {
+            this.isDirtyLegend = true;
+        }
         if (pick(redraw, true)) {
             this.redraw(animation);
         }
@@ -569,6 +622,7 @@ Chart.prototype.collectionsWithInit = {
     // collectionName: [ initializingMethod, [extraArguments] ]
     xAxis: [Chart.prototype.addAxis, [true]],
     yAxis: [Chart.prototype.addAxis, [false]],
+    colorAxis: [Chart.prototype.addColorAxis, [false]],
     series: [Chart.prototype.addSeries]
 };
 // extend the Point prototype for dynamic methods

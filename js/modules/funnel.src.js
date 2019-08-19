@@ -16,10 +16,12 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 
 // create shortcuts
-var seriesType = Highcharts.seriesType,
-    seriesTypes = Highcharts.seriesTypes,
-    noop = Highcharts.noop,
-    pick = Highcharts.pick;
+var H = Highcharts,
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
+    fireEvent = H.fireEvent,
+    noop = H.noop,
+    pick = H.pick;
 
 /**
  * @private
@@ -329,6 +331,8 @@ seriesType('funnel', 'pie',
                 cumulative += fraction;
             }
         });
+
+        fireEvent(series, 'afterTranslate');
     },
 
     // Funnel items don't have angles (#2289)
