@@ -29,6 +29,9 @@ hiddenAxisMixin = {
     render: function () {
         this.isDirty = false; // prevent setting Y axis dirty
     },
+    createLabelCollector: function () {
+        return false;
+    },
     setScale: noop,
     setCategories: noop,
     setTitle: noop
@@ -432,8 +435,10 @@ addEvent(Axis, 'init', function (e) {
         if (!this.labelCollector) {
             this.labelCollector = this.createLabelCollector();
         }
-        // Prevent overlapping axis labels (#9761)
-        chart.labelCollectors.push(this.labelCollector);
+        if (this.labelCollector) {
+            // Prevent overlapping axis labels (#9761)
+            chart.labelCollectors.push(this.labelCollector);
+        }
     }
     else {
         this.isRadial = false;
@@ -465,6 +470,15 @@ addEvent(Axis, 'autoLabelAlign', function (e) {
     if (this.isRadial) {
         e.align = undefined;
         e.preventDefault();
+    }
+});
+// Remove label collector function on axis remove/update
+addEvent(Axis, 'destroy', function () {
+    if (this.chart && this.chart.labelCollectors) {
+        var index = this.chart.labelCollectors.indexOf(this.labelCollector);
+        if (index >= 0) {
+            this.chart.labelCollectors.splice(index, 1);
+        }
     }
 });
 // Add special cases within the Tick class' methods for radial axes.
