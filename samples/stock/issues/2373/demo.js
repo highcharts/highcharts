@@ -53,20 +53,23 @@ function createChart() {
 
 names.forEach(function (name, i) {
 
-    Highcharts.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',   function (data) {
+    Highcharts.getJSON(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/' + name.toLowerCase() + '-c.json',
+        function (data) {
 
-        seriesOptions[i] = {
-            name: name,
-            data: data,
-            showInNavigator: true
-        };
+            seriesOptions[i] = {
+                name: name,
+                data: data,
+                showInNavigator: true
+            };
 
-        // As we're loading the data asynchronously, we don't know what order it will arrive. So
-        // we keep a counter and create the chart when all the data is loaded.
-        seriesCounter++;
+            // As we're loading the data asynchronously, we don't know what order it will arrive. So
+            // we keep a counter and create the chart when all the data is loaded.
+            seriesCounter++;
 
-        if (seriesCounter === names.length) {
-            createChart();
+            if (seriesCounter === names.length) {
+                createChart();
+            }
         }
-    });
+    );
 });
