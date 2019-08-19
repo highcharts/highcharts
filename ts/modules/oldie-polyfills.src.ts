@@ -183,11 +183,10 @@ if (!Object.keys) {
         obj: object
     ): Array<string> {
         var result = [] as Array<string>,
-            hasOwnProperty = Object.prototype.hasOwnProperty,
             prop: (number|string|symbol);
 
         for (prop in obj) {
-            if (hasOwnProperty.call(obj, prop)) {
+            if (Object.hasOwnProperty.call(obj, prop)) {
                 result.push(prop);
             }
         }
