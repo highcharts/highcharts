@@ -277,6 +277,7 @@ module.exports = function (config) {
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
+            f.indexOf('topojson-client') === -1 &&
 
             // Complains on chart.renderer.addPattern
             f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
