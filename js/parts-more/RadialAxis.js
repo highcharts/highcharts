@@ -379,13 +379,34 @@ radialAxisMixin = {
                     center[2]) +
                 (titleOptions.y || 0))
         };
+    },
+    /* *
+     * Attach and return collecting function for labels in radial axis for
+     * anti-collision.
+     */
+    createLabelCollector: function () {
+        var axis = this;
+        return function () {
+            if (axis.isRadial &&
+                axis.tickPositions &&
+                // undocumented option for now, but working
+                axis.options.labels.allowOverlap !== true) {
+                return axis.tickPositions
+                    .map(function (pos) {
+                    return axis.ticks[pos] && axis.ticks[pos].label;
+                })
+                    .filter(function (label) {
+                    return Boolean(label);
+                });
+            }
+        };
     }
     /* eslint-enable valid-jsdoc */
 };
 /* eslint-disable no-invalid-this */
 // Actions before axis init.
 addEvent(Axis, 'init', function (e) {
-    var axis = this, chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
+    var chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
         chart.pane && chart.pane[paneIndex];
     // Before prototype.init
     if (angular) {
@@ -408,21 +429,11 @@ addEvent(Axis, 'init', function (e) {
         this.isRadial = true;
         chart.inverted = false;
         chartOptions.chart.zoomType = null;
+        if (!this.labelCollector) {
+            this.labelCollector = this.createLabelCollector();
+        }
         // Prevent overlapping axis labels (#9761)
-        chart.labelCollectors.push(function () {
-            if (axis.isRadial &&
-                axis.tickPositions &&
-                // undocumented option for now, but working
-                axis.options.labels.allowOverlap !== true) {
-                return axis.tickPositions
-                    .map(function (pos) {
-                    return axis.ticks[pos] && axis.ticks[pos].label;
-                })
-                    .filter(function (label) {
-                    return Boolean(label);
-                });
-            }
-        });
+        chart.labelCollectors.push(this.labelCollector);
     }
     else {
         this.isRadial = false;

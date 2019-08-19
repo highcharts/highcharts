@@ -25,6 +25,9 @@ declare global {
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
         }
+        interface ChartLabelCollectorFunction {
+            (this: null): (Array<(SVGElement|undefined)>|undefined);
+        }
         interface ChartOptions {
             renderer?: string;
             skipClone?: boolean;
@@ -81,7 +84,7 @@ declare global {
             public isDirtyBox?: boolean;
             public isDirtyLegend?: boolean;
             public isResizing: number;
-            public labelCollectors: Array<Function>;
+            public labelCollectors: Array<ChartLabelCollectorFunction>;
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
