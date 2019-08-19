@@ -700,6 +700,7 @@ RendererProto.elements3d.funnel3d = funnel3dMethods;
 RendererProto.funnel3d = function (shapeArgs) {
     var renderer = this,
         funnel3d = renderer.element3d('funnel3d', shapeArgs),
+        styledMode = renderer.styledMode,
         // hide stroke for Firefox
         strokeAttrs = {
             'stroke-width': 1,
@@ -716,7 +717,10 @@ RendererProto.funnel3d = function (shapeArgs) {
         funnel3d.backUpper,
         funnel3d.rightUpper
     ].forEach(function (upperElem) {
-        upperElem.attr(strokeAttrs);
+
+        if (!styledMode) {
+            upperElem.attr(strokeAttrs);
+        }
         upperElem.add(funnel3d.upperGroup);
     });
 
@@ -729,7 +733,9 @@ RendererProto.funnel3d = function (shapeArgs) {
         funnel3d.backLower,
         funnel3d.rightLower
     ].forEach(function (lowerElem) {
-        lowerElem.attr(strokeAttrs);
+        if (!styledMode) {
+            lowerElem.attr(strokeAttrs);
+        }
         lowerElem.add(funnel3d.lowerGroup);
     });
 
