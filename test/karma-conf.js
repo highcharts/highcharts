@@ -392,7 +392,6 @@ module.exports = function (config) {
             'samples/unit-tests/oldie/*/demo.js',
 
             // visual tests excluded for now due to failure
-            'samples/highcharts/series-networkgraph/barnes-hut-approximation/demo.js', // disconnects/timeout
             'samples/highcharts/demo/funnel3d/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
@@ -459,7 +458,7 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-,]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|unit-tests|issues)\/([a-z0-9\-]+\/[a-z0-9\-,]+)\/demo.js$/g,
                         '$1/$2'
                     );
 
@@ -641,14 +640,31 @@ module.exports = function (config) {
                         var done = assert.async();
                         ${js}
 
-                        var chart = Highcharts.charts[
-                            Highcharts.charts.length - 1
-                        ];
 
-                        //console.log(assert.test.module.unskippedTestsRun, '${path}');
-                        ${assertion}
+                        let attempts = 0;
+                        function assertIfChartExists() {
+                            var chart = Highcharts.charts[
+                                Highcharts.charts.length - 1
+                            ];
 
-                        ${reset}
+                            if (chart || document.getElementsByTagName('svg').length) {
+                                //console.log(assert.test.module.unskippedTestsRun, '${path}');
+                                ${assertion}
+                                ${reset}
+                            } else if (attempts < 50) {
+                                setTimeout(assertIfChartExists, 100);
+                                attempts++;
+                            } else {
+                                assert.ok(
+                                    false,
+                                    \`Chart async chart test should load within \${attempts} attempts\`
+                                );
+                                done();
+                                ${reset}
+                            }
+                        }
+                        assertIfChartExists();
+
                     });
                     `;
 

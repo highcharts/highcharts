@@ -61,12 +61,14 @@ Highcharts.setOptions({
         // has the same layout option: layoutAlgorithm.
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         },
         packedbubble: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         }
 
@@ -86,9 +88,17 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-Highcharts.getJSON = function (url, callback) {
-    callback(window.JSONSources[url]);
-};
+Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
+    if (window.JSONSources[url]) {
+        callback(window.JSONSources[url]);
+    } else {
+        console.log('@getJSON: Loading over network', url);
+        return proceed.call(Highcharts, url, function (data) {
+            window.JSONSources[url] = data;
+            callback(data);
+        });
+    }
+});
 
 if (window.QUnit) {
     /*
@@ -182,12 +192,24 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver({});
+        // Network graphs, sankey etc
+        if (
+            chart.series[0].nodes &&
+            chart.series[0].nodes[0] &&
+            typeof chart.series[0].nodes[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].nodes[0].onMouseOver({});
+        
+        // Others
+        } else if (
+            chart.series[0].points &&
+            chart.series[0].points[0] &&
+            typeof chart.series[0].points[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].points[0].onMouseOver({});
+        }
     }
 };
 
