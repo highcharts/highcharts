@@ -816,6 +816,21 @@ addEvent(Axis as any, 'autoLabelAlign', function (
     }
 });
 
+// Remove label collector function on axis remove/update
+addEvent(Axis as any, 'destroy', function (
+    this: Highcharts.RadialAxis
+): void {
+    if (this.chart && this.chart.labelCollectors) {
+        var index = this.chart.labelCollectors.indexOf(
+            this.labelCollector as Highcharts.ChartLabelCollectorFunction
+        );
+
+        if (index >= 0) {
+            this.chart.labelCollectors.splice(index, 1);
+        }
+    }
+});
+
 // Add special cases within the Tick class' methods for radial axes.
 addEvent(Tick as any, 'afterGetPosition', function (
     this: Highcharts.RadialTick,
