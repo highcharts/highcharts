@@ -24,8 +24,12 @@ declare global {
                 options: AxisPlotBandsOptions
             ): (PlotLineOrBand|undefined);
             addPlotBandOrLine(
-                options: (AxisPlotLinesOptions|AxisPlotBandsOptions),
-                coll?: ('plotBands'|'plotLines')
+                options: AxisPlotBandsOptions,
+                coll?: 'plotBands'
+            ): (PlotLineOrBand|undefined);
+            addPlotBandOrLine(
+                options: AxisPlotLinesOptions,
+                coll?: 'plotLines'
             ): (PlotLineOrBand|undefined);
             addPlotLine(
                 options: AxisPlotLinesOptions
@@ -33,7 +37,7 @@ declare global {
             getPlotBandPath(
                 from: number,
                 to: number,
-                options?: Dictionary<any>
+                options?: (AxisPlotBandsOptions|AxisPlotLinesOptions)
             ): SVGPathArray;
             removePlotBand(id: string): void;
             removePlotBandOrLine(id: string): void;
@@ -110,8 +114,8 @@ declare global {
             public render(): (PlotLineOrBand|undefined);
             public renderLabel(
                 optionsLabel: (
-                    AxisPlotLinesLabelOptions|
-                    AxisPlotBandsLabelOptions
+                    AxisPlotBandsLabelOptions|
+                    AxisPlotLinesLabelOptions
                 ),
                 path: SVGPathArray,
                 isBand?: boolean,
@@ -119,8 +123,8 @@ declare global {
             ): void;
             public getLabelText(
                 optionsLabel: (
-                    AxisPlotLinesLabelOptions|
-                    AxisPlotBandsLabelOptions
+                    AxisPlotBandsLabelOptions|
+                    AxisPlotLinesLabelOptions
                 ),
             ): string
         }
@@ -1246,20 +1250,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      * @function Highcharts.Axis#addPlotBandOrLine
      *
-     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
      *        The plotBand or plotLine configuration object.
      *
      * @param {"plotBands"|"plotLines"} [coll]
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    addPlotBandOrLine: function (
+    addPlotBandOrLine: function <T extends (
+        Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
+    )> (
         this: Highcharts.Axis,
-        options: (
-            Highcharts.AxisPlotLinesOptions|
-            Highcharts.AxisPlotBandsOptions
-        ),
-        coll?: ('plotBands'|'plotLines')
+        options: T,
+        coll?: (
+            T extends Highcharts.AxisPlotBandsOptions ?
+                'plotBands' :
+                'plotLines'
+        )
     ): (Highcharts.PlotLineOrBand|undefined) {
         var obj = new H.PlotLineOrBand(this, options).render(),
             userOptions = this.userOptions;
@@ -1267,8 +1274,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
-                userOptions[coll] = userOptions[coll] || [];
-                (userOptions[coll] as any).push(options);
+                // Workaround Microsoft/TypeScript issue #32693
+                var updatedOptions = (userOptions[coll] || []) as Array<T>;
+                updatedOptions.push(options);
+                userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
         }
