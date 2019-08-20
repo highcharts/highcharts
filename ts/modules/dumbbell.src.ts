@@ -49,7 +49,7 @@ declare global {
             public pointSetState: any;
         }
         class DumbbellSeries extends AreaRangeSeries {
-            startColor?: ColorType;
+            public startColor?: ColorType;
             public data: Array<DumbbellPoint>;
             public options: DumbbellSeriesOptions;
             public points: Array<DumbbellPoint>;
@@ -92,9 +92,7 @@ var pick = H.pick,
  *
  * @sample {highcharts} highcharts/demo/dumbbell/
  *         Dumbbell chart
- * @sample {highstock} stock/demo/dumbbell/
- *         Dumbbell chart
- * @sample {highcharts} highcharts/css/dumbbell/
+ * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
  *         Styled mode
  *
  * @extends      plotOptions.arearange
@@ -274,7 +272,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                 pointOptions.color,
                 point.zone ? point.zone.color : undefined,
                 point.color
-            )
+            );
             H.extend(point, point.origProps);
             delete point.origProps;
         }
@@ -549,7 +547,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                         pointOptions.color,
                         point.zone ? point.zone.color : undefined,
                         point.color
-                    )
+                    );
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });

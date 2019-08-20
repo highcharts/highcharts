@@ -53,9 +53,7 @@ var seriesType = H.seriesType,
  *
  * @sample {highcharts} highcharts/demo/lollipop/
  *         Lollipop chart
- * @sample {highstock} stock/demo/lollipop/
- *         Lollipop chart
- * @sample {highcharts} highcharts/css/lollipop/
+ * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
  *         Styled mode
  *
  * @extends      plotOptions.dumbbell
@@ -89,7 +87,7 @@ seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
     },
     tooltip: {
         pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
-    } 
+    }
 }, {
     toYData: areaProto.toYData,
     setStackedPoints: areaProto.setStackedPoints,
