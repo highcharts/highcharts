@@ -758,7 +758,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         var chart = this,
             hoverPoints = chart.hoverPoints,
-            doRedraw: boolean;
+            doRedraw: boolean,
+            PanAxisOptions = Highcharts.PanAxisOptions;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
@@ -774,6 +775,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 isX: number
             ): void {
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+                    axisOpt = axis.options,
                     horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
@@ -836,8 +838,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     newMin !== extremes.min &&
                     newMax !== extremes.max &&
                     isX ? true : (
-                        newMin >= (axis.options as Highcharts.panAxisOptions).startMin &&
-                        newMax <= (axis.options as Highcharts.panAxisOptions).startMax)
+                            newMin >= (axisOpt as PanAxisOptions).startMin &&
+                            newMax <= (axisOpt as PanAxisOptions).startMax)
                 ) {
                     axis.setExtremes(
                         newMin,
