@@ -1116,7 +1116,6 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             if (!(series.parentNode as any).graphic) {
                 series.graph = (series.parentNode as any).graphic =
                     chart.renderer.symbol(parentOptions.symbol)
-                        .attr(parentAttribs)
                         .add(series.parentNodesGroup);
             }
             (series.parentNode as any).graphic.attr(parentAttribs);
