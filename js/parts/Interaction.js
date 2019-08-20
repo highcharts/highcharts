@@ -596,7 +596,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
      *
      * @return {void}
