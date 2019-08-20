@@ -98,10 +98,23 @@ declare global {
         [key: string]: any;
         [index: number]: any;
     }
+    interface PointerEvent {
+        /** @deprecated */
+        toElement?: PointerEvent['relatedTarget'];
+    }
     interface Window {
+        ArrayBuffer: typeof ArrayBuffer;
+        Blob: typeof Blob;
         Image: typeof Image;
+        TouchEvent: typeof TouchEvent;
+        Uint8Array: Uint8Array & Uint8ArrayConstructor;
+        URL: typeof URL;
+        /** @deprecated */
+        createObjectURL?: (typeof URL)['createObjectURL'];
+        /** @deprecated */
         opera?: unknown;
-        TouchEvent?: typeof TouchEvent;
+        /** @deprecated */
+        webkitURL?: typeof URL;
     }
     const win: Window; // @todo: UMD variable
 }
