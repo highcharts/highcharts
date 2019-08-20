@@ -1696,7 +1696,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.unbindReflow = addEvent(win, 'resize', function (
                 e: Event
             ): void {
-                chart.reflow(e);
+                // a removed event listener still runs in Edge and IE if the
+                // listener was removed while the event runs, so check if the
+                // chart is not destroyed (#11609)
+                if (chart.options) {
+                    chart.reflow(e);
+                }
             });
             addEvent(this, 'destroy', this.unbindReflow);
 
