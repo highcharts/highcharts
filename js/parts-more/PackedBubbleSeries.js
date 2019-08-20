@@ -701,7 +701,6 @@ seriesType('packedbubble', 'bubble',
         if (!series.parentNode.graphic) {
             series.graph = series.parentNode.graphic =
                 chart.renderer.symbol(parentOptions.symbol)
-                    .attr(parentAttribs)
                     .add(series.parentNodesGroup);
         }
         series.parentNode.graphic.attr(parentAttribs);
