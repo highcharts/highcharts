@@ -3,4 +3,5 @@
  authors:
    - Torstein Hønsi
  js_wrap: b
+ alt_text: Highcharts wind rose chart JavaScript example visualizes weather frequency conditions by compass direction using polar graph.
 ...
