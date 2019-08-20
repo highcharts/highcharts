@@ -103,7 +103,7 @@ var merge = H.merge,
  *
  * @extends      plotOptions.line
  * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
+ *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
  *               getExtremesFromAll, marker, negativeColor, pointPlacement,
  *               shadow, softThreshold, stacking, states, step, threshold,
  *               turboThreshold, xAxis, zoneAxis, zones

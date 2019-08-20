@@ -155,8 +155,8 @@ seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
      * @extends      plotOptions.areaspline
      * @since        6.0.0
      * @product      highcharts
-     * @excluding    boostThreshold, connectNulls, stacking, pointInterval,
-     *               pointIntervalUnit
+     * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
+     *               pointInterval, pointIntervalUnit
      * @optionparent plotOptions.bellcurve
      */
     , {

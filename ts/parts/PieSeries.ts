@@ -344,7 +344,7 @@ seriesType<Highcharts.PieSeriesOptions>(
      *
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
-     *               cropThreshold, dashStyle, findNearestPointBy,
+     *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
      *               getExtremesFromAll, label, lineWidth, marker,
      *               negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
