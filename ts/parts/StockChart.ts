@@ -48,6 +48,10 @@ declare global {
         interface VMLRenderer {
             crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
         }
+        interface panAxisOptions extends XAxisOptions {
+            startMin: number,
+            startMax: number 
+        }
         class StockChart extends Chart {
         }
         function stockChart(): StockChart;
@@ -1090,5 +1094,32 @@ addEvent(Chart, 'update', function (
         merge(true, this.options.scrollbar, options.scrollbar);
         (this.navigator.update as any)({}, false);
         delete options.scrollbar;
+    }
+});
+
+addEvent(Axis, 'afterSetScale', function (
+    this: Highcharts.Axis
+): void {
+    var panning = (this.chart.options.chart as any).panning,
+        options = this.options as Highcharts.panAxisOptions;
+
+    if (
+        (panning === 'y' ||
+        panning === 'xy') &&
+        !this.isXAxis &&
+        !defined(options.startMin) &&
+        !defined(options.startMax)
+    ) {
+  
+        var min = Number.MAX_VALUE,
+            max = Number.MIN_VALUE;
+    
+        this.series.forEach(function (series) {
+            min = Math.min(Math.min.apply(null, (series.yData as any)), min)
+            max = Math.max(Math.max.apply(null, (series.yData as any)), max)
+        })  
+        
+        options.startMin = min;
+        options.startMax = max;
     }
 });

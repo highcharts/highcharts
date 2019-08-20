@@ -817,22 +817,27 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
                 // If the new range spills over, either to the min or max,
                 // adjust the new range.
-                spill = paddedMin - newMin;
-                if (spill > 0) {
-                    newMax += spill;
-                    newMin = paddedMin;
-                }
-                spill = newMax - paddedMax;
-                if (spill > 0) {
-                    newMax = paddedMax;
-                    newMin -= spill;
+                if (isX) {
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
+                    }
                 }
 
                 // Set new extremes if they are actually new
                 if (
                     axis.series.length &&
                     newMin !== extremes.min &&
-                    newMax !== extremes.max
+                    newMax !== extremes.max &&
+                    isX ? true : (
+                        newMin >= (axis.options as Highcharts.panAxisOptions).startMin &&
+                        newMax <= (axis.options as Highcharts.panAxisOptions).startMax)
                 ) {
                     axis.setExtremes(
                         newMin,
