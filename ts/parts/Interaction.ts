@@ -97,13 +97,13 @@ declare global {
  * on the point. One parameter, `event`, is passed to the function. Returning
  * `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
+ * @type {Highcharts.PointSelectCallbackFunction|undefined}
  *//**
  * Fires when the point is unselected either programmatically or following a
  * click on the point. One parameter, `event`, is passed to the function.
  * Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointUnselectCallbackFunction|undefined}
  */
 
 /**
