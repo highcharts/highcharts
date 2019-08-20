@@ -434,18 +434,6 @@ declare global {
     }
 }
 
-
-/**
- * @interface Highcharts.PointOptionsObject
- *//**
- * Individual point events
- * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PlotSeriesPointEventsOptions}
- *//**
- * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PlotSeriesPointMarkerOptions}
- */
-
 /**
  * Function callback when a series has been animated.
  *
