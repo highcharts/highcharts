@@ -100,7 +100,7 @@ declare global {
     }
     interface PointerEvent {
         /** @deprecated */
-        toElement?: PointerEvent['relatedTarget'];
+        readonly toElement: Element;
     }
     interface Window {
         ArrayBuffer: typeof ArrayBuffer;
