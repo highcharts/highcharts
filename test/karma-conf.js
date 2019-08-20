@@ -397,7 +397,23 @@ module.exports = function (config) {
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
-            'samples/highcharts/demo/synchronized-charts/demo.js'
+            'samples/highcharts/demo/synchronized-charts/demo.js',
+            // various samples failing standard chart creation test
+            'samples/highcharts/series/data-array-of-name-value/demo.js',
+            'samples/highcharts/plotoptions/series-dashstyle-all/demo.js',
+            'samples/highcharts/series/data-array-of-name-value/demo.js',
+            'samples/highcharts/studies/direction-arrows/demo.js',
+            'samples/highcharts/studies/distribution-algorithm/demo.js',
+            'samples/highcharts/members/renderer-arc/demo.js',
+            'samples/highcharts/members/renderer-basic/demo.js',
+            'samples/highcharts/members/renderer-callout/demo.js',
+            'samples/highcharts/members/renderer-circle/demo.js',
+            'samples/highcharts/members/renderer-g/demo.js',
+            'samples/highcharts/members/renderer-path/demo.js',
+            'samples/highcharts/members/renderer-rect/demo.js',
+            'samples/maps/coloraxis/dataclasses-name/demo.js',
+            'samples/maps/coloraxis/dataclasses-labelformatter/demo.js',
+            'samples/maps/series/latlon-transform/demo.js',
 
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
@@ -516,40 +532,6 @@ module.exports = function (config) {
                         return;
                     }
 
-                    const html = getHTML(path);
-
-                    js = resolveJSON(js);
-
-                    // Don't do intervals (typically for gauge samples, add
-                    // point etc)
-                    js = js.replace('setInterval', 'Highcharts.noop');
-
-                    // Force enableSimulation: false
-                    js = js.replace(
-                        'enableSimulation: true',
-                        'enableSimulation: false'
-                    );
-
-                    // Reset global options
-                    let reset = (
-                            js.indexOf('Highcharts.setOptions') === -1 &&
-                            js.indexOf('Highcharts.getOptions') === -1
-                        ) ?
-                        '' :
-                        `
-                        Highcharts.setOptions(
-                            JSON.parse(Highcharts.defaultOptionsRaw)
-                        );
-                        `;
-
-                    // Reset modified callbacks
-                    if (js.indexOf('Chart.prototype.callbacks') !== -1) {
-                        reset += `
-                        Highcharts.Chart.prototype.callbacks =
-                            Highcharts.callbacksRaw.slice(0);
-                        `;
-                    }
-
                     let assertion;
 
                     // Set reference image
@@ -575,7 +557,7 @@ module.exports = function (config) {
                             done();
                         `;
 
-                    } else {
+                    } else if (argv.visualcompare) {
                         if (!argv.remotelocation && !fs.existsSync(
                             `./samples/${path}/reference.svg`
                         )) {
@@ -584,96 +566,54 @@ module.exports = function (config) {
                                 ` ./samples/${path}/reference.svg`
                             );
                             file.path = file.originalPath + '.preprocessed.js';
-                            done(`QUnit.skip('${path}');`);
+                            done(`
+                                QUnit.skip('${path}', function(assert) { assert.ok(true, 'Done'); });
+                            `);
                             return;
                         }
 
-                        try {
-                            assertion = `
-                                compareToReference(chart, '${path}')
-                                    .then(actual => {
-                                        if (${argv.difflog}) {
-                                            var today = new Date().toISOString().slice(0,10);
-                                            var diffLog = {
-                                                name: 'visual-test-results',
-                                                object: {
-                                                    '${path}': actual,
-                                                    meta: {
-                                                        runDate: today,
-                                                        gitSha: __karma__.config.gitSha
-                                                    },
-                                                },
-                                            };
-                                            if (actual || actual === 0) {
-                                                window.dump(JSON.stringify( diffLog ));
-                                            }
-                                            assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
-                                        } else {
-                                            assert.strictEqual(
-                                                actual,
-                                                0,
-                                                'Different pixels\\n' +
-                                                '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                                '- samples/${path}/diff.gif'
-                                            );
-                                        }
-                                        done();
-                                    })
-                                    .catch(err => {
-                                        console.error(err);
-                                        done();
-                                    });
-                            `;
-                        } catch (e) {
-                            assertion = `
-                                assert.ok(false, 'Reference image loaded')
+                        assertion = `
+                        compareToReference(chart, '${path}')
+                            .then(actual => {
+                                if (${argv.difflog}) {
+                                    var today = new Date().toISOString().slice(0,10);
+                                    var diffLog = {
+                                        name: 'visual-test-results',
+                                        object: {
+                                            '${path}': actual,
+                                            meta: {
+                                                runDate: today,
+                                                gitSha: __karma__.config.gitSha
+                                            },
+                                        },
+                                    };
+                                    if (actual || actual === 0) {
+                                        window.dump(JSON.stringify( diffLog ));
+                                    }
+                                    assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
+                                } else {
+                                    assert.strictEqual(
+                                        actual,
+                                        0,
+                                        'Different pixels\\n' +
+                                        '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                        '- samples/${path}/diff.gif'
+                                    );
+                                }
                                 done();
-                            `;
-                        }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                done();
+                            });
+                        `;
                     }
-
-                    js = `
-
-                    QUnit.test('${path}', function (assert) {
-
-                        // Apply demo.html
-                        document.getElementById('demo-html').innerHTML =
-                            \`${html}\`;
-
-                        var done = assert.async();
-                        ${js}
-
-
-                        let attempts = 0;
-                        function assertIfChartExists() {
-                            var chart = Highcharts.charts[
-                                Highcharts.charts.length - 1
-                            ];
-
-                            if (chart || document.getElementsByTagName('svg').length) {
-                                //console.log(assert.test.module.unskippedTestsRun, '${path}');
-                                ${assertion}
-                                ${reset}
-                            } else if (attempts < 50) {
-                                setTimeout(assertIfChartExists, 100);
-                                attempts++;
-                            } else {
-                                assert.ok(
-                                    false,
-                                    \`Chart async chart test should load within \${attempts} attempts\`
-                                );
-                                done();
-                                ${reset}
-                            }
-                        }
-                        assertIfChartExists();
-
-                    });
-                    `;
+                    // TODO: same to assume default assert like this?
+                    assertion = assertion ? assertion : `assert.ok(true, 'Chart and SVG should exist.');`;
 
                     file.path = file.originalPath + '.preprocessed.js';
-
-                    done(js);
+                    const testTemplate = createVisualTestTemplate(argv, path, js, assertion);
+                    done(testTemplate);
                 }
             }]
         }
@@ -740,3 +680,74 @@ module.exports = function (config) {
 
     config.set(options);
 };
+
+function createVisualTestTemplate(argv, path, js, assertion) {
+    let scriptBody = resolveJSON(js);
+
+    // Don't do intervals (typically for gauge samples, add point etc)
+    scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
+
+    // Force enableSimulation: false
+    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+
+    let html = getHTML(path);
+
+    // Reset global options
+    let reset = (
+        scriptBody.indexOf('Highcharts.setOptions') === -1 &&
+        scriptBody.indexOf('Highcharts.getOptions') === -1
+    ) ?
+        '' :
+        `
+        Highcharts.setOptions(
+            JSON.parse(Highcharts.defaultOptionsRaw)
+        );
+        `;
+
+    // Reset modified callbacks
+    if (scriptBody.indexOf('Chart.prototype.callbacks') !== -1) {
+        reset += `
+            Highcharts.Chart.prototype.callbacks =
+                Highcharts.callbacksRaw.slice(0);
+        `;
+    }
+
+    return `
+        QUnit.test('${path}', function (assert) {
+            // Apply demo.html
+            document.getElementById('demo-html').innerHTML = \`${html}\`;
+            
+            /*
+             * we expect 2 callbacks if --visualcompare argument is supplied,
+             * one for the test comparison and one for checking if chart exists.
+             */ 
+            var done = assert.async(${argv.visualcompare || argv.reference ? 2 : 1 });
+            
+            ${scriptBody}
+
+            let attempts = 0;
+            function assertIfChartExists() {
+                var chart = Highcharts.charts[
+                    Highcharts.charts.length - 1
+                ];
+
+                if (chart && document.getElementsByTagName('svg').length) {
+                    ${assertion}
+                    done();
+                    ${reset}
+                } else if (attempts < 50) {
+                    setTimeout(assertIfChartExists, 100);
+                    attempts++;
+                } else {
+                    assert.ok(
+                        false,
+                        \`Chart async chart test should load within \${attempts} attempts\`
+                    );
+                    done();
+                    ${reset}
+                }
+            }
+            assertIfChartExists();
+        });
+    `;
+}

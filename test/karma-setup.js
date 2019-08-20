@@ -349,7 +349,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        var remotelocation = __karma__.config.cliArgs.remotelocation;
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {
