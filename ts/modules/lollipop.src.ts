@@ -86,7 +86,10 @@ seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
             /** @ignore-option */
             halo: false
         }
-    }
+    },
+    tooltip: {
+        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
+    } 
 }, {
     toYData: areaProto.toYData,
     setStackedPoints: areaProto.setStackedPoints,

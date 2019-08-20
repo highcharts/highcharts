@@ -49,6 +49,7 @@ declare global {
             public pointSetState: any;
         }
         class DumbbellSeries extends AreaRangeSeries {
+            startColor?: ColorType;
             public data: Array<DumbbellPoint>;
             public options: DumbbellSeriesOptions;
             public points: Array<DumbbellPoint>;
@@ -82,7 +83,8 @@ var pick = H.pick,
     seriesProto = H.Series.prototype,
     areaRangeProto = seriesTypes.arearange.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
-    colProto = seriesTypes.column.prototype;
+    colProto = seriesTypes.column.prototype,
+    areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
  * The dumbbell series is a carteseian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -225,6 +227,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             connectorColor = pick(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
+                pointOptions.color,
                 point.zone ? point.zone.color : undefined,
                 point.color
             ),
@@ -255,6 +258,25 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
 
         if (point.plotX < 0 || point.plotX > xAxis.len) {
             connectorWidth = 0;
+        }
+
+        // Connector should reflect upper marker's zone color
+        if (point.upperGraphic) {
+            point.origProps = {
+                y: point.y,
+                zone: point.zone
+            };
+            point.y = point.high;
+            point.zone = point.zone ? point.getZone() : undefined;
+            connectorColor = pick(
+                pointOptions.connectorColor,
+                seriesOptions.connectorColor,
+                pointOptions.color,
+                point.zone ? point.zone.color : undefined,
+                point.color
+            )
+            H.extend(point, point.origProps);
+            delete point.origProps;
         }
 
         attribs = {
@@ -380,9 +402,9 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
         var series = this,
             chart = series.chart,
             pointLength = series.points.length,
-            seriesStartColor = series.options.startColor,
+            seriesStartColor = series.startColor = series.options.startColor,
             i = 0,
-            color,
+            lowerGraphicColor,
             point,
             zoneColor;
 
@@ -396,12 +418,13 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
 
             if (point.upperGraphic) {
                 (point.upperGraphic.element as any).point = point;
+                point.upperGraphic.addClass('highcharts-lollipop-high');
             }
             (point.connector.element as any).point = point;
 
             if (point.lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
-                color = pick(
+                lowerGraphicColor = pick(
                     point.options.startColor,
                     seriesStartColor,
                     point.options.color,
@@ -411,9 +434,10 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                 );
                 if (!chart.styledMode) {
                     point.lowerGraphic.attr({
-                        fill: color
+                        fill: lowerGraphicColor
                     });
                 }
+                point.lowerGraphic.addClass('highcharts-lollipop-low');
             }
             i++;
         }
@@ -470,7 +494,11 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
         return pointAttribs;
     }
 }, {
-    pointSetState: areaRangeProto.pointClass.prototype.setState,
+    // seriesTypes doesn't inherit from arearange point proto so put below
+    // methods rigidly.
+    destroyElements: areaRangePointProto.destroyElements,
+    isValid: areaRangePointProto.isValid,
+    pointSetState: areaRangePointProto.setState,
     /**
      * Set the point's state extended by have influence on the connector
      * (between low and high value).
@@ -490,7 +518,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             pointOptions = point.options,
             pointStartColor = pointOptions.startColor,
             zoneColor = point.zone && point.zone.color,
-            color = pick(
+            lowerGraphicColor = pick(
                 pointStartColor,
                 seriesStartColor,
                 pointOptions.color,
@@ -498,17 +526,35 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                 point.color,
                 series.color
             ),
-            verb = 'attr';
+            verb = 'attr',
+            upperGraphicColor;
 
         this.pointSetState.apply(this, arguments);
 
         if (!this.state) {
             verb = 'animate';
-            if (point.lowerGraphic && point.upperGraphic) {
-                if (!chart.styledMode) {
-                    point.lowerGraphic.attr({
-                        fill: color
+            if (point.lowerGraphic && !chart.styledMode) {
+                point.lowerGraphic.attr({
+                    fill: lowerGraphicColor
+                });
+                if (point.upperGraphic) {
+                    point.origProps = {
+                        y: point.y,
+                        zone: point.zone
+                    };
+                    point.y = point.high;
+                    point.zone = point.zone ? point.getZone() : undefined;
+                    upperGraphicColor = pick(
+                        point.marker ? point.marker.fillColor : undefined,
+                        pointOptions.color,
+                        point.zone ? point.zone.color : undefined,
+                        point.color
+                    )
+                    point.upperGraphic.attr({
+                        fill: upperGraphicColor
                     });
+                    H.extend(point, point.origProps);
+                    delete point.origProps;
                 }
             }
         }

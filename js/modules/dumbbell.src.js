@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype;
+var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
  * The dumbbell series is a carteseian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -95,13 +95,20 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Correct line position by Math.floor instead of round.
      * As a result the line is aligned in the same way as marker
+     *
      * @private
+     *
      * @function Highcharts.seriesTypes.dumbbell#crispConnector
+     *
+     * @param {Highcharts.SVGRenderer} this
+     *        Highcharts Renderer.
      * @param {Highcharts.SVGPathArray} points
      *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
      *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
+     *
+     *
      */
     crispConnector: function (points) {
         if (points[1] === points[4]) {
@@ -119,11 +126,15 @@ seriesType('dumbbell', 'arearange', {
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
      * @private
+     *
+     * @param {Highcharts.Series} this The series of points.
      * @param {Highcharts.Point} point The point to inspect.
-     * @return {Object} The path and styles.
+     *
+     * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
     getConnectorAttribs: function (point) {
-        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, point.zone ? point.zone.color : undefined, point.color), connectorWidthPlus = seriesOptions.states.hover.connectorWidthPlus, dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle), pointTop = pick(point.plotLow, point.plotY), pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ? yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs;
+        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color), connectorWidthPlus = seriesOptions.states.hover.connectorWidthPlus, dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle), pointTop = pick(point.plotLow, point.plotY), pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ?
+            yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs;
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
@@ -142,6 +153,18 @@ seriesType('dumbbell', 'arearange', {
         if (point.plotX < 0 || point.plotX > xAxis.len) {
             connectorWidth = 0;
         }
+        // Connector should reflect upper marker's zone color
+        if (point.upperGraphic) {
+            point.origProps = {
+                y: point.y,
+                zone: point.zone
+            };
+            point.y = point.high;
+            point.zone = point.zone ? point.getZone() : undefined;
+            connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color);
+            H.extend(point, point.origProps);
+            delete point.origProps;
+        }
         attribs = {
             d: series.crispConnector([
                 'M',
@@ -156,7 +179,7 @@ seriesType('dumbbell', 'arearange', {
             attribs.stroke = connectorColor;
             attribs['stroke-width'] = connectorWidth;
             if (dashStyle) {
-                attribs['dashstyle'] = dashStyle;
+                attribs.dashstyle = dashStyle;
             }
         }
         return attribs;
@@ -164,10 +187,15 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Draw connector line that connects dumbbell point's low and high values.
      * @private
+     *
+     * @param {Highcharts.Series} this The series of points.
      * @param {Highcharts.Point} point The point to inspect.
+     *
+     * @return {void}
      */
     drawConnector: function (point) {
-        var series = this, animationLimit = pick(series.options.animationLimit, 250), verb = series.chart.pointCount < animationLimit ? 'animate' : 'attr';
+        var series = this, animationLimit = pick(series.options.animationLimit, 250), verb = series.chart.pointCount < animationLimit ?
+            'animate' : 'attr';
         if (!point.connector) {
             point.connector = series.chart.renderer.path()
                 .addClass('highcharts-lollipop-stem')
@@ -183,9 +211,13 @@ seriesType('dumbbell', 'arearange', {
      * groupPadding, pointPadding, pointWidth etc.
      *
      * @private
+     *
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      *
-     * @return {Highcharts.ColumnMetricsObject}
+     * @param {Highcharts.Series} this The series of points.
+     *
+     * @return {Highcharts.ColumnMetricsObject} metrics shapeArgs
+     *
      */
     getColumnMetrics: function () {
         var metrics = colProto.getColumnMetrics.apply(this, arguments);
@@ -199,7 +231,12 @@ seriesType('dumbbell', 'arearange', {
      * shape positions
      *
      * @private
+     *
      * @function Highcharts.seriesTypes.dumbbell#translate
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     * @return {void}
      */
     translate: function () {
         // calculate shapeargs
@@ -219,10 +256,15 @@ seriesType('dumbbell', 'arearange', {
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.
      * @private
+     *
      * @function Highcharts.Series#drawPoints
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     * @return {void}
      */
     drawPoints: function () {
-        var series = this, chart = series.chart, pointLength = series.points.length, seriesStartColor = series.options.startColor, i = 0, color, point, zoneColor;
+        var series = this, chart = series.chart, pointLength = series.points.length, seriesStartColor = series.startColor = series.options.startColor, i = 0, lowerGraphicColor, point, zoneColor;
         this.seriesDrawPoints.apply(series, arguments);
         // draw connectors and color upper markers
         while (i < pointLength) {
@@ -230,16 +272,18 @@ seriesType('dumbbell', 'arearange', {
             series.drawConnector(point);
             if (point.upperGraphic) {
                 point.upperGraphic.element.point = point;
+                point.upperGraphic.addClass('highcharts-lollipop-high');
             }
             point.connector.element.point = point;
             if (point.lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
-                color = pick(point.options.startColor, seriesStartColor, point.options.color, zoneColor, point.color, series.color);
+                lowerGraphicColor = pick(point.options.startColor, seriesStartColor, point.options.color, zoneColor, point.color, series.color);
                 if (!chart.styledMode) {
                     point.lowerGraphic.attr({
-                        fill: color
+                        fill: lowerGraphicColor
                     });
                 }
+                point.lowerGraphic.addClass('highcharts-lollipop-low');
             }
             i++;
         }
@@ -253,11 +297,7 @@ seriesType('dumbbell', 'arearange', {
      *
      * @function Highcharts.Series#markerAttribs
      *
-     * @param {Highcharts.Point} point
-     *        The Point to inspect.
-     *
-     * @param {string} [state]
-     *        The state, can be either `hover`, `select` or undefined.
+     * @param {Highcharts.Series} this The series of points.
      *
      * @return {Highcharts.SVGAttributes}
      *         A hash containing those attributes that are not settable from
@@ -275,11 +315,11 @@ seriesType('dumbbell', 'arearange', {
      * @private
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.Series} this The series of points.
+     * @param {Highcharts.Point} point The point to inspect.
+     * @param {string} state current state of point (normal, hover, select)
      *
-     * @param {string} state
-     *
-     * @return {Highcharts.Dictionary<any>}
+     * @return {Highcharts.SVGAttributes} pointAttribs SVGAttributes
      */
     pointAttribs: function (point, state) {
         var pointAttribs;
@@ -290,22 +330,42 @@ seriesType('dumbbell', 'arearange', {
         return pointAttribs;
     }
 }, {
-    pointSetState: areaRangeProto.pointClass.prototype.setState,
+    // seriesTypes doesn't inherit from arearange point proto so put below
+    // methods rigidly.
+    destroyElements: areaRangePointProto.destroyElements,
+    isValid: areaRangePointProto.isValid,
+    pointSetState: areaRangePointProto.setState,
     /**
      * Set the point's state extended by have influence on the connector
      * (between low and high value).
      *
+     * @private
+     * @param {Highcharts.Point} this The point to inspect.
+     *
+     * @return {void}
      */
     setState: function () {
-        var point = this, series = point.series, chart = series.chart, seriesStartColor = series.options.startColor, pointOptions = point.options, pointStartColor = pointOptions.startColor, zoneColor = point.zone && point.zone.color, color = pick(pointStartColor, seriesStartColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr';
+        var point = this, series = point.series, chart = series.chart, seriesStartColor = series.options.startColor, pointOptions = point.options, pointStartColor = pointOptions.startColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointStartColor, seriesStartColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor;
         this.pointSetState.apply(this, arguments);
         if (!this.state) {
             verb = 'animate';
-            if (point.lowerGraphic && point.upperGraphic) {
-                if (!chart.styledMode) {
-                    point.lowerGraphic.attr({
-                        fill: color
+            if (point.lowerGraphic && !chart.styledMode) {
+                point.lowerGraphic.attr({
+                    fill: lowerGraphicColor
+                });
+                if (point.upperGraphic) {
+                    point.origProps = {
+                        y: point.y,
+                        zone: point.zone
+                    };
+                    point.y = point.high;
+                    point.zone = point.zone ? point.getZone() : undefined;
+                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : undefined, pointOptions.color, point.zone ? point.zone.color : undefined, point.color);
+                    point.upperGraphic.attr({
+                        fill: upperGraphicColor
                     });
+                    H.extend(point, point.origProps);
+                    delete point.origProps;
                 }
             }
         }

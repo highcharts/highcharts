@@ -13,7 +13,8 @@ var seriesType = H.seriesType, areaProto = H.seriesTypes.area.prototype, colProt
 /**
  * The lollipop series is a carteseian series with a line anchored from
  * the x axis and a dot at the end to mark the value.
- * Requires `highcharts-more.js`, `modules/dumbbell.js` and `modules/lollipop.js`.
+ * Requires `highcharts-more.js`, `modules/dumbbell.js` and
+ * `modules/lollipop.js`.
  *
  * @sample {highcharts} highcharts/demo/lollipop/
  *         Lollipop chart
@@ -50,6 +51,9 @@ seriesType('lollipop', 'dumbbell', {
             /** @ignore-option */
             halo: false
         }
+    },
+    tooltip: {
+        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
     }
 }, {
     toYData: areaProto.toYData,
@@ -58,7 +62,7 @@ seriesType('lollipop', 'dumbbell', {
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
     alignDataLabel: colProto.alignDataLabel,
-    setShapeArgs: colProto.translate,
+    setShapeArgs: colProto.translate
 }, {
     pointSetState: areaProto.pointClass.prototype.setState,
     setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState
