@@ -43,7 +43,7 @@ declare global {
             haloPath(size: number): SVGElement;
             importEvents(): void;
             onMouseOut(): void;
-            onMouseOver(e: PointerEventObject): void;
+            onMouseOver(e?: PointerEventObject): void;
             select(selected?: boolean, accumulate?: boolean): void;
             setState(
                 state?: string,
@@ -963,14 +963,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
      *
      * @return {void}
      */
     onMouseOver: function (
         this: Highcharts.Point,
-        e: Highcharts.PointerEventObject
+        e?: Highcharts.PointerEventObject
     ): void {
         var point = this,
             series = point.series,

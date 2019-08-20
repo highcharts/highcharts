@@ -200,7 +200,7 @@ Highcharts.prepareShot = function (chart) {
             chart.series[0].nodes[0] &&
             typeof chart.series[0].nodes[0].onMouseOver === 'function'
         ) {
-            chart.series[0].nodes[0].onMouseOver({});
+            chart.series[0].nodes[0].onMouseOver();
         
         // Others
         } else if (
@@ -208,7 +208,7 @@ Highcharts.prepareShot = function (chart) {
             chart.series[0].points[0] &&
             typeof chart.series[0].points[0].onMouseOver === 'function'
         ) {
-            chart.series[0].points[0].onMouseOver({});
+            chart.series[0].points[0].onMouseOver();
         }
     }
 };
