@@ -170,9 +170,9 @@ seriesType('sankey', 'column',
  * @since        6.0.0
  * @product      highcharts
  * @excluding    animationLimit, boostThreshold, borderRadius,
- *               crisp, cropThreshold, depth, edgeColor, edgeWidth,
- *               findNearestPointBy, grouping, groupPadding, groupZPadding,
- *               maxPointWidth, negativeColor, pointInterval,
+ *               crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *               edgeWidth, findNearestPointBy, grouping, groupPadding,
+ *               groupZPadding, maxPointWidth, negativeColor, pointInterval,
  *               pointIntervalUnit, pointPadding, pointPlacement,
  *               pointRange, pointStart, pointWidth, shadow, softThreshold,
  *               stacking, threshold, zoneAxis, zones, minPointLength

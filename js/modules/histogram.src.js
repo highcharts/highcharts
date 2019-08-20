@@ -82,7 +82,8 @@ seriesType(
      *         Histogram
      *
      * @extends      plotOptions.column
-     * @excluding    boostThreshold, pointInterval, pointIntervalUnit, stacking
+     * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
+     *               stacking
      * @product      highcharts
      * @since        6.0.0
      * @optionparent plotOptions.histogram
