@@ -205,6 +205,10 @@ H.StockChart = H.stockChart = function (
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
         opposite,
+        panning = pick(
+            options.chart && options.chart.panning,
+            (defaultOptions.chart as any).panning,
+        ),
 
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
@@ -213,10 +217,11 @@ H.StockChart = H.stockChart = function (
             (defaultOptions.navigator as any).enabled,
             true
         ),
-        disableStartOnTick = navigatorEnabled ? {
+        verticalPanningEnabled = panning === 'y' || panning === 'xy',
+        disableStartOnTick = {
             startOnTick: false,
             endOnTick: false
-        } : null;
+        };
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (
@@ -244,7 +249,7 @@ H.StockChart = H.stockChart = function (
                 type: 'datetime',
                 categories: null
             },
-            disableStartOnTick as any
+            (navigatorEnabled ? disableStartOnTick : null) as any
         );
     });
 
@@ -280,7 +285,8 @@ H.StockChart = H.stockChart = function (
             },
             defaultOptions.yAxis, // #3802
             defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions // user options
+            yAxisOptions, // user options
+            (verticalPanningEnabled ? disableStartOnTick : null) as any
         );
     });
 
