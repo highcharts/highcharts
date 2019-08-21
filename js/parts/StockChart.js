@@ -763,16 +763,18 @@ addEvent(Chart, 'update', function (e) {
     }
 });
 addEvent(Axis, 'afterSetScale', function () {
-    var panning = this.chart.options.chart.panning, options = this.options;
+    var axis = this, panning = axis.chart.options.chart.panning, options = axis.options;
     if ((panning === 'y' ||
         panning === 'xy') &&
-        !this.isXAxis &&
+        !axis.isXAxis &&
         !defined(options.startMin) &&
         !defined(options.startMax)) {
         var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
-        this.series.forEach(function (series) {
-            min = Math.min(Math.min.apply(null, series.yData), min);
-            max = Math.max(Math.max.apply(null, series.yData), max);
+        axis.series.forEach(function (series) {
+            min = Math.min(Math.min.apply(null, series.yData), min) -
+                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+            max = Math.max(Math.max.apply(null, series.yData), max) +
+                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
         options.startMin = min;
         options.startMax = max;
