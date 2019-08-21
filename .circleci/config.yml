@@ -324,7 +324,7 @@ workflows:
           filters:
             branches:
               only:
-                - tools/vis-test-samples
+                - tools/visual-test-samples
                 - master
     jobs:
       - checkout_code
