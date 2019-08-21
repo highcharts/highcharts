@@ -816,7 +816,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
                     obj[key] = pick(
                         stateOptions[key],
                         (options as any)[key],
-                        levelOptions[key]
+                        levelOptions[key],
+                        (series.options as any)[key]
                     );
                     return obj;
                 }, {}),
