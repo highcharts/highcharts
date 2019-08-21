@@ -45,6 +45,7 @@ const SOURCE_GLOBS = [
     'js/parts-more/AreaRangeSeries.js',
     'js/parts-more/PackedBubbleSeries.js',
     'js/modules/accessibility/*.js',
+    'js/modules/draggable-points.src.js',
     'js/modules/drilldown.src.js',
     'js/modules/exporting.src.js',
     'js/modules/export-data.src.js',
