@@ -398,23 +398,6 @@ module.exports = function (config) {
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
-            // various samples failing standard chart creation test
-            'samples/highcharts/series/data-array-of-name-value/demo.js',
-            'samples/highcharts/plotoptions/series-dashstyle-all/demo.js',
-            'samples/highcharts/series/data-array-of-name-value/demo.js',
-            'samples/highcharts/studies/direction-arrows/demo.js',
-            'samples/highcharts/studies/distribution-algorithm/demo.js',
-            'samples/highcharts/members/renderer-arc/demo.js',
-            'samples/highcharts/members/renderer-basic/demo.js',
-            'samples/highcharts/members/renderer-callout/demo.js',
-            'samples/highcharts/members/renderer-circle/demo.js',
-            'samples/highcharts/members/renderer-g/demo.js',
-            'samples/highcharts/members/renderer-path/demo.js',
-            'samples/highcharts/members/renderer-rect/demo.js',
-            'samples/maps/coloraxis/dataclasses-name/demo.js',
-            'samples/maps/coloraxis/dataclasses-labelformatter/demo.js',
-            'samples/maps/series/latlon-transform/demo.js',
-
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
@@ -736,7 +719,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                     Highcharts.charts.length - 1
                 ];
 
-                if (chart && document.getElementsByTagName('svg').length) {
+                if (chart || document.getElementsByTagName('svg').length) {
                     ${assertion}
                     done();
                     ${reset}
