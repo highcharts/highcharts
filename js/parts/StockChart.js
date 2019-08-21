@@ -118,13 +118,13 @@ var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = 
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = pick(options.chart && options.chart.panning, defaultOptions.chart.panning), 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), disableStartOnTick = navigatorEnabled ? {
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning === 'y' || panning === 'xy', disableStartOnTick = {
         startOnTick: false,
         endOnTick: false
-    } : null;
+    };
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge({
@@ -145,7 +145,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         {
             type: 'datetime',
             categories: null
-        }, disableStartOnTick);
+        }, (navigatorEnabled ? disableStartOnTick : null));
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
@@ -171,8 +171,8 @@ H.StockChart = H.stockChart = function (a, b, c) {
             }
         }, defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions // user options
-        );
+        yAxisOptions, // user options
+        (verticalPanningEnabled ? disableStartOnTick : null));
     });
     options.series = null;
     options = merge({

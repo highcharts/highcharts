@@ -717,8 +717,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always false when the navigator or
+         * vertical panning is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
          *         True by default
@@ -1639,8 +1639,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `startOnTick` is always false when either the
+         * navigator or vertical panning is enabled, to prevent jumpy
+         * scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
@@ -2422,8 +2423,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          */
         /**
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always false when either the
+         * navigator or vertical panning is enabled, to prevent jumpy
+         * scrolling.
          */
         endOnTick: true,
         /**
