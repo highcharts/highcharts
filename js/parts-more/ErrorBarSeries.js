@@ -24,6 +24,7 @@ var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  *         Error bars on a scatter series
  *
  * @extends      plotOptions.boxplot
+ * @excluding    dragDrop
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar
  */
