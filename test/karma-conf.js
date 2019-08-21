@@ -712,10 +712,15 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         `;
     }
 
+    var useFakeTime = path.startsWith('gantt/');
+    var startOfMockedTime = Date.UTC(2019, 7, 1);
+
     return `
         QUnit.test('${path}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
+            
+            ${useFakeTime ? `var clock = TestUtilities.lolexInstall({ now: ${startOfMockedTime} });` : ''}
             
             /*
              * we expect 2 callbacks if --visualcompare argument is supplied,
@@ -748,6 +753,8 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                 }
             }
             assertIfChartExists();
+            
+            ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
         });
     `;
 }
