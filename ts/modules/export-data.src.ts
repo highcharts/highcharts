@@ -24,9 +24,12 @@ import Highcharts from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface CategoryAndDatetimeMap {
-            categoryMap: Dictionary<Array<(number|string|null)>>;
-            datetimeValueAxisMap: Dictionary<Array<string>>;
+        type ExportingCategoryMap = Dictionary<Array<(number|string|null)>>;
+        type ExportingDateTimeMap = Dictionary<Array<string>>;
+
+        interface ExportingCategoryDateTimeMap {
+            categoryMap: ExportingCategoryMap;
+            dateTimeValueAxisMap: ExportingDateTimeMap;
         }
         interface Chart {
             dataTableDiv?: HTMLDivElement;
@@ -477,16 +480,13 @@ Highcharts.Chart.prototype.getDataRows = function (
             return item.name + ((keyLength as any) > 1 ? ' (' + key + ')' : '');
         },
         // Map the categories for value axes
-        getCategoryAndDatetimeMap = function (
+        getCategoryAndDateTimeMap = function (
             series: Highcharts.Series,
             pointArrayMap: Array<string>,
             pIdx?: number
-        ): Highcharts.CategoryAndDatetimeMap {
-            var categoryMap: Highcharts.CategoryAndDatetimeMap['categoryMap'] =
-                {},
-                datetimeValueAxisMap:
-                Highcharts.CategoryAndDatetimeMap['datetimeValueAxisMap'] =
-                {};
+        ): Highcharts.ExportingCategoryDateTimeMap {
+            var categoryMap: Highcharts.ExportingCategoryMap = {},
+                dateTimeValueAxisMap: Highcharts.ExportingDateTimeMap = {};
 
             pointArrayMap.forEach(function (prop: string): void {
                 var axisName = (
@@ -502,14 +502,14 @@ Highcharts.Chart.prototype.getDataRows = function (
                 categoryMap[prop] = (
                     axis && axis.categories
                 ) || [];
-                datetimeValueAxisMap[prop] = (
+                dateTimeValueAxisMap[prop] = (
                     axis && axis.isDatetimeAxis
                 );
             });
 
             return {
                 categoryMap: categoryMap,
-                datetimeValueAxisMap: datetimeValueAxisMap
+                dateTimeValueAxisMap: dateTimeValueAxisMap
             };
         },
         xAxisIndices: Array<Array<number>> = [];
@@ -526,7 +526,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(series.xAxis),
-            categoryAndDatetimeMap = getCategoryAndDatetimeMap(
+            categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
             ),
@@ -596,7 +596,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
                 if (hasParallelCoords) {
-                    categoryAndDatetimeMap = getCategoryAndDatetimeMap(
+                    categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                         series,
                         pointArrayMap,
                         pIdx
@@ -642,7 +642,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
                         // datetime yAxis
-                        categoryAndDatetimeMap.datetimeValueAxisMap[prop] ?
+                        categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                             time.dateFormat(csvOptions.dateFormat as any, val) :
                             null,
                         // linear/log yAxis
