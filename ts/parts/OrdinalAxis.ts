@@ -921,7 +921,7 @@ addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
         panning = (chart.options.chart as any).panning,
         runBase = false;
 
-    if (xAxis.options.ordinal && xAxis.series.length) {
+    if ((panning !== 'y') && xAxis.options.ordinal && xAxis.series.length) {
 
         var mouseDownX = chart.mouseDownX,
             extremes = xAxis.getExtremes(),

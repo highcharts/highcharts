@@ -758,7 +758,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         var chart = this,
             hoverPoints = chart.hoverPoints,
-            doRedraw: boolean;
+            doRedraw: boolean,
+            xy = [1]; // x
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
@@ -769,10 +770,18 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 });
             }
 
+            // panning axis mapping
+            if (panning === 'xy') {
+                xy = [1, 0];
+            } else if (panning === 'y') {
+                xy = [0];
+            }
+
             // xy is used in maps
-            (panning === 'xy' ? [1, 0] : [1]).forEach(function (
+            xy.forEach(function (
                 isX: number
             ): void {
+
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
                     axisOpt = axis.options,
                     horiz = axis.horiz,

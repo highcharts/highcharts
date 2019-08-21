@@ -762,3 +762,19 @@ addEvent(Chart, 'update', function (e) {
         delete options.scrollbar;
     }
 });
+addEvent(Axis, 'afterSetScale', function () {
+    var panning = this.chart.options.chart.panning, options = this.options;
+    if ((panning === 'y' ||
+        panning === 'xy') &&
+        !this.isXAxis &&
+        !defined(options.startMin) &&
+        !defined(options.startMax)) {
+        var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
+        this.series.forEach(function (series) {
+            min = Math.min(Math.min.apply(null, series.yData), min);
+            max = Math.max(Math.max.apply(null, series.yData), max);
+        });
+        options.startMin = min;
+        options.startMax = max;
+    }
+});

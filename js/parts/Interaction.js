@@ -465,7 +465,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @return {void}
      */
     pan: function (e, panning) {
-        var chart = this, hoverPoints = chart.hoverPoints, doRedraw;
+        var chart = this, hoverPoints = chart.hoverPoints, doRedraw, xy = [1]; // x
         fireEvent(this, 'pan', { originalEvent: e }, function () {
             // remove active points for shared tooltip
             if (hoverPoints) {
@@ -473,9 +473,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     point.setState();
                 });
             }
+            // panning axis mapping
+            if (panning === 'xy') {
+                xy = [1, 0];
+            }
+            else if (panning === 'y') {
+                xy = [0];
+            }
             // xy is used in maps
-            (panning === 'xy' ? [1, 0] : [1]).forEach(function (isX) {
-                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+            xy.forEach(function (isX) {
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
                     1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
@@ -489,20 +496,26 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         axis.minPixelPadding)), spill;
                 // If the new range spills over, either to the min or max,
                 // adjust the new range.
-                spill = paddedMin - newMin;
-                if (spill > 0) {
-                    newMax += spill;
-                    newMin = paddedMin;
-                }
-                spill = newMax - paddedMax;
-                if (spill > 0) {
-                    newMax = paddedMax;
-                    newMin -= spill;
+                if (isX) {
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
+                    }
                 }
                 // Set new extremes if they are actually new
                 if (axis.series.length &&
                     newMin !== extremes.min &&
-                    newMax !== extremes.max) {
+                    newMax !== extremes.max &&
+                    isX ? true : (newMin >= axisOpt
+                    .startMin &&
+                    newMax <= axisOpt
+                        .startMax)) {
                     axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                     doRedraw = true;
                 }
