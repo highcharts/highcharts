@@ -1100,13 +1100,14 @@ addEvent(Chart, 'update', function (
 addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
 ): void {
-    var panning = (this.chart.options.chart as any).panning,
-        options = this.options as Highcharts.PanAxisOptions;
+    var axis = this,
+        panning = (axis.chart.options.chart as any).panning,
+        options = axis.options as Highcharts.PanAxisOptions;
 
     if (
         (panning === 'y' ||
         panning === 'xy') &&
-        !this.isXAxis &&
+        !axis.isXAxis &&
         !defined(options.startMin) &&
         !defined(options.startMax)
     ) {
@@ -1114,9 +1115,11 @@ addEvent(Axis, 'afterSetScale', function (
         var min = Number.MAX_VALUE,
             max = Number.MIN_VALUE;
 
-        this.series.forEach(function (series): void {
-            min = Math.min(Math.min.apply(null, (series.yData as any)), min);
-            max = Math.max(Math.max.apply(null, (series.yData as any)), max);
+        axis.series.forEach(function (series): void {
+            min = Math.min(Math.min.apply(null, (series.yData as any)), min) -
+                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+            max = Math.max(Math.max.apply(null, (series.yData as any)), max) +
+                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
 
         options.startMin = min;
