@@ -34,7 +34,7 @@ seriesType('map', 'scatter',
  *         Choropleth map
  *
  * @extends      plotOptions.scatter
- * @excluding    marker
+ * @excluding    dragDrop, marker
  * @product      highmaps
  * @optionparent plotOptions.map
  */
