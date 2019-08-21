@@ -32,6 +32,17 @@ const CONFIG_FILE = Path.join(
 
 /* *
  *
+ *  Variables
+ *
+ * */
+
+/**
+ * Callbacks to do on exit.
+ */
+let onExitCallbacks;
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -80,45 +91,87 @@ function exec(command, silent) {
  * @param {string} name
  *        Individual name
  *
- * @param {boolean} [runningFlag]
+ * @param {boolean|number|string} [runningFlag]
  *        If not set get current flag
  *
- * @param {boolean} [keepOnExit]
- *        Not clear running flag on process exit
- *
- * @return {boolean}
- *         Running flag
+ * @return {boolean|number|string}
+ *         Current flag
  */
-function isRunning(name, runningFlag, keepOnExit) {
+function isRunning(name, runningFlag) {
 
     const config = readConfig();
+    const dictionary = config.isRunning;
     const key = name.replace(/[^-\w]+/g, '_');
 
     if (typeof runningFlag === 'undefined') {
-        return (config.isRunning[key] === true);
-    }
-
-    if (!runningFlag) {
-        delete config.isRunning[key];
-        writeConfig(config);
-    } else {
-        config.isRunning[key] = true;
-        writeConfig(config);
-        if (!keepOnExit) {
-            [
-                'exit', 'uncaughtException',
-                'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
-            ].forEach(
-                evt => process.on(evt, code => {
-                    isRunning(key, false, true);
-                    process.exit(code); // eslint-disable-line
-                })
-            );
+        runningFlag = dictionary[key];
+    } else if (!runningFlag) {
+        if (typeof dictionary[key] !== 'undefined') {
+            delete dictionary[key];
+            writeConfig(config);
         }
-        writeConfig(config);
+        runningFlag = dictionary[key];
+    } else {
+        if (dictionary[key] !== runningFlag) {
+            dictionary[key] = runningFlag;
+            writeConfig(config);
+        }
+        onExit(
+            '_lib_process_isRunning_' + key,
+            () => {
+                const exitConfig = readConfig();
+                delete exitConfig.isRunning[key];
+                writeConfig(exitConfig);
+            }
+        );
     }
 
-    return (config.isRunning[key] === true);
+    return runningFlag;
+}
+
+/**
+ * Calls a function on any managed process exit. A previous callback with the
+ * same name gets replaced.
+ *
+ * @param {string} name
+ *        Individual name
+ *
+ * @param {Function} [callback]
+ *        Set to undefined to disable. Return false to handle exit yourself.
+ *        Following callbacks will be not called until next exit event.
+ *
+ * @return {void}
+ */
+function onExit(name, callback) {
+
+    if (!onExitCallbacks) {
+
+        onExitCallbacks = {};
+
+        [
+            'exit', 'uncaughtException', 'unhandledRejection', 'SIGBREAK',
+            'SIGHUP', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
+        ].forEach(evt => (
+            process.on(evt, code => {
+
+                const exit = Object
+                    .keys(onExitCallbacks)
+                    .every(key => {
+                        callback = onExitCallbacks[key];
+                        delete onExitCallbacks[key];
+                        return callback(evt, code, key) !== false;
+                    });
+
+                if (exit) {
+                    process.exit(code); // eslint-disable-line no-process-exit
+                }
+            })
+        ));
+    }
+
+    const key = name.replace(/[^-\w]+/g, '_');
+
+    onExitCallbacks[key] = callback;
 }
 
 /**
@@ -132,6 +185,7 @@ function readConfig() {
     const FS = require('fs');
 
     let config = {
+        isProcessing: {},
         isRunning: {}
     };
 
@@ -171,5 +225,6 @@ module.exports = {
     CPD,
     CWD,
     exec,
-    isRunning
+    isRunning,
+    onExit
 };

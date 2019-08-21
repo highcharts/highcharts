@@ -905,13 +905,14 @@ H.Tooltip.prototype = {
                     rightAligned = false;
                 }
                 // Prepare for distribution
-                target = (point.series && point.series.yAxis &&
-                    point.series.yAxis.pos) + (point.plotY || 0);
-                target -= distributionBoxTop;
                 if (point.isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         chart.plotHeight + headerHeight;
+                }
+                else {
+                    var yAxis = series.yAxis;
+                    target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min((point.plotY || 0), yAxis.len)); // Limit target position to within yAxis
                 }
                 boxes.push({
                     target: target,
@@ -937,7 +938,7 @@ H.Tooltip.prototype = {
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box) {
-            var point = box.point, series = point.series;
+            var point = box.point, series = point.series, yAxis = series && series.yAxis;
             // Put the label in place
             box.tt.attr({
                 visibility: box.pos === undefined ? 'hidden' : 'inherit',
@@ -950,7 +951,7 @@ H.Tooltip.prototype = {
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
                     chart.plotTop + chart.plotHeight / 2 :
-                    point.plotY + series.yAxis.pos
+                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
     },
@@ -963,7 +964,12 @@ H.Tooltip.prototype = {
      * @param {Highcharts.Point} point
      */
     updatePosition: function (point) {
-        var chart = this.chart, label = this.getLabel(), pos = (this.options.positioner || this.getPosition).call(this, label.width, label.height, point), anchorX = point.plotX + chart.plotLeft, anchorY = point.plotY + chart.plotTop, pad;
+        var chart = this.chart, pointer = chart.pointer, label = this.getLabel(), pos, anchorX = point.plotX + chart.plotLeft, anchorY = point.plotY + chart.plotTop, pad;
+        // Needed for outside: true (#11688)
+        if (!pointer.chartPosition) {
+            pointer.chartPosition = H.offset(chart.container);
+        }
+        pos = (this.options.positioner || this.getPosition).call(this, label.width, label.height, point);
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
             pad = (this.options.borderWidth || 0) + 2 * this.distance;
@@ -978,8 +984,8 @@ H.Tooltip.prototype = {
                 anchorX *= containerScaling.scaleX;
                 anchorY *= containerScaling.scaleY;
             }
-            anchorX += chart.pointer.chartPosition.left - pos.x;
-            anchorY += chart.pointer.chartPosition.top - pos.y;
+            anchorX += pointer.chartPosition.left - pos.x;
+            anchorY += pointer.chartPosition.top - pos.y;
         }
         // do the move
         this.move(Math.round(pos.x), Math.round(pos.y || 0), // can be undefined (#3977)

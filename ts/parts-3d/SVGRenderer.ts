@@ -32,7 +32,7 @@ declare global {
             zSide2: number;
             zTop: number;
         }
-        interface CuboidMethods extends Element3dMethods {
+        interface CuboidMethodsObject extends Element3dMethodsObject {
             parts: Array<string>;
             pathType: string;
             animate(
@@ -53,7 +53,7 @@ declare global {
                 fill: (ColorString|GradientColorObject|PatternObject)
             ): SVGElement;
         }
-        interface CuboidPaths {
+        interface CuboidPathsObject extends SVGPath3dObject {
             front: SVGPathArray;
             isFront: number;
             isTop: number;
@@ -61,30 +61,38 @@ declare global {
             top: SVGPathArray;
             zIndexes: Dictionary<number>;
         }
-        interface Element3dMethods {
+        interface Element3dMethodsObject {
             processParts: Function;
             singleSetterForParts: Function;
             destroyParts(this: SVGElement): void;
             initArgs(this: SVGElement, args: SVGAttributes): void;
         }
-        interface Elements3d {
-            base: Element3dMethods;
-            cuboid: (CuboidMethods&Element3dMethods);
+        interface Elements3dObject {
+            base: Element3dMethodsObject;
+            cuboid: (CuboidMethodsObject&Element3dMethodsObject);
+        }
+        interface SVGPath3dObject {
+            back?: SVGPathArray;
+            bottom?: SVGPathArray;
+            front?: SVGPathArray;
+            side?: SVGPathArray;
+            top?: SVGPathArray;
+            zIndexes?: Dictionary<number>;
         }
         interface SVGElement {
             attribs?: SVGAttributes;
             parts?: Array<string>;
             pathType?: string;
             vertexes?: Array<Position3dObject>;
-            initArgs: Element3dMethods['initArgs'];
+            initArgs: Element3dMethodsObject['initArgs'];
             setPaths(attribs: SVGAttributes): void;
         }
         interface SVGRenderer {
-            elements3d: Elements3d;
+            elements3d: Elements3dObject;
             arc3d(attribs: SVGAttributes): SVGElement;
             arc3dPath(shapeArgs: SVGAttributes): Arc3dPaths;
             cuboid(shapeArgs: SVGAttributes): SVGElement;
-            cuboidPath(shapeArgs: SVGAttributes): CuboidPaths;
+            cuboidPath(shapeArgs: SVGAttributes): CuboidPathsObject;
             element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
             face3d(args?: SVGAttributes): SVGElement;
             polyhedron(args?: SVGAttributes): SVGElement;
@@ -122,8 +130,8 @@ var animObject = H.animObject,
     SVGRenderer = H.SVGRenderer,
     // internal:
     dFactor: number,
-    element3dMethods: Highcharts.Element3dMethods,
-    cuboidMethods: Highcharts.CuboidMethods;
+    element3dMethods: Highcharts.Element3dMethodsObject,
+    cuboidMethods: Highcharts.CuboidMethodsObject;
 
 /*
     EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
@@ -336,7 +344,7 @@ SVGRenderer.prototype.polyhedron = function (
 
 
     // destroy all children
-    result.destroy = function (): void {
+    result.destroy = function (): undefined {
         for (var i = 0; i < result.faces.length; i++) {
             result.faces[i].destroy();
         }
@@ -409,7 +417,7 @@ element3dMethods = {
     ): void {
         var elem3d = this,
             renderer = elem3d.renderer,
-            paths: (Highcharts.Arc3dPaths|Highcharts.CuboidPaths) =
+            paths: (Highcharts.Arc3dPaths|Highcharts.CuboidPathsObject) =
                 (renderer as any)[elem3d.pathType + 'Path'](args),
             zIndexes = (paths as any).zIndexes;
 
@@ -622,7 +630,7 @@ SVGRenderer.prototype.cuboid = function (
 H.SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: Highcharts.SVGAttributes
-): Highcharts.CuboidPaths {
+): Highcharts.CuboidPathsObject {
     var x = shapeArgs.x,
         y = shapeArgs.y,
         z = shapeArgs.z,
@@ -1024,14 +1032,14 @@ H.SVGRenderer.prototype.arc3d = function (
     };
 
     // destroy all children
-    wrapper.destroy = function (this: Highcharts.SVGElement): void {
+    wrapper.destroy = function (this: Highcharts.SVGElement): undefined {
         this.top.destroy();
         this.out.destroy();
         this.inn.destroy();
         this.side1.destroy();
         this.side2.destroy();
 
-        SVGElement.prototype.destroy.call(this);
+        return SVGElement.prototype.destroy.call(this);
     };
     // hide all children
     wrapper.hide = function (this: Highcharts.SVGElement): void {

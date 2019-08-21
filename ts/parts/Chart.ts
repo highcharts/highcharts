@@ -232,6 +232,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     erase,
     isArray,
@@ -251,7 +252,6 @@ import './Pointer.js';
 var addEvent = H.addEvent,
     animate = H.animate,
     animObject = H.animObject,
-    attr = H.attr,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
@@ -1696,7 +1696,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.unbindReflow = addEvent(win, 'resize', function (
                 e: Event
             ): void {
-                chart.reflow(e);
+                // a removed event listener still runs in Edge and IE if the
+                // listener was removed while the event runs, so check if the
+                // chart is not destroyed (#11609)
+                if (chart.options) {
+                    chart.reflow(e);
+                }
             });
             addEvent(this, 'destroy', this.unbindReflow);
 
@@ -2475,7 +2480,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.credits.update = function (
                 options: Highcharts.CreditsOptions
             ): void {
-                chart.credits = (chart.credits as any).destroy() as any;
+                chart.credits = (chart.credits as any).destroy();
                 chart.addCredits(options);
             };
         }

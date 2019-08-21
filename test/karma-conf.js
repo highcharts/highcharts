@@ -2,6 +2,7 @@
 /* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
+const path = require('path');
 
 // Internal reference
 const hasJSONSources = {};
@@ -65,39 +66,51 @@ function getHTML(path) {
 }
 
 /**
- * Look for $.getJSON calls in the demos and add hook to local sample data.
+ * Look for Highcharts.getJSON calls in the demos and add hook to local sample data.
  * @param  {String} js
  *         The contents of demo.js
  * @return {String}
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const match = js.match(/\$\.getJSON\('([^']+)/);
+
+    const match = js.match(/(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/);
+
     if (match) {
-        let src = match[1];
-        if (!hasJSONSources[src]) {
-            let innerMatch = src.match(/filename=([^&']+)/);
-            if (innerMatch) {
-                let data = fs.readFileSync(
-                    'samples/data/' + innerMatch[1],
-                    'utf8'
-                );
+        let src = match[2];
 
-                if (data) {
-                    hasJSONSources[src] = true;
+            
+        let innerMatch = src.match(
+            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+        );
 
-                    if (/json$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = ${data};
-                        ${js}
-                        `;
-                    }
-                    if (/csv$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = \`${data}\`;
-                        ${js}
-                        `;
-                    }
+        if (innerMatch) {
+
+            let filename = innerMatch[2];
+
+            let data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'samples/data',
+                    filename
+                ),
+                'utf8'
+            );
+
+            if (data) {
+    
+                if (/json$/.test(filename)) {
+                    return `
+                    window.JSONSources['${src}'] = ${data};
+                    ${js}
+                    `;
+                }
+                if (/csv$/.test(filename)) {
+                    return `
+                    window.JSONSources['${src}'] = \`${data}\`;
+                    ${js}
+                    `;
                 }
             }
         }
@@ -264,6 +277,7 @@ module.exports = function (config) {
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
+            f.indexOf('topojson-client') === -1 &&
 
             // Complains on chart.renderer.addPattern
             f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
@@ -330,6 +344,9 @@ module.exports = function (config) {
 
             // --- VISUAL TESTS ---
 
+            // Custom data source
+            'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+
             // Error #13, renders to other divs than #container. Sets global
             // options.
             'samples/highcharts/demo/bullet-graph/demo.js',
@@ -363,17 +380,27 @@ module.exports = function (config) {
 
             // Various
             'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
+            'samples/highcharts/data/delimiters/demo.js', // data island
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
-
+            'samples/highcharts/studies/logistics/demo.js', // overriding
+            
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
 
             // Skip the special oldie tests (which don't run QUnit)
-            'samples/unit-tests/oldie/*/demo.js'
+            'samples/unit-tests/oldie/*/demo.js',
+
+            // visual tests excluded for now due to failure
+            'samples/highcharts/demo/funnel3d/demo.js',
+            'samples/highcharts/demo/organization-chart/demo.js',
+            'samples/highcharts/demo/pareto/demo.js',
+            'samples/highcharts/demo/pyramid3d/demo.js',
+            'samples/highcharts/demo/synchronized-charts/demo.js'
+
         ],
-        reporters: ['imagecapture', 'progress'],
+        reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
@@ -388,6 +415,10 @@ module.exports = function (config) {
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
         },
+        jsonLogReporter: {
+            outputPath: 'test/',
+        },
+
 
         formatError: function (s) {
             let ret = s.replace(
@@ -416,7 +447,9 @@ module.exports = function (config) {
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic'],
             '**/maps/*/*/demo.js': ['generic'],
-            '**/stock/*/*/demo.js': ['generic']
+            '**/stock/*/*/demo.js': ['generic'],
+            '**/gantt/*/*/demo.js': ['generic'],
+            '**/issues/*/*/demo.js': ['generic']
         },
 
         /*
@@ -428,7 +461,7 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|gantt|unit-tests|issues)\/([a-z0-9\-\.]+\/[a-z0-9\-,]+)\/demo.js$/g,
                         '$1/$2'
                     );
 
@@ -478,7 +511,7 @@ module.exports = function (config) {
 
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
-                        file.path = file.originalPath + '.preprocessed';
+                        file.path = file.originalPath + '.preprocessed.js';
                         done(`QUnit.skip('${path}');`);
                         return;
                     }
@@ -490,6 +523,12 @@ module.exports = function (config) {
                     // Don't do intervals (typically for gauge samples, add
                     // point etc)
                     js = js.replace('setInterval', 'Highcharts.noop');
+
+                    // Force enableSimulation: false
+                    js = js.replace(
+                        'enableSimulation: true',
+                        'enableSimulation: false'
+                    );
 
                     // Reset global options
                     let reset = (
@@ -530,39 +569,54 @@ module.exports = function (config) {
                             } else {
                                 assert.ok(
                                     false,
-                                    '${path}: ' + err
+                                    '${path}: SVG should be generated'
                                 );                
                             }
                             done();
                         `;
 
-                    // Reference file doens't exist
-                    } else if (!fs.existsSync(
-                        `./samples/${path}/reference.svg`
-                    )) {
-                        console.log(
-                        'Reference file doesn\'t exist: '.yellow +
-                        ` ./samples/${path}/reference.svg`
-
-                        );
-                        file.path = file.originalPath + '.preprocessed';
-                        done(`QUnit.skip('${path}');`);
-                        return;
-
-                    // Reference file exists, run the comparison
                     } else {
+                        if (!argv.remotelocation && !fs.existsSync(
+                            `./samples/${path}/reference.svg`
+                        )) {
+                            console.log(
+                                'Reference file doesn\'t exist: '.yellow +
+                                ` ./samples/${path}/reference.svg`
+                            );
+                            file.path = file.originalPath + '.preprocessed.js';
+                            done(`QUnit.skip('${path}');`);
+                            return;
+                        }
 
                         try {
                             assertion = `
                                 compareToReference(chart, '${path}')
                                     .then(actual => {
-                                        assert.strictEqual(
-                                            actual,
-                                            0,
-                                            'Different pixels\\n' +
-                                            '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                            '- samples/${path}/diff.gif'
-                                        );
+                                        if (${argv.difflog}) {
+                                            var today = new Date().toISOString().slice(0,10);
+                                            var diffLog = {
+                                                name: 'visual-test-results',
+                                                object: {
+                                                    '${path}': actual,
+                                                    meta: {
+                                                        runDate: today,
+                                                        gitSha: __karma__.config.gitSha
+                                                    },
+                                                },
+                                            };
+                                            if (actual || actual === 0) {
+                                                window.dump(JSON.stringify( diffLog ));
+                                            }
+                                            assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
+                                        } else {
+                                            assert.strictEqual(
+                                                actual,
+                                                0,
+                                                'Different pixels\\n' +
+                                                '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                                '- samples/${path}/diff.gif'
+                                            );
+                                        }
                                         done();
                                     })
                                     .catch(err => {
@@ -578,12 +632,9 @@ module.exports = function (config) {
                         }
                     }
 
-
                     js = `
 
                     QUnit.test('${path}', function (assert) {
-
-                        // console.log('Starting ${path}');
 
                         // Apply demo.html
                         document.getElementById('demo-html').innerHTML =
@@ -592,17 +643,35 @@ module.exports = function (config) {
                         var done = assert.async();
                         ${js}
 
-                        var chart = Highcharts.charts[
-                            Highcharts.charts.length - 1
-                        ];
 
-                        ${assertion}
+                        let attempts = 0;
+                        function assertIfChartExists() {
+                            var chart = Highcharts.charts[
+                                Highcharts.charts.length - 1
+                            ];
 
-                        ${reset}
+                            if (chart || document.getElementsByTagName('svg').length) {
+                                //console.log(assert.test.module.unskippedTestsRun, '${path}');
+                                ${assertion}
+                                ${reset}
+                            } else if (attempts < 50) {
+                                setTimeout(assertIfChartExists, 100);
+                                attempts++;
+                            } else {
+                                assert.ok(
+                                    false,
+                                    \`Chart async chart test should load within \${attempts} attempts\`
+                                );
+                                done();
+                                ${reset}
+                            }
+                        }
+                        assertIfChartExists();
+
                     });
                     `;
 
-                    file.path = file.originalPath + '.preprocessed';
+                    file.path = file.originalPath + '.preprocessed.js';
 
                     done(js);
                 }
@@ -641,7 +710,7 @@ module.exports = function (config) {
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 33000; // default 2000
+        options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;

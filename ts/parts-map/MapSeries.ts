@@ -1236,18 +1236,20 @@ seriesType<Highcharts.MapSeriesOptions>(
             init?: boolean
         ): void {
             var toBox = this.chart.plotBox,
-                level = this.chart.drilldownLevels[
-                    this.chart.drilldownLevels.length - 1
-                ],
+                level: Highcharts.DrilldownLevelObject =
+                    (this.chart.drilldownLevels as any)[
+                        (this.chart.drilldownLevels as any).length - 1
+                    ],
                 fromBox = level.bBox,
-                animationOptions = this.chart.options.drilldown.animation,
+                animationOptions: (boolean|Highcharts.AnimationOptionsObject) =
+                    (this.chart.options.drilldown as any).animation,
                 scale;
 
             if (!init) {
 
                 scale = Math.min(
-                    fromBox.width / toBox.width,
-                    fromBox.height / toBox.height
+                    (fromBox.width as any) / toBox.width,
+                    (fromBox.height as any) / toBox.height
                 );
                 level.shapeArgs = {
                     scaleX: scale,
@@ -1283,7 +1285,7 @@ seriesType<Highcharts.MapSeriesOptions>(
         // series.
         animateDrillupFrom: function (
             this: Highcharts.MapSeries,
-            level: object
+            level: Highcharts.DrilldownLevelObject
         ): void {
             (seriesTypes.column.prototype as Highcharts.ColumnSeries)
                 .animateDrillupFrom.call(this, level);

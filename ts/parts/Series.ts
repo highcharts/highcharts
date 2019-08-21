@@ -434,18 +434,6 @@ declare global {
     }
 }
 
-
-/**
- * @interface Highcharts.PointOptionsObject
- *//**
- * Individual point events
- * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PlotSeriesPointEventsOptions}
- *//**
- * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PlotSeriesPointMarkerOptions}
- */
-
 /**
  * Function callback when a series has been animated.
  *
@@ -4720,7 +4708,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         }
 
                     } else if (graphic) {
-                        point.graphic = graphic.destroy() as any; // #1269
+                        point.graphic = graphic.destroy(); // #1269
                     }
                 }
             }

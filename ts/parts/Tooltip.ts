@@ -404,7 +404,7 @@ H.Tooltip.prototype = {
 
             if (tt) {
                 if (!tt.isActive || force) {
-                    series.tt = tt.destroy() as any;
+                    series.tt = tt.destroy();
                 } else {
                     tt.isActive = false;
                 }
@@ -613,11 +613,11 @@ H.Tooltip.prototype = {
     destroy: function (this: Highcharts.Tooltip): void {
         // Destroy and clear local variables
         if (this.label) {
-            this.label = this.label.destroy() as any;
+            this.label = this.label.destroy();
         }
         if (this.split && this.tt) {
             (this.cleanSplit as any)(this.chart, true);
-            this.tt = this.tt.destroy() as any;
+            this.tt = this.tt.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
@@ -1314,14 +1314,16 @@ H.Tooltip.prototype = {
                 }
 
                 // Prepare for distribution
-                target = (point.series && point.series.yAxis &&
-                    (point.series.yAxis.pos as any)) + (point.plotY || 0);
-                target -= distributionBoxTop;
-
                 if ((point as any).isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         chart.plotHeight + headerHeight;
+                } else {
+                    const yAxis = (series.yAxis as any);
+                    target = yAxis.pos - distributionBoxTop + Math.max(
+                        0,
+                        Math.min((point.plotY || 0), yAxis.len)
+                    ); // Limit target position to within yAxis
                 }
                 boxes.push({
                     target: target,
@@ -1357,7 +1359,8 @@ H.Tooltip.prototype = {
         (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             var point = box.point,
-                series = point.series;
+                series = point.series,
+                yAxis = series && series.yAxis;
 
             // Put the label in place
             box.tt.attr({
@@ -1371,7 +1374,7 @@ H.Tooltip.prototype = {
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
                     chart.plotTop + chart.plotHeight / 2 :
-                    point.plotY + series.yAxis.pos
+                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
     },
@@ -1389,16 +1392,23 @@ H.Tooltip.prototype = {
         point: Highcharts.Point
     ): void {
         var chart = this.chart,
+            pointer = chart.pointer,
             label = this.getLabel(),
-            pos = ((this.options.positioner as any) || this.getPosition).call(
-                this,
-                label.width,
-                label.height,
-                point
-            ),
+            pos,
             anchorX = (point.plotX as any) + chart.plotLeft,
             anchorY = (point.plotY as any) + chart.plotTop,
             pad;
+
+        // Needed for outside: true (#11688)
+        if (!pointer.chartPosition) {
+            pointer.chartPosition = H.offset(chart.container);
+        }
+        pos = ((this.options.positioner as any) || this.getPosition).call(
+            this,
+            label.width,
+            label.height,
+            point
+        );
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
@@ -1424,8 +1434,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += chart.pointer.chartPosition.left - pos.x;
-            anchorY += chart.pointer.chartPosition.top - pos.y;
+            anchorX += pointer.chartPosition.left - pos.x;
+            anchorY += pointer.chartPosition.top - pos.y;
         }
 
         // do the move

@@ -448,7 +448,10 @@ seriesType('networkgraph', 'line',
      * @private
      */
     createNode: H.NodesMixin.createNode,
-    destroy: H.NodesMixin.destroy,
+    destroy: function () {
+        this.layout.removeElementFromCollection(this, this.layout.series);
+        H.NodesMixin.destroy.call(this);
+    },
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Extend init with base event, which should stop simulation during
@@ -485,6 +488,7 @@ seriesType('networkgraph', 'line',
         for (i = this.nodes.length - 1; i >= 0; i--) {
             node = this.nodes[i];
             node.degree = node.getDegree();
+            node.radius = pick(node.marker && node.marker.radius, this.options.marker && this.options.marker.radius, 0);
             // If node exists, but it's not available in nodeLookup,
             // then it's leftover from previous runs (e.g. setData)
             if (!this.nodeLookup[node.id]) {
@@ -575,9 +579,9 @@ seriesType('networkgraph', 'line',
         }
         this.layout = layout;
         layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-        layout.addSeries(this);
-        layout.addNodes(this.nodes);
-        layout.addLinks(this.points);
+        layout.addElementsToCollection([this], layout.series);
+        layout.addElementsToCollection(this.nodes, layout.nodes);
+        layout.addElementsToCollection(this.points, layout.links);
     },
     /**
      * Extend the render function to also render this.nodes together with
@@ -921,11 +925,8 @@ seriesType('networkgraph', 'line',
                     link.destroyElements();
                 }
             });
-            this.series.layout.removeNode(this);
         }
-        else {
-            this.series.layout.removeLink(this);
-        }
+        this.series.layout.removeElementFromCollection(this, this.series.layout[this.isNode ? 'nodes' : 'links']);
         return Point.prototype.destroy.apply(this, arguments);
     }
 });

@@ -92,7 +92,7 @@ declare global {
                 series: Array<Series>,
                 isDirectTouch: boolean,
                 shared: (boolean|undefined),
-                e: PointerEventObject
+                e?: PointerEventObject
             ): PointerHoverDataObject;
             public getPointFromEvent(e: Event): (Point|undefined)
             public inClass(
@@ -112,7 +112,7 @@ declare global {
             public onDocumentMouseUp(e: PointerEventObject): void;
             public onTrackerMouseOut(e: PointerEventObject): void;
             public reset(allowMove?: boolean, delay?: number): void;
-            public runPointActions(e: PointerEventObject, p?: Point): void;
+            public runPointActions(e?: PointerEventObject, p?: Point): void;
             public scaleGroups(
                 attribs?: SeriesPlotBoxObject,
                 clip?: boolean
@@ -219,6 +219,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     isNumber,
     isObject,
@@ -231,7 +232,6 @@ import './Color.js';
 
 var H = Highcharts,
     addEvent = H.addEvent,
-    attr = H.attr,
     charts = H.charts,
     color = H.color,
     css = H.css,
@@ -594,7 +594,7 @@ Highcharts.Pointer.prototype = {
      * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The triggering event, containing chart coordinates of the pointer.
      *
      * @return {object}
@@ -608,7 +608,7 @@ Highcharts.Pointer.prototype = {
         series: Array<Highcharts.Series>,
         isDirectTouch: boolean,
         shared: (boolean|undefined),
-        e: Highcharts.PointerEventObject
+        e?: Highcharts.PointerEventObject
     ): Highcharts.PointerHoverDataObject {
         var hoverPoint: Highcharts.Point,
             hoverPoints = [] as Array<Highcharts.Point>,
@@ -632,7 +632,7 @@ Highcharts.Pointer.prototype = {
                 });
 
         // Use existing hovered point or find the one closest to coordinates.
-        hoverPoint = useExisting ?
+        hoverPoint = useExisting || !e ?
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e) as any;
 
@@ -656,11 +656,7 @@ Highcharts.Pointer.prototype = {
                     var point = find(s.points, function (
                         p: Highcharts.Point
                     ): boolean {
-                        return (
-                            p.x === hoverPoint.x &&
-                            !p.isNull &&
-                            p.isInside !== false
-                        );
+                        return p.x === hoverPoint.x && !p.isNull;
                     });
 
                     if (isObject(point)) {
@@ -703,7 +699,7 @@ Highcharts.Pointer.prototype = {
      */
     runPointActions: function (
         this: Highcharts.Pointer,
-        e: Highcharts.PointerEventObject,
+        e?: Highcharts.PointerEventObject,
         p?: Highcharts.Point
     ): void {
         var pointer = this,
@@ -722,7 +718,7 @@ Highcharts.Pointer.prototype = {
             hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
             // onMouseOver or already hovering a series with directTouch
-            isDirectTouch = e.type !== 'touchmove' && (
+            isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
                     (hoverSeries && hoverSeries.directTouch) &&
                     pointer.isDirectTouch

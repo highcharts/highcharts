@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  aws-s3: circleci/aws-s3@1.0.11
 ######### Anchors ####################
 defaults: &defaults
   executor: node_image
@@ -121,6 +122,58 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
+  generate_visual_test_images:
+    <<: *defaults
+    description: Generate visual tests reference images
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate visual references
+          command: npx gulp test --tests highcharts/demo/* --reference --browsercount 1
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync:
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing assets in S3 location
+          overwrite: true
+      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+      - <<: *persist_workspace
+
+  test_visual_diff:
+    <<: *defaults
+    description: Uploads visual test results to S3
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+      tests:
+        description: "The path to the visual tests to run"
+        type: string
+        default: "highcharts/demo/*"
+    steps:
+      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
+      - <<: *load_workspace
+      - aws-s3/sync: # fetch reference images
+          from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          to: 'samples/'
+      - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog"
+      - run: "sudo apt-get install -y librsvg2-bin"
+      - run:
+          name: "Generate PNGs and diff"
+          command: |
+            find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \; &&
+            find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \; &&
+            find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync: # delete existing assets in S3 location
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
+          overwrite: true
+      - run:
+          name: "Upload visual tests assets"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
+
   build_dist:
     <<: *defaults
     steps:
@@ -201,36 +254,57 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - install_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - lint:
           requires:
             - install_dependencies
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
           requires:
             - lint
-      - test_browsers:
-          name: "test-Mac.Safari"
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - generate_visual_test_images:
           requires:
             - install_dependencies
-          browsers: "Mac.Safari"
-      - test_browsers:
-          name: "test-Win.Chrome"
-          requires:
-            - "test-Mac.Safari"
-          browsers: "Win.Chrome"
-      - test_browsers:
-          name: "test-Mac.Firefox"
-          requires:
-            - "test-Win.Chrome"
-          browsers: "Mac.Firefox"
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-staging
       - test_browsers:
           name: "test-Win.IE8"
           requires:
-            - "test-Mac.Firefox"
+            - install_dependencies
           browsers: "Win.IE8 --oldie"
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - "test-Win.IE8"
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.Chrome"
 
   nightly:
     triggers:
@@ -239,13 +313,18 @@ workflows:
           filters:
             branches:
               only:
-                - feature/ci-nightly
+                - feature/ci-visual-tests
                 - master
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
+      - test_visual_diff:
+          name: "Test visual differences and distribute diff log to S3."
+          requires:
+            - install_dependencies
+          context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
@@ -288,4 +367,3 @@ workflows:
           requires:
             - build_dist
           context: highcharts-staging
-

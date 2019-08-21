@@ -43,7 +43,7 @@ declare global {
             haloPath(size: number): SVGElement;
             importEvents(): void;
             onMouseOut(): void;
-            onMouseOver(e: PointerEventObject): void;
+            onMouseOver(e?: PointerEventObject): void;
             select(selected?: boolean, accumulate?: boolean): void;
             setState(
                 state?: string,
@@ -97,13 +97,13 @@ declare global {
  * on the point. One parameter, `event`, is passed to the function. Returning
  * `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
+ * @type {Highcharts.PointSelectCallbackFunction|undefined}
  *//**
  * Fires when the point is unselected either programmatically or following a
  * click on the point. One parameter, `event`, is passed to the function.
  * Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointUnselectCallbackFunction|undefined}
  */
 
 /**
@@ -963,14 +963,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
      *
      * @return {void}
      */
     onMouseOver: function (
         this: Highcharts.Point,
-        e: Highcharts.PointerEventObject
+        e?: Highcharts.PointerEventObject
     ): void {
         var point = this,
             series = point.series,
@@ -1060,8 +1060,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         move?: boolean
     ): void {
         var point = this,
-            plotX = Math.floor(point.plotX as any), // #4586
-            plotY = point.plotY,
             series = point.series,
             previousState = point.state,
             stateOptions = (
@@ -1203,31 +1201,33 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 if (stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
-                    stateMarkerGraphic = stateMarkerGraphic.destroy() as any;
+                    stateMarkerGraphic = stateMarkerGraphic.destroy();
                 }
 
                 // Add a new state marker graphic
-                if (!stateMarkerGraphic) {
-                    if (newSymbol) {
-                        series.stateMarkerGraphic = stateMarkerGraphic =
-                            chart.renderer
-                                .symbol(
-                                    newSymbol,
-                                    (markerAttribs as any).x,
-                                    (markerAttribs as any).y,
-                                    (markerAttribs as any).width,
-                                    (markerAttribs as any).height
-                                )
-                                .add(series.markerGroup);
-                        stateMarkerGraphic.currentSymbol = newSymbol;
-                    }
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(
+                                        newSymbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height
+                                    )
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
 
-                // Move the existing graphic
-                } else {
-                    stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-                        x: (markerAttribs as any).x,
-                        y: (markerAttribs as any).y
-                    });
+                    // Move the existing graphic
+                    } else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
                 }
 
                 if (!chart.styledMode && stateMarkerGraphic) {
@@ -1237,10 +1237,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             if (stateMarkerGraphic) {
                 stateMarkerGraphic[
-                    state &&
-                    chart.isInsidePlot(plotX, plotY as any, chart.inverted) ?
-                        'show' :
-                        'hide'
+                    state && point.isInside ? 'show' : 'hide'
                 ](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
             }
@@ -1248,14 +1245,16 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         // Show me your halo
         haloOptions = stateOptions.halo;
-        if (haloOptions && haloOptions.size) {
+        const markerGraphic = (point.graphic || stateMarkerGraphic);
+        const markerVisibility = (
+            markerGraphic && markerGraphic.visibility || 'inherit'
+        );
+
+        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add(
-                        ((point.graphic || stateMarkerGraphic) as any)
-                            .parentGroup
-                    );
+                    .add((markerGraphic as any).parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any
@@ -1264,6 +1263,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
+                'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055

@@ -14,16 +14,16 @@ declare global {
     namespace Highcharts {
         interface NodesMixin {
             createNode(this: NodesSeries, id: string): NodesPoint;
-            destroy(this: Highcharts.NodesSeries): void;
+            destroy(this: NodesSeries): void;
             generatePoints(this: NodesSeries): void;
             setData(
-                this: Highcharts.NodesSeries,
+                this: NodesSeries,
                 data: Array<NodesPointOptions>,
                 redraw?: boolean,
                 animation?: (boolean|AnimationOptionsObject),
                 updatePoints?: boolean
             ): void;
-            setNodeState(this: Highcharts.NodesPoint, state: string): void;
+            setNodeState(this: NodesPoint, state: string): void;
         }
         interface Point {
             name?: string;
@@ -35,7 +35,7 @@ declare global {
             id?: string;
             mass?: number;
             outgoing?: boolean;
-            weight?: number;
+            weight?: (number|null);
         }
         interface NodesSeriesOptions extends SeriesOptions {
             mass?: number;

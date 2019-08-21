@@ -32,7 +32,6 @@
             }
         ],
         "no-dupe-class-members": 0,
-        "no-prototype-builtins": 1,
         "no-shadow": 0,
         "no-undef": 0,
         "no-undefined": 0,
@@ -40,6 +39,7 @@
         "no-unused-expressions": 0,
         "no-use-before-define": 0,
         "no-useless-constructor": 0,
+        "no-useless-return": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
         "prefer-rest-params": 0,

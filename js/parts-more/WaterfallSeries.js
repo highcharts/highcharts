@@ -15,6 +15,16 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+/**
+ * Returns true if the key is a direct property of the object.
+ * @private
+ * @param {*} obj - Object with property to test
+ * @param {string} key - Property key to test
+ * @return {boolean} - Whether it is a direct property
+ */
+function ownProp(obj, key) {
+    return Object.hasOwnProperty.call(obj, key);
+}
 /* eslint-disable no-invalid-this */
 addEvent(Axis, 'afterInit', function () {
     if (!this.isXAxis) {
@@ -197,10 +207,10 @@ seriesType('waterfall', 'column', {
                         total =
                             actualStackX.stackState[actualStackX.stateIndex--];
                         y = pointY >= 0 ? total : total - pointY;
-                        if (actualStackX.hasOwnProperty('absolutePos')) {
+                        if (ownProp(actualStackX, 'absolutePos')) {
                             delete actualStackX.absolutePos;
                         }
-                        if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                        if (ownProp(actualStackX, 'absoluteNeg')) {
                             delete actualStackX.absoluteNeg;
                         }
                     }
@@ -218,14 +228,14 @@ seriesType('waterfall', 'column', {
                             y = total - pointY;
                         }
                         if (!actualStackX.posTotal) {
-                            if (actualStackX.hasOwnProperty('absolutePos')) {
+                            if (ownProp(actualStackX, 'absolutePos')) {
                                 actualStackX.posTotal =
                                     actualStackX.absolutePos;
                                 delete actualStackX.absolutePos;
                             }
                         }
                         if (!actualStackX.negTotal) {
-                            if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                            if (ownProp(actualStackX, 'absoluteNeg')) {
                                 actualStackX.negTotal =
                                     actualStackX.absoluteNeg;
                                 delete actualStackX.absoluteNeg;

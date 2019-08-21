@@ -939,7 +939,7 @@ seriesProto.processData = function (
         }
     }
 
-    return; // eslint-disable-line no-useless-return
+    return;
 };
 
 // Modify series extremes

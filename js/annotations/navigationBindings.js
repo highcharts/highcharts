@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var attr = U.attr,
+    isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
     objectEach = U.objectEach;
@@ -689,7 +690,7 @@ extend(H.NavigationBindings.prototype, {
             elemClassName;
 
         while (element) {
-            elemClassName = H.attr(element, 'class');
+            elemClassName = attr(element, 'class');
             if (elemClassName) {
                 classNames = classNames.concat(
                     elemClassName.split(' ').map(
@@ -1324,6 +1325,15 @@ H.setOptions({
             }
         },
         /**
+         * Path where Highcharts will look for icons. Change this to use
+         * icons from a different server.
+         *
+         * @since     7.1.3
+         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @apioption navigation.iconsURL
+         */
+
+        /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *
          * @type      {Function}
@@ -1381,18 +1391,6 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {},
-        /**
-         * Additional options to popup.
-         *
-         * @apioption navigation.annotationsPopup
-         */
-        annotationsPopup: {
-            /**
-             * Path where Highcharts will look for icons. Change this to use
-             * icons from a different server.
-             */
-            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-        }
+        annotationsOptions: {}
     }
 });

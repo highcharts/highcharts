@@ -1896,21 +1896,23 @@ var stockToolsBindings = {
         className: 'highcharts-current-price-indicator',
         /** @ignore */
         init: function (button) {
-            var series = this.chart.series[0],
+            var chart = this.chart,
+                series = chart.series[0],
                 options = series.options,
                 lastVisiblePrice = options.lastVisiblePrice &&
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled,
-                gui = this.chart.stockTools;
+                gui = chart.stockTools,
+                iconsURL = gui.getIconsURL();
 
             if (gui && gui.guiEnabled) {
                 if (lastPrice) {
                     button.firstChild.style['background-image'] =
-                        'url("' + gui.options.iconsURL +
+                        'url("' + iconsURL +
                         'current-price-show.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("' + gui.options.iconsURL +
+                        'url("' + iconsURL +
                         'current-price-hide.svg")';
                 }
             }
@@ -1985,22 +1987,24 @@ var stockToolsBindings = {
         className: 'highcharts-toggle-annotations',
         /** @ignore */
         init: function (button) {
-            var gui = this.chart.stockTools;
+            var chart = this.chart,
+                gui = chart.stockTools,
+                iconsURL = gui.getIconsURL();
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
-            (this.chart.annotations || []).forEach(function (annotation) {
+            (chart.annotations || []).forEach(function (annotation) {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
             if (gui && gui.guiEnabled) {
                 if (this.toggledAnnotations) {
                     button.firstChild.style['background-image'] =
-                        'url("' + gui.options.iconsURL +
+                        'url("' + iconsURL +
                             'annotations-hidden.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("' + gui.options.iconsURL +
+                        'url("' + iconsURL +
                             'annotations-visible.svg")';
                 }
             }

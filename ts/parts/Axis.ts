@@ -272,30 +272,13 @@ declare global {
             angle?: number;
             gridLineInterpolation?: AxisGridLineInterpolationValue;
             maxColor?: (ColorString|GradientColorObject|PatternObject);
-            maxLength?: (number|string);
             minColor?: (ColorString|GradientColorObject|PatternObject);
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
             staticScale?: number;
             stops?: Array<[
                 number,
                 (ColorString|GradientColorObject|PatternObject)
             ]>;
             tooltipValueFormat?: string;
-        }
-        interface YAxisResizeControlledAxisOptions {
-            next?: Array<(string|number)>;
-            prev?: Array<(string|number)>;
-        }
-        interface YAxisResizeOptions {
-            controlledAxis?: YAxisResizeControlledAxisOptions;
-            cursor?: string;
-            enabled?: boolean;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            lineDashStyle?: string;
-            lineWidth?: number;
-            x?: number;
-            y?: number;
         }
         interface ZAxisOptions extends XAxisOptions {
             breaks?: undefined;
@@ -6118,7 +6101,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     step * tickInterval > range &&
                     spaceNeeded !== Infinity &&
-                    slotSize !== Infinity
+                    slotSize !== Infinity &&
+                    range
                 ) {
                     step = Math.ceil(range / tickInterval);
                 }

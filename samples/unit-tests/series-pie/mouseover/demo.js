@@ -69,7 +69,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
                         series.halo.element.getAttribute('visibility')
                     ], [
                         points[1].name,
-                        'visible'
+                        null // null equals visibility "inherit"
                     ],
                     'Halo should be visible after mouse over.'
                 );
@@ -191,7 +191,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
                         (haloBox.x + haloBox.y)
                     ], [
                         points[0].name,
-                        'visible',
+                        null, // null equals visibility "inherit"
                         0
                     ],
                     'Halo should not be visible after mouse over.'
@@ -236,7 +236,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
                         ((haloBox.x + haloBox.y) > 0)
                     ], [
                         points[1].name,
-                        'visible',
+                        null, // null equals visibility "inherit"
                         true
                     ],
                     'Halo should be visible after mouse over.'

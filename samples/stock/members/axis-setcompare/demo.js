@@ -41,9 +41,9 @@ function createChart() {
 }
 
 
-$.each(names, function (i, name) {
+names.forEach(function (name, i) {
 
-    $.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',    function (data) {
+    Highcharts.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',    function (data) {
 
         seriesOptions[i] = {
             name: name,
@@ -61,8 +61,9 @@ $.each(names, function (i, name) {
 });
 
 // buttons behaviour
-$('button.compare').click(function () {
-    var compare = $(this).data().compare;
-    chart.yAxis[0].setCompare(compare);
-
+document.querySelectorAll('button.compare').forEach(function (button) {
+    button.addEventListener('click', function () {
+        var compare = this.getAttribute('data-compare');
+        chart.yAxis[0].setCompare(compare);
+    });
 });

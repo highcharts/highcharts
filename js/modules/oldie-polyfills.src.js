@@ -86,9 +86,9 @@ if (!Array.prototype.reduce) {
 }
 if (!Object.keys) {
     Object.keys = function (obj) {
-        var result = [], hasOwnProperty = Object.prototype.hasOwnProperty, prop;
+        var result = [], prop;
         for (prop in obj) {
-            if (hasOwnProperty.call(obj, prop)) {
+            if (Object.hasOwnProperty.call(obj, prop)) {
                 result.push(prop);
             }
         }

@@ -32,7 +32,7 @@
  *         Modify the default label format output
  *
  * @name Highcharts.SeriesOrganizationDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>|undefined}
+ * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction|undefined}
  * @default function () { return this.point.name; }
  * @since 6.0.2
  */

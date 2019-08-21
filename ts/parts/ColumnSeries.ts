@@ -44,15 +44,18 @@ declare global {
             states?: ColumnSeriesStatesOptions;
         }
         interface ColumnSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
+            extends LineSeriesStatesHoverOptions {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
         }
+        interface ColumnSeriesStatesInactiveOptions
+            extends LineSeriesStatesInactiveOptions {
+        }
         interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
             hover?: ColumnSeriesStatesHoverOptions;
+            inactive?: ColumnSeriesStatesInactiveOptions;
             select?: ColumnSeriesStatesSelectOptions;
         }
         interface ColumnSeriesStatesSelectOptions {
@@ -1082,7 +1085,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                         graphic &&
                         graphic.element.nodeName !== point.shapeType
                     ) {
-                        graphic = graphic.destroy() as any;
+                        graphic = graphic.destroy();
                     }
 
                     if (graphic) { // update
@@ -1120,7 +1123,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
 
                 } else if (graphic) {
-                    point.graphic = graphic.destroy() as any; // #1269
+                    point.graphic = graphic.destroy(); // #1269
                 }
             });
         },

@@ -1,4 +1,3 @@
-/* global TestController */
 QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', function (assert) {
 
     var events = [],
@@ -862,44 +861,5 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         data.hoverPoints.length,
         1,
         'Combination chart: Only one point hovered when hovered series has noSharedTooltip'
-    );
-});
-
-QUnit.test('Hover points', assert => {
-    const chart = Highcharts.chart('container', {
-        yAxis: {
-            min: 2,
-            max: 5
-        },
-        series: [{
-            data: [1, 2, 3, 4]
-        }, {
-            data: [3, 2, 1, 4]
-        }],
-        tooltip: {
-            shared: true
-        }
-    });
-    const { series: [series1] } = chart;
-    const getSeriesNameAndPointIndex = point => `${point.series.name}.${point.index}`;
-
-    assert.strictEqual(
-        chart.hoverPoints,
-        undefined,
-        'Should have no hover points before any interaction'
-    );
-
-    series1.points[3].onMouseOver();
-    assert.deepEqual(
-        chart.hoverPoints.map(getSeriesNameAndPointIndex),
-        ['Series 1.3', 'Series 2.3'],
-        'Should include all series in hover points'
-    );
-
-    series1.points[2].onMouseOver();
-    assert.deepEqual(
-        chart.hoverPoints.map(getSeriesNameAndPointIndex),
-        ['Series 1.2'],
-        'Should not include points outside plot area in hover points. #7650'
     );
 });

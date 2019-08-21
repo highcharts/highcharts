@@ -10,9 +10,9 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, pInt = U.pInt;
+var attr = U.attr, defined = U.defined, pInt = U.pInt;
 import './SvgRenderer.js';
-var attr = H.attr, createElement = H.createElement, css = H.css, extend = H.extend, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, pick = H.pick, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var createElement = H.createElement, css = H.css, extend = H.extend, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, pick = H.pick, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /* eslint-disable valid-jsdoc */
 // Extend SvgElement for useHTML option.
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
@@ -365,14 +365,11 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }
                                 parentGroup.doTransform = true;
                             }
-                            if (cls) {
-                                cls = { className: cls };
-                            } // else null
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
                             htmlGroup =
                                 parentGroup.div =
-                                    parentGroup.div || createElement('div', cls, {
+                                    parentGroup.div || createElement('div', cls ? { className: cls } : undefined, {
                                         position: 'absolute',
                                         left: (parentGroup.translateX || 0) + 'px',
                                         top: (parentGroup.translateY || 0) + 'px',

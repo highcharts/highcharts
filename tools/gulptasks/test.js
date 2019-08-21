@@ -296,6 +296,10 @@ Available arguments for 'gulp test':
     Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
     directory.
 
+--difflog
+    Produces a JSON file containing the number of different pixels for visual tests.
+    Use --remotelocation to specify remote location of reference.svg files to compare with.
+
 --ts
     Compile TypeScript-based tests.
 
@@ -315,10 +319,20 @@ Available arguments for 'gulp test':
             const KarmaServer = require('karma').Server;
             const PluginError = require('plugin-error');
 
+            let gitSha;
+            if (argv.difflog) {
+                const { getLatestCommitShaSync } = require('./lib/git');
+                gitSha = getLatestCommitShaSync();
+            }
+
             new KarmaServer(
                 {
                     configFile: KARMA_CONFIG_FILE,
-                    singleRun: true
+                    singleRun: true,
+                    client: {
+                        gitSha,
+                        cliArgs: argv
+                    }
                 },
                 err => {
 

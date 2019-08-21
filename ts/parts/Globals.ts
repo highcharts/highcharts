@@ -16,7 +16,10 @@
  */
 declare global {
     namespace Highcharts {
+        type ExportingErrorCallbackFunction = any; // @todo offline exporting
         type NavigationOptions = any; // @todo exporting module
+        type OrganizationSeries = any; // @todo organization module
+        type OrganizationSeriesOptions = any // @todo organization module
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
@@ -24,7 +27,6 @@ declare global {
             beforePadding?: Function; // @todo
         }
         interface Chart {
-            drilldownLevels?: any; // @todo drilldown module
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
@@ -32,21 +34,13 @@ declare global {
             isPrinting?: any; // @todo exporting module
             openMenu?: any; // @todo exporting module
             redrawTrigger?: any; // @todo static-scale module
+            getFilename: Function; // @todo exporting module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
         }
-        interface ColumnSeries {
-            animateDrillupFrom: Function; // @todo drilldown module
-            animateDrillupTo: Function; // @todo drilldown module
-        }
-        interface NetworkgraphLayout {
-            beforeStep: Function; // @todo networkgraph
-        }
         interface Options {
-            drilldown?: any; // @todo drilldown module
-            exporting?: any; // @todo exporting module
             navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
@@ -59,10 +53,8 @@ declare global {
         interface Series {
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
-            invertable?: any; // @todo sankey
             isSeriesBoosting?: any; // @todo boost module
             labelBySeries?: any; // @todo series label module
-            layout?: any; // @todo networkgraph
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
@@ -97,14 +89,32 @@ declare global {
         msHidden: boolean;
         webkitHidden: boolean;
     }
+    interface Element {
+        mozRequestFullScreen: Function;
+        msRequestFullscreen: Function;
+        webkitRequestFullscreen: Function;
+    }
     interface Index extends Object {
         [key: string]: any;
         [index: number]: any;
     }
+    interface PointerEvent {
+        /** @deprecated */
+        readonly toElement: Element;
+    }
     interface Window {
+        ArrayBuffer: typeof ArrayBuffer;
+        Blob: typeof Blob;
         Image: typeof Image;
+        TouchEvent: typeof TouchEvent;
+        Uint8Array: Uint8Array & Uint8ArrayConstructor;
+        URL: typeof URL;
+        /** @deprecated */
+        createObjectURL?: (typeof URL)['createObjectURL'];
+        /** @deprecated */
         opera?: unknown;
-        TouchEvent?: typeof TouchEvent;
+        /** @deprecated */
+        webkitURL?: typeof URL;
     }
     const win: Window; // @todo: UMD variable
 }

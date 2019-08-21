@@ -54,14 +54,14 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     pInt
 } = U;
 
 import './SvgRenderer.js';
 
-var attr = H.attr,
-    createElement = H.createElement,
+var createElement = H.createElement,
     css = H.css,
     extend = H.extend,
     isFirefox = H.isFirefox,
@@ -570,17 +570,13 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 parentGroup.doTransform = true;
                             }
 
-                            if (cls) {
-                                cls = { className: cls };
-                            } // else null
-
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
                             htmlGroup =
                             parentGroup.div =
                             (parentGroup.div as any) || createElement(
                                 'div',
-                                cls,
+                                cls ? { className: cls } : undefined,
                                 {
                                     position: 'absolute',
                                     left: (parentGroup.translateX || 0) + 'px',
