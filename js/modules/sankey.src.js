@@ -313,6 +313,8 @@ seriesType('sankey', 'column',
      * @since     7.1.3
      * @default   0
      * @apioption plotOptions.sankey.minLinkWidth
+     *
+     * @private
      */
     minLinkWidth: 0,
     /**

@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,7 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject, SizeObject {
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
