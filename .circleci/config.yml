@@ -292,7 +292,7 @@ workflows:
           context: highcharts-staging
       - test_browsers:
           name: "verify-samples-Chrome"
-          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*/*"
+          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*/*,gantt/*/*"
           browsercount: 2
           requires:
             - install_dependencies
