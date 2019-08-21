@@ -260,7 +260,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *         The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
+    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
         if (csvOptions.columnHeaderFormatter) {
@@ -285,21 +285,31 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             };
         }
         return item.name + (keyLength > 1 ? ' (' + key + ')' : '');
+    }, 
+    // Map the categories for value axes
+    getCategoryAndDatetimeMap = function (series, pointArrayMap, pIdx) {
+        var categoryMap = {}, datetimeValueAxisMap = {};
+        pointArrayMap.forEach(function (prop) {
+            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
+                prop) + 'Axis', 
+            // Points in parallel coordinates refers to all yAxis
+            // not only `series.yAxis`
+            axis = Highcharts.isNumber(pIdx) ?
+                series.chart[axisName][pIdx] :
+                series[axisName];
+            categoryMap[prop] = (axis && axis.categories) || [];
+            datetimeValueAxisMap[prop] = (axis && axis.isDatetimeAxis);
+        });
+        return {
+            categoryMap: categoryMap,
+            datetimeValueAxisMap: datetimeValueAxisMap
+        };
     }, xAxisIndices = [];
     // Loop the series and index values
     i = 0;
     this.setUpKeyToAxis();
     this.series.forEach(function (series) {
-        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, categoryMap = {}, datetimeValueAxisMap = {}, xAxisIndex = xAxes.indexOf(series.xAxis), mockSeries, j;
-        // Map the categories for value axes
-        pointArrayMap.forEach(function (prop) {
-            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
-                prop) + 'Axis';
-            categoryMap[prop] = (series[axisName] &&
-                series[axisName].categories) || [];
-            datetimeValueAxisMap[prop] = (series[axisName] &&
-                series[axisName].isDatetimeAxis);
-        });
+        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(series.xAxis), categoryAndDatetimeMap = getCategoryAndDatetimeMap(series, pointArrayMap), mockSeries, j;
         if (series.options.includeInDataExport !== false &&
             !series.options.isInternal &&
             series.visible !== false // #55
@@ -334,6 +344,11 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             // data (#7913), and we need to support Boost (#7026).
             series.options.data.forEach(function eachData(options, pIdx) {
                 var key, prop, val, name, point;
+                // In parallel coordinates chart, each data point is connected
+                // to a separate yAxis, conform this
+                if (hasParallelCoords) {
+                    categoryAndDatetimeMap = getCategoryAndDatetimeMap(series, pointArrayMap, pIdx);
+                }
                 point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(point, [options]);
                 key = point.x;
@@ -361,10 +376,15 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = point[prop];
-                    rows[key][i + j] = pick(categoryMap[prop][val], // Y axis category if present
-                    datetimeValueAxisMap[prop] ?
+                    rows[key][i + j] = pick(
+                    // Y axis category if present
+                    categoryAndDatetimeMap.categoryMap[prop][val], 
+                    // datetime yAxis
+                    categoryAndDatetimeMap.datetimeValueAxisMap[prop] ?
                         time.dateFormat(csvOptions.dateFormat, val) :
-                        null, val);
+                        null, 
+                    // linear/log yAxis
+                    val);
                     j++;
                 }
             });

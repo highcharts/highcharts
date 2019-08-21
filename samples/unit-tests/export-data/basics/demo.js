@@ -888,7 +888,7 @@ QUnit.test('Gantt chart', function (assert) {
     );
 });
 
-QUnit.skip('Parallel coordinates', function (assert) {
+QUnit.test('Parallel coordinates', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 parallelCoordinates: true
