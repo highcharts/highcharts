@@ -51,7 +51,10 @@ declare global {
             endAngle?: number;
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
-            dataLabels?: PieSeriesDataLabelsOptionsObject;
+            dataLabels?: (
+                PieSeriesDataLabelsOptionsObject|
+                Array<PieSeriesDataLabelsOptionsObject>
+            );
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
