@@ -511,7 +511,12 @@ module.exports = function (config) {
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
                         file.path = file.originalPath + '.preprocessed.js';
-                        done(`QUnit.skip('${path}');`);
+                        if (argv.visualcompare) {
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to being skipped from demo.html');`);
+                        } else {
+                            done(`QUnit.skip('${path}');`);
+                        }
                         return;
                     }
 
@@ -527,16 +532,11 @@ module.exports = function (config) {
                                     filename: './samples/${path}/reference.svg',
                                     data: svg
                                 });
-                                assert.ok(
-                                    true,
-                                    'Reference created for ${path}'
-                                );
-                            } else {
-                                assert.ok(
-                                    false,
-                                    '${path}: SVG should be generated'
-                                );                
                             }
+                            assert.ok(
+                                svg,
+                                '${path}: SVG and reference.svg file should be generated'
+                            );
                             done();
                         `;
 
@@ -549,9 +549,8 @@ module.exports = function (config) {
                                 ` ./samples/${path}/reference.svg`
                             );
                             file.path = file.originalPath + '.preprocessed.js';
-                            done(`
-                                QUnit.skip('${path}', function(assert) { assert.ok(true, 'Done'); });
-                            `);
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
                             return;
                         }
 
@@ -591,9 +590,6 @@ module.exports = function (config) {
                             });
                         `;
                     }
-                    // TODO: same to assume default assert like this?
-                    assertion = assertion ? assertion : `assert.ok(true, 'Chart and SVG should exist.');`;
-
                     file.path = file.originalPath + '.preprocessed.js';
                     const testTemplate = createVisualTestTemplate(argv, path, js, assertion);
                     done(testTemplate);
@@ -709,22 +705,24 @@ function createVisualTestTemplate(argv, path, js, assertion) {
              * we expect 2 callbacks if --visualcompare argument is supplied,
              * one for the test comparison and one for checking if chart exists.
              */ 
-            var done = assert.async(${argv.visualcompare || argv.reference ? 2 : 1 });
+            var done = assert.async();
             
             ${scriptBody}
 
             let attempts = 0;
-            function assertIfChartExists() {
+            function waitForChartToLoad() {
                 var chart = Highcharts.charts[
                     Highcharts.charts.length - 1
                 ];
 
                 if (chart || document.getElementsByTagName('svg').length) {
-                    ${assertion}
-                    done();
+                    ${assertion ? assertion : `
+                        assert.ok(true, 'Chart and SVG should exist.');
+                        done();
+                    `}
                     ${reset}
                 } else if (attempts < 50) {
-                    setTimeout(assertIfChartExists, 100);
+                    setTimeout(waitForChartToLoad, 100);
                     attempts++;
                 } else {
                     assert.ok(
@@ -735,7 +733,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                     ${reset}
                 }
             }
-            assertIfChartExists();
+            waitForChartToLoad();
             
             ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
         });

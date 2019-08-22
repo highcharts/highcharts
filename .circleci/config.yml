@@ -129,7 +129,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Generate visual references
-          command: npx gulp test --tests highcharts/demo/* --reference --browsercount 1
+          command: npx gulp test --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
@@ -155,13 +155,19 @@ jobs:
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
-          command: "npx gulp test --tests highcharts/demo/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog"
+          command: "npx gulp test --tests highcharts/*/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite"
       - run:
           name: "Highmaps visual tests"
-          command: "npx gulp test --tests maps/demo/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog"
+          command: "npx gulp test --tests maps/*/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite"
+          when: always
       - run:
           name: "Highstock visual tests"
-          command: "npx gulp test --tests stock/demo/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog"
+          command: "npx gulp test --tests stock/*/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite"
+          when: always
+      - run:
+          name: "Gant visual tests"
+          command: "npx gulp test --tests gantt/*/* --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite"
+          when: always
       - run: "sudo apt-get install -y librsvg2-bin"
       - run:
           name: "Generate PNGs and diff"
@@ -292,7 +298,7 @@ workflows:
           context: highcharts-staging
       - test_browsers:
           name: "verify-samples-Chrome"
-          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*/*,gantt/*/*"
+          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           requires:
             - install_dependencies
       - test_browsers:
