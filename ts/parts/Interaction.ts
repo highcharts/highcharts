@@ -777,7 +777,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
 
-            // xy is used in maps
             xy.forEach(function (
                 isX: number
             ): void {

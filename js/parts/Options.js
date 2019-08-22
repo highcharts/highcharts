@@ -855,6 +855,7 @@ H.defaultOptions = {
          * `followTouchMove` to `false`.
          *
          * @sample {highcharts} highcharts/chart/pankey/ Zooming and panning
+         * @sample {highstock} highcharts/chart/panning/ Zooming and xy panning
          *
          * @type      {boolean}
          * @default   {highcharts} false

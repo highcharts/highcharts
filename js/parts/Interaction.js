@@ -480,7 +480,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             else if (panning === 'y') {
                 xy = [0];
             }
-            // xy is used in maps
             xy.forEach(function (isX) {
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?

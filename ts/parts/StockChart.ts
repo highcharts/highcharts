@@ -1103,6 +1103,9 @@ addEvent(Chart, 'update', function (
     }
 });
 
+// Extend the Axis prototype to calculate start min/max values
+// (including min/maxPadding). This is related to using vertical panning 
+// (#11315).
 addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
 ): void {
