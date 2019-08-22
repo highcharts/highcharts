@@ -856,9 +856,7 @@ function isArray(obj) {
  *         True if the argument is an object.
  */
 function isObject(obj, strict) {
-    return (!!obj &&
-        typeof obj === 'object' &&
-        (!strict || !isArray(obj))); // eslint-disable-line @typescript-eslint/no-explicit-any
+    return (!!obj && typeof obj === 'object' && (!strict || !isArray(obj)));
 }
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1633,7 +1631,7 @@ H.setAnimation = function (animation, chart) {
  *         An object with at least a duration property.
  */
 H.animObject = function (animation) {
-    return isObject(animation) ?
+    return isObject(animation, true) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
 };

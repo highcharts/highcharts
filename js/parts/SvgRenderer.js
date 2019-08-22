@@ -3270,7 +3270,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (isArray(path)) {
             attribs.d = path;
         }
-        else if (isObject(path)) { // attributes
+        else if (isObject(path, true)) { // attributes
             extend(attribs, path);
         }
         return this.createElement('path').attr(attribs);
@@ -3306,7 +3306,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     *         The generated wrapper element.
     */
     circle: function (x, y, r) {
-        var attribs = (isObject(x) ?
+        var attribs = (isObject(x, true) ?
             x :
             x === undefined ? {} : { x: x, y: y, r: r }), wrapper = this.createElement('circle');
         // Setting x or y translates to cx and cy
@@ -3358,7 +3358,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     */
     arc: function (x, y, r, innerR, start, end) {
         var arc, options;
-        if (isObject(x)) {
+        if (isObject(x, true)) {
             options = x;
             y = options.y;
             r = options.r;
@@ -3422,8 +3422,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     *         The generated wrapper element.
     */
     rect: function (x, y, width, height, r, strokeWidth) {
-        r = isObject(x) ? x.r : r;
-        var wrapper = this.createElement('rect'), attribs = isObject(x) ?
+        r = isObject(x, true) ? x.r : r;
+        var wrapper = this.createElement('rect'), attribs = isObject(x, true) ?
             x :
             x === undefined ?
                 {} :
