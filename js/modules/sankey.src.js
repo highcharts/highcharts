@@ -464,7 +464,7 @@ seriesType('sankey', 'column',
                 }
                 else {
                     for (i = 0; i < node.linksTo.length; i++) {
-                        point = node.linksTo[0];
+                        point = node.linksTo[i];
                         if (point.fromNode.column > fromColumn) {
                             fromNode = point.fromNode;
                             fromColumn = fromNode.column;

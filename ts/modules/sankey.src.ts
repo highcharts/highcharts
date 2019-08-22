@@ -732,7 +732,7 @@ seriesType<Highcharts.SankeySeriesOptions>(
                     // highest order column that links to this one.
                     } else {
                         for (i = 0; i < node.linksTo.length; i++) {
-                            point = node.linksTo[0];
+                            point = node.linksTo[i];
                             if ((point.fromNode.column as any) > fromColumn) {
                                 fromNode = point.fromNode;
                                 fromColumn = (fromNode.column as any);
