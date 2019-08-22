@@ -299,7 +299,7 @@ declare global {
             type: string,
             parent: string,
             options: TOptions,
-            props: Dictionary<any>,
+            props?: Dictionary<any>,
             pointProps?: Dictionary<any>
         ): typeof Series;
         function setAnimation(
@@ -3209,7 +3209,7 @@ H.seriesType = function (
     type: string,
     parent: string,
     options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
+    props?: Highcharts.Dictionary<any>,
     pointProps?: Highcharts.Dictionary<any>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),

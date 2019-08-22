@@ -365,6 +365,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
  *
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
+ *
+ * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
@@ -717,6 +719,8 @@ Highcharts.Chart.prototype.getCSV = function (
  *
  * @return {string}
  *         HTML representation of the data.
+ *
+ * @fires Highcharts.Chart#event:afterGetTable
  */
 Highcharts.Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
@@ -1014,6 +1018,8 @@ Highcharts.Chart.prototype.downloadXLS = function (): void {
  *
  * @function Highcharts.Chart#viewData
  * @return {void}
+ *
+ * @fires Highcharts.Chart#event:afterViewData
  */
 Highcharts.Chart.prototype.viewData = function (): void {
     if (!this.dataTableDiv) {

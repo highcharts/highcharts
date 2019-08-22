@@ -258,6 +258,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
+ *
+ * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
     var time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
@@ -486,6 +488,8 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  *
  * @return {string}
  *         HTML representation of the data.
+ *
+ * @fires Highcharts.Chart#event:afterGetTable
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     var html = '<table id="highcharts-data-table-' + this.index + '">', options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
@@ -694,6 +698,8 @@ Highcharts.Chart.prototype.downloadXLS = function () {
  *
  * @function Highcharts.Chart#viewData
  * @return {void}
+ *
+ * @fires Highcharts.Chart#event:afterViewData
  */
 Highcharts.Chart.prototype.viewData = function () {
     if (!this.dataTableDiv) {
