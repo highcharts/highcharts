@@ -16,8 +16,6 @@
  */
 declare global {
     namespace Highcharts {
-        type ExportingErrorCallbackFunction = any; // @todo offline exporting
-        type NavigationOptions = any; // @todo exporting module
         type OrganizationSeries = any; // @todo organization module
         type OrganizationSeriesOptions = any // @todo organization module
         type PatternObject = object; // @todo pattern module
@@ -31,17 +29,11 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
             isBoosting?: any; // @todo boost module
-            isPrinting?: any; // @todo exporting module
-            openMenu?: any; // @todo exporting module
             redrawTrigger?: any; // @todo static-scale module
-            getFilename: Function; // @todo exporting module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
-        }
-        interface Options {
-            navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
@@ -58,6 +50,9 @@ declare global {
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
+        }
+        interface SVGRenderer {
+            inlineWhitelist?: any; // @todo offline exporting module
         }
         interface Tick {
             slotWidth?: any; // @todo
@@ -85,6 +80,13 @@ declare global {
     type GlobalHighcharts = typeof Highcharts;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
+    interface CallableFunction {
+        apply<TScope, TArguments extends any[], TReturn>(
+            this: (this: TScope, ...args: TArguments) => TReturn,
+            thisArg: TScope,
+            args?: (TArguments|IArguments)
+        ): TReturn;
+    }
     interface Document {
         msHidden: boolean;
         webkitHidden: boolean;
