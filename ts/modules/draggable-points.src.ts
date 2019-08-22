@@ -96,7 +96,7 @@ declare global {
             chartX: number;
             chartY: number;
             guideBox?: BBoxObject;
-            points: Dictionary<SVGAttributes>;
+            points: Dictionary<Dictionary<number>>;
             prevdX?: number;
             prevdY?: number;
         }
@@ -109,7 +109,7 @@ declare global {
             getDropValues(
                 origin: DragDropPositionObject,
                 newPos: PointerEventObject,
-                updateProps: Dictionary<Dictionary<Dictionary<string>>>
+                updateProps: Dictionary<SeriesDragDropPropsObject>
             ): Dictionary<number>;
             /** @requires modules/draggable-points */
             showDragHandles(): void;
@@ -122,8 +122,10 @@ declare global {
             point: Point;
         }
         interface PointDragEventObject {
+            newPoint?: PointDragDropObject;
+            newPointId?: string;
             newPoints: Dictionary<PointDragDropObject>;
-            origin: object;
+            origin: DragDropPositionObject;
             preventDefault: Function;
             target: Point;
             type: 'drag';
@@ -138,9 +140,11 @@ declare global {
             (this: Point, event: PointDropEventObject): void;
         }
         interface PointDropEventObject {
+            newPoint?: PointDragDropObject;
+            newPointId?: string;
             newPoints: Dictionary<PointDragDropObject>;
             numNewPoints: number;
-            origin: object;
+            origin: DragDropPositionObject;
             preventDefault: Function;
             target: Point;
             type: 'drop';
@@ -184,6 +188,36 @@ declare global {
         }
     }
 }
+
+/**
+ * Current drag and drop position.
+ *
+ * @interface Highcharts.DragDropPositionObject
+ *//**
+ * Chart x position
+ * @name Highcharts.DragDropPositionObject#chartX
+ * @type {number}
+ *//**
+ * Chart y position
+ * @name Highcharts.DragDropPositionObject#chartY
+ * @type {number}
+ *//**
+ * Drag and drop guide box.
+ * @name Highcharts.DragDropPositionObject#guideBox
+ * @type {Highcharts.BBoxObject|undefined}
+ *//**
+ * Updated point data.
+ * @name Highcharts.DragDropPositionObject#points
+ * @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
+ *//**
+ * Delta of previous x position.
+ * @name Highcharts.DragDropPositionObject#prevdX
+ * @type {number|undefined}
+ *//**
+ * Delta of previous y position.
+ * @name Highcharts.DragDropPositionObject#prevdY
+ * @type {number|undefined}
+ */
 
 /**
  * @interface Highcharts.PointOptionsObject
@@ -246,13 +280,21 @@ declare global {
  *
  * @interface Highcharts.PointDragEventObject
  *//**
+ * New point after drag if only a single one.
+ * @name Highcharts.PointDropEventObject#newPoint
+ * @type {Highcharts.PointDragDropObject|undefined}
+ *//**
+ * New point id after drag if only a single one.
+ * @name Highcharts.PointDropEventObject#newPointId
+ * @type {string|undefined}
+ *//**
  * New points during drag.
  * @name Highcharts.PointDragEventObject#newPoints
  * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
  *//**
  * Original data.
  * @name Highcharts.PointDragEventObject#origin
- * @type {object}
+ * @type {Highcharts.DragDropPositionObject}
  *//**
  * Prevent default drag action.
  * @name Highcharts.PointDragEventObject#preventDefault
@@ -307,6 +349,14 @@ declare global {
  *
  * @interface Highcharts.PointDropEventObject
  *//**
+ * New point after drop if only a single one.
+ * @name Highcharts.PointDropEventObject#newPoint
+ * @type {Highcharts.PointDragDropObject|undefined}
+ *//**
+ * New point id after drop if only a single one.
+ * @name Highcharts.PointDropEventObject#newPointId
+ * @type {string|undefined}
+ *//**
  * New points after drop.
  * @name Highcharts.PointDropEventObject#newPoints
  * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
@@ -317,7 +367,7 @@ declare global {
  *//**
  * Original data.
  * @name Highcharts.PointDropEventObject#origin
- * @type {object}
+ * @type {Highcharts.DragDropPositionObject}
  *//**
  * Prevent default drop action.
  * @name Highcharts.PointDropEventObject#preventDefault
@@ -1778,7 +1828,7 @@ function getPositionSnapshot(
     points: Array<Highcharts.Point>,
     guideBox?: Highcharts.SVGElement
 ): Highcharts.DragDropPositionObject {
-    var res = {
+    var res: Highcharts.DragDropPositionObject = {
         chartX: e.chartX,
         chartY: e.chartY,
         guideBox: guideBox && {
@@ -1787,12 +1837,12 @@ function getPositionSnapshot(
             width: guideBox.attr('width'),
             height: guideBox.attr('height')
         } as Highcharts.BBoxObject,
-        points: {} as Highcharts.Dictionary<Highcharts.SVGAttributes>
+        points: {}
     };
 
     // Loop over the points and add their props
     points.forEach(function (point: Highcharts.Point): void {
-        var pointProps: Highcharts.SVGAttributes = {};
+        var pointProps: Highcharts.Dictionary<number> = {};
 
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
@@ -1812,7 +1862,7 @@ function getPositionSnapshot(
                 axis.toPixels((point as any)[key]) -
                 (axis.horiz ? e.chartX : e.chartY);
         });
-        pointProps.point = point; // Store reference to point
+        (pointProps as any).point = point; // Store reference to point
         res.points[point.id] = pointProps;
     });
 
@@ -2266,11 +2316,7 @@ H.Chart.prototype.setGuideBoxState = function (
 H.Point.prototype.getDropValues = function (
     origin: Highcharts.DragDropPositionObject,
     newPos: Highcharts.PointerEventObject,
-    updateProps: Highcharts.Dictionary<(
-        Highcharts.Dictionary<(
-            Highcharts.Dictionary<string>
-        )>
-    )>
+    updateProps: Highcharts.Dictionary<Highcharts.SeriesDragDropPropsObject>
 ): Highcharts.Dictionary<number> {
     var point = this,
         series = point.series,
@@ -2325,13 +2371,16 @@ H.Point.prototype.getDropValues = function (
 
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
-    objectEach(updateProps, function (val, key: string): void {
+    objectEach(updateProps, function (
+        val: Highcharts.SeriesDragDropPropsObject,
+        key: string
+    ): void {
         var oldVal = pointOrigin[key],
             axis: Highcharts.Axis = (series as any)[val.axis + 'Axis'],
             newVal = limitToRange(
                 axis.toValue(
                     (axis.horiz ? newPos.chartX : newPos.chartY) +
-                    pointOrigin[key + 'Offset']
+                    (pointOrigin as any)[key + 'Offset']
                 ),
                 val.axis.toUpperCase()
             );

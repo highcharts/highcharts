@@ -12,6 +12,35 @@
 'use strict';
 import H from '../parts/Globals.js';
 /**
+ * Current drag and drop position.
+ *
+ * @interface Highcharts.DragDropPositionObject
+ */ /**
+* Chart x position
+* @name Highcharts.DragDropPositionObject#chartX
+* @type {number}
+*/ /**
+* Chart y position
+* @name Highcharts.DragDropPositionObject#chartY
+* @type {number}
+*/ /**
+* Drag and drop guide box.
+* @name Highcharts.DragDropPositionObject#guideBox
+* @type {Highcharts.BBoxObject|undefined}
+*/ /**
+* Updated point data.
+* @name Highcharts.DragDropPositionObject#points
+* @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
+*/ /**
+* Delta of previous x position.
+* @name Highcharts.DragDropPositionObject#prevdX
+* @type {number|undefined}
+*/ /**
+* Delta of previous y position.
+* @name Highcharts.DragDropPositionObject#prevdY
+* @type {number|undefined}
+*/
+/**
  * @interface Highcharts.PointOptionsObject
  */ /**
 * Callback that fires while dragging a point. The mouse event is passed in as
@@ -69,13 +98,21 @@ import H from '../parts/Globals.js';
  *
  * @interface Highcharts.PointDragEventObject
  */ /**
+* New point after drag if only a single one.
+* @name Highcharts.PointDropEventObject#newPoint
+* @type {Highcharts.PointDragDropObject|undefined}
+*/ /**
+* New point id after drag if only a single one.
+* @name Highcharts.PointDropEventObject#newPointId
+* @type {string|undefined}
+*/ /**
 * New points during drag.
 * @name Highcharts.PointDragEventObject#newPoints
 * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
 */ /**
 * Original data.
 * @name Highcharts.PointDragEventObject#origin
-* @type {object}
+* @type {Highcharts.DragDropPositionObject}
 */ /**
 * Prevent default drag action.
 * @name Highcharts.PointDragEventObject#preventDefault
@@ -126,6 +163,14 @@ import H from '../parts/Globals.js';
  *
  * @interface Highcharts.PointDropEventObject
  */ /**
+* New point after drop if only a single one.
+* @name Highcharts.PointDropEventObject#newPoint
+* @type {Highcharts.PointDragDropObject|undefined}
+*/ /**
+* New point id after drop if only a single one.
+* @name Highcharts.PointDropEventObject#newPointId
+* @type {string|undefined}
+*/ /**
 * New points after drop.
 * @name Highcharts.PointDropEventObject#newPoints
 * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
@@ -136,7 +181,7 @@ import H from '../parts/Globals.js';
 */ /**
 * Original data.
 * @name Highcharts.PointDropEventObject#origin
-* @type {object}
+* @type {Highcharts.DragDropPositionObject}
 */ /**
 * Prevent default drop action.
 * @name Highcharts.PointDropEventObject#preventDefault
