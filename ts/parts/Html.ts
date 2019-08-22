@@ -619,7 +619,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                     if (parents[0].div) { // #6418
                                         wrapper.on.apply(
                                             { element: parents[0].div },
-                                            arguments as any
+                                            arguments
                                         );
                                     }
                                     return parentGroup;

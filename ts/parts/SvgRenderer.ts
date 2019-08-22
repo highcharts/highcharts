@@ -92,7 +92,9 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
+            [key: string]: SymbolFunction<(
+                SVGElement|SVGPathArray|Array<SVGElement>
+            )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -3459,7 +3461,7 @@ SVGElement.prototype.strokeSetter = function (
 SVGRenderer = H.SVGRenderer = function (
     this: Highcharts.SVGRenderer
 ): any {
-    this.init.apply(this, arguments as any);
+    this.init.apply(this, arguments);
 } as any;
 extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     /**
@@ -4737,8 +4739,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         if (isArray(path)) {
             attribs.d = path as any;
-        } else if (isObject(path)) { // attributes
-            extend(attribs, path as any);
+        } else if (isObject(path, true)) { // attributes
+            extend(attribs, path);
         }
         return this.createElement('path').attr(attribs) as any;
     },
@@ -4780,8 +4782,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         r?: number
     ): Highcharts.SVGElement {
         var attribs = (
-                isObject(x) ?
-                    x as Highcharts.SVGAttributes :
+                isObject(x, true) ?
+                    x :
                     x === undefined ? {} : { x: x, y: y, r: r }
             ),
             wrapper = this.createElement('circle');
@@ -4851,8 +4853,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var arc: Highcharts.SVGElement,
             options: Highcharts.SVGAttributes;
 
-        if (isObject(x)) {
-            options = x as Highcharts.SVGAttributes;
+        if (isObject(x, true)) {
+            options = x;
             y = options.y;
             r = options.r;
             innerR = options.innerR;
@@ -4932,11 +4934,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         strokeWidth?: number
     ): Highcharts.SVGElement {
 
-        r = isObject(x) ? (x as any).r : r;
+        r = isObject(x, true) ? x.r : r;
 
         var wrapper = this.createElement('rect'),
-            attribs: Highcharts.SVGAttributes = isObject(x) ?
-                (x as any) :
+            attribs: Highcharts.SVGAttributes = isObject(x, true) ?
+                x :
                 x === undefined ?
                     {} :
                     {

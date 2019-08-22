@@ -13,15 +13,12 @@
 import H from './Globals.js';
 
 /** @private */
-type IsObjectConditionalType<TObject, TStrict> = (
+type IsObjectConditionalType<TObject> = (
     TObject extends object ?
         (TObject extends null ?
             false :
-            (TStrict extends true ?
-                (TObject extends Array<any> ?
-                    false :
-                    true
-                ) :
+            (TObject extends Array<any> ?
+                false :
                 true
             )
         ) :
@@ -226,10 +223,11 @@ declare global {
         function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
-        function isObject<T1, T2 extends boolean = false>(
-            obj: T1,
-            strict?: T2
-        ): IsObjectConditionalType<T1, T2>;
+        function isObject(obj: unknown, strict: true): obj is object;
+        function isObject<T>(
+            obj: T,
+            strict?: false
+        ): IsObjectConditionalType<T>;
         function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
@@ -1162,7 +1160,7 @@ H.Fx.prototype = {
      * @return {void}
      */
     fillSetter: function (): void {
-        H.Fx.prototype.strokeSetter.apply(this, arguments as any);
+        H.Fx.prototype.strokeSetter.apply(this, arguments);
     },
 
     /**
@@ -1320,6 +1318,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
+function isObject<T>(obj: T, strict?: false): IsObjectConditionalType<T>;
+function isObject(obj: unknown, strict: true): obj is object;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -1334,15 +1334,11 @@ function isArray(obj: unknown): obj is Array<unknown> {
  * @return {boolean}
  *         True if the argument is an object.
  */
-function isObject<T1, T2 extends boolean = false>(
-    obj: T1,
-    strict?: T2
-): IsObjectConditionalType<T1, T2> {
-    return (
-        !!obj &&
-        typeof obj === 'object' &&
-        (!strict || !isArray(obj))
-    ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+function isObject<T>(
+    obj: T,
+    strict?: boolean
+): boolean {
+    return (!!obj && typeof obj === 'object' && (!strict || !isArray(obj)));
 }
 
 /**
@@ -1377,7 +1373,7 @@ function isClass(obj: (object|undefined)): boolean {
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && (c as any).name && (c as any).name !== 'Object')
+        (c && c.name && c.name !== 'Object')
     );
 }
 
@@ -2293,8 +2289,8 @@ H.setAnimation = function (
 H.animObject = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
-    return isObject(animation) ?
-        H.merge(animation as Highcharts.AnimationOptionsObject) as any :
+    return isObject(animation, true) ?
+        H.merge<Highcharts.AnimationOptionsObject>(animation) :
         { duration: animation as boolean ? 500 : 0 };
 };
 
@@ -3123,7 +3119,7 @@ H.animate = function (
         unit = '',
         end,
         fx,
-        args;
+        args: IArguments;
 
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;

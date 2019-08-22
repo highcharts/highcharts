@@ -279,7 +279,7 @@ SVGRenderer.prototype.face3d = function (
             hash.d = path;
             hash.visibility = visibility;
         }
-        return SVGElement.prototype.attr.apply(this, arguments as any);
+        return SVGElement.prototype.attr.apply(this, arguments);
     } as any;
 
     ret.animate = function (
@@ -318,7 +318,7 @@ SVGRenderer.prototype.face3d = function (
             this.attr('visibility', visibility);
         }
 
-        return SVGElement.prototype.animate.apply(this, arguments as any);
+        return SVGElement.prototype.animate.apply(this, arguments);
     };
 
     return ret.attr(args);
@@ -378,7 +378,7 @@ SVGRenderer.prototype.polyhedron = function (
             }
             delete hash.faces;
         }
-        return SVGElement.prototype.attr.apply(this, arguments as any);
+        return SVGElement.prototype.attr.apply(this, arguments);
     } as any;
 
     result.animate = function (
@@ -399,7 +399,7 @@ SVGRenderer.prototype.polyhedron = function (
             }
             delete params.faces;
         }
-        return SVGElement.prototype.animate.apply(this, arguments as any);
+        return SVGElement.prototype.animate.apply(this, arguments);
     };
 
     return result.attr(args);
@@ -960,7 +960,7 @@ H.SVGRenderer.prototype.arc3d = function (
                 wrapper.setPaths(wrapper.attribs as any);
             }
         }
-        return SVGElement.prototype.attr.apply(wrapper, arguments as any);
+        return SVGElement.prototype.attr.apply(wrapper, arguments);
     } as any;
 
     // Override the animate function by sucking out custom parameters related to
