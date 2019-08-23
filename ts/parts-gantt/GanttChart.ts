@@ -25,9 +25,6 @@ declare global {
             options: Options,
             callback?: ChartCallbackFunction
         ): Chart;
-        interface Options {
-            isGantt?: boolean;
-        }
     }
 }
 

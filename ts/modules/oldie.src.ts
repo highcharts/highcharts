@@ -2076,7 +2076,7 @@ if (!svg) {
     H.VMLRenderer = VMLRenderer = function (
         this: Highcharts.VMLRenderer
     ): void {
-        this.init.apply(this, arguments);
+        this.init.apply(this, arguments as any);
     } as any;
     VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
