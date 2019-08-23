@@ -788,6 +788,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             }
 
             // panning axis mapping
+
             var xy = [1]; // x
 
             if (type === 'xy') {

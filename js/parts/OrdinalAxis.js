@@ -605,7 +605,10 @@ Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 // Extending the Chart.pan method for ordinal axes
 addEvent(Chart, 'pan', function (e) {
     var chart = this, xAxis = chart.xAxis[0], overscroll = xAxis.options.overscroll, chartX = e.originalEvent.chartX, panning = chart.options.chart.panning, runBase = false;
-    if (panning && panning.type !== 'y' && xAxis.options.ordinal && xAxis.series.length) {
+    if (panning &&
+        panning.type !== 'y' &&
+        xAxis.options.ordinal &&
+        xAxis.series.length) {
         var mouseDownX = chart.mouseDownX, extremes = xAxis.getExtremes(), dataMax = extremes.dataMax, min = extremes.min, max = extremes.max, trimmedRange, hoverPoints = chart.hoverPoints, closestPointRange = xAxis.closestPointRange || xAxis.overscrollPointsRange, pointPixelWidth = (xAxis.translationSlope *
             (xAxis.ordinalSlope || closestPointRange)), 
         // how many ordinal units did we move?

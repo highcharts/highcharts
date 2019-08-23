@@ -3,7 +3,7 @@ Highcharts.stockChart('container', {
     chart: {
         panning: {
             enabled: true,
-            type: 'y'
+            type: 'xy'
         },
         panKey: 'alt',
         zoomType: 'xy'

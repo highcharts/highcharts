@@ -767,7 +767,7 @@ addEvent(Chart, 'update', function (e) {
     }
 });
 // Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning 
+// (including min/maxPadding). This is related to using vertical panning
 // (#11315).
 addEvent(Axis, 'afterSetScale', function () {
     var axis = this, panning = axis.chart.options.chart.panning, options = axis.options;
