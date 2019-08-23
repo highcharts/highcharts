@@ -44,7 +44,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            width: 280,
+            width: 250,
             height: 260
         },
 
