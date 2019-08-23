@@ -12,6 +12,10 @@
 
 import H from '../parts/Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         interface ColorMapPoint extends Point {

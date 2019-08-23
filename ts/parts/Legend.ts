@@ -108,7 +108,7 @@ declare global {
             ): void;
             public destroy(): void;
             public destroyItem(
-                item: (BubbleLegend|Point|Series|ColorAxis)
+                item: (BubbleLegend|ColorAxis|Point|Series)
             ): void;
             public getAlignment(): string;
             public getAllItems(): Array<(BubbleLegend|Point|Series)>;
@@ -528,9 +528,9 @@ Highcharts.Legend.prototype = {
         this: Highcharts.Legend,
         item: (
             Highcharts.BubbleLegend |
+            Highcharts.ColorAxis |
             Highcharts.Point |
-            Highcharts.Series |
-            Highcharts.ColorAxis
+            Highcharts.Series
         )
     ): void {
         var checkbox = item.checkbox;

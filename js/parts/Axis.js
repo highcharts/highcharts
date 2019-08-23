@@ -3954,7 +3954,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         // Hook for Highstock Scroller. Consider combining with beforePadding.
         fireEvent(axis, 'foundExtremes');
         // Hook for adjusting this.min and this.max. Used by bubble series.
-        if (axis.beforePadding && axis.coll !== 'colorAxis') {
+        if (axis.beforePadding) {
             axis.beforePadding();
         }
         // adjust min and max for the minimum range

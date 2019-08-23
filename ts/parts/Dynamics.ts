@@ -47,7 +47,7 @@ declare global {
             ): Axis;
             createAxis(
                 type: string,
-                args: CreateAxisArgumentsObject
+                options: CreateAxisOptionsObject
             ): Axis|ColorAxis;
             addSeries(
                 options: SeriesOptionsType,
@@ -69,9 +69,9 @@ declare global {
             options: Options;
             redraw: boolean;
         }
-        interface CreateAxisArgumentsObject {
+        interface CreateAxisOptionsObject {
             animation: undefined | boolean | AnimationOptionsObject;
-            options: AxisOptions | ColorAxisOptions;
+            axis: AxisOptions | ColorAxisOptions;
             redraw: undefined | boolean;
         }
         interface Point {
@@ -293,7 +293,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ): Highcharts.Axis {
         return this.createAxis(
             isX ? 'xAxis' : 'yAxis',
-            { options: options, redraw: redraw, animation: animation }
+            { axis: options, redraw: redraw, animation: animation }
         );
     },
 
@@ -329,7 +329,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ): Highcharts.Axis {
         return this.createAxis(
             'colorAxis',
-            { options: options, redraw: redraw, animation: animation }
+            { axis: options, redraw: redraw, animation: animation }
         );
     },
 
@@ -351,14 +351,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     createAxis: function (
         this: Highcharts.Chart,
         type: string,
-        args: Highcharts.CreateAxisArgumentsObject
-    ): Highcharts.Axis | Highcharts.ColorAxis {
+        options: Highcharts.CreateAxisOptionsObject
+    ): Highcharts.Axis {
         var chartOptions = this.options,
             isColorAxis = type === 'colorAxis',
-            options = args.options,
-            redraw = args.redraw,
-            animation = args.animation,
-            userOptions = merge(options, {
+            axisOptions = options.axis,
+            redraw = options.redraw,
+            animation = options.animation,
+            userOptions = merge(axisOptions, {
                 index: (this as any)[type].length,
                 isX: type === 'xAxis'
             }),

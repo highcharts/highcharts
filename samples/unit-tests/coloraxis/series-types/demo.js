@@ -4,8 +4,13 @@ QUnit.module('Color axis for series types', function () {
         if (
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
             type !== 'gauge' &&
+            type !== 'solidgauge' &&
             type !== 'networkgraph' &&
-            type !== 'sunburst'
+            type !== 'sunburst' &&
+            type !== 'sankey' &&
+            type !== 'dependencywheel' &&
+            type !== 'venn' &&
+            type !== 'wordcloud'
         ) {
 
             QUnit.test('Color axis for ' + type, function (assert) {
@@ -18,6 +23,7 @@ QUnit.module('Color axis for series types', function () {
                         }
                     },
                     series: [{
+                        colorByPoint: false,
                         marker: {
                             enabled: true
                         },
@@ -33,6 +39,9 @@ QUnit.module('Color axis for series types', function () {
                 // Special cases
                 if (type === 'treemap') {
                     cfg.series[0].keys = ['x', 'y', 'value', 'colorValue'];
+
+                } else if (type === 'xrange') {
+                    cfg.series[0].keys = ['x', 'x2', 'y'];
 
                 } else if (type === 'gantt') {
                     cfg.series[0].data = [

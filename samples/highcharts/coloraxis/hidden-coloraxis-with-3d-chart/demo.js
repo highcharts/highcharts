@@ -16,9 +16,6 @@ Highcharts.chart({
     title: {
         text: 'Hidden color axis with 3d chart'
     },
-    subtitle: {
-        text: 'Test options by dragging the sliders below'
-    },
     plotOptions: {
         column: {
             depth: 25

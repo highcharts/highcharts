@@ -24,6 +24,7 @@ declare global {
         interface ColorSeries extends Series {
             colorAxis: ColorAxis;
             data: Array<ColorPoint>;
+            points: Array<ColorPoint>;
             options: ColorSeriesOptions;
             optionalAxis: string;
             translateColors(): void;
@@ -99,7 +100,7 @@ H.colorSeriesMixin = {
             colorAxis = this.colorAxis,
             colorKey = this.colorKey;
 
-        (points as any).forEach(function (point: Highcharts.ColorPoint): void {
+        points.forEach(function (point: Highcharts.ColorPoint): void {
             var value = (point as any)[colorKey],
                 color;
 

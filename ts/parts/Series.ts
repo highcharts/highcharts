@@ -1438,14 +1438,14 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 
         /**
          * Whether to display this particular series or series type in the
-         * legend. The default value is `true` for standalone series, `false`
-         * for linked series.
+         * legend. Standalone series are shown in legend by default, and linked
+         * series are not. Since v7.2.0 it is possible to show series that use
+         * colorAxis by setting this option to `true`.
          *
          * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
          *         One series in the legend, one hidden
          *
          * @type      {boolean}
-         * @default   true
          * @apioption plotOptions.series.showInLegend
          */
 
@@ -2602,6 +2602,9 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * first. Set this option to false to prevent a series from connecting
          * to the default color axis.
          *
+         * Since v7.2.0 the option can also be an axis id or an axis index
+         * instead of a boolean flag.
+         *
          * @sample highcharts/coloraxis/coloraxis-with-pie/
          *         Color axis with pie series
          * @sample highcharts/coloraxis/multiple-coloraxis/
@@ -2609,7 +2612,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          *
          * @type      {number|string|boolean}
          * @default   0
-         * @since     7.1.4
          * @product   highcharts highstock highmaps
          * @apioption plotOptions.series.colorAxis
          */
@@ -2627,7 +2629,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          *
          * @type      {string}
          * @default   y
-         * @since     7.1.4
+         * @since     7.2.0
          * @product   highcharts highstock highmaps
          * @apioption plotOptions.series.colorKey
          */
@@ -4109,8 +4111,8 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 activeCounter = 0,
                 // #2117, need to compensate for log X axis
                 xExtremes,
-                xMin,
-                xMax,
+                xMin = 0,
+                xMax = 0,
                 validValue,
                 withinRange,
                 // Handle X outside the viewed area. This does not work with
@@ -4148,8 +4150,8 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     this.cropped ||
                     !xAxis || // for colorAxis support
                     (
-                        ((xData as any)[i + shoulder] || x) >= (xMin as any) &&
-                        ((xData as any)[i - shoulder] || x) <= (xMax as any)
+                        ((xData as any)[i + shoulder] || x) >= xMin &&
+                        ((xData as any)[i - shoulder] || x) <= xMax
                     )
                 );
 

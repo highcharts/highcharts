@@ -28,8 +28,8 @@ declare global {
         interface Series {
             axisTypes: Array<string>;
             colorKey: string;
-            minColorValue: number;
-            maxColorValue: number;
+            minColorValue?: number;
+            maxColorValue?: number;
         }
         interface SeriesOptions {
             colorKey?: string;
@@ -211,7 +211,10 @@ extend(ColorAxis.prototype, {
      * convenient to add each category to a separate series.
      *
      * Color axis does not work with: `sankey`, `sunburst`, `dependencywheel`,
-     * `networkgraph` and `gauge` series types.
+     * `networkgraph`, `wordcloud`, `venn`, `gauge` and `solidgauge` series
+     * types.
+     *
+     * Since v7.2.0 `colorAxis` can also be an array of options objects.
      *
      * See [the Axis object](/class-reference/Highcharts.Axis) for
      * programmatic access to the axis.
@@ -277,7 +280,7 @@ extend(ColorAxis.prototype, {
          *         Horizontal color axis layout with vertical legend
          *
          * @type      {string|undefined}
-         * @default   undefined
+         * @since     7.2.0
          * @product   highcharts highstock highmaps
          * @apioption colorAxis.layout
          */
@@ -648,10 +651,7 @@ extend(ColorAxis.prototype, {
         chart: Highcharts.Chart,
         userOptions: Highcharts.ColorAxisOptions
     ): void {
-        var horiz = userOptions.layout ?
-                userOptions.layout !== 'vertical' :
-                (chart.options.legend as any).layout !== 'vertical',
-            options;
+        var options;
 
         this.coll = 'colorAxis';
 
@@ -674,7 +674,7 @@ extend(ColorAxis.prototype, {
         this.initStops();
 
         // Override original axis properties
-        this.horiz = horiz;
+        this.horiz = !options.opposite;
         this.zoomEnabled = false;
 
         // Add default values
@@ -1382,6 +1382,8 @@ extend(ColorAxis.prototype, {
         }
         return legendItems;
     },
+
+    beforePadding: false, // Prevents unnecessary padding with `hc-more`
     name: '' // Prevents 'undefined' in legend in IE8
 });
 
@@ -1454,10 +1456,10 @@ addEvent(Legend, 'afterGetAllItems', function (
     var colorAxisItems = [] as Array<Highcharts.ColorAxis |
         Highcharts.ColorAxisLegendItemObject>,
         colorAxes = this.chart.colorAxis || [],
-        options,
+        options: Highcharts.ColorAxisOptions,
         i;
 
-    colorAxes.forEach(function (colorAxis): void {
+    colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
         options = colorAxis.options;
 
         if (options && options.showInLegend) {
@@ -1471,11 +1473,23 @@ addEvent(Legend, 'afterGetAllItems', function (
                 // Add this axis on top
                 colorAxisItems.push(colorAxis);
             }
-            // Don't add the color axis' series
+            // If dataClasses are defined or showInLegend option is not set to
+            // true, do not add color axis' series to legend.
             colorAxis.series.forEach(function (
                 series: Highcharts.Series
             ): void {
-                erase(e.allItems, series);
+                if (!series.options.showInLegend || options.dataClasses) {
+                    if (series.options.legendType === 'point') {
+                        series.points.forEach(function (
+                            point: Highcharts.Point
+                        ): void {
+                            erase(e.allItems, point);
+                        });
+
+                    } else {
+                        erase(e.allItems, series);
+                    }
+                }
             });
         }
     });
@@ -1498,14 +1512,12 @@ addEvent(Legend, 'afterColorizeItem', function (
 });
 
 // Updates in the legend need to be reflected in the color axis (6888)
-addEvent(Legend, 'afterUpdate', function (
-    this: Highcharts.Legend
-): void {
-    var colorAxis = this.chart.colorAxis;
+addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
+    var colorAxes = this.chart.colorAxis;
 
-    if (colorAxis) {
-        colorAxis.forEach(function (axis): void {
-            axis.update({}, arguments[2]);
+    if (colorAxes) {
+        colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
+            colorAxis.update({}, arguments[2]);
         });
     }
 });

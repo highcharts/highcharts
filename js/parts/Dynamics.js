@@ -119,7 +119,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     addAxis: function (options, isX, redraw, animation) {
-        return this.createAxis(isX ? 'xAxis' : 'yAxis', { options: options, redraw: redraw, animation: animation });
+        return this.createAxis(isX ? 'xAxis' : 'yAxis', { axis: options, redraw: redraw, animation: animation });
     },
     /**
      * Add a color axis to the chart after render time. Note that this method
@@ -146,7 +146,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     addColorAxis: function (options, redraw, animation) {
-        return this.createAxis('colorAxis', { options: options, redraw: redraw, animation: animation });
+        return this.createAxis('colorAxis', { axis: options, redraw: redraw, animation: animation });
     },
     /**
      * Factory for creating different axis types.
@@ -163,8 +163,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {Highcharts.Axis | Highcharts.ColorAxis}
      *         The newly generated Axis object.
      */
-    createAxis: function (type, args) {
-        var chartOptions = this.options, isColorAxis = type === 'colorAxis', options = args.options, redraw = args.redraw, animation = args.animation, userOptions = merge(options, {
+    createAxis: function (type, options) {
+        var chartOptions = this.options, isColorAxis = type === 'colorAxis', axisOptions = options.axis, redraw = options.redraw, animation = options.animation, userOptions = merge(axisOptions, {
             index: this[type].length,
             isX: type === 'xAxis'
         }), axis;

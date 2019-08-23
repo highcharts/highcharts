@@ -17,7 +17,9 @@ Highcharts.chart('container', {
         minColor: '#000fb0',
         maxColor: '#e3e5ff',
         labels: {
-            format: "{value}%"
+            formatter: function () {
+                return Math.abs(this.value) + '%';
+            }
         }
     }, {
         minColor: '#ffece8',
