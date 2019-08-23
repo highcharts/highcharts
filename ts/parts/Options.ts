@@ -79,7 +79,7 @@ declare global {
             marginRight?: number;
             marginTop?: number;
             panKey?: string;
-            panning?: boolean;
+            panning?: PanningOptions;
             pinchType?: string;
             plotBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject

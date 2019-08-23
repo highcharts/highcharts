@@ -465,7 +465,18 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @return {void}
      */
     pan: function (e, panning) {
-        var chart = this, hoverPoints = chart.hoverPoints, doRedraw, xy = [1]; // x
+        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, doRedraw, type;
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        }
+        else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+        chart.options.chart.panning = panningOptions;
+        type = panningOptions.type;
         fireEvent(this, 'pan', { originalEvent: e }, function () {
             // remove active points for shared tooltip
             if (hoverPoints) {
@@ -474,10 +485,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 });
             }
             // panning axis mapping
-            if (panning === 'xy') {
+            var xy = [1]; // x
+            if (type === 'xy') {
                 xy = [1, 0];
             }
-            else if (panning === 'y') {
+            else if (type === 'y') {
                 xy = [0];
             }
             xy.forEach(function (isX) {

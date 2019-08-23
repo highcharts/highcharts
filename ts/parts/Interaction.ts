@@ -20,7 +20,7 @@ declare global {
     namespace Highcharts {
         interface Chart {
             resetZoomButton?: SVGElement;
-            pan(e: PointerEventObject, panning: string): void;
+            pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
             showResetZoom(): void;
             zoom(event: SelectEventObject): void;
             zoomOut(): void;
@@ -62,6 +62,10 @@ declare global {
         }
         interface PointUnselectCallbackFunction {
             (this: Point, event: PointInteractionEventObject): void;
+        }
+        interface PanningOptions {
+            type: string;
+            enabled: boolean;
         }
         interface Series {
             _hasTracking?: boolean;
@@ -753,13 +757,26 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     pan: function (
         this: Highcharts.Chart,
         e: Highcharts.PointerEventObject,
-        panning: string
+        panning: Highcharts.PanningOptions|boolean
     ): void {
 
         var chart = this,
             hoverPoints = chart.hoverPoints,
+            panningOptions: Highcharts.PanningOptions,
             doRedraw: boolean,
-            xy = [1]; // x
+            type: string;
+
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        } else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+
+        (chart.options.chart as any).panning = panningOptions;
+        type = panningOptions.type;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
@@ -771,9 +788,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             }
 
             // panning axis mapping
-            if (panning === 'xy') {
+            var xy = [1]; // x
+
+            if (type === 'xy') {
                 xy = [1, 0];
-            } else if (panning === 'y') {
+            } else if (type === 'y') {
                 xy = [0];
             }
 

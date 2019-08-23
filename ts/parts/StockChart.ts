@@ -205,11 +205,7 @@ H.StockChart = H.stockChart = function (
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
         opposite,
-        panning = pick(
-            options.chart && options.chart.panning,
-            (defaultOptions.chart as any).panning,
-        ),
-
+        panning = options.chart && options.chart.panning,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
         navigatorEnabled = pick(
@@ -217,7 +213,8 @@ H.StockChart = H.stockChart = function (
             (defaultOptions.navigator as any).enabled,
             true
         ),
-        verticalPanningEnabled = panning === 'y' || panning === 'xy',
+        verticalPanningEnabled = panning &&
+                    (panning.type === 'y' || panning.type === 'xy'),
         disableStartOnTick = {
             startOnTick: false,
             endOnTick: false
@@ -295,7 +292,10 @@ H.StockChart = H.stockChart = function (
     options = merge(
         {
             chart: {
-                panning: true,
+                panning: {
+                    enabled: true,
+                    type: 'x'
+                },
                 pinchType: 'x'
             },
             navigator: {
@@ -1104,7 +1104,7 @@ addEvent(Chart, 'update', function (
 });
 
 // Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning 
+// (including min/maxPadding). This is related to using vertical panning
 // (#11315).
 addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
@@ -1114,8 +1114,9 @@ addEvent(Axis, 'afterSetScale', function (
         options = axis.options as Highcharts.PanAxisOptions;
 
     if (
-        (panning === 'y' ||
-        panning === 'xy') &&
+        panning &&
+        (panning.type === 'y' ||
+        panning.type === 'xy') &&
         !axis.isXAxis &&
         !defined(options.startMin) &&
         !defined(options.startMax)

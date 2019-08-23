@@ -118,10 +118,11 @@ var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = 
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = pick(options.chart && options.chart.panning, defaultOptions.chart.panning), 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning === 'y' || panning === 'xy', disableStartOnTick = {
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning &&
+        (panning.type === 'y' || panning.type === 'xy'), disableStartOnTick = {
         startOnTick: false,
         endOnTick: false
     };
@@ -177,7 +178,10 @@ H.StockChart = H.stockChart = function (a, b, c) {
     options.series = null;
     options = merge({
         chart: {
-            panning: true,
+            panning: {
+                enabled: true,
+                type: 'x'
+            },
             pinchType: 'x'
         },
         navigator: {
@@ -767,8 +771,9 @@ addEvent(Chart, 'update', function (e) {
 // (#11315).
 addEvent(Axis, 'afterSetScale', function () {
     var axis = this, panning = axis.chart.options.chart.panning, options = axis.options;
-    if ((panning === 'y' ||
-        panning === 'xy') &&
+    if (panning &&
+        (panning.type === 'y' ||
+            panning.type === 'xy') &&
         !axis.isXAxis &&
         !defined(options.startMin) &&
         !defined(options.startMax)) {
