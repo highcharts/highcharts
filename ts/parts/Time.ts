@@ -516,7 +516,7 @@ Highcharts.Time.prototype = {
         var d, offset, newOffset;
 
         if (this.useUTC) {
-            d = this.Date.UTC.apply(0, arguments);
+            d = this.Date.UTC.apply(0, arguments as any);
             offset = this.getTimezoneOffset(d);
             d += offset;
             newOffset = this.getTimezoneOffset(d);
@@ -744,7 +744,7 @@ Highcharts.Time.prototype = {
         this: Highcharts.Time,
         f: (string|Array<T>|Highcharts.Dictionary<T>)
     ): Highcharts.Dictionary<T> {
-        if (!isObject(f)) { // check for string or array
+        if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
                 main: f[0],
