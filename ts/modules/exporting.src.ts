@@ -1809,7 +1809,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 if (isObject(item, true)) {
                     var element;
 
-                    if (item.separator) {
+                    if ((item as any).separator) {
                         element = createElement(
                             'hr',
                             null as any,
@@ -1831,8 +1831,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 }
                             },
                             innerHTML: (
-                                item.text ||
-                                (chart.options.lang as any)[item.textKey as any]
+                                (item as any).text ||
+                                (chart.options.lang as any)[
+                                    (item as any).textKey as any
+                                ]
                             )
                         }, null as any, innerMenu);
 
