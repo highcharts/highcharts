@@ -45,31 +45,6 @@ declare global {
             /** @requires modules/export-data */
             viewData(): void;
         }
-        interface ExportingButtonOptionsObject {
-            className?: string;
-            enabled?: boolean;
-            menuClassName?: string;
-            menuItems?: Array<string>;
-            onclick?: Function;
-            symbol?: ('menu'|'menuball'|'exportIcon'|string|SymbolKeyValue);
-            symbolFill?: ColorString;
-            symbolStroke?: ColorString;
-            symbolStrokeWidth?: number;
-            text?: string;
-            theme?: ExportingButtonThemeOptionsObject;
-            titleKey?: string;
-            x?: number;
-            y?: number;
-        }
-        interface ExportingButtonsOptions {
-            [key: string]: ExportingButtonOptionsObject;
-            contextButton: ExportingButtonOptionsObject;
-        }
-        interface ExportingButtonThemeOptionsObject {
-            fill?: ColorType;
-            padding?: number;
-            stroke?: ColorString;
-        }
         interface ExportingCsvOptions {
             columnHeaderFormatter?: (Function|null);
             dateFormat?: string;
@@ -77,40 +52,16 @@ declare global {
             itemDelimiter?: (string|null);
             lineDelimiter?: string;
         }
-        interface ExportingMenuObject {
-            onclick?: EventCallbackFunction<Chart>;
-            separator?: boolean;
-            text?: string;
-            textKey?: string;
-        }
         interface ExportingOptions {
-            allowHTML?: boolean;
-            buttons?: ExportingButtonsOptions;
-            chartOptions?: Options;
             csv?: ExportingCsvOptions;
-            enabled?: boolean;
-            error?: ExportingErrorCallbackFunction;
-            fallbackToExportServer?: boolean;
-            filename?: string;
-            formAttributes?: any;
-            libURL?: string;
-            menuItemDefinitions?: Dictionary<ExportingMenuObject>;
-            printMaxWidth?: number;
-            scale?: number;
             showTable?: boolean;
-            sourceHeight?: number;
-            sourceWidth?: number;
             tableCaption?: (boolean|string);
-            type?: string;
-            url?: string;
-            useMultiLevelHeaders?: boolean;
-            useRowspanHeaders?: boolean;
-            width?: number;
         }
-        interface ExportingPoint extends PointOptionsObject {
-            series: ExportingSeries;
+        interface ExportDataPoint {
+            series: ExportDataSeries;
+            x?: number;
         }
-        interface ExportingSeries {
+        interface ExportDataSeries {
             autoIncrement: Series['autoIncrement'];
             chart: Chart;
             options: SeriesOptions;
@@ -125,9 +76,6 @@ declare global {
         interface Series {
             exportKey?: string;
             keyToAxis?: Dictionary<string>;
-        }
-        interface Options {
-            exporting?: ExportingOptions;
         }
     }
     interface MSBlobBuilder extends Blob {
@@ -488,7 +436,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 {},
             datetimeValueAxisMap: Highcharts.Dictionary<Array<string>> = {},
             xAxisIndex = xAxes.indexOf(series.xAxis),
-            mockSeries: Highcharts.ExportingSeries,
+            mockSeries: Highcharts.ExportDataSeries,
             j: number;
 
         // Map the categories for value axes
@@ -566,7 +514,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportingPoint|Highcharts.Point);
+                    point: (Highcharts.ExportDataPoint|Highcharts.Point);
 
                 point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(

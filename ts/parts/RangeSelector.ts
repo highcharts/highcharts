@@ -1698,7 +1698,7 @@ RangeSelector.prototype = {
             ((buttonPosition as any).y +
                 buttonGroup.getBBox().height - 12) <
             ((navButtonOptions.y || 0) +
-                navButtonOptions.height))
+                (navButtonOptions.height as any)))
         ) {
             exportingX = -40;
         }
@@ -1737,7 +1737,7 @@ RangeSelector.prototype = {
                 ((inputPosition as any).y -
                     inputGroup.getBBox().height - 12) <
                 ((navButtonOptions.y || 0) +
-                    navButtonOptions.height +
+                    (navButtonOptions.height as any) +
                     chart.spacing[0]))
             ) {
                 exportingX = -40;
