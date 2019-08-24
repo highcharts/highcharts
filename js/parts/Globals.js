@@ -32,7 +32,7 @@ var H = {
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: !!win.TouchEvent,
+    hasTouch: !!glob.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,

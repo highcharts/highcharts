@@ -77,12 +77,13 @@ declare global {
         const isWebKit: boolean;
         const marginNames: Array<string>;
         const noop: Function;
+        const product: string;
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
         const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
+        const version: string;
     }
-    type GlobalHighcharts = typeof Highcharts;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
     interface Document {
@@ -93,10 +94,6 @@ declare global {
         mozRequestFullScreen: Function;
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
-    }
-    interface Index extends Object {
-        [key: string]: any;
-        [index: number]: any;
     }
     interface PointerEvent {
         /** @deprecated */
@@ -143,7 +140,7 @@ var glob = typeof win === 'undefined' ?
         doc.createElementNS &&
         !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
     ),
-    isMS = /(edge|msie|trident)/i.test(userAgent) && !(glob as any).opera,
+    isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
     isFirefox = userAgent.indexOf('Firefox') !== -1,
     isChrome = userAgent.indexOf('Chrome') !== -1,
     hasBidiBug = (
@@ -151,13 +148,13 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var H: GlobalHighcharts = {
+var H: typeof Highcharts = {
     product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: !!win.TouchEvent,
+    hasTouch: !!glob.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,
@@ -166,7 +163,7 @@ var H: GlobalHighcharts = {
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
     SVG_NS: SVG_NS,
     chartCount: 0,
-    seriesTypes: {},
+    seriesTypes: {} as Highcharts.SeriesTypesDictionary,
     symbolSizes: {},
     svg: svg,
     win: glob,
@@ -196,6 +193,6 @@ var H: GlobalHighcharts = {
      * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
      */
     dateFormats: {}
-} as any;
+} as unknown as typeof Highcharts;
 
 export default H;
