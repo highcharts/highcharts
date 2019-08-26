@@ -4245,10 +4245,18 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     point.stackY = yValue;
 
                     // Place the stack label
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        (pointStack as any).setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0
+                        );
+                    }
 
                 }
 

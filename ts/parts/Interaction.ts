@@ -1250,11 +1250,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((markerGraphic as any).parentGroup);
+                    .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any

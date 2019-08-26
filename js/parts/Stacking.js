@@ -159,9 +159,10 @@ H.StackItem.prototype = {
      * @param {number} xWidth
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
+     * @param {number} [defaultX]
      * @return {void}
      */
-    setOffset: function (xOffset, xWidth, boxBottom, boxTop) {
+    setOffset: function (xOffset, xWidth, boxBottom, boxTop, defaultX) {
         var stackItem = this, axis = stackItem.axis, chart = axis.chart, 
         // stack value translated mapped to chart coordinates
         y = axis.translate(axis.usePercentage ?
@@ -172,7 +173,8 @@ H.StackItem.prototype = {
         // stack height:
         h = defined(y) && Math.abs(y - yZero), 
         // x position:
-        x = chart.xAxis[0].translate(stackItem.x) + xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
+        x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
+            xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
         if (label && stackBox) {
             var bBox = label.getBBox(), boxOffsetX = chart.inverted ?
                 (isNegative ? bBox.width : 0) : bBox.width / 2, boxOffsetY = chart.inverted ?

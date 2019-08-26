@@ -129,7 +129,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Generate visual references
-          command: npx gulp test --tests highcharts/demo/* --reference --browsercount 1
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
@@ -146,17 +146,36 @@ jobs:
         description: "Which browser to test?"
         type: string
         default: "ChromeHeadless"
-      tests:
-        description: "The path to the visual tests to run"
-        type: string
-        default: "highcharts/demo/*"
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
       - aws-s3/sync: # fetch reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
-          to: 'samples/'
-      - run: "npx gulp test --tests << parameters.tests >> --splitbrowsers << parameters.browsers >> --browsercount 1 --difflog"
+          to: "samples/"
+      - run:
+          # run tests in sequence due to all writing to the same file
+          name: "Highcharts visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+      - run:
+          name: "Highmaps visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests maps/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Highstock visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests stock/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Gant visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests gantt/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
       - run: "sudo apt-get install -y librsvg2-bin"
       - run:
           name: "Generate PNGs and diff"
@@ -286,6 +305,11 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_browsers:
+          name: "verify-samples-Chrome"
+          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
+          requires:
+            - install_dependencies
+      - test_browsers:
           name: "test-Win.IE8"
           requires:
             - install_dependencies
@@ -313,7 +337,7 @@ workflows:
           filters:
             branches:
               only:
-                - feature/ci-visual-tests
+                - tools/visual-test-samples
                 - master
     jobs:
       - checkout_code

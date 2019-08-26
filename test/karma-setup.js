@@ -225,6 +225,14 @@ function getSVG(chart) {
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
 
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
+
     // Renderer samples
     } else {
         if (document.getElementsByTagName('svg').length) {
@@ -349,7 +357,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        var remotelocation = __karma__.config.cliArgs.remotelocation;
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {

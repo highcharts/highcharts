@@ -132,7 +132,8 @@ declare global {
                 xOffset: number,
                 xWidth: number,
                 boxBottom?: number,
-                boxTop?: number
+                boxTop?: number,
+                defaultX?: number
             ): void;
         }
     }
@@ -342,6 +343,7 @@ H.StackItem.prototype = {
      * @param {number} xWidth
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
+     * @param {number} [defaultX]
      * @return {void}
      */
     setOffset: function (
@@ -349,7 +351,8 @@ H.StackItem.prototype = {
         xOffset: number,
         xWidth: number,
         boxBottom?: number,
-        boxTop?: number
+        boxTop?: number,
+        defaultX?: number
     ): void {
         var stackItem = this,
             axis = stackItem.axis,
@@ -370,7 +373,8 @@ H.StackItem.prototype = {
             // stack height:
             h = defined(y) && Math.abs((y as any) - (yZero as any)),
             // x position:
-            x = (chart.xAxis[0].translate(stackItem.x) as any) + xOffset,
+            x = pick(defaultX, (chart.xAxis[0].translate(stackItem.x) as any)) +
+                xOffset,
             stackBox = defined(y) && stackItem.getStackBox(
                 chart,
                 stackItem,

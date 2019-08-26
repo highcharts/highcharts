@@ -772,7 +772,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         haloOptions = stateOptions.halo;
         var markerGraphic = (point.graphic || stateMarkerGraphic);
         var markerVisibility = (markerGraphic && markerGraphic.visibility || 'inherit');
-        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
