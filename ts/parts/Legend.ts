@@ -168,8 +168,8 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * The sequential index of the data point in the legend.
  * @name Highcharts.PointOptionsObject#legendIndex

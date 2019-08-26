@@ -126,8 +126,8 @@ declare global {
     }
 }
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * Pie series only. Whether to display a slice offset from the center.
  * @name Highcharts.PointOptionsObject#sliced
