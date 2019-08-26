@@ -388,8 +388,8 @@ QUnit.test('Pan in vertical direction, and both directions. (Highstock only)', f
     );
 
     assert.strictEqual(
-        chart.yAxis[0].max - chart.yAxis[0].min,
-        initialRange,
+        Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min),
+        Highcharts.correctFloat(initialRange),
         'Has preserved range.'
     );
 
