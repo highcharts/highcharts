@@ -32,6 +32,7 @@ declare global {
             natural: PositionObject;
         }
         interface PiePointOptions extends LinePointOptions {
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
             sliced?: boolean;
             visible?: boolean;
         }
@@ -51,10 +52,7 @@ declare global {
             endAngle?: number;
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
-            dataLabels?: (
-                PieSeriesDataLabelsOptionsObject|
-                Array<PieSeriesDataLabelsOptionsObject>
-            );
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
@@ -441,7 +439,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          */
 
         /**
-         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
          * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
          *
          * @private
@@ -942,7 +940,7 @@ seriesType<Highcharts.PieSeriesOptions>(
                 point.labelDistance = pick(
                     (
                         point.options.dataLabels &&
-                        (point.options.dataLabels as any).distance
+                        point.options.dataLabels.distance
                     ),
                     labelDistance
                 );
@@ -1608,7 +1606,7 @@ seriesType<Highcharts.PieSeriesOptions>(
  */
 
 /**
- * @type      {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+ * @type      {Highcharts.SeriesPieDataLabelsOptionsObject}
  * @product   highcharts
  * @apioption series.pie.data.dataLabels
  */

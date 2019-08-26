@@ -52,10 +52,7 @@ declare global {
             neckHeight?: (number|string);
             reversed?: boolean;
             size?: null;
-            dataLabels?: (
-                FunnelSeriesDataLabelsOptionsObject|
-                Array<FunnelSeriesDataLabelsOptionsObject>
-            );
+            dataLabels?: FunnelSeriesDataLabelsOptionsObject;
             states?: FunnelSeriesStatesOptions;
         }
         class FunnelSeries extends PieSeries {
