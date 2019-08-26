@@ -14,6 +14,29 @@
 //   module importing the same data.
 'use strict';
 import Highcharts from '../parts/Globals.js';
+/**
+ * Function callback to execute while data rows are processed for exporting.
+ * This allows the modification of data rows before processed into the final
+ * format.
+ *
+ * @callback Highcharts.ExportDataCallbackFunction
+ * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *
+ * @param {Highcharts.Chart} this
+ * Chart context where the event occured.
+ *
+ * @param {Highcharts.ExportDataEventObject} event
+ * Event object with data rows that can be modified.
+ */
+/**
+ * Contains information about the export data event.
+ *
+ * @interface Highcharts.ExportDataEventObject
+ */ /**
+* Contains the data rows for the current export task and can be modified.
+* @name Highcharts.ExportDataEventObject#dataRows
+* @type {Array<Array<string>>}
+*/
 import U from '../parts/Utilities.js';
 var defined = U.defined, isObject = U.isObject;
 import '../parts/Chart.js';
@@ -37,6 +60,16 @@ function htmlencode(html) {
         .replace(/\//g, '&#x2F;');
 }
 Highcharts.setOptions({
+    /**
+     * Callback that fires while exporting data. This allows the modification of
+     * data rows before processed into the final format.
+     *
+     * Requires the `export-data` module.
+     *
+     * @type      {Highcharts.ExportDataCallbackFunction}
+     * @context   Highcharts.Chart
+     * @apioption chart.events.exportData
+     */
     /**
      * Export-data module required. When set to `false` will prevent the series
      * data from being included in any form of data export.
