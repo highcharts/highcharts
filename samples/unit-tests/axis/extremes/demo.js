@@ -453,7 +453,7 @@ QUnit.test(
         function getRandomData(start, end) {
             var data = [];
 
-            for (; start <= end; start += (1000 * 60)) {
+            for (; start <= end; start += (1000 * 60 * 10)) {
                 data.push([start, Math.random()]);
             }
 

@@ -374,7 +374,9 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
 QUnit.test('Switch from non-grouped to grouped', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            width: 400
+            width: 50, // So small to keep the data samle small and fast
+            marginLeft: 0,
+            marginRight: 0
         },
         series: [{
             dataGrouping: {
@@ -402,16 +404,26 @@ QUnit.test('Switch from non-grouped to grouped', function (assert) {
         }]
     });
 
+    assert.notOk(
+        chart.series[0].hasGroupedData,
+        'The chart should not have grouped data initially'
+    );
+
     chart.series[0].update({
         data: (() => {
             var arr = [],
                 i = 0;
-            for (; i < 3999; i++) {
+            for (; i < 200; i++) {
                 arr.push([Date.UTC(2019, 3, 30, 23, i * 10), i]);
             }
             return arr;
         })()
     });
+
+    assert.ok(
+        chart.series[0].hasGroupedData,
+        'The chart should have grouped data after update'
+    );
 
     assert.strictEqual(
         chart.container.querySelectorAll('.highcharts-markers path').length,

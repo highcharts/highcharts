@@ -1,10 +1,12 @@
 QUnit.test('AddPoint animation param (#5665)', function (assert) {
 
+    var clock = TestUtilities.lolexInstall();
     var interval,
         done = assert.async(),
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
+                width: 600,
                 animation: {
                     duration: 1000
                 },
@@ -31,4 +33,6 @@ QUnit.test('AddPoint animation param (#5665)', function (assert) {
         );
         done();
     }, 1000);
+
+    TestUtilities.lolexRunAndUninstall(clock);
 });
