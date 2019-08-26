@@ -552,7 +552,11 @@ H.Tick.prototype = {
 
         var axis = this.axis,
             transA = axis.transA,
-            reversed = axis.reversed,
+            reversed = ( // #7911
+                axis.isLinked && axis.linkedParent ?
+                    axis.linkedParent.reversed :
+                    axis.reversed
+            ),
             staggerLines = axis.staggerLines,
             rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
             yOffset = labelOptions.y,
@@ -821,7 +825,6 @@ H.Tick.prototype = {
                 index,
                 step
             );
-
             // Apply show first and show last. If the tick is both first and
             // last, it is a single centered tick, in which case we show the
             // label anyway (#2100).
