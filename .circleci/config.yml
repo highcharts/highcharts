@@ -149,6 +149,9 @@ jobs:
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
+      - run:
+          name: "Set application version env var"
+          command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
       - aws-s3/sync: # fetch reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
@@ -156,24 +159,24 @@ jobs:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
           command: >
-            npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
+            npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --create-missing-references
             --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
       - run:
           name: "Highmaps visual tests"
           command: >
-            npx karma start test/karma-conf.js --tests maps/*/* --single-run
+            npx karma start test/karma-conf.js --tests maps/*/* --single-run --create-missing-references
             --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Highstock visual tests"
           command: >
-            npx karma start test/karma-conf.js --tests stock/*/* --single-run
+            npx karma start test/karma-conf.js --tests stock/*/* --single-run --create-missing-references
             --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Gant visual tests"
           command: >
-            npx karma start test/karma-conf.js --tests gantt/*/* --single-run
+            npx karma start test/karma-conf.js --tests gantt/*/* --single-run --create-missing-references
             --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
           when: always
       - run: "sudo apt-get install -y librsvg2-bin"
@@ -192,6 +195,19 @@ jobs:
           name: "Upload visual tests assets"
           command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
           when: always
+      - aws-s3/sync: # upload any missing or new reference images
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images to versioned location
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+
 
   build_dist:
     <<: *defaults
@@ -337,7 +353,7 @@ workflows:
           filters:
             branches:
               only:
-                - tools/visual-test-samples
+                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
       - checkout_code
