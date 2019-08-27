@@ -401,11 +401,11 @@ H.StackItem.prototype = {
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             // Align the label to the box
             label.align(stackItem.alignOptions, null as any, stackBox);
-
             // Set visibility (#678)
             alignAttr = label.alignAttr;
             label.show();
-
+            // Set label above/under stackBox
+            alignAttr.y -= boxOffsetY;
             if (isJustify) {
                 // Set label x position for justifyDataLabel function
                 alignAttr.x -= boxOffsetX;
@@ -413,10 +413,7 @@ H.StackItem.prototype = {
                     label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-            alignAttr = label.alignAttr;
-            // Set label above/under stackBox
-            alignAttr.y -= boxOffsetY;
-
+            alignAttr.x = label.alignAttr.x;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
