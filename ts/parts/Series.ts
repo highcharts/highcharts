@@ -435,6 +435,18 @@ declare global {
 }
 
 /**
+ * This is a placeholder type of the possible series options for
+ * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
+ *
+ * In TypeScript is this dynamically generated to reference all possible types
+ * of series options.
+ *
+ * @ignore-declaration
+ * @typedef {Highcharts.SeriesOptions|Highcharts.Dictionary<*>} Highcharts.SeriesOptionsType
+ */
+
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
