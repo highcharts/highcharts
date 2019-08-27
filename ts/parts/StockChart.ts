@@ -1109,7 +1109,7 @@ addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
 ): void {
     var axis = this,
-        panning = axis.chart.options.chart && 
+        panning = axis.chart.options.chart &&
             axis.chart.options.chart.panning,
         options = axis.options as Highcharts.PanAxisOptions;
 
