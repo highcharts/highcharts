@@ -852,7 +852,9 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
         legend.render();
         chart.getMargins();
         chart.axes.forEach(function (axis) {
-            axis.render();
+            if (axis.visible) { // #11448
+                axis.render();
+            }
             if (!bubbleLegendOptions.placed) {
                 axis.setScale();
                 axis.updateNames();
