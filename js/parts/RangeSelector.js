@@ -1275,6 +1275,10 @@ RangeSelector.prototype = {
                 (floating ? 0 : options.y) -
                 10 // 10 spacing
             );
+            if (chart.titleOffset && chart.titleOffset[2]) {
+                translateY -=
+                    chart.titleOffset[2] + chart.options.title.margin;
+            }
         }
         if (verticalAlign === 'top') {
             if (floating) {

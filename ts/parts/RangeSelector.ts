@@ -1834,6 +1834,11 @@ RangeSelector.prototype = {
                 10 // 10 spacing
             );
 
+            if (chart.titleOffset && chart.titleOffset[2]) {
+                translateY -=
+                    chart.titleOffset[2] + (chart.options.title as any).margin;
+            }
+
         }
 
         if (verticalAlign === 'top') {
