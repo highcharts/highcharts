@@ -763,6 +763,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         var chart = this,
             hoverPoints = chart.hoverPoints,
             panningOptions: Highcharts.PanningOptions,
+            chartOptions = chart.options.chart,
             doRedraw: boolean,
             type: string;
 
@@ -775,7 +776,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             };
         }
 
-        (chart.options.chart as any).panning = panningOptions;
+        if (chartOptions && chartOptions.panning) {
+            chartOptions.panning = panningOptions;
+        }
         type = panningOptions.type;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
@@ -847,7 +850,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to
                 // override them.
-                if (!axis.options.ordinal) {
+                if (!axisOpt.ordinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
                     if (isX) {

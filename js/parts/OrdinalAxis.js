@@ -604,7 +604,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 // Extending the Chart.pan method for ordinal axes
 addEvent(Chart, 'pan', function (e) {
-    var chart = this, xAxis = chart.xAxis[0], overscroll = xAxis.options.overscroll, chartX = e.originalEvent.chartX, panning = chart.options.chart.panning, runBase = false;
+    var chart = this, xAxis = chart.xAxis[0], overscroll = xAxis.options.overscroll, chartX = e.originalEvent.chartX, panning = chart.options.chart &&
+        chart.options.chart.panning, runBase = false;
     if (panning &&
         panning.type !== 'y' &&
         xAxis.options.ordinal &&
@@ -669,7 +670,7 @@ addEvent(Chart, 'pan', function (e) {
         runBase = true;
     }
     // revert to the linear chart.pan version
-    if (runBase || panning && (panning.type === 'y' || panning.type === 'xy')) {
+    if (runBase || (panning && /y/.test(panning.type))) {
         if (overscroll) {
             xAxis.max = xAxis.dataMax + overscroll;
         }

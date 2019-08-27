@@ -918,7 +918,8 @@ addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
         chartX = e.originalEvent.chartX,
-        panning = (chart.options.chart as any).panning,
+        panning = chart.options.chart &&
+                chart.options.chart.panning,
         runBase = false;
 
     if (
@@ -1024,7 +1025,7 @@ addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
     }
 
     // revert to the linear chart.pan version
-    if (runBase || panning && (panning.type === 'y' || panning.type === 'xy')) {
+    if (runBase || (panning && /y/.test(panning.type))) {
         if (overscroll) {
             xAxis.max = (xAxis.dataMax as any) + overscroll;
         }

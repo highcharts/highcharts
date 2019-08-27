@@ -213,8 +213,7 @@ H.StockChart = H.stockChart = function (
             (defaultOptions.navigator as any).enabled,
             true
         ),
-        verticalPanningEnabled = panning &&
-                    (panning.type === 'y' || panning.type === 'xy'),
+        verticalPanningEnabled = panning && /y/.test(panning.type),
         disableStartOnTick = {
             startOnTick: false,
             endOnTick: false
@@ -1110,7 +1109,8 @@ addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
 ): void {
     var axis = this,
-        panning = (axis.chart.options.chart as any).panning,
+        panning = axis.chart.options.chart && 
+            axis.chart.options.chart.panning,
         options = axis.options as Highcharts.PanAxisOptions;
 
     if (
@@ -1126,9 +1126,9 @@ addEvent(Axis, 'afterSetScale', function (
             max = Number.MIN_VALUE;
 
         axis.series.forEach(function (series): void {
-            min = Math.min(Math.min.apply(null, (series.yData as any)), min) -
+            min = Math.min(H.arrayMin(series.yData as any), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(Math.max.apply(null, (series.yData as any)), max) +
+            max = Math.max(H.arrayMax(series.yData as any), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
 

@@ -121,8 +121,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
     seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning &&
-        (panning.type === 'y' || panning.type === 'xy'), disableStartOnTick = {
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning && /y/.test(panning.type), disableStartOnTick = {
         startOnTick: false,
         endOnTick: false
     };
@@ -770,7 +769,8 @@ addEvent(Chart, 'update', function (e) {
 // (including min/maxPadding). This is related to using vertical panning
 // (#11315).
 addEvent(Axis, 'afterSetScale', function () {
-    var axis = this, panning = axis.chart.options.chart.panning, options = axis.options;
+    var axis = this, panning = axis.chart.options.chart &&
+        axis.chart.options.chart.panning, options = axis.options;
     if (panning &&
         (panning.type === 'y' ||
             panning.type === 'xy') &&
@@ -779,9 +779,9 @@ addEvent(Axis, 'afterSetScale', function () {
         !defined(options.startMax)) {
         var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
         axis.series.forEach(function (series) {
-            min = Math.min(Math.min.apply(null, series.yData), min) -
+            min = Math.min(H.arrayMin(series.yData), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(Math.max.apply(null, series.yData), max) +
+            max = Math.max(H.arrayMax(series.yData), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
         options.startMin = min;
