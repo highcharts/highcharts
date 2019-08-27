@@ -815,8 +815,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
      * chart is a combination of series types, there is no need to set it on the
      * series level.
      *
-     * In TypeScript instead the `type` option must always be set.
-     *
      * @sample {highcharts} highcharts/series/type/
      *         Line and column in the same chart
      * @sample highcharts/series/type-dynamic/
@@ -6070,8 +6068,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL
