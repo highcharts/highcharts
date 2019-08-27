@@ -267,7 +267,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 };
             });
             gWrapper.addedSetters = true;
-        }, chart = H.charts[renderer.chartIndex], styledMode = chart && chart.styledMode;
+        };
         // Text setter
         wrapper.textSetter = function (value) {
             if (value !== element.innerHTML) {
@@ -314,7 +314,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             .css({
             position: 'absolute'
         });
-        if (!styledMode) {
+        if (!renderer.styledMode) {
             wrapper.css({
                 fontFamily: this.style.fontFamily,
                 fontSize: this.style.fontSize
