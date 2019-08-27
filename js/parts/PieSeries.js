@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Pie series only. Whether to display a slice offset from the center.
 * @name Highcharts.PointOptionsObject#sliced
@@ -291,7 +291,7 @@ seriesType('pie', 'line',
      * @apioption plotOptions.pie.colors
      */
     /**
-     * @type    {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+     * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
      * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
      *
      * @private
@@ -1186,7 +1186,7 @@ seriesType('pie', 'line',
  * @apioption series.pie.data
  */
 /**
- * @type      {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+ * @type      {Highcharts.SeriesPieDataLabelsOptionsObject}
  * @product   highcharts
  * @apioption series.pie.data.dataLabels
  */

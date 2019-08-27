@@ -536,6 +536,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
          * @since     7.1.3
          * @default   0
          * @apioption plotOptions.sankey.minLinkWidth
+         *
+         * @private
          */
         minLinkWidth: 0,
 
@@ -816,7 +818,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
                     obj[key] = pick(
                         stateOptions[key],
                         (options as any)[key],
-                        levelOptions[key]
+                        levelOptions[key],
+                        (series.options as any)[key]
                     );
                     return obj;
                 }, {}),

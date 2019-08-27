@@ -699,15 +699,12 @@ seriesType('packedbubble', 'bubble',
             width: series.parentNodeRadius * 2,
             height: series.parentNodeRadius * 2
         }, parentOptions);
-        if (!series.graph) {
+        if (!series.parentNode.graphic) {
             series.graph = series.parentNode.graphic =
                 chart.renderer.symbol(parentOptions.symbol)
-                    .attr(parentAttribs)
                     .add(series.parentNodesGroup);
         }
-        else {
-            series.graph.attr(parentAttribs);
-        }
+        series.parentNode.graphic.attr(parentAttribs);
     },
     /**
      * Creating parent nodes for split series, in which all the bubbles

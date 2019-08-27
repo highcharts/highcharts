@@ -397,8 +397,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
-            'samples/highcharts/demo/synchronized-charts/demo.js'
-
+            'samples/highcharts/demo/synchronized-charts/demo.js',
         ],
         reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
@@ -512,42 +511,13 @@ module.exports = function (config) {
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
                         file.path = file.originalPath + '.preprocessed.js';
-                        done(`QUnit.skip('${path}');`);
+                        if (argv.visualcompare) {
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to being skipped from demo.html');`);
+                        } else {
+                            done(`QUnit.skip('${path}');`);
+                        }
                         return;
-                    }
-
-                    const html = getHTML(path);
-
-                    js = resolveJSON(js);
-
-                    // Don't do intervals (typically for gauge samples, add
-                    // point etc)
-                    js = js.replace('setInterval', 'Highcharts.noop');
-
-                    // Force enableSimulation: false
-                    js = js.replace(
-                        'enableSimulation: true',
-                        'enableSimulation: false'
-                    );
-
-                    // Reset global options
-                    let reset = (
-                            js.indexOf('Highcharts.setOptions') === -1 &&
-                            js.indexOf('Highcharts.getOptions') === -1
-                        ) ?
-                        '' :
-                        `
-                        Highcharts.setOptions(
-                            JSON.parse(Highcharts.defaultOptionsRaw)
-                        );
-                        `;
-
-                    // Reset modified callbacks
-                    if (js.indexOf('Chart.prototype.callbacks') !== -1) {
-                        reset += `
-                        Highcharts.Chart.prototype.callbacks =
-                            Highcharts.callbacksRaw.slice(0);
-                        `;
                     }
 
                     let assertion;
@@ -562,20 +532,15 @@ module.exports = function (config) {
                                     filename: './samples/${path}/reference.svg',
                                     data: svg
                                 });
-                                assert.ok(
-                                    true,
-                                    'Reference created for ${path}'
-                                );
-                            } else {
-                                assert.ok(
-                                    false,
-                                    '${path}: SVG should be generated'
-                                );                
                             }
+                            assert.ok(
+                                svg,
+                                '${path}: SVG and reference.svg file should be generated'
+                            );
                             done();
                         `;
 
-                    } else {
+                    } else if (argv.visualcompare) {
                         if (!argv.remotelocation && !fs.existsSync(
                             `./samples/${path}/reference.svg`
                         )) {
@@ -584,96 +549,50 @@ module.exports = function (config) {
                                 ` ./samples/${path}/reference.svg`
                             );
                             file.path = file.originalPath + '.preprocessed.js';
-                            done(`QUnit.skip('${path}');`);
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
                             return;
                         }
 
-                        try {
-                            assertion = `
-                                compareToReference(chart, '${path}')
-                                    .then(actual => {
-                                        if (${argv.difflog}) {
-                                            var today = new Date().toISOString().slice(0,10);
-                                            var diffLog = {
-                                                name: 'visual-test-results',
-                                                object: {
-                                                    '${path}': actual,
-                                                    meta: {
-                                                        runDate: today,
-                                                        gitSha: __karma__.config.gitSha
-                                                    },
-                                                },
-                                            };
-                                            if (actual || actual === 0) {
-                                                window.dump(JSON.stringify( diffLog ));
-                                            }
-                                            assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
-                                        } else {
-                                            assert.strictEqual(
-                                                actual,
-                                                0,
-                                                'Different pixels\\n' +
-                                                '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                                '- samples/${path}/diff.gif'
-                                            );
-                                        }
-                                        done();
-                                    })
-                                    .catch(err => {
-                                        console.error(err);
-                                        done();
-                                    });
-                            `;
-                        } catch (e) {
-                            assertion = `
-                                assert.ok(false, 'Reference image loaded')
+                        assertion = `
+                        compareToReference(chart, '${path}')
+                            .then(actual => {
+                                if (${argv.difflog}) {
+                                    var today = new Date().toISOString().slice(0,10);
+                                    var diffLog = {
+                                        name: 'visual-test-results',
+                                        object: {
+                                            '${path}': actual,
+                                            meta: {
+                                                runDate: today,
+                                                gitSha: __karma__.config.gitSha
+                                            },
+                                        },
+                                    };
+                                    if (actual || actual === 0) {
+                                        window.dump(JSON.stringify( diffLog ));
+                                    }
+                                    assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
+                                } else {
+                                    assert.strictEqual(
+                                        actual,
+                                        0,
+                                        'Different pixels\\n' +
+                                        '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                        '- samples/${path}/diff.gif'
+                                    );
+                                }
                                 done();
-                            `;
-                        }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                done();
+                            });
+                        `;
                     }
-
-                    js = `
-
-                    QUnit.test('${path}', function (assert) {
-
-                        // Apply demo.html
-                        document.getElementById('demo-html').innerHTML =
-                            \`${html}\`;
-
-                        var done = assert.async();
-                        ${js}
-
-
-                        let attempts = 0;
-                        function assertIfChartExists() {
-                            var chart = Highcharts.charts[
-                                Highcharts.charts.length - 1
-                            ];
-
-                            if (chart || document.getElementsByTagName('svg').length) {
-                                //console.log(assert.test.module.unskippedTestsRun, '${path}');
-                                ${assertion}
-                                ${reset}
-                            } else if (attempts < 50) {
-                                setTimeout(assertIfChartExists, 100);
-                                attempts++;
-                            } else {
-                                assert.ok(
-                                    false,
-                                    \`Chart async chart test should load within \${attempts} attempts\`
-                                );
-                                done();
-                                ${reset}
-                            }
-                        }
-                        assertIfChartExists();
-
-                    });
-                    `;
-
                     file.path = file.originalPath + '.preprocessed.js';
-
-                    done(js);
+                    const testTemplate = createVisualTestTemplate(argv, path, js, assertion);
+                    done(testTemplate);
                 }
             }]
         }
@@ -740,3 +659,83 @@ module.exports = function (config) {
 
     config.set(options);
 };
+
+function createVisualTestTemplate(argv, path, js, assertion) {
+    let scriptBody = resolveJSON(js);
+
+    // Don't do intervals (typically for gauge samples, add point etc)
+    scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
+
+    // Force enableSimulation: false
+    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+
+    let html = getHTML(path);
+
+    // Reset global options
+    let reset = (
+        scriptBody.indexOf('Highcharts.setOptions') === -1 &&
+        scriptBody.indexOf('Highcharts.getOptions') === -1
+    ) ?
+        '' :
+        `
+        Highcharts.setOptions(
+            JSON.parse(Highcharts.defaultOptionsRaw)
+        );
+        `;
+
+    // Reset modified callbacks
+    if (scriptBody.indexOf('Chart.prototype.callbacks') !== -1) {
+        reset += `
+            Highcharts.Chart.prototype.callbacks =
+                Highcharts.callbacksRaw.slice(0);
+        `;
+    }
+
+    var useFakeTime = path.startsWith('gantt/');
+    var startOfMockedTime = Date.UTC(2019, 7, 1);
+
+    return `
+        QUnit.test('${path}', function (assert) {
+            // Apply demo.html
+            document.getElementById('demo-html').innerHTML = \`${html}\`;
+            
+            ${useFakeTime ? `var clock = TestUtilities.lolexInstall({ now: ${startOfMockedTime} });` : ''}
+            
+            /*
+             * we expect 2 callbacks if --visualcompare argument is supplied,
+             * one for the test comparison and one for checking if chart exists.
+             */ 
+            var done = assert.async();
+            
+            ${scriptBody}
+
+            let attempts = 0;
+            function waitForChartToLoad() {
+                var chart = Highcharts.charts[
+                    Highcharts.charts.length - 1
+                ];
+
+                if (chart || document.getElementsByTagName('svg').length) {
+                    ${assertion ? assertion : `
+                        assert.ok(true, 'Chart and SVG should exist.');
+                        done();
+                    `}
+                    ${reset}
+                } else if (attempts < 50) {
+                    setTimeout(waitForChartToLoad, 100);
+                    attempts++;
+                } else {
+                    assert.ok(
+                        false,
+                        \`Chart async chart test should load within \${attempts} attempts\`
+                    );
+                    done();
+                    ${reset}
+                }
+            }
+            waitForChartToLoad();
+            
+            ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
+        });
+    `;
+}

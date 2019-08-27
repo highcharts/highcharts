@@ -200,7 +200,7 @@ Highcharts.prepareShot = function (chart) {
             chart.series[0].nodes[0] &&
             typeof chart.series[0].nodes[0].onMouseOver === 'function'
         ) {
-            chart.series[0].nodes[0].onMouseOver({});
+            chart.series[0].nodes[0].onMouseOver();
         
         // Others
         } else if (
@@ -208,7 +208,7 @@ Highcharts.prepareShot = function (chart) {
             chart.series[0].points[0] &&
             typeof chart.series[0].points[0].onMouseOver === 'function'
         ) {
-            chart.series[0].points[0].onMouseOver({});
+            chart.series[0].points[0].onMouseOver();
         }
     }
 };
@@ -224,6 +224,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -349,7 +357,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        var remotelocation = __karma__.config.cliArgs.remotelocation;
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {

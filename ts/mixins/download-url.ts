@@ -23,11 +23,6 @@ declare global {
         function dataURLtoBlob(dataURL: string): (string|undefined);
         function downloadURL(dataURL: (string|URL), filename: string): void;
     }
-    interface Window {
-        ArrayBuffer: ArrayBuffer & ArrayBufferConstructor;
-        Uint8Array: Uint8Array & Uint8ArrayConstructor;
-        webkitURL?: string;
-    }
 }
 
 var win = Highcharts.win,

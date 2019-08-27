@@ -10,16 +10,6 @@
 'use strict';
 import H from './Globals.js';
 /**
- * @interface Highcharts.PointOptionsObject
- */ /**
-* Individual point events
-* @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PlotSeriesPointEventsOptions}
-*/ /**
-* @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PlotSeriesPointMarkerOptions}
-*/
-/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -3162,7 +3152,14 @@ null,
                         (point.y / pointStack.total * 100);
                 point.stackY = yValue;
                 // Place the stack label
-                pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                // in case of variwide series (where widths of points are
+                // different in most cases), stack labels are positioned
+                // wrongly, so the call of the setOffset is omited here and
+                // labels are correctly positioned later, at the end of the
+                // variwide's translate function (#10962)
+                if (!series.irregularWidths) {
+                    pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                }
             }
             // Set translated yBottom or remove it
             point.yBottom = defined(yBottom) ?
