@@ -185,15 +185,15 @@ H.StackItem.prototype = {
             // Set visibility (#678)
             alignAttr = label.alignAttr;
             label.show();
+            // Set label above/under stackBox
+            alignAttr.y -= boxOffsetY;
             if (isJustify) {
                 // Set label x position for justifyDataLabel function
                 alignAttr.x -= boxOffsetX;
                 Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-            alignAttr = label.alignAttr;
-            // Set label above/under stackBox
-            alignAttr.y -= boxOffsetY;
+            alignAttr.x = label.alignAttr.x;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
