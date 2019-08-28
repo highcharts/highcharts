@@ -67,7 +67,6 @@ jobs:
            else
             git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
            fi
-     - run: aws s3 --version #testing presences of cli tool
      - <<: *persist_workspace
 
   install_dependencies:
@@ -156,10 +155,22 @@ jobs:
       - run:
           name: Generate any new references images
           command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - aws-s3/sync: # fetch reference images
+      - aws-s3/sync: # fetch remote reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
           overwrite: true
+      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
@@ -200,19 +211,6 @@ jobs:
           name: "Upload visual test candidates and diff assets"
           command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
           when: always
-      - aws-s3/sync: # upload any missing or new reference images
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
-      - aws-s3/sync: # upload any missing or new reference images to versioned location
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
-
 
   build_dist:
     <<: *defaults
