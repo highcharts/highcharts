@@ -815,6 +815,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
             }
         }, this);
+        // Handle title.margin and caption.margin
+        if (titleOffset[0] &&
+            (this.options.title.verticalAlign || 'top') === 'top') {
+            titleOffset[0] += this.options.title.margin;
+        }
+        if (titleOffset[2] &&
+            this.options.caption.verticalAlign === 'bottom') {
+            titleOffset[2] += this.options.caption.margin;
+        }
         requiresDirtyBox = (!this.titleOffset ||
             this.titleOffset.join(',') !== titleOffset.join(','));
         // Used in getMargins
@@ -1070,10 +1079,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.resetMargins();
         // Adjust for title and subtitle
         if (titleOffset[0] && !defined(margin[0])) {
-            this.plotTop = Math.max(this.plotTop, titleOffset[0] + this.options.title.margin + spacing[0]);
+            this.plotTop = Math.max(this.plotTop, titleOffset[0] + spacing[0]);
         }
         if (titleOffset[2] && !defined(margin[2])) {
-            this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + this.options.title.margin + spacing[2]);
+            this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + spacing[2]);
         }
         // Adjust for legend
         if (this.legend && this.legend.display) {

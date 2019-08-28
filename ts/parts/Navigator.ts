@@ -2758,10 +2758,7 @@ if (!H.Navigator) {
                             0
                     ) -
                     (
-                        this.titleOffset ?
-                            this.titleOffset[2] +
-                                ((this.options.title as any).margin || 0) :
-                            0
+                        this.titleOffset ? this.titleOffset[2] : 0
                     );
             }
 

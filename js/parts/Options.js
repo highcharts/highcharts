@@ -1784,6 +1784,10 @@ H.defaultOptions = {
          * @apioption caption.floating
          */
         /**
+         * The margin between the caption and the plot area.
+         */
+        margin: 15,
+        /**
          * CSS styles for the caption.
          *
          * In styled mode, the caption style is given in the

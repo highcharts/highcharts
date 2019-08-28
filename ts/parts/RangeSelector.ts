@@ -1831,14 +1831,9 @@ RangeSelector.prototype = {
                 alignTranslateY -
                 groupHeight -
                 (floating ? 0 : (options.y as any)) -
+                (chart.titleOffset ? chart.titleOffset[2] : 0) -
                 10 // 10 spacing
             );
-
-            if (chart.titleOffset && chart.titleOffset[2]) {
-                translateY -=
-                    chart.titleOffset[2] + (chart.options.title as any).margin;
-            }
-
         }
 
         if (verticalAlign === 'top') {
@@ -1847,8 +1842,7 @@ RangeSelector.prototype = {
             }
 
             if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY =
-                    chart.titleOffset[0] + (chart.options.title as any).margin;
+                translateY = chart.titleOffset[0];
             }
 
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
