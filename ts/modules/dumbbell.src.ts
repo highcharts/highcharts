@@ -60,8 +60,6 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
-            public toYData: any;
-            public alignDataLabel: any;
             public crispConnector(points: SVGPathArray): SVGPathArray;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
@@ -99,7 +97,7 @@ var pick = H.pick,
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        7.1.3
+ * @since        7.2.0
  * @optionparent plotOptions.dumbbell
  */
 seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
@@ -113,11 +111,8 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects dumbbell point's values.
      *
-     * @type      {number}
-     * @since     7.1.3
+     * @since     7.2.0
      * @product   highcharts highstock
-     * @apioption plotOptions.dumbbell.connectorWidth
-     * @default   1
      */
     connectorWidth: 1,
     /** @ignore-option */
@@ -127,20 +122,18 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
     /**
      * Color of the start markers in dumbbell graph.
      *
-     * @type      {string}
-     * @since     7.1.3
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since     7.2.0
      * @product   highcharts highstock
-     * @apioption plotOptions.dumbbell.startColor
-     * @default   #90ed7d
      */
-    startColor: '#90ed7d',
+    startColor: '${palette.neutralColor80}',
     /**
      * Color of the line that connects dumbbell point's values.
      * By default it is a series' color.
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     7.1.3
+     * @since     7.2.0
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -150,10 +143,8 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @type  {number}
-             * @since 7.1.3
+             * @since 7.2.0
              * @product   highcharts highstock
-             * @apioption plotOptions.dumbbell.states.hover.connectorWidthPlus
              */
             connectorWidthPlus: 1,
             /** @ignore-option */
@@ -164,7 +155,6 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: H.TrackerMixin.drawTrackerPoint,
     drawGraph: H.noop,
-    toYData: areaRangeProto.toYData,
     /**
      * Correct line position by Math.floor instead of round.
      * As a result the line is aligned in the same way as marker
@@ -236,7 +226,8 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             pointHeight = chart.inverted ?
                 yAxis.len - pxThreshold : pxThreshold,
             pointBottom = pick(point.plotHigh, pointHeight),
-            attribs: Highcharts.SVGAttributes;
+            attribs: Highcharts.SVGAttributes,
+            origProps;
 
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
@@ -260,7 +251,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
 
         // Connector should reflect upper marker's zone color
         if (point.upperGraphic) {
-            point.origProps = {
+            origProps = {
                 y: point.y,
                 zone: point.zone
             };
@@ -273,8 +264,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                 point.zone ? point.zone.color : undefined,
                 point.color
             );
-            H.extend(point, point.origProps);
-            delete point.origProps;
+            H.extend(point, origProps);
         }
 
         attribs = {
@@ -366,13 +356,13 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
     translate: function (
         this: Highcharts.DumbbellSeries
     ): void {
-        // calculate shapeargs
+        // Calculate shapeargs
         this.setShapeArgs.apply(this);
 
-        // calculate point low / high values
+        // Calculate point low / high values
         this.translatePoint.apply(this, arguments as any);
 
-        // correct x position
+        // Correct x position
         this.points.forEach(function (point): void {
             var shapeArgs = point.shapeArgs,
                 pointWidth = point.pointWidth;
@@ -408,7 +398,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
 
         this.seriesDrawPoints.apply(series, arguments as any);
 
-        // draw connectors and color upper markers
+        // Draw connectors and color upper markers
         while (i < pointLength) {
             point = series.points[i];
 
@@ -525,7 +515,8 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                 series.color
             ),
             verb = 'attr',
-            upperGraphicColor;
+            upperGraphicColor,
+            origProps;
 
         this.pointSetState.apply(this, arguments);
 
@@ -536,7 +527,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                     fill: lowerGraphicColor
                 });
                 if (point.upperGraphic) {
-                    point.origProps = {
+                    origProps = {
                         y: point.y,
                         zone: point.zone
                     };
@@ -551,8 +542,7 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, point.origProps);
-                    delete point.origProps;
+                    H.extend(point, origProps);
                 }
             }
         }

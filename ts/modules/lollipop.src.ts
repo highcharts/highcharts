@@ -31,11 +31,9 @@ declare global {
             public data: Array<LollipopPoint>;
             public options: LollipopSeriesOptions;
             public points: Array<LollipopPoint>;
-            public toYData: AreaSeries['toYData'];
             public translatePoint: AreaSeries['translate'];
             public drawPoint: AreaSeries['drawPoints'];
             public drawDataLabels: ColumnSeries['drawDataLabels'];
-            public alignDataLabel: ColumnSeries['alignDataLabel'];
             public setShapeArgs: ColumnSeries['translate'];
         }
     }
@@ -60,7 +58,7 @@ var seriesType = H.seriesType,
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, startColor,
  *               stickyTracking, trackByArea
- * @since        7.1.3
+ * @since        7.2.0
  * @optionparent plotOptions.lollipop
  */
 seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
@@ -89,12 +87,9 @@ seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
         pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
     }
 }, {
-    toYData: areaProto.toYData,
-    setStackedPoints: areaProto.setStackedPoints,
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
-    alignDataLabel: colProto.alignDataLabel,
     setShapeArgs: colProto.translate
 }, {
     pointSetState: areaProto.pointClass.prototype.setState,

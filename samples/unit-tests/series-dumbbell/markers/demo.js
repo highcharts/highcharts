@@ -67,13 +67,13 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     // Testing setState()
     chart.series[0].points[1].setState('hover');
 
-    assert.deepEqual(
+    assert.strictEqual(
         chart.series[0].points[1].upperGraphic.attr('fill'),
         '#ffff00',
         'The upper marker should have a correct color on hover.'
     );
 
-    assert.deepEqual(
+    assert.strictEqual(
         chart.series[0].points[1].lowerGraphic.attr('fill'),
         chart.series[0].startColor,
         'The lower marker should have a correct color (startColor) on hover.'
@@ -81,13 +81,13 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
 
     chart.series[0].points[1].setState('');
 
-    assert.deepEqual(
+    assert.strictEqual(
         chart.series[0].points[1].upperGraphic.attr('fill'),
         '#ffff00',
         'The upper marker should have a correct color without any state.'
     );
 
-    assert.deepEqual(
+    assert.strictEqual(
         chart.series[0].points[1].lowerGraphic.attr('fill'),
         chart.series[0].startColor,
         'The lower marker should have a correct color (startColor) without any state.'
@@ -137,7 +137,7 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
         }
     });
 
-    assert.deepEqual(
+    assert.strictEqual(
         chart.series[0].points[1].upperGraphic.attr('fill'),
         '#ff0000',
         'After point.marker.fillColor update, the upperGraphic should have a correct color.'
@@ -148,7 +148,7 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
     });
 
     chart.series[0].points.forEach(function (point) {
-        assert.deepEqual(
+        assert.strictEqual(
             point.lowerGraphic.attr('fill'),
             '#000000',
             'After series.startColor update, all the lowerGraphics should have a correct color.'

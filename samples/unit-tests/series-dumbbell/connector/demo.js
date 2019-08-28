@@ -11,8 +11,8 @@ QUnit.test('Dumbbell connectors', function (assert) {
     });
 
     chart.series[0].points.forEach(function (point) {
-        assert.ok(
-            point.connector.element.getAttribute('d'),
+        assert.strictEqual(
+            typeof point.connector.element.getAttribute('d'),
             'string',
             'First point should have connector.'
         );
@@ -38,13 +38,13 @@ QUnit.test('Dumbbell connectors', function (assert) {
     assert.strictEqual(
         chart.series[0].points[3].connector.element.getAttribute('stroke'),
         'green',
-        'Added point`s connector should have correct color.'
+        'Added point\'s connector should have correct color.'
     );
 
     assert.strictEqual(
         chart.series[0].points[3].connector.element.getAttribute('stroke-width'),
-        "3",
-        'Added point` connector should have correct width.'
+        '3',
+        'Added point\'s connector should have correct width.'
     );
 
     chart.addSeries({
@@ -64,7 +64,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         assert.strictEqual(
             graphic.element,
             undefined,
-            'All point`s graphics should be removed.'
+            'All point\'s graphics should be removed.'
         );
     });
 

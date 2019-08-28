@@ -1,4 +1,4 @@
-Highcharts.chart('lollipop', {
+Highcharts.chart('container', {
 
     chart: {
         type: 'lollipop'
