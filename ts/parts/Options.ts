@@ -146,6 +146,7 @@ declare global {
         interface CaptionOptions {
             align?: AlignValue;
             floating?: boolean;
+            margin?: number;
             style?: CSSObject;
             text?: string;
             useHTML?: boolean;
@@ -2256,6 +2257,11 @@ H.defaultOptions = {
          * @default   false
          * @apioption caption.floating
          */
+
+        /**
+         * The margin between the caption and the plot area.
+         */
+        margin: 15,
 
         /**
          * CSS styles for the caption.

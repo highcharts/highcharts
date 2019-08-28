@@ -1266,6 +1266,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         }, this);
 
+        // Handle title.margin and caption.margin
+        if (
+            titleOffset[0] &&
+            ((this.options.title as any).verticalAlign || 'top') === 'top'
+        ) {
+            titleOffset[0] += (this.options.title as any).margin;
+        }
+        if (
+            titleOffset[2] &&
+            (this.options.caption as any).verticalAlign === 'bottom'
+        ) {
+            titleOffset[2] += (this.options.caption as any).margin;
+        }
+
         requiresDirtyBox = (
             !this.titleOffset ||
             this.titleOffset.join(',') !== titleOffset.join(',')
@@ -1603,14 +1617,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (titleOffset[0] && !defined(margin[0])) {
             this.plotTop = Math.max(
                 this.plotTop,
-                titleOffset[0] + (this.options.title as any).margin + spacing[0]
+                titleOffset[0] + spacing[0]
             );
         }
 
         if (titleOffset[2] && !defined(margin[2])) {
             this.marginBottom = Math.max(
                 this.marginBottom as any,
-                titleOffset[2] + (this.options.title as any).margin + spacing[2]
+                titleOffset[2] + spacing[2]
             );
         }
 
