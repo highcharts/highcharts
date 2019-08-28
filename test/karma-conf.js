@@ -541,9 +541,9 @@ module.exports = function (config) {
                         `;
 
                     } else if (argv.visualcompare) {
-                        var referenceSVGExists = fs.existsSync(`./samples/${path}/reference.svg`);
-                        if (!argv['create-missing-references'] &&
-                            !argv.remotelocation && !referenceSVGExists) {
+                        if (!argv.remotelocation && !fs.existsSync(
+                            `./samples/${path}/reference.svg`
+                        )) {
                             console.log(
                                 'Reference file doesn\'t exist: '.yellow +
                                 ` ./samples/${path}/reference.svg`
@@ -555,14 +555,6 @@ module.exports = function (config) {
                         }
 
                         assertion = `
-                        if (${!referenceSVGExists} && ${argv['create-missing-references']}) {
-                            console.log('Reference.svg not found. Forcing creation before comparing..');
-                            __karma__.info({
-                                filename: \`./samples/${path}/reference.svg\`,
-                                data: getSVG(chart)
-                            });
-                        }
-
                         compareToReference(chart, '${path}')
                             .then(actual => {
                                 if (${argv.difflog}) {
