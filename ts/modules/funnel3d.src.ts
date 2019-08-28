@@ -15,6 +15,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         class Funnel3dSeries extends ColumnSeries {
