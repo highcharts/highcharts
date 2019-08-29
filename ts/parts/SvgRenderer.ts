@@ -2656,7 +2656,7 @@ extend((
             delete wrapper[key];
         });
 
-        return;
+        return undefined;
     },
 
     /**

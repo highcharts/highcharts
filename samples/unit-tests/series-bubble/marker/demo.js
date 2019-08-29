@@ -1,5 +1,3 @@
-/* global TestController */
-
 QUnit.test('Global marker is null (#6321)', function (assert) {
 
     var chart = Highcharts.chart('container', {

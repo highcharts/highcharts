@@ -117,6 +117,7 @@ declare global {
             states?: SeriesStatesOptions;
             step?: SeriesStepValue;
             stickyTracking?: boolean;
+            supportingColor?: (ColorString|GradientColorObject|PatternObject);
             threshold?: number;
             turboThreshold?: number;
             visible?: boolean;

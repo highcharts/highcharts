@@ -18,6 +18,10 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface PlotSeriesOptions {
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            ignoreHiddenPoint?: boolean;
+        }
         interface PiePointConnectorShapeFunction {
             (...args: Array<any>): SVGPathArray;
         }
@@ -35,6 +39,9 @@ declare global {
             dataLabels?: PieSeriesDataLabelsOptionsObject;
             sliced?: boolean;
             visible?: boolean;
+        }
+        interface PiePositionObject extends PositionObject {
+            alignment: AlignValue;
         }
         interface PieSeriesDataLabelsOptionsObject
             extends DataLabelsOptionsObject
@@ -118,6 +125,7 @@ declare global {
             public shadowGroup?: SVGElement;
             public startAngleRad?: number;
             public total?: number;
+            public drawEmpty(): void;
             public getX(y: number, left: boolean, point: PiePoint): number;
             public redrawPoints(): void;
             public sortByAngle(points: Array<PiePoint>, sign: number): void;
@@ -412,6 +420,26 @@ seriesType<Highcharts.PieSeriesOptions>(
         center: [null, null],
 
         /**
+         * The color of the pie series. A pie series is represented as an empty
+         * circle if the total sum of its values is 0. Use this property to
+         * define the color of its border.
+         *
+         * In styled mode, the color can be defined by the
+         * [colorIndex](#plotOptions.series.colorIndex) option. Also, the series
+         * color can be set with the `.highcharts-series`,
+         * `.highcharts-color-{n}`, `.highcharts-{type}-series` or
+         * `.highcharts-series-{n}` class, or individual classes given by the
+         * `className` option.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+         *         Empty pie series
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @default   ${palette.neutralColor20}
+         * @apioption plotOptions.pie.color
+         */
+
+        /**
          * @product highcharts
          *
          * @private
@@ -470,6 +498,20 @@ seriesType<Highcharts.PieSeriesOptions>(
             /** @ignore-option */
             crookDistance: '70%'
         },
+
+        /**
+         * If the total sum of the pie's values is 0, the series is represented
+         * as an empty circle . The `fillColor` option defines the color of that
+         * circle. Use [pie.borderWidth](#plotOptions.pie.borderWidth) to set
+         * the border thickness.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+         *         Empty pie series
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @private
+         */
+        fillColor: undefined,
 
         /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
@@ -1035,12 +1077,45 @@ seriesType<Highcharts.PieSeriesOptions>(
         },
 
         /**
+         * Called internally to draw auxiliary graph in pie-like series in
+         * situtation when the default graph is not sufficient enough to present
+         * the data well. Auxiliary graph is saved in the same object as
+         * regular graph.
+         *
          * @private
-         * @deprecated
-         * @name Highcharts.seriesTypes.pie#drawGraph
-         * @type {null}
+         * @function Highcharts.seriesTypes.pie#drawEmpty
          */
-        drawGraph: null,
+        drawEmpty: function (this: Highcharts.PieSeries): void {
+            var centerX,
+                centerY,
+                options = this.options;
+
+            // Draw auxiliary graph if there're no visible points.
+            if (this.total === 0) {
+                centerX = this.center[0];
+                centerY = this.center[1];
+
+                if (!this.graph) { // Auxiliary graph doesn't exist yet.
+                    this.graph = this.chart.renderer.circle(centerX,
+                        centerY, 0)
+                        .addClass('highcharts-graph')
+                        .add(this.group);
+                }
+
+                this.graph.animate({
+                    'stroke-width': options.borderWidth,
+                    cx: centerX,
+                    cy: centerY,
+                    r: this.center[2] / 2,
+                    fill: (options.fillColor as any) || 'none',
+                    stroke: (options.color as any) ||
+                        '${palette.neutralColor20}'
+                });
+
+            } else if (this.graph) { // Destroy the graph object.
+                this.graph = this.graph.destroy();
+            }
+        },
 
         /**
          * Draw the data points
@@ -1058,6 +1133,8 @@ seriesType<Highcharts.PieSeriesOptions>(
                 pointAttr: Highcharts.SVGAttributes,
                 shapeArgs,
                 shadow = series.options.shadow;
+
+            this.drawEmpty();
 
             if (shadow && !series.shadowGroup && !chart.styledMode) {
                 series.shadowGroup = renderer.g('shadow')
@@ -1209,8 +1286,13 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @private
          * @function Highcharts.seriesTypes.pie#getSymbol
          */
-        getSymbol: noop
+        getSymbol: noop,
 
+        /**
+         * @private
+         * @type {null}
+         */
+        drawGraph: null
 
     },
     /**
