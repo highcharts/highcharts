@@ -158,7 +158,9 @@ jobs:
       - aws-s3/sync: # fetch remote reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
-          overwrite: true
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
       - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
           from: "samples/"
           to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
