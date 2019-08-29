@@ -184,7 +184,7 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, fireEvent = H.fireEvent, setAnimation = H.setAnimation;
 /**
  * Pie series type.
  *
@@ -791,6 +791,7 @@ seriesType('pie', 'line',
                 }
             };
         }
+        fireEvent(series, 'afterTranslate');
     },
     /**
      * Called internally to draw auxiliary graph in pie-like series in

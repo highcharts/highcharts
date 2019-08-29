@@ -20,6 +20,7 @@ var defined = U.defined,
 import '../parts/Series.js';
 
 var extend = H.extend,
+    fireEvent = H.fireEvent,
     merge = H.merge,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
@@ -143,6 +144,7 @@ H.seriesType(
                 this.slots = this.getSlots();
             } else {
                 this.generatePoints();
+                fireEvent(this, 'afterTranslate');
             }
         },
 

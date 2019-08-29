@@ -102,11 +102,11 @@ var merge = H.merge,
  *         Gauge chart
  *
  * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
- *               getExtremesFromAll, marker, negativeColor, pointPlacement,
- *               shadow, softThreshold, stacking, states, step, threshold,
- *               turboThreshold, xAxis, zoneAxis, zones
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+ *               pointPlacement, shadow, softThreshold, stacking, states, step,
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */

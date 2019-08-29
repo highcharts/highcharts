@@ -728,6 +728,12 @@ addEvent(Axis as any, 'init', function (
         pane = (this as Highcharts.Axis).pane =
             chart.pane && chart.pane[paneIndex];
 
+    // Prevent changes for colorAxis
+    if (this.coll === 'colorAxis') {
+        this.isRadial = false;
+        return;
+    }
+
     // Before prototype.init
     if (angular) {
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
