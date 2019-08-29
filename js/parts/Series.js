@@ -10,6 +10,17 @@
 'use strict';
 import H from './Globals.js';
 /**
+ * This is a placeholder type of the possible series options for
+ * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
+ *
+ * In TypeScript is this dynamically generated to reference all possible types
+ * of series options.
+ *
+ * @ignore-declaration
+ * @typedef {Highcharts.SeriesOptions|Highcharts.Dictionary<*>} Highcharts.SeriesOptionsType
+ */
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -343,8 +354,6 @@ H.Series = H.seriesType('line',
  * series type is inherited from [chart.type](#chart.type), so unless the
  * chart is a combination of series types, there is no need to set it on the
  * series level.
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @sample {highcharts} highcharts/series/type/
  *         Line and column in the same chart
@@ -4383,8 +4392,6 @@ null,
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL

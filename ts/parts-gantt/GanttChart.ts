@@ -20,6 +20,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Options {
+            isGantt?: boolean;
+        }
         function ganttChart(
             renderTo: (string|HTMLDOMElement),
             options: Options,

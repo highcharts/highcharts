@@ -79,7 +79,7 @@ seriesType(
      *         Treemap
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker, jitter
+     * @excluding    dragDrop, marker, jitter
      * @product      highcharts
      * @optionparent plotOptions.treemap
      */

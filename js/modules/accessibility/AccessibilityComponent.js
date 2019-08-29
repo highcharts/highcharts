@@ -372,35 +372,6 @@ AccessibilityComponent.prototype = {
     },
 
 
-    /**
-     * Utility function to strip tags from a string. Used for aria-label
-     * attributes, painting on a canvas will fail if the text contains tags.
-     * @private
-     * @param {string} s The string to strip tags from
-     * @return {string} The new string.
-     */
-    stripTags: function (s) {
-        return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
-    },
-
-
-    /**
-     * HTML encode some characters vulnerable for XSS.
-     * @private
-     * @param {string} html The input string.
-     * @return {string} The escaped string.
-     */
-    htmlencode: function (html) {
-        return html
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#x27;')
-            .replace(/\//g, '&#x2F;');
-    },
-
-
     // Functions to be overridden by derived classes
 
     /**

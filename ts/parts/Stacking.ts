@@ -397,16 +397,15 @@ H.StackItem.prototype = {
                     (isNegative ? bBox.width : 0) : bBox.width / 2,
                 boxOffsetY = chart.inverted ?
                     bBox.height / 2 : (isNegative ? -4 : bBox.height + 4);
+
+            stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             // Align the label to the box
             label.align(stackItem.alignOptions, null as any, stackBox);
-
             // Set visibility (#678)
             alignAttr = label.alignAttr;
             label.show();
-
             // Set label above/under stackBox
             alignAttr.y -= boxOffsetY;
-
             if (isJustify) {
                 // Set label x position for justifyDataLabel function
                 alignAttr.x -= boxOffsetX;
@@ -414,22 +413,18 @@ H.StackItem.prototype = {
                     label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-            label.alignAttr = alignAttr;
+            alignAttr.x = label.alignAttr.x;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
             });
 
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(
-                    label.alignAttr.x - bBox.width / 2,
-                    label.alignAttr.y
-                ) && chart.isInsidePlot(
-                    label.alignAttr.x + (chart.inverted ?
+                visible = chart.isInsidePlot(label.x +
+                    (chart.inverted ? 0 : -bBox.width / 2), label.y) &&
+                    chart.isInsidePlot(label.x + (chart.inverted ?
                         (isNegative ? -bBox.width : bBox.width) :
-                        bBox.width / 2),
-                    label.alignAttr.y + bBox.height
-                );
+                        bBox.width / 2), label.y + bBox.height);
                 if (!visible) {
                     label.hide();
                 }

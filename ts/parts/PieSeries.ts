@@ -36,6 +36,7 @@ declare global {
             natural: PositionObject;
         }
         interface PiePointOptions extends LinePointOptions {
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
             sliced?: boolean;
             visible?: boolean;
         }
@@ -134,8 +135,8 @@ declare global {
     }
 }
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * Pie series only. Whether to display a slice offset from the center.
  * @name Highcharts.PointOptionsObject#sliced
@@ -351,11 +352,11 @@ seriesType<Highcharts.PieSeriesOptions>(
      *
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
-     *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, label, marker, negativeColor,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointStart, softThreshold, stacking, step, threshold,
-     *               turboThreshold, zoneAxis, zones
+     *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
+     *               getExtremesFromAll, label, lineWidth, marker,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointStart, softThreshold, stacking, step,
+     *               threshold, turboThreshold, zoneAxis, zones
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -466,7 +467,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          */
 
         /**
-         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
          * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
          *
          * @private
@@ -981,7 +982,7 @@ seriesType<Highcharts.PieSeriesOptions>(
                 point.labelDistance = pick(
                     (
                         point.options.dataLabels &&
-                        (point.options.dataLabels as any).distance
+                        point.options.dataLabels.distance
                     ),
                     labelDistance
                 );
@@ -1687,7 +1688,7 @@ seriesType<Highcharts.PieSeriesOptions>(
  */
 
 /**
- * @type      {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+ * @type      {Highcharts.SeriesPieDataLabelsOptionsObject}
  * @product   highcharts
  * @apioption series.pie.data.dataLabels
  */

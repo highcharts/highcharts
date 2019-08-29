@@ -219,8 +219,8 @@ declare global {
  * @type {number|undefined}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * Callback that fires while dragging a point. The mouse event is passed in as
  * parameter. The original data can be accessed from `e.origin`, and the new

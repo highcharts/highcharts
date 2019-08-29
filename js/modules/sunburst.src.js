@@ -448,7 +448,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *
  * @extends      plotOptions.pie
  * @excluding    allAreas, clip, colorAxis, compare, compareBase, dataGrouping,
- *               depth, endAngle, gapSize, gapUnit, ignoreHiddenPoint,
+ *               depth, dragDrop, endAngle, gapSize, gapUnit, ignoreHiddenPoint,
  *               innerSize, joinBy, legendType, linecap, minSize,
  *               navigatorOptions, pointRange
  * @product      highcharts

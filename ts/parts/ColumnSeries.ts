@@ -127,8 +127,8 @@ declare global {
  * @type {number}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * A name for the dash style to use for the column or bar. Overrides dashStyle
  * on the series. In styled mode, the stroke dash-array can be set with the same

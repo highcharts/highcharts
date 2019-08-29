@@ -149,9 +149,30 @@ jobs:
     steps:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
-      - aws-s3/sync: # fetch reference images
+      - run:
+          name: "Set application version env var"
+          command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+      - run:
+          name: Generate any new references images
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - aws-s3/sync: # fetch remote reference images
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
@@ -189,7 +210,7 @@ jobs:
           to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
           overwrite: true
       - run:
-          name: "Upload visual tests assets"
+          name: "Upload visual test candidates and diff assets"
           command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
           when: always
 
@@ -337,7 +358,7 @@ workflows:
           filters:
             branches:
               only:
-                - tools/visual-test-samples
+                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
       - checkout_code

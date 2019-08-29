@@ -121,13 +121,16 @@ Highcharts.chart('container', {
         type: 'column'
     },
 
-    accessibility: {
-        description: 'Chart displaying art grants in 2016, grouped by grant category. ' +
+    caption: {
+        text: 'Chart displaying art grants in 2016, grouped by grant category. ' +
         'Cultural Center grants have significantly higher individual grant amounts than the other categories. ' +
         'The largest grant amount went to SOMArts Cultural Centers, and was $630,191.36. ' +
         'The chart leaves out all grants below $50,000. ' +
         'The chart displays one column series for each of the 4 grant categories, ' +
-        'as well as a line series for each of the grant category totals.',
+        'as well as a line series for each of the grant category totals.'
+    },
+
+    accessibility: {
         seriesDescriptionFormatter: function (series) {
             return series.type === 'line' &&
                 series.name + ', ' + dollarFormat(series.points[0].y);
