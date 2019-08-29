@@ -113,7 +113,7 @@ declare global {
             public initDataClasses(userOptions: ColorAxisOptions): void;
             public initStops(): void;
             public normalizedValue(value: number): number;
-            public remove(): void;
+            public remove(redraw?: boolean): void;
             public destroyItems(): void;
             public setAxisSize(): void;
             public setLegendColor(): void;
@@ -170,9 +170,14 @@ extend(Point.prototype, colorPointMixin);
 /**
  * The ColorAxis object for inclusion in gradient legends.
  *
- * @private
  * @class
  * @name Highcharts.ColorAxis
+ *
+ * @param {Highcharts.Chart} chart
+ * The related chart of the color axis.
+ *
+ * @param {Highcharts.ColorAxisOptions} userOptions
+ * The color axis options for initialization.
  *
  * @augments Highcharts.Axis
  */
@@ -638,12 +643,16 @@ extend(ColorAxis.prototype, {
     /* eslint-disable no-invalid-this, valid-jsdoc */
 
     /**
-     * Initialize the color axis
+     * Initializes the color axis.
      *
-     * @private
      * @function Highcharts.ColorAxis#init
+     *
      * @param {Highcharts.Chart} chart
+     * The related chart of the color axis.
+     *
      * @param {Highcharts.ColorAxisOptions} userOptions
+     * The color axis options for initialization.
+     *
      * @return {void}
      */
     init: function (
@@ -736,12 +745,12 @@ extend(ColorAxis.prototype, {
     },
 
     /**
-     * Define hasData function for ColorAxis. Returns true if the series has
-     * points at all.
+     * Returns true if the series has points at all.
      *
-     * @private
      * @function Highcharts.ColorAxis#hasData
+     *
      * @return {boolean}
+     * True, if the series has points, otherwise false.
      */
     hasData: function (this: Highcharts.ColorAxis): boolean {
         return !!(this.tickPositions && this.tickPositions.length);
@@ -1160,7 +1169,21 @@ extend(ColorAxis.prototype, {
     },
 
     /**
-     * @private
+     * Internal function to draw a crosshair.
+     *
+     * @function Highcharts.ColorAxis#drawCrosshair
+     *
+     * @param {Highcharts.PointerEventObject} [e]
+     *        The event arguments from the modified pointer event, extended with
+     *        `chartX` and `chartY`
+     *
+     * @param {Highcharts.Point} [point]
+     *        The Point object if the crosshair snaps to points.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.ColorAxis#event:afterDrawCrosshair
+     * @fires Highcharts.ColorAxis#event:drawCrosshair
      */
     drawCrosshair: function (
         this: Highcharts.ColorAxis,
@@ -1239,6 +1262,24 @@ extend(ColorAxis.prototype, {
             Axis.prototype.getPlotLinePath.apply(this, arguments as any);
     },
 
+    /**
+     * Updates a color axis instance with a new set of options. The options are
+     * merged with the existing options, so only new or altered options need to
+     * be specified.
+     *
+     * @function Highcharts.ColorAxis#update
+     *
+     * @param {Highcharts.ColorAxisOptions} newOptions
+     * The new options that will be merged in with existing options on the color
+     * axis.
+     *
+     * @param {boolean} [redraw]
+     * Whether to redraw the chart after the color axis is altered. If doing
+     * more operations on the chart, it is a good idea to set redraw to `false`
+     * and call {@link Highcharts.Chart#redraw} after.
+     *
+     * @return {void}
+     */
     update: function (
         this: Highcharts.ColorAxis,
         newOptions: Highcharts.ColorAxisOptions,
@@ -1293,14 +1334,18 @@ extend(ColorAxis.prototype, {
     },
 
     /**
-     * Extend basic axis remove by also removing the legend item.
+     * Removes the color axis and the related legend item.
      *
-     * @private
      * @function Highcharts.ColorAxis#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart following the remove.
+     *
+     * @return {void}
      */
-    remove: function (this: Highcharts.ColorAxis): void {
+    remove: function (this: Highcharts.ColorAxis, redraw?: boolean): void {
         this.destroyItems();
-        Axis.prototype.remove.call(this);
+        Axis.prototype.remove.call(this, redraw);
     },
 
     /**
@@ -1450,8 +1495,11 @@ addEvent(Series, 'bindAxes', function (): void {
 // them from showing up individually.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<Highcharts.ColorAxis |
-    Highcharts.ColorAxisLegendItemObject>; }
+    e: {
+        allItems: Array<(
+            Highcharts.ColorAxis|Highcharts.ColorAxisLegendItemObject
+        )>;
+    }
 ): void {
     var colorAxisItems = [] as Array<Highcharts.ColorAxis |
         Highcharts.ColorAxisLegendItemObject>,
@@ -1502,7 +1550,10 @@ addEvent(Legend, 'afterGetAllItems', function (
 
 addEvent(Legend, 'afterColorizeItem', function (
     this: Highcharts.Legend,
-    e: { item: Highcharts.ColorAxis; visible: boolean }
+    e: {
+        item: Highcharts.ColorAxis;
+        visible: boolean;
+    }
 ): void {
     if (e.visible && e.item.legendColor) {
         (e.item.legendSymbol as any).attr({
