@@ -172,14 +172,13 @@ extend(Point.prototype, colorPointMixin);
  *
  * @class
  * @name Highcharts.ColorAxis
+ * @augments Highcharts.Axis
  *
  * @param {Highcharts.Chart} chart
  * The related chart of the color axis.
  *
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
- *
- * @augments Highcharts.Axis
  */
 ColorAxis = H.ColorAxis = function (this: Highcharts.ColorAxis): void {
     this.init.apply(this, arguments as any);
