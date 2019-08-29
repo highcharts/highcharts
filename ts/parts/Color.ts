@@ -21,6 +21,7 @@ declare global {
         type ColorNone = [];
         type ColorRGBA = [number, number, number, number];
         type ColorString = string;
+        type ColorType = (ColorString|GradientColorObject|PatternObject);
         interface ColorParser {
             regex: RegExp;
             parse: (
@@ -49,19 +50,25 @@ declare global {
             r: number;
         }
         class Color {
-            public constructor(input: (ColorString|GradientColorObject));
-            public input: (ColorString|GradientColorObject);
+            public constructor(
+                input: (ColorString|GradientColorObject|PatternObject|undefined)
+            );
+            public input?: ColorType;
             public names: Dictionary<ColorString>;
             public parsers: Array<ColorParser>;
             public rgba: (ColorNone|ColorRGBA);
             public stops: Array<Color>;
             public brighten(alpha: number): Color;
             public get(format?: ('a'|'rgb'|'rgba')): Color['input'];
-            public init(input: (ColorString|GradientColorObject)): void;
+            public init(
+                input: (ColorString|GradientColorObject|PatternObject|undefined)
+            ): void;
             public setOpacity(alpha: number): Color;
             public tweenTo(to: Color, alpha: number): ColorString;
         }
-        function color(input: ColorString): Color;
+        function color(
+            input: (ColorString|GradientColorObject|PatternObject|undefined)
+        ): Color;
     }
 }
 
@@ -73,6 +80,13 @@ declare global {
  * and apply concepts like opacity and brightening.
  *
  * @typedef {string} Highcharts.ColorString
+ */
+
+/**
+ * A valid color type than can be parsed and handled by Highcharts. It can be a
+ * color string, a gradient object, or a pattern object.
+ *
+ * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
  */
 
 /**
@@ -183,12 +197,15 @@ var merge = H.merge;
  * @class
  * @name Highcharts.Color
  *
- * @param {Highcharts.ColorString|Highcharts.GradientColorObject} input
+ * @param {Highcharts.ColorType} input
  *        The input color in either rbga or hex format
  */
 H.Color = function (
     this: Highcharts.Color,
-    input: (Highcharts.ColorString|Highcharts.GradientColorObject)
+    input: (
+        Highcharts.ColorString|Highcharts.GradientColorObject|
+        Highcharts.PatternObject|undefined
+    )
 ): any {
     // Backwards compatibility, allow instanciation without new
     if (!(this instanceof H.Color)) {
@@ -203,7 +220,8 @@ H.Color.prototype = {
     // parsers to Highcharts.Color.prototype.parsers.
     parsers: [{
         // RGBA color
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/, // eslint-disable-line security/detect-unsafe-regex
+        // eslint-disable-next-line max-len
+        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
         parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
             return [
                 pInt(result[1]),
@@ -234,14 +252,17 @@ H.Color.prototype = {
      * @private
      * @function Highcharts.Color#init
      *
-     * @param {Highcharts.ColorString|Highcharts.GradientColorObject} input
+     * @param {Highcharts.ColorType} input
      *        The input color in either rbga or hex format
      *
      * @return {void}
      */
     init: function (
         this: Highcharts.Color,
-        input: (Highcharts.ColorString|Highcharts.GradientColorObject)
+        input: (
+            Highcharts.ColorString|Highcharts.GradientColorObject|
+            Highcharts.PatternObject|undefined
+        )
     ): void {
         var result: (RegExpExecArray|null),
             rgba: any,
@@ -328,7 +349,7 @@ H.Color.prototype = {
      * @param {string} [format]
      *        Possible values are 'a', 'rgb', 'rgba' (default).
      *
-     * @return {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @return {Highcharts.ColorType}
      *         This color as a string or gradient stops.
      */
     get: function (
@@ -337,10 +358,10 @@ H.Color.prototype = {
     ): Highcharts.Color['input'] {
         var input = this.input,
             rgba = this.rgba,
-            ret: (string|Highcharts.GradientColorObject);
+            ret: Highcharts.Color['input'];
 
         if (this.stops) {
-            ret = merge(input);
+            ret = merge(input as any);
             (ret as any).stops = [].concat((ret as any).stops);
             this.stops.forEach(function (
                 stop: Highcharts.Color,
@@ -483,12 +504,17 @@ H.Color.prototype = {
  *
  * @function Highcharts.color
  *
- * @param {Highcharts.ColorString} input
+ * @param {Highcharts.ColorType} input
  *        The input color in either rbga or hex format
  *
  * @return {Highcharts.Color}
  *         Color instance
  */
-H.color = function (input: Highcharts.ColorString): Highcharts.Color {
+H.color = function (
+    input: (
+        Highcharts.ColorString|Highcharts.GradientColorObject|
+        Highcharts.PatternObject|undefined
+    )
+): Highcharts.Color {
     return new H.Color(input);
 };

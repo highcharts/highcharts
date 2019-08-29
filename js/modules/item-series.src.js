@@ -13,7 +13,9 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined,
+    isNumber = U.isNumber,
+    objectEach = U.objectEach;
 
 import '../parts/Series.js';
 
@@ -354,7 +356,7 @@ H.seriesType(
                         pointMarkerOptions.radius,
                         seriesMarkerOptions.radius
                     ),
-                    size = H.defined(r) ? 2 * r : itemSize,
+                    size = defined(r) ? 2 * r : itemSize,
                     padding = size * options.itemPadding,
                     x,
                     y,
@@ -437,7 +439,7 @@ H.seriesType(
                         i++;
                     }
                 }
-                H.objectEach(graphics, function (graphic, key) {
+                objectEach(graphics, function (graphic, key) {
                     if (!graphic.isActive) {
                         graphic.destroy();
                         delete graphics[key];

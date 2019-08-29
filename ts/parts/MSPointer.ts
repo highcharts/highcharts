@@ -33,7 +33,11 @@ declare global {
 
 /* globals MSPointerEvent, PointerEvent */
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    objectEach
+} = U;
+
 import './Pointer.js';
 
 var addEvent = H.addEvent,
@@ -59,7 +63,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
             fake.item = function (i: string): any {
                 return this[i];
             };
-            H.objectEach(touches, function (
+            objectEach(touches, function (
                 touch: Highcharts.PointerEventObject
             ): void {
                 fake.push({

@@ -187,11 +187,11 @@
         // Custom formatter
         defaultConfig.xAxis[0].currentDateIndicator = {
             label: {
-                formatter: function (indicator) {
+                formatter: function () {
                     var dateFormat = '%a, %b %d %Y',
                         date = Highcharts.dateFormat(
                             dateFormat,
-                            indicator.options.value
+                            this.options.value
                         );
                     return 'Today: ' + date;
                 }

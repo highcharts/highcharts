@@ -13,10 +13,6 @@ Highcharts.chart('container', {
         text: 'Demo of predefined, image and custom marker symbols'
     },
 
-    legend: {
-        y: -40 // make room for subtitle
-    },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
@@ -57,7 +53,6 @@ Highcharts.chart('container', {
         text: '*) Base64 not supported in IE6 and IE7',
         verticalAlign: 'bottom',
         align: 'right',
-        y: null,
         style: {
             fontSize: '10px'
         }

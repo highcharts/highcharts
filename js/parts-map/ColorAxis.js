@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var erase = U.erase, isNumber = U.isNumber;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
@@ -213,7 +213,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/gridlines/
          *         Grid lines demonstrated
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6e6e6
          * @product   highcharts highmaps
          * @apioption colorAxis.gridLineColor
@@ -331,7 +331,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         minColor: '${palette.highlightColor10}',
@@ -350,7 +350,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
          *         On data classes
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highmaps
          */
         maxColor: '${palette.highlightColor100}',
@@ -593,7 +593,7 @@ extend(ColorAxis.prototype, {
      * @function Highcharts.ColorAxis#toColor
      * @param {number} value
      * @param {Highcharts.Point} point
-     * @return {string|undefined}
+     * @return {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
      */
     toColor: function (value, point) {
         var pos, stops = this.stops, from, to, color, dataClasses = this.dataClasses, dataClass, i;
@@ -723,8 +723,10 @@ extend(ColorAxis.prototype, {
         while (i--) {
             series[i].getExtremes();
             if (series[i].valueMin !== undefined) {
-                this.dataMin = Math.min(this.dataMin, series[i].valueMin);
-                this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+                this.dataMin =
+                    Math.min(this.dataMin, series[i].valueMin);
+                this.dataMax =
+                    Math.max(this.dataMax, series[i].valueMax);
             }
         }
     },
@@ -922,7 +924,7 @@ addEvent(Legend, 'afterGetAllItems', function (e) {
             }
             // Don't add the color axis' series
             colorAxis.series.forEach(function (series) {
-                H.erase(e.allItems, series);
+                erase(e.allItems, series);
             });
         }
     }

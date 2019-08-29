@@ -10,16 +10,6 @@
 'use strict';
 import H from './Globals.js';
 /**
- * @interface Highcharts.PointOptionsObject
- */ /**
-* Individual point events
-* @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PlotSeriesPointEventsOptions}
-*/ /**
-* @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PlotSeriesPointMarkerOptions}
-*/
-/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -202,14 +192,14 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, // @todo  add as a requirement
-removeEvent = H.removeEvent, splat = H.splat, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
+removeEvent = H.removeEvent, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -343,7 +333,7 @@ H.Series = H.seriesType('line',
  * @sample {highcharts} highcharts/series/stack/
  *         Stacked and grouped columns
  *
- * @type      {string|object}
+ * @type      {number|string}
  * @since     2.1
  * @product   highcharts highstock
  * @apioption series.stack
@@ -784,7 +774,7 @@ null,
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1198,7 +1188,7 @@ null,
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         lineColor: '${palette.backgroundColor}',
         /**
@@ -1353,7 +1343,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
                  */
                 /**
@@ -1445,7 +1435,7 @@ null,
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 lineColor: '${palette.neutralColor100}',
                 /**
@@ -1597,14 +1587,13 @@ null,
     dataLabels: {
         /** @internal */
         align: 'center',
-        /* eslint-disable valid-jsdoc */
+        // eslint-disable-next-line valid-jsdoc
         /**
          * @internal
          * @default function () { return H.numberFormat(this.y, -1); }
          */
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
-            /* eslint-enable valid-jsdoc */
         },
         /** @internal */
         padding: 5,
@@ -2125,7 +2114,7 @@ null,
                 series[key + 'Data'] = [];
             }
         });
-        if (!series.points) {
+        if (!series.points && !series.data) {
             series.setData(options.data, false);
         }
         // Mark cartesian
@@ -2199,7 +2188,8 @@ null,
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
-                    if (seriesOptions[AXIS] === axisOptions.index ||
+                    if (seriesOptions[AXIS] ===
+                        axisOptions.index ||
                         (seriesOptions[AXIS] !== undefined &&
                             seriesOptions[AXIS] === axisOptions.id) ||
                         (seriesOptions[AXIS] === undefined &&
@@ -2328,7 +2318,7 @@ null,
         };
         fireEvent(this, 'setOptions', e);
         // These may be modified by the event
-        var userPlotOptions = userOptions.plotOptions || {}, typeOptions = e.plotOptions[this.type];
+        var typeOptions = e.plotOptions[this.type], userPlotOptions = (userOptions.plotOptions || {});
         // use copy to prevent undetected changes (#9762)
         this.userOptions = e.userOptions;
         options = merge(typeOptions, plotOptions.series, 
@@ -2538,7 +2528,7 @@ null,
         this.xIncrement = null;
         // Iterate the new data
         data.forEach(function (pointOptions, i) {
-            var id, x, pointIndex, optionsObject = (H.defined(pointOptions) &&
+            var id, x, pointIndex, optionsObject = (defined(pointOptions) &&
                 this.pointClass.prototype.optionsToObject.call({ series: this }, pointOptions)) || {};
             // Get the x of the new data point
             x = optionsObject.x;
@@ -2796,8 +2786,9 @@ null,
      * @return {boolean|undefined}
      */
     processData: function (force) {
-        var series = this, processedXData = series.xData, // copied during slice operation
-        processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
+        var series = this, 
+        // copied during slice operation:
+        processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
         options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
         isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
@@ -2866,7 +2857,8 @@ null,
         series.cropStart = cropStart;
         series.processedXData = processedXData;
         series.processedYData = processedYData;
-        series.closestPointRange = closestPointRange;
+        series.closestPointRange =
+            series.basePointRange = closestPointRange;
     },
     /**
      * Iterate over xData and crop values between min and max. Returns
@@ -3072,7 +3064,7 @@ null,
                 j = y.length;
                 if (j) { // array, like ohlc or range data
                     while (j--) {
-                        if (typeof y[j] === 'number') { // #7380
+                        if (isNumber(y[j])) { // #7380, #11513
                             activeYData[activeCounter++] = y[j];
                         }
                     }
@@ -3115,7 +3107,8 @@ null,
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
-                yValue < (stackThreshold ? 0 : threshold) ?
+                yValue <
+                    (stackThreshold ? 0 : threshold) ?
                 '-' :
                 '') + series.stackKey], pointStack, stackValues;
             // Discard disallowed y values for log axes (#3434)
@@ -3159,7 +3152,14 @@ null,
                         (point.y / pointStack.total * 100);
                 point.stackY = yValue;
                 // Place the stack label
-                pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                // in case of variwide series (where widths of points are
+                // different in most cases), stack labels are positioned
+                // wrongly, so the call of the setOffset is omited here and
+                // labels are correctly positioned later, at the end of the
+                // variwide's translate function (#10962)
+                if (!series.irregularWidths) {
+                    pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                }
             }
             // Set translated yBottom or remove it
             point.yBottom = defined(yBottom) ?
@@ -3202,7 +3202,7 @@ null,
                 lastPlotX = plotX;
             }
             // Find point zone
-            point.zone = this.zones.length && point.getZone();
+            point.zone = (this.zones.length && point.getZone());
         }
         series.closestPointRangePx = closestPointRangePx;
         fireEvent(this, 'afterTranslate');
@@ -3411,7 +3411,8 @@ null,
      * @function Highcharts.Series#drawPoints
      */
     drawPoints: function () {
-        var series = this, points = series.points, chart = series.chart, i, point, symbol, graphic, verb, options = series.options, seriesMarkerOptions = options.marker, pointMarkerOptions, hasPointMarker, enabled, isInside, markerGroup = series[series.specialGroup] || series.markerGroup, xAxis = series.xAxis, markerAttribs, globallyEnabled = pick(seriesMarkerOptions.enabled, !xAxis || xAxis.isRadial ? true : null, 
+        var series = this, points = series.points, chart = series.chart, i, point, symbol, graphic, verb, options = series.options, seriesMarkerOptions = options.marker, pointMarkerOptions, hasPointMarker, enabled, isInside, markerGroup = (series[series.specialGroup] ||
+            series.markerGroup), xAxis = series.xAxis, markerAttribs, globallyEnabled = pick(seriesMarkerOptions.enabled, !xAxis || xAxis.isRadial ? true : null, 
         // Use larger or equal as radius is null in bubbles (#6321)
         series.closestPointRangePx >= (seriesMarkerOptions.enabledThreshold *
             seriesMarkerOptions.radius));
@@ -3430,7 +3431,7 @@ null,
                 if (enabled && !point.isNull) {
                     // Shortcuts
                     symbol = pick(pointMarkerOptions.symbol, series.symbol);
-                    markerAttribs = series.markerAttribs(point, point.selected && 'select');
+                    markerAttribs = series.markerAttribs(point, (point.selected && 'select'));
                     if (graphic) { // update
                         // Since the marker group isn't clipped, each
                         // individual marker must be toggled
@@ -3460,7 +3461,7 @@ null,
                     }
                     // Presentational attributes
                     if (graphic && !chart.styledMode) {
-                        graphic[verb](series.pointAttribs(point, point.selected && 'select'));
+                        graphic[verb](series.pointAttribs(point, (point.selected && 'select')));
                     }
                     if (graphic) {
                         graphic.addClass(point.getClassName(), true);
@@ -3666,7 +3667,9 @@ null,
         }
         // Build the line
         points.forEach(function (point, i) {
-            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], pathToPoint; // the path to this point from the previous
+            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], 
+            // the path to this point from the previous
+            pathToPoint;
             if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
                 !connectCliffs) {
                 gap = true; // ... and continue
@@ -3681,7 +3684,11 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = ['M', point.plotX, point.plotY];
+                    pathToPoint = [
+                        'M',
+                        point.plotX,
+                        point.plotY
+                    ];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
@@ -3845,7 +3852,7 @@ null,
                     (zone.className || '')
             ];
             if (!this.chart.styledMode) {
-                propset.push(zone.color || this.color, zone.dashStyle || this.options.dashStyle);
+                propset.push((zone.color || this.color), (zone.dashStyle || this.options.dashStyle));
             }
             props.push(propset);
         }, this);
@@ -4022,7 +4029,7 @@ null,
      * @param {string} prop
      * @param {string} name
      * @param {string} visibility
-     * @param {number} zIndex
+     * @param {number} [zIndex]
      * @param {Highcharts.SVGElement} [parent]
      * @return {Highcharts.SVGElement}
      */

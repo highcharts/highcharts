@@ -34,6 +34,8 @@ declare global {
             innerContainer?: HTMLDOMElement;
             scrollingContainer?: HTMLDOMElement;
             scrollableMask?: SVGElement;
+            scrollablePixelsX?: number;
+            scrollablePixelsY?: number;
             applyFixed(): void;
             moveFixedElements(): void;
             setUpScrolling(): void;
@@ -118,7 +120,7 @@ var addEvent = H.addEvent,
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-addEvent(Chart as any, 'afterSetChartSize', function (
+addEvent(Chart, 'afterSetChartSize', function (
     this: Highcharts.Chart,
     e: { skipAxes: boolean }
 ): void {
@@ -218,7 +220,7 @@ addEvent(Chart as any, 'afterSetChartSize', function (
     }
 });
 
-addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
     if (this.scrollablePixelsX || this.scrollablePixelsY) {
         if (this.setUpScrolling) {
             this.setUpScrolling();
@@ -407,11 +409,13 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
 
         if (scrollableOptions.scrollPositionX) {
             (this.scrollingContainer as any).scrollLeft =
-                this.scrollablePixelsX * scrollableOptions.scrollPositionX;
+                (this.scrollablePixelsX as any) *
+                scrollableOptions.scrollPositionX;
         }
         if (scrollableOptions.scrollPositionY) {
             (this.scrollingContainer as any).scrollTop =
-                this.scrollablePixelsY * scrollableOptions.scrollPositionY;
+                (this.scrollablePixelsY as any) *
+                scrollableOptions.scrollPositionY;
         }
     }
 

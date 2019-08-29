@@ -38,10 +38,10 @@ import H from './Globals.js';
  *         Parsed JavaScript time value.
  */
 import U from './Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, splat = H.splat;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick;
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
  * ************************************************************************** */
@@ -1078,9 +1078,9 @@ RangeSelector.prototype = {
      *
      * @private
      * @function Highcharts.RangeSelector#render
-     * @param {number} min
+     * @param {number} [min]
      *        X axis minimum
-     * @param {number} max
+     * @param {number} [max]
      *        X axis maximum
      * @return {void}
      */
@@ -1391,7 +1391,7 @@ RangeSelector.prototype = {
             maxInput.onfocus = maxInput.onblur = maxInput.onchange = null;
         }
         // Destroy HTML and SVG elements
-        H.objectEach(rSelector, function (val, key) {
+        objectEach(rSelector, function (val, key) {
             if (val && key !== 'chart') {
                 if (val.destroy) {
                     // SVGElement

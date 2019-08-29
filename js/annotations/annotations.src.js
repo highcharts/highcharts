@@ -11,7 +11,9 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isString = U.isString;
+var defined = U.defined,
+    erase = U.erase,
+    splat = U.splat;
 
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
@@ -27,12 +29,9 @@ import ControlPoint from './ControlPoint.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    defined = H.defined,
-    erase = H.erase,
     find = H.find,
     pick = H.pick,
     reduce = H.reduce,
-    splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties,
     chartProto = H.Chart.prototype;
 
@@ -211,7 +210,7 @@ merge(
              * annotation in [Chart#removeAnnotation(id)](
              * /class-reference/Highcharts.Chart#removeAnnotation) method.
              *
-             * @type      {string}
+             * @type      {string|number}
              * @apioption annotations.id
              */
 
@@ -1237,17 +1236,19 @@ H.extend(chartProto, /** @lends Highcharts.Chart# */ {
     /**
      * Remove an annotation from the chart.
      *
-     * @param {String|Annotation} idOrAnnotation - The annotation's id or
+     * @param {String|Number|Annotation} idOrAnnotation - The annotation's id or
      *      direct annotation object.
      */
     removeAnnotation: function (idOrAnnotation) {
         var annotations = this.annotations,
-            annotation = isString(idOrAnnotation) ? find(
-                annotations,
-                function (annotation) {
-                    return annotation.options.id === idOrAnnotation;
-                }
-            ) : idOrAnnotation;
+            annotation = idOrAnnotation.coll === 'annotations' ?
+                idOrAnnotation :
+                find(
+                    annotations,
+                    function (annotation) {
+                        return annotation.options.id === idOrAnnotation;
+                    }
+                );
 
         if (annotation) {
             fireEvent(annotation, 'remove');

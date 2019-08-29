@@ -161,3 +161,65 @@ QUnit.test('Marker size and position', function (assert) {
     );
 
 });
+
+QUnit.test('visibility', assert => {
+    const axisHeight = 150;
+    const data = [85, 82, 84, 87, 92];
+    const {
+        series: [series1, series2],
+        yAxis: [/* yAxis1 */, yAxis2]
+    } = Highcharts.stockChart('container', {
+        // NOTE: Disable a11y, because it affects stateMarkerGraphic in Karma.
+        accessibility: {
+            enabled: false
+        },
+        chart: {
+            height: axisHeight * 3
+        },
+        tooltip: {
+            split: true
+        },
+        yAxis: [{
+            height: axisHeight,
+            top: 0,
+            offset: 0
+        }, {
+            opposite: false,
+            height: axisHeight,
+            top: axisHeight,
+            offset: 0
+        }],
+        rangeSelector: {
+            enabled: false
+        },
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        series: [{ data: data, yAxis: 0 }, { data: data, yAxis: 1 }]
+    });
+
+    yAxis2.setExtremes(85, 90);
+    series1.points[2].onMouseOver();
+
+    assert.ok(
+        series1.stateMarkerGraphic,
+        'Should have stateMarkerGraphic on Series 1'
+    );
+    assert.strictEqual(
+        series1.stateMarkerGraphic.visibility,
+        'visible',
+        'Should have stateMarkerGraphic on Series 1 with visibility "visible"'
+    );
+    assert.ok(
+        series2.stateMarkerGraphic,
+        'Should have stateMarkerGraphic on Series 2'
+    );
+    assert.strictEqual(
+        series2.stateMarkerGraphic.visibility,
+        'hidden',
+        'Should have stateMarkerGraphic on Series 2 with visibility "hidden" when point is outside extremes. #11493'
+    );
+});

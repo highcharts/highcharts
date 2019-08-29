@@ -11,16 +11,16 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isString = U.isString;
+var defined = U.defined,
+    isArray = U.isArray,
+    isObject = U.isObject,
+    isString = U.isString,
+    objectEach = U.objectEach;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    defined = H.defined,
-    objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
-    isObject = H.isObject,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
@@ -49,8 +49,8 @@ wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
     }
 });
 
-H.Popup = function (parentDiv) {
-    this.init(parentDiv);
+H.Popup = function (parentDiv, iconsURL) {
+    this.init(parentDiv, iconsURL);
 };
 
 H.Popup.prototype = {
@@ -58,9 +58,10 @@ H.Popup.prototype = {
      * Initialize the popup. Create base div and add close button.
      * @private
      * @param {HTMLDOMElement} - container where popup should be placed
+     * @param {Object} - user options
      * @return {HTMLDOMElement} - return created popup's div
      */
-    init: function (parentDiv) {
+    init: function (parentDiv, iconsURL) {
 
         // create popup div
         this.container = createElement(DIV, {
@@ -68,6 +69,7 @@ H.Popup.prototype = {
         }, null, parentDiv);
 
         this.lang = this.getLangpack();
+        this.iconsURL = iconsURL;
 
         // add close button
         this.addCloseBtn();
@@ -84,6 +86,9 @@ H.Popup.prototype = {
         closeBtn = createElement(DIV, {
             className: PREFIX + 'popup-close'
         }, null, this.container);
+
+        closeBtn.style['background-image'] = 'url(' +
+                this.iconsURL + 'close.svg)';
 
         ['click', 'touchstart'].forEach(function (eventName) {
             addEvent(closeBtn, eventName, function () {
@@ -363,6 +368,8 @@ H.Popup.prototype = {
             );
 
             button.className += ' ' + PREFIX + 'annotation-remove-button';
+            button.style['background-image'] = 'url(' +
+                this.iconsURL + 'destroy.svg)';
 
             button = this.addButton(
                 popupDiv,
@@ -381,6 +388,9 @@ H.Popup.prototype = {
             );
 
             button.className += ' ' + PREFIX + 'annotation-edit-button';
+            button.style['background-image'] = 'url(' +
+                this.iconsURL + 'edit.svg)';
+
         },
         /**
          * Create annotation simple form.
@@ -1045,7 +1055,16 @@ H.Popup.prototype = {
 addEvent(H.NavigationBindings, 'showPopup', function (config) {
     if (!this.popup) {
         // Add popup to main container
-        this.popup = new H.Popup(this.chart.container);
+        this.popup = new H.Popup(
+            this.chart.container, (
+                this.chart.options.navigation.iconsURL ||
+                (
+                    this.chart.options.stockTools &&
+                    this.chart.options.stockTools.gui.iconsURL
+                ) ||
+                'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+            )
+        );
     }
 
     this.popup.showForm(

@@ -29,6 +29,8 @@ declare global {
         interface Chart {
             extraBottomMargin?: boolean;
             extraTopMargin?: boolean;
+            fixedRange?: number;
+            rangeSelector?: RangeSelector;
         }
         interface Options {
             rangeSelector?: RangeSelectorOptions;
@@ -129,7 +131,7 @@ declare global {
             ): RangeObject;
             public hideInput(name: string): void;
             public init(chart: Chart): void;
-            public render(min: number, max: number): void;
+            public render(min?: number, max?: number): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -173,8 +175,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber,
-    pInt
+    objectEach,
+    pInt,
+    splat
 } = U;
 
 import './Axis.js';
@@ -186,14 +191,12 @@ var addEvent = H.addEvent,
     css = H.css,
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
     extend = H.extend,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
-    splat = H.splat;
+    pick = H.pick;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -1510,16 +1513,16 @@ RangeSelector.prototype = {
      *
      * @private
      * @function Highcharts.RangeSelector#render
-     * @param {number} min
+     * @param {number} [min]
      *        X axis minimum
-     * @param {number} max
+     * @param {number} [max]
      *        X axis maximum
      * @return {void}
      */
     render: function (
         this: Highcharts.RangeSelector,
-        min: number,
-        max: number
+        min?: number,
+        max?: number
     ): void {
 
         var rangeSelector = this,
@@ -1613,7 +1616,7 @@ RangeSelector.prototype = {
                         rangeOptions.text as any,
                         0,
                         0,
-                        function (e: Event): void {
+                        function (e: (Event|Highcharts.Dictionary<any>)): void {
 
                             // extract events from button object and call
                             var buttonEvents = (
@@ -1624,7 +1627,7 @@ RangeSelector.prototype = {
 
                             if (buttonEvents) {
                                 callDefaultEvent =
-                                        buttonEvents.call(rangeOptions, e);
+                                    buttonEvents.call(rangeOptions, e as any);
                             }
 
                             if (callDefaultEvent !== false) {
@@ -1963,7 +1966,7 @@ RangeSelector.prototype = {
         this.destroy();
         this.init(chart);
 
-        chart.rangeSelector.render();
+        (chart.rangeSelector as any).render();
     },
 
     /**
@@ -1992,11 +1995,7 @@ RangeSelector.prototype = {
         }
 
         // Destroy HTML and SVG elements
-        H.objectEach(rSelector, function (
-            this: Highcharts.RangeSelector,
-            val: unknown,
-            key: string
-        ): void {
+        objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
                 if ((val as Highcharts.SVGElement).destroy) {
                     // SVGElement
@@ -2084,7 +2083,7 @@ Axis.prototype.minFromRange = function (
 
 if (!H.RangeSelector) {
     // Initialize rangeselector for stock charts
-    addEvent(Chart as any, 'afterGetContainer', function (
+    addEvent(Chart, 'afterGetContainer', function (
         this: Highcharts.Chart
     ): void {
         if ((this.options.rangeSelector as any).enabled) {
@@ -2092,9 +2091,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart as any, 'beforeRender', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
 
         var chart = this,
             axes = chart.axes,
@@ -2129,7 +2126,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart as any, 'update', function (
+    addEvent(Chart, 'update', function (
         this: Highcharts.Chart,
         e: Highcharts.Chart
     ): void {
@@ -2185,7 +2182,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart as any, 'render', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
         var chart = this,
             rangeSelector = chart.rangeSelector,
             verticalAlign;
@@ -2203,7 +2200,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart as any, 'getMargins', function (
+    addEvent(Chart, 'getMargins', function (
         this: Highcharts.Chart
     ): void {
         var rangeSelector = this.rangeSelector,
@@ -2216,7 +2213,7 @@ if (!H.RangeSelector) {
             }
 
             if (this.extraBottomMargin) {
-                this.marginBottom += rangeSelectorHeight;
+                (this.marginBottom as any) += rangeSelectorHeight;
             }
         }
     });
@@ -2233,7 +2230,7 @@ if (!H.RangeSelector) {
         function renderRangeSelector(): void {
             extremes = chart.xAxis[0].getExtremes();
             if (isNumber(extremes.min)) {
-                rangeSelector.render(extremes.min, extremes.max);
+                (rangeSelector as any).render(extremes.min, extremes.max);
             }
         }
 
@@ -2243,7 +2240,7 @@ if (!H.RangeSelector) {
                 chart.xAxis[0],
                 'afterSetExtremes',
                 function (e: Highcharts.RangeObject): void {
-                    rangeSelector.render(e.min, e.max);
+                    (rangeSelector as any).render(e.min, e.max);
                 }
             );
 

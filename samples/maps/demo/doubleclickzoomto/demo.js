@@ -1,8 +1,8 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Prevent logarithmic errors in color calulcation
-    $.each(data, function () {
-        this.value = (this.value < 1 ? 1 : this.value);
+    data.forEach(function (p) {
+        p.value = (p.value < 1 ? 1 : p.value);
     });
 
     // Initiate the chart

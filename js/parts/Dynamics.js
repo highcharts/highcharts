@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, defined = H.defined, erase = H.erase, extend = H.extend, fireEvent = H.fireEvent, isObject = H.isObject, merge = H.merge, objectEach = H.objectEach, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation, splat = H.splat;
+var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -36,7 +36,8 @@ H.cleanRecursively = function (newer, older) {
             }
             // Arrays, primitives and DOM nodes are copied directly
         }
-        else if (isObject(newer[key]) || newer[key] !== older[key]) {
+        else if (isObject(newer[key]) ||
+            newer[key] !== older[key]) {
             result[key] = newer[key];
         }
     });
@@ -174,7 +175,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         loadingDiv.className = 'highcharts-loading';
         // Update text
         chart.loadingSpan.innerHTML =
-            str || options.lang.loading;
+            pick(str, options.lang.loading, '');
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend(loadingOptions.style, {
@@ -997,6 +998,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // when updating after addPoint
             series.xData[0])
         }, (!keepPoints && { data: series.options.data }), options);
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
         // Make sure preserved properties are not destroyed (#3094)
         preserve = groups.concat(preserve);
         preserve.forEach(function (prop) {

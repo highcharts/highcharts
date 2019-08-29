@@ -73,12 +73,15 @@ declare global {
 import './Chart.js';
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    isArray,
+    isObject,
+    objectEach,
+    splat
+} = U;
 
 var Chart = H.Chart,
-    isObject = H.isObject,
-    pick = H.pick,
-    splat = H.splat;
+    pick = H.pick;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -223,7 +226,6 @@ Chart.prototype.setResponsive = function (
 
     if (!reset && options && options.rules) {
         options.rules.forEach(function (
-            this: Highcharts.Chart,
             rule: Highcharts.ResponsiveRulesOptions
         ): void {
             if (rule._id === undefined) {
@@ -341,7 +343,7 @@ Chart.prototype.currentOptions = function (
     ): void {
         var i;
 
-        H.objectEach(options, function (
+        objectEach(options, function (
             val: Highcharts.Dictionary<any>,
             key: string
         ): void {

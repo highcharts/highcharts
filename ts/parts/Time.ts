@@ -12,6 +12,14 @@
 
 import Highcharts from './Globals.js';
 
+import U from './Utilities.js';
+const {
+    defined,
+    isObject,
+    objectEach,
+    splat
+} = U;
+
 /**
  * Internal types
  * @private
@@ -138,7 +146,6 @@ declare global {
  */
 
 var H = Highcharts,
-    defined = H.defined,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick,
@@ -622,7 +629,7 @@ Highcharts.Time.prototype = {
         timestamp?: (boolean|number),
         capitalize?: boolean
     ): string {
-        if (!H.defined(timestamp) || isNaN(timestamp as any)) {
+        if (!defined(timestamp) || isNaN(timestamp as any)) {
             return (H.defaultOptions.lang as any).invalidDate || '';
         }
         format = H.pick(format, '%Y-%m-%d %H:%M:%S');
@@ -703,7 +710,7 @@ Highcharts.Time.prototype = {
 
 
         // Do the replaces
-        H.objectEach(replacements, function (
+        objectEach(replacements, function (
             val: (string|Function),
             key: string
         ): void {
@@ -737,8 +744,8 @@ Highcharts.Time.prototype = {
         this: Highcharts.Time,
         f: (string|Array<T>|Highcharts.Dictionary<T>)
     ): Highcharts.Dictionary<T> {
-        if (!H.isObject(f, true)) { // check for string or array
-            f = H.splat(f);
+        if (!isObject(f, true)) { // check for string or array
+            f = splat(f);
             return {
                 main: f[0],
                 from: f[1],

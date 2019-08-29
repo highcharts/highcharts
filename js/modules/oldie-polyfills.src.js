@@ -15,11 +15,11 @@
 'use strict';
 /* eslint-disable no-extend-native */
 if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function (fn, ctx) {
+    Array.prototype.forEach = function (fn, thisArg) {
         var i = 0, len = this.length;
         for (; i < len; i++) {
             if (this[i] !== undefined && // added check
-                fn.call(ctx, this[i], i, this) === false) {
+                fn.call(thisArg, this[i], i, this) === false) {
                 return i;
             }
         }
@@ -65,10 +65,10 @@ if (!Array.prototype.filter) {
     };
 }
 if (!Array.prototype.some) {
-    Array.prototype.some = function (fn, ctx) {
+    Array.prototype.some = function (fn, thisArg) {
         var i = 0, len = this.length;
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === true) {
+            if (fn.call(thisArg, this[i], i, this) === true) {
                 return true;
             }
         }
@@ -86,9 +86,9 @@ if (!Array.prototype.reduce) {
 }
 if (!Object.keys) {
     Object.keys = function (obj) {
-        var result = [], hasOwnProperty = Object.prototype.hasOwnProperty, prop;
+        var result = [], prop;
         for (prop in obj) {
-            if (hasOwnProperty.call(obj, prop)) {
+            if (Object.hasOwnProperty.call(obj, prop)) {
                 result.push(prop);
             }
         }

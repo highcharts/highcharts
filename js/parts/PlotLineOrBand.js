@@ -30,8 +30,9 @@ import Axis from './Axis.js';
  *
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
-import './Utilities.js';
-var arrayMax = H.arrayMax, arrayMin = H.arrayMin, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, merge = H.merge, pick = H.pick;
+import U from './Utilities.js';
+var defined = U.defined, erase = U.erase, objectEach = U.objectEach;
+var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -130,7 +131,7 @@ H.PlotLineOrBand.prototype = {
             svgElem.attr({ d: path });
             // events
             if (events) {
-                H.objectEach(events, function (event, eventType) {
+                objectEach(events, function (event, eventType) {
                     svgElem.on(eventType, function (e) {
                         events[eventType].apply(plotLine, [e]);
                     });
@@ -151,7 +152,7 @@ H.PlotLineOrBand.prototype = {
         }
         // the plot band/line label
         if (optionsLabel &&
-            defined(optionsLabel.text) &&
+            (defined(optionsLabel.text) || defined(optionsLabel.formatter)) &&
             path &&
             path.length &&
             axis.width > 0 &&
@@ -185,7 +186,7 @@ H.PlotLineOrBand.prototype = {
      * @return {void}
      */
     renderLabel: function (optionsLabel, path, isBand, zIndex) {
-        var plotLine = this, label = plotLine.label, renderer = plotLine.axis.chart.renderer, attribs, xBounds, yBounds, x, y;
+        var plotLine = this, label = plotLine.label, renderer = plotLine.axis.chart.renderer, attribs, xBounds, yBounds, x, y, labelText;
         // add the SVG element
         if (!label) {
             attribs = {
@@ -195,6 +196,7 @@ H.PlotLineOrBand.prototype = {
                     '-label ' + (optionsLabel.className || '')
             };
             attribs.zIndex = zIndex;
+            labelText = this.getLabelText(optionsLabel);
             /**
              * SVG element of the label.
              *
@@ -202,7 +204,7 @@ H.PlotLineOrBand.prototype = {
              * @type {Highcharts.SVGElement}
              */
             plotLine.label = label = renderer
-                .text(optionsLabel.text, 0, 0, optionsLabel.useHTML)
+                .text(labelText, 0, 0, optionsLabel.useHTML)
                 .attr(attribs)
                 .add();
             if (!this.axis.chart.styledMode) {
@@ -224,6 +226,20 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
+    },
+    /**
+     * Get label's text content.
+     *
+     * @private
+     * @function Highcharts.PlotLineOrBand#getLabelText
+     * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
+     * @return {string}
+     */
+    getLabelText: function (optionsLabel) {
+        return defined(optionsLabel.formatter) ?
+            optionsLabel.formatter
+                .call(this) :
+            optionsLabel.text;
     },
     /**
      * Remove the plot line or band.
@@ -656,6 +672,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @apioption  xAxis.plotLines.label.align
      */
     /**
+     * Callback JavaScript function to format the label. Useful properties like
+     * the value of plot line or the range of plot band (`from` & `to`
+     * properties) can be found in `this.options` object.
+     *
+     * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
+     *         Label formatters for plot line and plot band.
+     * @type      {Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>}
+     * @apioption xAxis.plotLines.label.formatter
+     */
+    /**
      * Rotation of the text label in degrees. Defaults to 0 for horizontal plot
      * lines and 90 for vertical lines.
      *
@@ -903,7 +929,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      * @function Highcharts.Axis#addPlotBandOrLine
      *
-     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
      *        The plotBand or plotLine configuration object.
      *
      * @param {"plotBands"|"plotLines"} [coll]
@@ -915,8 +941,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
-                userOptions[coll] = userOptions[coll] || [];
-                userOptions[coll].push(options);
+                // Workaround Microsoft/TypeScript issue #32693
+                var updatedOptions = (userOptions[coll] || []);
+                updatedOptions.push(options);
+                userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
         }

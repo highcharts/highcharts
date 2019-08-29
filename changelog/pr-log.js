@@ -18,7 +18,7 @@ const log = {
     'Highcharts Gantt': {}
 };
 
-module.exports = async () => {
+module.exports = async since => {
 
     const included = [];
 
@@ -33,7 +33,7 @@ module.exports = async () => {
     const commit = await octokit.repos.getCommit({
         owner: 'highcharts',
         repo: 'highcharts',
-        commit_sha: tags.data[0].commit.sha
+        ref: since || tags.data[0].commit.sha
     }).catch(error);
 
     console.log(
@@ -42,12 +42,12 @@ module.exports = async () => {
     );
     const after = Date.parse(commit.headers['last-modified']);
 
-    while (page < 5) {
+    while (page < 20) {
         const allPulls = await octokit.pulls.list({
             owner: 'highcharts',
             repo: 'highcharts',
             state: 'closed',
-            base: 'master',
+            // base: 'master',
             page
         }).catch(error);
 

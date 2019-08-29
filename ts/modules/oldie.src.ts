@@ -34,7 +34,7 @@ declare global {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
         }
-        interface SymbolsDictionary {
+        interface SymbolDictionary {
             rect(
                 x: number,
                 y: number,
@@ -48,6 +48,11 @@ declare global {
             isVML?: boolean;
             /** @requires highcharts/modules/oldies */
             getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
+            /** @requires highcharts/modules/oldies */
+            invertChild(
+                element: HTMLDOMElement,
+                parentNode: HTMLDOMElement
+            ): void;
             /** @requires highcharts/modules/oldies */
             measureSpanWidth(text: string, style: CSSObject): number;
         }
@@ -98,25 +103,36 @@ declare global {
             public element: VMLDOMElement;
             public elemHeight?: number;
             public getBBox: SVGElement['getBBox'];
+            public heightSetter: VMLElement['xSetter'];
             public inverted?: boolean;
             public isCircle?: boolean;
             public onAdd?: Function;
+            public opacitySetter: Function;
             public parentGroup?: VMLElement;
             public r?: number;
             public renderer: VMLRenderer;
             public rotation?: number;
             public shadows?: Array<VMLDOMElement>;
             public 'stroke-opacitySetter': VMLElement['fill-opacitySetter'];
+            public updateShadows: Function;
             public updateTransform: HTMLElement['htmlUpdateTransform'];
+            public widthSetter: VMLElement['xSetter'];
             public xCorr?: number;
             public yCorr?: number;
+            public ySetter: VMLElement['xSetter'];
             public add(parent?: VMLElement): VMLElement;
             public attr(attr?: VMLAttributes): VMLElement;
             public attr(key: string, val: string): VMLElement;
             public classGetter(): string;
             public classSetter(value: string): void;
+            public clip(clipRect: VMLClipRectObject): VMLElement;
             public css(style: CSSObject): VMLElement;
             public cutOffPath(path: string, length: number): string;
+            public dashstyleSetter(
+                value: string,
+                key: string,
+                element: HTMLDOMElement
+            ): void;
             public destroy(): void;
             public dSetter(
                 value: VMLPathArray,
@@ -187,6 +203,11 @@ declare global {
                 key: string,
                 element: VMLDOMElement
             ): void;
+            public zIndexSetter(
+                value: string,
+                key: string,
+                element: VMLDOMElement
+            ): void;
         }
         /** @requires highcharts/modules/oldies */
         class VMLRenderer {
@@ -201,7 +222,7 @@ declare global {
             public isIE8: boolean;
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
-            public symbols: SymbolsDictionary;
+            public symbols: SymbolDictionary;
             public circle(obj: Dictionary<number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
@@ -296,8 +317,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     pInt
 } = U;
 
@@ -305,18 +329,15 @@ import '../parts/SvgRenderer.js';
 
 var VMLRenderer,
     VMLRendererExtension,
-    VMLElement,
+    VMLElement: typeof Highcharts.VMLElement,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,
-    erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
-    isObject = H.isObject,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -394,7 +415,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement as any, 'afterInit', function (
+    H.addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
@@ -414,10 +435,12 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    H.Pointer.prototype.normalize = function (
-        e: PointerEvent,
+    H.Pointer.prototype.normalize = function<
+        T extends Highcharts.PointerEventObject
+    > (
+        e: (T|PointerEvent),
         chartPosition?: Highcharts.OffsetObject
-    ): Highcharts.PointerEventObject {
+    ): T {
 
         e = e || win.event;
         if (!e.target) {
@@ -429,12 +452,12 @@ if (!svg) {
             this.chartPosition = chartPosition = H.offset(this.chart.container);
         }
 
-        return H.extend(e as Highcharts.PointerEventObject, {
+        return H.extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
             chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
             chartY: Math.round(e.y)
-        });
+        }) as T;
     };
 
     /**
@@ -853,7 +876,7 @@ if (!svg) {
          * @param {Highcharts.CSSObject} styles
          * @return {Highcharts.VMLElement}
          */
-        css: SVGElement.prototype.htmlCss as Highcharts.HTMLElement['htmlCss'],
+        css: SVGElement.prototype.htmlCss as any,
 
         /**
          * Removes a child either by removeChild or move to garbageBin.
@@ -1064,7 +1087,10 @@ if (!svg) {
             }
             return this.element.getAttribute(key);
         },
-        classSetter: function (value: string): void {
+        classSetter: function (
+            this: Highcharts.VMLElement,
+            value: string
+        ): void {
             // IE8 Standards mode has problems retrieving the className unless
             // set like this. IE8 Standards can't set the class name before the
             // element is appended.
@@ -1283,9 +1309,9 @@ if (!svg) {
         classGetter: function (this: Highcharts.VMLElement): string {
             return this.getAttr('className') || '';
         }
-    };
+    } as any;
     (VMLElement as any)['stroke-opacitySetter'] =
-        VMLElement['fill-opacitySetter'];
+        (VMLElement as any)['fill-opacitySetter'];
     H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
     // Some shared setters
@@ -1477,7 +1503,8 @@ if (!svg) {
          * @return {T}
          */
         color: function<T extends (
-            Highcharts.ColorString|Highcharts.GradientColorObject
+            Highcharts.ColorString|Highcharts.GradientColorObject|
+            Highcharts.PatternObject
         )> (
             this: Highcharts.VMLRenderer,
             color: T,
@@ -1493,9 +1520,15 @@ if (!svg) {
                 ret = 'none' as T;
 
             // Check for linear or radial gradient
-            if (color && (color as any).linearGradient) {
+            if (
+                color &&
+                (color as Highcharts.GradientColorObject).linearGradient
+            ) {
                 fillType = 'gradient';
-            } else if (color && (color as any).radialGradient) {
+            } else if (
+                color &&
+                (color as Highcharts.GradientColorObject).radialGradient
+            ) {
                 fillType = 'pattern';
             }
 
@@ -1503,11 +1536,18 @@ if (!svg) {
             if (fillType) {
 
                 var stopColor: (Highcharts.ColorString|undefined),
-                    stopOpacity,
-                    gradient = (
-                        (color as any).linearGradient ||
-                        (color as any).radialGradient
-                    ),
+                    stopOpacity: number,
+                    gradient: (
+                        Highcharts.LinearGradientColorObject|
+                        Highcharts.RadialGradientColorObject
+                    ) = (
+                        (
+                            color as Highcharts.GradientColorObject
+                        ).linearGradient ||
+                        (
+                            color as Highcharts.GradientColorObject
+                        ).radialGradient
+                    ) as any,
                     x1,
                     y1,
                     x2,
@@ -1517,9 +1557,7 @@ if (!svg) {
                     color1: (Highcharts.ColorString|undefined),
                     color2: (Highcharts.ColorString|undefined),
                     fillAttr = '',
-                    stops = (color as any).stops as (
-                        Highcharts.GradientColorObject['stops']
-                    ),
+                    stops = (color as Highcharts.GradientColorObject).stops,
                     firstStop,
                     lastStop,
                     colors = [] as Array<Highcharts.ColorString>,
@@ -1562,7 +1600,7 @@ if (!svg) {
                     if (regexRgba.test(stop[1])) {
                         colorObject = H.color(stop[1]);
                         stopColor = colorObject.get('rgb') as any;
-                        stopOpacity = colorObject.get('a');
+                        stopOpacity = colorObject.get('a') as any;
                     } else {
                         stopColor = stop[1];
                         stopOpacity = 1;
@@ -1575,10 +1613,10 @@ if (!svg) {
                     // first and the last
                     if (!i) {
                         opacity1 = stopOpacity as any;
-                        color2 = stopColor as any;
+                        color2 = stopColor;
                     } else {
                         opacity2 = stopOpacity as any;
-                        color1 = stopColor as any;
+                        color1 = stopColor;
                     }
                 });
 
@@ -1587,10 +1625,10 @@ if (!svg) {
 
                     // Handle linear gradient angle
                     if (fillType === 'gradient') {
-                        x1 = gradient.x1 || gradient[0] || 0;
-                        y1 = gradient.y1 || gradient[1] || 0;
-                        x2 = gradient.x2 || gradient[2] || 0;
-                        y2 = gradient.y2 || gradient[3] || 0;
+                        x1 = (gradient as any).x1 || (gradient as any)[0] || 0;
+                        y1 = (gradient as any).y1 || (gradient as any)[1] || 0;
+                        x2 = (gradient as any).x2 || (gradient as any)[2] || 0;
+                        y2 = (gradient as any).y2 || (gradient as any)[3] || 0;
                         fillAttr = 'angle="' + (90 - Math.atan(
                             (y2 - y1) / // y vector
                             (x2 - x1) // x vector
@@ -1601,11 +1639,11 @@ if (!svg) {
                     // Radial (circular) gradient
                     } else {
 
-                        var r = gradient.r,
+                        var r = (gradient as any).r,
                             sizex = r * 2,
                             sizey = r * 2,
-                            cx = gradient.cx,
-                            cy = gradient.cy,
+                            cx = (gradient as any).cx,
+                            cy = (gradient as any).cy,
                             radialReference = elem.radialReference,
                             bBox,
                             applyRadialGradient = function (): void {
@@ -1656,7 +1694,7 @@ if (!svg) {
             // to hold the opacity component
             } else if (regexRgba.test(color as any) && elem.tagName !== 'IMG') {
 
-                colorObject = H.color(color as any);
+                colorObject = H.color(color);
 
                 (wrapper as any)[prop + '-opacitySetter'](
                     colorObject.get('a'),
@@ -2059,7 +2097,7 @@ SVGRenderer.prototype.getSpanWidth = function (
     if (!svg && renderer.forExport) {
         actualWidth = renderer.measureSpanWidth(
             (tspan.firstChild as any).data,
-            wrapper.styles
+            wrapper.styles as any
         );
     }
     return actualWidth;

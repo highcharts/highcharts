@@ -59,7 +59,7 @@ import H from './Globals.js';
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string|undefined}
+ * @return {number|string|null|undefined}
  *         Formatted data label text
  */
 /**
@@ -156,7 +156,7 @@ import H from './Globals.js';
 *      Data labels box options
 *
 * @name Highcharts.DataLabelsOptionsObject#borderColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 * @since 2.2.1
 */ /**
 * The border radius in pixels for the data label.
@@ -208,7 +208,7 @@ import H from './Globals.js';
 *      White data labels
 *
 * @name Highcharts.DataLabelsOptionsObject#color
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * Whether to hide data labels that are outside the plot area. By default, the
 * data label is moved inside the plot area according to the
@@ -412,7 +412,7 @@ import H from './Globals.js';
 * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
 * true will disable this option.
 * @name Highcharts.DataLabelsOptionsObject#textPath
-* @type {Highcharts.DataLabelsTextPath|undefined}
+* @type {Highcharts.DataLabelsTextPathOptionsObject|undefined}
 * @since 7.1.0
 */ /**
 * Whether to
@@ -469,16 +469,16 @@ import H from './Globals.js';
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.DataLabelsTextPath
+ * @interface Highcharts.DataLabelsTextPathOptionsObject
  * @since 7.1.0
  */ /**
 * Presentation attributes for the text path.
-* @name Highcharts.DataLabelsTextPath#attributes
-* @type {Highcharts.SVGAttributes}
+* @name Highcharts.DataLabelsTextPathOptionsObject#attributes
+* @type {Highcharts.SVGAttributes|undefined}
 * @since 7.1.0
 */ /**
 * Enable or disable `textPath` option for link's or marker's data labels.
-* @name Highcharts.DataLabelsTextPath#enabled
+* @name Highcharts.DataLabelsTextPathOptionsObject#enabled
 * @type {boolean|undefined}
 * @since 7.1.0
 */
@@ -495,9 +495,9 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, objectEach = U.objectEach, splat = U.splat;
 import './Series.js';
-var arrayMax = H.arrayMax, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, isIntersectRect = H.isIntersectRect, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort, splat = H.splat;
+var arrayMax = H.arrayMax, extend = H.extend, format = H.format, merge = H.merge, noop = H.noop, pick = H.pick, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -745,7 +745,7 @@ Series.prototype.drawDataLabels = function () {
                         style.color = pick(labelOptions.color, style.color, series.color, '${palette.neutralColor100}');
                         // Get automated contrast color
                         if (style.color === 'contrast') {
-                            point.contrastColor = renderer.getContrast(point.color || series.color);
+                            point.contrastColor = renderer.getContrast((point.color || series.color));
                             style.color = (!defined(labelDistance) &&
                                 labelOptions.inside) ||
                                 labelDistance < 0 ||
@@ -769,7 +769,7 @@ Series.prototype.drawDataLabels = function () {
                         attr['stroke-width'] = labelOptions.borderWidth;
                     }
                     // Remove unused attributes (#947)
-                    H.objectEach(attr, function (val, name) {
+                    objectEach(attr, function (val, name) {
                         if (val === undefined) {
                             delete attr[name];
                         }
@@ -792,8 +792,7 @@ Series.prototype.drawDataLabels = function () {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        point.connector =
-                            point.connector.destroy();
+                        point.connector = point.connector.destroy();
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {
@@ -935,7 +934,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
         }
         // Handle justify or crop
         if (justify && alignTo.height >= 0) { // #8830
-            point.isLabelJustified = this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+            this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
             // Now check that the data label is within the plot area
         }
         else if (pick(options.crop, true)) {
@@ -983,6 +982,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
+            options.inside = true;
         }
         else {
             options.x = -off;
@@ -994,6 +994,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
+            options.inside = true;
         }
         else {
             options.x = chart.plotWidth - off;
@@ -1005,6 +1006,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
+            options.inside = true;
         }
         else {
             options.y = -off;
@@ -1016,6 +1018,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
+            options.inside = true;
         }
         else {
             options.y = chart.plotHeight - off;
@@ -1333,7 +1336,7 @@ if (seriesTypes.pie) {
      *
      * @param {*} labelPos
      *
-     * @return {Highcharts.PathObject}
+     * @return {Highcharts.SVGPathArray}
      */
     // TODO: depracated - remove it
     /*
@@ -1522,14 +1525,7 @@ if (seriesTypes.column) {
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         // If label was justified and we have contrast, set it:
-        if (point.contrastColor &&
-            point.shapeArgs &&
-            isIntersectRect({
-                x: dataLabel.x,
-                y: dataLabel.y,
-                width: dataLabel.width - dataLabel.padding,
-                height: dataLabel.height - dataLabel.padding
-            }, point.shapeArgs)) {
+        if (options.inside && point.contrastColor) {
             dataLabel.css({
                 color: point.contrastColor
             });

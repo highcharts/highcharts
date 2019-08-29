@@ -37,7 +37,7 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
 
 });
 
-QUnit.test('Area range with compare (#4922)', function (assert) {
+QUnit.test('Area range with compare (#4922) and NaN (#11513)', function (assert) {
     var chart = Highcharts.stockChart('container', {
 
         chart: {
@@ -52,12 +52,19 @@ QUnit.test('Area range with compare (#4922)', function (assert) {
 
         series: [{
             data: [
+                [0, NaN, NaN], // #11513
                 [0, 3, 4],
                 [1, 4, 6],
                 [2, 2, 3]
             ]
         }]
     });
+
+    assert.strictEqual(
+        typeof chart.yAxis[0].min,
+        'number',
+        'The Y axis extremes should be valid (#11513)'
+    );
 
     assert.ok(
         typeof chart.series[0].graph.element.getAttribute('d'),

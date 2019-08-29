@@ -21,14 +21,21 @@ declare global {
         interface Axis {
             fake?: boolean;
             previousZoom?: [(null|number), (null|number)];
+            toFixedRange(
+                pxMin?: number,
+                pxMax?: number,
+                fixedMin?: number,
+                fixedMax?: number
+            ): RangeObject;
         }
         interface Chart {
+            navigator?: Navigator;
             scrollbar?: Scrollbar;
             scroller?: Navigator;
         }
         interface NavigatorHandlesOptions {
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             enabled?: boolean;
             height?: number;
             lineWidth?: number;
@@ -41,11 +48,12 @@ declare global {
             enabled?: boolean;
             handles?: NavigatorHandlesOptions;
             height?: number;
+            isInternal?: boolean;
             margin?: number;
             maskFill?: (ColorString|GradientColorObject|PatternObject);
             maskInside?: boolean;
             opposite?: boolean;
-            outlineColor?: ColorString;
+            outlineColor?: (ColorString|GradientColorObject|PatternObject);
             outlineWidth?: number;
             series?: SeriesOptionsType;
             top?: number;
@@ -60,7 +68,7 @@ declare global {
             navigatorSeries?: Series;
         }
         interface SymbolDictionary {
-            'navigator-handle'?: (
+            'navigator-handle': (
                 x: number,
                 y: number,
                 w: number,
@@ -129,19 +137,19 @@ declare global {
             public drawHandle(
                 x: number,
                 index: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public drawMasks(
                 zoomedMin: number,
                 zoomedMax: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public drawOutline(
                 zoomedMin: number,
                 zoomedMax: number,
-                inverted: boolean,
+                inverted: (boolean|undefined),
                 verb: string
             ): void;
             public getBaseSeriesMin(currentSeriesMin: number): number;
@@ -180,8 +188,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
+    erase,
     isArray,
-    isNumber
+    isNumber,
+    splat
 } = U;
 
 import './Color.js';
@@ -196,9 +207,7 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     color = H.color,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    erase = H.erase,
     extend = H.extend,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -410,7 +419,7 @@ extend(defaultOptions, {
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             borderColor: '${palette.neutralColor40}'
         },
@@ -439,7 +448,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/outline/
          *         2px blue outline
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
         outlineColor: '${palette.neutralColor20}',
@@ -774,32 +783,34 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
  *
  * @private
  * @function Highcharts.Axis#toFixedRange
- * @param {number} pxMin
- * @param {number} pxMax
- * @param {number} fixedMin
- * @param {number} fixedMax
+ * @param {number} [pxMin]
+ * @param {number} [pxMax]
+ * @param {number} [fixedMin]
+ * @param {number} [fixedMax]
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (
     this: Highcharts.Axis,
-    pxMin: number,
-    pxMax: number,
-    fixedMin: number,
-    fixedMax: number
+    pxMin?: number,
+    pxMax?: number,
+    fixedMin?: number,
+    fixedMax?: number
 ): Highcharts.RangeObject {
     var fixedRange = this.chart && this.chart.fixedRange,
-        newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)),
-        newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)),
+        newMin =
+            pick(fixedMin, this.translate(pxMin as any, true, !this.horiz)),
+        newMax =
+            pick(fixedMax, this.translate(pxMax as any, true, !this.horiz)),
         changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
     // If the difference between the fixed range and the actual requested range
     // is too great, the user is dragging across an ordinal gap, and we need to
     // release the range selector button.
-    if (changeRatio > 0.7 && changeRatio < 1.3) {
+    if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
         if (fixedMax) {
-            newMin = newMax - fixedRange;
+            newMin = newMax - (fixedRange as any);
         } else {
-            newMax = newMin + fixedRange;
+            newMax = newMin + (fixedRange as any);
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
@@ -840,7 +851,7 @@ Navigator.prototype = {
      * @param {number} index
      *        0 for left and 1 for right
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag for chart.inverted
      *
      * @param {string} verb
@@ -882,7 +893,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -892,7 +903,7 @@ Navigator.prototype = {
         this: Highcharts.Navigator,
         zoomedMin: number,
         zoomedMax: number,
-        inverted: boolean,
+        inverted: (boolean|undefined),
         verb: string
     ): void {
         var navigator = this,
@@ -992,7 +1003,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -1002,7 +1013,7 @@ Navigator.prototype = {
         this: Highcharts.Navigator,
         zoomedMin: number,
         zoomedMax: number,
-        inverted: boolean,
+        inverted: (boolean|undefined),
         verb: string
     ): void {
         var navigator = this,
@@ -1584,7 +1595,7 @@ Navigator.prototype = {
             navigator.fixedExtreme = reverse ? baseXAxis.max : baseXAxis.min;
         }
 
-        chart.fixedRange = null;
+        chart.fixedRange = null as any;
     },
     /**
      * Mouse move event based on x/y mouse position.
@@ -1792,10 +1803,7 @@ Navigator.prototype = {
 
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                baseSeries.forEach(function (
-                    this: Highcharts.Navigator,
-                    series: Highcharts.Series
-                ): void {
+                baseSeries.forEach(function (series: Highcharts.Series): void {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }
@@ -1861,7 +1869,7 @@ Navigator.prototype = {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge({
+            navigator.xAxis = new Axis(chart, merge<Highcharts.XAxisOptions>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -2255,7 +2263,7 @@ Navigator.prototype = {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
-                (H.splat(chartNavigatorSeriesOptions) as any);
+                (splat(chartNavigatorSeriesOptions) as any);
             (chartNavigatorSeriesOptions as any).forEach(function (
                 userSeriesOptions: Highcharts.SeriesOptionsType,
                 i: number
@@ -2319,10 +2327,7 @@ Navigator.prototype = {
             );
         }
 
-        baseSeries.forEach(function (
-            this: Highcharts.Navigator,
-            base: Highcharts.Series
-        ): void {
+        baseSeries.forEach(function (base: Highcharts.Series): void {
             // Link base series show/hide to navigator series visibility
             addEvent(base, 'show', function (this: Highcharts.Series): void {
                 if (this.navigatorSeries) {
@@ -2602,7 +2607,7 @@ Navigator.prototype = {
             'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
             'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
             'rendered'
-        ].forEach(function (this: Highcharts.Navigator, prop: string): void {
+        ].forEach(function (prop: string): void {
             if ((this as any)[prop] && (this as any)[prop].destroy) {
                 (this as any)[prop].destroy();
             }
@@ -2611,7 +2616,6 @@ Navigator.prototype = {
 
         // Destroy elements in collection
         [this.handles].forEach(function (
-            this: Highcharts.Navigator,
             coll: Array<Highcharts.SVGElement>
         ): void {
             destroyObjectProperties(coll);
@@ -2625,7 +2629,7 @@ if (!H.Navigator) {
     // For Stock charts, override selection zooming with some special features
     // because X axis zooming is already allowed by the Navigator and Range
     // selector.
-    addEvent(Axis as any, 'zoom', function (
+    addEvent(Axis, 'zoom', function (
         this: Highcharts.Axis,
         e: Highcharts.Dictionary<any>
     ): void {
@@ -2675,7 +2679,7 @@ if (!H.Navigator) {
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)
-    addEvent(Chart as any, 'beforeShowResetZoom', function (
+    addEvent(Chart, 'beforeShowResetZoom', function (
         this: Highcharts.Chart
     ): (boolean|undefined) {
         var chartOptions = this.options,
@@ -2692,9 +2696,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator for stock charts
-    addEvent(Chart as any, 'beforeRender', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
         var options = this.options;
 
         if ((options.navigator as any).enabled ||
@@ -2708,7 +2710,7 @@ if (!H.Navigator) {
     // the final top position of the navigator once the height of the chart,
     // including the legend, is determined. #367. We can't use Chart.getMargins,
     // because labels offsets are not calculated yet.
-    addEvent(Chart as any, 'afterSetChartSize', function (
+    addEvent(Chart, 'afterSetChartSize', function (
         this: Highcharts.Chart
     ): void {
 
@@ -2772,7 +2774,7 @@ if (!H.Navigator) {
     });
 
     // Merge options, if no scrolling exists yet
-    addEvent(Chart as any, 'update', function (
+    addEvent(Chart, 'update', function (
         this: Highcharts.Chart,
         e: Highcharts.Chart
     ): void {
@@ -2792,7 +2794,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator, if no scrolling exists yet
-    addEvent(Chart as any, 'afterUpdate', function (
+    addEvent(Chart, 'afterUpdate', function (
         this: Highcharts.Chart,
         event: Highcharts.ChartAfterUpdateEventObject
     ): void {
@@ -2811,9 +2813,7 @@ if (!H.Navigator) {
     });
 
     // Handle adding new series
-    addEvent(Chart as any, 'afterAddSeries', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterAddSeries', function (this: Highcharts.Chart): void {
         if (this.navigator) {
             // Recompute which series should be shown in navigator, and add them
             this.navigator.setBaseSeries(null as any, false);
@@ -2821,9 +2821,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(Series as any, 'afterUpdate', function (
-        this: Highcharts.Series
-    ): void {
+    addEvent(Series, 'afterUpdate', function (this: Highcharts.Series): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

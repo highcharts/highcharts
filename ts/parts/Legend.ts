@@ -18,30 +18,14 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface BubbleLegend extends LegendItemObject {
+        }
         interface LegendCheckBoxElement extends HTMLDOMElement {
             checked?: boolean;
             x: number;
             y: number;
         }
-        interface LegendSymbolMixin {
-            drawLineMarker(legend: Legend): void;
-            drawRectangle(legend: Legend, item: (Point|Series)): void;
-        }
-        interface Point {
-            _legendItemPos?: Array<number>;
-            checkbox?: LegendCheckBoxElement;
-            checkboxOffset?: number;
-            itemHeight?: number;
-            itemWidth?: number;
-            legendGroup?: SVGElement;
-            legendItem?: SVGElement;
-            legendItemHeight?: number;
-            legendItemWidth?: number;
-            legendLine?: SVGElement;
-            legendSymbol?: SVGElement;
-            pageIx?: number;
-        }
-        interface Series extends LegendSymbolMixin {
+        interface LegendItemObject extends LegendSymbolMixin {
             _legendItemPos?: Array<number>;
             checkbox?: LegendCheckBoxElement;
             checkboxOffset?: number;
@@ -56,15 +40,22 @@ declare global {
             legendSymbol?: SVGElement;
             pageIx?: number;
         }
-        interface SeriesOptions {
+        interface LegendSymbolMixin {
+            drawLineMarker(legend: Legend): void;
+            drawRectangle(legend: Legend, item: (Point|Series)): void;
+        }
+        interface PlotSeriesOptions {
             legendType?: ('point'|'series');
+        }
+        interface Point extends LegendItemObject {
+        }
+        interface Series extends LegendItemObject {
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
-            public allItems: Array<(Point|Series)>;
+            public allItems: Array<(BubbleLegend|Point|Series)>;
             public baseline?: number;
             public box: SVGElement;
-            public bubbleLegend?: boolean;
             public chart: Chart;
             public clipHeight?: number;
             public clipRect?: SVGElement
@@ -111,27 +102,30 @@ declare global {
                 margin: Array<number>,
                 spacing: Array<number>
             ): void;
-            public colorizeItem(item: (Point|Series), visible?: boolean): void;
+            public colorizeItem(
+                item: (BubbleLegend|Point|Series),
+                visible?: boolean
+            ): void;
             public destroy(): void;
-            public destroyItem(item: (Point|Series)): void;
+            public destroyItem(item: (BubbleLegend|Point|Series)): void;
             public getAlignment(): string;
-            public getAllItems(): Array<Point|Series>;
+            public getAllItems(): Array<(BubbleLegend|Point|Series)>;
             public handleOverflow(legendHeight: number): number;
             public init(chart: Chart, options: LegendOptions): void;
-            public layoutItem(item: (Point|Series)): void;
+            public layoutItem(item: (BubbleLegend|Point|Series)): void;
             public render(): void;
             public positionCheckboxes(): void;
-            public positionItem(item: (Point|Series)): void;
+            public positionItem(item: (BubbleLegend|Point|Series)): void;
             public positionItems(): void;
             public proximatePositions(): void;
-            public renderItem(item: (Point|Series)): void;
+            public renderItem(item: (BubbleLegend|Point|Series)): void;
             public renderTitle(): void;
             public scroll(
                 scrollBy: number,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
             public setOptions(options: LegendOptions): void;
-            public setText(item: (Point|Series)): void;
+            public setText(item: (BubbleLegend|Point|Series)): void;
             public update(options: LegendOptions, redraw?: boolean): void;
         }
         let LegendSymbolMixin: LegendSymbolMixin;
@@ -220,6 +214,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
@@ -227,7 +222,6 @@ var H = Highcharts,
     addEvent = H.addEvent,
     css = H.css,
     discardElement = H.discardElement,
-    defined = H.defined,
     fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
@@ -403,13 +397,10 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#colorizeItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        A Series or Point instance
-     *
      * @param {boolean} [visible=false]
      *        Dimmed or colored
-     *
      * @return {void}
      *
      * @todo
@@ -417,7 +408,7 @@ Highcharts.Legend.prototype = {
      */
     colorizeItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -435,9 +426,9 @@ Highcharts.Legend.prototype = {
                     (options.itemStyle as any).color :
                     hiddenColor,
                 symbolColor = visible ?
-                    (item.color || hiddenColor) :
+                    ((item as any).color || hiddenColor) :
                     hiddenColor,
-                markerOptions = item.options && item.options.marker,
+                markerOptions = item.options && (item.options as any).marker,
                 symbolAttr = { fill: symbolColor } as Highcharts.SVGAttributes;
 
             if (legendItem) {
@@ -489,10 +480,8 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#positionItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to position
-     *
      * @return {void}
      */
     positionItem: function (
@@ -529,13 +518,13 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#destroyItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to remove
+     * @return {void}
      */
     destroyItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
         var checkbox = item.checkbox;
 
@@ -575,7 +564,7 @@ Highcharts.Legend.prototype = {
 
         // Destroy items
         this.getAllItems().forEach(function (
-            item: (Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
         ): void {
             ['legendItem', 'legendGroup'].forEach(destroyItems, item);
         });
@@ -610,8 +599,9 @@ Highcharts.Legend.prototype = {
         if (alignAttr) {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (
-                this: Highcharts.Legend,
-                item: (Highcharts.Point|Highcharts.Series)
+                item: (
+                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                )
             ): void {
                 var checkbox = item.checkbox,
                     top;
@@ -705,14 +695,14 @@ Highcharts.Legend.prototype = {
      */
     setText: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
         var options = this.options;
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
                 H.format(options.labelFormat, item, this.chart.time) :
-                options.labelFormatter.call(item)
+                (options.labelFormatter as any).call(item)
         });
     },
 
@@ -723,14 +713,14 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#renderItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to render.
      *
      * @return {void}
      */
     renderItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
         var legend = this,
             chart = legend.chart,
@@ -767,7 +757,7 @@ Highcharts.Legend.prototype = {
                 .g('legend-item')
                 .addClass(
                     'highcharts-' + series.type + '-series ' +
-                    'highcharts-color-' + item.colorIndex +
+                    'highcharts-color-' + (item as any).colorIndex +
                     (itemClassName ? ' ' + itemClassName : '') +
                     (
                         isSeries ?
@@ -872,13 +862,13 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#layoutItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *
      * @return {void}
      */
     layoutItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
 
         var options = this.options,
@@ -947,25 +937,25 @@ Highcharts.Legend.prototype = {
 
     /**
      * Get all items, which is one item per series for most series and one
-     * item per point for pie series and its derivatives.
+     * item per point for pie series and its derivatives. Fires the event
+     * `afterGetAllItems`.
      *
      * @private
      * @function Highcharts.Legend#getAllItems
-     *
-     * @return {Array<(Highcharts.Point|Highcharts.Series)>}
+     * @return {Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)>}
      *         The current items in the legend.
-     *
      * @fires Highcharts.Legend#event:afterGetAllItems
-     *
-     * @todo
-     * Make events official: Fires the event `afterGetAllItems`.
      */
     getAllItems: function (
         this: Highcharts.Legend
-    ): Array<(Highcharts.Point|Highcharts.Series)> {
-        var allItems = [] as Array<(Highcharts.Point|Highcharts.Series)>;
+    ): Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)> {
+        var allItems = [] as Array<(
+            Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+        )>;
 
-        this.chart.series.forEach(function (series: Highcharts.Series): void {
+        this.chart.series.forEach(function (
+            series: Highcharts.Series
+        ): void {
             var seriesOptions = series && series.options;
 
             // Handle showInLegend. If the series is linked to another series,
@@ -1033,8 +1023,7 @@ Highcharts.Legend.prototype = {
         margin: Array<number>,
         spacing: Array<number>
     ): void {
-        var legend = this,
-            chart = this.chart,
+        var chart = this.chart,
             options = this.options,
             alignment = this.getAlignment(),
             titleMarginOption: number = (chart.options.title as any).margin,
@@ -1096,7 +1085,7 @@ Highcharts.Legend.prototype = {
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (
-            item: (Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
         ): void {
             var lastPoint: (Highcharts.Point|undefined),
                 height,
@@ -1159,7 +1148,9 @@ Highcharts.Legend.prototype = {
             chart = legend.chart,
             renderer = chart.renderer,
             legendGroup = legend.group,
-            allItems: Array<(Highcharts.Point|Highcharts.Series)>,
+            allItems: Array<(
+                Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+            )>,
             display,
             legendWidth,
             legendHeight,
@@ -1306,14 +1297,19 @@ Highcharts.Legend.prototype = {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
             const margin: number = (chart.options.title as any).margin;
-            const vAlign = legend.getAlignment().charAt(1);
             let alignTo = chart.spacingBox;
             let y = alignTo.y;
 
-            if (vAlign === 't' && chart.titleOffset[0] > 0) {
+            if (
+                /(lth|ct|rth)/.test(legend.getAlignment()) &&
+                chart.titleOffset[0] > 0
+            ) {
                 y += chart.titleOffset[0] + margin;
 
-            } else if (vAlign === 'b' && chart.titleOffset[2] > 0) {
+            } else if (
+                /(lbh|cb|rbh)/.test(legend.getAlignment()) &&
+                chart.titleOffset[2] > 0
+            ) {
                 y -= chart.titleOffset[2] + margin;
             }
 
@@ -1425,7 +1421,9 @@ Highcharts.Legend.prototype = {
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
             allItems.forEach(function (
-                item: (Highcharts.Point|Highcharts.Series),
+                item: (
+                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                ),
                 i: number
             ): void {
                 var y = (item._legendItemPos as any)[1],
@@ -1585,7 +1583,6 @@ Highcharts.Legend.prototype = {
                 text: currentPage + '/' + pageCount
             });
             [this.down, this.downTracker].forEach(function (
-                this: Highcharts.Legend,
                 elem: (Highcharts.SVGElement|undefined)
             ): void {
                 (elem as any).attr({
@@ -1746,7 +1743,7 @@ H.LegendSymbolMixin = {
             );
 
             // Restrict symbol markers size
-            if (this.symbol.indexOf('url') === 0) {
+            if ((this.symbol as any).indexOf('url') === 0) {
                 markerOptions = merge(markerOptions, {
                     width: symbolHeight,
                     height: symbolHeight
@@ -1755,7 +1752,7 @@ H.LegendSymbolMixin = {
             }
 
             this.legendSymbol = legendSymbol = renderer.symbol(
-                this.symbol,
+                this.symbol as any,
                 (symbolWidth / 2) - radius,
                 verticalCenter - radius,
                 2 * radius,

@@ -43,6 +43,9 @@ declare global {
             ) => void;
             touch: (e: PointerEventObject, start?: boolean) => void;
         }
+        interface TouchPointerEventObject extends PointerEventObject {
+            touches: Array<Touch>;
+        }
     }
 }
 
@@ -245,13 +248,13 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      */
     pinch: function (
         this: Highcharts.Pointer,
-        e: Highcharts.PointerEventObject
+        e: Highcharts.TouchPointerEventObject
     ): void {
 
         var self = this,
             chart = self.chart,
             pinchDown = self.pinchDown,
-            touches = (e as any).touches,
+            touches = e.touches,
             touchesLength = touches.length,
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
@@ -281,7 +284,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
         // Normalize each touch
         [].map.call(touches, function (
-            e: TouchEvent
+            e: PointerEvent
         ): Highcharts.PointerEventObject {
             return self.normalize(e);
         });

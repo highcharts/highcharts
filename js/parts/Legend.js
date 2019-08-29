@@ -85,8 +85,8 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber;
-var H = Highcharts, addEvent = H.addEvent, css = H.css, discardElement = H.discardElement, defined = H.defined, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, pick = H.pick, setAnimation = H.setAnimation, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
+var defined = U.defined, isNumber = U.isNumber;
+var H = Highcharts, addEvent = H.addEvent, css = H.css, discardElement = H.discardElement, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, pick = H.pick, setAnimation = H.setAnimation, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -212,13 +212,10 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#colorizeItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        A Series or Point instance
-     *
      * @param {boolean} [visible=false]
      *        Dimmed or colored
-     *
      * @return {void}
      *
      * @todo
@@ -273,10 +270,8 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#positionItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to position
-     *
      * @return {void}
      */
     positionItem: function (item) {
@@ -299,9 +294,9 @@ Highcharts.Legend.prototype = {
      *
      * @private
      * @function Highcharts.Legend#destroyItem
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to remove
+     * @return {void}
      */
     destroyItem: function (item) {
         var checkbox = item.checkbox;
@@ -443,7 +438,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#renderItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *        The item to render.
      *
      * @return {void}
@@ -535,7 +530,7 @@ Highcharts.Legend.prototype = {
      * @private
      * @function Highcharts.Legend#layoutItem
      *
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      *
      * @return {void}
      */
@@ -578,18 +573,14 @@ Highcharts.Legend.prototype = {
     },
     /**
      * Get all items, which is one item per series for most series and one
-     * item per point for pie series and its derivatives.
+     * item per point for pie series and its derivatives. Fires the event
+     * `afterGetAllItems`.
      *
      * @private
      * @function Highcharts.Legend#getAllItems
-     *
-     * @return {Array<(Highcharts.Point|Highcharts.Series)>}
+     * @return {Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)>}
      *         The current items in the legend.
-     *
      * @fires Highcharts.Legend#event:afterGetAllItems
-     *
-     * @todo
-     * Make events official: Fires the event `afterGetAllItems`.
      */
     getAllItems: function () {
         var allItems = [];
@@ -641,7 +632,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     adjustMargins: function (margin, spacing) {
-        var legend = this, chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
+        var chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
             chart.titleOffset[0] + titleMarginOption :
             0, titleMarginBottom = titleMarginOption !== undefined ?
             chart.titleOffset[2] + titleMarginOption :
@@ -838,13 +829,14 @@ Highcharts.Legend.prototype = {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
             var margin = chart.options.title.margin;
-            var vAlign = legend.getAlignment().charAt(1);
             var alignTo = chart.spacingBox;
             var y = alignTo.y;
-            if (vAlign === 't' && chart.titleOffset[0] > 0) {
+            if (/(lth|ct|rth)/.test(legend.getAlignment()) &&
+                chart.titleOffset[0] > 0) {
                 y += chart.titleOffset[0] + margin;
             }
-            else if (vAlign === 'b' && chart.titleOffset[2] > 0) {
+            else if (/(lbh|cb|rbh)/.test(legend.getAlignment()) &&
+                chart.titleOffset[2] > 0) {
                 y -= chart.titleOffset[2] + margin;
             }
             if (y !== alignTo.y) {

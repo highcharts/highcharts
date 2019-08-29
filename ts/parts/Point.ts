@@ -44,11 +44,11 @@ declare global {
             update?: PointUpdateCallbackFunction;
         }
         interface PointLabelObject {
-            x: string;
-            y: number;
-            color: (ColorString|GradientColorObject|PatternObject);
+            x?: string;
+            y?: (number|null);
+            color?: ColorType;
             colorIndex: number;
-            key: string;
+            key?: string;
             series: Series;
             point: Point;
             percentage?: number;
@@ -57,9 +57,9 @@ declare global {
         interface PointMarkerOptionsObject {
             enabled?: boolean;
             enabledThreshold?: number;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            fillColor?: ColorType;
             height?: number;
-            lineColor?: ColorString;
+            lineColor?: ColorType;
             lineWidth?: number;
             radius?: number;
             radiusPlus?: number;
@@ -75,7 +75,7 @@ declare global {
         }
         interface PointOptionsObject {
             className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             colorIndex?: number;
             drilldown?: string;
             events?: PointEventsOptionsObject;
@@ -85,6 +85,7 @@ declare global {
             marker?: PointMarkerOptionsObject;
             name?: string;
             selected?: boolean;
+            states?: PointStatesOptionsObject;
             x?: number;
             y?: (null|number);
         }
@@ -94,8 +95,8 @@ declare global {
         interface PointStatesHoverOptionsObject {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: ColorString;
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             lineWidth?: number;
             lineWidthPlus?: number;
             radius?: number;
@@ -108,13 +109,6 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
         }
         interface PointStatesOptionsObject {
-            [key: string]: (
-                PointStatesHoverOptionsObject |
-                PointStatesInactiveOptionsObject |
-                PointStatesNormalOptionsObject |
-                PointStatesSelectOptionsObject |
-                undefined
-            );
             hover?: PointStatesHoverOptionsObject;
             inactive?: PointStatesInactiveOptionsObject;
             normal?: PointStatesNormalOptionsObject;
@@ -122,8 +116,8 @@ declare global {
         }
         interface PointStatesSelectOptionsObject {
             enabled?: boolean;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            lineColor?: ColorString;
+            fillColor?: ColorType;
+            lineColor?: ColorType;
             lineWidth?: number;
             radius?: number;
         }
@@ -145,7 +139,7 @@ declare global {
         }
         class Point {
             public constructor();
-            public color: (ColorString|GradientColorObject|PatternObject);
+            public color?: ColorType;
             public colorIndex: number;
             public formatPrefix: string;
             public id: string;
@@ -157,13 +151,13 @@ declare global {
             public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
-            public shapeArgs?: (BBoxObject|Dictionary<number>);
+            public shapeArgs?: SVGAttributes;
             public shapeType?: string;
             public state?: string;
             public total?: number;
             public visible: boolean;
             public x: (number|null);
-            public y: number;
+            public y?: (number|null);
             public applyOptions(options: PointOptionsType, x?: number): Point;
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;
@@ -180,6 +174,7 @@ declare global {
                 options: PointOptionsType,
                 x?: number
             ): Point;
+            public isValid?(): boolean;
             public optionsToObject(options: PointOptionsType): Dictionary<any>;
             public resolveColor(): void;
             public setNestedProperty<T>(object: T, value: any, key: string): T;
@@ -228,36 +223,24 @@ declare global {
  * Fires when the mouse leaves the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOut
- * @type {Highcharts.PointMouseOutCallbackFunction}
+ * @type {Highcharts.PointMouseOutCallbackFunction|undefined}
  *//**
  * Fires when the mouse enters the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOver
- * @type {Highcharts.PointMouseOverCallbackFunction}
+ * @type {Highcharts.PointMouseOverCallbackFunction|undefined}
  *//**
  * Fires when the point is removed using the `.remove()` method. One parameter,
  * `event`, is passed to the function. Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#remove
- * @type {Highcharts.PointRemoveCallbackFunction}
- *//**
- * Fires when the point is selected either programmatically or following a click
- * on the point. One parameter, `event`, is passed to the function. Returning
- * `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
- *//**
- * Fires when the point is unselected either programmatically or following a
- * click on the point. One parameter, `event`, is passed to the function.
- * Returning `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointRemoveCallbackFunction|undefined}
  *//**
  * Fires when the point is updated programmatically through the `.update()``
  * method. One parameter, `event`, is passed to the function. The new point
  * options can be accessed through event.options. Returning `false` cancels the
  * operation.
  * @name Highcharts.PointEventsOptionsObject#update
- * @type {Highcharts.PointUpdateCallbackFunction}
+ * @type {Highcharts.PointUpdateCallbackFunction|undefined}
  */
 
 /**
@@ -267,7 +250,7 @@ declare global {
  *//**
  * The point's current color.
  * @name Highcharts.PointLabelObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The point's current color index, used in styled mode instead of `color`. The
  * color index is inserted in class names used for styling.
@@ -276,7 +259,7 @@ declare global {
  *//**
  * The name of the related point.
  * @name Highcharts.PointLabelObject#key
- * @type {number|string}
+ * @type {string|undefined}
  *//**
  * The percentage for related points in a stacked series or pies.
  * @name Highcharts.PointLabelObject#percentage
@@ -293,12 +276,12 @@ declare global {
  * The total of values in either a stack for stacked series, or a pie in a pie
  * series.
  * @name Highcharts.PointLabelObject#total
- * @type {number}
+ * @type {number|undefined}
  *//**
  * For categorized axes this property holds the category name for the point. For
  * other axes it holds the X value.
  * @name Highcharts.PointLabelObject#x
- * @type {number|string}
+ * @type {number|string|undefined}
  *//**
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
@@ -452,10 +435,9 @@ declare global {
  * @name Highcharts.PointOptionsObject#drilldown
  * @type {string|undefined}
  *//**
- * The id of a series in the drilldown.series array to use for a drilldown for
- * this point.
+ * The individual point events.
  * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PointEventsOptionsObject}
+ * @type {Highcharts.PointEventsOptionsObject|undefined}
  *//**
  * An id for the point. This can be used after render time to get a pointer to
  * the point object through `chart.get()`.
@@ -464,7 +446,7 @@ declare global {
  *//**
  * Options for the point markers of line-like series.
  * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PointMarkerOptionsObject}
+ * @type {Highcharts.PointMarkerOptionsObject|undefined}
  *//**
  * The name of the point as shown in the legend, tooltip, dataLabels etc.
  * @name Highcharts.PointOptionsObject#name
@@ -517,12 +499,12 @@ declare global {
  * The fill color of the marker in hover state. When `undefined`, the series' or
  * point's fillColor for normal state is used.
  * @name Highcharts.PointStatesHoverOptionsObject#fillColor
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The color of the point marker's outline. When `undefined`, the series' or
  * point's lineColor for normal state is used.
  * @name Highcharts.PointStatesHoverOptionsObject#lineColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The width of the point marker's outline. When `undefined`, the series' or
  * point's lineWidth for normal state is used.
@@ -601,7 +583,7 @@ declare global {
  * The color of the point marker's outline. When `undefined`, the series' or
  * point's color is used.
  * @name Highcharts.PointStatesSelectOptionsObject#lineColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * The width of the point marker's outline.
  * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
@@ -639,19 +621,20 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
+    erase,
     isArray,
-    isNumber
+    isNumber,
+    isObject
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     extend = H.extend,
-    erase = H.erase,
     fireEvent = H.fireEvent,
     format = H.format,
     pick = H.pick,
     uniqueKey = H.uniqueKey,
-    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -735,10 +718,10 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
          */
         if (!styledMode && !(this.options as any).color) {
-            this.color = series.color as any; // #3445
+            this.color = series.color; // #3445
         }
 
         if (series.options.colorByPoint) {
@@ -819,8 +802,8 @@ Highcharts.Point.prototype = {
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
-        if ((options as any).group) {
-            delete point.group;
+        if ((options as Highcharts.ColumnPoint).group) {
+            delete (point as Highcharts.ColumnPoint).group;
         }
         if (options.dataLabels) {
             delete point.dataLabels;
@@ -913,7 +896,7 @@ Highcharts.Point.prototype = {
             result[key] = (
                 isLastKey ?
                     value :
-                    H.isObject(result[key], true) ?
+                    isObject(result[key], true) ?
                         result[key] :
                         {}
             );
@@ -1076,7 +1059,7 @@ Highcharts.Point.prototype = {
             point.setState();
             erase(hoverPoints, point);
             if (!hoverPoints.length) {
-                chart.hoverPoints = null;
+                chart.hoverPoints = null as any;
             }
 
         }
@@ -1158,7 +1141,7 @@ Highcharts.Point.prototype = {
         this: Highcharts.Point
     ): Highcharts.PointLabelObject {
         return {
-            x: this.category as any,
+            x: this.category,
             y: this.y,
             color: this.color,
             colorIndex: this.colorIndex,
@@ -1197,7 +1180,8 @@ Highcharts.Point.prototype = {
 
         // Replace default point style with class name
         if (series.chart.styledMode) {
-            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+            pointFormat =
+                (series.chart.tooltip as any).styledModeFormat(pointFormat);
         }
 
         // Loop over the point array map and replace unformatted values with

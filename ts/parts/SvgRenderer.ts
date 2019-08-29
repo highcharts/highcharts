@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'callout'|'circle'|'diamond'|'square'|'triangle'|
-            'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
+            'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,11 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject {
-            height: number;
-            width: number;
-            x: number;
-            y: number;
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
@@ -75,7 +71,7 @@ declare global {
         interface SVGAttributes {
             [key: string]: any;
             d?: (string|SVGPathArray);
-            fill?: ColorString;
+            fill?: ColorType;
             inverted?: boolean;
             matrix?: Array<number>;
             rotation?: number;
@@ -83,7 +79,7 @@ declare global {
             rotationOriginY?: number;
             scaleX?: number;
             scaleY?: number;
-            stroke?: ColorString;
+            stroke?: ColorType;
             style?: (string|CSSObject);
             translateX?: number;
             translateY?: number;
@@ -96,7 +92,7 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: (SymbolFunction<SVGElement|SVGPathArray>|undefined);
+            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -119,7 +115,7 @@ declare global {
             start?: number;
             width?: number;
         }
-        interface TranslationObject {
+        interface TranslationAttributes extends SVGAttributes {
             translateX: number;
             translateY: number;
         }
@@ -132,6 +128,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
+            public styles?: CSSObject;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
                 value: string,
@@ -149,7 +146,7 @@ declare global {
             public alignSetter(value: ('start'|'middle'|'end')): void;
             public animate(
                 params: SVGAttributes,
-                options?: AnimationOptionsObject,
+                options?: (boolean|AnimationOptionsObject),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -313,7 +310,7 @@ declare global {
                 text: string,
                 x: number,
                 y: number,
-                callback: Function,
+                callback: EventCallbackFunction<SVGElement>,
                 normalState?: SVGAttributes,
                 hoverState?: SVGAttributes,
                 pressedState?: SVGAttributes,
@@ -642,7 +639,7 @@ declare global {
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
  * @name Highcharts.SVGAttributes#fill
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}
@@ -666,7 +663,7 @@ declare global {
  * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#style
  * @type {string|Highcharts.CSSObject|undefined}
@@ -809,10 +806,16 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
+    defined,
+    erase,
     isArray,
     isNumber,
+    isObject,
     isString,
-    pInt
+    objectEach,
+    pInt,
+    splat
 } = U;
 
 import './Color.js';
@@ -822,28 +825,22 @@ var SVGElement: Highcharts.SVGElement,
 
     addEvent = H.addEvent,
     animate = H.animate,
-    attr = H.attr,
     charts = H.charts,
     color = H.color,
     css = H.css,
     createElement = H.createElement,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
     extend = H.extend,
-    erase = H.erase,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
-    isObject = H.isObject,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
-    splat = H.splat,
     stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
@@ -944,7 +941,7 @@ extend((
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -956,7 +953,7 @@ extend((
     animate: function (
         this: Highcharts.SVGElement,
         params: Highcharts.SVGAttributes,
-        options?: Highcharts.AnimationOptionsObject,
+        options?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
@@ -981,11 +978,7 @@ extend((
         } else {
             this.attr(params, undefined, complete);
             // Call the end step synchronously
-            H.objectEach(params, function (
-                this: Highcharts.SVGElement,
-                val: any,
-                prop: string
-            ): void {
+            objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
                     animOptions.step.call(this, val, { prop: prop, pos: 1 });
                 }
@@ -1383,7 +1376,6 @@ extend((
         } else {
 
             objectEach(hash, function eachAttribute(
-                this: Highcharts.SVGElement,
                 val: any,
                 key: string
             ): void {
@@ -1744,7 +1736,7 @@ extend((
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (style: string, n: string): void {
-                if (style !== oldStyles[n]) {
+                if (style !== (oldStyles as any)[n]) {
                     newStyles[n] = style;
                     hasNew = true;
                 }
@@ -2379,7 +2371,8 @@ extend((
                             '11px,17': 14,
                             '13px,20': 16
                         } as Highcharts.Dictionary<number>)[
-                            styles && styles.fontSize + ',' + Math.round(height)
+                            (styles as any) &&
+                            (styles as any).fontSize + ',' + Math.round(height)
                         ] ||
                         height
                     );
@@ -2741,7 +2734,10 @@ extend((
                     attr(
                         shadow,
                         'height',
-                        Math.max(attr(shadow, 'height') - strokeWidth, 0)
+                        Math.max(
+                            (attr(shadow, 'height') as any) - strokeWidth,
+                            0
+                        )
                     );
                     (shadow as any).cutHeight = strokeWidth;
                 }
@@ -2773,7 +2769,6 @@ extend((
         this: Highcharts.SVGElement
     ): void {
         (this.shadows || []).forEach(function (
-            this: Highcharts.SVGElement,
             shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
         ): void {
             this.safeRemoveChild(shadow);
@@ -3018,7 +3013,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#setTextPath
      * @param {Highcharts.SVGElement} path - path to follow
-     * @param {Highcharts.DataLabelsTextPath} textPathOptions - options
+     * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions - options
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
@@ -3115,7 +3110,7 @@ extend((
             }
 
             // Additional attributes
-            H.objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val: string, key: string): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
                     val
@@ -3408,6 +3403,9 @@ SVGElement.prototype.strokeSetter = function (
     } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
         element.removeAttribute('stroke');
         this.hasStroke = false;
+    } else if (this.renderer.styledMode && this['stroke-width']) {
+        element.setAttribute('stroke-width', this['stroke-width']);
+        this.hasStroke = true;
     }
 };
 
@@ -4085,7 +4083,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 return textLineHeight ?
                     pInt(textLineHeight) :
                     renderer.fontMetrics(
-                        fontSizeStyle,
+                        fontSizeStyle as any,
                         // Get the computed size from parent if not explicit
                         (tspan.getAttribute('style') ? tspan : textNode) as any
                     ).h;
@@ -4100,7 +4098,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 ): void {
                     if (!except || except.indexOf(value) === -1) {
                         inputStr = inputStr.toString().replace(
-                            new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
+                            new RegExp(value, 'g'),
                             key
                         );
                     }
@@ -4337,7 +4335,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                             0,
                                             // Substract the font face to make
                                             // room for the ellipsis itself
-                                            width - parseInt(fontSize || 12, 10)
+                                            width - parseInt(
+                                                (fontSize as any) || 12,
+                                                10
+                                            )
                                         ),
                                         // Build the text to test for
                                         function (
@@ -4443,7 +4444,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
             // Apply the text outline
             if (textOutline && wrapper.applyTextOutline) {
-                wrapper.applyTextOutline(textOutline);
+                wrapper.applyTextOutline(textOutline as any);
             }
         }
     },
@@ -4490,7 +4491,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the button's top side.
      *
-     * @param {Function} callback
+     * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      *        The function to execute on button click or touch.
      *
      * @param {Highcharts.SVGAttributes} [normalState]
@@ -4519,7 +4520,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         text: string,
         x: number,
         y: number,
-        callback: Function,
+        callback: Highcharts.EventCallbackFunction<Highcharts.SVGElement>,
         normalState?: Highcharts.SVGAttributes,
         hoverState?: Highcharts.SVGAttributes,
         pressedState?: Highcharts.SVGAttributes,
@@ -4561,14 +4562,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
-            }, normalState as any);
+            }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
                 fill: '${palette.neutralColor10}'
-            }, hoverState as any);
+            }, hoverState);
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
@@ -4579,7 +4580,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     color: '${palette.neutralColor100}',
                     fontWeight: 'bold'
                 }
-            }, pressedState as any);
+            }, pressedState);
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
@@ -4588,7 +4589,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 style: {
                     color: '${palette.neutralColor20}'
                 }
-            }, disabledState as any);
+            }, disabledState);
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -4934,23 +4935,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         r = isObject(x) ? (x as any).r : r;
 
         var wrapper = this.createElement('rect'),
-            attribs = isObject(x) ? x : x === undefined ? {} : {
-                x: x,
-                y: y,
-                width: Math.max(width as any, 0),
-                height: Math.max(height as any, 0)
-            };
+            attribs: Highcharts.SVGAttributes = isObject(x) ?
+                (x as any) :
+                x === undefined ?
+                    {} :
+                    {
+                        x: x,
+                        y: y,
+                        width: Math.max(width as any, 0),
+                        height: Math.max(height as any, 0)
+                    };
 
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
-                (attribs as any).strokeWidth = strokeWidth;
+                attribs.strokeWidth = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
-            (attribs as any).fill = 'none';
+            attribs.fill = 'none';
         }
 
         if (r) {
-            (attribs as any).r = r;
+            attribs.r = r;
         }
 
         wrapper.rSetter = function (
@@ -5923,7 +5928,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 .attr({
                     zIndex: 1
                 }) as Highcharts.SVGAttributes,
-            box: Highcharts.SVGElement,
+            box: (Highcharts.SVGElement|undefined),
             bBox: Highcharts.BBoxObject,
             alignFactor = 0,
             padding = 3,
@@ -5940,7 +5945,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             needsBox = styledMode || hasBGImage,
             getCrispAdjust = function (): number {
                 return styledMode ?
-                    box.strokeWidth() % 2 / 2 :
+                    (box as any).strokeWidth() % 2 / 2 :
                     (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
             },
             updateBoxSize: Function,
@@ -6265,7 +6270,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     text = text.destroy();
                 }
                 if (box) {
-                    box = box.destroy() as any;
+                    box = box.destroy();
                 }
                 // Call base implementation to destroy the rest
                 SVGElement.prototype.destroy.call(wrapper);

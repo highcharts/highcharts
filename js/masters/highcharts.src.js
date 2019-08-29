@@ -40,10 +40,18 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    attr: U.attr,
+    defined: U.defined,
+    erase: U.erase,
     isArray: U.isArray,
+    isClass: U.isClass,
+    isDOMElement: U.isDOMElement,
     isNumber: U.isNumber,
+    isObject: U.isObject,
     isString: U.isString,
-    pInt: U.pInt
+    objectEach: U.objectEach,
+    pInt: U.pInt,
+    splat: U.splat
 });
 
 export default Highcharts;

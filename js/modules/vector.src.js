@@ -10,7 +10,8 @@
 
 import H from '../parts/Globals.js';
 
-var seriesType = H.seriesType;
+var seriesType = H.seriesType,
+    pick = H.pick;
 
 /**
  * The vector series class.
@@ -203,7 +204,12 @@ seriesType('vector', 'scatter'
                     if (!point.graphic) {
                         point.graphic = this.chart.renderer
                             .path()
-                            .add(this.markerGroup);
+                            .add(this.markerGroup)
+                            .addClass(
+                                'highcharts-point ' +
+                                'highcharts-color-' +
+                                pick(point.colorIndex, point.series.colorIndex)
+                            );
                     }
                     point.graphic
                         .attr({
@@ -211,8 +217,12 @@ seriesType('vector', 'scatter'
                             translateX: plotX,
                             translateY: plotY,
                             rotation: point.direction
-                        })
-                        .attr(this.pointAttribs(point));
+                        });
+
+                    if (!this.chart.styledMode) {
+                        point.graphic
+                            .attr(this.pointAttribs(point));
+                    }
 
                 } else if (point.graphic) {
                     point.graphic = point.graphic.destroy();

@@ -217,7 +217,7 @@ import H from './Globals.js';
 * @type {string|Highcharts.SVGPathArray|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#fill
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#inverted
 * @type {boolean|undefined}
@@ -241,7 +241,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#stroke
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#style
 * @type {string|Highcharts.CSSObject|undefined}
@@ -373,9 +373,9 @@ import H from './Globals.js';
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, pInt = U.pInt;
+var attr = U.attr, defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
 import './Color.js';
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, attr = H.attr, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, defined = H.defined, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, erase = H.erase, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isObject = H.isObject, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, objectEach = H.objectEach, pick = H.pick, removeEvent = H.removeEvent, splat = H.splat, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, extend = H.extend, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, pick = H.pick, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -455,7 +455,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -482,7 +482,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         else {
             this.attr(params, undefined, complete);
             // Call the end step synchronously
-            H.objectEach(params, function (val, prop) {
+            objectEach(params, function (val, prop) {
                 if (animOptions.step) {
                     animOptions.step.call(this, val, { prop: prop, pos: 1 });
                 }
@@ -1529,7 +1529,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     bBox.height = height = ({
                         '11px,17': 14,
                         '13px,20': 16
-                    }[styles && styles.fontSize + ',' + Math.round(height)] ||
+                    }[styles &&
+                        styles.fontSize + ',' + Math.round(height)] ||
                         height);
                 }
                 // Adjust for rotated text
@@ -2016,7 +2017,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#setTextPath
      * @param {Highcharts.SVGElement} path - path to follow
-     * @param {Highcharts.DataLabelsTextPath} textPathOptions - options
+     * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions - options
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
@@ -2085,7 +2086,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 delete attrs.dx;
             }
             // Additional attributes
-            H.objectEach(attrs, function (val, key) {
+            objectEach(attrs, function (val, key) {
                 textPathElement.setAttribute(attribsMap[key] || key, val);
             });
             // Remove translation, text that follows path does not need that
@@ -2299,6 +2300,10 @@ SVGElement.prototype['stroke-widthSetter'] =
         else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
             element.removeAttribute('stroke');
             this.hasStroke = false;
+        }
+        else if (this.renderer.styledMode && this['stroke-width']) {
+            element.setAttribute('stroke-width', this['stroke-width']);
+            this.hasStroke = true;
         }
     };
 /**
@@ -2828,8 +2833,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }, unescapeEntities = function (inputStr, except) {
             objectEach(renderer.escapes, function (value, key) {
                 if (!except || except.indexOf(value) === -1) {
-                    inputStr = inputStr.toString().replace(new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
-                    key);
+                    inputStr = inputStr.toString().replace(new RegExp(value, 'g'), key);
                 }
             });
             return inputStr;
@@ -3079,7 +3083,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the button's top side.
      *
-     * @param {Function} callback
+     * @param {Highcharts.EventCallbackFunction<Highcharts.SVGElement>} callback
      *        The function to execute on button click or touch.
      *
      * @param {Highcharts.SVGAttributes} [normalState]
@@ -3419,12 +3423,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     */
     rect: function (x, y, width, height, r, strokeWidth) {
         r = isObject(x) ? x.r : r;
-        var wrapper = this.createElement('rect'), attribs = isObject(x) ? x : x === undefined ? {} : {
-            x: x,
-            y: y,
-            width: Math.max(width, 0),
-            height: Math.max(height, 0)
-        };
+        var wrapper = this.createElement('rect'), attribs = isObject(x) ?
+            x :
+            x === undefined ?
+                {} :
+                {
+                    x: x,
+                    y: y,
+                    width: Math.max(width, 0),
+                    height: Math.max(height, 0)
+                };
         if (!this.styledMode) {
             if (strokeWidth !== undefined) {
                 attribs.strokeWidth = strokeWidth;

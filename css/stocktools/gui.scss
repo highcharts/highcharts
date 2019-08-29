@@ -1,5 +1,3 @@
-$version: "7.1.2";
-
 // Colors for buttons.
 $button-background-color: #f7f7f7;
 $button-hover-color: #e6ebf5;
@@ -84,7 +82,6 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-down {
-  background-image: url("https://code.highcharts.com/#{$version}/gfx/stock-icons/arrow-right.svg");
   background-size: cover;
   /* Safari */
   -webkit-transform: rotate(90deg);
@@ -99,7 +96,6 @@ $button-hover-color: #e6ebf5;
   transform: rotate(90deg);
 }
 .highcharts-bindings-wrapper .highcharts-arrow-up {
-  background-image: url("https://code.highcharts.com/#{$version}/gfx/stock-icons/arrow-right.svg");
   background-size: cover;
   outline: none;
   display: inline-block;
@@ -128,7 +124,8 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-right {
-  background: url("https://code.highcharts.com/#{$version}/gfx/stock-icons/arrow-bottom.svg") no-repeat right bottom;
+  background-repeat: no-repeat;
+  background-position: right bottom;
   background-size: contain;
 }
 
@@ -147,7 +144,6 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper .highcharts-arrow-left {
-  background-image: url("https://code.highcharts.com/#{$version}/gfx/stock-icons/arrow-right.svg");
   /* Safari */
   -webkit-transform: rotate(180deg);
   /* Firefox */
@@ -251,7 +247,6 @@ $button-hover-color: #e6ebf5;
   width: 10px;
   height: 10px;
   background-color: $button-background-color;
-  background-image: url("https://code.highcharts.com/gfx/#{$version}/stock-icons/arrow-right.svg");
   background-size: cover;
 }
 

@@ -12,14 +12,13 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    objectEach = U.objectEach;
 
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    objectEach = H.objectEach,
     pick = H.pick,
-    isIntersectRect = H.isIntersectRect,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent;
 
@@ -104,6 +103,14 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
         label2,
         box1,
         box2,
+        isIntersectRect = function (box1, box2) {
+            return !(
+                box2.x > box1.x + box1.width ||
+                box2.x + box2.width < box1.x ||
+                box2.y > box1.y + box1.height ||
+                box2.y + box2.height < box1.y
+            );
+        },
 
         // Get the box with its position inside the chart, as opposed to getBBox
         // that only reports the position relative to the parent.

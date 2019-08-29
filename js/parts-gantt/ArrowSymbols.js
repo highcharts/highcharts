@@ -1,14 +1,15 @@
 /* *
- * (c) 2017 Highsoft AS
- * Authors: Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
- */
-
+ *  (c) 2017 Highsoft AS
+ *  Authors: Lars A. V. Cabrera
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
-
 import H from '../parts/Globals.js';
-
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.
  * ```
@@ -47,7 +48,6 @@ H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
         'L', x + w, y + h
     ];
 };
-
 /**
  * Creates a half-width arrow symbol. Like a triangle, except not filled.
  * ```
@@ -79,7 +79,6 @@ H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
 H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
     return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
 };
-
 /**
  * Creates a left-oriented triangle.
  * ```
@@ -116,7 +115,6 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
         'Z'
     ];
 };
-
 /**
  * Alias function for triangle-left.
  *
@@ -139,8 +137,7 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
  *         Path array
  */
 H.SVGRenderer.prototype.symbols['arrow-filled'] =
-        H.SVGRenderer.prototype.symbols['triangle-left'];
-
+    H.SVGRenderer.prototype.symbols['triangle-left'];
 /**
  * Creates a half-width, left-oriented triangle.
  * ```
@@ -172,7 +169,6 @@ H.SVGRenderer.prototype.symbols['arrow-filled'] =
 H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
     return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
 };
-
 /**
  * Alias function for triangle-left-half.
  *
@@ -195,4 +191,4 @@ H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
  *         Path array
  */
 H.SVGRenderer.prototype.symbols['arrow-filled-half'] =
-        H.SVGRenderer.prototype.symbols['triangle-left-half'];
+    H.SVGRenderer.prototype.symbols['triangle-left-half'];

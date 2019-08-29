@@ -26,6 +26,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var isArray = U.isArray,
     isNumber = U.isNumber,
+    isObject = U.isObject,
     isString = U.isString;
 
 import '../parts/Series.js';
@@ -41,7 +42,6 @@ var addEvent = H.addEvent,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
-    isObject = H.isObject,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
     isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
@@ -875,7 +875,8 @@ var vennSeries = {
                 shapeArgs,
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
                 dataLabelWidth = dataLabelValues.width,
-                dataLabelPosition = dataLabelValues.position;
+                dataLabelPosition = dataLabelValues.position,
+                dlOptions = point.options && point.options.dataLabels;
 
             if (shape) {
                 if (shape.r) {
@@ -928,11 +929,15 @@ var vennSeries = {
 
             // Add width for the data label
             if (dataLabelWidth && shapeArgs) {
-                point.dlOptions = {
-                    style: {
-                        width: dataLabelWidth
-                    }
-                };
+                point.dlOptions = merge(
+                    true,
+                    {
+                        style: {
+                            width: dataLabelWidth
+                        }
+                    },
+                    isObject(dlOptions) && dlOptions
+                );
             }
 
             // Set name for usage in tooltip and in data label.

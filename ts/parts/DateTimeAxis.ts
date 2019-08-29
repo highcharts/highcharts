@@ -33,6 +33,23 @@ declare global {
         interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
             unitName: string;
         }
+        interface DateTimeLabelFormatOptionsObject {
+            main?: string;
+            range?: boolean;
+        }
+        interface XAxisDateTimeLabelFormatsOptions {
+            day?: (string|DateTimeLabelFormatOptionsObject);
+            hour?: (string|DateTimeLabelFormatOptionsObject);
+            millisecond?: (string|DateTimeLabelFormatOptionsObject);
+            minute?: (string|DateTimeLabelFormatOptionsObject);
+            month?: (string|DateTimeLabelFormatOptionsObject);
+            second?: (string|DateTimeLabelFormatOptionsObject);
+            week?: (string|DateTimeLabelFormatOptionsObject);
+            year?: (string|DateTimeLabelFormatOptionsObject);
+        }
+        interface XAxisOptions {
+            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
+        }
     }
 }
 

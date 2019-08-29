@@ -57,7 +57,12 @@ declare global {
 }
 
 import './Axis.js';
-import './Utilities.js';
+
+import U from './Utilities.js';
+const {
+    defined
+} = U;
+
 import './Chart.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
@@ -67,7 +72,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
-    defined = H.defined,
     extend = H.extend,
     noop = H.noop,
     pick = H.pick,
@@ -79,9 +83,7 @@ var addEvent = H.addEvent,
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *
  * ************************************************************************** */
-addEvent(Series as any, 'updatedData', function (
-    this: Highcharts.Series
-): void {
+addEvent(Series, 'updatedData', function (this: Highcharts.Series): void {
     var xAxis = this.xAxis;
 
     // Destroy the extended ordinal index on updated data
@@ -778,7 +780,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             positions = [],
             max = axis.dataMax;
 
-        if (H.defined(distance)) {
+        if (defined(distance)) {
             // Max + pointRange because we need to scroll to the last
 
             positions.push(max);
@@ -911,7 +913,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 
 // Extending the Chart.pan method for ordinal axes
-addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
+addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
     var chart = this,
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
@@ -982,8 +984,8 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
             // axis which is smaller and faster.
             chart.fixedRange = max - min;
             trimmedRange = xAxis.toFixedRange(
-                null,
-                null,
+                null as any,
+                null as any,
                 lin2val.apply(searchAxisLeft, [
                     val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
                     true // translate from index
@@ -995,8 +997,7 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
             );
 
             // Apply it if it is within the available data range
-            if (
-                trimmedRange.min >= Math.min(extremes.dataMin, min) &&
+            if (trimmedRange.min >= Math.min(extremes.dataMin, min) &&
                 trimmedRange.max <= Math.max(dataMax, max) + (overscroll as any)
             ) {
                 xAxis.setExtremes(
@@ -1026,7 +1027,7 @@ addEvent(Chart as any, 'pan', function (this: Highcharts.Chart, e: any): void {
     }
 });
 
-addEvent(Axis as any, 'foundExtremes', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'foundExtremes', function (this: Highcharts.Axis): void {
     var axis = this;
 
     if (
@@ -1056,7 +1057,7 @@ addEvent(Axis as any, 'foundExtremes', function (this: Highcharts.Axis): void {
 // For ordinal axis, that loads data async, redraw axis after data is loaded.
 // If we don't do that, axis will have the same extremes as previously, but
 // ordinal positions won't be calculated. See #10290
-addEvent(Axis as any, 'afterSetScale', function (this: Highcharts.Axis): void {
+addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
     var axis = this;
 
     if (axis.horiz && !axis.isDirty) {

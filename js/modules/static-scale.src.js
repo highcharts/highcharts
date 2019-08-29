@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined,
+    isNumber = U.isNumber;
 
 var Chart = H.Chart,
     pick = H.pick;
@@ -57,7 +58,7 @@ Chart.prototype.adjustHeight = function () {
                 height,
                 diff;
 
-            if (axis.staticScale && H.defined(axis.min)) {
+            if (axis.staticScale && defined(axis.min)) {
                 height = pick(
                     axis.unitLength,
                     axis.max + axis.tickInterval - axis.min

@@ -75,10 +75,14 @@ var chart = Highcharts.chart('container', {
     }
 });
 
-$('#small').click(function () {
-    chart.setSize(400, 300);
+document.getElementById('small').addEventListener('click', function () {
+    chart.setSize(400);
 });
 
-$('#large').click(function () {
-    chart.setSize(600, 300);
+document.getElementById('large').addEventListener('click', function () {
+    chart.setSize(600);
+});
+
+document.getElementById('auto').addEventListener('click', function () {
+    chart.setSize(null);
 });

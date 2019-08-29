@@ -66,10 +66,10 @@ H.CenteredSeriesMixin = {
      * @private
      * @function Highcharts.CenteredSeriesMixin.getStartAndEndRadians
      *
-     * @param {number} start
+     * @param {number} [start]
      *        Start angle in degrees.
      *
-     * @param {number} end
+     * @param {number} [end]
      *        Start angle in degrees.
      *
      * @return {Highcharts.RadianAngles}

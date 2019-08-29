@@ -26,9 +26,9 @@ declare global {
             zoomOut(): void;
         }
         interface Legend {
-            createCheckboxForItem(item: (Point|Series)): void;
+            createCheckboxForItem(item: (BubbleLegend|Point|Series)): void;
             setItemEvents(
-                item: (Point|Series),
+                item: (BubbleLegend|Point|Series),
                 legendItem: SVGElement,
                 useHTML?: boolean
             ): void;
@@ -37,12 +37,13 @@ declare global {
             className?: string;
             events?: SeriesEventsOptions;
             hasImportedEvents?: boolean;
+            selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
             haloPath(size: number): SVGElement;
             importEvents(): void;
             onMouseOut(): void;
-            onMouseOver(e: PointerEventObject): void;
+            onMouseOver(e?: PointerEventObject): void;
             select(selected?: boolean, accumulate?: boolean): void;
             setState(
                 state?: string,
@@ -74,7 +75,9 @@ declare global {
             );
             hide(): void;
             onMouseOut(): void;
+            onMouseOver(): void;
             select(selected?: boolean): void;
+            setAllPointsToState(state?: string): void;
             setState(state?: string, inherit?: boolean): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
@@ -94,13 +97,13 @@ declare global {
  * on the point. One parameter, `event`, is passed to the function. Returning
  * `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
+ * @type {Highcharts.PointSelectCallbackFunction|undefined}
  *//**
  * Fires when the point is unselected either programmatically or following a
  * click on the point. One parameter, `event`, is passed to the function.
  * Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointUnselectCallbackFunction|undefined}
  */
 
 /**
@@ -140,7 +143,12 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    defined,
+    isArray,
+    isObject,
+    objectEach
+} = U;
 
 import './Chart.js';
 import './Options.js';
@@ -157,7 +165,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
@@ -210,7 +217,7 @@ TrackerMixin = H.TrackerMixin = {
             );
 
             if (point.graphic) {
-                point.graphic.element.point = point;
+                (point.graphic.element as any).point = point;
             }
             (dataLabels as any).forEach(function (
                 dataLabel: Highcharts.SVGElement
@@ -268,9 +275,12 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function (this: Highcharts.Series): void {
         var series = this,
             options = series.options,
-            trackByArea = options.trackByArea,
+            trackByArea =
+                (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
             trackerPath = ([] as Highcharts.SVGPathArray).concat(
-                trackByArea ? series.areaPath : series.graphPath
+                trackByArea ?
+                    ((series as Highcharts.AreaSeries).areaPath as any) :
+                    (series.graphPath as any)
             ),
             trackerPathLength = trackerPath.length,
             chart = series.chart,
@@ -417,7 +427,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @return {void}
@@ -426,7 +436,7 @@ extend(Legend.prototype, {
      */
     setItemEvents: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
         legendItem: Highcharts.SVGElement,
         useHTML?: boolean
     ): void {
@@ -442,13 +452,18 @@ extend(Legend.prototype, {
         (useHTML ? legendItem : (item.legendGroup as any))
             .on('mouseover', function (): void {
 
-                legend.allItems.forEach(function (
-                    inactiveItem: (Highcharts.Point|Highcharts.Series)
-                ): void {
-                    if (item !== inactiveItem) {
-                        inactiveItem.setState('inactive', !isPoint);
-                    }
-                });
+                if (item.visible) {
+                    legend.allItems.forEach(function (
+                        inactiveItem: (
+                            Highcharts.BubbleLegend|Highcharts.Point|
+                            Highcharts.Series
+                        )
+                    ): void {
+                        if (item !== inactiveItem) {
+                            inactiveItem.setState('inactive', !isPoint);
+                        }
+                    });
+                }
 
                 item.setState('hover');
 
@@ -476,7 +491,10 @@ extend(Legend.prototype, {
                 }
 
                 legend.allItems.forEach(function (
-                    inactiveItem: (Highcharts.Point|Highcharts.Series)
+                    inactiveItem: (
+                        Highcharts.BubbleLegend|Highcharts.Point|
+                        Highcharts.Series
+                    )
                 ): void {
                     if (item !== inactiveItem) {
                         inactiveItem.setState('', !isPoint);
@@ -494,6 +512,20 @@ extend(Legend.prototype, {
                         if ((item as any).setVisible) {
                             (item as any).setVisible();
                         }
+                        // Reset inactive state
+                        legend.allItems.forEach(function (
+                            inactiveItem: (
+                                Highcharts.BubbleLegend|Highcharts.Point|
+                                Highcharts.Series
+                            )
+                        ): void {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState(
+                                    item.visible ? 'inactive' : '',
+                                    !isPoint
+                                );
+                            }
+                        });
                     };
 
                 // A CSS class to dim or hide other than the hovered series.
@@ -524,21 +556,21 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @return {void}
      * @fires Highcharts.Series#event:checkboxClick
      */
     createCheckboxForItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
     ): void {
         var legend = this;
 
         item.checkbox = createElement('input', {
             type: 'checkbox',
             className: 'highcharts-legend-checkbox',
-            checked: item.selected,
-            defaultChecked: item.selected // required by IE7
+            checked: (item as any).selected,
+            defaultChecked: (item as any).selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (
@@ -554,7 +586,7 @@ extend(Legend.prototype, {
                     item: item
                 },
                 function (): void {
-                    item.select();
+                    (item as any).select();
                 }
             );
         });
@@ -671,7 +703,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     mouseDownPos >= axisStartPos &&
                     mouseDownPos <= axisEndPos) ||
                     isXAxis ||
-                    !H.defined(mouseDownPos)
+                    !defined(mouseDownPos)
                 ) {
                     isWithinPane = true;
                 }
@@ -931,14 +963,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
      *
      * @return {void}
      */
     onMouseOver: function (
         this: Highcharts.Point,
-        e: Highcharts.PointerEventObject
+        e?: Highcharts.PointerEventObject
     ): void {
         var point = this,
             series = point.series,
@@ -974,7 +1006,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
         }
 
-        chart.hoverPoints = chart.hoverPoint = null;
+        chart.hoverPoints = chart.hoverPoint = null as any;
     },
 
     /**
@@ -996,7 +1028,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             point.events = events;
 
-            H.objectEach(events, function (
+            objectEach(events, function (
                 event: Function,
                 eventType: string
             ): void {
@@ -1028,8 +1060,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         move?: boolean
     ): void {
         var point = this,
-            plotX = Math.floor(point.plotX as any), // #4586
-            plotY = point.plotY,
             series = point.series,
             previousState = point.state,
             stateOptions = (
@@ -1044,7 +1074,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             markerStateOptions = ((
                 markerOptions &&
                 markerOptions.states &&
-                markerOptions.states[state || 'normal']
+                (markerOptions.states as any)[state || 'normal']
             ) || {}),
             stateDisabled = (markerStateOptions as any).enabled === false,
             stateMarkerGraphic = series.stateMarkerGraphic,
@@ -1081,8 +1111,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             (
                 state &&
                 pointMarker.states &&
-                pointMarker.states[state] &&
-                (pointMarker.states[state] as any).enabled === false
+                (pointMarker.states as any)[state] &&
+                (pointMarker.states as any)[state].enabled === false
             ) // #1610
 
         ) {
@@ -1175,27 +1205,29 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
 
                 // Add a new state marker graphic
-                if (!stateMarkerGraphic) {
-                    if (newSymbol) {
-                        series.stateMarkerGraphic = stateMarkerGraphic =
-                            chart.renderer
-                                .symbol(
-                                    newSymbol,
-                                    (markerAttribs as any).x,
-                                    (markerAttribs as any).y,
-                                    (markerAttribs as any).width,
-                                    (markerAttribs as any).height
-                                )
-                                .add(series.markerGroup);
-                        stateMarkerGraphic.currentSymbol = newSymbol;
-                    }
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(
+                                        newSymbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height
+                                    )
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
 
-                // Move the existing graphic
-                } else {
-                    stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-                        x: (markerAttribs as any).x,
-                        y: (markerAttribs as any).y
-                    });
+                    // Move the existing graphic
+                    } else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
                 }
 
                 if (!chart.styledMode && stateMarkerGraphic) {
@@ -1205,10 +1237,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             if (stateMarkerGraphic) {
                 stateMarkerGraphic[
-                    state &&
-                    chart.isInsidePlot(plotX, plotY as any, chart.inverted) ?
-                        'show' :
-                        'hide'
+                    state && point.isInside ? 'show' : 'hide'
                 ](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
             }
@@ -1216,11 +1245,19 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         // Show me your halo
         haloOptions = stateOptions.halo;
-        if (haloOptions && haloOptions.size) {
+        const markerGraphic = (point.graphic || stateMarkerGraphic);
+        const markerVisibility = (
+            markerGraphic && markerGraphic.visibility || 'inherit'
+        );
+
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((point.graphic || stateMarkerGraphic).parentGroup);
+                    .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any
@@ -1229,6 +1266,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 'class': 'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
+                'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276
             });
             halo.point = point; // #6055
@@ -1339,7 +1377,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             hoverPoint = chart.hoverPoint;
 
         // #182, set to null before the mouseOut event fires
-        chart.hoverSeries = null;
+        chart.hoverSeries = null as any;
 
         // trigger mouse out on the point, which must be in this series
         if (hoverPoint) {
@@ -1413,7 +1451,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                 series.group,
                 series.markerGroup,
                 series.dataLabelsGroup
-            ].forEach(function (group: Highcharts.SVGElement): void {
+            ].forEach(function (
+                group: (Highcharts.SVGElement|undefined)
+            ): void {
                 if (group) {
                     // Old state
                     if (series.state) {
@@ -1492,12 +1532,29 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         // Don't loop over points on a series that doesn't apply inactive state
         // to siblings markers (e.g. line, column)
         if (inherit && inactiveOtherPoints && series.points) {
-            series.points.forEach(function (point: Highcharts.Point): void {
-                if (point.setState) {
-                    point.setState(state);
-                }
-            });
+            series.setAllPointsToState(state);
         }
+    },
+
+    /**
+     * Set the state for all points in the series.
+     *
+     * @function Highcharts.Series#setAllPointsToState
+     *
+     * @private
+     *
+     * @param {string} [state]
+     *        Can be either `hover` or undefined to set to normal state.
+     */
+    setAllPointsToState: function (
+        this: Highcharts.Series,
+        state?: string
+    ): void {
+        this.points.forEach(function (point: Highcharts.Point): void {
+            if (point.setState) {
+                point.setState(state);
+            }
+        });
     },
 
     /**

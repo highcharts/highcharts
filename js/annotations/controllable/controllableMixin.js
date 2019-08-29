@@ -2,7 +2,9 @@
 import H from './../../parts/Globals.js';
 
 import U from './../../parts/Utilities.js';
-var isString = U.isString;
+var isObject = U.isObject,
+    isString = U.isString,
+    splat = U.splat;
 
 import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
@@ -53,7 +55,7 @@ var controllableMixin = {
     getPointsOptions: function () {
         var options = this.options;
 
-        return options.points || (options.point && H.splat(options.point));
+        return options.points || (options.point && splat(options.point));
     },
 
     /**
@@ -160,7 +162,7 @@ var controllableMixin = {
         }
 
         if (!point || point.series === null) {
-            if (H.isObject(pointOptions)) {
+            if (isObject(pointOptions)) {
                 point = new MockPoint(
                     this.chart,
                     this,

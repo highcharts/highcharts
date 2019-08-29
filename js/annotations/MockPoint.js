@@ -1,4 +1,8 @@
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
+
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
@@ -261,7 +265,7 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
         this.series[axisName] =
             axisOptions instanceof H.Axis ?
                 axisOptions :
-                H.defined(axisOptions) ?
+                defined(axisOptions) ?
                     chart[axisName][axisOptions] || chart.get(axisOptions) :
                     null;
     },
@@ -318,13 +322,13 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
             isInside = true;
 
         if (xAxis) {
-            isInside = H.defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
+            isInside = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
         }
 
         if (yAxis) {
             isInside =
                 isInside &&
-                H.defined(plotY) &&
+                defined(plotY) &&
                 plotY >= 0 && plotY <= yAxis.len;
         }
 

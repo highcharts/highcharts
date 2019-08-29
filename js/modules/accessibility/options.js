@@ -72,7 +72,7 @@ var options = {
          * Set to `false` to disable.
          *
          * @type  {boolean|number}
-         * @since next
+         * @since 7.1.3
          */
         pointNavigationThreshold: false,
 
@@ -136,7 +136,7 @@ var options = {
          * Theme to apply to the chart when Windows High Contrast Mode is
          * detected.
          *
-         * @since next
+         * @since 7.1.3
          * @type {object}
          * @apioption accessibility.highContrastTheme
          */

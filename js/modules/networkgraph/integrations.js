@@ -1,14 +1,17 @@
 /* *
- * Networkgraph series
  *
- * (c) 2010-2019 Paweł Fus
+ *  Networkgraph series
  *
- * License: www.highcharts.com/license
- */
-
+ *  (c) 2010-2019 Paweł Fus
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from '../../parts/Globals.js';
-
+/* eslint-disable no-invalid-this, valid-jsdoc */
 H.networkgraphIntegrations = {
     verlet: {
         /**
@@ -16,10 +19,8 @@ H.networkgraphIntegrations = {
          * `layoutAlgorithm.attractiveForce`
          *
          * @private
-         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
-         *
          * @return {number} force
          */
         attractiveForceFunction: function (d, k) {
@@ -31,10 +32,8 @@ H.networkgraphIntegrations = {
          * `layoutAlgorithm.repulsiveForce`
          *
          * @private
-         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
-         *
          * @return {number} force
          */
         repulsiveForceFunction: function (d, k) {
@@ -49,24 +48,21 @@ H.networkgraphIntegrations = {
          * `plotX` and `plotY` position.
          *
          * @private
-         *
          * @return {void}
          */
         barycenter: function () {
-            var gravitationalConstant = this.options.gravitationalConstant,
-                xFactor = this.barycenter.xFactor,
-                yFactor = this.barycenter.yFactor;
-
+            var gravitationalConstant = this.options.gravitationalConstant, xFactor = this.barycenter.xFactor, yFactor = this.barycenter.yFactor;
             // To consider:
             xFactor = (xFactor - (this.box.left + this.box.width) / 2) *
                 gravitationalConstant;
             yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
                 gravitationalConstant;
-
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
-                    node.plotX -= xFactor / node.mass / node.degree;
-                    node.plotY -= yFactor / node.mass / node.degree;
+                    node.plotX -=
+                        xFactor / node.mass / node.degree;
+                    node.plotY -=
+                        yFactor / node.mass / node.degree;
                 }
             });
         },
@@ -77,17 +73,16 @@ H.networkgraphIntegrations = {
          * `plotX` and `plotY` position.
          *
          * @private
-         *
-         * @param {Highcharts.Point} node node that should be translated by
-         *                          force.
-         * @param {number} force force calcualated in `repulsiveForceFunction`
-         * @param {object} distance Distance between two nodes e.g. `{x, y}`
-         *
+         * @param {Highcharts.Point} node
+         *        Node that should be translated by force.
+         * @param {number} force
+         *        Force calcualated in `repulsiveForceFunction`
+         * @param {Highcharts.PositionObject} distance
+         *        Distance between two nodes e.g. `{x, y}`
          * @return {void}
          */
         repulsive: function (node, force, distanceXY) {
             var factor = force * this.diffTemperature / node.mass / node.degree;
-
             if (!node.fixedPosition) {
                 node.plotX += distanceXY.x * factor;
                 node.plotY += distanceXY.y * factor;
@@ -100,29 +95,27 @@ H.networkgraphIntegrations = {
          * `plotX` and `plotY` position.
          *
          * @private
-         *
-         * @param {Highcharts.Point} link link that connects two nodes
-         * @param {number} force force calcualated in `repulsiveForceFunction`
-         * @param {object} distance Distance between two nodes e.g. `{x, y}`
-         *
+         * @param {Highcharts.Point} link
+         *        Link that connects two nodes
+         * @param {number} force
+         *        Force calcualated in `repulsiveForceFunction`
+         * @param {Highcharts.PositionObject} distance
+         *        Distance between two nodes e.g. `{x, y}`
          * @return {void}
          */
         attractive: function (link, force, distanceXY) {
-            var massFactor = link.getMass(),
-                translatedX = -distanceXY.x * force * this.diffTemperature,
-                translatedY = -distanceXY.y * force * this.diffTemperature;
-
+            var massFactor = link.getMass(), translatedX = -distanceXY.x * force * this.diffTemperature, translatedY = -distanceXY.y * force * this.diffTemperature;
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.plotX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.plotY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                link.fromNode.plotX -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                link.fromNode.plotY -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.plotX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.plotY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                link.toNode.plotX +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                link.toNode.plotY +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -153,36 +146,26 @@ H.networkgraphIntegrations = {
          * "lonesock" Dummer
          *
          * @private
-         *
-         * @param {object} layout layout object
+         * @param {Highcharts.NetworkgraphLayout} layout layout object
          * @param {Highcharts.Point} node node that should be translated
-         *
          * @return {void}
          */
         integrate: function (layout, node) {
-            var friction = -layout.options.friction,
-                maxSpeed = layout.options.maxSpeed,
-                prevX = node.prevX,
-                prevY = node.prevY,
-                // Apply friciton:
-                diffX = (node.plotX + node.dispX - prevX) * friction,
-                diffY = (node.plotY + node.dispY - prevY) * friction,
-                abs = Math.abs,
-                signX = abs(diffX) / (diffX || 1), // need to deal with 0
-                signY = abs(diffY) / (diffY || 1);
-
+            var friction = -layout.options.friction, maxSpeed = layout.options.maxSpeed, prevX = node.prevX, prevY = node.prevY, 
+            // Apply friciton:
+            diffX = ((node.plotX + node.dispX -
+                prevX) * friction), diffY = ((node.plotY + node.dispY -
+                prevY) * friction), abs = Math.abs, signX = abs(diffX) / (diffX || 1), // need to deal with 0
+            signY = abs(diffY) / (diffY || 1);
             // Apply max speed:
             diffX = signX * Math.min(maxSpeed, Math.abs(diffX));
             diffY = signY * Math.min(maxSpeed, Math.abs(diffY));
-
             // Store for the next iteration:
             node.prevX = node.plotX + node.dispX;
             node.prevY = node.plotY + node.dispY;
-
             // Update positions:
             node.plotX += diffX;
             node.plotY += diffY;
-
             node.temperature = layout.vectorLength({
                 x: diffX,
                 y: diffY
@@ -193,16 +176,11 @@ H.networkgraphIntegrations = {
          * readable.
          *
          * @private
-         *
-         * @param {object} layout layout object
-         *
+         * @param {Highcharts.NetworkgraphLayout} layout layout object
          * @return {number}
          */
         getK: function (layout) {
-            return Math.pow(
-                layout.box.width * layout.box.height / layout.nodes.length,
-                0.5
-            );
+            return Math.pow(layout.box.width * layout.box.height / layout.nodes.length, 0.5);
         }
     },
     euler: {
@@ -216,10 +194,8 @@ H.networkgraphIntegrations = {
          *    `function (d, k) { return d / k }`
          *
          * @private
-         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
-         *
          * @return {number} force
          */
         attractiveForceFunction: function (d, k) {
@@ -241,10 +217,8 @@ H.networkgraphIntegrations = {
          *    `function (d, k) { return k * k / d * (2 * k - d > 0 ? 1 : 0) }`
          *
          * @private
-         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
-         *
          * @return {number} force
          */
         repulsiveForceFunction: function (d, k) {
@@ -258,23 +232,19 @@ H.networkgraphIntegrations = {
          * position. Later, in `integrate()` forces are applied on nodes.
          *
          * @private
-         *
          * @return {void}
          */
         barycenter: function () {
-            var gravitationalConstant = this.options.gravitationalConstant,
-                xFactor = this.barycenter.xFactor,
-                yFactor = this.barycenter.yFactor;
-
+            var gravitationalConstant = this.options.gravitationalConstant, xFactor = this.barycenter.xFactor, yFactor = this.barycenter.yFactor;
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
-                    var degree = node.getDegree(),
-                        phi = degree * (1 + degree / 2);
-
-                    node.dispX += (xFactor - node.plotX) *
-                        gravitationalConstant * phi / node.degree;
-                    node.dispY += (yFactor - node.plotY) *
-                        gravitationalConstant * phi / node.degree;
+                    var degree = node.getDegree(), phi = degree * (1 + degree / 2);
+                    node.dispX += ((xFactor - node.plotX) *
+                        gravitationalConstant *
+                        phi / node.degree);
+                    node.dispY += ((yFactor - node.plotY) *
+                        gravitationalConstant *
+                        phi / node.degree);
                 }
             });
         },
@@ -282,19 +252,19 @@ H.networkgraphIntegrations = {
          * Repulsive force.
          *
          * @private
-         *
          * @param {Highcharts.Point} node
          *        Node that should be translated by force.
          * @param {number} force
          *        Force calcualated in `repulsiveForceFunction`
-         * @param {object} distance
+         * @param {Highcharts.PositionObject} distanceXY
          *        Distance between two nodes e.g. `{x, y}`
-         *
          * @return {void}
          */
         repulsive: function (node, force, distanceXY, distanceR) {
-            node.dispX += (distanceXY.x / distanceR) * force / node.degree;
-            node.dispY += (distanceXY.y / distanceR) * force / node.degree;
+            node.dispX +=
+                (distanceXY.x / distanceR) * force / node.degree;
+            node.dispY +=
+                (distanceXY.y / distanceR) * force / node.degree;
         },
         /**
          * Attractive force.
@@ -303,30 +273,28 @@ H.networkgraphIntegrations = {
          * position. Later, in `integrate()` forces are applied on nodes.
          *
          * @private
-         *
-         * @param {Highcharts.Point} link link that connects two nodes
-         * @param {number} force force calcualated in `repulsiveForceFunction`
-         * @param {object} distance Distance between two nodes e.g. `{x, y}`
-         *
+         * @param {Highcharts.Point} link
+         *        Link that connects two nodes
+         * @param {number} force
+         *        Force calcualated in `repulsiveForceFunction`
+         * @param {Highcharts.PositionObject} distanceXY
+         *        Distance between two nodes e.g. `{x, y}`
+         * @param {number} distanceR
          * @return {void}
          */
         attractive: function (link, force, distanceXY, distanceR) {
-            var massFactor = link.getMass(),
-                translatedX = (distanceXY.x / distanceR) * force,
-                translatedY = (distanceXY.y / distanceR) * force;
-
+            var massFactor = link.getMass(), translatedX = (distanceXY.x / distanceR) * force, translatedY = (distanceXY.y / distanceR) * force;
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.dispX -= translatedX * massFactor.fromNode /
-                    link.fromNode.degree;
-                link.fromNode.dispY -= translatedY * massFactor.fromNode /
-                    link.fromNode.degree;
+                link.fromNode.dispX -=
+                    translatedX * massFactor.fromNode / link.fromNode.degree;
+                link.fromNode.dispY -=
+                    translatedY * massFactor.fromNode / link.fromNode.degree;
             }
-
             if (!link.toNode.fixedPosition) {
-                link.toNode.dispX += translatedX * massFactor.toNode /
-                    link.toNode.degree;
-                link.toNode.dispY += translatedY * massFactor.toNode /
-                    link.toNode.degree;
+                link.toNode.dispX +=
+                    translatedX * massFactor.toNode / link.toNode.degree;
+                link.toNode.dispY +=
+                    translatedY * massFactor.toNode / link.toNode.degree;
             }
         },
         /**
@@ -363,28 +331,27 @@ H.networkgraphIntegrations = {
          * Actually `min(v(n), temperature(n))` replaces simulated annealing.
          *
          * @private
-         *
-         * @param {object} layout layout object
-         * @param {Highcharts.Point} node node that should be translated
-         *
+         * @param {Highcharts.NetworkgraphLayout} layout
+         *        Layout object
+         * @param {Highcharts.Point} node
+         *        Node that should be translated
          * @return {void}
          */
         integrate: function (layout, node) {
             var distanceR;
-
-            node.dispX += node.dispX * layout.options.friction;
-            node.dispY += node.dispY * layout.options.friction;
-
+            node.dispX +=
+                node.dispX * layout.options.friction;
+            node.dispY +=
+                node.dispY * layout.options.friction;
             distanceR = node.temperature = layout.vectorLength({
                 x: node.dispX,
                 y: node.dispY
             });
-
             if (distanceR !== 0) {
-                node.plotX += node.dispX / distanceR *
-                    Math.min(Math.abs(node.dispX), layout.temperature);
-                node.plotY += node.dispY / distanceR *
-                    Math.min(Math.abs(node.dispY), layout.temperature);
+                node.plotX += (node.dispX / distanceR *
+                    Math.min(Math.abs(node.dispX), layout.temperature));
+                node.plotY += (node.dispY / distanceR *
+                    Math.min(Math.abs(node.dispY), layout.temperature));
             }
         },
         /**
@@ -392,16 +359,11 @@ H.networkgraphIntegrations = {
          * readable.
          *
          * @private
-         *
          * @param {object} layout layout object
-         *
          * @return {number}
          */
         getK: function (layout) {
-            return Math.pow(
-                layout.box.width * layout.box.height / layout.nodes.length,
-                0.3
-            );
+            return Math.pow(layout.box.width * layout.box.height / layout.nodes.length, 0.3);
         }
     }
 };

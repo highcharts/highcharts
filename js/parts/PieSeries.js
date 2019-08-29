@@ -66,7 +66,7 @@ import H from './Globals.js';
 *      Styled connectors
 *
 * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 * @since 2.1
 * @product highcharts
 */ /**
@@ -177,14 +177,14 @@ import H from './Globals.js';
 * @product highcharts
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined, isNumber = U.isNumber;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, defined = H.defined, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
 /**
  * Pie series type.
  *
@@ -259,7 +259,7 @@ seriesType('pie', 'line',
      * @sample {highcharts} highcharts/plotoptions/pie-center/
      *         Centered at 100, 100
      *
-     * @type    {Array<number|string|null>}
+     * @type    {Array<(number|string|null),(number|string|null)>}
      * @default [null, null]
      * @product highcharts
      *
@@ -427,7 +427,7 @@ seriesType('pie', 'line',
      * try to shrink to make room for data labels in side the plot area,
      *  but only to this size.
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   80
      * @since     3.0
      * @product   highcharts
@@ -518,7 +518,7 @@ seriesType('pie', 'line',
      * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/
      *         Black border
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @product highcharts
      *
@@ -632,7 +632,9 @@ seriesType('pie', 'line',
             point = points[i];
             total += (ignoreHiddenPoint && !point.visible) ?
                 0 :
-                point.isNull ? 0 : point.y;
+                point.isNull ?
+                    0 :
+                    point.y;
         }
         this.total = total;
         // Set each point's properties
@@ -684,7 +686,7 @@ seriesType('pie', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.pie#translate
-     * @param {Array<number>} positions
+     * @param {Array<number>} [positions]
      * @return {void}
      */
     translate: function (positions) {
@@ -724,8 +726,7 @@ seriesType('pie', 'line',
                 point.options.dataLabels.distance), labelDistance);
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
-            point.labelDistance =
-                H.relativeLength(point.labelDistance, point.shapeArgs.r);
+            point.labelDistance = H.relativeLength(point.labelDistance, point.shapeArgs.r);
             // Saved for later dataLabels distance calculation.
             series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
             // The angle must stay within -90 and 270 (#2645)
@@ -860,7 +861,7 @@ seriesType('pie', 'line',
                     if (shadowGroup) {
                         shadowGroup.attr(groupTranslation);
                     }
-                    pointAttr = series.pointAttribs(point, point.selected && 'select');
+                    pointAttr = series.pointAttribs(point, (point.selected && 'select'));
                 }
                 // Draw the slice
                 if (!point.delayedRendering) {
@@ -1075,7 +1076,7 @@ seriesType('pie', 'line',
     /**
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
-     * @return {Highcharts.TranslationObject}
+     * @return {Highcharts.TranslationAttributes}
      */
     getTranslate: function () {
         return this.sliced ? this.slicedTranslation : {

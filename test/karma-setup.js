@@ -41,18 +41,34 @@ Highcharts.setOptions({
             kdNow: true,
             dataLabels: {
                 defer: false
+            },
+            states: {
+                hover: {
+                    animation: false
+                },
+                select: {
+                    animation: false
+                },
+                inactive: {
+                    animation: false
+                },
+                normal: {
+                    animation: false
+                }
             }
         },
         // We cannot use it in plotOptions.series because treemap
         // has the same layout option: layoutAlgorithm.
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         },
         packedbubble: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         }
 
@@ -72,6 +88,17 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
+Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
+    if (window.JSONSources[url]) {
+        callback(window.JSONSources[url]);
+    } else {
+        console.log('@getJSON: Loading over network', url);
+        return proceed.call(Highcharts, url, function (data) {
+            window.JSONSources[url] = data;
+            callback(data);
+        });
+    }
+});
 
 if (window.QUnit) {
     /*
@@ -165,12 +192,24 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver();
+        // Network graphs, sankey etc
+        if (
+            chart.series[0].nodes &&
+            chart.series[0].nodes[0] &&
+            typeof chart.series[0].nodes[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].nodes[0].onMouseOver();
+        
+        // Others
+        } else if (
+            chart.series[0].points &&
+            chart.series[0].points[0] &&
+            typeof chart.series[0].points[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].points[0].onMouseOver();
+        }
     }
 };
 
@@ -185,6 +224,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -220,6 +267,23 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 }
 
 /**
+ * Vanilla request for fetching an url using GET.
+ * @param {String} url to fetch
+ * @param {Function} callback to call when done.
+ */
+function xhrLoad(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+}
+
+/**
  * Get a PNG image or image data from the chart SVG.
  * @param  {Object} chart The chart instance
  * @param  {String} path  The sample path
@@ -237,6 +301,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
 
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
+
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
@@ -248,7 +316,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        new Error('Error loading SVG on canvas')
+                        new Error('Error loading SVG on canvas.')
                     );
                 };
                 img.src = url;
@@ -289,23 +357,26 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        // Handle reference, load SVG from file
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
+        // Handle reference, load SVG from bucket or file
+        var url = 'base/samples/' + path + '/reference.svg';
+        if (remotelocation) {
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
+        }
+        xhrLoad(url, function onXHRDone(xhr) {
+            if (xhr.status == 200) {
                 var svg = xhr.responseText;
-
                 svgToPixels(svg, function (data) {
                     referenceData = data;
                     doComparison();
-                });
+                })
+            } else {
+                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
+                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
+                resolve();
             }
-        };
-        xhr.send();
-
+        });
     });
-
 }
 
 // De-randomize Math.random in tests

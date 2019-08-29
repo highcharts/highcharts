@@ -280,3 +280,71 @@ QUnit.test('Split tooltip - points with different colors in one series (#10571)'
     );
 
 });
+
+QUnit.test('positioning', assert => {
+    const axisHeight = 150;
+    const data = [85, 82, 84, 87, 92];
+    const {
+        series: [series1, series2],
+        yAxis: [/* yAxis1 */, yAxis2]
+    } = Highcharts.stockChart('container', {
+        chart: {
+            height: axisHeight * 3
+        },
+        tooltip: {
+            split: true
+        },
+        yAxis: [{
+            height: axisHeight,
+            top: 0,
+            offset: 0
+        }, {
+            opposite: false,
+            height: axisHeight,
+            top: axisHeight,
+            offset: 0
+        }],
+        rangeSelector: {
+            enabled: false
+        },
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        series: [{ data: data, yAxis: 0 }, { data: data, yAxis: 1 }]
+    });
+    const isInsideAxis = ({ pos, len }, { anchorY }) => (
+        (pos <= anchorY) && (anchorY <= (pos + len))
+    );
+
+    // Set extremes to 85-90 for yAxis2.
+    yAxis2.setExtremes(85, 90);
+
+    // Hover a point to show tooltip
+    series1.points[3].onMouseOver();
+
+    // Get tooltip on Series 2
+    const tooltip = series2.tt;
+
+    // Test tooltip position when point is inside plot area
+    assert.ok(
+        isInsideAxis(yAxis2, tooltip),
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
+    );
+
+    // Test tooltip position when point is below plot area
+    series1.points[2].onMouseOver();
+    assert.ok(
+        isInsideAxis(yAxis2, tooltip),
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is below plot area'
+    );
+
+    // Test tooltip position when point is above plot area
+    series1.points[4].onMouseOver();
+    assert.ok(
+        isInsideAxis(yAxis2, tooltip),
+        'Should have Series 2 tooltip anchorY aligned within yAxis when point is above plot area'
+    );
+});

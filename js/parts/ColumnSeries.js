@@ -39,12 +39,12 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined, isNumber = U.isNumber;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, extend = H.extend, defined = H.defined, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var animObject = H.animObject, color = H.color, extend = H.extend, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
 /**
  * The column series type.
  *
@@ -296,7 +296,7 @@ seriesType('column', 'line',
              * A specific border color for the hovered point. Defaults to
              * inherit the normal state border color.
              *
-             * @type      {Highcharts.ColorString}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product   highcharts gantt
              * @apioption plotOptions.column.states.hover.borderColor
              */
@@ -342,7 +342,7 @@ seriesType('column', 'line',
             /**
              * A specific border color for the selected point.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @default #000000
              * @product highcharts highstock gantt
              */
@@ -423,7 +423,7 @@ seriesType('column', 'line',
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #ffffff
      * @product   highcharts highstock gantt
      *
@@ -450,6 +450,7 @@ seriesType('column', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.column#init
+     * @return {void}
      */
     init: function () {
         Series.prototype.init.apply(this, arguments);
@@ -470,7 +471,6 @@ seriesType('column', 'line',
      *
      * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
-     *
      * @return {Highcharts.ColumnMetricsObject}
      */
     getColumnMetrics: function () {
@@ -684,7 +684,7 @@ seriesType('column', 'line',
      * @private
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.ColumnPoint} point
      *
      * @param {string} state
      *
@@ -717,7 +717,9 @@ seriesType('column', 'line',
         if (state) {
             stateOptions = merge(options.states[state], 
             // #6401
-            point.options.states && point.options.states[state] || {});
+            point.options.states &&
+                point.options.states[state] ||
+                {});
             brightness = stateOptions.brightness;
             fill =
                 stateOptions.color || (brightness !== undefined &&
@@ -779,7 +781,7 @@ seriesType('column', 'line',
                 }
                 // Presentational
                 if (!chart.styledMode) {
-                    graphic[verb](series.pointAttribs(point, point.selected && 'select'))
+                    graphic[verb](series.pointAttribs(point, (point.selected && 'select')))
                         .shadow(point.allowShadow !== false && options.shadow, null, options.stacking && !options.borderRadius);
                 }
                 graphic.addClass(point.getClassName(), true);
@@ -934,7 +936,7 @@ seriesType('column', 'line',
  * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
  *         Dark gray border
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock
  * @apioption series.column.data.borderColor
  */

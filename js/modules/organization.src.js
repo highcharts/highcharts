@@ -32,7 +32,7 @@
  *         Modify the default label format output
  *
  * @name Highcharts.SeriesOrganizationDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>|undefined}
+ * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction|undefined}
  * @default function () { return this.point.name; }
  * @since 6.0.2
  */
@@ -231,13 +231,18 @@ H.seriesType(
             var series = this,
                 attribs = base.pointAttribs.call(series, point, state),
                 level = point.isNode ? point.level : point.fromNode.level,
-                levelOptions = series.mapOptionsToLevel[level],
+                levelOptions = series.mapOptionsToLevel[level || 0] || {},
                 options = point.options,
-                stateOptions = levelOptions.states[state] || {},
+                stateOptions = (
+                    levelOptions.states && levelOptions.states[state]
+                ) || {},
                 values = ['borderRadius', 'linkColor', 'linkLineWidth']
                     .reduce(function (obj, key) {
                         obj[key] = pick(
-                            stateOptions[key], options[key], levelOptions[key]
+                            stateOptions[key],
+                            options[key],
+                            levelOptions[key],
+                            series.options[key]
                         );
                         return obj;
                     }, {});
@@ -512,6 +517,15 @@ H.seriesType(
  * @type      {Array<*>}
  * @product   highcharts
  * @apioption series.organization.nodes
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.organization.dataLabels](#series.organization.dataLabels).
+ *
+ * @type    {Highcharts.SeriesOrganizationDataLabelsOptionsObject|Array<Highcharts.SeriesOrganizationDataLabelsOptionsObject>}
+ *
+ * @apioption series.organization.nodes.dataLabels
  */
 
 /**

@@ -103,33 +103,33 @@ AccessibilityComponent.prototype = {
     /**
      * Utility function to clone a mouse event for re-dispatching.
      * @private
-     * @param {global.Event} event The event to clone.
+     * @param {global.Event} e The event to clone.
      * @return {global.Event} The cloned event
      */
-    cloneMouseEvent: function (event) {
+    cloneMouseEvent: function (e) {
         if (typeof win.MouseEvent === 'function') {
-            return new win.MouseEvent(event.type, event);
+            return new win.MouseEvent(e.type, e);
         }
         // No MouseEvent support, try using initMouseEvent
         if (doc.createEvent) {
             var evt = doc.createEvent('MouseEvent');
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(
-                    event.type,
-                    event.canBubble,
-                    event.cancelable,
-                    event.view,
-                    event.detail,
-                    event.screenX,
-                    event.screenY,
-                    event.clientX,
-                    event.clientY,
-                    event.ctrlKey,
-                    event.altKey,
-                    event.shiftKey,
-                    event.metaKey,
-                    event.button,
-                    event.relatedTarget
+                    e.type,
+                    e.type === 'click' || e.canBubble, // #10561
+                    e.cancelable,
+                    e.view,
+                    e.detail,
+                    e.screenX,
+                    e.screenY,
+                    e.clientX,
+                    e.clientY,
+                    e.ctrlKey,
+                    e.altKey,
+                    e.shiftKey,
+                    e.metaKey,
+                    e.button,
+                    e.relatedTarget
                 );
                 return evt;
             }
@@ -137,7 +137,7 @@ AccessibilityComponent.prototype = {
             // Fallback to basic Event
             evt = doc.createEvent('Event');
             if (evt.initEvent) {
-                evt.initEvent(event.type, true, true);
+                evt.initEvent(e.type, true, true);
                 return evt;
             }
         }
@@ -213,7 +213,7 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             left: bBox.x + 'px',
-            top: bBox.y - this.chart.containerHeight + 'px'
+            top: bBox.y - this.chart.chartHeight + 'px'
         });
 
         // Handle pre-click

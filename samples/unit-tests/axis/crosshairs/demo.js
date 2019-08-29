@@ -1,4 +1,3 @@
-/* global TestController */
 QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
     var chart = Highcharts.chart('container', {
         yAxis: [{
@@ -370,5 +369,34 @@ QUnit.test('Show crosshair label on logarithmic axis correctly. #8542', function
         chart.yAxis[0].crossLabel.attr('visibility'),
         'visible',
         'Crosshair label is visible on logarithmic axis for the second point (#8542)'
+    );
+});
+
+
+QUnit.test('Set crosshair stroke-width correctly in StyledMode #11246', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column',
+            styledMode: true
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            crosshair: true
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        Highcharts.defined(chart.xAxis[0].cross.element.attributes['stroke-width']),
+        true,
+        'Crosshair should has stroke-width attribute (#11246)'
     );
 });

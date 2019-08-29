@@ -29,6 +29,7 @@ function task() {
     const argv = require('yargs').argv;
     const buildTool = require('../build');
     const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
@@ -44,11 +45,19 @@ function task() {
 
         logLib.message('Generating code...');
 
+        processLib.isRunning('scripts-js', true);
+
         BuildScripts
             .fnFirstBuild()
             .then(() => logLib.success('Created code'))
-            .then(resolve)
-            .catch(reject);
+            .then(function (output) {
+                processLib.isRunning('scripts-js', false);
+                resolve(output);
+            })
+            .catch(function (error) {
+                processLib.isRunning('scripts-js', false);
+                reject(error);
+            });
     });
 }
 

@@ -24,6 +24,9 @@ declare global {
         type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
+        interface Chart {
+            runTrackerClick?: boolean;
+        }
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
             left?: KDNode;
@@ -32,7 +35,25 @@ declare global {
         }
         interface KDPointSearchObject {
             clientX: number;
-            plotY: number;
+            plotY?: number;
+        }
+        interface LinePointOptions extends PointOptionsObject {
+        }
+        interface LineSeriesOptions extends SeriesOptions {
+            states?: LineSeriesStatesOptions;
+        }
+        interface LineSeriesStatesHoverOptions
+            extends SeriesStatesHoverOptions
+        {
+            // only for inheritance
+        }
+        interface LineSeriesStatesInactiveOptions
+            extends SeriesStatesInactiveOptions
+        {
+            // only for inheritance
+        }
+        interface LineSeriesStatesOptions extends SeriesStatesOptions {
+            hover?: LineSeriesStatesHoverOptions;
         }
         interface PlotOptions {
             [key: string]: PlotSeriesOptions;
@@ -44,7 +65,7 @@ declare global {
             animationLimit?: number;
             boostBlending?: SeriesBlendingValue;
             boostThreshold?: number;
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             className?: string;
             clip?: boolean;
@@ -52,9 +73,6 @@ declare global {
             colorAxis?: boolean;
             colorIndex?: number;
             colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
             connectEnds?: boolean;
             connectNulls?: boolean;
             cropThreshold?: number;
@@ -78,7 +96,7 @@ declare global {
             linkedTo?: string;
             marker?: PointMarkerOptionsObject;
             navigatorOptions?: SeriesOptions;
-            negativeColor?: ColorString;
+            negativeColor?: (ColorString|GradientColorObject|PatternObject);
             opacity?: number;
             point?: PlotSeriesPointOptions;
             pointDescriptionFormatter?: Function;
@@ -118,16 +136,20 @@ declare global {
             category?: string;
             clientX?: number;
             dataGroup?: DataGroupingInfoObject;
+            dist?: number;
+            distX?: number;
             hasImage?: boolean;
             index?: number;
             isInside?: boolean;
             low?: number;
             negative?: boolean;
+            options: PointOptionsObject;
             plotX?: number;
             plotY?: number;
             stackTotal?: number;
-            stackY?: number;
+            stackY?: (number|null);
             yBottom?: number;
+            zone?: PlotSeriesZonesOptions;
         }
         interface SeriesAfterAnimateCallbackFunction {
             (this: Series, event: SeriesAfterAnimateEventObject): void;
@@ -187,13 +209,15 @@ declare global {
         }
         interface SeriesOptions extends PlotSeriesOptions {
             data?: Array<PointOptionsType>;
+            grouping?: boolean;
             id?: string;
             index?: number;
             kdNow?: boolean;
             legendIndex?: number;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             name?: string;
             selected?: boolean;
-            stack?: (object|string);
+            stack?: (number|string);
             type?: string;
             visible?: boolean;
             xAxis?: (number|string);
@@ -218,8 +242,9 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
             enabled?: boolean;
             halo?: (boolean|SeriesStatesHoverHaloOptions);
-            lineWidth?: number;
+            lineWidth?: SeriesOptions['lineWidth'];
             lineWidthPlus?: number;
+            opacity?: SeriesOptions['opacity'];
         }
         interface SeriesStatesInactiveOptions {
             opacity?: number;
@@ -228,29 +253,38 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
         }
         interface SeriesStatesOptions {
-            [key: string]: (
-                SeriesStatesHoverOptions |
-                SeriesStatesInactiveOptions |
-                SeriesStatesNormalOptions |
-                undefined
-            );
             hover?: SeriesStatesHoverOptions;
             inactive?: SeriesStatesInactiveOptions;
             normal?: SeriesStatesNormalOptions;
+        }
+        interface SeriesTypesDictionary {
+            [key: string]: typeof Series;
+            line: typeof LineSeries;
+        }
+        class LinePoint extends Point {
+            public options: LinePointOptions;
+            public series: LineSeries;
+        }
+        class LineSeries extends Series {
+            public data: Array<LinePoint>;
+            public options: LineSeriesOptions;
+            public pointClass: typeof LinePoint;
+            public points: Array<LinePoint>;
         }
         class Series {
             public constructor(chart?: Chart, options?: SeriesOptionsType);
             public _i: number;
             public animationTimeout?: number;
             public area?: SVGElement;
-            public axisTypes: ['xAxis', 'yAxis'];
+            public axisTypes: Array<string>;
+            public basePointRange?: number;
             public buildingKdTree?: boolean;
             public chart: Chart;
             public clips?: Array<SVGElement>;
             public closestPointRange?: number;
             public closestPointRangePx?: number;
             public coll: 'series';
-            public color?: ColorString;
+            public color?: (ColorString|GradientColorObject|PatternObject);
             public colorCounter: number;
             public colorIndex?: number;
             public cropped?: boolean;
@@ -264,10 +298,12 @@ declare global {
                 LegendSymbolMixin['drawRectangle']
             );
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
+            public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
             public graphPath?: SVGPathArray;
+            public group?: SVGElement;
             public hasCartesianSeries?: Chart['hasCartesianSeries'];
             public hasRendered?: boolean;
             public hcEvents: Dictionary<Array<EventWrapperObject<Series>>>;
@@ -282,19 +318,20 @@ declare global {
             public name: string;
             public optionalAxis?: string;
             public options: SeriesOptionsType;
-            public parallelArrays: ['x', 'y'];
+            public parallelArrays: Array<string>;
             public pointClass: typeof Point;
             public pointInterval?: number;
             public points: Array<Point>;
             public pointValKey?: string;
-            public processedXData?: Array<number>;
-            public processedYData?: Array<number>;
+            public processedXData: Array<number>;
+            public processedYData: Array<number>;
             public requireSorting: boolean;
             public selected: boolean;
             public sharedClipKey?: string;
             public sorted: boolean;
             public state: string;
             public stickyTracking: boolean;
+            public symbol?: string;
             public tooltipOptions: TooltipOptions;
             public type: string;
             public userOptions: SeriesOptionsType;
@@ -312,7 +349,7 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<number>,
+                yData: Array<(number|null|undefined)>,
                 min: number,
                 max: number,
                 cropShoulder?: number
@@ -362,13 +399,14 @@ declare global {
                 prop: string,
                 name: string,
                 visibility: string,
-                zIndex: number,
+                zIndex?: number,
                 parent?: SVGElement
             ): SVGElement;
             public pointAttribs(point: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
+            public redrawPoints(): void;
             public render(): void;
             public searchKDTree(
                 point: KDPointSearchObject,
@@ -389,24 +427,13 @@ declare global {
             public setOptions(
                 itemOptions: SeriesOptionsType
             ): SeriesOptionsType;
+            public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(data: Array<PointOptionsType>): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
     }
 }
-
-
-/**
- * @interface Highcharts.PointOptionsObject
- *//**
- * Individual point events
- * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PlotSeriesPointEventsOptions}
- *//**
- * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PlotSeriesPointMarkerOptions}
- */
 
 /**
  * Function callback when a series has been animated.
@@ -606,9 +633,13 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
+    erase,
     isArray,
     isNumber,
-    isString
+    isString,
+    objectEach,
+    splat
 } = U;
 
 import './Options.js';
@@ -623,17 +654,13 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    defined = H.defined,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    objectEach = H.objectEach,
     pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
-    splat = H.splat,
     SVGElement = H.SVGElement,
     syncTimeout = H.syncTimeout,
     win = H.win;
@@ -702,7 +729,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType(
+H.Series = H.seriesType<Highcharts.SeriesOptions>(
     'line',
 
     /**
@@ -777,7 +804,7 @@ H.Series = H.seriesType(
      * @sample {highcharts} highcharts/series/stack/
      *         Stacked and grouped columns
      *
-     * @type      {string|object}
+     * @type      {number|string}
      * @since     2.1
      * @product   highcharts highstock
      * @apioption series.stack
@@ -1249,7 +1276,7 @@ H.Series = H.seriesType(
          * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
          *         Arearange
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     3.0
          * @apioption plotOptions.series.negativeColor
          */
@@ -1690,7 +1717,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
              *         Inherit from series color (undefined)
              *
-             * @type {Highcharts.ColorString}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             lineColor: '${palette.backgroundColor}',
 
@@ -1859,7 +1886,7 @@ H.Series = H.seriesType(
                      * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                      *         White fill color, black line color
                      *
-                     * @type      {Highcharts.ColorString}
+                     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      * @apioption plotOptions.series.marker.states.hover.lineColor
                      */
 
@@ -1960,7 +1987,7 @@ H.Series = H.seriesType(
                      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                      *         Red line color for selected points
                      *
-                     * @type {Highcharts.ColorString}
+                     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      */
                     lineColor: '${palette.neutralColor100}',
 
@@ -2123,7 +2150,7 @@ H.Series = H.seriesType(
         dataLabels: {
             /** @internal */
             align: 'center',
-            /* eslint-disable valid-jsdoc */
+            // eslint-disable-next-line valid-jsdoc
             /**
              * @internal
              * @default function () { return H.numberFormat(this.y, -1); }
@@ -2132,7 +2159,6 @@ H.Series = H.seriesType(
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
-                /* eslint-enable valid-jsdoc */
             },
             /** @internal */
             padding: 5,
@@ -2718,7 +2744,7 @@ H.Series = H.seriesType(
                     (series as any)[key + 'Data'] = [];
                 }
             });
-            if (!series.points) {
+            if (!series.points && !series.data) {
                 series.setData(options.data as any, false);
             }
 
@@ -2805,9 +2831,7 @@ H.Series = H.seriesType(
             ): void {
 
                 // repeat for xAxis and yAxis
-                (series.axisTypes || []).forEach(function (
-                    AXIS: Highcharts.AxisCollValue
-                ): void {
+                (series.axisTypes || []).forEach(function (AXIS: string): void {
 
                     // loop through the chart's axis objects
                     (chart as any)[AXIS].forEach(function (
@@ -2819,13 +2843,14 @@ H.Series = H.seriesType(
                         // the number of the axis, or if undefined, use the
                         // first axis
                         if (
-                            seriesOptions[AXIS] === axisOptions.index ||
+                            (seriesOptions as any)[AXIS] ===
+                            axisOptions.index ||
                             (
-                                seriesOptions[AXIS] !== undefined &&
-                                seriesOptions[AXIS] === axisOptions.id
+                                (seriesOptions as any)[AXIS] !== undefined &&
+                                (seriesOptions as any)[AXIS] === axisOptions.id
                             ) ||
                             (
-                                seriesOptions[AXIS] === undefined &&
+                                (seriesOptions as any)[AXIS] === undefined &&
                                 axisOptions.index === 0
                             )
                         ) {
@@ -3016,8 +3041,10 @@ H.Series = H.seriesType(
             fireEvent(this, 'setOptions', e);
 
             // These may be modified by the event
-            var userPlotOptions = userOptions.plotOptions || {},
-                typeOptions = (e.plotOptions as any)[this.type];
+            var typeOptions = (e.plotOptions as any)[this.type],
+                userPlotOptions = (
+                    userOptions.plotOptions || {} as Highcharts.PlotOptions
+                );
 
             // use copy to prevent undetected changes (#9762)
             this.userOptions = e.userOptions;
@@ -3314,7 +3341,6 @@ H.Series = H.seriesType(
 
             // Iterate the new data
             data.forEach(function (
-                this: Highcharts.Series,
                 pointOptions: Highcharts.PointOptionsType,
                 i: number
             ): void {
@@ -3322,7 +3348,7 @@ H.Series = H.seriesType(
                     x,
                     pointIndex,
                     optionsObject = (
-                        H.defined(pointOptions) &&
+                        defined(pointOptions) &&
                         this.pointClass.prototype.optionsToObject.call(
                             { series: this },
                             pointOptions
@@ -3427,10 +3453,7 @@ H.Series = H.seriesType(
             }
 
             // Add new points
-            pointsToAdd.forEach(function (
-                this: Highcharts.Series,
-                point
-            ): void {
+            pointsToAdd.forEach(function (point): void {
                 this.addPoint(point, false, null as any, null as any, false);
             }, this);
 
@@ -3665,10 +3688,11 @@ H.Series = H.seriesType(
             force?: boolean
         ): (boolean|undefined) {
             var series = this,
-                processedXData = series.xData, // copied during slice operation
-                processedYData = series.yData,
+                // copied during slice operation:
+                processedXData: Array<number> = series.xData as any,
+                processedYData: Array<number> = series.yData as any,
                 dataLength = (processedXData as any).length,
-                croppedData,
+                croppedData: Highcharts.SeriesCropDataObject,
                 cropStart = 0,
                 cropped,
                 distance,
@@ -3691,8 +3715,7 @@ H.Series = H.seriesType(
             // If the series data or axes haven't changed, don't go through
             // this. Return false to pass the message on to override methods
             // like in data grouping.
-            if (
-                isCartesian &&
+            if (isCartesian &&
                 !series.isDirty &&
                 !xAxis.isDirty &&
                 !series.yAxis.isDirty &&
@@ -3709,8 +3732,7 @@ H.Series = H.seriesType(
             }
 
             // optionally filter out points outside the plot area
-            if (
-                isCartesian &&
+            if (isCartesian &&
                 series.sorted &&
                 !getExtremesFromAll &&
                 (
@@ -3721,8 +3743,7 @@ H.Series = H.seriesType(
             ) {
 
                 // it's outside current extremes
-                if (
-                    (processedXData as any)[dataLength - 1] < (min as any) ||
+                if ((processedXData as any)[dataLength - 1] < (min as any) ||
                     (processedXData as any)[0] > (max as any)
                 ) {
                     processedXData = [];
@@ -3760,8 +3781,7 @@ H.Series = H.seriesType(
                         (processedXData as any)[i - 1])
                 );
 
-                if (
-                    distance > 0 &&
+                if (distance > 0 &&
                     (
                         closestPointRange === undefined ||
                         distance < closestPointRange
@@ -3784,7 +3804,8 @@ H.Series = H.seriesType(
             series.processedXData = processedXData;
             series.processedYData = processedYData;
 
-            series.closestPointRange = closestPointRange;
+            series.closestPointRange =
+                series.basePointRange = closestPointRange;
 
         },
 
@@ -4079,7 +4100,7 @@ H.Series = H.seriesType(
                     j = (y as any).length;
                     if (j) { // array, like ohlc or range data
                         while (j--) {
-                            if (typeof (y as any)[j] === 'number') { // #7380
+                            if (isNumber((y as any)[j])) { // #7380, #11513
                                 activeYData[activeCounter++] = (y as any)[j];
                             }
                         }
@@ -4149,7 +4170,8 @@ H.Series = H.seriesType(
                     yBottom = point.low,
                     stack = stacking && yAxis.stacks[(
                         series.negStacks &&
-                        yValue < (stackThreshold ? 0 : (threshold as any)) ?
+                        (yValue as any) <
+                        (stackThreshold ? 0 : (threshold as any)) ?
                             '-' :
                             ''
                     ) + series.stackKey],
@@ -4159,7 +4181,7 @@ H.Series = H.seriesType(
                 // Discard disallowed y values for log axes (#3434)
                 if (yAxis.positiveValuesOnly &&
                     yValue !== null &&
-                    yValue <= 0
+                    (yValue as any) <= 0
                 ) {
                     point.isNull = true;
                 }
@@ -4220,14 +4242,22 @@ H.Series = H.seriesType(
                     point.total = point.stackTotal = (pointStack as any).total;
                     point.percentage =
                         (pointStack as any).total &&
-                        (point.y / (pointStack as any).total * 100);
+                        ((point.y as any) / (pointStack as any).total * 100);
                     point.stackY = yValue;
 
                     // Place the stack label
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        (pointStack as any).setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0
+                        );
+                    }
 
                 }
 
@@ -4240,7 +4270,7 @@ H.Series = H.seriesType(
 
                 // general hook, used for Highstock compare mode
                 if (hasModifyValue) {
-                    yValue = series.modifyValue(yValue, point);
+                    yValue = (series.modifyValue as any)(yValue, point);
                 }
 
                 // Set the the plotY value, reset it for redraws
@@ -4301,7 +4331,7 @@ H.Series = H.seriesType(
                 }
 
                 // Find point zone
-                point.zone = this.zones.length && point.getZone();
+                point.zone = (this.zones.length && point.getZone() as any);
             }
             series.closestPointRangePx = closestPointRangePx;
 
@@ -4394,7 +4424,7 @@ H.Series = H.seriesType(
                 clipBox = series.clipBox || chart.clipBox;
 
                 if (finalBox) {
-                    clipBox.width = chart.plotSizeX;
+                    clipBox.width = chart.plotSizeX as any;
                     clipBox.x = 0;
                 }
             }
@@ -4473,7 +4503,7 @@ H.Series = H.seriesType(
             }
 
             if (options.clip !== false || animation) {
-                this.group.clip(
+                (this.group as any).clip(
                     animation || seriesClipBox ? clipRect : chart.clipRect
                 );
                 (this.markerGroup as any).clip(markerClipRect);
@@ -4591,8 +4621,10 @@ H.Series = H.seriesType(
                 hasPointMarker,
                 enabled,
                 isInside,
-                markerGroup =
-                    (series as any)[series.specialGroup] || series.markerGroup,
+                markerGroup = (
+                    (series as any)[series.specialGroup as any] ||
+                    series.markerGroup
+                ),
                 xAxis = series.xAxis,
                 markerAttribs,
                 globallyEnabled = pick(
@@ -4629,7 +4661,7 @@ H.Series = H.seriesType(
 
                         markerAttribs = series.markerAttribs(
                             point,
-                            point.selected && 'select'
+                            (point.selected && 'select') as any
                         );
 
                         if (graphic) { // update
@@ -4675,7 +4707,7 @@ H.Series = H.seriesType(
                             graphic[verb](
                                 series.pointAttribs(
                                     point,
-                                    point.selected && 'select'
+                                    (point.selected && 'select') as any
                                 )
                             );
                         }
@@ -4797,7 +4829,12 @@ H.Series = H.seriesType(
                     (pointOptions && pointOptions.marker) || {}
                 ),
                 pointStateOptions,
-                color = this.color,
+                color: (
+                    Highcharts.ColorString|
+                    Highcharts.GradientColorObject|
+                    Highcharts.PatternObject|
+                    undefined
+                ) = this.color,
                 pointColorOption = pointOptions && pointOptions.color,
                 pointColor = point && point.color,
                 strokeWidth = pick(
@@ -4833,7 +4870,7 @@ H.Series = H.seriesType(
                 seriesStateOptions = (seriesMarkerOptions as any).states[state];
                 pointStateOptions = (
                     pointMarkerOptions.states &&
-                    (pointMarkerOptions as any).states[state]
+                    (pointMarkerOptions.states as any)[state]
                 ) || {};
                 strokeWidth = pick(
                     pointStateOptions.lineWidth,
@@ -4944,7 +4981,7 @@ H.Series = H.seriesType(
 
             // remove from hoverSeries
             if (chart.hoverSeries === series) {
-                chart.hoverSeries = null;
+                chart.hoverSeries = null as any;
             }
             erase(chart.series, series);
             chart.orderSeries();
@@ -5008,7 +5045,8 @@ H.Series = H.seriesType(
                 var plotX = point.plotX,
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
-                    pathToPoint; // the path to this point from the previous
+                    // the path to this point from the previous
+                    pathToPoint: Highcharts.SVGPathArray;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -5028,47 +5066,63 @@ H.Series = H.seriesType(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = ['M', point.plotX, point.plotY];
+                        pathToPoint = [
+                            'M',
+                            point.plotX as any,
+                            point.plotY as any
+                        ];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if (series.getPointSpline) {
+                    } else if (
+                        (series as Highcharts.SplineSeries).getPointSpline
+                    ) {
 
-                        pathToPoint = series.getPointSpline(points, point, i);
+                        pathToPoint = (
+                            series as Highcharts.SplineSeries
+                        ).getPointSpline(
+                            points as Array<Highcharts.SplinePoint>,
+                            point as Highcharts.SplinePoint,
+                            i
+                        );
 
                     } else if (step) {
 
                         if (step === 1) { // right
                             pathToPoint = [
                                 'L',
-                                lastPoint.plotX,
-                                plotY
+                                lastPoint.plotX as any,
+                                plotY as any
                             ];
 
                         } else if (step === 2) { // center
                             pathToPoint = [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY,
+                                lastPoint.plotY as any,
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                plotY
+                                plotY as any
                             ];
 
                         } else {
                             pathToPoint = [
                                 'L',
-                                plotX,
-                                lastPoint.plotY
+                                plotX as any,
+                                lastPoint.plotY as any
                             ];
                         }
-                        pathToPoint.push('L', plotX, plotY);
+                        pathToPoint.push(
+                            'L',
+                            plotX as any,
+                            plotY as any
+                        );
 
                     } else {
                         // normal line to next point
                         pathToPoint = [
                             'L',
-                            plotX,
-                            plotY
+                            plotX as any,
+                            plotY as any
                         ];
                     }
 
@@ -5122,7 +5176,7 @@ H.Series = H.seriesType(
                         options.lineColor ||
                         this.color ||
                         '${palette.neutralColor20}' // when colorByPoint = true
-                    ),
+                    ) as any,
                     options.dashStyle as any
                 );
             }
@@ -5217,7 +5271,6 @@ H.Series = H.seriesType(
         ): Array<Array<string>> {
             // Add the zone properties if any
             this.zones.forEach(function (
-                this: Highcharts.Series,
                 zone: Highcharts.PlotSeriesZonesOptions,
                 i: number
             ): void {
@@ -5229,8 +5282,8 @@ H.Series = H.seriesType(
 
                 if (!this.chart.styledMode) {
                     propset.push(
-                        (zone.color as any) || this.color,
-                        (zone.dashStyle as any) || this.options.dashStyle
+                        (zone.color || this.color) as any,
+                        (zone.dashStyle || this.options.dashStyle) as any
                     );
                 }
                 props.push(propset);
@@ -5477,7 +5530,7 @@ H.Series = H.seriesType(
          * @param {string} prop
          * @param {string} name
          * @param {string} visibility
-         * @param {number} zIndex
+         * @param {number} [zIndex]
          * @param {Highcharts.SVGElement} [parent]
          * @return {Highcharts.SVGElement}
          */
@@ -5486,7 +5539,7 @@ H.Series = H.seriesType(
             prop: string,
             name: string,
             visibility: string,
-            zIndex: number,
+            zIndex?: number,
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
@@ -5540,7 +5593,9 @@ H.Series = H.seriesType(
          *
          * @return {Highcharts.SeriesPlotBoxObject}
          */
-        getPlotBox: function (): Highcharts.SeriesPlotBoxObject {
+        getPlotBox: function (
+            this: Highcharts.Series
+        ): Highcharts.SeriesPlotBoxObject {
             var chart = this.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis;

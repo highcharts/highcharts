@@ -287,11 +287,13 @@ Chart.prototype.applyFixed = function () {
     if (firstTime) {
         if (scrollableOptions.scrollPositionX) {
             this.scrollingContainer.scrollLeft =
-                this.scrollablePixelsX * scrollableOptions.scrollPositionX;
+                this.scrollablePixelsX *
+                    scrollableOptions.scrollPositionX;
         }
         if (scrollableOptions.scrollPositionY) {
             this.scrollingContainer.scrollTop =
-                this.scrollablePixelsY * scrollableOptions.scrollPositionY;
+                this.scrollablePixelsY *
+                    scrollableOptions.scrollPositionY;
         }
     }
     // Mask behind the left and right side

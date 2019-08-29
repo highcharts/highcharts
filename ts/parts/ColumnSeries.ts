@@ -22,7 +22,16 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesOptions {
+        interface PlotSeriesZonesOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface ColumnPointOptions extends LinePointOptions {
+            dashStyle?: DashStyleValue;
+            pointWidth?: number;
+        }
+        interface ColumnSeriesOptions extends LineSeriesOptions {
             borderRadius?: number;
             crisp?: boolean;
             grouping?: boolean;
@@ -31,37 +40,74 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
+            startFromThreshold?: boolean;
+            states?: ColumnSeriesStatesOptions;
         }
-        interface PlotSeriesZonesOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface Point {
-            barX?: number;
-            pointWidth?: number;
-            shapeType?: string;
-        }
-        interface PointOptionsObject {
-            dashStyle?: DashStyleValue;
-            pointWidth?: number;
-        }
-        interface Series {
-            borderWidth?: number;
-            columnIndex?: number;
-            columnMetrics?: ColumnMetricsObject;
-            cropShould?: number;
-            dashStyle?: DashStyleValue;
-            dense?: boolean;
-            crispCol(x: number, y: number, w: number, h: number): BBoxObject;
-            getColumnMetrics(): ColumnMetricsObject;
-            remove(): void;
-        }
-        interface SeriesStatesHoverOptions {
-            borderColor?: ColorString;
+        interface ColumnSeriesStatesHoverOptions
+            extends LineSeriesStatesHoverOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             brightness?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
+        }
+        interface ColumnSeriesStatesInactiveOptions
+            extends LineSeriesStatesInactiveOptions {
+        }
+        interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
+            hover?: ColumnSeriesStatesHoverOptions;
+            inactive?: ColumnSeriesStatesInactiveOptions;
+            select?: ColumnSeriesStatesSelectOptions;
+        }
+        interface ColumnSeriesStatesSelectOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            brightness?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+        }
+        interface PlotSeriesOptions {
+            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
+        }
+        interface Point {
+            allowShadow?: ColumnPoint['allowShadow'];
+        }
+        interface Series {
+            barW?: number;
+            pointXOffset?: number;
+        }
+        interface SeriesTypesDictionary {
+            column: typeof ColumnSeries;
+        }
+        class ColumnPoint extends LinePoint {
+            public allowShadow?: boolean;
+            public barX: number;
+            public group?: SVGElement;
+            public options: ColumnPointOptions;
+            public pointWidth: number;
+            public series: ColumnSeries;
+            public shapeType: string;
+        }
+        class ColumnSeries extends LineSeries {
+            public borderWidth: number;
+            public columnIndex?: number;
+            public columnMetrics?: ColumnMetricsObject;
+            public cropShould?: number;
+            public dashStyle?: DashStyleValue;
+            public data: Array<ColumnPoint>;
+            public dense?: boolean;
+            public group: SVGElement;
+            public options: ColumnSeriesOptions;
+            public pointClass: typeof ColumnPoint;
+            public points: Array<ColumnPoint>;
+            public pointXOffset: number;
+            public translatedThreshold?: number;
+            public crispCol(
+                x: number,
+                y: number,
+                w: number,
+                h: number
+            ): BBoxObject;
+            public getColumnMetrics(): ColumnMetricsObject;
+            public remove(): void;
         }
     }
 }
@@ -99,6 +145,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
@@ -110,7 +157,6 @@ import './Options.js';
 var animObject = H.animObject,
     color = H.color,
     extend = H.extend,
-    defined = H.defined,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -128,7 +174,7 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType(
+seriesType<Highcharts.ColumnSeriesOptions>(
     'column',
     'line',
 
@@ -391,7 +437,7 @@ seriesType(
                  * A specific border color for the hovered point. Defaults to
                  * inherit the normal state border color.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product   highcharts gantt
                  * @apioption plotOptions.column.states.hover.borderColor
                  */
@@ -442,7 +488,7 @@ seriesType(
                 /**
                  * A specific border color for the selected point.
                  *
-                 * @type    {Highcharts.ColorString}
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
@@ -531,7 +577,7 @@ seriesType(
          * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
          *         Dark gray border
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #ffffff
          * @product   highcharts highstock gantt
          *
@@ -561,8 +607,9 @@ seriesType(
          *
          * @private
          * @function Highcharts.seriesTypes.column#init
+         * @return {void}
          */
-        init: function (this: Highcharts.Series): void {
+        init: function (this: Highcharts.ColumnSeries): void {
             Series.prototype.init.apply(this, arguments as any);
 
             var series = this,
@@ -587,11 +634,10 @@ seriesType(
          *
          * @private
          * @function Highcharts.seriesTypes.column#getColumnMetrics
-         *
          * @return {Highcharts.ColumnMetricsObject}
          */
         getColumnMetrics: function (
-            this: Highcharts.Series
+            this: Highcharts.ColumnSeries
         ): Highcharts.ColumnMetricsObject {
 
             var series = this,
@@ -638,7 +684,7 @@ seriesType(
                         } else if (otherOptions.grouping !== false) { // #1162
                             columnIndex = columnCount++;
                         }
-                        otherSeries.columnIndex = columnIndex;
+                        (otherSeries as any).columnIndex = columnIndex;
                     }
                 });
             }
@@ -698,7 +744,7 @@ seriesType(
          * @return {Highcharts.BBoxObject}
          */
         crispCol: function (
-            this: Highcharts.Series,
+            this: Highcharts.ColumnSeries,
             x: number,
             y: number,
             w: number,
@@ -751,7 +797,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#translate
          */
-        translate: function (this: Highcharts.Series): void {
+        translate: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = series.chart,
                 options = series.options,
@@ -764,13 +810,13 @@ seriesType(
                 yAxis = series.yAxis,
                 threshold = options.threshold,
                 translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
+                    yAxis.getThreshold(threshold as any),
                 minPointLength = pick(options.minPointLength, 5),
                 metrics = series.getColumnMetrics(),
                 seriesPointWidth = metrics.width,
                 // postprocessed for border width
                 seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+                    Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
                 dataMax = series.dataMax;
@@ -790,7 +836,9 @@ seriesType(
             Series.prototype.translate.apply(series);
 
             // Record the new values
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (
+                point: Highcharts.ColumnPoint
+            ): void {
                 var yBottom = pick(point.yBottom, translatedThreshold),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
@@ -816,9 +864,9 @@ seriesType(
                     // in visible range (#7046)
                     if (
                         point.y === threshold &&
-                        series.dataMax <= threshold &&
+                        series.dataMax <= (threshold as any) &&
                         // and if there's room for it (#7311)
-                        (yAxis.min as any) < threshold &&
+                        (yAxis.min as any) < (threshold as any) &&
                         // if all points are the same value (i.e zero) not draw
                         // as negative points (#10646)
                         dataMin !== dataMax
@@ -901,7 +949,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#drawGraph
          */
-        drawGraph: function (this: Highcharts.Series): void {
+        drawGraph: function (this: Highcharts.ColumnSeries): void {
             this.group[
                 this.dense ? 'addClass' : 'removeClass'
             ]('highcharts-dense-data');
@@ -913,21 +961,21 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#pointAttribs
          *
-         * @param {Highcharts.Point} point
+         * @param {Highcharts.ColumnPoint} point
          *
          * @param {string} state
          *
          * @return {Highcharts.SVGAttributes}
          */
         pointAttribs: function (
-            this: Highcharts.Series,
-            point: Highcharts.Point,
+            this: Highcharts.ColumnSeries,
+            point: Highcharts.ColumnPoint,
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
-                stateOptions: Highcharts.SeriesStatesHoverOptions,
+                stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
                 ret: Highcharts.SVGAttributes,
-                p2o = this.pointAttrToOptions || {},
+                p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
                 strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
                 fill = (point && point.color) || this.color,
@@ -970,7 +1018,9 @@ seriesType(
                 stateOptions = merge(
                     (options.states as any)[state],
                     // #6401
-                    point.options.states && point.options.states[state] || {}
+                    point.options.states &&
+                    (point.options.states as any)[state] ||
+                    {}
                 );
                 brightness = stateOptions.brightness;
                 fill =
@@ -1009,7 +1059,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#drawPoints
          */
-        drawPoints: function (this: Highcharts.Series): void {
+        drawPoints: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = this.chart,
                 options = series.options,
@@ -1018,7 +1068,9 @@ seriesType(
                 shapeArgs;
 
             // draw the columns
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (
+                point: Highcharts.ColumnPoint
+            ): void {
                 var plotY = point.plotY,
                     graphic = point.graphic,
                     verb = graphic && chart.pointCount < animationLimit ?
@@ -1049,16 +1101,16 @@ seriesType(
 
                     // Border radius is not stylable (#6900)
                     if (options.borderRadius) {
-                        graphic[verb]({
+                        (graphic as any)[verb]({
                             r: options.borderRadius
                         });
                     }
 
                     // Presentational
                     if (!chart.styledMode) {
-                        graphic[verb](series.pointAttribs(
+                        (graphic as any)[verb](series.pointAttribs(
                             point,
-                            point.selected && 'select'
+                            (point.selected && 'select') as any
                         ))
                             .shadow(
                                 point.allowShadow !== false && options.shadow,
@@ -1067,7 +1119,7 @@ seriesType(
                             );
                     }
 
-                    graphic.addClass(point.getClassName(), true);
+                    (graphic as any).addClass(point.getClassName(), true);
 
 
                 } else if (graphic) {
@@ -1085,7 +1137,7 @@ seriesType(
          * @param {boolean} init
          *        Whether to initialize the animation or run it
          */
-        animate: function (this: Highcharts.Series, init: boolean): void {
+        animate: function (this: Highcharts.ColumnSeries, init: boolean): void {
             var series = this,
                 yAxis = this.yAxis,
                 options = series.options,
@@ -1120,7 +1172,7 @@ seriesType(
                     series.group.attr(attr);
 
                 } else { // run the animation
-                    translateStart = series.group.attr(translateProp);
+                    translateStart = series.group.attr(translateProp) as any;
                     series.group.animate(
                         { scaleY: 1 },
                         extend(animObject(series.options.animation), {
@@ -1148,7 +1200,7 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.column#remove
          */
-        remove: function (this: Highcharts.Series): void {
+        remove: function (this: Highcharts.ColumnSeries): void {
             var series = this,
                 chart = series.chart;
 
@@ -1252,7 +1304,7 @@ seriesType(
  * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
  *         Dark gray border
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock
  * @apioption series.column.data.borderColor
  */

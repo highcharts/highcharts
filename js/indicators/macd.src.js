@@ -7,13 +7,14 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined;
 
 
 var seriesType = H.seriesType,
     noop = H.noop,
     merge = H.merge,
-    defined = H.defined,
     SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema,
     correctFloat = H.correctFloat;

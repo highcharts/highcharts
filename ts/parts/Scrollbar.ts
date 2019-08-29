@@ -38,14 +38,14 @@ declare global {
             barBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
-            barBorderColor?: ColorString;
+            barBorderColor?: (ColorString|GradientColorObject|PatternObject);
             barBorderRadius?: number;
             barBorderWidth?: number;
             buttonArrowColor?: (ColorString|GradientColorObject|PatternObject);
             buttonBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
-            buttonBorderColor?: ColorString;
+            buttonBorderColor?: (ColorString|GradientColorObject|PatternObject);
             buttonBorderRadius?: number;
             buttonBorderWidth?: number;
             enabled?: boolean;
@@ -61,11 +61,14 @@ declare global {
             trackBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
-            trackBorderColor?: ColorString;
+            trackBorderColor?: (ColorString|GradientColorObject|PatternObject);
             trackBorderRadius?: number;
             trackBorderWidth?: number;
             vertical?: boolean;
             zIndex?: number;
+        }
+        interface XAxisOptions {
+            scrollbar?: ScrollbarOptions;
         }
         class Scrollbar {
             public constructor(
@@ -135,12 +138,16 @@ declare global {
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
-        function swapXY(path: SVGPathArray, vertical: boolean): SVGPathArray;
+        function swapXY(path: SVGPathArray, vertical?: boolean): SVGPathArray;
     }
 }
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    defined
+} = U;
+
 import './Axis.js';
 import './Options.js';
 
@@ -148,7 +155,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
@@ -158,7 +164,7 @@ var addEvent = H.addEvent,
     removeEvent = H.removeEvent,
     swapXY: (
         path: Highcharts.SVGPathArray,
-        vertical: boolean
+        vertical?: boolean
     ) => Highcharts.SVGPathArray;
 
 /**
@@ -286,7 +292,7 @@ var defaultScrollbarOptions = {
     /**
      * The color of the scrollbar's border.
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBorderColor: '${palette.neutralColor20}',
 
@@ -316,7 +322,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBorderColor: '${palette.neutralColor20}',
 
@@ -351,7 +357,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBorderColor: '${palette.neutralColor5}',
 
@@ -390,7 +396,7 @@ defaultOptions.scrollbar = merge(
  * @param {Highcharts.SVGPathArray} path
  *        Path to be rotated.
  *
- * @param {boolean} vertical
+ * @param {boolean} [vertical]
  *        If vertical scrollbar, swap x-y values.
  *
  * @return {Highcharts.SVGPathArray}
@@ -398,7 +404,7 @@ defaultOptions.scrollbar = merge(
  */
 H.swapXY = swapXY = function (
     path: Highcharts.SVGPathArray,
-    vertical: boolean
+    vertical?: boolean
 ): Highcharts.SVGPathArray {
     var i,
         len = path.length,
@@ -506,7 +512,7 @@ Scrollbar.prototype = {
 
         if (!styledMode) {
             scroller.track.attr({
-                fill: options.trackBackgroundColor as any,
+                fill: options.trackBackgroundColor,
                 stroke: options.trackBorderColor,
                 'stroke-width': options.trackBorderWidth
             });
@@ -543,18 +549,18 @@ Scrollbar.prototype = {
                 3, size / 4,
                 'L',
                 3, 2 * size / 3
-            ], options.vertical as any))
+            ], options.vertical))
             .addClass('highcharts-scrollbar-rifles')
             .add(scroller.scrollbarGroup);
 
         if (!styledMode) {
             scroller.scrollbar.attr({
-                fill: options.barBackgroundColor as any,
+                fill: options.barBackgroundColor,
                 stroke: options.barBorderColor,
                 'stroke-width': options.barBorderWidth
             });
             scroller.scrollbarRifles.attr({
-                stroke: options.rifleColor as any,
+                stroke: options.rifleColor,
                 'stroke-width': 1
             });
         }
@@ -673,7 +679,7 @@ Scrollbar.prototype = {
             tempElem.attr({
                 stroke: options.buttonBorderColor,
                 'stroke-width': options.buttonBorderWidth,
-                fill: options.buttonBackgroundColor as any
+                fill: options.buttonBackgroundColor
             });
         }
 
@@ -698,13 +704,13 @@ Scrollbar.prototype = {
                 'L',
                 size / 2 + (index ? 2 : -2),
                 size / 2
-            ], options.vertical as any))
+            ], options.vertical))
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
 
         if (!this.chart.styledMode) {
             tempElem.attr({
-                fill: options.buttonArrowColor as any
+                fill: options.buttonArrowColor
             });
         }
     },
@@ -1158,7 +1164,7 @@ if (!H.Scrollbar) {
     /* *
      * Wrap axis initialization and create scrollbar if enabled:
      */
-    addEvent(Axis as any, 'afterInit', function (this: Highcharts.Axis): void {
+    addEvent(Axis, 'afterInit', function (this: Highcharts.Axis): void {
         var axis = this;
 
         if (
@@ -1236,9 +1242,7 @@ if (!H.Scrollbar) {
     /* *
     * Wrap rendering axis, and update scrollbar if one is created:
     */
-    addEvent(Axis as any, 'afterRender', function (
-        this: Highcharts.Axis
-    ): void {
+    addEvent(Axis, 'afterRender', function (this: Highcharts.Axis): void {
         var axis = this,
             scrollMin = Math.min(
                 pick(axis.options.min, axis.min),
@@ -1340,9 +1344,7 @@ if (!H.Scrollbar) {
      * Make space for a scrollbar
      * @private
      */
-    addEvent(Axis as any, 'afterGetOffset', function (
-        this: Highcharts.Axis
-    ): void {
+    addEvent(Axis, 'afterGetOffset', function (this: Highcharts.Axis): void {
         var axis = this,
             index = axis.horiz ? 2 : 1,
             scrollbar = axis.scrollbar;

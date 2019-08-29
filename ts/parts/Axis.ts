@@ -77,7 +77,11 @@ declare global {
         interface AxisTickPositionsArray extends Array<number> {
         }
         interface AxisTickPositionerCallbackFunction {
-            (this: Axis): Array<number>;
+            (
+                this: Axis,
+                min: number,
+                max: number
+            ): (AxisTickPositionsArray|undefined);
         }
         interface ExtremesObject {
             dataMax: number;
@@ -88,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: (XAxisOptions|Array<XAxisOptions>);
-            yAxis?: (YAxisOptions|Array<YAxisOptions>);
+            xAxis?: Array<XAxisOptions>;
+            yAxis?: Array<YAxisOptions>;
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -102,7 +106,7 @@ declare global {
         interface XAxisCrosshairLabelOptions {
             align?: AlignValue;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             format?: string;
@@ -113,7 +117,7 @@ declare global {
         }
         interface XAxisCrosshairOptions {
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             dashStyle?: DashStyleValue;
             label?: XAxisCrosshairLabelOptions;
             snap?: boolean;
@@ -126,42 +130,6 @@ declare global {
             repeat?: number;
             to?: number;
         }
-        interface XAxisCurrentDateIndicatorLabelOptions {
-            align?: AlignValue;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface XAxisCurrentDateIndicatorOptions {
-            acrossPanes?: boolean;
-            className?: string;
-            color?: ColorString;
-            dashStyle?: DashStyleValue;
-            events?: any;
-            id?: string;
-            label?: XAxisCurrentDateIndicatorLabelOptions;
-            width?: number;
-            zIndex?: number;
-        }
-        interface XAxisDateTimeLabelFormatsOptions {
-            day?: XAxisDateTimeLabelFormatsSubOptions;
-            hour?: XAxisDateTimeLabelFormatsSubOptions;
-            millisecond?: XAxisDateTimeLabelFormatsSubOptions;
-            minute?: XAxisDateTimeLabelFormatsSubOptions;
-            month?: XAxisDateTimeLabelFormatsSubOptions;
-            second?: XAxisDateTimeLabelFormatsSubOptions;
-            week?: XAxisDateTimeLabelFormatsSubOptions;
-            year?: XAxisDateTimeLabelFormatsSubOptions;
-        }
-        interface XAxisDateTimeLabelFormatsSubOptions {
-            main?: string;
-            range?: boolean;
-        }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
             afterSetExtremes?: AxisSetExtremesEventCallbackFunction;
@@ -170,7 +138,7 @@ declare global {
             setExtremes?: AxisSetExtremesEventCallbackFunction;
         }
         interface XAxisGridOptions {
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderWidth?: number;
             cellHeight?: number;
             columns?: Array<XAxisOptions>;
@@ -190,10 +158,8 @@ declare global {
             maxStaggerLines?: number;
             overflow?: OptionsOverflowValue;
             padding?: number;
-            position3d?: OptionsPosition3dValue;
             reserveSpace?: boolean;
             rotation?: number;
-            skew3d?: boolean;
             staggerLines?: number;
             step?: number;
             style?: CSSObject;
@@ -206,19 +172,19 @@ declare global {
             accessibility?: (object|XAxisAccessibilityOptions);
             alignTicks?: boolean;
             allowDecimals?: boolean;
-            alternateGridColor?: ColorString;
+            alternateGridColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
             breaks?: Array<XAxisBreaksOptions>;
             categories?: Array<string>;
             ceiling?: number;
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
-            currentDateIndicator?: (boolean|XAxisCurrentDateIndicatorOptions);
-            dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
             grid?: XAxisGridOptions;
-            gridLineColor?: ColorString;
+            gridLineColor?: (ColorString|GradientColorObject|PatternObject);
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
             gridZIndex?: number;
@@ -228,7 +194,7 @@ declare global {
             labels?: XAxisLabelsOptions;
             left?: (number|string);
             linearToLogConverter?: undefined;
-            lineColor?: ColorString;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             linkedTo?: number;
             margin?: number;
@@ -237,10 +203,12 @@ declare global {
             maxRange?: number;
             maxZoom?: number;
             min?: (null|number);
-            minorGridLineColor?: ColorString;
+            minorGridLineColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
             minorGridLineDashStyle?: DashStyleValue;
             minorGridLineWidth?: number;
-            minorTickColor?: ColorString;
+            minorTickColor?: (ColorString|GradientColorObject|PatternObject);
             minorTickInterval?: ('auto'|null|number);
             minorTickLength?: number;
             minorTickPosition?: AxisMinorTickPositionValue;
@@ -258,18 +226,16 @@ declare global {
             range?: number;
             reversed?: boolean;
             reversedStacks?: boolean;
-            scrollbar?: XAxisScrollbarOptions;
             showEmpty?: boolean;
             showFirstLabel?: boolean;
             showLastLabel?: boolean;
             side?: number;
             softMax?: number;
             softMin?: number;
-            stackLabels?: undefined;
             startOfWeek?: number;
             startOnTick?: boolean;
             tickAmount?: number;
-            tickColor?: ColorString;
+            tickColor?: (ColorString|GradientColorObject|PatternObject);
             tickInterval?: number;
             tickLength?: number;
             tickmarkPlacement?: AxisTickmarkPlacementValue;
@@ -286,17 +252,15 @@ declare global {
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
-            zoomEnabled?: undefined;
+            zoomEnabled?: boolean;
         }
         interface XAxisTitleOptions {
             align?: AxisTitleAlignValue;
             enabled?: boolean;
             margin?: number;
             offset?: number;
-            position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
             reserveSpace?: boolean;
             rotation?: number;
-            skew3d?: (boolean|null);
             style?: CSSObject;
             text?: (string|null);
             textAlign?: AlignValue;
@@ -307,29 +271,14 @@ declare global {
         interface YAxisOptions extends XAxisOptions {
             angle?: number;
             gridLineInterpolation?: AxisGridLineInterpolationValue;
-            maxColor?: ColorString;
-            maxLength?: (number|string);
-            minColor?: ColorString;
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
-            stackLabels?: YAxisStackLabelsOptions;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
+            minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
-            stops?: Array<[number, ColorString]>;
+            stops?: Array<[
+                number,
+                (ColorString|GradientColorObject|PatternObject)
+            ]>;
             tooltipValueFormat?: string;
-        }
-        interface YAxisResizeControlledAxisOptions {
-            next?: Array<(string|number)>;
-            prev?: Array<(string|number)>;
-        }
-        interface YAxisResizeOptions {
-            controlledAxis?: YAxisResizeControlledAxisOptions;
-            cursor?: string;
-            enabled?: boolean;
-            lineColor?: ColorString;
-            lineDashStyle?: string;
-            lineWidth?: number;
-            x?: number;
-            y?: number;
         }
         interface ZAxisOptions extends XAxisOptions {
             breaks?: undefined;
@@ -356,7 +305,7 @@ declare global {
             public closestPointRange: number;
             public coll: string;
             public cross?: SVGElement;
-            public crosshair: (boolean|AxisCrosshairOptions);
+            public crosshair?: AxisCrosshairOptions;
             public dataMax?: (null|number);
             public dataMin?: (null|number);
             public defaultBottomAxisOptions: AxisOptions;
@@ -506,7 +455,7 @@ declare global {
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
-            public tickSize(prefix: string): Array<number>;
+            public tickSize(prefix?: string): Array<number>;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
             public translate(
@@ -743,9 +692,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isArray,
     isNumber,
-    isString
+    isString,
+    objectEach,
+    splat
 } = U;
 
 import './Color.js';
@@ -759,7 +711,6 @@ var addEvent = H.addEvent,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     extend = H.extend,
@@ -768,11 +719,9 @@ var addEvent = H.addEvent,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    splat = H.splat,
     syncTimeout = H.syncTimeout,
     Tick = H.Tick;
 
@@ -832,6 +781,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @type         {*|Array<*>}
      * @optionparent xAxis
+     *
+     * @private
      */
     defaultOptions: {
 
@@ -882,7 +833,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/alternategridcolor/
          *         Alternate grid color on the Y axis
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption xAxis.alternateGridColor
          */
 
@@ -1037,7 +988,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
          *         Customized crosshairs
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #cccccc
          * @since     4.1
          * @apioption xAxis.crosshair.color
@@ -1099,7 +1050,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * The border color for the crosshair label
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderColor
@@ -1217,6 +1168,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
+         * Whether to zoom axis. If `chart.zoomType` is set, the option allows
+         * to disable zooming on an individual axis.
+         *
+         * @sample {highcharts} highcharts/xaxis/zoomenabled/
+         *         Zoom enabled is false
+         *
+         *
+         * @type      {boolean}
+         * @default   enabled
+         * @apioption xAxis.zoomEnabled
+         */
+
+        /**
          * For a datetime axis, the scale will automatically adjust to the
          * appropriate unit. This member gives the default string
          * representations used for each unit. For intermediate values,
@@ -1244,31 +1208,55 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /**
+             * @type {string|*}
+             */
             millisecond: {
                 main: '%H:%M:%S.%L',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             second: {
                 main: '%H:%M:%S',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             minute: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             hour: {
                 main: '%H:%M',
                 range: false
             },
+            /**
+             * @type {string|*}
+             */
             day: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             week: {
                 main: '%e. %b'
             },
+            /**
+             * @type {string|*}
+             */
             month: {
                 main: '%b \'%y'
             },
+            /**
+             * @type {string|*}
+             */
             year: {
                 main: '%Y'
             }
@@ -2741,7 +2729,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorgridlinecolor/
          *         Bright grey lines from Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #f2f2f2
          */
         minorGridLineColor: '${palette.neutralColor5}',
@@ -2769,7 +2757,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorticks/
          *         Black tick marks on Y axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #999999
          */
         minorTickColor: '${palette.neutralColor40}',
@@ -2791,7 +2779,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/linecolor/
          *         A red line on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         lineColor: '${palette.highlightColor20}',
@@ -2830,7 +2818,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/gridlinecolor/
          *         Green lines
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #e6e6e6
          */
         gridLineColor: '${palette.neutralColor10}',
@@ -2869,7 +2857,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/ticks/
          *         Formatted ticks on X axis
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #ccd6eb
          */
         tickColor: '${palette.highlightColor20}'
@@ -2890,6 +2878,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @extends      xAxis
      * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
+     *
+     * @private
      */
     defaultYAxisOptions: {
 
@@ -2973,7 +2963,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -2987,7 +2977,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -3209,7 +3199,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * In Highmaps, the axis line is hidden by default, because the axis is
          * not visible by default.
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption yAxis.lineColor
          */
 
@@ -3669,6 +3659,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @product   highcharts
      * @excluding breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
      * @apioption zAxis
+     *
+     * @private
      */
 
     // This variable extends the defaultOptions for left axes.
@@ -3796,6 +3788,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             (axis.opposite ? 0 : 2) : // top : bottom
             (axis.opposite ? 1 : 3)); // right : left
 
+        /**
+         * Current options for the axis after merge of defaults and user's
+         * options.
+         *
+         * @name Highcharts.Axis#options
+         * @type {Highcharts.AxisOptions}
+         */
         axis.setOptions(userOptions);
 
 
@@ -3808,7 +3807,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axis.defaultLabelFormatter;
 
 
-        // Flag, stagger lines or not
+        /**
+         * User's options for this axis without defaults.
+         *
+         * @name Highcharts.Axis#userOptions
+         * @type {Highcharts.AxisOptions}
+         */
         axis.userOptions = userOptions;
 
         axis.minPixelPadding = 0;
@@ -3831,7 +3835,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.categories = (options.categories as any) || axis.hasNames;
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
-            axis.names.keys = {} as any;
+            (axis.names as any).keys = {};
         }
 
 
@@ -4741,11 +4745,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param {Highcharts.Point} point The point to inspect.
      * @return {number} The X value that the point is given.
      */
-    nameToX: function (this: Highcharts.Axis, point: Highcharts.Point): number {
+    nameToX: function (
+        this: Highcharts.Axis,
+        point: Highcharts.Point
+    ): (number|undefined) {
         var explicitCategories = isArray(this.categories),
             names = explicitCategories ? this.categories : this.names,
             nameX = point.options.x,
-            x;
+            x: (number|undefined);
 
         point.series.requireSorting = false;
 
@@ -4755,7 +4762,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 (
                     explicitCategories ?
                         (names as any).indexOf(point.name) :
-                        pick((names as any).keys[point.name], -1)
+                        pick((names as any).keys[point.name as any], -1)
 
                 );
         }
@@ -4769,9 +4776,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // Write the last point's name to the names array
         if (x !== undefined) {
-            this.names[x] = point.name;
+            this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
-            (this.names.keys as any)[point.name] = x;
+            (this.names as any).keys[point.name as any] = x;
         }
 
         return x;
@@ -4787,8 +4794,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             i = names.length;
 
         if (i > 0) {
-            Object.keys(names.keys).forEach(function (key: string): void {
-                delete (names.keys as any)[key];
+            Object.keys((names as any).keys).forEach(function (
+                key: string
+            ): void {
+                delete ((names as any).keys)[key];
             });
             names.length = 0;
 
@@ -6006,10 +6015,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * Get the tick length and width for the axis based on axis options.
      * @private
-     * @param {string} prefix 'tick' or 'minorTick'
-     * @return {Array<number>} An array of tickLength and tickWidth
+     * @param {string} [prefix]
+     *        'tick' or 'minorTick'
+     * @return {Array<number>}
+     *         An array of tickLength and tickWidth
      */
-    tickSize: function (this: Highcharts.Axis, prefix: string): Array<number> {
+    tickSize: function (this: Highcharts.Axis, prefix?: string): Array<number> {
         var options = this.options,
             tickLength = (options as any)[prefix + 'Length'],
             tickWidth = pick(
@@ -6018,7 +6029,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
-            tickSize;
+            tickSize: (Array<number>|undefined);
 
         if (tickWidth && tickLength) {
             // Negate the length
@@ -6090,7 +6101,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     step * tickInterval > range &&
                     spaceNeeded !== Infinity &&
-                    slotSize !== Infinity
+                    slotSize !== Infinity &&
+                    range
                 ) {
                     step = Math.ceil(range / tickInterval);
                 }
@@ -6810,7 +6822,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            titlePosition = {
+            titlePosition: Highcharts.PositionObject = {
                 x: horiz ?
                     alongAxis + xOption :
                     offAxis + (opposite ? this.width : 0) + offset + xOption,
@@ -6913,7 +6925,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = options.stackLabels,
+            stackLabelOptions =
+                (options as Highcharts.YAxisOptions).stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,

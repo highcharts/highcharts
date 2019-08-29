@@ -48,11 +48,12 @@ import H from './Globals.js';
 * @name Highcharts.StackItemObject#x
 * @type {number}
 */
-import './Utilities.js';
+import U from './Utilities.js';
+var defined = U.defined, objectEach = U.objectEach;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, format = H.format, objectEach = H.objectEach, pick = H.pick, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, pick = H.pick, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -65,7 +66,7 @@ var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, defined = H.d
  * @param {Highcharts.YAxisStackLabelsOptions} options
  * @param {boolean} isNegative
  * @param {number} x
- * @param {Highcharts.OptionsStackingValue} stackOption
+ * @param {Highcharts.OptionsStackingValue} [stackOption]
  */
 H.StackItem = function (axis, options, isNegative, x, stackOption) {
     var inverted = axis.chart.inverted;
@@ -73,7 +74,7 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
     // Tells if the stack is negative
     this.isNegative = isNegative;
     // Save the options to be able to style the label
-    this.options = options;
+    this.options = options = options || {};
     // Save the x value to be able to position the label later
     this.x = x;
     // Initialize total value
@@ -118,21 +119,22 @@ H.StackItem.prototype = {
      * @return {void}
      */
     render: function (group) {
-        var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ?
+        var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
             format(formatOption, this, chart.time) :
-            options.formatter.call(this); // format the text in the label
+            options.formatter.call(this);
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
         if (this.label) {
             this.label.attr({ text: str, visibility: 'hidden' });
-            // Create new label
         }
         else {
-            this.label =
-                chart.renderer.label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
+            // Create new label
+            this.label = chart.renderer
+                .label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
             attr = {
                 text: str,
                 align: this.textAlign,
+                rotation: options.rotation,
                 padding: pick(options.padding, 0),
                 visibility: 'hidden' // hidden until setOffset is called
             };
@@ -157,9 +159,10 @@ H.StackItem.prototype = {
      * @param {number} xWidth
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
+     * @param {number} [defaultX]
      * @return {void}
      */
-    setOffset: function (xOffset, xWidth, boxBottom, boxTop) {
+    setOffset: function (xOffset, xWidth, boxBottom, boxTop, defaultX) {
         var stackItem = this, axis = stackItem.axis, chart = axis.chart, 
         // stack value translated mapped to chart coordinates
         y = axis.translate(axis.usePercentage ?
@@ -170,7 +173,8 @@ H.StackItem.prototype = {
         // stack height:
         h = defined(y) && Math.abs(y - yZero), 
         // x position:
-        x = chart.xAxis[0].translate(stackItem.x) + xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
+        x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
+            xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
         if (label && stackBox) {
             var bBox = label.getBBox(), boxOffsetX = chart.inverted ?
                 (isNegative ? bBox.width : 0) : bBox.width / 2, boxOffsetY = chart.inverted ?
@@ -188,6 +192,7 @@ H.StackItem.prototype = {
                 Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
+            label.alignAttr = alignAttr;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
@@ -246,7 +251,7 @@ H.StackItem.prototype = {
  * @return {void}
  */
 Chart.prototype.getStacks = function () {
-    var chart = this;
+    var chart = this, inverted = chart.inverted;
     // reset stacks for each yAxis
     chart.yAxis.forEach(function (axis) {
         if (axis.stacks && axis.hasVisibleSeries) {
@@ -254,10 +259,16 @@ Chart.prototype.getStacks = function () {
         }
     });
     chart.series.forEach(function (series) {
+        var xAxisOptions = series.xAxis && series.xAxis.options || {};
         if (series.options.stacking &&
             (series.visible === true ||
                 chart.options.chart.ignoreHiddenSeries === false)) {
-            series.stackKey = series.type + pick(series.options.stack, '');
+            series.stackKey = [
+                series.type,
+                pick(series.options.stack, ''),
+                inverted ? xAxisOptions.top : xAxisOptions.left,
+                inverted ? xAxisOptions.height : xAxisOptions.width
+            ].join(',');
         }
     });
 };
@@ -442,7 +453,8 @@ Series.prototype.setStackedPoints = function () {
         else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
-        stack.cumulative = pick(stack.cumulative, stackThreshold) + (y || 0);
+        stack.cumulative =
+            pick(stack.cumulative, stackThreshold) + (y || 0);
         if (y !== null) {
             stack.points[pointKey].push(stack.cumulative);
             stackedYData[i] = stack.cumulative;

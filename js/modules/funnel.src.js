@@ -38,7 +38,7 @@ seriesType('funnel', 'pie',
  *         Funnel demo
  *
  * @extends      plotOptions.pie
- * @excluding    size
+ * @excluding    innerSize,size
  * @product      highcharts
  * @optionparent plotOptions.funnel
  */
@@ -468,7 +468,7 @@ seriesType('funnel', 'pie',
         );
 
         // If label was justified and we have contrast, set it:
-        if (point.isLabelJustified && point.contrastColor) {
+        if (options.inside && point.contrastColor) {
             dataLabel.css({
                 color: point.contrastColor
             });

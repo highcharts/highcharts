@@ -21,8 +21,8 @@ declare global {
         interface CenteredSeriesMixin {
             getCenter(this: Series): Array<number>;
             getStartAndEndRadians(
-                start: number,
-                end: number
+                start?: number,
+                end?: number
             ): RadianAngles;
         }
         interface RadianAngles {
@@ -83,8 +83,8 @@ H.CenteredSeriesMixin = {
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption = options.center,
             positions = [
-                pick(centerOption[0], '50%'),
-                pick(centerOption[1], '50%'),
+                pick((centerOption as any)[0], '50%'),
+                pick((centerOption as any)[1], '50%'),
                 options.size || '100%',
                 options.innerSize || 0
             ],
@@ -120,18 +120,18 @@ H.CenteredSeriesMixin = {
      * @private
      * @function Highcharts.CenteredSeriesMixin.getStartAndEndRadians
      *
-     * @param {number} start
+     * @param {number} [start]
      *        Start angle in degrees.
      *
-     * @param {number} end
+     * @param {number} [end]
      *        Start angle in degrees.
      *
      * @return {Highcharts.RadianAngles}
      *         Returns an object containing start and end angles as radians.
      */
     getStartAndEndRadians: function (
-        start: number,
-        end: number
+        start?: number,
+        end?: number
     ): Highcharts.RadianAngles {
         var startAngle = isNumber(start) ? start : 0, // must be a number
             endAngle = (

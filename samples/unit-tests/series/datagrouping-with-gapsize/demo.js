@@ -136,4 +136,34 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
         33,
         'Graph should be continuous when dataGrouping is months (#10000)'
     );
+
+    chart.addSeries({
+        dataGrouping: {
+            forced: true,
+            units: [
+                [
+                    'month', [1]
+                ]
+            ]
+        },
+        gapSize: 2,
+        data: [
+            [Date.UTC(2019, 0, 1), 1],
+            [Date.UTC(2019, 3, 1), 2],
+            [Date.UTC(2019, 6, 1), 3],
+            [Date.UTC(2019, 9, 1), 4]
+        ]
+    }, false);
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true
+        },
+        gapSize: 2
+    });
+
+    assert.strictEqual(
+        chart.series[1].graph.attr('d').split(' ').lastIndexOf('L'),
+        9,
+        'Series with higher granularity should be continous (#11351)'
+    );
 });

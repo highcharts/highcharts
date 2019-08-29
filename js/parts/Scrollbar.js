@@ -9,10 +9,11 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var defined = U.defined;
 import './Axis.js';
 import './Options.js';
-var addEvent = H.addEvent, Axis = H.Axis, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, swapXY;
+var addEvent = H.addEvent, Axis = H.Axis, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, swapXY;
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
@@ -125,7 +126,7 @@ var defaultScrollbarOptions = {
     /**
      * The color of the scrollbar's border.
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBorderColor: '${palette.neutralColor20}',
     /**
@@ -152,7 +153,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBorderColor: '${palette.neutralColor20}',
     /**
@@ -183,7 +184,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBorderColor: '${palette.neutralColor5}',
     /**
@@ -214,7 +215,7 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Highcharts.SVGPathArray} path
  *        Path to be rotated.
  *
- * @param {boolean} vertical
+ * @param {boolean} [vertical]
  *        If vertical scrollbar, swap x-y values.
  *
  * @return {Highcharts.SVGPathArray}

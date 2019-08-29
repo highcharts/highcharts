@@ -10,14 +10,14 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, defined = H.defined, destroyObjectProperties = H.destroyObjectProperties, erase = H.erase, extend = H.extend, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -199,7 +199,7 @@ extend(defaultOptions, {
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             borderColor: '${palette.neutralColor40}'
         },
@@ -226,7 +226,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/outline/
          *         2px blue outline
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
         outlineColor: '${palette.neutralColor20}',
@@ -503,10 +503,10 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options
  *
  * @private
  * @function Highcharts.Axis#toFixedRange
- * @param {number} pxMin
- * @param {number} pxMax
- * @param {number} fixedMin
- * @param {number} fixedMax
+ * @param {number} [pxMin]
+ * @param {number} [pxMax]
+ * @param {number} [fixedMin]
+ * @param {number} [fixedMax]
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
@@ -556,7 +556,7 @@ Navigator.prototype = {
      * @param {number} index
      *        0 for left and 1 for right
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag for chart.inverted
      *
      * @param {string} verb
@@ -585,7 +585,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -676,7 +676,7 @@ Navigator.prototype = {
      * @param {number} zoomedMax
      *        in pixels position where zoomed range ends
      *
-     * @param {boolean} inverted
+     * @param {boolean|undefined} inverted
      *        flag if chart is inverted
      *
      * @param {string} verb
@@ -1530,7 +1530,7 @@ Navigator.prototype = {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
-                H.splat(chartNavigatorSeriesOptions);
+                splat(chartNavigatorSeriesOptions);
             chartNavigatorSeriesOptions.forEach(function (userSeriesOptions, i) {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);

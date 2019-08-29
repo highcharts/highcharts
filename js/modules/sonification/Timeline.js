@@ -46,6 +46,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+
+import U from '../../parts/Utilities.js';
+var splat = U.splat;
+
 import utilities from 'utilities.js';
 
 
@@ -525,7 +529,7 @@ Timeline.prototype.rewind = function (onEnd) {
  * backwards.
  */
 Timeline.prototype.playPaths = function (direction) {
-    var curPaths = H.splat(this.paths[this.cursor]),
+    var curPaths = splat(this.paths[this.cursor]),
         nextPaths = this.paths[this.cursor + direction],
         timeline = this,
         signalHandler = this.signalHandler,
@@ -557,7 +561,7 @@ Timeline.prototype.playPaths = function (direction) {
                         // We have more paths, move cursor along
                         timeline.cursor += direction;
                         // Reset upcoming path cursors before playing
-                        H.splat(nextPaths).forEach(function (nextPath) {
+                        splat(nextPaths).forEach(function (nextPath) {
                             nextPath[
                                 direction > 0 ? 'resetCursor' : 'resetCursorEnd'
                             ]();
@@ -614,7 +618,7 @@ Timeline.prototype.pause = function (fadeOut) {
  */
 Timeline.prototype.resetCursor = function () {
     this.paths.forEach(function (paths) {
-        H.splat(paths).forEach(function (path) {
+        splat(paths).forEach(function (path) {
             path.resetCursor();
         });
     });
@@ -628,7 +632,7 @@ Timeline.prototype.resetCursor = function () {
  */
 Timeline.prototype.resetCursorEnd = function () {
     this.paths.forEach(function (paths) {
-        H.splat(paths).forEach(function (path) {
+        splat(paths).forEach(function (path) {
             path.resetCursorEnd();
         });
     });
@@ -647,7 +651,7 @@ Timeline.prototype.resetCursorEnd = function () {
  */
 Timeline.prototype.setCursor = function (eventId) {
     return this.paths.some(function (paths) {
-        return H.splat(paths).some(function (path) {
+        return splat(paths).some(function (path) {
             return path.setCursor(eventId);
         });
     });
@@ -688,7 +692,7 @@ Timeline.prototype.atStart = function () {
  * played.
  */
 Timeline.prototype.getCurrentPlayingPaths = function () {
-    return H.splat(this.paths[this.cursor]);
+    return splat(this.paths[this.cursor]);
 };
 
 

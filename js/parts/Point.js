@@ -47,36 +47,24 @@ import Highcharts from './Globals.js';
 * Fires when the mouse leaves the area close to the point. One parameter,
 * `event`, is passed to the function, containing common event information.
 * @name Highcharts.PointEventsOptionsObject#mouseOut
-* @type {Highcharts.PointMouseOutCallbackFunction}
+* @type {Highcharts.PointMouseOutCallbackFunction|undefined}
 */ /**
 * Fires when the mouse enters the area close to the point. One parameter,
 * `event`, is passed to the function, containing common event information.
 * @name Highcharts.PointEventsOptionsObject#mouseOver
-* @type {Highcharts.PointMouseOverCallbackFunction}
+* @type {Highcharts.PointMouseOverCallbackFunction|undefined}
 */ /**
 * Fires when the point is removed using the `.remove()` method. One parameter,
 * `event`, is passed to the function. Returning `false` cancels the operation.
 * @name Highcharts.PointEventsOptionsObject#remove
-* @type {Highcharts.PointRemoveCallbackFunction}
-*/ /**
-* Fires when the point is selected either programmatically or following a click
-* on the point. One parameter, `event`, is passed to the function. Returning
-* `false` cancels the operation.
-* @name Highcharts.PointEventsOptionsObject#select
-* @type {Highcharts.PointSelectCallbackFunction}
-*/ /**
-* Fires when the point is unselected either programmatically or following a
-* click on the point. One parameter, `event`, is passed to the function.
-* Returning `false` cancels the operation.
-* @name Highcharts.PointEventsOptionsObject#unselect
-* @type {Highcharts.PointUnselectCallbackFunction}
+* @type {Highcharts.PointRemoveCallbackFunction|undefined}
 */ /**
 * Fires when the point is updated programmatically through the `.update()``
 * method. One parameter, `event`, is passed to the function. The new point
 * options can be accessed through event.options. Returning `false` cancels the
 * operation.
 * @name Highcharts.PointEventsOptionsObject#update
-* @type {Highcharts.PointUpdateCallbackFunction}
+* @type {Highcharts.PointUpdateCallbackFunction|undefined}
 */
 /**
  * Configuration hash for the data label and tooltip formatters.
@@ -85,7 +73,7 @@ import Highcharts from './Globals.js';
  */ /**
 * The point's current color.
 * @name Highcharts.PointLabelObject#color
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The point's current color index, used in styled mode instead of `color`. The
 * color index is inserted in class names used for styling.
@@ -94,7 +82,7 @@ import Highcharts from './Globals.js';
 */ /**
 * The name of the related point.
 * @name Highcharts.PointLabelObject#key
-* @type {number|string}
+* @type {string|undefined}
 */ /**
 * The percentage for related points in a stacked series or pies.
 * @name Highcharts.PointLabelObject#percentage
@@ -111,12 +99,12 @@ import Highcharts from './Globals.js';
 * The total of values in either a stack for stacked series, or a pie in a pie
 * series.
 * @name Highcharts.PointLabelObject#total
-* @type {number}
+* @type {number|undefined}
 */ /**
 * For categorized axes this property holds the category name for the point. For
 * other axes it holds the X value.
 * @name Highcharts.PointLabelObject#x
-* @type {number|string}
+* @type {number|string|undefined}
 */ /**
 * The y value of the point.
 * @name Highcharts.PointLabelObject#y
@@ -265,10 +253,9 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointOptionsObject#drilldown
 * @type {string|undefined}
 */ /**
-* The id of a series in the drilldown.series array to use for a drilldown for
-* this point.
+* The individual point events.
 * @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PointEventsOptionsObject}
+* @type {Highcharts.PointEventsOptionsObject|undefined}
 */ /**
 * An id for the point. This can be used after render time to get a pointer to
 * the point object through `chart.get()`.
@@ -277,7 +264,7 @@ import Highcharts from './Globals.js';
 */ /**
 * Options for the point markers of line-like series.
 * @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PointMarkerOptionsObject}
+* @type {Highcharts.PointMarkerOptionsObject|undefined}
 */ /**
 * The name of the point as shown in the legend, tooltip, dataLabels etc.
 * @name Highcharts.PointOptionsObject#name
@@ -327,12 +314,12 @@ import Highcharts from './Globals.js';
 * The fill color of the marker in hover state. When `undefined`, the series' or
 * point's fillColor for normal state is used.
 * @name Highcharts.PointStatesHoverOptionsObject#fillColor
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The color of the point marker's outline. When `undefined`, the series' or
 * point's lineColor for normal state is used.
 * @name Highcharts.PointStatesHoverOptionsObject#lineColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The width of the point marker's outline. When `undefined`, the series' or
 * point's lineWidth for normal state is used.
@@ -407,7 +394,7 @@ import Highcharts from './Globals.js';
 * The color of the point marker's outline. When `undefined`, the series' or
 * point's color is used.
 * @name Highcharts.PointStatesSelectOptionsObject#lineColor
-* @type {Highcharts.ColorString|undefined}
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
 */ /**
 * The width of the point marker's outline.
 * @name Highcharts.PointStatesSelectOptionsObject#lineWidth
@@ -441,8 +428,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber;
-var Point, H = Highcharts, extend = H.extend, erase = H.erase, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, defined = H.defined, removeEvent = H.removeEvent;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
+var Point, H = Highcharts, extend = H.extend, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -502,7 +489,7 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
          */
         if (!styledMode && !this.options.color) {
             this.color = series.color; // #3445
@@ -645,7 +632,7 @@ Highcharts.Point.prototype = {
             var isLastKey = arr.length - 1 === i;
             result[key] = (isLastKey ?
                 value :
-                H.isObject(result[key], true) ?
+                isObject(result[key], true) ?
                     result[key] :
                     {});
             return result[key];
@@ -868,7 +855,8 @@ Highcharts.Point.prototype = {
         var series = this.series, seriesTooltipOptions = series.tooltipOptions, valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''), valuePrefix = seriesTooltipOptions.valuePrefix || '', valueSuffix = seriesTooltipOptions.valueSuffix || '';
         // Replace default point style with class name
         if (series.chart.styledMode) {
-            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+            pointFormat =
+                series.chart.tooltip.styledModeFormat(pointFormat);
         }
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup

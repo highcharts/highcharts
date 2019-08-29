@@ -274,10 +274,16 @@ function GLRenderer(postRenderCallback) {
             firstPoint = true,
             zones = options.zones || false,
             zoneDefColor = false,
-            threshold = options.threshold;
+            threshold = options.threshold,
+            gapSize = false;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
+        }
+
+        if (options.gapSize) {
+            gapSize = options.gapUnit !== 'value' ?
+                options.gapSize * series.closestPointRange : options.gapSize;
         }
 
         if (zones) {
@@ -625,6 +631,10 @@ function GLRenderer(postRenderCallback) {
 
             if (!isXInside && !nextInside && !prevInside) {
                 continue;
+            }
+
+            if (gapSize && x - px > gapSize) {
+                beginSegment();
             }
 
             // Note: Boost requires that zones are sorted!

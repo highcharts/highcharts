@@ -16,6 +16,7 @@ var isNumber = U.isNumber;
 import onSeriesMixin from '../mixins/on-series.js';
 
 var noop = H.noop,
+    pick = H.pick,
     seriesType = H.seriesType;
 
 // Once off, register the windbarb approximation for data grouping.This can be
@@ -330,12 +331,16 @@ seriesType('windbarb', 'column'
                     this.options.clip === false ||
                     chart.isInsidePlot(plotX, 0, false)
                 ) {
-
                     // Create the graphic the first time
                     if (!point.graphic) {
                         point.graphic = this.chart.renderer
                             .path()
-                            .add(this.markerGroup);
+                            .add(this.markerGroup)
+                            .addClass(
+                                'highcharts-point ' +
+                                'highcharts-color-' +
+                                pick(point.colorIndex, point.series.colorIndex)
+                            );
                     }
 
                     // Position the graphic
@@ -345,8 +350,12 @@ seriesType('windbarb', 'column'
                             translateX: plotX + this.options.xOffset,
                             translateY: plotY + this.options.yOffset,
                             rotation: point.direction
-                        })
-                        .attr(this.pointAttribs(point));
+                        });
+
+                    if (!this.chart.styledMode) {
+                        point.graphic
+                            .attr(this.pointAttribs(point));
+                    }
 
                 } else if (point.graphic) {
                     point.graphic = point.graphic.destroy();

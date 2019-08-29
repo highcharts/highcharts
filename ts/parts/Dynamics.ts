@@ -100,16 +100,21 @@ declare global {
         interface XAxisOptions {
             index?: number;
         }
-        function cleanRecursively<T>(newer: T, older: T): T;
+        function cleanRecursively<T>(newer: T, older: unknown): T;
     }
 }
 
 
 import U from './Utilities.js';
 const {
+    defined,
+    erase,
     isArray,
     isNumber,
-    isString
+    isObject,
+    isString,
+    objectEach,
+    splat
 } = U;
 
 import './Axis.js';
@@ -123,19 +128,14 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    defined = H.defined,
-    erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    isObject = H.isObject,
     merge = H.merge,
-    objectEach = H.objectEach,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    setAnimation = H.setAnimation,
-    splat = H.splat;
+    setAnimation = H.setAnimation;
 
 /* eslint-disable valid-jsdoc */
 
@@ -144,29 +144,32 @@ var addEvent = H.addEvent,
  * computing (#9197).
  * @private
  */
-H.cleanRecursively = function<T extends Highcharts.Dictionary<any>> (
-    newer: T,
-    older: T
-): T {
+H.cleanRecursively = function<T> (newer: T, older: unknown): T {
     var result = {} as T;
 
-    objectEach(newer, function (val: any, key: string): void {
+    objectEach(newer, function (val: unknown, key: (number|string)): void {
         var ob;
 
         // Dive into objects (except DOM nodes)
         if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
+            isObject((newer as any)[key], true) &&
+            !(newer as any).nodeType && // #10044
+            (older as any)[key]
         ) {
-            ob = H.cleanRecursively(newer[key], older[key]);
+            ob = H.cleanRecursively(
+                (newer as any)[key],
+                (older as any)[key]
+            );
             if (Object.keys(ob).length) {
-                result[key] = ob;
+                (result as any)[key] = ob;
             }
 
         // Arrays, primitives and DOM nodes are copied directly
-        } else if (isObject(newer[key]) || newer[key] !== older[key]) {
-            result[key] = newer[key];
+        } else if (
+            isObject((newer as any)[key]) ||
+            (newer as any)[key] !== (older as any)[key]
+        ) {
+            (result as any)[key] = (newer as any)[key];
         }
     });
 
@@ -351,7 +354,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Update text
         (chart.loadingSpan as any).innerHTML =
-            str || (options.lang as any).loading;
+            pick(str, (options.lang as any).loading, '');
 
         if (!chart.styledMode) {
             // Update visuals
@@ -1410,6 +1413,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
+
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
 
         // Make sure preserved properties are not destroyed (#3094)
         preserve = groups.concat(preserve);

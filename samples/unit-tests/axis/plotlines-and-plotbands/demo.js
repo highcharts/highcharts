@@ -254,3 +254,52 @@ QUnit.test('Plotbands clip (#2361)', function (assert) {
         "Plotbands should be hidden after zooming"
     );
 });
+
+
+QUnit.test('#8356: support for plot lines & bands labels formatter.', function (assert) {
+    var plotLine,
+        plotBand,
+        formatterCallback = function () {
+            return 'Label is visible.';
+        },
+        chart = Highcharts.chart('container', {
+            xAxis: {
+                plotLines: [{
+                    value: 1,
+                    color: '#f00',
+                    width: 1,
+                    label: {
+                        formatter: formatterCallback
+                    }
+                }],
+                plotBands: [{
+                    from: 2,
+                    to: 5,
+                    color: 'rgba(255, 255, 0, 0.2)',
+                    width: 1,
+                    label: {
+                        formatter: formatterCallback
+                    }
+                }]
+            },
+            series: [{
+                data: [1, 2, 6, 1, 2, 4, 9]
+            }]
+        });
+
+    plotLine = chart.xAxis[0].plotLinesAndBands[0];
+    plotBand =  chart.xAxis[0].plotLinesAndBands[1];
+
+    assert.ok(
+        plotLine.label &&
+          plotLine.label.element.textContent.indexOf(formatterCallback()) > -1,
+        "Plot line label is visible."
+    );
+
+    assert.ok(
+        plotBand.label &&
+          plotBand.label.element.textContent.indexOf(formatterCallback()) > -1,
+        "Plot band label is visible."
+    );
+
+});

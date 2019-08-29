@@ -6,7 +6,7 @@
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String  The tag to start from. This is not used when --pr.
+ * --since String  The tag to start from, defaults to latest commit.
  * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
  * --pr            Use Pull Request descriptions as source for the log.
@@ -14,6 +14,7 @@
  *                 that are not used in the changelog.
  */
 
+const marked = require('marked');
 const prLog = require('./pr-log');
 const params = require('yargs').argv;
 
@@ -39,7 +40,7 @@ const params = require('yargs').argv;
         }
 
         if (params.pr) {
-            var log = await prLog().catch(e => console.error(e));
+            var log = await prLog(params.since).catch(e => console.error(e));
 
             callback(log);
             return;
@@ -161,49 +162,51 @@ const params = require('yargs').argv;
         log.forEach((change, i) => {
 
             let desc = change.description || change;
+            let match;
+            const reg = /`([a-zA-Z0-9\.\[\]]+)`/g;
 
-            optionKeys.forEach(key => {
-                const replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
+            while ((match = reg.exec(desc)) !== null) {
 
-                desc = desc
-                    .replace(
-                        ` \`${key}\` `,
-                        replacement
-                    )
-                    .replace(
-                        ` ${key} `,
-                        replacement
-                    );
-                // We often refer to series options without the plotOptions
-                // parent, so make sure it is auto linked too.
-                if (key.indexOf('plotOptions.') === 0) {
-                    const shortKey = key.replace('plotOptions.', '');
-                    if (shortKey.indexOf('.') !== -1) {
-                        desc = desc
-                            .replace(
-                                ` \`${shortKey}\` `,
-                                replacement
-                            )
-                            .replace(
-                                ` ${shortKey} `,
-                                replacement
-                            );
+                const shortKey = match[1];
+                const replacements = [];
+
+                optionKeys.forEach(longKey => {
+                    if (longKey.indexOf(shortKey) !== -1) {
+                        replacements.push(longKey);
                     }
+                });
+
+                // If more than one match, we may be dealing with ambiguous keys
+                // like `formatter`, `lineWidth` etch.
+                if (replacements.length === 1) {
+                    desc = desc.replace(
+                        `\`${shortKey}\``,
+                        `[${shortKey}](https://api.highcharts.com/${apiFolder}/${replacements[0]})`
+                    );
                 }
-            });
+            }
 
             // Start fixes
             if (i === log.startFixes) {
                 outputString += '\n## Bug fixes\n';
             }
+
+            const edit = params.review ?
+                ` [<a href="https://github.com/highcharts/highcharts/pull/${change.number}">Edit</a>]` :
+                '';
+
             // All items
-            outputString += '- ' + addMissingDotToCommitMessage(desc) + '\n';
+            outputString += '- ' + addMissingDotToCommitMessage(desc) +
+                edit + '\n';
 
         });
 
         fs.writeFile(filename, outputString, function () {
             console.log('Wrote draft to ' + filename);
         });
+
+
+        return outputString;
     }
 
     /*
@@ -242,46 +245,13 @@ const params = require('yargs').argv;
         ).join(padder || 0) + number;
     }
 
-    function buildReview(log, products) {
+    function saveReview(md) {
 
         const filename = path.join(__dirname, 'review.html');
 
-        const formatItem = p => {
-
-            const labels = p.labels
-                .map(l => `<span style="background: #${l.color}; padding: 0 0.2em; border-radius: 0.2em">${l.name}</span>`)
-                .join(' ');
-            return `
-            <li>
-                ${p.description}
-                ${labels}
-                [<a href="https://github.com/highcharts/highcharts/pull/${p.number}">Edit</a>]
-            </li>`;
-        };
-
-        let html = '<style>body { font-family: sans-serif }</style>';
-
-        Object.keys(products).forEach(product => {
-            html += `<h2>${product}</h2>`;
-
-            log[product].features.forEach(p => {
-                html += formatItem(p);
-            });
-
-            html += '<h4>Bug Fixes</h4>';
-            log[product].bugfixes.forEach(p => {
-                html += formatItem(p);
-            });
-        });
-
-        html += '<h2>Excluded</h2>';
-        log.excluded.forEach(p => {
-            html += formatItem(p);
-        });
-
         fs.writeFileSync(
             filename,
-            html,
+            marked(md),
             'utf8'
         );
 
@@ -294,6 +264,7 @@ const params = require('yargs').argv;
         const optionKeys = getOptionKeys(tree);
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
+        const review = [];
 
         // Split the log into an array
         if (!params.pr) {
@@ -317,13 +288,9 @@ const params = require('yargs').argv;
                     products = JSON.parse(products);
                 }
 
-                if (params.review && params.pr) {
-                    buildReview(log, products);
-                }
-
                 for (name in products) {
 
-                    if (products.hasOwnProperty(name)) {
+                    if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
                         if (params.pr) {
                             products[name].nr = pack.version;
                             products[name].date =
@@ -332,15 +299,19 @@ const params = require('yargs').argv;
                                 pad(d.getDate(), 2);
                         }
 
-                        buildMarkdown(
+                        review.push(buildMarkdown(
                             name,
                             products[name].nr,
                             products[name].date,
                             log,
                             products,
                             optionKeys
-                        );
+                        ));
                     }
+                }
+
+                if (params.review) {
+                    saveReview(review.join('\n\n___\n'));
                 }
             }
         );

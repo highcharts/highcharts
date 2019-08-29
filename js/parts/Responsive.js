@@ -23,8 +23,8 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var isArray = U.isArray;
-var Chart = H.Chart, isObject = H.isObject, pick = H.pick, splat = H.splat;
+var isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
+var Chart = H.Chart, pick = H.pick;
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.
@@ -227,7 +227,7 @@ Chart.prototype.currentOptions = function (options) {
      */
     function getCurrent(options, curr, ret, depth) {
         var i;
-        H.objectEach(options, function (val, key) {
+        objectEach(options, function (val, key) {
             if (!depth &&
                 chart.collectionsWithUpdate.indexOf(key) > -1) {
                 val = splat(val);

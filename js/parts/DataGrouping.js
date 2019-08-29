@@ -25,11 +25,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber;
+var defined = U.defined, isNumber = U.isNumber;
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, defined = H.defined, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = H.Axis, correctFloat = H.correctFloat, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -70,7 +70,7 @@ var approximations = H.approximations = {
         // If we have a number, return it divided by the length. If not,
         // return null or undefined based on what the sum method finds.
         if (isNumber(ret) && len) {
-            ret = ret / len;
+            ret = correctFloat(ret / len);
         }
         return ret;
     },

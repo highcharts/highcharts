@@ -15,159 +15,49 @@
  * @private
  */
 declare global {
-    type GlobalHTMLElement = HTMLElement;
-    type GlobalSVGElement = SVGElement;
-    interface Document {
-        msHidden: boolean;
-        webkitHidden: boolean;
-    }
-    interface Window {
-        Image: typeof Image;
-        opera?: any;
-        TouchEvent?: typeof TouchEvent;
-    }
-    const win: Window; // @todo: UMD variable
-    function parseFloat (value: (number|string)): number;
     namespace Highcharts {
-        type LabelFormatterCallbackFunction = any; // @todo
-        type OptionsOverflowValue = ('allow'|'justify');
-        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
-        type PatternObject = object; // @todo
-        type XAxisScrollbarOptions = any; // @todo
-        type YAxisStackLabelsOptions = any; // @todo
+        type ExportingErrorCallbackFunction = any; // @todo offline exporting
+        type NavigationOptions = any; // @todo exporting module
+        type OrganizationSeries = any; // @todo organization module
+        type OrganizationSeriesOptions = any // @todo organization module
+        type PatternObject = object; // @todo pattern module
+        type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
-            extKey?: any; // @todo
-            id?: any; // @todo
-            labelLeft?: any; // @todo
-            labelRight?: any; // @todo
-            sector?: any; // @todo
-            beforePadding: Function; // @todo
-            getMaxLabelDimensions: Function; // @todo
-            toFixedRange: Function; // @todo
-        }
-        interface AxisLabelsFormatterContextObject {
-            tickPositionInfo?: any; // @todo
+            rightWall?: any; // @todo
+            beforePadding?: Function; // @todo
         }
         interface Chart {
-            fixedRange?: any; // @todo
-            hoverPoint?: any; // @todo
-            hoverPoints?: any; // @todo
-            hoverSeries?: any; // @todo
-            inverted?: any; // @todo
-            isBoosting?: any; // @todo
-            isPrinting?: any; // @todo
-            mapCredits?: any; // @todo
-            marginBottom?: any; // @todo
-            marginRight?: any; // @todo
-            navigator?: Navigator; // @todo
-            openMenu?: any; // @todo
-            polar?: any; // @todo
-            rangeSelector?: any; // @todo
-            redrawTrigger?: any; // @todo
-            runTrackerClick?: any; // @todo
-            scrollablePixelsX?: any; // @todo
-            scrollablePixelsY?: any; // @todo
-            tooltip?: any; // @todo
+            frame3d?: any; // @todo highcharts 3d
+            frameShapes?: any; // @todo highcharts 3d
+            hasParallelCoordinates?: any; // @todo parallel module
+            isBoosting?: any; // @todo boost module
+            isPrinting?: any; // @todo exporting module
+            openMenu?: any; // @todo exporting module
+            redrawTrigger?: any; // @todo static-scale module
+            getFilename: Function; // @todo exporting module
+            hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
-            reflow?: any; // @todo
-            renderer?: any; // @todo
-            skipClone?: any; // @todo
-        }
-        interface ColorAxis {
-            legendItem?: any; // @todo
         }
         interface Options {
-            exporting?: any; // @todo
-            isStock?: boolean; // @todo
-            navigation?: any; // @todo
+            navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
-            center?: any; // @todo
-            colorByPoint?: any; // @todo
-            inactiveOtherPoints?: any; // @todo
-            innerSize?: any; // @todo
-            lineColor?: any; // @todo
-            minSize?: any; // @todo
-            negativeFillColor?: any; // @todo
-            size?: any; // @todo
-            startFromThreshold?: any; // @todo
-            tooltip?: any; // @todo
-            trackByArea?: any; // @todo
         }
         interface Point {
-            allowShadow?: unknown; // @todo
-            below?: any; // @todo
-            dataLabelOnNull?: any; // @todo
-            dist?: any; // @todo
-            distX?: any; // @todo
-            dlBox?: any; // @todo
-            dlOptions?: any; // @todo
-            graphic?: any; // @todo
-            group?: any; // @todo
-            half?: any; // @todo
-            labelDistance?: any; // @todo
-            name?: any; // @todo
-            plotHigh?: any; // @todo
-            plotLow?: any; // @todo
-            selected?: any; // @todo
-            startR?: any; // @todo
-            tooltipDateKeys?: any; // @todo
-            tooltipPos?: any; // @todo
-            ttBelow?: any; // @todo
-            zone?: any; // @todo
-            getDataLabelPath: Function; // @todo
-        }
-        interface PointOptionsObject {
-            states?: any; // @todo
+            startR?: any; // @todo solid-gauge
+            tooltipDateKeys?: any; // @todo xrange
         }
         interface Series {
-            allowDG?: any; // @todo
-            areaPath?: any; // @todo
-            barW?: any; // @todo
-            center?: any; // @todo
-            clipBox?: any; // @todo
-            colorKey?: any; // @todo
-            fillColor?: any; // @todo
-            fillGraph?: any; // @todo
-            fixedBox?: any; // @todo
-            forceDL?: any; // @todo
-            gappedPath?: any; // @todo
-            group?: any; // @todo
-            hasDerivedData?: any; // @todo
-            invertable?: any; // @todo
-            isSeriesBoosting?: any; // @todo
-            labelBySeries?: any; // @todo
-            maxLabelDistance?: any; // @todo
-            modifyValue?: any; // @todo
-            pointArrayMap?: any; // @todo
-            pointAttrToOptions?: any; // @todo
-            pointXOffset?: any; // @todo
-            radii?: any; // @todo
-            resetZones?: any; // @todo
-            showLine?: any; // @todo
-            specialGroup?: any; // @todo
-            symbol?: any; // @todo
-            takeOrdinalPosition?: any; // @todo
-            translatedThreshold?: any; // @todo
-            useCommonDataGrouping?: any; // @todo
-            valueMax?: any; // @todo
-            valueMin?: any; // @todo
-            getPoint: Function; // @todo
-            getPointSpline: Function; // @todo
-            toYData: Function; // @todo
-        }
-        interface SeriesOptions {
-            endAngle?: any; // @todo
-            startAngle?: any; // @todo
-        }
-        interface SeriesStatesHoverOptions {
-            opacity?: any; // @todo
-        }
-        interface SVGRenderer {
-            invertChild: Function; // @todo
+            fillGraph?: any; // @todo ichimoku indicator
+            gappedPath?: any; // @todo broken axis module
+            isSeriesBoosting?: any; // @todo boost module
+            labelBySeries?: any; // @todo series label module
+            resetZones?: any; // @todo macd indicator
+            useCommonDataGrouping?: any; // @todo indicators
+            getPoint: Function; // @todo boost module
         }
         interface Tick {
             slotWidth?: any; // @todo
@@ -189,10 +79,44 @@ declare global {
         const noop: Function;
         const symbolSizes: Dictionary<SizeObject>;
         const win: Window;
-        const seriesTypes: Dictionary<typeof Series>;
+        const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
     }
     type GlobalHighcharts = typeof Highcharts;
+    type GlobalHTMLElement = HTMLElement;
+    type GlobalSVGElement = SVGElement;
+    interface Document {
+        msHidden: boolean;
+        webkitHidden: boolean;
+    }
+    interface Element {
+        mozRequestFullScreen: Function;
+        msRequestFullscreen: Function;
+        webkitRequestFullscreen: Function;
+    }
+    interface Index extends Object {
+        [key: string]: any;
+        [index: number]: any;
+    }
+    interface PointerEvent {
+        /** @deprecated */
+        readonly toElement: Element;
+    }
+    interface Window {
+        ArrayBuffer: typeof ArrayBuffer;
+        Blob: typeof Blob;
+        Image: typeof Image;
+        TouchEvent: typeof TouchEvent;
+        Uint8Array: Uint8Array & Uint8ArrayConstructor;
+        URL: typeof URL;
+        /** @deprecated */
+        createObjectURL?: (typeof URL)['createObjectURL'];
+        /** @deprecated */
+        opera?: unknown;
+        /** @deprecated */
+        webkitURL?: typeof URL;
+    }
+    const win: Window; // @todo: UMD variable
 }
 
 /* globals Image, window */

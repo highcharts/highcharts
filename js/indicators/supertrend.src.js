@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray,
+    objectEach = U.objectEach;
 
 var ATR = H.seriesTypes.atr,
     SMA = H.seriesTypes.sma,
@@ -376,7 +377,7 @@ H.seriesType(
             }
 
             // Generate lines:
-            H.objectEach(groupedPoitns, function (values, lineName) {
+            objectEach(groupedPoitns, function (values, lineName) {
                 indicator.points = values;
                 indicator.options = merge(
                     supertrendLineOptions[lineName].styles,

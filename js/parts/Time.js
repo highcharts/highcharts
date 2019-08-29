@@ -9,6 +9,8 @@
  * */
 'use strict';
 import Highcharts from './Globals.js';
+import U from './Utilities.js';
+var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -55,7 +57,7 @@ import Highcharts from './Globals.js';
 * @name Highcharts.AxisTickPositionsArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
-var H = Highcharts, defined = H.defined, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
+var H = Highcharts, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using
@@ -445,7 +447,7 @@ Highcharts.Time.prototype = {
      *         The formatted date.
      */
     dateFormat: function (format, timestamp, capitalize) {
-        if (!H.defined(timestamp) || isNaN(timestamp)) {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang.invalidDate || '';
         }
         format = H.pick(format, '%Y-%m-%d %H:%M:%S');
@@ -504,7 +506,7 @@ Highcharts.Time.prototype = {
             L: pad(Math.floor(timestamp % 1000), 3)
         }, H.dateFormats);
         // Do the replaces
-        H.objectEach(replacements, function (val, key) {
+        objectEach(replacements, function (val, key) {
             // Regex would do it in one line, but this is faster
             while (format.indexOf('%' + key) !== -1) {
                 format = format.replace('%' + key, typeof val === 'function' ? val.call(time, timestamp) : val);
@@ -524,8 +526,8 @@ Highcharts.Time.prototype = {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     resolveDTLFormat: function (f) {
-        if (!H.isObject(f, true)) { // check for string or array
-            f = H.splat(f);
+        if (!isObject(f, true)) { // check for string or array
+            f = splat(f);
             return {
                 main: f[0],
                 from: f[1],

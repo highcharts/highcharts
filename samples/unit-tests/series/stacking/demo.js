@@ -134,7 +134,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         var size = 0,
             key;
         for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
+            if (Object.hasOwnProperty.call(obj, key)) {
                 size++;
             }
         }
@@ -194,7 +194,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         }).highcharts();
 
         assert.strictEqual(
-            sizeof(chart.yAxis[0].stacks.area),
+            sizeof(chart.yAxis[0].stacks[chart.series[0].stackKey]),
             5,
             'Stack is 5'
         );
@@ -210,7 +210,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         // Note: the size of the stacks is now 10, while we would ideally have 5.
         // It seems like the initial 5 are not removed at all.
         assert.strictEqual(
-            sizeof(chart.yAxis[0].stacks.area) < 11,
+            sizeof(chart.yAxis[0].stacks[chart.series[0].stackKey]) < 11,
             true,
             'Stacks have been removed'
         );
@@ -522,7 +522,10 @@ QUnit.test('Date objects as X values, column', function (assert) {
         });
 
         assert.strictEqual(
-            chart.yAxis[0].stacks.column[0].label.alignAttr.y <
+            chart
+                .yAxis[0]
+                .stacks[chart.series[1].stackKey][0]
+                .label.alignAttr.y <
             chart.series[1].points[0].plotY,
             true,
             'Stack labels should be above the stack'
@@ -553,12 +556,77 @@ QUnit.test('Date objects as X values, column', function (assert) {
             }]
         });
 
-        var labelPos = chart.yAxis[0].stacks.bar[0].label;
+        var labelPos = chart
+            .yAxis[0]
+            .stacks[chart.series[0].stackKey][0]
+            .label;
+
         assert.close(
             chart.xAxis[0].toPixels(0, true),
             labelPos.alignAttr.y + (labelPos.getBBox().height / 2),
             1,
             'Stack labels should be properly positioned'
+        );
+    });
+
+
+    QUnit.test("Stack positions with multiple axes", function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        grouping: false
+                    }
+                },
+                xAxis: [{
+                    width: '50%'
+                }, {
+                    width: '50%',
+                    opposite: true
+                }, {
+                    width: '50%',
+                    left: '50%',
+                    offset: 0
+                }, {
+                    width: '50%',
+                    left: '50%',
+                    offset: 0,
+                    opposite: true
+                }],
+                series: [{
+                    data: [1]
+                }, {
+                    data: [1],
+                    xAxis: 1
+                }, {
+                    data: [1],
+                    xAxis: 2
+                }, {
+                    data: [1],
+                    xAxis: 3
+                }]
+            }),
+            yAxis = chart.yAxis[0],
+            series = chart.series;
+
+        // Use assert.close() because of criping logic
+        assert.close(
+            series[0].points[0].shapeArgs.y +
+                series[0].points[0].shapeArgs.height,
+            yAxis.toPixels(1, true),
+            2,
+            'Series 1 - point should start from value=1 (#4024)'
+        );
+
+        assert.close(
+            series[2].points[0].shapeArgs.y +
+                series[2].points[0].shapeArgs.height,
+            yAxis.toPixels(1, true),
+            2,
+            'Series 3 - Point should start from value=1 (#4024)'
         );
     });
 }());

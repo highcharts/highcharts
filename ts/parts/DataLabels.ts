@@ -26,7 +26,7 @@ declare global {
         interface DataLabelsBoxObject {
             align?: number;
             pos?: number;
-            rank?: number;
+            rank?: (number|null);
             size: number;
             target: number;
             targets?: Array<number>;
@@ -37,7 +37,9 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): (string|undefined);
+            (this: DataLabelsFormatterContextObject): (
+                number|string|null|undefined
+            );
         }
         interface DataLabelsFormatterContextObject {
             percentage?: number;
@@ -51,11 +53,11 @@ declare global {
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
-            borderColor?: ColorString;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
             className?: string;
-            color?: ColorString;
+            color?: (ColorString|GradientColorObject|PatternObject);
             crop?: boolean;
             defer?: boolean;
             enabled?: boolean;
@@ -70,15 +72,15 @@ declare global {
             shadow?: (boolean|ShadowOptionsObject);
             shape?: string;
             style?: CSSObject;
-            textPath?: DataLabelsTextPath;
+            textPath?: DataLabelsTextPathOptionsObject;
             useHTML?: boolean;
             verticalAlign?: (VerticalAlignValue|null);
             x?: number;
             y?: (number|null);
             zIndex?: number;
         }
-        interface DataLabelsTextPath {
-            attributes: SVGAttributes;
+        interface DataLabelsTextPathOptionsObject {
+            attributes?: SVGAttributes;
             enabled?: boolean;
         }
         interface Point {
@@ -89,10 +91,13 @@ declare global {
             dataLabel?: SVGElement;
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
-            isLabelJustified?: boolean;
+            dlBox?: BBoxObject;
+            dlOptions?: DataLabelsOptionsObject;
+            graphic?: SVGElement;
             /** @deprecated */
             positionIndex?: unknown;
             top?: number;
+            getDataLabelPath(dataLabel: SVGElement): SVGElement;
         }
         interface PointOptionsObject {
             dataLabels?: (
@@ -210,7 +215,7 @@ declare global {
  * @param {Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
- * @return {string|undefined}
+ * @return {number|string|null|undefined}
  *         Formatted data label text
  */
 
@@ -309,7 +314,7 @@ declare global {
  *      Data labels box options
  *
  * @name Highcharts.DataLabelsOptionsObject#borderColor
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  * @since 2.2.1
  *//**
  * The border radius in pixels for the data label.
@@ -361,7 +366,7 @@ declare global {
  *      White data labels
  *
  * @name Highcharts.DataLabelsOptionsObject#color
- * @type {Highcharts.ColorString|undefined}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
  *//**
  * Whether to hide data labels that are outside the plot area. By default, the
  * data label is moved inside the plot area according to the
@@ -565,7 +570,7 @@ declare global {
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
  * @name Highcharts.DataLabelsOptionsObject#textPath
- * @type {Highcharts.DataLabelsTextPath|undefined}
+ * @type {Highcharts.DataLabelsTextPathOptionsObject|undefined}
  * @since 7.1.0
  *//**
  * Whether to
@@ -624,16 +629,16 @@ declare global {
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.DataLabelsTextPath
+ * @interface Highcharts.DataLabelsTextPathOptionsObject
  * @since 7.1.0
  *//**
  * Presentation attributes for the text path.
- * @name Highcharts.DataLabelsTextPath#attributes
- * @type {Highcharts.SVGAttributes}
+ * @name Highcharts.DataLabelsTextPathOptionsObject#attributes
+ * @type {Highcharts.SVGAttributes|undefined}
  * @since 7.1.0
  *//**
  * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.DataLabelsTextPath#enabled
+ * @name Highcharts.DataLabelsTextPathOptionsObject#enabled
  * @type {boolean|undefined}
  * @since 7.1.0
  */
@@ -652,23 +657,25 @@ declare global {
  */
 
 import U from './Utilities.js';
-const isArray = U.isArray;
+const {
+    defined,
+    isArray,
+    objectEach,
+    splat
+} = U;
 
 import './Series.js';
 
 var arrayMax = H.arrayMax,
-    defined = H.defined,
     extend = H.extend,
     format = H.format,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
-    isIntersectRect = H.isIntersectRect,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort,
-    splat = H.splat;
+    stableSort = H.stableSort;
 
 /* eslint-disable valid-jsdoc */
 
@@ -946,9 +953,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                 function (
                     el: Highcharts.DataLabelsOptionsObject
                 ): Highcharts.DataLabelsOptionsObject {
-                    return merge<Highcharts.DataLabelsOptionsObject>(
-                        one as any, el
-                    );
+                    return merge(one, el);
                 }
             );
         } else if (!isArray(one) && !isArray(two)) {
@@ -1021,7 +1026,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
             pointOptions = splat(
                 mergeArrays(
                     seriesDlOptions as any,
-                    point.dlOptions || // dlOptions is used in treemaps
+                    (point.dlOptions as any) || // dlOptions is used in treemaps
                         (point.options && point.options.dataLabels)
                 )
             );
@@ -1050,7 +1055,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         point.connector,
                     labelDistance = pick(
                         (labelOptions as any).distance,
-                        point.labelDistance
+                        (point as Highcharts.PiePoint).labelDistance
                     ),
                     isNew = !dataLabel;
 
@@ -1087,7 +1092,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
                             point.contrastColor = renderer.getContrast(
-                                (point.color as any) || (series.color as any)
+                                (point.color || series.color) as any
                             );
                             (style as any).color = (
                                 !defined(labelDistance) &&
@@ -1117,7 +1122,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                     }
 
                     // Remove unused attributes (#947)
-                    H.objectEach(attr, function (val: any, name: string): void {
+                    objectEach(attr, function (val: any, name: string): void {
                         if (val === undefined) {
                             delete attr[name];
                         }
@@ -1140,8 +1145,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         delete point.dataLabel;
                     }
                     if (connector) {
-                        point.connector =
-                            (point.connector as any).destroy();
+                        point.connector = (point.connector as any).destroy();
                         if (point.connectors) {
                             // Remove point.connectors if this was the last one
                             if (point.connectors.length === 1) {
@@ -1257,7 +1261,11 @@ Series.prototype.alignDataLabel = function (
 ): void {
     var chart = this.chart,
         inverted = this.isCartesian && chart.inverted,
-        plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
+        plotX = pick(
+            point.dlBox && (point.dlBox as any).centerX,
+            point.plotX,
+            -9999
+        ),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),
         baseline,
@@ -1356,7 +1364,7 @@ Series.prototype.alignDataLabel = function (
 
         // Handle justify or crop
         if (justify && alignTo.height >= 0) { // #8830
-            point.isLabelJustified = this.justifyDataLabel(
+            this.justifyDataLabel(
                 dataLabel,
                 options,
                 alignAttr,
@@ -1435,6 +1443,7 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
+            options.inside = true;
         } else {
             options.x = -off;
         }
@@ -1446,6 +1455,7 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
+            options.inside = true;
         } else {
             options.x = chart.plotWidth - off;
         }
@@ -1457,6 +1467,7 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
+            options.inside = true;
         } else {
             options.y = -off;
         }
@@ -1468,6 +1479,7 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
+            options.inside = true;
         } else {
             options.y = chart.plotHeight - off;
         }
@@ -1486,7 +1498,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
-        radialDistributionY: function (point: Highcharts.Point): number {
+        radialDistributionY: function (point: Highcharts.PiePoint): number {
             return point.top + (point.distributeBox as any).pos;
         },
         // get the x - use the natural x position for labels near the
@@ -1495,8 +1507,8 @@ if (seriesTypes.pie) {
 
         // Based on the value computed in Highcharts' distribute algorithm.
         radialDistributionX: function (
-            series: Highcharts.Series,
-            point: Highcharts.Point,
+            series: Highcharts.PieSeries,
+            point: Highcharts.PiePoint,
             y: number,
             naturalY: number
         ): number {
@@ -1504,19 +1516,19 @@ if (seriesTypes.pie) {
                 y < (point.top as any) + 2 || y > (point.bottom as any) - 2 ?
                     naturalY :
                     y,
-                point.half,
+                point.half as any,
                 point
             );
         },
 
         // dataLabels.distance determines the x position of the label
         justify: function (
-            point: Highcharts.Point,
+            point: Highcharts.PiePoint,
             radius: number,
             seriesCenter: Array<number>
         ): number {
             return seriesCenter[0] + (point.half ? -1 : 1) *
-            (radius + point.labelDistance);
+            (radius + (point.labelDistance as any));
         },
 
         // Left edges of the left-half labels touch the left edge of the plot
@@ -1539,7 +1551,7 @@ if (seriesTypes.pie) {
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
         alignToConnectors: function (
-            points: Array<Highcharts.Point>,
+            points: Array<Highcharts.PiePoint>,
             half: boolean,
             plotWidth: number,
             plotLeft: number
@@ -1548,7 +1560,7 @@ if (seriesTypes.pie) {
                 dataLabelWidth;
 
             // find widest data label
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Highcharts.PiePoint): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
@@ -1567,7 +1579,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function (
-        this: Highcharts.Series
+        this: Highcharts.PieSeries
     ): void {
         var series = this,
             data = series.data,
@@ -1593,7 +1605,7 @@ if (seriesTypes.pie) {
             halves = [
                 [], // right
                 [] // left
-            ] as [Array<Highcharts.Point>, Array<Highcharts.Point>],
+            ] as [Array<Highcharts.PiePoint>, Array<Highcharts.PiePoint>],
             x,
             y,
             visibility,
@@ -1611,7 +1623,7 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        data.forEach(function (point: Highcharts.Point): void {
+        data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
@@ -1628,13 +1640,13 @@ if (seriesTypes.pie) {
         // run parent method
         Series.prototype.drawDataLabels.apply(series);
 
-        data.forEach(function (point: Highcharts.Point): void {
+        data.forEach(function (point: Highcharts.PiePoint): void {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
 
                     // Arrange points for detection collision
-                    halves[point.half].push(point);
+                    halves[point.half as any].push(point);
 
                     // Reset positions (#4905)
                     point.dataLabel._pos = null;
@@ -1672,7 +1684,7 @@ if (seriesTypes.pie) {
          * of the pie to detect overlapping labels.
          */
         halves.forEach(function (
-            points: Array<Highcharts.Point>,
+            points: Array<Highcharts.PiePoint>,
             i: number
         ): void {
 
@@ -1703,17 +1715,17 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                points.forEach(function (point: Highcharts.Point): void {
+                points.forEach(function (point: Highcharts.PiePoint): void {
                     // check if specific points' label is outside the pie
-                    if (point.labelDistance > 0 && point.dataLabel) {
+                    if ((point.labelDistance as any) > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
                         // Used for calculation of y value in getX method
                         point.top = Math.max(
                             0,
-                            centerY - radius - point.labelDistance
+                            centerY - radius - (point.labelDistance as any)
                         );
                         point.bottom = Math.min(
-                            centerY + radius + point.labelDistance,
+                            centerY + radius + (point.labelDistance as any),
                             chart.plotHeight
                         );
                         size = point.dataLabel.getBBox().height || 21;
@@ -1872,8 +1884,7 @@ if (seriesTypes.pie) {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (
-            arrayMax(overflow) === 0 ||
+        if (arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
 
@@ -1881,7 +1892,7 @@ if (seriesTypes.pie) {
             (this.placeDataLabels as any)();
 
 
-            this.points.forEach(function (point: Highcharts.Point): void {
+            this.points.forEach(function (point: Highcharts.PiePoint): void {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                     merge(options, point.options.dataLabels);
@@ -1895,11 +1906,10 @@ if (seriesTypes.pie) {
                     connector = point.connector;
                     dataLabel = point.dataLabel;
 
-                    if (
-                        dataLabel &&
+                    if (dataLabel &&
                         dataLabel._pos &&
                         point.visible &&
-                        point.labelDistance > 0
+                        (point.labelDistance as any) > 0
                     ) {
                         visibility = dataLabel._attr.visibility;
 
@@ -1955,7 +1965,7 @@ if (seriesTypes.pie) {
      *
      * @param {*} labelPos
      *
-     * @return {Highcharts.PathObject}
+     * @return {Highcharts.SVGPathArray}
      */
     // TODO: depracated - remove it
     /*
@@ -1994,12 +2004,9 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.placeDataLabels = function (
-        this: Highcharts.Series
+        this: Highcharts.PieSeries
     ): void {
-        this.points.forEach(function (
-            this: Highcharts.Series,
-            point: Highcharts.Point
-        ): void {
+        this.points.forEach(function (point: Highcharts.Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
 
@@ -2050,7 +2057,7 @@ if (seriesTypes.pie) {
      * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (
-        this: Highcharts.Series,
+        this: Highcharts.PieSeries,
         overflow: Array<number>
     ): boolean {
 
@@ -2065,24 +2072,24 @@ if (seriesTypes.pie) {
 
         if (!ret) {
             // Handle horizontal size and center
-            if (centerOption[0] !== null) { // Fixed center
+            if ((centerOption as any)[0] !== null) { // Fixed center
                 newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize);
+                    Math.max(overflow[1], overflow[3]), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
                     // horizontal overflow
                     center[2] - overflow[1] - overflow[3],
-                    minSize
+                    minSize as any
                 );
                 // horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
             }
 
             // Handle vertical size and center
-            if (centerOption[1] !== null) { // Fixed center
+            if ((centerOption as any)[1] !== null) { // Fixed center
                 newSize = Math.max(Math.min(newSize, center[2] -
-                    Math.max(overflow[0], overflow[2])), minSize);
+                    Math.max(overflow[0], overflow[2])), minSize as any);
 
             } else { // Auto center
                 newSize = Math.max(
@@ -2091,7 +2098,7 @@ if (seriesTypes.pie) {
                         // vertical overflow
                         center[2] - overflow[0] - overflow[2]
                     ),
-                    minSize
+                    minSize as any
                 );
                 // vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;
@@ -2136,7 +2143,7 @@ if (seriesTypes.column) {
      * @return {void}
      */
     seriesTypes.column.prototype.alignDataLabel = function (
-        this: Highcharts.Series,
+        this: Highcharts.ColumnSeries,
         point: Highcharts.Point,
         dataLabel: Highcharts.SVGElement,
         options: Highcharts.DataLabelsOptionsObject,
@@ -2148,7 +2155,7 @@ if (seriesTypes.column) {
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                point.below, // range series
+                (point as Highcharts.AreaRangePoint).below, // range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, series.yAxis.len)
             ),
@@ -2158,7 +2165,7 @@ if (seriesTypes.column) {
 
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
-            alignTo = merge(dlBox);
+            alignTo = merge(dlBox) as any;
 
             if (alignTo.y < 0) {
                 alignTo.height += alignTo.y;
@@ -2213,19 +2220,7 @@ if (seriesTypes.column) {
         );
 
         // If label was justified and we have contrast, set it:
-        if (
-            point.contrastColor &&
-            point.shapeArgs &&
-            isIntersectRect(
-                {
-                    x: dataLabel.x,
-                    y: dataLabel.y,
-                    width: dataLabel.width - dataLabel.padding,
-                    height: dataLabel.height - dataLabel.padding
-                },
-                point.shapeArgs as any
-            )
-        ) {
+        if (options.inside && point.contrastColor) {
             dataLabel.css({
                 color: point.contrastColor
             });

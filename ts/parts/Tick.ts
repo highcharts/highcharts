@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface AxisLabelsFormatterContextObject {
+            tickPositionInfo?: TimeTicksInfoObject;
+        }
         interface TickParametersObject {
             category?: string;
             options?: Dictionary<any>;
@@ -120,11 +123,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    defined,
     isNumber
 } = U;
 
 var correctFloat = H.correctFloat,
-    defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     merge = H.merge,
@@ -308,7 +311,7 @@ H.Tick.prototype = {
             if (
                 label.textWidth &&
                 !(labelOptions.style && labelOptions.style.width) &&
-                !label.styles.width
+                !(label.styles as any).width
             ) {
                 label.css({ width: null as any });
             }

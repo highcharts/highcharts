@@ -13,9 +13,12 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var defined = U.defined,
+    isArray = U.isArray,
     isNumber = U.isNumber,
-    isString = U.isString;
+    isObject = U.isObject,
+    isString = U.isString,
+    objectEach = U.objectEach;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -27,7 +30,6 @@ var seriesType = H.seriesType,
     merge = H.merge,
     extend = H.extend,
     error = H.error,
-    defined = H.defined,
     noop = H.noop,
     fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
@@ -35,14 +37,13 @@ var seriesType = H.seriesType,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
-    isObject = H.isObject,
     pick = H.pick,
     Series = H.Series,
     stableSort = H.stableSort,
     color = H.Color,
     eachObject = function (list, func, context) {
         context = context || this;
-        H.objectEach(list, function (val, key) {
+        objectEach(list, function (val, key) {
             func.call(context, val, key, list);
         });
     },
@@ -1319,7 +1320,7 @@ seriesType(
             // The issue was happening when datalabel's text contained a
             // long sequence of characters without a whitespace.
             if (
-                !H.defined(style.textOverflow) &&
+                !defined(style.textOverflow) &&
                 dataLabel.text &&
                 dataLabel.getBBox().width > dataLabel.text.textWidth
             ) {
