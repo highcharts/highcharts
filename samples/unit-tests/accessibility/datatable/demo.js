@@ -1,4 +1,3 @@
-
 // Tests that the generated data table has the right structure
 QUnit.test('Accessible data table', function (assert) {
     var head,

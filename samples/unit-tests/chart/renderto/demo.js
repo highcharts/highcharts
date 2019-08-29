@@ -1,6 +1,5 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Container initially hidden (#6693)', function (assert) {
 
     var outerOuter = document.createElement('div');
@@ -127,7 +126,7 @@ QUnit.test('Container hidden by display:block !important', function (assert) {
 
     var style = document.createElement('style');
     document.head.appendChild(style);
-    style.sheet.insertRule('.ng-cloak { display: none !important; }');
+    style.sheet.insertRule('.ng-cloak { display: none !important; }', 0);
 
     var c = document.createElement('div');
     document.body.appendChild(c);

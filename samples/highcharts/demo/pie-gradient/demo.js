@@ -1,5 +1,3 @@
-
-
 // Radialize the colors
 Highcharts.setOptions({
     colors: Highcharts.map(Highcharts.getOptions().colors, function (color) {
@@ -38,9 +36,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                },
                 connectorColor: 'silver'
             }
         }

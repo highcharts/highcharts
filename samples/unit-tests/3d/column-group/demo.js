@@ -1,4 +1,3 @@
-
 QUnit.test('3D columns with scatter series', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {

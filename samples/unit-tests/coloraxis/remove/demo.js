@@ -12,8 +12,8 @@ QUnit.test('destroy. #6488', function (assert) {
         series: [{
             borderWidth: 1,
             data: [
-              [0, 0, 10],
-              [0, 1, 19]
+                [0, 0, 10],
+                [0, 1, 19]
             ]
         }]
     });

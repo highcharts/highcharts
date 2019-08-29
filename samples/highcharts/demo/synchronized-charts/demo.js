@@ -6,7 +6,6 @@ mouse/touch event handler to bind the charts together.
 */
 
 
-
 /**
  * In order to synchronize tooltips and crosshairs, override the
  * built-in events with handlers defined on the parent element.
@@ -78,7 +77,7 @@ function syncExtremes(e) {
 
 // Get the data. The contents of the data file can be viewed at
 Highcharts.ajax({
-    url: 'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/activity.json',
+    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/activity.json',
     dataType: 'text',
     success: function (activity) {
 

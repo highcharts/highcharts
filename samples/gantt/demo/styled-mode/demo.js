@@ -1,4 +1,3 @@
-
 var today = new Date(),
     day = 1000 * 60 * 60 * 24;
 
@@ -11,6 +10,9 @@ today.setUTCMilliseconds(0);
 
 // THE CHART
 Highcharts.ganttChart('container', {
+    chart: {
+        styledMode: true
+    },
     title: {
         text: 'Highcharts Gantt in Styled Mode'
     },

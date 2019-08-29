@@ -1,9 +1,12 @@
 /* eslint-env browser */
+/* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
 /**
  * This file runs in the browser as setup for the karma tests.
  */
+
+var VERBOSE = false;
 
 var div;
 if (!document.getElementById('container')) {
@@ -23,7 +26,9 @@ document.body.appendChild(demoHTML);
 var canvas = document.createElement('canvas');
 canvas.setAttribute('width', 300);
 canvas.setAttribute('height', 200);
-var ctx = canvas.getContext('2d');
+var ctx = canvas.getContext && canvas.getContext('2d');
+
+var currentTests = [];
 
 // Disable animation over all.
 Highcharts.setOptions({
@@ -36,7 +41,44 @@ Highcharts.setOptions({
             kdNow: true,
             dataLabels: {
                 defer: false
+            },
+            states: {
+                hover: {
+                    animation: false
+                },
+                select: {
+                    animation: false
+                },
+                inactive: {
+                    animation: false
+                },
+                normal: {
+                    animation: false
+                }
             }
+        },
+        // We cannot use it in plotOptions.series because treemap
+        // has the same layout option: layoutAlgorithm.
+        networkgraph: {
+            layoutAlgorithm: {
+                enableSimulation: false,
+                maxIterations: 10
+            }
+        },
+        packedbubble: {
+            layoutAlgorithm: {
+                enableSimulation: false,
+                maxIterations: 10
+            }
+        }
+
+    },
+    // Stock's Toolbar decreases width of the chart. At the same time, some
+    // tests have hardcoded x/y positions for events which cuases them to fail.
+    // For these tests, let's disable stockTools.gui globally.
+    stockTools: {
+        gui: {
+            enabled: false
         }
     },
     tooltip: {
@@ -46,79 +88,102 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-
-
-/*
- * Compare numbers taking in account an error.
- * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
- *
- * @param  {Float} number
- * @param  {Float} expected
- * @param  {Float} error    Optional
- * @param  {String} message  Optional
- */
-QUnit.assert.close = function (number, expected, error, message) {
-    if (error === void 0 || error === null) {
-        error = 0.00001; // default error
-    }
-
-    var result = number === expected || (number <= expected + error && number >= expected - error) || false;
-
-    this.pushResult({
-        result: result,
-        actual: number,
-        expected: expected,
-        message: message
-    });
-};
-
-QUnit.module('Highcharts', {
-    beforeEach: function () {
-
-        // Reset container size that some tests may have modified
-        var containerStyle = document.getElementById('container').style;
-        containerStyle.width = 'auto';
-        containerStyle.height = 'auto';
-        containerStyle.position = 'absolute';
-        containerStyle.left = '8';
-        containerStyle.top = '8';
-        containerStyle.zIndex = '9999';
-
-        // Reset randomizer
-        Math.randomCursor = 0;
-    },
-
-    afterEach: function () {
-
-        var containerStyle = document.getElementById('container').style;
-        containerStyle.width = '';
-        containerStyle.height = '';
-        containerStyle.position = '';
-        containerStyle.left = '';
-        containerStyle.top = '';
-        containerStyle.zIndex = '';
-
-        var currentChart = null,
-            charts = Highcharts.charts,
-            templateCharts = [];
-
-        // Destroy all charts, except template charts
-        for (var i = 0, ie = charts.length; i < ie; ++i) {
-            currentChart = charts[i];
-            if (!currentChart) {
-                continue;
-            }
-            if (currentChart.template) {
-                templateCharts.push(currentChart);
-            } else if (currentChart.destroy && currentChart.renderer) {
-                currentChart.destroy();
-            }
-        }
-
-        Highcharts.charts.length = 0;
-        Array.prototype.push.apply(Highcharts.charts, templateCharts);
+Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
+    if (window.JSONSources[url]) {
+        callback(window.JSONSources[url]);
+    } else {
+        console.log('@getJSON: Loading over network', url);
+        return proceed.call(Highcharts, url, function (data) {
+            window.JSONSources[url] = data;
+            callback(data);
+        });
     }
 });
+
+if (window.QUnit) {
+    /*
+     * Compare numbers taking in account an error.
+     * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {Float} error    Optional
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.close = function (number, expected, error, message) {
+        if (error === void 0 || error === null) {
+            error = 0.00001; // default error
+        }
+
+        var result = number === expected || (number <= expected + error && number >= expected - error) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
+    QUnit.module('Highcharts', {
+        beforeEach: function (test) {
+            if (VERBOSE) {
+                console.log('Start "' + test.test.testName + '"');
+            }
+            currentTests.push(test.test.testName);
+
+            // Reset container size that some tests may have modified
+            var containerStyle = document.getElementById('container').style;
+            containerStyle.width = 'auto';
+            containerStyle.height = 'auto';
+            containerStyle.position = 'absolute';
+            containerStyle.left = '8';
+            containerStyle.top = '8';
+            containerStyle.zIndex = '9999';
+
+            // Reset randomizer
+            Math.randomCursor = 0;
+        },
+
+        afterEach: function (test) {
+            if (VERBOSE) {
+                console.log('- end "' + test.test.testName + '"');
+            }
+            currentTests.splice(
+                currentTests.indexOf(test.test.testName),
+                1
+            );
+
+            var containerStyle = document.getElementById('container').style;
+            containerStyle.width = '';
+            containerStyle.height = '';
+            containerStyle.position = '';
+            containerStyle.left = '';
+            containerStyle.top = '';
+            containerStyle.zIndex = '';
+
+            var currentChart = null,
+                charts = Highcharts.charts,
+                templateCharts = [];
+
+            // Destroy all charts, except template charts
+            for (var i = 0, ie = charts.length; i < ie; ++i) {
+                currentChart = charts[i];
+                if (!currentChart) {
+                    continue;
+                }
+                if (currentChart.template) {
+                    templateCharts.push(currentChart);
+                } else if (currentChart.destroy && currentChart.renderer) {
+                    currentChart.destroy();
+                }
+            }
+
+            Highcharts.charts.length = 0;
+            Array.prototype.push.apply(Highcharts.charts, templateCharts);
+        }
+    });
+}
 
 /*
  * Display the tooltip so it gets part of the comparison
@@ -127,12 +192,24 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver();
+        // Network graphs, sankey etc
+        if (
+            chart.series[0].nodes &&
+            chart.series[0].nodes[0] &&
+            typeof chart.series[0].nodes[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].nodes[0].onMouseOver();
+        
+        // Others
+        } else if (
+            chart.series[0].points &&
+            chart.series[0].points[0] &&
+            typeof chart.series[0].points[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].points[0].onMouseOver();
+        }
     }
 };
 
@@ -147,6 +224,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -182,6 +267,23 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 }
 
 /**
+ * Vanilla request for fetching an url using GET.
+ * @param {String} url to fetch
+ * @param {Function} callback to call when done.
+ */
+function xhrLoad(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+}
+
+/**
  * Get a PNG image or image data from the chart SVG.
  * @param  {Object} chart The chart instance
  * @param  {String} path  The sample path
@@ -199,6 +301,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
 
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
+
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
@@ -210,7 +316,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        'Error loading SVG on canvas'
+                        new Error('Error loading SVG on canvas.')
                     );
                 };
                 img.src = url;
@@ -248,26 +354,29 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 doComparison();
             });
         } else {
-            reject('No candidate SVG found');
+            reject(new Error('No candidate SVG found'));
         }
 
-        // Handle reference, load SVG from file
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
+        // Handle reference, load SVG from bucket or file
+        var url = 'base/samples/' + path + '/reference.svg';
+        if (remotelocation) {
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
+        }
+        xhrLoad(url, function onXHRDone(xhr) {
+            if (xhr.status == 200) {
                 var svg = xhr.responseText;
-
                 svgToPixels(svg, function (data) {
                     referenceData = data;
                     doComparison();
-                });
+                })
+            } else {
+                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
+                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
+                resolve();
             }
-        };
-        xhr.send();
-
+        });
     });
-
 }
 
 // De-randomize Math.random in tests
@@ -318,6 +427,16 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
 // Override getJSON
 window.JSONSources = {};
-$.getJSON = function (url, callback) { // eslint-disable-line no-undef
-    callback(window.JSONSources[url]);
+if (window.$) {
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+}
+/*
+window.onbeforeunload = function () {
+    console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
+    if (currentTests.length) {
+        return false;
+    }
 };
+*/

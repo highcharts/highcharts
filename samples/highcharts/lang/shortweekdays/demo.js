@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     lang: {
         shortWeekdays: ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la']

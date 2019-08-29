@@ -1,5 +1,3 @@
-
-
 var chart = Highcharts.chart('container', {
 
     chart: {
@@ -85,9 +83,8 @@ var chart = Highcharts.chart('container', {
         data: [-0.5],
         threshold: 0,
         dataLabels: {
-            format: '<span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) ||
-                    'black') + '">{y} </span>' +
+            format:
+                '<span style="font-size:25px;color:black">{y} </span>' +
                 '<span style="font-size:16px">%</span><br>' +
                 '<span style="color:silver">Target: 2 %</span>'
         },
@@ -109,4 +106,3 @@ setInterval(function () {
         point.update(newVal);
     }
 }, 2000);
-

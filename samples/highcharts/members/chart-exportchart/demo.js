@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('container', {
 
     credits: {

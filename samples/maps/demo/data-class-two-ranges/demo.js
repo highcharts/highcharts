@@ -1,4 +1,3 @@
-
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
 Highcharts.data({
@@ -16,7 +15,7 @@ Highcharts.data({
                 $div = $('<div></div>')
                     .dialog({
                         title: this.name,
-                        width: 400,
+                        width: 320,
                         height: 300
                     });
 
@@ -24,7 +23,7 @@ Highcharts.data({
                 chart: {
                     renderTo: $div[0],
                     type: 'pie',
-                    width: 370,
+                    width: 290,
                     height: 240
                 },
                 title: {
@@ -35,11 +34,11 @@ Highcharts.data({
                     data: [{
                         name: 'Trump',
                         color: '#0200D0',
-                        y: parseInt(columns[4][row], 10)
+                        y: parseInt(columns[3][row], 10)
                     }, {
                         name: 'Clinton',
                         color: '#C40401',
-                        y: parseInt(columns[3][row], 10)
+                        y: parseInt(columns[2][row], 10)
                     }],
                     dataLabels: {
                         format: '<b>{point.name}</b> {point.percentage:.1f}%'
@@ -78,7 +77,11 @@ Highcharts.data({
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)'
+                    backgroundColor: ( // theme
+                        Highcharts.defaultOptions &&
+                        Highcharts.defaultOptions.legend &&
+                        Highcharts.defaultOptions.legend.backgroundColor
+                    ) || 'rgba(255, 255, 255, 0.85)'
                 },
 
                 mapNavigation: {

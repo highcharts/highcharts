@@ -1,5 +1,3 @@
-
-
 // Define a custom symbol path
 Highcharts.SVGRenderer.prototype.symbols.cross = function (x, y, w, h) {
     return ['M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'];
@@ -13,10 +11,6 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Demo of predefined, image and custom marker symbols'
-    },
-
-    legend: {
-        y: -40 // make room for subtitle
     },
 
     xAxis: {
@@ -59,7 +53,6 @@ Highcharts.chart('container', {
         text: '*) Base64 not supported in IE6 and IE7',
         verticalAlign: 'bottom',
         align: 'right',
-        y: null,
         style: {
             fontSize: '10px'
         }

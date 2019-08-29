@@ -1,7 +1,7 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'column',
+        styledMode: true,
         options3d: {
             enabled: true,
             alpha: 15,

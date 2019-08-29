@@ -1,6 +1,5 @@
-
-$.getJSON(
-    'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json',
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
     function (data) {
         var detailChart;
 
@@ -32,10 +31,12 @@ $.getJSON(
                     enabled: false
                 },
                 title: {
-                    text: 'Historical USD to EUR Exchange Rate'
+                    text: 'Historical USD to EUR Exchange Rate',
+                    align: 'left'
                 },
                 subtitle: {
-                    text: 'Select an area by dragging across the lower chart'
+                    text: 'Select an area by dragging across the lower chart',
+                    align: 'left'
                 },
                 xAxis: {
                     type: 'datetime'
@@ -229,7 +230,7 @@ $.getJSON(
                 height: 100,
                 width: '100%'
             })
-                .appendTo($container);
+            .appendTo($container);
 
         // create master and in its callback, create the detail chart
         createMaster();

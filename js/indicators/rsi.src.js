@@ -1,28 +1,46 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
 
-var isArray = H.isArray;
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
 // Utils:
 function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
 
-H.seriesType('rsi', 'sma',
-        /**
-         * Relative strength index (RSI) technical indicator. This series
-         * requires the `linkedTo` option to be set and should be loaded after
-         * the `stock/indicators/indicators.js` file.
-         *
-         * @extends plotOptions.sma
-         * @product highstock
-         * @sample {highstock} stock/indicators/rsi
-         *                     RSI indicator
-         * @since 6.0.0
-         * @optionparent plotOptions.rsi
-         */
+/**
+ * The RSI series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.rsi
+ *
+ * @augments Highcharts.Series
+ */
+H.seriesType(
+    'rsi',
+    'sma',
+    /**
+     * Relative strength index (RSI) technical indicator. This series
+     * requires the `linkedTo` option to be set and should be loaded after
+     * the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/rsi
+     *         RSI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @optionparent plotOptions.rsi
+     */
     {
         /**
          * @excluding index
@@ -31,14 +49,14 @@ H.seriesType('rsi', 'sma',
             period: 14,
             /**
              * Number of maximum decimals that are used in RSI calculations.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             decimals: 4
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
@@ -137,21 +155,9 @@ H.seriesType('rsi', 'sma',
  * A `RSI` series. If the [type](#series.rsi.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.rsi
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.rsi
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.rsi
- */
-
-/**
- * An array of data points for the series. For the `rsi` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.rsi.data
  */

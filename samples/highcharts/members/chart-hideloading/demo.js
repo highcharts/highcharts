@@ -1,4 +1,3 @@
-
 // the button handler
 var isLoading = false,
     $button = $('#button'),
@@ -16,7 +15,6 @@ chart = Highcharts.chart('container', {
 });
 
 
-
 $button.click(function () {
     if (!isLoading) {
         chart.showLoading();
@@ -27,4 +25,3 @@ $button.click(function () {
     }
     isLoading = !isLoading;
 });
-

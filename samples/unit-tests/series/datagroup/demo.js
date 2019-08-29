@@ -1,5 +1,3 @@
-
-
 QUnit.test('Point dataGroup', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {

@@ -1,4 +1,3 @@
-
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0/pubhtml
 Highcharts.data({
@@ -39,7 +38,13 @@ Highcharts.data({
                 title: {
                     text: 'Individuals per km²',
                     style: {
-                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                        color: ( // theme
+                            Highcharts.defaultOptions &&
+                            Highcharts.defaultOptions.legend &&
+                            Highcharts.defaultOptions.legend.title &&
+                            Highcharts.defaultOptions.legend.title.style &&
+                            Highcharts.defaultOptions.legend.title.style.color
+                        ) || 'black'
                     }
                 },
                 align: 'left',
@@ -47,7 +52,11 @@ Highcharts.data({
                 floating: true,
                 layout: 'vertical',
                 valueDecimals: 0,
-                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
+                backgroundColor: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.legend &&
+                    Highcharts.defaultOptions.legend.backgroundColor
+                ) || 'rgba(255, 255, 255, 0.85)',
                 symbolRadius: 0,
                 symbolHeight: 14
             },

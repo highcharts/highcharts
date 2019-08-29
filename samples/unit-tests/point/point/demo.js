@@ -1,4 +1,366 @@
+QUnit.test('Center the halo on the point(#4689)', function (assert) {
+    var chart,
+        options = {
+            chart: {
+                width: 500,
+                height: 300
+            },
+            series: [{
+                data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+            }],
+            plotOptions: {
+                line: {
+                    marker: {
+                        symbol: 'circle',
+                        states: {
+                            hover: {
+                                fillColor: 'white',
+                                radius: 2
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            halo: {
+                                size: 5,
+                                opacity: 1,
+                                attributes: {
+                                    fill: 'black'
+                                }
+                            },
+                            lineWidthPlus: 0
+                        }
+                    }
+                }
+            }
+        };
+
+    function getCenter(box) {
+        return [
+            (box.x + box.width / 2).toFixed(0),
+            (box.y + box.height / 2).toFixed(0)
+        ].join(',');
+    }
+
+    // Non-inverted chart
+    chart = $('#container').highcharts(options).highcharts();
+
+    for (var i = 0; i < chart.series[0].points.length; i++) {
+        chart.series[0].points[i].onMouseOver();
+        assert.strictEqual(
+            getCenter(chart.series[0].points[i].graphic.getBBox()),
+            getCenter(chart.series[0].halo.getBBox()),
+            'Point ' + i + ' and halo has the same center'
+        );
+    }
+});
+
 /* global TestController */
+
+QUnit.test(
+    'Point inactive state - basics',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                plotOptions: {
+                    series: {
+                        states: {
+                            inactive: {
+                                opacity: 0.1,
+                                animation: false
+                            }
+                        },
+                        marker: {
+                            states: {
+                                inactive: {
+                                    opacity: 0.1
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    data: [5, 10, 15]
+                }, {
+                    data: [15, 15, 13]
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseMove(
+            chart.series[0].points[1].plotX + chart.plotLeft + 15,
+            chart.series[0].points[1].plotY + chart.plotTop
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[1].group.element,
+                'opacity'
+            ),
+            '0.1',
+            'Correct opacity for inactive series.'
+        );
+    }
+);
+
+QUnit.test(
+    'Point inactive state - series mix, shared tooltip, legend',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                plotOptions: {
+                    series: {
+                        states: {
+                            inactive: {
+                                opacity: 0.1,
+                                animation: false
+                            }
+                        },
+                        marker: {
+                            states: {
+                                inactive: {
+                                    opacity: 0.1,
+                                    animation: false
+                                }
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    data: [5, 10, 15]
+                }, {
+                    type: 'column',
+                    data: [15, 15, 13, 16],
+                    allowPointSelect: true
+                }]
+            }),
+            legend = chart.legend,
+            controller = new TestController(chart);
+
+        controller.mouseMove(
+            chart.series[0].points[2].plotX + chart.plotLeft,
+            chart.series[0].points[2].plotY + chart.plotTop
+        );
+
+        assert.ok(
+            Highcharts.attr(
+                chart.series[0].group.element,
+                'opacity'
+            ) !== '0.1',
+            'Shared tooltip: no change in opacity when Series 1' +
+                ' has hovered points'
+        );
+
+        assert.ok(
+            Highcharts.attr(
+                chart.series[1].group.element,
+                'opacity'
+            ) !== '0.1',
+            'Shared tooltip: no change in opacity when Series 2' +
+                ' has hovered points'
+        );
+
+        controller.mouseMove(
+            chart.series[1].points[3].plotX + chart.plotLeft + 5,
+            chart.series[1].points[3].plotY + chart.plotTop - 15
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].group.element,
+                'opacity'
+            ),
+            '0.1',
+            'Shared tooltip: Series 1 has no point for shared tooltip,' +
+                ' opacity changed'
+        );
+
+        assert.ok(
+            Highcharts.attr(
+                chart.series[1].group.element,
+                'opacity'
+            ) !== '0.1',
+            'Shared tooltip: no change in opacity when Series 1' +
+                ' has hovered points'
+        );
+
+        controller.mouseOver(
+            legend.group.translateX + legend.maxItemWidth * 1.5,
+            legend.group.translateY + legend.itemHeight
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].group.element,
+                'opacity'
+            ),
+            '0.1',
+            'Legend hover: correct inactive series opacity'
+        );
+
+        assert.ok(
+            Highcharts.attr(
+                chart.series[1].group.element,
+                'opacity'
+            ) !== '0.1',
+            'Legend hover: correct hovered series opacity'
+        );
+
+        controller.click(
+            chart.plotLeft + chart.series[1].points[3].plotX,
+            chart.plotTop + chart.series[1].points[3].plotY + 5
+        );
+
+        controller.mouseOver(
+            chart.plotLeft + chart.series[1].points[0].plotX,
+            chart.plotTop + chart.series[1].points[0].plotY + 5
+        );
+
+        controller.click(
+            chart.plotLeft + chart.series[1].points[0].plotX,
+            chart.plotTop + chart.series[1].points[0].plotY + 5
+        );
+
+        assert.strictEqual(
+            chart.series[1].points[3].state,
+            '',
+            'Correct state for column after deselection (#10504)'
+        );
+
+    }
+);
+
+
+QUnit.test(
+    'Point inactive state - series with inactive points within',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                plotOptions: {
+                    series: {
+                        states: {
+                            inactive: {
+                                opacity: 0.1,
+                                animation: false
+                            }
+                        },
+                        marker: {
+                            states: {
+                                inactive: {
+                                    opacity: 0.1,
+                                    animation: false
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    type: 'networkgraph',
+                    layoutAlgorithm: {
+                        integration: 'verlet'
+                    },
+                    keys: ['from', 'to'],
+                    data: [['A', 'B'], ['B', 'C']]
+                }, {
+                    type: 'pie',
+                    showInLegend: true,
+                    data: [5, 10]
+                }]
+            }),
+            legend = chart.legend,
+            controller = new TestController(chart);
+
+        controller.mouseOver(
+            chart.series[0].nodes[0].plotX + chart.plotLeft,
+            chart.series[0].nodes[0].plotY + chart.plotTop
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].nodes[0].graphic.element,
+                'opacity'
+            ),
+            '1',
+            'Networkgraph series: hover states applied on the first point'
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].nodes[1].graphic.element,
+                'opacity'
+            ),
+            '1',
+            'Networkgraph series: hover state applied on the second point'
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].nodes[2].graphic.element,
+                'opacity'
+            ),
+            '0.1',
+            'Networkgraph series: inactive state applied on the third point'
+        );
+
+        controller.mouseOver(
+            chart.series[1].points[0].shapeArgs.x + chart.plotLeft + 15,
+            chart.series[1].points[0].shapeArgs.y + chart.plotTop - 15
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[1].points[0].graphic.element,
+                'opacity'
+            ),
+            '1',
+            'Pie series: hover state applied on the first point'
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[1].points[1].graphic.element,
+                'opacity'
+            ),
+            '0.1',
+            'Pie series: inactive state applied on the second point'
+        );
+
+        controller.mouseOver(
+            legend.group.translateX + legend.maxItemWidth * 1.5,
+            legend.group.translateY + legend.itemHeight
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].points[0].graphic.element,
+                'opacity'
+            ),
+            '0.3',
+            'Legend hover: correct inactive series point opacity'
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[1].points[0].graphic.element,
+                'opacity'
+            ),
+            '0.1',
+            'Legend hover: correct hovered series point opacity -other point'
+        );
+
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[1].points[1].graphic.element,
+                'opacity'
+            ),
+            '1',
+            'Legend hover: correct hovered series point opacity -current point'
+        );
+    }
+);
 
 QUnit.test('Dynamic point states', function (assert) {
     var chart = new Highcharts.chart('container', {
@@ -296,3 +658,31 @@ QUnit.test('Point className on other elements', function (assert) {
     );
 });
 
+QUnit.test('Deselecting points', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.series[0].points[1].select(true, true);
+    chart.series[0].points[2].select(true, true);
+
+    chart.series[1].points[1].select(true, false);
+
+    assert.strictEqual(
+        chart.series[0].options.data['-1'],
+        undefined,
+        'No fake points in series.options.data after deselecting other points.'
+    );
+});

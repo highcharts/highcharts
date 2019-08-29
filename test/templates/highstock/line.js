@@ -9,6 +9,7 @@ TestTemplate.register('highstock/line', Highcharts.stockChart, {
     },
 
     series: [{
+        type: 'line',
         data: [1, 3, 2]
     }]
 

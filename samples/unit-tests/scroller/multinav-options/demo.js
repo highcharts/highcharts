@@ -218,4 +218,3 @@ QUnit.test('Set only navigator series option as array', function (assert) {
     assert.strictEqual(chart.navigator.series[0].color, '#f00', 'First navigator series is red');
     assert.strictEqual(chart.navigator.series[1].color, '#0f0', 'Second navigator series is green');
 });
-

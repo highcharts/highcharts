@@ -7,24 +7,24 @@ QUnit.test('Categories undefined, inferred from names', function (assert) {
         title: {
             text: "Point names and categories"
         },
-        "series": [{
-            "data": [{
-                "name": "May",
-                "y": 1
+        series: [{
+            data: [{
+                name: "May",
+                y: 1
             }],
-            "name": "Alpha"
+            name: "Alpha"
         }, {
-            "data": [{
-                "name": "Apr",
-                "y": 1
+            data: [{
+                name: "Apr",
+                y: 1
             }, {
-                "name": "May",
-                "y": 2
+                name: "May",
+                y: 2
             }, {
-                "name": "Jun",
-                "y": 3
+                name: "Jun",
+                y: 3
             }],
-            "name": "Beta"
+            name: "Beta"
         }],
         xAxis: {
             type: 'category'
@@ -64,24 +64,24 @@ QUnit.test('Categories defined, points go in right category', function (assert) 
         title: {
             text: "Point names and categories"
         },
-        "series": [{
-            "data": [{
-                "name": "May",
-                "y": 1
+        series: [{
+            data: [{
+                name: "May",
+                y: 1
             }],
-            "name": "Alpha"
+            name: "Alpha"
         }, {
-            "data": [{
-                "name": "Apr",
-                "y": 1
+            data: [{
+                name: "Apr",
+                y: 1
             }, {
-                "name": "May",
-                "y": 2
+                name: "May",
+                y: 2
             }, {
-                "name": "Jun",
-                "y": 3
+                name: "Jun",
+                y: 3
             }],
-            "name": "Beta"
+            name: "Beta"
         }],
         xAxis: {
             categories: ['Apr', 'May', 'Jun'],
@@ -236,22 +236,22 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
 QUnit.test('uniqueNames default in the data module', function (assert) {
     var chart = Highcharts.chart('container', {
         data: {
-            "seriesMapping": [{
-                "x": 0
+            seriesMapping: [{
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }, {
-                "x": 0
+                x: 0
             }],
-            "columnTypes": [
+            columnTypes: [
                 "string",
                 "float",
                 "float",
@@ -261,7 +261,7 @@ QUnit.test('uniqueNames default in the data module', function (assert) {
                 "float",
                 "float"
             ],
-            "csv": ",Canada,France,Germany,Italy,Japan,United Kingdom,United States\n2008 Q1,100,100,100,100,100,100,100\nQ2,100.5,99.5,99.8,99.2,98.8,99.8,100.5\nQ3,101.2,99.3,99.4,97.9,97.8,98.1,100\nQ4,100.1,97.7,97.4,95.6,94.5,95.9,97.9\n2009 Q1,97.8,96.1,93.1,92.8,90.8,94.2,96.5\nQ2,96.9,96,93.2,92.4,92.4,94,96.4\nQ3,97.4,96.2,93.7,92.9,92.4,94.1,96.7\nQ4,98.7,96.8,94.5,92.9,94,94.5,97.7\n2010 Q1,100,97.2,95.2,93.4,95.4,95,98.1\nQ2,100.7,97.8,97.3,94.2,96.4,95.9,99\nQ3,101.1,98.4,98,94.6,97.8,96.5,99.7\nQ4,102.2,98.9,98.7,95,97.2,96.6,100.3\n2011 Q1,103,100,100.5,95.2,95.5,97.1,99.9\nQ2,103,99.9,100.7,95.4,94.9,97.3,100.7\nQ3,104.7,100.2,101.1,95.1,97.4,98,100.9\nQ4,105.3,100.4,101.1,94.3,97.5,98,102\n2012 Q1,105.5,100.6,101.4,93.5,98.6,98,102.6\nQ2,106,100.4,101.6,93.1,98.2,97.9,103\nQ3,106.1,100.6,101.6,92.7,97.7,98.7,103.6\nQ4,106.3,100.4,101.2,92,97.5,98.3,103.7\n2013 Q1,107.2,100.4,100.8,91.2,98.9,98.9,104.4\nQ2,107.7,101,101.6,91,99.6,99.6,104.8\nQ3,108.4,101,101.9,91,100,100.3,106\nQ4,109.2,101.2,102.4,90.9,99.7,100.7,106.9\n2014 Q1,109.5,101.2,103.2,90.9,101.1,101.3,106.3\nQ2,110.4,101.1,103.1,90.6,99.3,102.1,107.5\nQ3,111.2,101.3,103.1,90.5,98.9,102.9,108.8\nQ4,,,,,,103.4,"
+            csv: ",Canada,France,Germany,Italy,Japan,United Kingdom,United States\n2008 Q1,100,100,100,100,100,100,100\nQ2,100.5,99.5,99.8,99.2,98.8,99.8,100.5\nQ3,101.2,99.3,99.4,97.9,97.8,98.1,100\nQ4,100.1,97.7,97.4,95.6,94.5,95.9,97.9\n2009 Q1,97.8,96.1,93.1,92.8,90.8,94.2,96.5\nQ2,96.9,96,93.2,92.4,92.4,94,96.4\nQ3,97.4,96.2,93.7,92.9,92.4,94.1,96.7\nQ4,98.7,96.8,94.5,92.9,94,94.5,97.7\n2010 Q1,100,97.2,95.2,93.4,95.4,95,98.1\nQ2,100.7,97.8,97.3,94.2,96.4,95.9,99\nQ3,101.1,98.4,98,94.6,97.8,96.5,99.7\nQ4,102.2,98.9,98.7,95,97.2,96.6,100.3\n2011 Q1,103,100,100.5,95.2,95.5,97.1,99.9\nQ2,103,99.9,100.7,95.4,94.9,97.3,100.7\nQ3,104.7,100.2,101.1,95.1,97.4,98,100.9\nQ4,105.3,100.4,101.1,94.3,97.5,98,102\n2012 Q1,105.5,100.6,101.4,93.5,98.6,98,102.6\nQ2,106,100.4,101.6,93.1,98.2,97.9,103\nQ3,106.1,100.6,101.6,92.7,97.7,98.7,103.6\nQ4,106.3,100.4,101.2,92,97.5,98.3,103.7\n2013 Q1,107.2,100.4,100.8,91.2,98.9,98.9,104.4\nQ2,107.7,101,101.6,91,99.6,99.6,104.8\nQ3,108.4,101,101.9,91,100,100.3,106\nQ4,109.2,101.2,102.4,90.9,99.7,100.7,106.9\n2014 Q1,109.5,101.2,103.2,90.9,101.1,101.3,106.3\nQ2,110.4,101.1,103.1,90.6,99.3,102.1,107.5\nQ3,111.2,101.3,103.1,90.5,98.9,102.9,108.8\nQ4,,,,,,103.4,"
         }
     });
     assert.strictEqual(
@@ -291,7 +291,8 @@ QUnit.test('uniqueNames: false', function (assert) {
                 y: 3
             }],
             type: 'column',
-            stacking: 'normal'
+            stacking: 'normal',
+            cropThreshold: false
         }]
 
     });
@@ -299,6 +300,29 @@ QUnit.test('uniqueNames: false', function (assert) {
         chart.xAxis[0].names.length,
         3,
         'Each point its own category'
+    );
+
+
+    chart.series[0].points.forEach(function (p) {
+        p.graphic.hasSurvived = true;
+    });
+    chart.series[0].setData([{
+        name: 'First',
+        y: 4
+    }, {
+        name: 'Third',
+        y: 3
+    }, {
+        name: 'Third',
+        y: 2
+    }]);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.graphic.hasSurvived;
+        }),
+        [true, true, true],
+        'All graphics should survive setting data, preserving animation'
     );
 });
 
@@ -382,6 +406,46 @@ QUnit.test('Keeping updated with setData (#5768)', function (assert) {
     );
 });
 
+QUnit.test('Combined with a series with no names (#9562)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: [{
+                y: 1,
+                name: 'Cat1'
+            }, {
+                y: 2,
+                name: 'Cat2'
+            }, {
+                y: 3,
+                name: 'Cat3'
+            }],
+            name: 'Drillable'
+        }, {
+            data: [2, 2, 2],
+            type: 'column',
+            name: 'Static'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Initial categories'
+    );
+
+    chart.series[0].points[0].update(2);
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Categories should not be affected'
+    );
+});
+
 
 QUnit.test('Set crosshair width (#5819)', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -416,9 +480,9 @@ QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
             uniqueNames: false
         },
 
-        "series": [{
+        series: [{
             animation: false,
-            "data": [
+            data: [
                 ["2014", 1.1],
                 ["2013", 11.6],
                 ["2012", 8.4]
@@ -439,7 +503,6 @@ QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
     );
 
     chart.setSize(390);
-
 
 
     assert.strictEqual(
@@ -675,4 +738,105 @@ QUnit.test('Test different point.name types.', function (assert) {
             'X axis label for position ' + pos
         );
     });
+});
+
+QUnit.test('Updating above cropThreshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [
+                ['Ein', 1],
+                ['To', 2],
+                ['Tre', 3],
+                ['Fire', 4]
+            ],
+            type: 'column',
+            cropThreshold: 1
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Ein', 'To', 'Tre', 'Fire'],
+        'Initial categories'
+    );
+
+    chart.series[0].update({
+        data: [
+            ['Ein', 1],
+            ['To', 2],
+            ['Fem', 5],
+            ['Seks', 6]
+        ]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Ein', 'To', 'Fem', 'Seks'],
+        'Categories should be updated (#9487)'
+    );
+
+    chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [
+                ['Ein', 1],
+                ['To', 2],
+                ['Tre', 3],
+                ['Fire', 4]
+            ],
+            type: 'column',
+            cropThreshold: 1
+        }]
+    });
+
+    chart.series[0].update({
+        data: [
+            ['Ein', 1],
+            ['To', 2],
+            ['Tre', 3],
+            ['Fire', 4],
+            ['Fem', 5],
+            ['Seks', 6]
+        ]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Ein', 'To', 'Tre', 'Fire', 'Fem', 'Seks'],
+        'Categories should be updated when passing crop threshold (#5857)'
+    );
+});
+
+QUnit.test('Category axis grid lines when flat axis', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['Jan']
+        },
+        yAxis: {
+            title: null,
+            categories: ['category'],
+            min: 0,
+            max: 0
+        },
+        series: [{
+            name: 'data',
+            data: [0]
+        }]
+    });
+
+    assert.close(
+        Number(
+            chart.container.querySelector('.highcharts-yaxis-grid .highcharts-grid-line')
+                .getAttribute('d')
+                .split(' ')[2]
+        ),
+        chart.plotTop,
+        1,
+        'Ticks should be placed between category, grid line on top (#11199)'
+    );
 });

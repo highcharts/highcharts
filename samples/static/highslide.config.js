@@ -1,6 +1,6 @@
 /**
-*	Site-specific configuration settings for Highslide JS
-*/
+ * Site-specific configuration settings for Highslide JS
+ */
 hs.graphicsDir = 'https://www.highcharts.com/samples/graphics/highslide/';
 hs.outlineType = 'rounded-white';
 hs.wrapperClassName = 'draggable-header';

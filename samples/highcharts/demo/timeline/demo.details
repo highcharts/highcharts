@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Daniel Studencki
+ js_wrap: b
+ isNew: true
+ alt_text: Highcharts timeline diagram JavaScript example visualizes space exploration over time with Sputnik to Apollo story chart.
+...

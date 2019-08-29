@@ -1,5 +1,9 @@
 Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Solar Employment Growth by Sector, 2010-2016'
     },

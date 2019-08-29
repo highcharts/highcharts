@@ -1,11 +1,18 @@
-
 Highcharts.chart('container', {
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Title styles ...'
     },
 
     subtitle: {
-        text: '... and subtitle styles'
+        text: '... and subtitle styles ...'
+    },
+
+    caption: {
+        text: '... and this is the green caption text'
     },
 
     xAxis: {

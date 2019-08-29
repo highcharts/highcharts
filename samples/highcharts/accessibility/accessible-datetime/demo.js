@@ -1,7 +1,9 @@
-
 Highcharts.chart('container', {
+    caption: {
+        text: 'Random data on a date axis.'
+    },
     chart: {
-        description: 'Random data on a date axis.'
+        zoomType: 'x'
     },
     xAxis: {
         type: 'datetime',

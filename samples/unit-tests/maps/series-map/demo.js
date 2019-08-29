@@ -1,4 +1,3 @@
-
 QUnit.test('Null points', function (assert) {
     var chart = Highcharts.mapChart('container', {
         series: [{
@@ -40,5 +39,15 @@ QUnit.test('Null points', function (assert) {
     assert.ok(
         chart.series[0].points[4].graphic.hasClass('highcharts-null-point'),
         'Point with no data has null point class'
+    );
+
+    chart.series[0].update({
+        borderWidth: 0
+    });
+
+    assert.strictEqual(
+        chart.series[0].group.element.getAttribute('stroke-width'),
+        '0',
+        'The stroke width should be 0'
     );
 });

@@ -1,5 +1,3 @@
-
-
 QUnit.test('Soft threshold', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
@@ -40,7 +38,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.yAxis[0].stacks.bar[0].cumulative,
+            chart.yAxis[0].stacks[chart.series[0].stackKey][0].cumulative,
             90,
             'Threshold is applied'
         );

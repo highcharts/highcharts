@@ -1,23 +1,23 @@
-
 Highcharts.chart('container', {
+
+    title: {
+        text: 'Highcharts with a shared tooltip formatter'
+    },
 
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ]
+        ],
+        crosshair: true
     },
 
     tooltip: {
         formatter: function () {
-            var s = '<b>' + this.x + '</b>';
-
-            $.each(this.points, function () {
-                s += '<br/>' + this.series.name + ': ' +
-                    this.y + 'm';
-            });
-
-            return s;
+            return this.points.reduce(function (s, point) {
+                return s + '<br/>' + point.series.name + ': ' +
+                    point.y + 'm';
+            }, '<b>' + this.x + '</b>');
         },
         shared: true
     },

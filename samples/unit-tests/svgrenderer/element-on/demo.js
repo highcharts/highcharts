@@ -1,11 +1,11 @@
 QUnit.test('Element.on', function (assert) {
 
     var renderer = new Highcharts
-        .Renderer(
-            $('#container')[0],
-            400,
-            300
-        ),
+            .Renderer(
+                $('#container')[0],
+                400,
+                300
+            ),
         rectSvgElement = renderer.rect(100, 100, 100, 100, 5)
             .attr({
                 'stroke-width': 2,

@@ -1,4 +1,3 @@
-
 Highcharts.chart('container1', {
 
     chart: {
@@ -122,5 +121,3 @@ Highcharts.chart('container3', {
     }]
 
 });
-
-

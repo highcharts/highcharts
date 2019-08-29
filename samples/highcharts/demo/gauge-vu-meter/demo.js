@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
 
     chart: {
@@ -106,29 +105,29 @@ Highcharts.chart('container', {
 
 },
 
-    // Let the music play
-    function (chart) {
-        setInterval(function () {
-            if (chart.series) { // the chart may be destroyed
-                var left = chart.series[0].points[0],
-                    right = chart.series[1].points[0],
-                    leftVal,
-                    rightVal,
-                    inc = (Math.random() - 0.5) * 3;
+// Let the music play
+function (chart) {
+    setInterval(function () {
+        if (chart.series) { // the chart may be destroyed
+            var left = chart.series[0].points[0],
+                right = chart.series[1].points[0],
+                leftVal,
+                rightVal,
+                inc = (Math.random() - 0.5) * 3;
 
-                leftVal = left.y + inc;
-                rightVal = leftVal + inc / 3;
-                if (leftVal < -20 || leftVal > 6) {
-                    leftVal = left.y - inc;
-                }
-                if (rightVal < -20 || rightVal > 6) {
-                    rightVal = leftVal;
-                }
-
-                left.update(leftVal, false);
-                right.update(rightVal, false);
-                chart.redraw();
+            leftVal = left.y + inc;
+            rightVal = leftVal + inc / 3;
+            if (leftVal < -20 || leftVal > 6) {
+                leftVal = left.y - inc;
             }
-        }, 500);
+            if (rightVal < -20 || rightVal > 6) {
+                rightVal = leftVal;
+            }
 
-    });
+            left.update(leftVal, false);
+            right.update(rightVal, false);
+            chart.redraw();
+        }
+    }, 500);
+
+});

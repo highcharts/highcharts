@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'area'
@@ -17,8 +16,11 @@ Highcharts.chart('container', {
         }
     },
     yAxis: {
+        labels: {
+            format: '{value}%'
+        },
         title: {
-            text: 'Percent'
+            enabled: false
         }
     },
     tooltip: {

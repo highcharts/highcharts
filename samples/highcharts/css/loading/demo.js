@@ -1,4 +1,3 @@
-
 // the button handler
 var isLoading = false,
     $button = $('#button'),
@@ -18,6 +17,10 @@ $button.click(function () {
 
 // create the chart
 chart = Highcharts.chart('container', {
+
+    chart: {
+        styledMode: true
+    },
 
     title: {
         text: 'Loading styled by CSS'

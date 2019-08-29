@@ -1,16 +1,12 @@
-
-// THE CHART
 Highcharts.chart('container', {
     chart: {
         type: 'xrange'
     },
     title: {
-        text: 'Highcharts X-range study'
+        text: 'Highcharts X-range series'
     },
     xAxis: {
-        type: 'datetime',
-        min: Date.UTC(2014, 11, 1),
-        max: Date.UTC(2014, 11, 23)
+        type: 'datetime'
     },
     yAxis: {
         title: '',

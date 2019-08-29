@@ -1,5 +1,3 @@
-
-
 var gaugeOptions = {
 
     chart: {
@@ -14,7 +12,7 @@ var gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            backgroundColor: '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -70,9 +68,11 @@ $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
         name: 'Speed',
         data: [30],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">km/h</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px;color:black">{y}</span><br/>' +
+                '<span style="font-size:12px;color:silver">km/h</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' km/h'
@@ -95,9 +95,15 @@ $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
         name: 'RPM',
         data: [4],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px;color:black">' +
+                '{y:.1f}' +
+                '</span><br/>' +
+                '<span style="font-size:12px;color:silver">' +
+                '* 1000 / min' +
+                '</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' revolutions/min'
@@ -105,4 +111,3 @@ $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
     }]
 
 }));
-

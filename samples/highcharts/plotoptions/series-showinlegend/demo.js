@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Demo of the <em>showInLegend</em> option'

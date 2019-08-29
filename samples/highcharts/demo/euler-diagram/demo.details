@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Jon Arild Nygård
+ js_wrap: b
+...

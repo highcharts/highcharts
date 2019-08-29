@@ -1,4 +1,3 @@
-
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
@@ -8,38 +7,52 @@ QUnit.test('Accessibility disabled', function (assert) {
                 data: [1, 2, 3, 4, 5, 6]
             }]
         }),
-        point = chart.series[0].points[0];
+        point = chart.series[0].points[0],
+        infoRegion = chart.accessibility &&
+            chart.accessibility.components.infoRegion;
 
     assert.notOk(
         point.graphic.element.getAttribute('aria-label'),
         'There be no ARIA on point'
     );
 
-    assert.notOk(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be no screen reader region');
+    assert.notOk(
+        infoRegion && infoRegion.screenReaderRegion &&
+        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        'There be no screen reader region'
+    );
 });
 
 QUnit.test('No data', function (assert) {
-    var chart;
+    var chart = Highcharts.chart('container', {
+            series: [{}]
+        }),
+        infoRegion = chart.accessibility &&
+            chart.accessibility.components.infoRegion;
 
-    chart = Highcharts.chart('container', {
-        series: [{}]
-    });
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        infoRegion.screenReaderRegion &&
+        infoRegion.screenReaderRegion.getAttribute('aria-label'),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
+    infoRegion = chart.accessibility &&
+        chart.accessibility.components.infoRegion;
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        infoRegion.screenReaderRegion &&
+        infoRegion.screenReaderRegion.getAttribute('aria-label'),
         'There be screen reader region, no series option'
     );
 
     chart = Highcharts.chart('container', {
         series: []
     });
+    infoRegion = chart.accessibility &&
+        chart.accessibility.components.infoRegion;
     assert.ok(
-        chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'),
+        infoRegion.screenReaderRegion &&
+        infoRegion.screenReaderRegion.getAttribute('aria-label'),
         'There be screen reader region, no series items'
     );
 });
@@ -47,7 +60,8 @@ QUnit.test('No data', function (assert) {
 QUnit.test('pointDescriptionThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionThreshold: 7
+                pointDescriptionThreshold: 7,
+                describeSingleSeries: true
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -59,12 +73,59 @@ QUnit.test('pointDescriptionThreshold', function (assert) {
         point.graphic.element.getAttribute('aria-label'),
         'There be ARIA on point'
     );
+    assert.ok(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        'There be ARIA on series'
+    );
 
     point.series.addPoint(4);
 
     assert.notOk(
         point.series.points[6].graphic.element.getAttribute('aria-label'),
         'There be no ARIA on point'
+    );
+    assert.ok(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        'There be ARIA on series'
+    );
+});
+
+QUnit.test('pointNavigationThreshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+            accessibility: {
+                pointNavigationThreshold: 7
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    assert.ok(
+        point.graphic.element.getAttribute('aria-label'),
+        'There be ARIA on point'
+    );
+    assert.strictEqual(
+        point.graphic.element.getAttribute('tabindex'),
+        '-1',
+        'There be tabindex on point'
+    );
+    assert.strictEqual(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        '',
+        'There be empty ARIA on series'
+    );
+
+    point.series.addPoint(4);
+
+    assert.ok(
+        point.series.points[6].graphic.element.getAttribute('aria-label'),
+        'There still be ARIA on point'
+    );
+    assert.strictEqual(
+        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        '',
+        'There still be ARIA on series'
     );
 });
 
@@ -117,13 +178,47 @@ QUnit.test('pointDescriptionFormatter', function (assert) {
 
 QUnit.test('Chart description', function (assert) {
     var chart = Highcharts.chart('container', {
-        chart: {
+        accessibility: {
             description: 'Description: Yo.'
         },
         series: [{
             data: [1, 2, 3, 4, 5, 6]
         }]
     });
+    assert.ok(
+        chart.accessibility.components.infoRegion.screenReaderRegion.innerHTML
+            .indexOf('Description: Yo.') > -1,
+        'Chart description included in screen reader region'
+    );
+});
 
-    assert.ok(chart.screenReaderRegion.innerHTML.indexOf('Description: Yo.') > -1, 'Chart description included in screen reader region');
+QUnit.test('Landmark verbosity', function (assert) {
+    var numRegions = function (chart) {
+            return (
+                chart.renderTo.outerHTML.match(/role="region"/g) || []
+            ).length;
+        },
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                landmarkVerbosity: 'disabled'
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        });
+    assert.strictEqual(numRegions(chart), 0, 'No landmarks in chart');
+
+    chart.update({
+        accessibility: {
+            landmarkVerbosity: 'one'
+        }
+    });
+    assert.strictEqual(numRegions(chart), 1, 'One landmark in chart');
+
+    chart.update({
+        accessibility: {
+            landmarkVerbosity: 'all'
+        }
+    });
+    assert.ok(numRegions(chart) > 1, 'More than one landmark');
 });

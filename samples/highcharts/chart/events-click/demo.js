@@ -1,24 +1,23 @@
-
 // create the chart
 Highcharts.chart('container', {
     chart: {
         events: {
             click: function (event) {
                 var label = this.renderer.label(
-                        'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) + ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
-                        event.xAxis[0].axis.toPixels(event.xAxis[0].value),
-                        event.yAxis[0].axis.toPixels(event.yAxis[0].value)
-                    )
-                        .attr({
-                            fill: Highcharts.getOptions().colors[0],
-                            padding: 10,
-                            r: 5,
-                            zIndex: 8
-                        })
-                        .css({
-                            color: '#FFFFFF'
-                        })
-                        .add();
+                    'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) + ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
+                    event.xAxis[0].axis.toPixels(event.xAxis[0].value),
+                    event.yAxis[0].axis.toPixels(event.yAxis[0].value)
+                )
+                    .attr({
+                        fill: Highcharts.getOptions().colors[0],
+                        padding: 10,
+                        r: 5,
+                        zIndex: 8
+                    })
+                    .css({
+                        color: '#FFFFFF'
+                    })
+                    .add();
 
                 setTimeout(function () {
                     label.fadeOut();

@@ -1,4 +1,3 @@
-
 QUnit.test('Select and unselect updates checkbox', function (assert) {
 
     var chart = Highcharts.chart('container', {

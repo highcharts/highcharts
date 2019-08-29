@@ -9,6 +9,7 @@ TestTemplate.register('highcharts/pie', Highcharts.chart, {
     },
 
     series: [{
+        type: 'pie',
         data: [1, 3, 2]
     }]
 

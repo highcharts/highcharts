@@ -1,4 +1,3 @@
-
 QUnit.test('Color object', function (assert) {
 
     var Color = Highcharts.Color;

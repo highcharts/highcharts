@@ -1,5 +1,3 @@
-
-
 QUnit.test('Async addSeriesAsDrilldown', function (assert) {
 
     var clock = TestUtilities.lolexInstall();
@@ -17,14 +15,14 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
 
                             var chart = this,
                                 drilldowns = {
-                                    'Animals': {
+                                    Animals: {
                                         name: 'Animals',
                                         data: [
                                             ['Cows', 2],
                                             ['Sheep', 3]
                                         ]
                                     },
-                                    'Fruits': {
+                                    Fruits: {
                                         name: 'Fruits',
                                         data: [
                                             ['Apples', 5],
@@ -32,7 +30,7 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
                                             ['Bananas', 2]
                                         ]
                                     },
-                                    'Cars': {
+                                    Cars: {
                                         name: 'Cars',
                                         data: [
                                             ['Toyota', 1],

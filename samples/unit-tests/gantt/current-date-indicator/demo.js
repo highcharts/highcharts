@@ -60,14 +60,19 @@
         var chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
             cdi = axis.plotLinesAndBands[0],
-            done = assert.async(),
             wait = 1, // Comparing milliseconds, so 1 millisecond is enough
             oldValue,
-            newValue;
+            newValue,
+            clock = TestUtilities.lolexInstall();
 
-        oldValue = cdi.options.value.getTime();
+        try {
+            oldValue = cdi.options.value.getTime();
 
-        setTimeout(function () {
+            // Run lolex ticker
+            setTimeout(function () { }, wait);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+
             axis.redraw();
 
             newValue = cdi.options.value.getTime();
@@ -76,8 +81,10 @@
                 newValue > oldValue,
                 'Value is greater after Axis.redraw()'
             );
-            done();
-        }, wait);
+
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     });
 
     /**
@@ -94,14 +101,17 @@
         var chart = Highcharts.chart('container', config),
             axis = chart.xAxis[0],
             cdi = axis.plotLinesAndBands[0],
-            done = assert.async(),
-            wait = 1, // Comparing minutes, so 1 minute is required
+            wait = 1,
             oldLabelText,
-            newLabelText;
+            newLabelText,
+            clock = TestUtilities.lolexInstall();
 
-        oldLabelText = cdi.label.textStr;
+        try {
+            oldLabelText = cdi.label.textStr;
 
-        setTimeout(function () {
+            // Run lolex ticker
+            setTimeout(function () {}, wait);
+            TestUtilities.lolexRunAndUninstall(clock);
 
             axis.redraw();
 
@@ -112,8 +122,9 @@
                 oldLabelText,
                 'label text gets updated on Axis.redraw()'
             );
-            done();
-        }, wait);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     });
 
     /**
@@ -125,7 +136,8 @@
                 // 'Tue, Dec 06 2016, '
                 /^[A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}, /.source +
                 // '21:35:12'
-                /[0-9]{2}:[0-9]{2}$/.source),
+                /[0-9]{2}:[0-9]{2}$/.source
+            ),
             customFormat,
             chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
@@ -175,11 +187,11 @@
         // Custom formatter
         defaultConfig.xAxis[0].currentDateIndicator = {
             label: {
-                formatter: function (indicator) {
+                formatter: function () {
                     var dateFormat = '%a, %b %d %Y',
                         date = Highcharts.dateFormat(
                             dateFormat,
-                            indicator.options.value
+                            this.options.value
                         );
                     return 'Today: ' + date;
                 }

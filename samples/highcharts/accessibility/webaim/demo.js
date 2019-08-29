@@ -1,9 +1,11 @@
-
 // First chart
 Highcharts.chart('container-line', {
     chart: {
-        type: 'spline',
-        description: 'Commonly used desktop and laptop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
+        type: 'spline'
+    },
+
+    caption: {
+        text: 'Commonly used desktop and laptop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
     },
 
     legend: {
@@ -96,8 +98,11 @@ Highcharts.getOptions().plotOptions.pie.colors = (function () {
 
 Highcharts.chart('container-pie', {
     chart: {
-        type: 'pie',
-        description: 'Most commonly used desktop and laptop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
+        type: 'pie'
+    },
+
+    caption: {
+        text: 'Most commonly used desktop and laptop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
     },
 
     title: {
@@ -133,7 +138,9 @@ Highcharts.chart('container-pie', {
             name: 'JAWS',
             y: 30.2,
             website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
-            description: 'This is the most used desktop screen reader'
+            accessibility: {
+                description: 'This is the most used desktop screen reader'
+            }
         }, {
             name: 'ZoomText',
             y: 22.2,
@@ -170,8 +177,11 @@ Highcharts.chart('container-pie', {
 // Third chart
 Highcharts.chart('container-column', {
     chart: {
-        type: 'column',
-        description: 'Disability types of the survey respondents. Blindness and low vision are by far the most common, with 64% and 38.7% of respondents respectively. Note that some respondents reported multiple disabilities.'
+        type: 'column'
+    },
+
+    caption: {
+        text: 'Disability types of the survey respondents. Blindness and low vision are by far the most common, with 64% and 38.7% of respondents respectively. Note that some respondents reported multiple disabilities.'
     },
 
     title: {
@@ -216,12 +226,15 @@ Highcharts.chart('container-column', {
 Highcharts.chart('container-pie-3d', {
     chart: {
         type: 'pie',
-        description: "Respondents' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time.",
         options3d: {
             enabled: true,
             alpha: 55,
             beta: 0
         }
+    },
+
+    caption: {
+        text: "Respondents' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time."
     },
 
     title: {
@@ -255,4 +268,3 @@ Highcharts.chart('container-pie-3d', {
         }]
     }]
 });
-

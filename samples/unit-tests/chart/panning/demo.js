@@ -1,3 +1,113 @@
+QUnit.test('Panning inverted chart(#4077)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                width: 600,
+                height: 400,
+                animation: false
+            },
+
+            title: {
+                text: 'Zooming and panning'
+            },
+
+            subtitle: {
+                text: 'Click and drag to zoom in. Hold down shift key to pan.'
+            },
+
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                animation: false
+            }]
+        }),
+        firstZoom = {};
+
+    chart.container.parentNode.style.position = 'absolute';
+    chart.container.parentNode.style.top = 0;
+
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Initial min'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        11,
+        'Initial max'
+    );
+
+
+    // Zoom
+    chart.pointer.onContainerMouseDown({
+        type: 'mousedown',
+        pageX: 200,
+        pageY: 150,
+        target: chart.container
+    });
+    chart.pointer.onContainerMouseMove({
+        type: 'mousemove',
+        pageX: 200,
+        pageY: 200,
+        target: chart.container
+    });
+    chart.pointer.onDocumentMouseUp({});
+
+    assert.strictEqual(
+        chart.xAxis[0].min > 0,
+        true,
+        'Zoomed min'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max < 11,
+        true,
+        'Zoomed max'
+    );
+
+    firstZoom = chart.xAxis[0].getExtremes();
+
+    // Pan
+    chart.pointer.onContainerMouseDown({
+        type: 'mousedown',
+        pageX: 200,
+        pageY: 100,
+        target: chart.container,
+        shiftKey: true
+    });
+    chart.pointer.onContainerMouseMove({
+        type: 'mousemove',
+        pageX: 200,
+        pageY: 50,
+        target: chart.container,
+        shiftKey: true
+    });
+    chart.pointer.onDocumentMouseUp({
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].min > firstZoom.min,
+        true,
+        'Has panned'
+    );
+    assert.strictEqual(
+        (chart.xAxis[0].max - chart.xAxis[0].min).toFixed(2),
+        (firstZoom.max - firstZoom.min).toFixed(2),
+        'Has preserved range'
+    );
+
+
+    chart.container.parentNode.style.position = 'static';
+
+});
+
 /* global TestController */
 QUnit.test('Zoom and pan key', function (assert) {
 
@@ -26,9 +136,8 @@ QUnit.test('Zoom and pan key', function (assert) {
                 data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
             }]
         }),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         firstZoom = {};
-
 
     chart.setSize(600, 300);
 
@@ -93,11 +202,7 @@ QUnit.test('Zoom and pan key', function (assert) {
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
-
-
 });
-
-
 
 QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     var chart = Highcharts.stockChart('container', {
@@ -143,7 +248,7 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         }]
     });
 
-    var controller = TestController(chart);
+    var controller = new TestController(chart);
 
     var initialMin = chart.xAxis[0].min,
         initialRange = chart.xAxis[0].max - chart.xAxis[0].min;
@@ -172,7 +277,6 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         initialRange,
         'Has preserved range'
     );
-
 });
 
 QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
@@ -229,7 +333,6 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
         '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
         'Right ticks'
     );
-
 
     // Pan
     controller.pan([300, 200], [200, 200]);

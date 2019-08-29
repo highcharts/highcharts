@@ -1,9 +1,5 @@
-
 QUnit.test('Sankey', function (assert) {
     var chart = Highcharts.chart('container', {});
-
-
-
     var series = chart.addSeries({
         keys: ['from', 'to', 'weight'],
         data: [
@@ -35,7 +31,13 @@ QUnit.test('Sankey', function (assert) {
                 color: '#FF0000'
             }
         }
-    });
+    }, false);
+
+    // This would cause an error prior to #9300
+    series.update({
+        events: {}
+    }, false);
+    chart.redraw();
 
     assert.strictEqual(
         chart.container.querySelector('.highcharts-no-data'),
@@ -159,9 +161,9 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         'Default nodeFormatter'
     );
     assert.strictEqual(
-        series.points[0].dataLabel.text.textStr,
-        '',
-        'Default point formatter'
+        series.points[0].dataLabel,
+        undefined,
+        'Default point (link) formatter should not produce a label'
     );
     series.nodes[0].onMouseOver();
     assert.notEqual(
@@ -203,8 +205,6 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         -1,
         'Tooltip ok'
     );
-
-
 
     series.update({
         dataLabels: {
@@ -255,53 +255,52 @@ QUnit.test('Sankey column option', function (assert) {
         series: [{
             keys: ['from', 'to', 'weight'],
             data: [
-                ['1', '3', 1775 ],
-                ['1', '4', 2877 ],
-                ['10', '11', 216 ],
-                ['10', '12', 32 ],
-                ['11', '13', 5 ],
-                ['11', '14', 5 ],
-                ['11', '17', 833 ],
-                ['11', '18', 142 ],
-                ['12', '13', 6 ],
-                ['12', '14', 3 ],
-                ['12', '17', 82 ],
-                ['12', '18', 40 ],
-                ['13', '15', 7 ],
-                ['13', '16', 4 ],
-                ['14', '15', 7 ],
-                ['14', '16', 1 ],
-                ['15', '17', 20 ],
-                ['15', '18', 6 ],
-                ['16', '17', 7 ],
-                ['16', '18', 2 ],
-                ['18', '19', 1153 ],
-                ['18', '20', 5037 ],
-                ['2', '3', 21863 ],
-                ['2', '4', 5931 ],
-                ['3', '17', 20207 ],
-                ['3', '18', 1456 ],
-                ['3', '5', 782 ],
-                ['3', '6', 1193 ],
-                ['4', '17', 3934 ],
-                ['4', '18', 3006 ],
-                ['4', '5', 1102 ],
-                ['4', '6', 766 ],
-                ['5', '7', 1396 ],
-                ['5', '8', 488 ],
-                ['6', '7', 1415 ],
-                ['6', '8', 544 ],
-                ['7', '10', 163 ],
-                ['7', '17', 2860 ],
-                ['7', '18', 838 ],
-                ['7', '9', 94 ],
-                ['8', '10', 85 ],
-                ['8', '17', 752 ],
-                ['8', '18', 448 ],
-                ['8', '9', 170 ],
-                ['9', '11', 227 ],
-                ['9', '12', 37 ]
-
+                ['1', '3', 1775],
+                ['1', '4', 2877],
+                ['10', '11', 216],
+                ['10', '12', 32],
+                ['11', '13', 5],
+                ['11', '14', 5],
+                ['11', '17', 833],
+                ['11', '18', 142],
+                ['12', '13', 6],
+                ['12', '14', 3],
+                ['12', '17', 82],
+                ['12', '18', 40],
+                ['13', '15', 7],
+                ['13', '16', 4],
+                ['14', '15', 7],
+                ['14', '16', 1],
+                ['15', '17', 20],
+                ['15', '18', 6],
+                ['16', '17', 7],
+                ['16', '18', 2],
+                ['18', '19', 1153],
+                ['18', '20', 5037],
+                ['2', '3', 21863],
+                ['2', '4', 5931],
+                ['3', '17', 20207],
+                ['3', '18', 1456],
+                ['3', '5', 782],
+                ['3', '6', 1193],
+                ['4', '17', 3934],
+                ['4', '18', 3006],
+                ['4', '5', 1102],
+                ['4', '6', 766],
+                ['5', '7', 1396],
+                ['5', '8', 488],
+                ['6', '7', 1415],
+                ['6', '8', 544],
+                ['7', '10', 163],
+                ['7', '17', 2860],
+                ['7', '18', 838],
+                ['7', '9', 94],
+                ['8', '10', 85],
+                ['8', '17', 752],
+                ['8', '18', 448],
+                ['8', '9', 170],
+                ['9', '11', 227],
+                ['9', '12', 37]
             ],
             nodes: [{
                 id: '1',
@@ -379,3 +378,164 @@ QUnit.test('Sankey column option', function (assert) {
     );
 });
 
+QUnit.test('Sankey and unordered data', assert => {
+    const chart = Highcharts.chart('container', {
+
+        title: {
+            text: 'Unordered Sankey'
+        },
+
+        series: [{
+            keys: ['from', 'to', 'weight'],
+            data: [
+                [1, 573, 1],
+                [573, 574, 1],
+                [573, 577, 1],
+                [574, 586, 1],
+                [575, 585, 1],
+                [575, 596, 1],
+                [577, 575, 1],
+                [578, 582, 1],
+                [582, 609, 1],
+                [582, 606, 1],
+                [584, 578, 1],
+                [596, 584, 1],
+                [606, 607, 1],
+                [607, 608, 1]
+            ],
+            type: 'sankey',
+            name: 'Sankey demo series'
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.series[0].nodeColumns[0].length,
+        1,
+        'There should be only one item in the first (root) column'
+    );
+
+    chart.series[0].setData([
+        [480, 481, 1],
+        [481, 482, 1],
+        [472, 477, 1],
+        [481, 474, 1],
+        [1, 472, 1],
+        [472, 473, 1],
+        [474, 475, 1],
+        [475, 476, 1],
+        [477, 478, 1],
+        [478, 479, 1],
+        [479, 480, 1]
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].nodeColumns[0].length,
+        1,
+        'There should be only one item in the first (root) column'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'c', 5],
+        ['c', 'b', 5]
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].nodes.length,
+        3,
+        'Circular data should not cause endless recursion'
+    );
+
+});
+
+
+QUnit.test(
+    'Sankey and inactive state',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    keys: ['from', 'to', 'weight'],
+                    data: [
+                        ['Brazil', 'Portugal', 5],
+                        ['Portugal', 'England', 15]
+                    ],
+                    type: 'sankey'
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseOver(
+            chart.series[0].nodes[1].nodeX + chart.plotLeft + 50,
+            chart.series[0].points[1].plotY + chart.plotTop + 5
+        );
+
+        chart.series[0].update({
+            // Set `keys` to prevent using `setData()`
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['Brazil', 'Portugal', 5],
+                ['Portugal', 'England', 25]
+            ]
+        });
+
+        assert.ok(
+            true,
+            'No errors when updating series after hovering a link (#10624).'
+        );
+    }
+);
+
+QUnit.test(
+    'Sankey and circular data',
+    function (assert) {
+
+        Highcharts.chart('container', {
+
+            title: {
+                text: 'Highcharts Sankey Diagram'
+            },
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['a', 'b', 1],
+                    ['a', 'c', 1],
+                    ['b', 'c', 1]
+                ],
+                type: 'sankey',
+                name: 'Sankey demo series'
+            }]
+        });
+
+        assert.ok(
+            true,
+            'No errors with circular data (#10658).'
+        );
+    }
+);
+
+QUnit.test(
+    'Sankey and minimum line width',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    minLinkWidth: 1,
+                    keys: ['from', 'to', 'weight'],
+                    data: [
+                        ['Brazil', 'England', 1],
+                        ['Canada', 'Portugal', 100000]
+                    ],
+                    type: 'sankey'
+                }]
+            }),
+            path = chart.series[0].data[0].graphic.d.split(' ');
+
+        assert.ok(
+            (parseFloat(path[path.length - 2]) - parseFloat(path[2])) >= 1,
+            true,
+            'Lines are draw with minimal value (#7318).'
+        );
+    }
+);

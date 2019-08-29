@@ -1,0 +1,7 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+.highcharts-yaxis-labels {
+    filter: url(#glow);
+    fill: red;
+    stroke-width: 1px;
+}

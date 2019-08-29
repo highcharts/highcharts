@@ -1,4 +1,3 @@
-
 QUnit.test('Testing exportChart', function (assert) {
 
     var chart = Highcharts

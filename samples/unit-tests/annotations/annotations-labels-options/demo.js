@@ -1,4 +1,3 @@
-
 QUnit.test('Setting graphic attributes for a label', function (assert) {
     var expected = {
             text: 'Max',
@@ -23,7 +22,7 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
             }]
         }),
 
-        label = chart.annotations[0].labels[0],
+        label = chart.annotations[0].labels[0].graphic,
 
         actual = {
             text: label.text.textStr,

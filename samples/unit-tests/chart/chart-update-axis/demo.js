@@ -72,7 +72,6 @@ QUnit.test('Test updating axis by id', function (assert) {
     );
 
 
-
     chart.update({
         xAxis: [{
             id: 'primary',
@@ -139,7 +138,6 @@ QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
     );
 
 
-
     chart.update({
         yAxis: [{
             title: {
@@ -173,4 +171,3 @@ QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
         'Updated titles'
     );
 });
-

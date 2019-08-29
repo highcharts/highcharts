@@ -1,14 +1,17 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * Gray theme for Highcharts JS
- * @author Torstein Honsi
- */
+ *  License: www.highcharts.com/license
+ *
+ *  Gray theme for Highcharts JS
+ *
+ * */
 
 'use strict';
+
 import Highcharts from '../parts/Globals.js';
+
 Highcharts.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -80,6 +83,7 @@ Highcharts.theme = {
         }
     },
     legend: {
+        backgroundColor: 'rgba(48, 48, 48, 0.8)',
         itemStyle: {
             color: '#CCC'
         },
@@ -88,6 +92,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#333'
+        },
+        title: {
+            style: {
+                color: '#E0E0E0'
+            }
         }
     },
     labels: {
@@ -112,6 +121,9 @@ Highcharts.theme = {
 
     plotOptions: {
         series: {
+            dataLabels: {
+                color: '#444'
+            },
             nullColor: '#444444'
         },
         line: {
@@ -253,14 +265,7 @@ Highcharts.theme = {
             ]
         },
         trackBorderColor: '#666'
-    },
-
-    // special colors for some of the demo examples
-    legendBackgroundColor: 'rgba(48, 48, 48, 0.8)',
-    background2: 'rgb(70, 70, 70)',
-    dataLabelsColor: '#444',
-    textColor: '#E0E0E0',
-    maskColor: 'rgba(255,255,255,0.3)'
+    }
 };
 
 // Apply the theme

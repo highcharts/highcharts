@@ -1,4 +1,3 @@
-
 var seriesOptions = [],
     seriesCounter = 0,
     names = ['MSFT', 'AAPL', 'GOOG'];
@@ -55,9 +54,9 @@ function createChart() {
     });
 }
 
-$.each(names, function (i, name) {
+names.forEach(function (name, i) {
 
-    $.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',    function (data) {
+    Highcharts.getJSON('https://www.highcharts.com/samples/data/' + name.toLowerCase() + '-c.json',    function (data) {
 
         seriesOptions[i] = {
             name: name,

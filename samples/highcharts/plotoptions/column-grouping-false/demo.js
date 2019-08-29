@@ -1,5 +1,3 @@
-
-
 // First, let's make the colors transparent
 Highcharts.setOptions({
     colors: Highcharts.map(Highcharts.getOptions().colors, function (color) {
@@ -83,4 +81,3 @@ Highcharts.chart('container', {
 
     }]
 });
-

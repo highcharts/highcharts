@@ -1,5 +1,3 @@
-
-
 QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -131,7 +129,6 @@ QUnit.test('TouchPointer events', function (assert) {
 });
 
 QUnit.test('followPointer and followTouchMove', function (assert) {
-
 
 
     var chart;
@@ -319,4 +316,63 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         -1,
         'The tooltip should show Apples'
     );
+});
+
+QUnit.test('Touch and panning', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                pinchType: 'x',
+                panning: true
+            },
+            xAxis: {
+                min: 4,
+                max: 6
+            },
+            tooltip: {
+                followTouchMove: false
+            },
+            series: [{
+                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }]
+        }),
+        offset = Highcharts.offset(chart.container);
+
+    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+        return this[i];
+    };
+
+
+    chart.pointer.onContainerTouchStart({
+        type: 'touchstart',
+        touches: [{
+            pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+            pageY: offset.top + chart.plotTop + 10
+        }],
+        preventDefault: function () {}
+    });
+
+    chart.pointer.onContainerTouchMove({
+        type: 'touchmove',
+        touches: [{
+            pageX: offset.left + chart.plotLeft + 10,
+            pageY: offset.top + chart.plotTop + 10
+        }],
+        preventDefault: function () {}
+    });
+
+    chart.pointer.onDocumentTouchEnd({
+        type: 'touchend',
+        touches: [{
+            pageX: offset.left + chart.plotLeft + 10,
+            pageY: offset.top + chart.plotTop + 10
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].max > chart.xAxis[0].options.max,
+        true,
+        'Touch-device panning allows panning outside the xAxis options: min & max (#10633)'
+    );
+
 });

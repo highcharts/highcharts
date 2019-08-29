@@ -1,5 +1,3 @@
-
-
 QUnit.test('Pyramid centering (issue #5500)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

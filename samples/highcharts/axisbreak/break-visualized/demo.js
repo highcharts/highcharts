@@ -1,5 +1,3 @@
-
-
 /**
  * Extend the Axis.getLinePath method in order to visualize breaks with two parallel
  * slanted lines. For each break, the slanted lines are inserted into the line path.

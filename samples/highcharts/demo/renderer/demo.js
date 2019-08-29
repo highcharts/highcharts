@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         backgroundColor: 'white',
@@ -10,7 +9,6 @@ Highcharts.chart('container', {
                     colors = Highcharts.getOptions().colors,
                     rightArrow = ['M', 0, 0, 'L', 100, 0, 'L', 95, 5, 'M', 100, 0, 'L', 95, -5],
                     leftArrow = ['M', 100, 0, 'L', 0, 0, 'L', 5, 5, 'M', 0, 0, 'L', 5, -5];
-
 
 
                 // Separator, client from service
@@ -157,7 +155,6 @@ Highcharts.chart('container', {
                     })
                     .add()
                     .shadow(true);
-
 
 
                 // Arrow from Browser to Batik

@@ -1,5 +1,3 @@
-
-
 QUnit.test(
     'Legend layout',
     function (assert) {
@@ -10,6 +8,13 @@ QUnit.test(
                 align: 'right'
             },
 
+            yAxis: [{
+
+            }, {
+                top: '50%',
+                height: '50%'
+            }],
+
             series: [{
                 data: [1, 1, 1]
             }, {
@@ -18,6 +23,10 @@ QUnit.test(
                 data: [4, 4, 4]
             }, {
                 data: [null, null, null] // #8638
+            }, {
+                yAxis: 1,
+                data: [1, 1, 1], // #10063
+                name: 'Positioned Axis'
             }]
         });
 
@@ -26,7 +35,7 @@ QUnit.test(
 
             assert.close(
                 s.legendGroup.translateY,
-                chart.plotTop - chart.spacing[0] + y,
+                s.yAxis.top - chart.spacing[0] + y,
                 20,
                 'Label should be next to last point'
             );

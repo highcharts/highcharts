@@ -1,0 +1,414 @@
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.11
+######### Anchors ####################
+defaults: &defaults
+  executor: node_image
+  working_directory: /home/circleci/repo/highcharts
+
+persist_workspace: &persist_workspace
+  - persist_to_workspace:
+      root: ~/repo
+      paths: .
+
+load_workspace: &load_workspace
+  - attach_workspace:
+      at: ~/repo
+
+add_gh_keys: &add_gh_keys
+  - add_ssh_keys:
+      fingerprints:
+        - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
+add_to_ssh_config: &add_to_ssh_config
+  - run:
+      name: Avoid hosts unknown for github
+      command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+add_gh_user_config: &add_gh_user_config
+  - run:
+      name: Github user config
+      command: |
+        git config --global user.name "CircleCI"
+        git config --global user.email "technical+circleci_mu@highsoft.com"
+
+#######################################
+
+executors:
+  node_image:
+    docker:
+      - image: circleci/node:lts-browsers
+
+commands:
+  early_return_for_forked_pull_requests:
+    description: >-
+      If this build is from a fork, stop executing the current job and return success.
+      This is useful to avoid steps that will fail due to missing credentials.
+    steps:
+      - run:
+          name: Early return if this build is from a forked PR
+          command: |
+            if [ -n "$CIRCLE_PR_NUMBER" ]; then
+              echo "Nothing to do for forked PRs, so marking this step successful"
+              circleci step halt
+            fi
+
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      # rather than using the checkout keyword we checkout via commandline
+      # to avoid a huge and slow checkout depth
+     - <<: *add_gh_keys
+     - <<: *add_to_ssh_config
+     - run:
+         name: Clone GitHub highcharts repository
+         command: |
+           if [ -n "$CIRCLE_TAG" ]; then
+            git clone --branch "${CIRCLE_TAG}" ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+           else
+            git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+           fi
+     - <<: *persist_workspace
+
+  install_dependencies:
+    <<: *defaults
+    steps:
+      # Restore checked out code and built dependencies.
+      - << : *load_workspace
+      - run: node --version && npm --version
+      - run: npm install --quiet
+      - run: npm run gulp scripts # needed for running the tests
+      - <<: *persist_workspace
+
+  generate_ts_declarations:
+    <<: *defaults
+    steps:
+      - << : *load_workspace
+      - run:
+          name: Generate highcharts ts declarations
+          command: npx gulp jsdoc-dts && npx gulp lint-dts
+      - <<: *persist_workspace
+
+  lint:
+    <<: *defaults
+    steps:
+      - << : *load_workspace
+      - run:
+          name: Execute linting
+          command: npx gulp lint
+
+  test_browsers:
+    <<: *defaults
+    description: Run tests with different browser configs at BrowserStack
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "Mac.Safari"
+      browsercount:
+        description: "Number of browser instances"
+        type: integer
+        default: 1
+    steps:
+      - << : *load_workspace
+      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
+      - run: mkdir ../test-results
+      - run:
+          name: Save test results
+          command: |
+            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
+          when: always
+      - store_test_results:
+          path: ../test-results
+      - store_artifacts:
+          path: ../test-results
+
+  generate_visual_test_images:
+    <<: *defaults
+    description: Generate visual tests reference images
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate visual references
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync:
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing assets in S3 location
+          overwrite: true
+      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+      - <<: *persist_workspace
+
+  test_visual_diff:
+    <<: *defaults
+    description: Uploads visual test results to S3
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+    steps:
+      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
+      - <<: *load_workspace
+      - run:
+          name: "Set application version env var"
+          command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+      - run:
+          name: Generate any new references images
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - aws-s3/sync: # fetch remote reference images
+          from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          to: "samples/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - run:
+          # run tests in sequence due to all writing to the same file
+          name: "Highcharts visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+      - run:
+          name: "Highmaps visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests maps/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Highstock visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests stock/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Gant visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests gantt/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run: "sudo apt-get install -y librsvg2-bin"
+      - run:
+          name: "Generate PNGs and diff"
+          command: |
+            find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \; &&
+            find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \; &&
+            find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync: # delete existing assets in S3 location
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
+          overwrite: true
+      - run:
+          name: "Upload visual test candidates and diff assets"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
+
+  build_dist:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Compile build
+          command: npm run build
+      - <<: *persist_workspace
+
+  deploy_code:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Upload code to S3
+          command: npx gulp dist-upload
+
+  deploy_api_docs:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate api docs
+          command: npx gulp jsdoc
+      - run:
+          name: Upload api docs to S3
+          command: npx gulp upload-api --silent --noextensions
+      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
+
+  deploy_changelog:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - run:
+          name: install pre dependencies
+          command: sudo apt-get install cpio
+      - run:
+          name: Fetch full highcharts/master branch
+          command: git fetch --unshallow
+      - run:
+          name: Generate changelog since last tag
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+      - run:
+          name: Changelog - Create git-describe named folder and copy changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
+      - run:
+          name: Changelog - Upload changelog
+          command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
+      - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+
+  deploy_to_highcharts_dist:
+    <<: *defaults
+    steps:
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run:
+          name: Clone highcharts-dist repository
+          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-dist.git --depth=1 /home/circleci/repo/highcharts-dist
+      - run:
+          name: Delete remote nightly branch
+          command: cd ../highcharts-dist && git push origin --delete nightly || true
+      - run:
+          name: Run copy-release
+          command: cd ../highcharts && node copy-release
+      - run:
+          name: Push to highcharts-dist nightly branch
+          command: |
+            cd ../highcharts-dist
+            git checkout -b nightly
+            git add .
+            git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
+            git push -u origin nightly
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout_code:
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - install_dependencies:
+          requires:
+            - checkout_code
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - lint:
+          requires:
+            - install_dependencies
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - generate_ts_declarations:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - generate_visual_test_images:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-staging
+      - test_browsers:
+          name: "verify-samples-Chrome"
+          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
+          requires:
+            - install_dependencies
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - install_dependencies
+          browsers: "Win.IE8 --oldie"
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - "test-Win.IE8"
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Mac.Safari"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.Chrome"
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 2 * * *" # 2 am every night
+          filters:
+            branches:
+              only:
+                - tools/visual-tests-generate-missing-refs
+                - master
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - test_visual_diff:
+          name: "Test visual differences and distribute diff log to S3."
+          requires:
+            - install_dependencies
+          context: highcharts-staging
+      - test_browsers:
+          name: "test-Mac.Safari"
+          requires:
+            - install_dependencies
+          browsers: "Mac.Safari"
+      - test_browsers:
+          name: "test-Win.Chrome"
+          requires:
+            - "test-Mac.Safari"
+      - test_browsers:
+          name: "test-Mac.Firefox"
+          requires:
+            - "test-Win.Chrome"
+          browsers: "Mac.Firefox"
+      - test_browsers:
+          name: "test-Win.IE8"
+          requires:
+            - "test-Mac.Firefox"
+          browsers: "Win.IE8 --oldie"
+      - build_dist:
+          requires:
+            - install_dependencies
+            - "test-Mac.Firefox"
+            - "test-Mac.Safari"
+            - "test-Win.IE8"
+            - "test-Win.Chrome"
+      - deploy_code:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_api_docs:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_changelog:
+          requires:
+            - build_dist
+          context: highcharts-staging
+      - deploy_to_highcharts_dist:
+          requires:
+            - build_dist
+          context: highcharts-staging

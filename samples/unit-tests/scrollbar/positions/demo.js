@@ -149,9 +149,98 @@ QUnit.test(
             scrollbar = chart.yAxis[0].scrollbar;
 
         assert.strictEqual(
-        minWidth + scrollbar.scrollbarGroup.translateY <= scrollbar.scrollbarButtons[1].translateY,
-        true,
-        'Correct scrollbar bar position.'
+            minWidth + scrollbar.scrollbarGroup.translateY <= scrollbar.scrollbarButtons[1].translateY,
+            true,
+            'Correct scrollbar bar position.'
         );
+    }
+);
+
+QUnit.test(
+    'Overlapping scrollbars',
+    assert => {
+        const chart = Highcharts.chart('container', {
+                yAxis: [{
+                    opposite: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    opposite: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    scrollbar: {
+                        enabled: true
+                    }
+                }],
+                xAxis: [{
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    opposite: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                }, {
+                    opposite: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                }],
+                series: [{
+                    data: [1, 2, 3]
+                }, {
+                    data: [3, 2, 1],
+                    yAxis: 1,
+                    xAxis: 1
+                }, {
+                    data: [2, 1, 3],
+                    yAxis: 2,
+                    xAxis: 2
+                }, {
+                    data: [3, 1, 2],
+                    yAxis: 3,
+                    xAxis: 3
+                }]
+            }),
+            yAxes = chart.yAxis,
+            xAxes = chart.xAxis,
+            yAxesLen = yAxes.length,
+            xAxesLen = xAxes.length;
+
+        let i;
+
+        yAxes.forEach((yAxis, index) => {
+            for (i = index + 1; i < yAxesLen; i++) {
+
+                assert.strictEqual(
+                    yAxis.scrollbar.x + yAxis.scrollbar.width < yAxes[i].scrollbar.x,
+                    true,
+                    'Vertical scrollbar: ' + index + ' should not overlap scrollbar: ' + i
+                );
+            }
+        });
+
+        xAxes.forEach((xAxis, index) => {
+            for (i = index + 1; i < xAxesLen; i++) {
+
+                assert.strictEqual(
+                    xAxis.scrollbar.y + xAxis.scrollbar.height < xAxes[i].scrollbar.y,
+                    true,
+                    'Horizontal scrollbar: ' + index + ' should not overlap scrollbar: ' + i
+                );
+            }
+        });
     }
 );

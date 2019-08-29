@@ -1,4 +1,3 @@
-
 var n = 120,
     s = 600,
     pointStart = Date.UTC(2017, 0, 1),

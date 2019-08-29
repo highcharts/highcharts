@@ -1,3 +1,190 @@
+QUnit.test("Zooming too tight on left category should show full category (#4536)", function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            minRange: 0.99
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }, {
+            data: [144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2]
+        }, {
+            data: [144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2]
+        }]
+    }).highcharts();
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        "Starting min"
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        11,
+        "Starting max"
+    );
+
+
+    chart.xAxis[0].setExtremes(0, 0.5);
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        "Ending min"
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        0.99,
+        "Ending max"
+    );
+    assert.strictEqual(
+        typeof chart.xAxis[0].minPixelPadding,
+        'number',
+        "Category padding is a number"
+    );
+    assert.strictEqual(
+        chart.xAxis[0].minPixelPadding > 0,
+        true,
+        "Category padding is more than 0"
+    );
+});
+
+QUnit.test('Log axis extremes, issue #934', function (assert) {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            height: 400
+        },
+        yAxis: {
+            min: 1000,
+            max: 1000000000,
+            type: 'logarithmic',
+            tickInterval: 1
+        },
+        series: [{
+            data: [
+                10000,
+                8900]
+        }, {
+            data: [
+                8600,
+                7700]
+        }]
+    });
+
+    var ext = chart.yAxis[0].getExtremes();
+    assert.strictEqual(
+        ext.min,
+        1000,
+        'Min is 1000'
+    );
+
+    assert.strictEqual(
+        ext.max,
+        1000000000,
+        'Max is 1000000000'
+    );
+
+});
+
+
+QUnit.test('Log axis extremes, issue #4360', function (assert) {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'column'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Title'
+            },
+            type: 'logarithmic'
+        },
+        series: [{
+            name: "Brands",
+            colorByPoint: true,
+            data: [{
+                name: "A",
+                y: 30
+            },
+            {
+                name: "B",
+                y: 0
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label.textStr,
+        '30',
+        'Label is 30'
+    );
+});
+
+QUnit.test("setExtremes shouldn't return undefined min or max after zooming.(#1655)", function (assert) {
+    var min,
+        max,
+        UNDEFINED,
+        chart = new Highcharts.StockChart({
+            chart: {
+                renderTo: 'container',
+                zoomType: 'x'
+            },
+
+            series: [{
+                data: [
+                    [Date.UTC(2011, 1), 1],
+                    [Date.UTC(2012, 1), 1]
+                ]
+            }],
+
+            xAxis: {
+                events: {
+                    setExtremes: function (event) {
+                        min = event.min;
+                        max = event.max;
+                    }
+                }
+            }
+        });
+
+    // Set testing extremes:
+    chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
+
+    // Imitate left side zooming:
+    chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 50, chart.plotTop, 200, chart.plotHeight).add();
+    chart.pointer.hasDragged = true;
+    chart.pointer.drop({});
+
+    // Test:
+    assert.strictEqual(
+        min !== UNDEFINED,
+        true,
+        'Proper minimum'
+    );
+
+    // Reset extremes for a second test:
+    chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
+
+    // Imitate right side zooming:
+    chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 200, chart.plotTop, 200, chart.plotHeight).add();
+    chart.pointer.hasDragged = true;
+    chart.pointer.drop({});
+
+    // Test:
+    assert.strictEqual(
+        max !== UNDEFINED,
+        true,
+        'Proper maximum'
+    );
+});
+
 QUnit.test('getSeriesExtremes', function (assert) {
     var getSeriesExtremes = Highcharts.Axis.prototype.getSeriesExtremes,
         xAxis = {
@@ -5,7 +192,8 @@ QUnit.test('getSeriesExtremes', function (assert) {
             isXAxis: true,
             series: [{
                 visible: true,
-                options: {}
+                options: {},
+                getXExtremes: Highcharts.Series.prototype.getXExtremes
             }]
         };
 
@@ -158,27 +346,65 @@ QUnit.test('Zoom next to edge on category axis (#6731)', function (assert) {
     );
 });
 
-QUnit.test('Zooming between points (#7061)', function (assert) {
+QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
-        chart: {
-            zoomType: 'x'
-        },
-        xAxis: {
-            minRange: 0.5
-        },
+            chart: {
+                zoomType: 'x'
+            },
+            xAxis: {
+                minRange: 0.5
+            },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    });
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }],
+
+            navigator: {
+                enabled: true
+            }
+        }),
+        controller = new TestController(chart);
+
     chart.xAxis[0].setExtremes(2.3, 2.7);
 
     assert.strictEqual(
         typeof chart.yAxis[0].min,
         'number',
-        'Y axis has data'
+        'Y axis has data. Zooming between points (#7061)'
     );
+
+    chart.xAxis[0].setExtremes();
+
+    controller.mouseDown(100, 200);
+    controller.mouseMove(200, 200);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Highcharts.isObject(chart.resetZoomButton),
+        false,
+        'No reset zoom button - blocked by navigator (#9285)'
+    );
+
+    chart.xAxis[0].setExtremes();
+
+    chart.update({
+        navigator: {
+            enabled: false
+        }
+    });
+
+    controller.mouseDown(100, 200);
+    controller.mouseMove(200, 200);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Highcharts.isObject(chart.resetZoomButton),
+        true,
+        'Chart has reset zoom button after zoom (#9285)'
+    );
+
+
 });
 
 
@@ -227,7 +453,7 @@ QUnit.test(
         function getRandomData(start, end) {
             var data = [];
 
-            for (; start <= end; start += (1000 * 60)) {
+            for (; start <= end; start += (1000 * 60 * 10)) {
                 data.push([start, Math.random()]);
             }
 
@@ -321,25 +547,27 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
         try {
 
-            assert.deepEqual([
-                typeof xAxis.userMin,
-                typeof xAxis.userMax
-            ], [
-                'undefined',
-                'undefined'
-            ],
+            assert.deepEqual(
+                [
+                    typeof xAxis.userMin,
+                    typeof xAxis.userMax
+                ], [
+                    'undefined',
+                    'undefined'
+                ],
                 'The user range of x-axis should be undefined.'
             );
 
             xAxis.setExtremes(5, 11, true, false);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be set.'
             );
 
@@ -353,13 +581,14 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
             controller.touchEnd(100, 100);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be unchanged.'
             );
 
@@ -401,7 +630,10 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
 
     controller.slide(
         [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY], undefined, true);
+        [touchPointX + 100, touchPointY],
+        undefined,
+        true
+    );
 
     var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
 
@@ -409,5 +641,25 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         tickPositions,
         tickPositionsAfterSlide,
         "Tick positions has changed after touch sliding"
+    );
+});
+
+QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['One', 'Two', 'Three', 'Four'],
+            minRange: 0.1
+        },
+        series: [{
+            type: 'column',
+            data: [10, 1, 1, 1]
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(0.9, 1.1);
+
+    assert.ok(
+        chart.yAxis[0].max < 5,
+        'The Y axis should adapt to the visible data (#9044)'
     );
 });

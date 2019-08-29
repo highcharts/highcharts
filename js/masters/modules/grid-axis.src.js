@@ -1,10 +1,11 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts Gantt JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/grid-axis
+ * @requires highcharts
+ *
  * GridAxis
  *
- * (c) 2016 Lars A. V. Cabrera
- *
- * --- WORK IN PROGRESS ---
+ * (c) 2016-2019 Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */

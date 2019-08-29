@@ -1,16 +1,18 @@
-
 QUnit.test('Show-hide series', function (assert) {
 
     var chart =  Highcharts.stockChart('container',
-        {
-            rangeSelector: {
-                selected: 1
-            },
-            series: [{
-                name: 'USD to EUR',
-                data: usdeur
-            }]
-        }),
+            {
+                rangeSelector: {
+                    selected: 1
+                },
+                yAxis: {
+                    showEmpty: false
+                },
+                series: [{
+                    name: 'USD to EUR',
+                    data: usdeur
+                }]
+            }),
         series = chart.series[0];
 
     assert.strictEqual(

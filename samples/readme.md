@@ -49,7 +49,7 @@ emulate	a mouse event on a specific target, its position can be found using
 
 ```js
 // Instanciate
-var controller = TestController(chart);
+var controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });

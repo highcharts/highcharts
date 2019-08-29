@@ -1,7 +1,7 @@
-
 Highcharts.chart('container', {
     chart: {
-        type: 'spline'
+        type: 'spline',
+        styledMode: true
     },
 
     title: {

@@ -1,9 +1,17 @@
-'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
-var isArray = H.isArray,
-    seriesType = H.seriesType;
+'use strict';
+
+import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
+var seriesType = H.seriesType;
 
 function populateAverage(points, xVal, yVal, i, period) {
     var mmY = yVal[i - 1][3] - yVal[i - period - 1][3],
@@ -17,24 +25,35 @@ function populateAverage(points, xVal, yVal, i, period) {
 /**
  * The Momentum series type.
  *
- * @constructor seriesTypes.momentum
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.momentum
+ *
+ * @augments Highcharts.Series
  */
-seriesType('momentum', 'sma',
+seriesType(
+    'momentum',
+    'sma',
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/momentum Momentum indicator
-     * @since 6.0.0
+     * @sample stock/indicators/momentum
+     *         Momentum indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.momentum
      */
     {
         params: {
             period: 14
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Momentum',
         getValues: function (series, params) {
             var period = params.period,
@@ -86,24 +105,16 @@ seriesType('momentum', 'sma',
                 yData: yData
             };
         }
-    });
+    }
+);
 
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.momentum
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.momentum
+ * @since     6.0.0
+ * @excluding dataParser, dataURL
+ * @product   highstock
  * @apioption series.momentum
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.momentum.data
  */

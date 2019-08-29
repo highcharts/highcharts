@@ -11,6 +11,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
             dataLabels: {
                 enabled: true,
                 inside: true,
+                allowOverlap: true,
                 align: 'center'
             }
         }]
@@ -41,11 +42,11 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                     labelBox.width
                 ) / 2)),
                 { // close tolerance
-                    'Chrome': 4.5,
-                    'Edge': 1.5,
-                    'Firefox': 4,
-                    'MSIE': 2.5,
-                    'Safari': 2.5,
+                    Chrome: 4.5,
+                    Edge: 1.5,
+                    Firefox: 4,
+                    MSIE: 2.5,
+                    Safari: 2.5,
                     '': 1
                 }[TestUtilities.browser || ''],
                 'Data label #' + i + ' should be horizontal aligned in the' +
@@ -59,11 +60,11 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                     labelBox.height
                 ) / 2)),
                 { // close tolerance
-                    'Chrome': 9,
-                    'Edge': 7.5,
-                    'Firefox': 9.5,
-                    'MSIE': 7.5,
-                    'Safari': 8.5,
+                    Chrome: 9,
+                    Edge: 7.5,
+                    Firefox: 9.5,
+                    MSIE: 7.5,
+                    Safari: 8.5,
                     '': 1
                 }[TestUtilities.browser || ''],
                 'Data label #' + i + ' should be vertical aligned in the' +

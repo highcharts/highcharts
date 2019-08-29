@@ -1,4 +1,3 @@
-
 QUnit.test('Capture POST', function (assert) {
 
     var chart = Highcharts.chart('container', {

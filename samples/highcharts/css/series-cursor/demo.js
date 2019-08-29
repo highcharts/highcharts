@@ -1,5 +1,7 @@
-
 Highcharts.chart('container', {
+    chart: {
+        styledMode: true
+    },
     title: {
         text: 'Series cursor by CSS'
     },

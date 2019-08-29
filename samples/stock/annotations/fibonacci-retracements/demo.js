@@ -1,4 +1,3 @@
-
 // It builds the options for the fibonacc retracements annotation
 // which starts from (x1, y1) and stops on (x2, y2)
 function fibonacciRetracements(x1, y1, x2, y2) {
@@ -27,46 +26,46 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     var backgrounds = [];
     var labels = [];
 
-  // building options for the annotation
+    // building options for the annotation
     Highcharts.each(levels, function (level, i) {
         var retracement = y2 - diff * level;
         var p1 = point(x1, retracement);
         var p2 = point(x2, retracement);
 
-      // defining horizontal lines
+        // defining horizontal lines
         lines.push({
             type: 'path',
-            points: [ p1, p2 ],
+            points: [p1, p2],
             stroke: 'grey'
         });
 
-      // defining labels for horizontal lines
+        // defining labels for horizontal lines
         labels.push({
             point: p1,
             text: level.toString()
         });
 
         if (i > 0) {
-          // defining colored backgrounds
+            // defining colored backgrounds
             backgrounds.push({
                 type: 'path',
-                points: [ lines[i - 1].points[0], lines[i - 1].points[1], lines[i].points[1], lines[i].points[0] ],
+                points: [lines[i - 1].points[0], lines[i - 1].points[1], lines[i].points[1], lines[i].points[0]],
                 strokeWidth: 0,
                 fill: colors[i - 1]
             });
         }
     });
 
-  // defining the trend line
+    // defining the trend line
     var trendLine = [{
         type: 'path',
         dashStyle: 'Dash',
-        points: [ point(x1, y1), point(x2, y2) ],
+        points: [point(x1, y1), point(x2, y2)],
         stroke: 'black'
     }];
 
 
-  // Putting pieces together into an annotation
+    // Putting pieces together into an annotation
     return {
         labels: labels,
         shapes: lines.concat(backgrounds, trendLine),
@@ -86,7 +85,7 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     };
 }
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
     // create the chart
     Highcharts.stockChart('container', {
 

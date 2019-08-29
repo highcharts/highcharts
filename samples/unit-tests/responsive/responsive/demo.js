@@ -1,4 +1,3 @@
-
 QUnit.test('Adapt height', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -22,6 +21,15 @@ QUnit.test('Adapt height', function (assert) {
                 chartOptions: {
                     chart: {
                         height: 300
+                    }
+                }
+            }, {
+                condition: {
+                    maxWidth: 300
+                },
+                chartOptions: {
+                    chart: {
+                        height: '100%'
                     }
                 }
             }]
@@ -53,6 +61,20 @@ QUnit.test('Adapt height', function (assert) {
         400,
         'Height reset'
     );
+
+    chart.setSize(200);
+
+    assert.strictEqual(
+        chart.chartWidth,
+        200,
+        'Width updated'
+    );
+    assert.strictEqual(
+        chart.chartHeight,
+        200,
+        'Percentage height updated'
+    );
+
 });
 
 QUnit.test('Callback', function (assert) {
@@ -168,13 +190,25 @@ QUnit.test('Responsive on chart.update', function (assert) {
 });
 
 QUnit.test(
-    'Nested property names like series or xAxis (#6208)',
+    'Nested property names like series, xAxis or annotations (#6208, #8680)',
     function (assert) {
         var chart = Highcharts.chart('container', {
 
             chart: {
                 animation: false
             },
+
+            annotations: [{
+                labels: [{
+                    point: {
+                        xAxis: 0,
+                        yAxis: 0,
+                        x: 1,
+                        y: 3
+                    },
+                    text: 'Label'
+                }]
+            }],
 
             series: [{
                 data: [1, 4, 3],
@@ -204,6 +238,19 @@ QUnit.test(
                         },
                         series: [{
                             yAxis: 1
+                        }],
+                        annotations: [{
+                            visible: false
+                        }, {
+                            labels: [{
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: 1,
+                                    y: 1
+                                },
+                                text: 'Label v2'
+                            }]
                         }]
                     }
                 }]
@@ -220,6 +267,11 @@ QUnit.test(
             chart.yAxis[0],
             'Initial axis'
         );
+        assert.strictEqual(
+            chart.annotations[0].graphic.visibility,
+            'visible',
+            'Initial annotation visible'
+        );
 
         chart.setSize(400);
 
@@ -233,7 +285,24 @@ QUnit.test(
             chart.yAxis[1],
             'Responsive axis'
         );
+        assert.strictEqual(
+            chart.annotations[0].graphic.visibility,
+            'hidden',
+            'Initial annotation hidden'
+        );
+        assert.strictEqual(
+            chart.annotations.length,
+            2,
+            'New annotation added (#10713)'
+        );
 
+        chart.setSize(600);
+
+        assert.strictEqual(
+            chart.annotations.length,
+            1,
+            'Old annotation removed (#10713)'
+        );
     }
 );
 
@@ -452,5 +521,275 @@ QUnit.test('Mismatch of collection length (#6347)', function (assert) {
             .label.styles.fontSize,
         '12px',
         'Responsive font size'
+    );
+});
+
+QUnit.test('Responsive rules and chart.update', function (assert) {
+    var options = {
+
+        chart: {
+            type: 'column',
+            width: 400
+        },
+
+        legend: {
+            enabled: true
+        },
+
+        series: [{
+            name: 'Sales',
+            data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                // Make the labels less space demanding on mobile
+                chartOptions: {
+                    legend: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
+    };
+
+    var chart = Highcharts.chart('container', options);
+
+    var plotHeight = chart.plotHeight;
+
+    assert.strictEqual(
+        Boolean(chart.legend.group),
+        false,
+        'There should be no visible legend'
+    );
+
+    chart.update(options);
+
+    assert.strictEqual(
+        chart.plotHeight,
+        plotHeight,
+        'The height should not change'
+    );
+
+    assert.strictEqual(
+        Boolean(chart.legend.group),
+        false,
+        'There should still be no visible legend (#9617)'
+    );
+
+    chart.setSize(600);
+
+    assert.strictEqual(
+        chart.legend.group.element.nodeName,
+        'g',
+        'The legend should reappear'
+    );
+
+
+});
+
+QUnit.test('Falsy default', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'pie',
+            width: 300,
+            borderWidth: 1
+        },
+
+        series: [{
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        }],
+
+        plotOptions: {
+            pie: {
+                showInLegend: false
+            }
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    plotOptions: {
+                        pie: {
+                            showInLegend: true,
+                            dataLabels: {
+                                format: "{point.percentage}",
+                                distance: -20
+                            }
+                        }
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        3,
+        'There should be legend items for all points'
+    );
+
+    chart.setSize(500);
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        0,
+        'Legend items should be removed as per default showInLegend'
+    );
+});
+
+QUnit.test('Responsive spacing options', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie',
+            borderWidth: 1,
+            plotBorderWidth: 1,
+            width: 600
+        },
+        series: [{
+            data: [
+                ['Apples', 40],
+                ['Oranges', 60]
+            ]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minWidth: 321
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [10, 10, 25, 10]
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 320
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [18, 0, 0, 0]
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.deepEqual(
+        chart.spacing,
+        [10, 10, 25, 10],
+        'The initial spacing should correpond to responsive option'
+    );
+
+    chart.setSize(300);
+
+    assert.deepEqual(
+        chart.spacing,
+        [18, 0, 0, 0],
+        'The updated spacing should correpond to responsive option'
+    );
+});
+
+QUnit.test('Restoring to undefined settings (#10286)', assert => {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column',
+            width: 600,
+            height: 300
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'middle',
+            layout: 'vertical'
+        },
+
+        xAxis: {
+            categories: ['Apples', 'Oranges', 'Bananas'],
+            labels: {
+                x: -10
+            }
+        },
+
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Amount'
+            }
+        },
+
+        series: [{
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        }, {
+            name: 'Christmas Day before dinner',
+            data: [6, 4, 2]
+        }, {
+            name: 'Christmas Day after dinner',
+            data: [8, 4, 3]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal'
+                    },
+                    yAxis: {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -5
+                        },
+                        title: {
+                            text: null
+                        }
+                    },
+                    subtitle: {
+                        text: null
+                    },
+                    credits: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
+    });
+
+    const textY = chart.container
+        .querySelector('.highcharts-yaxis-labels text')
+        .getAttribute('y');
+
+    chart.setSize(400);
+    assert.notEqual(
+        chart.container
+            .querySelector('.highcharts-yaxis-labels text')
+            .getAttribute('y'),
+        textY,
+        'Y axis label position should be changed'
+    );
+
+    chart.setSize(600);
+    assert.strictEqual(
+        chart.container
+            .querySelector('.highcharts-yaxis-labels text')
+            .getAttribute('y'),
+        textY,
+        'Y axis label position should be restored'
     );
 });

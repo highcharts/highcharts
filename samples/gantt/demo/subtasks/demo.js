@@ -1,4 +1,3 @@
-
 var today = new Date(),
     day = 1000 * 60 * 60 * 24;
 

@@ -158,7 +158,7 @@ QUnit.test('Legend.title renders after update', function (assert) {
         };
     }(chart.legend.title.destroy));
 
-    chart.update(config);
+    chart.legend.update(config.legend);
 
     assert.ok(
         called
@@ -166,6 +166,12 @@ QUnit.test('Legend.title renders after update', function (assert) {
 
     assert.ok(
         chart.legend.title.text,
-        'Legend title exists after update.'
+        'Legend title exists after legend.update.'
+    );
+
+    chart.update(config);
+    assert.ok(
+        chart.legend.title.text,
+        'Legend title exists chart.update.'
     );
 });

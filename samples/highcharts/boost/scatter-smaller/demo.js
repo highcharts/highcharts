@@ -30,7 +30,7 @@ Highcharts.chart('container', {
         x: 100,
         y: 70,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         borderWidth: 1
     },
     plotOptions: {
@@ -170,4 +170,3 @@ Highcharts.chart('container', {
             [180.3, 83.2], [180.3, 83.2]]
     }]
 });
-

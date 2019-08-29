@@ -1,4 +1,3 @@
-
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -25,7 +24,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[1].yData,
-        [22.220999999999997, 22.208090909090906, 22.241165289256195],
+        [22.220999999999997, 22.208090909091, 22.241165289256],
         'Correct values'
     );
 
@@ -33,7 +32,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[1].yData,
-        [0, 4.027272727272727, 7.365950413223141, 10.095777610818933],
+        [0, 4.0272727272727, 7.3659504132231, 10.095777610819],
         'Correct values'
     );
 
@@ -55,7 +54,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         chart.series[1].yData,
-        [23.72, 23.775, 23.862499999999997, 23.746249999999996, 23.783125],
+        [23.72, 23.775, 23.8625, 23.74625, 23.783125],
         'Correct values'
     );
 
@@ -68,8 +67,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[2].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
-        [23.746666666666666, 23.848333333333333, 23.739166666666666, 23.779583333333335],
+        chart.series[1].yData.map(function (y) {
+            return y.toFixed(4);
+        }),
+        ["23.7467", "23.8483", "23.7392", "23.7796"],
         'Correct values after point.remove()'
     );
 });

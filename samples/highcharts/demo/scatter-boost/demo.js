@@ -1,5 +1,3 @@
-
-
 // Prepare the data
 var data = [],
     n = 1000000,
@@ -58,7 +56,7 @@ Highcharts.chart('container', {
         color: 'rgba(152,0,67,0.1)',
         data: data,
         marker: {
-            radius: 0.1
+            radius: 0.5
         },
         tooltip: {
             followPointer: false,

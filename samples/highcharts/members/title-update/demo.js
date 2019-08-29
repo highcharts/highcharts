@@ -1,4 +1,3 @@
-
 var i = 1;
 
 var chart = Highcharts.chart('container', {

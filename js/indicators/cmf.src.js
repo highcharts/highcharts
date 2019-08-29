@@ -1,46 +1,80 @@
+/* *
+ *
+ *  (c) 2010-2019 Highsoft AS
+ *
+ *  Author: Sebastian Domas
+ *
+ *  Chaikin Money Flow indicator for Highstock
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 /**
- * (c) 2010-2017 Highsoft AS
- * Author: Sebastian Domas
- *
- * Chaikin Money Flow indicator for Highstock
- *
- * License: www.highcharts.com/license
+ * @private
+ * @interface Highcharts.CmfValuesObject
+ *//**
+ * Combined xData and yData values into a tuple.
+ * @name Highcharts.CmfValuesObject#values
+ * @type {Array<Array<number,number>>}
+ *//**
+ * Values represent x timestamp values
+ * @name Highcharts.CmfValuesObject#xData
+ * @type {Array<number>}
+ *//**
+ * Values represent y values
+ * @name Highcharts.CmfValuesObject#yData
+ * @type {Array<number>}
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 
+/**
+ * The CMF series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.cmf
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('cmf', 'sma',
-  /**
-   * Chaikin Money Flow indicator (cmf).
-   *
-   * @type {Object}
-   * @extends plotOptions.sma
-   * @product highstock
-   * @sample {highstock} stock/indicators/cmf/
-   *                     Chaikin Money Flow indicator
-   * @since 6.0.0
-   * @excluding animationLimit
-   * @optionparent plotOptions.cmf
-   */
+    /**
+     * Chaikin Money Flow indicator (cmf).
+     *
+     * @sample stock/indicators/cmf/
+     *         Chaikin Money Flow indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @excluding    animationLimit
+     * @product      highstock
+     * @optionparent plotOptions.cmf
+     */
     {
         params: {
             period: 14,
-
-      /**
-       * The id of another series to use its data as volume data for the
-       * indiator calculation.
-       */
+            /**
+             * The id of another series to use its data as volume data for the
+             * indiator calculation.
+             */
             volumeSeriesID: 'volume'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Chaikin Money Flow',
         /**
          * Checks if the series and volumeSeries are accessible, number of
          * points.x is longer than period, is series has OHLC data
-         * @returns {Boolean}
-         *          true if series is valid and can be computed, otherwise false
-         **/
+         * @private
+         * @return {boolean} True if series is valid and can be computed,
+         * otherwise false.
+         */
         isValid: function () {
             var chart = this.chart,
                 options = this.options,
@@ -72,21 +106,11 @@ H.seriesType('cmf', 'sma',
         },
 
         /**
-         * @typedef {Object} Values
-         * @property {Number[][]} values
-         *           Combined xData and yData values into a tuple
-         * @property {Number[]} xData
-         *           Values represent x timestamp values
-         * @property {Number[]} yData
-         *           Values represent y values
-        **/
-
-        /**
-         * Returns indicator's data
-         * @returns {False | Values}
-         *          Returns false if the indicator is not valid, otherwise
-         *          returns Values object
-        **/
+         * Returns indicator's data.
+         * @private
+         * @return {boolean|Highcharts.CmfValuesObject} Returns false if the
+         * indicator is not valid, otherwise returns Values object.
+         */
         getValues: function (series, params) {
             if (!this.isValid()) {
                 return false;
@@ -101,13 +125,14 @@ H.seriesType('cmf', 'sma',
         },
 
         /**
-         * @static
-         * @param {Number[]} xData x timestamp values
-         * @param {Number[]} seriesYData yData of basic series
-         * @param {Number[]} volumeSeriesYData yData of volume series
-         * @param {Number} period indicator's param
-         * @returns {Values} object containing computed money flow data
-        **/
+         * @private
+         * @param {Array<number>} xData - x timestamp values
+         * @param {Array<number>} seriesYData - yData of basic series
+         * @param {Array<number>} volumeSeriesYData - yData of volume series
+         * @param {number} period - indicator's param
+         * @return {Highcharts.CmfValuesObject} object containing computed money
+         * flow data
+         */
         getMoneyFlow: function (xData, seriesYData, volumeSeriesYData, period) {
             var len = seriesYData.length,
                 moneyFlowVolume = [],
@@ -124,9 +149,9 @@ H.seriesType('cmf', 'sma',
              * Calculates money flow volume, changes i, nullIndex vars from
              * upper scope!
              * @private
-             * @param {Number[]} ohlc OHLC point
-             * @param {Number} volume Volume point's y value
-             * @returns {Number} volume * moneyFlowMultiplier
+             * @param {Array<number>} ohlc - OHLC point
+             * @param {number} volume - Volume point's y value
+             * @return {number} - volume * moneyFlowMultiplier
              **/
             function getMoneyFlowVolume(ohlc, volume) {
                 var high = ohlc[1],
@@ -143,10 +168,10 @@ H.seriesType('cmf', 'sma',
 
                 /**
                  * @private
-                 * @param {Number} h High value
-                 * @param {Number} l Low value
-                 * @param {Number} c Close value
-                 * @returns {Number} calculated multiplier for the point
+                 * @param {number} h - High value
+                 * @param {number} l - Low value
+                 * @param {number} c - Close value
+                 * @return {number} calculated multiplier for the point
                  **/
                 function getMoneyFlowMultiplier(h, l, c) {
                     return ((c - l) - (h - c)) / (h - l);
@@ -213,21 +238,9 @@ H.seriesType('cmf', 'sma',
  * A `CMF` series. If the [type](#series.cmf.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.cmf
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.cmf
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.cmf
- */
-
-/**
- * An array of data points for the series. For the `CMF` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.cmf.data
  */

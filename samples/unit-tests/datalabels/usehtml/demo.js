@@ -1,3 +1,28 @@
+QUnit.test('Data labels, useHTML and defer (#5075)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            animation: true,
+            dataLabels: {
+                enabled: true,
+                useHTML: true,
+                defer: true
+            },
+            data: [1000, 2000, 3000]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].dataLabelsGroup.div.nodeName,
+        'DIV',
+        'The data labels group has a HTML counterpart'
+    );
+    assert.strictEqual(
+        chart.series[0].dataLabelsGroup.div.style.opacity,
+        '0',
+        'And that div is hidden'
+    );
+});
 QUnit.test(
     '#7287: Correct class for the last dataLable when useHTML',
     function (assert) {
@@ -44,6 +69,31 @@ QUnit.test(
             point.dataLabel.div.children[0].style.cursor,
             'pointer',
             "Data label's 'cursor' attribute equals to 'pointer'"
+        );
+    }
+);
+
+QUnit.test(
+    '#10527: useHTML and textPath',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                dataLabels: {
+                    enabled: true,
+                    useHTML: true,
+                    textPath: {
+                        enabled: true
+                    }
+                },
+                data: [1, 3, 2]
+            }]
+        });
+
+        chart.series[0].hide();
+        chart.series[0].show();
+
+        assert.ok(
+            'No errors when enabling useHTML and textPath options together.'
         );
     }
 );

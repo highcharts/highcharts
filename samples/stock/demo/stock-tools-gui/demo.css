@@ -1,0 +1,9 @@
+#container {
+	max-height: 800px;
+	height: 75vh;
+}
+
+/* Conflict with Bootstrap, not needed after v7.0.1 */
+.highcharts-bindings-wrapper * {
+	box-sizing: content-box;
+}

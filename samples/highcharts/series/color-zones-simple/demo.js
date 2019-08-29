@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     series: [{
         data: [-10, -5, 0, 5, 10, 15, 10, 10, 5, 0, -5],

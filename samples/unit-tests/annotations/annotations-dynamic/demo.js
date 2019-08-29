@@ -1,4 +1,3 @@
-
 QUnit.test('Annotation\'s dynamic methods', function (assert) {
     var labelCollector;
     var chart = Highcharts.chart('container', {
@@ -25,6 +24,15 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
                 }
             }]
         }]
+    }, function (chart) {
+        var annotation = chart.addAnnotation({});
+
+        assert.ok(
+            true,
+            'No errors after adding an annotation in callback (#10628).'
+        );
+
+        chart.removeAnnotation(annotation);
     });
 
     assert.strictEqual(
@@ -48,7 +56,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     );
 
     var secondAnnotationOptions = {
-        id: '2',
+        id: 2,
         labels: [{
             point: {
                 x: 3,
@@ -59,7 +67,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(secondAnnotationOptions, false);
+    var secondAnnotation = chart.addAnnotation(secondAnnotationOptions);
 
     var thirdAnnotationOptions = {
         id: '3',
@@ -73,12 +81,98 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(thirdAnnotationOptions, false);
+    var thirdAnnotation = chart.addAnnotation(thirdAnnotationOptions);
 
     assert.ok(
-        chart.options.annotations[0] === secondAnnotationOptions &&
-        chart.options.annotations[1] === thirdAnnotationOptions &&
+        chart.options.annotations[0] === secondAnnotation.options &&
+        chart.options.annotations[1] === thirdAnnotation.options &&
         chart.options.annotations.length === 2,
         'Annotation options from the chart options are added when the annotations are added (#8393).'
+    );
+
+    thirdAnnotation.update({
+        labelOptions: {
+            format: 'custom format',
+            backgroundColor: 'red'
+        }
+    });
+
+    assert.strictEqual(
+        thirdAnnotation.labels[0].options.format,
+        'custom format',
+        'Correct annotations text after update (annotations.labels)'
+    );
+
+    thirdAnnotation.update({
+        labelOptions: {
+            backgroundColor: 'green'
+        }
+    });
+
+    assert.strictEqual(
+        thirdAnnotation.labels[0].graphic.attr('fill'),
+        'green',
+        'Correct annotations label fill after update (annotations.labels)'
+    );
+
+    var annotation = chart.addAnnotation({
+        shapes: [{
+            type: 'circle',
+            point: {
+                x: 4,
+                y: 123000,
+                xAxis: 0,
+                yAxis: 0
+            },
+            r: 5
+        }]
+    });
+
+    annotation.update({
+        shapes: [{
+            r: 25
+        }]
+    });
+
+    assert.strictEqual(
+        annotation.shapes[0].graphic.attr('r'),
+        25,
+        'Correct annotation size after update (annotations.shapes)'
+    );
+
+    chart.removeAnnotation(2);
+
+    assert.strictEqual(
+        chart.annotations.length,
+        2,
+        'Annotation with id=number, should be removed without errors (#10648)'
+    );
+});
+
+QUnit.test('Hiding and showing annotations with linked points', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            showInLegend: true,
+            data: [{
+                id: 'point1',
+                visible: false,
+                y: 3
+            }, {
+                y: 3
+            }],
+            type: 'pie'
+        }],
+        annotations: [{
+            labels: [{
+                point: 'point1',
+                text: 'Annotation'
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.annotations[0].labels[0].graphic.visibility,
+        'hidden',
+        'Annotation correctly hidden.'
     );
 });

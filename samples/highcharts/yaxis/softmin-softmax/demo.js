@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('container', {
 
     title: {
@@ -28,5 +27,6 @@ var chart = Highcharts.chart('container', {
 
 var toggle = false;
 $('#point-update').click(function () {
-    chart.series[0].points[11].update((toggle = (!toggle)) ? 120 : 54);
+    toggle = !toggle;
+    chart.series[0].points[11].update(toggle ? 120 : 54);
 });

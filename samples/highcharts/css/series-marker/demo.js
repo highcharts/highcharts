@@ -1,5 +1,8 @@
-
 Highcharts.chart('container', {
+
+    chart: {
+        styledMode: true
+    },
 
     title: {
         text: 'Marker styling'

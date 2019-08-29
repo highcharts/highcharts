@@ -1,6 +1,4 @@
-
-
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53f80ce1850b9060c0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {
@@ -10,6 +8,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53
                 load: function () {
                     this.addSeries({
                         type: 'mappoint',
+                        colorAxis: false,
                         data: [{
                             x: 200,
                             y: -1100,

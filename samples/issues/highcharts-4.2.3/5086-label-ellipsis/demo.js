@@ -3,7 +3,7 @@ jQuery(function () {
     QUnit.test('Squished text with Chart.addSeries', function (assert) {
 
         var series = {
-            "data": [
+            data: [
                 ['MapRefreshListServer', 1618],
                 ['MapGetNewLolomoServer', 1],
                 ['MapGetGenreListServer', 1]
@@ -11,16 +11,16 @@ jQuery(function () {
         };
 
         var chart1 = Highcharts.chart('container', {
-            "xAxis": {
-                "type": "category"
+            xAxis: {
+                type: "category"
             },
             series: [series]
         });
         var textWidth = chart1.xAxis[0].ticks['0'].label.styles.width;
 
         var chart2 = Highcharts.chart('container', {
-            "xAxis": {
-                "type": "category"
+            xAxis: {
+                type: "category"
             }
         });
         chart2.addSeries(series);

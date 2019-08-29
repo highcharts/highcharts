@@ -1,4 +1,3 @@
-
 QUnit.test('Panning reversed axis', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -15,13 +15,14 @@ QUnit.test('Floating enabled.', function (assert) {
         }]
     });
 
-    assert.strictEqual(
-        (chart.rangeSelector.group.translateX === 10) &&
-        (chart.rangeSelector.group.translateY === 100) &&
-        (chart.extraTopMargin === undefined) &&
-        (chart.plotTop === 10),
-        true,
-        'floating'
+    assert.deepEqual(
+        [
+            chart.rangeSelector.group.translateX,
+            chart.rangeSelector.group.translateY,
+            chart.extraTopMargin,
+            chart.plotTop
+        ],
+        [10, 100, undefined, 10],
+        'The range selector should be floating'
     );
 });
-

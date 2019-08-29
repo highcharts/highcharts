@@ -25,7 +25,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
     }, function (template) {
 
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             series = chart.series[0],
             points = series.points;
 
@@ -69,7 +69,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
                         series.halo.element.getAttribute('visibility')
                     ], [
                         points[1].name,
-                        'visible'
+                        null // null equals visibility "inherit"
                     ],
                     'Halo should be visible after mouse over.'
                 );
@@ -149,7 +149,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
     }, function (template) {
 
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             series = chart.series[0],
             points = series.points;
 
@@ -191,7 +191,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
                         (haloBox.x + haloBox.y)
                     ], [
                         points[0].name,
-                        'visible',
+                        null, // null equals visibility "inherit"
                         0
                     ],
                     'Halo should not be visible after mouse over.'
@@ -236,7 +236,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
                         ((haloBox.x + haloBox.y) > 0)
                     ], [
                         points[1].name,
-                        'visible',
+                        null, // null equals visibility "inherit"
                         true
                     ],
                     'Halo should be visible after mouse over.'
@@ -267,7 +267,7 @@ QUnit.test('Update point when hovering slice (#9088)', function (assert) {
         }]
     }, function (template) {
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             pointBox = chart.series[0].points[1].graphic.getBBox();
 
         controller.mouseOver(

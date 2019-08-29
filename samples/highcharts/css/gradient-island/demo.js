@@ -1,6 +1,8 @@
-
-
 Highcharts.chart('container', {
+
+    chart: {
+        styledMode: true
+    },
 
     title: {
         text: 'Gradients in styled mode'

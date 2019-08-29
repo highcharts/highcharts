@@ -1,13 +1,12 @@
-
-
-$.getJSON(
+Highcharts.getJSON(
     'https://www.highcharts.com/samples/data/aapl-c.json',
     function (data) {
         // Create the chart
         Highcharts.stockChart('container', {
 
             chart: {
-                marginRight: 50
+                marginRight: 50,
+                styledMode: true
             },
 
             rangeSelector: {
@@ -48,4 +47,3 @@ $.getJSON(
         });
     }
 );
-

@@ -4,3 +4,4 @@ parserOptions:
 
 rules:
     no-undefined: 0
+    object-shorthand: 0

@@ -1,4 +1,3 @@
-
 var $container = $('#container'),
     chart,
     origChartWidth = 400,

@@ -1,5 +1,3 @@
-
-
 // Initiate the chart
 var chart = Highcharts.Map({
     chart: {

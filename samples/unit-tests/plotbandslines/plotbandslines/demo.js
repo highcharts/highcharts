@@ -1,3 +1,81 @@
+QUnit.test('Plot band labels outside plot area (#3983)', function (assert) {
+    var chart,
+        options = {
+            chart: {
+                width: 600
+            },
+            xAxis: {
+                plotBands: [{
+                    from: 5,
+                    to: 6,
+                    color: Highcharts.getOptions().colors[0],
+                    label: {
+                        text: 'Before'
+                    }
+                }, {
+                    from: 12,
+                    to: 13,
+                    color: Highcharts.getOptions().colors[2],
+                    label: {
+                        text: 'Within'
+                    }
+                }, {
+                    from: 25,
+                    to: 26,
+                    color: Highcharts.getOptions().colors[3],
+                    label: {
+                        text: 'After'
+                    }
+
+                }]
+            },
+
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 7],
+                pointStart: 10
+            }]
+        };
+
+    // Create the Highcharts chart
+    chart = $('#container').highcharts(options).highcharts();
+
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[0].label,
+        'undefined',
+        'Highcharts - before'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[1].label,
+        'object',
+        'Highcharts - within'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[2].label,
+        'undefined',
+        'Highcharts - after'
+    );
+
+    // Create the Highstock chart
+    chart = $('#container').highcharts('StockChart', options).highcharts();
+
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[0].label,
+        'undefined',
+        'Highcharts - before'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[1].label,
+        'object',
+        'Highcharts - within'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotLinesAndBands[2].label,
+        'undefined',
+        'Highcharts - after'
+    );
+});
+
+
 QUnit.test('NaN in label position (#7175)', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
@@ -46,7 +124,7 @@ QUnit.test('NaN in label position (#7175)', function (assert) {
 
 });
 
-QUnit.test('Events should be bound to all plotBands (#6166).', function (assert) {
+QUnit.test('Events should be bound to all plotBands (#6166) and plotLines (#10302).', function (assert) {
     var clicked,
         chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -59,7 +137,7 @@ QUnit.test('Events should be bound to all plotBands (#6166).', function (assert)
                     id: 'plotband-1',
                     events: {
                         click: function () {
-                            clicked = 'clicked';
+                            clicked = 'plotBand';
                         }
                     }
                 }]
@@ -81,7 +159,34 @@ QUnit.test('Events should be bound to all plotBands (#6166).', function (assert)
 
     assert.deepEqual(
         clicked,
-        'clicked',
-        'Click event fired'
+        'plotBand',
+        'Click event fired on plot band'
+    );
+
+    // #10302
+    chart.xAxis[0].setExtremes(20, 50);
+    chart.update({
+        xAxis: {
+            plotLines: [{
+                value: 5,
+                width: 20,
+                color: "black",
+                zIndex: 1,
+                events: {
+                    click: function () {
+                        clicked = 'plotLine';
+                    }
+                }
+            }]
+        }
+    });
+
+    chart.xAxis[0].setExtremes(0, 40);
+    controller.click(85, 100);
+
+    assert.deepEqual(
+        clicked,
+        'plotLine',
+        'Click event fired on plot line'
     );
 });

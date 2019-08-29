@@ -10,36 +10,39 @@ Highcharts.ganttChart('container', {
     xAxis: {
         minPadding: 0.2,
         maxPadding: 0.2
-    //    reversed: true
     },
 
     yAxis: {
         type: 'category',
-        categories: ['A', 'B', 'C']
-        //reversed: true
+        categories: ['A', 'B', 'C'],
+        min: 0,
+        max: 2
     },
 
     series: [{
         name: 'Project 1',
         dragDrop: {
-            draggableX: true,
             liveRedraw: false,
+            draggableX: true,
             draggableY: true,
-            dragMinY: 0
-            //groupBy: 'groupId'
+            dragMinY: 0,
+            dragMaxY: 2,
+            groupBy: 'groupId'
         },
         data: [{
             start: Date.UTC(2014, 11, 1),
             end: Date.UTC(2014, 11, 2),
             completed: 0.95,
-            id: 'One',
-            groupId: 'bob',
+            groupId: 'group1',
+            y: 0
+        }, {
+            start: Date.UTC(2014, 11, 3),
+            end: Date.UTC(2014, 11, 5),
+            groupId: 'group1',
             y: 0
         }, {
             start: Date.UTC(2014, 11, 2),
             end: Date.UTC(2014, 11, 5),
-            id: 'Two',
-            groupId: 'bob',
             y: 1
         }]
     }]

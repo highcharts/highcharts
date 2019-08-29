@@ -51,7 +51,7 @@ seriesType('lineargauge', 'column',
      * Mentioned range can be defined by setting
      * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
      *
-     * @extends {plotOptions.column}
+     * @extends plotOptions.column
      * @product highcharts
      * @sample {highcharts} highcharts/demo/lineargauge/ Linearguage graph
      * @since 6.0.0
@@ -742,14 +742,14 @@ seriesType('lineargauge', 'column',
  * @apioption series.lineargauge.data.targetOptions.width
  */
 
- /**
-  * The zIndex of the target symbol.
-  *
-  * @type {Number}
-  * @since 6.0.0
-  * @product highcharts
-  * @apioption series.lineargauge.data.targetOptions.zIndex
-  */
+/**
+ * The zIndex of the target symbol.
+ *
+ * @type {Number}
+ * @since 6.0.0
+ * @product highcharts
+ * @apioption series.lineargauge.data.targetOptions.zIndex
+ */
 
 ////////////////////////////////////////////////////////////////////////////////
 

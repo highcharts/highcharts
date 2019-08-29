@@ -841,7 +841,7 @@
                         <!-- Copy zipped js/* to Root on S3 -->
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/gantt/js-gzip/"/>
-                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
@@ -849,7 +849,7 @@
                         <!-- copy gfx folder to Root -->
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/gantt/gfx"/>
-                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
@@ -857,7 +857,7 @@
                         <!-- Copy to js/* version [= ${path.var} ] on S3 -->
                         <antcall target="put-gzipped-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/gantt/js-gzip/"/>
-                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
@@ -865,7 +865,7 @@
                         <!-- copy gfx folder to version folder on S3-->
                         <antcall target="put-files-to-S3">
                             <param name="local" value="${basedir}/build/dist/gantt/gfx"/>
-                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
                             <param name="max.age" value="${max.age.one.day}"/>
@@ -946,6 +946,12 @@
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
     <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="${highcharts.site.dir}/samples/gantt" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/highcharts" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/maps" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/stock" includes="**/*"/>
+        </delete>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
         </copy>

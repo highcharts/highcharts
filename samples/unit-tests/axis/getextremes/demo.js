@@ -1,4 +1,3 @@
-
 QUnit.test('Mouse interaction', function (assert) {
 
     var chart = Highcharts
@@ -42,13 +41,13 @@ QUnit.test('Mouse interaction', function (assert) {
     assert.close(
         chart.xAxis[0].getExtremes().min,
         0,
-        0.00001,
+        0.05,
         'Min should be 0'
     );
     assert.close(
         chart.xAxis[0].getExtremes().max,
         5,
-        0.00001,
+        0.05,
         'Max should be 5'
     );
 

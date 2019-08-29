@@ -106,57 +106,89 @@ QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
 
 
 QUnit.test('Solid gauge animated color', function (assert) {
+    var clock = TestUtilities.lolexInstall();
+    try {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'solidgauge',
+                    animation: {
+                        duration: 50
+                    }
+                },
 
-    var done = assert.async();
+                title: null,
 
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'solidgauge',
-            animation: {
-                duration: 50
-            }
-        },
+                tooltip: {
+                    enabled: false
+                },
 
-        title: null,
+                yAxis: {
+                    stops: [
+                        [0, '#000000'],
+                        [1, '#ffffff']
+                    ],
+                    min: 0,
+                    max: 100
+                },
 
-        tooltip: {
-            enabled: false
-        },
+                series: [{
+                    name: 'Speed',
+                    data: [10]
+                }]
+            }),
+            point = chart.series[0].points[0];
 
-        yAxis: {
-            stops: [
-                [0, '#000000'],
-                [1, '#ffffff']
-            ],
-            min: 0,
-            max: 100
-        },
+        assert.strictEqual(
+            Highcharts.color(point.graphic.element.getAttribute('fill')).get(),
+            Highcharts.color('rgb(26,26,26)').get(),
+            'Initial color'
+        );
 
-        series: [{
-            name: 'Speed',
-            data: [10]
-        }]
+        point.update(50);
+        TestUtilities.lolexRunAndUninstall(clock);
 
-    });
-
-    var point = chart.series[0].points[0];
-    assert.strictEqual(
-        Highcharts.color(point.graphic.element.getAttribute('fill')).get(),
-        Highcharts.color('rgb(26,26,26)').get(),
-        'Initial color'
-    );
-
-    point.update(50);
-    setTimeout(function () {
         assert.strictEqual(
             Highcharts.color(point.graphic.element.getAttribute('fill')).get(),
             Highcharts.color('rgb(128,128,128)').get(),
             'Updated color'
         );
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
 
-        done();
-    }, 200);
+QUnit.test('Solid gauge: legend', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        series: [{
+            showInLegend: true,
+            colorByPoint: false,
+            data: [10]
+        }]
+    });
 
+    assert.strictEqual(
+        chart.legend.allItems[0].legendSymbol.element.getAttribute('fill'),
+        chart.series[0].points[0].graphic.element.getAttribute('fill'),
+        'Series legend item: color taken from series'
+    );
+});
 
+QUnit.test('Solid gauge null point (#10630)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        series: [{
+            data: [null]
+        }]
+    });
 
+    assert.strictEqual(
+        chart.series[0].points[0].graphic,
+        undefined,
+        'Series legend item: color taken from series'
+    );
 });

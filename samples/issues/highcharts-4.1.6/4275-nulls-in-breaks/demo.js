@@ -47,7 +47,6 @@ $(function () {
         );
 
 
-
         chart = $('#container').highcharts({
             title: {
                 text: 'Sample of a simple break'

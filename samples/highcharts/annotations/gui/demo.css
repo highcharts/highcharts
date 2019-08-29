@@ -1,17 +1,55 @@
-#container {
-	max-width: 800px;
-	margin: 0 auto;
+/* FULL SCREEN */
+.chart:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
 }
 
-fieldset {
-  margin-bottom: 10px;
-  font-size: 12px;
+.chart:-moz-full-screen {
+  width: 100%;
+  height: 100%;
 }
 
-input[type="text"] {
-  width: 130px;
+.chart:-ms-fullscreen {
+  width: 100%;
+  height: 100%;
 }
 
-ul {
-  list-style-type: none;
+.chart:fullscreen {
+  width: 100%;
+  height: 100%;
 }
+
+/* GENERAL */
+.chart { float: left; height: 400px; position: relative; width: 100%; }
+.highcharts-draw-mode { cursor: crosshair; }
+.left { float:left; }
+.right, .highcharts-dropdown li.right { float:right; }
+
+/* GUI */
+.highcharts-dropdown { margin: 0px 0px 0px 10px; padding: 0px; width:calc(100% - 63px); }
+.highcharts-dropdown li { background-color: #f7f7f7; background-repeat: no-repeat; cursor: pointer; float:left; height: 40px; list-style: none; margin-right:2px; margin-bottom: 3px; padding: 0px; position: relative; width: auto; }
+.highcharts-dropdown li ul { display: none; left: 0px; padding-left: 0px; position: absolute; z-index: 125; }
+.highcharts-dropdown li:hover { background-color:#e6ebf5; }
+.highcharts-dropdown li:hover ul { display:block; } 
+.highcharts-dropdown li ul li { margin-bottom: 0px; width:160px; }
+.highcharts-dropdown li > span.highcharts-menu-item-btn { background-repeat: no-repeat; background-position: 50% 50%; display: block; float: left; height: 100%; width: 40px; }
+.highcharts-dropdown li > .highcharts-menu-item-title { color:#666; line-height: 40px; font-size:0.876em; padding:0px 10px 0px 5px; }
+
+.highcharts-label-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg'); } 
+.highcharts-circle-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg'); } 
+.highcharts-rectangle-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg'); } 
+
+li.highcharts-active { background-color: #e6ebf5; }
+
+/* Popup */
+.chart-wrapper { float:left; position: relative; width: 100%; }
+
+/* Responsive design */
+@media screen and (max-width: 1024px) {
+  .highcharts-dropdown li > .highcharts-menu-item-title { display:none; }
+  .highcharts-dropdown li ul li { width:auto; }
+}
+
+
+
+

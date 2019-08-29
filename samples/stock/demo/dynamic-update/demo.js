@@ -1,5 +1,3 @@
-
-
 // Create the chart
 Highcharts.stockChart('container', {
     chart: {
@@ -64,4 +62,3 @@ Highcharts.stockChart('container', {
         }())
     }]
 });
-

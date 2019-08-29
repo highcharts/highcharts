@@ -6,13 +6,13 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
         Highcharts.css(table.querySelector('table'), {
             'border-collapse': 'collapse',
             'border-spacing': 0,
-            'background': 'white',
+            background: 'white',
             'min-width': '100%',
             'font-family': 'sans-serif',
             'font-size': '14px'
         });
 
-        table.querySelectorAll('td, th, caption').forEach(function (elem) {
+        [].forEach.call(table.querySelectorAll('td, th, caption'), function (elem) {
             Highcharts.css(elem, {
                 border: '1px solid silver',
                 padding: '0.5em'
@@ -25,7 +25,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
             'font-weight': 'bold'
         });
 
-        table.querySelectorAll('caption, tr').forEach(function (elem, i) {
+        [].forEach.call(table.querySelectorAll('caption, tr'), function (elem, i) {
             if (i % 2) {
                 Highcharts.css(elem, {
                     background: '#f8f8f8'

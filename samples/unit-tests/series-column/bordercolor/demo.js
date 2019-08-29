@@ -1,5 +1,3 @@
-
-
 QUnit.test('Individual border color', function (assert) {
 
     var chart = Highcharts.chart('container', {

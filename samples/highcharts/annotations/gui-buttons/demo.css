@@ -1,0 +1,24 @@
+/* GENERAL */
+.chart { float: left; height: 400px; position: relative; width: 100%; }
+.highcharts-draw-mode { cursor: crosshair; }
+
+/* GUI */
+.highcharts-bindings-wrapper { margin: 0px 0px 0px 10px; padding: 0px; width:calc(100% - 63px); }
+.highcharts-bindings-wrapper { background-repeat: no-repeat; cursor: pointer; float:left; height: 40px; list-style: none; margin-right:2px; margin-bottom: 3px; padding: 0px; position: relative; width: auto; }
+.highcharts-button { display: inline-block; background-color: #f7f7f7;  }
+.highcharts-menu-item-btn:hover { background-color:#e6ebf5; }
+.highcharts-menu-item-btn { background-repeat: no-repeat; background-position: 50% 50%; display: inline-block; float: left; height: 40px; width: 40px; }
+.highcharts-menu-item-title { color:#666; line-height: 40px; font-size:0.876em; padding:0px 10px 0px 5px; float: right; }
+
+.highcharts-label-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg'); } 
+.highcharts-circle-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg'); } 
+.highcharts-rectangle-annotation .highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg'); } 
+
+.highcharts-active { background-color: #e6ebf5; }
+
+/* Popup */
+.chart-wrapper { float:left; position: relative; width: 100%; }
+
+
+
+

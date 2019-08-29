@@ -1,57 +1,56 @@
-
 QUnit.test('Destroy map', function (assert) {
 
     // Test data
     var data = [
         {
-            "code": "AF",
-            "value": 53,
-            "name": "Afghanistan"
+            code: "AF",
+            value: 53,
+            name: "Afghanistan"
         },
         {
-            "code": "AL",
-            "value": 117,
-            "name": "Albania"
+            code: "AL",
+            value: 117,
+            name: "Albania"
         },
         {
-            "code": "DZ",
-            "value": 15,
-            "name": "Algeria"
+            code: "DZ",
+            value: 15,
+            name: "Algeria"
         },
         {
-            "code": "AS",
-            "value": 342,
-            "name": "American Samoa"
+            code: "AS",
+            value: 342,
+            name: "American Samoa"
         },
         {
-            "code": "AD",
-            "value": 181,
-            "name": "Andorra"
+            code: "AD",
+            value: 181,
+            name: "Andorra"
         },
         {
-            "code": "AO",
-            "value": 15,
-            "name": "Angola"
+            code: "AO",
+            value: 15,
+            name: "Angola"
         },
         {
-            "code": "AI",
-            "value": 202,
-            "name": "Antigua and Barbuda"
+            code: "AI",
+            value: 202,
+            name: "Antigua and Barbuda"
         },
         {
-            "code": "AR",
-            "value": 15,
-            "name": "Argentina"
+            code: "AR",
+            value: 15,
+            name: "Argentina"
         },
         {
-            "code": "AM",
-            "value": 109,
-            "name": "Armenia"
+            code: "AM",
+            value: 109,
+            name: "Armenia"
         },
         {
-            "code": "AW",
-            "value": 597,
-            "name": "Aruba"
+            code: "AW",
+            value: 597,
+            name: "Aruba"
         }
     ];
 

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": false,
+    "declaration": false,
+    "esModuleInterop": true,
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "module": "es6",
+    "outDir": "../js",
+    "rootDir": ".",
+    "target": "es5"
+  },
+  "include": [
+      "**/*.ts"
+  ]
+}

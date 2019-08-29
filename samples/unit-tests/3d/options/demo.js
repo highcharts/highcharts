@@ -1,4 +1,3 @@
-
 QUnit.test('General options tests', function (assert) {
     Highcharts.chart('container', {
         chart: {

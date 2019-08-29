@@ -1,4 +1,3 @@
-
 QUnit.test('Positioning labels according to real points', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
@@ -49,7 +48,7 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     var p1 = chart.series[0].data[0],
         x1 = xAxis.toPixels(p1.x),
         y1 = yAxis.toPixels(p1.y),
-        label1 = chart.annotations[0].labels[0];
+        label1 = chart.annotations[0].labels[0].graphic;
 
     assert.strictEqual(Math.round(label1.x), Math.round(x1), 'x position - left aligned with no offset');
     assert.strictEqual(Math.round(label1.y), Math.round(y1), 'y position - top aligned with no offset');
@@ -57,20 +56,20 @@ QUnit.test('Positioning labels according to real points', function (assert) {
     var p2 = chart.series[0].data[1],
         x2 = Math.round(xAxis.toPixels(p2.x) + 20),
         y2 = Math.round(yAxis.toPixels(p2.y) - 20),
-        label2 = chart.annotations[0].labels[1];
+        label2 = chart.annotations[0].labels[1].graphic;
 
     assert.strictEqual(Math.round(label2.x), x2, 'x position - left aligned with x offset');
     assert.strictEqual(Math.round(label2.y), y2, 'y position - top aligned with y offset');
 
     var p3 = chart.series[0].data[2],
-        label3 = chart.annotations[0].labels[2],
+        label3 = chart.annotations[0].labels[2].graphic,
         x3 = Math.round(xAxis.toPixels(p3.x) - Math.round(label3.width / 2)),
         y3 = Math.round(yAxis.toPixels(p3.y) - label3.height - 20);
 
     assert.close(Math.round(label3.x), x3, 2, 'x position - distance');
     assert.close(Math.round(label3.y), y3, 1, 'y position - distance');
 
-    var label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3].graphic,
         x4 = 0,
         y4 = 0;
 
@@ -133,7 +132,7 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     var p1 = chart.series[0].data[0],
         x1 = yAxis.toPixels(p1.y),
         y1 = xAxis.toPixels(p1.x),
-        label1 = chart.annotations[0].labels[0];
+        label1 = chart.annotations[0].labels[0].graphic;
 
     assert.strictEqual(Math.round(label1.x), Math.round(x1), 'x position - left aligned with no offset');
     assert.strictEqual(Math.round(label1.y), Math.round(y1), 'y position - top aligned with no offset');
@@ -142,14 +141,14 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     var p2 = chart.series[0].data[1],
         x2 = Math.round(yAxis.toPixels(p2.y) + 20),
         y2 = Math.round(xAxis.toPixels(p2.x) - 20),
-        label2 = chart.annotations[0].labels[1];
+        label2 = chart.annotations[0].labels[1].graphic;
 
     assert.strictEqual(Math.round(label2.x), x2, 'x position - left aligned with x offset');
     assert.strictEqual(Math.round(label2.y), y2, 'y position - top aligned with y offset');
 
 
     var p3 = chart.series[0].data[2],
-        label3 = chart.annotations[0].labels[2],
+        label3 = chart.annotations[0].labels[2].graphic,
         x3 = Math.round(yAxis.toPixels(p3.y) + 20),
         y3 = Math.round(Math.round(xAxis.toPixels(p3.x)) - label3.height / 2);
 
@@ -157,7 +156,7 @@ QUnit.test('Positioning labels according to real points - inverted chart', funct
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
 
-    var label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3].graphic,
         x4 = 20,
         y4 = 20;
 
@@ -233,7 +232,7 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
         xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0];
 
-    var label1 = chart.annotations[0].labels[0],
+    var label1 = chart.annotations[0].labels[0].graphic,
         x1 = Math.round(xAxis.toPixels(p1.x) - label1.width),
         y1 = Math.round(yAxis.toPixels(p1.y) - label1.height);
 
@@ -241,7 +240,7 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
     assert.strictEqual(Math.round(label1.y), y1, 'y position - bottom aligned with no offset');
 
 
-    var label2 = chart.annotations[0].labels[1],
+    var label2 = chart.annotations[0].labels[1].graphic,
         x2 = Math.round(xAxis.toPixels(p2.x) - label2.width / 2 + 5),
         y2 = Math.round(chart.plotTop + p2.y - label2.height / 2 - 20);
 
@@ -249,7 +248,7 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
     assert.strictEqual(Math.round(label2.y), y2, 'y position - middle aligned with offset');
 
 
-    var label3 = chart.annotations[0].labels[2],
+    var label3 = chart.annotations[0].labels[2].graphic,
         x3 = Math.round(chart.plotLeft + p3.x - label3.width / 2),
         y3 = Math.round(chart.plotTop + p3.y - label3.height - 20);
 
@@ -257,7 +256,7 @@ QUnit.test('Positioning labels according to mock points', function (assert) {
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
 
-    var label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3].graphic,
         x4 = 50,
         y4 = 80;
 
@@ -337,7 +336,7 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
         xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0];
 
-    var label1 = chart.annotations[0].labels[0],
+    var label1 = chart.annotations[0].labels[0].graphic,
         x1 = Math.round(yAxis.toPixels(p1.y) - label1.width),
         y1 = Math.round(xAxis.toPixels(p1.x) - label1.height);
 
@@ -345,7 +344,7 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
     assert.strictEqual(Math.round(label1.y), y1, 'y position - bottom aligned with no offset');
 
 
-    var label2 = chart.annotations[0].labels[1],
+    var label2 = chart.annotations[0].labels[1].graphic,
         x2 = Math.round(chart.plotLeft + p2.y - label2.width / 2 + 5),
         y2 = Math.round(xAxis.toPixels(p2.x) - label2.height / 2 - 20);
 
@@ -353,7 +352,7 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
     assert.strictEqual(Math.round(label2.y), y2, 'y position - middle aligned with offset');
 
 
-    var label3 = chart.annotations[0].labels[2],
+    var label3 = chart.annotations[0].labels[2].graphic,
         x3 = Math.round(chart.plotLeft + p3.y + 20),
         y3 = Math.round(chart.plotTop + p3.x - label3.height / 2);
 
@@ -361,7 +360,7 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
     assert.strictEqual(Math.round(label3.y), y3, 'y position - distance');
 
 
-    var label4 = chart.annotations[0].labels[3],
+    var label4 = chart.annotations[0].labels[3].graphic,
         x4 = 200,
         y4 = 250;
 

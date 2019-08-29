@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Handles should not be overlapped by xAxis labels", function (assert) {
         var chart = $('#container').highcharts('StockChart', {

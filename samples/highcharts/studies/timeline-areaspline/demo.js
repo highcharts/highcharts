@@ -1,5 +1,3 @@
-
-
 var dataSequence = [{
     name: 'Week 1',
     data: [1, 2, 2, 1, 1, 2, 2]
@@ -49,7 +47,7 @@ var chart = Highcharts.chart('container', {
         y: 50,
         floating: true,
         borderWidth: 1,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor: '#FFFFFF'
     },
     xAxis: {
         categories: [

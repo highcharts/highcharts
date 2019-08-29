@@ -1,5 +1,5 @@
 $(function () {
-           // create the chart
+    // create the chart
     $('#container').highcharts('StockChart', {
 
         chart: {

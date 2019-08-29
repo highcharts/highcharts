@@ -1,4 +1,3 @@
-
 var data = usdeur.splice(0, 500);
 
 

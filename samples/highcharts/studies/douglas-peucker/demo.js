@@ -1,5 +1,3 @@
-
-
 function simplifyPath(data, epsilon) {
     function douglasPecker(data, epsilon) {
         if (data.length <= 2) {

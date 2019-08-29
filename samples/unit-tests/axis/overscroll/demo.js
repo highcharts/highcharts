@@ -98,6 +98,7 @@ Highcharts.each([true, false], function (ordinal) {
         chart.scrollbar.buttonToMinClick(event);
         chart.scrollbar.buttonToMinClick(event);
 
+        // No lolex should be needed here
         setTimeout(function () {
             // Scrollbar button calls setExtremes with timeout(0):
             assert.strictEqual(
@@ -126,5 +127,20 @@ Highcharts.each([true, false], function (ordinal) {
             'Correct range with ALL'
         );
     });
-});
 
+    QUnit.test('Ordinal: ' + ordinal + ' - Extremes for even data', function (assert) {
+        var options = getOptions(),
+            xAxis;
+
+        options.rangeSelector.selected = null;
+        options.xAxis.overscroll = options.navigator.xAxis.overscroll = 100;
+
+        xAxis = Highcharts.stockChart('container', options).xAxis[0];
+
+        assert.strictEqual(
+            xAxis.tickPositions[1] - xAxis.tickPositions[0],
+            20,
+            'Correct ticks (#9160)'
+        );
+    });
+});

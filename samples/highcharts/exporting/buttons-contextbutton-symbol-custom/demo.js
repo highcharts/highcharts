@@ -1,4 +1,3 @@
-
 Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
     var path = [
         // Arrow stem

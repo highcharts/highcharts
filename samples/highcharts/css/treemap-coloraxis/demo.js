@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    chart: {
+        styledMode: true
+    },
     colorAxis: {
         min: 1,
         max: 6,

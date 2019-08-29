@@ -1,5 +1,5 @@
 Highcharts.chart('container', {
-    pathfinder: {
+    connectors: {
         marker: {
             enabled: true
         },

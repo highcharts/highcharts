@@ -76,7 +76,7 @@ QUnit.test('Path animation', function (assert) {
         var path = ren.path(['M', 10, 30, 'L', 10, 100])
             .attr({
                 'stroke-width': 2,
-                'stroke': 'blue'
+                stroke: 'blue'
             })
             .add();
 
@@ -100,8 +100,32 @@ QUnit.test('Path animation', function (assert) {
                 'M 300 30 L 300 400',
                 'First animation aborted by shorter second animation'
             );
-            document.body.removeChild(div);
         }, 1500);
+
+
+        setTimeout(function () {
+            path.startX = [1800, 3600];
+            path.attr({
+                d: ['M', 400, 120, 'L', 700, 120]
+            });
+            path.endX = [2349, 3600];
+
+            path.animate({
+                d: ['M', 200, 120, 'L', 700, 120]
+            }, {
+                duration: 300
+            });
+        }, 1700);
+
+        setTimeout(function () {
+            // console.log('M 200 120 L 700 120', path.attr('d'));
+            assert.notEqual(
+                path.attr('d'),
+                'M 200 120 L 700 120',
+                'Path is animating, not changing immediately (#10696).'
+            );
+            document.body.removeChild(div);
+        }, 1900);
 
         // Reset animation
         TestUtilities.lolexRunAndUninstall(clock);
@@ -606,10 +630,10 @@ QUnit.test('3D arc animation (#7097)', function (assert) {
             alpha: 45,
             beta: 10
         })
-        .attr({
-            fill: '#f00ff0'
-        })
-        .add();
+            .attr({
+                fill: '#f00ff0'
+            })
+            .add();
 
         arc.animate({
             end: 5
@@ -735,10 +759,10 @@ QUnit.test('Animation and text alignment', function (assert) {
 
         var btn,
             ren = new Highcharts.Renderer(
-            document.getElementById('container'),
-            400,
-            400
-        );
+                document.getElementById('container'),
+                400,
+                400
+            );
 
         var box = {
             x: 10,
@@ -749,7 +773,7 @@ QUnit.test('Animation and text alignment', function (assert) {
 
         ren.rect(box)
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();

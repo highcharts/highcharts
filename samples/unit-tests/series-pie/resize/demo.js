@@ -1,5 +1,3 @@
-
-
 QUnit.test('Redraw with dirty box', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

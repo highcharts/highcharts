@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Sample of a simple break'

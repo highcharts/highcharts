@@ -1,40 +1,30 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    each = H.each,
-    extend = H.extend,
-    merge = H.merge,
-    pick = H.pick,
-    Renderer = H.Renderer,
-    SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer;
-
-
+var Chart = H.Chart, defaultOptions = H.defaultOptions, extend = H.extend, merge = H.merge, pick = H.pick, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out'
 });
-
-
 // Set the default map navigation options
-
 /**
- * @product highmaps
+ * @product      highmaps
  * @optionparent mapNavigation
  */
 defaultOptions.mapNavigation = {
-
     /**
      * General options for the map navigation buttons. Individual options
      * can be given from the [mapNavigation.buttons](#mapNavigation.buttons)
@@ -42,109 +32,58 @@ defaultOptions.mapNavigation = {
      *
      * @sample {highmaps} maps/mapnavigation/button-theme/
      *         Theming the navigation buttons
-     *
-     * @type       {*}
-     * @product    highmaps
-     * @apioption  mapNavigation.buttonOptions
      */
     buttonOptions: {
-
         /**
          * What box to align the buttons to. Possible values are `plotBox`
          * and `spacingBox`.
          *
-         * @type       {string}
-         * @default    plotBox
-         * @product    highmaps
-         * @validvalue ["plotBox", "spacingBox"]
-         * @apioption  mapNavigation.buttonOptions.alignTo
+         * @type {Highcharts.ButtonRelativeToValue}
          */
         alignTo: 'plotBox',
-
         /**
          * The alignment of the navigation buttons.
          *
-         * @type       {string}
-         * @default    left
-         * @product    highmaps
-         * @validvalue ["left", "center", "right"]
-         * @apioption  mapNavigation.buttonOptions.align
+         * @type {Highcharts.AlignValue}
          */
         align: 'left',
-
         /**
          * The vertical alignment of the buttons. Individual alignment can
          * be adjusted by each button's `y` offset.
          *
-         * @type       {string}
-         * @default    bottom
-         * @product    highmaps
-         * @validvalue ["top", "middle", "bottom"]
-         * @apioption  mapNavigation.buttonOptions.verticalAlign
+         * @type {Highcharts.VerticalAlignValue}
          */
         verticalAlign: 'top',
-
         /**
          * The X offset of the buttons relative to its `align` setting.
-         *
-         * @type       {number}
-         * @default    0
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.x
          */
         x: 0,
-
         /**
          * The width of the map navigation buttons.
-         *
-         * @type       {number}
-         * @default    18
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.width
          */
         width: 18,
-
         /**
          * The pixel height of the map navigation buttons.
-         *
-         * @type       {number}
-         * @default    18
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.height
          */
         height: 18,
-
         /**
          * Padding for the navigation buttons.
          *
-         * @type       {number}
-         * @default    5
-         * @since      5.0.0
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.padding
+         * @since 5.0.0
          */
         padding: 5,
-
-        /*= if (build.classic) { =*/
-
         /**
-         * Text styles for the map navigation buttons. Defaults to
+         * Text styles for the map navigation buttons.
          *
-         * <pre>{
-         *     fontSize: '15px',
-         *     fontWeight: 'bold',
-         *     textAlign: 'center'
-         * }</pre>
-         *
-         * @type       {Highcharts.CSSObject}
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.style
+         * @type    {Highcharts.CSSObject}
+         * @default {"fontSize": "15px", "fontWeight": "bold"}
          */
         style: {
+            /** @ignore */
             fontSize: '15px',
+            /** @ignore */
             fontWeight: 'bold'
         },
-
         /**
          * A configuration object for the button theme. The object accepts
          * SVG properties like `stroke-width`, `stroke` and `fill`. Tri-state
@@ -154,18 +93,16 @@ defaultOptions.mapNavigation = {
          * @sample {highmaps} maps/mapnavigation/button-theme/
          *         Themed navigation buttons
          *
-         * @type       {*}
-         * @product    highmaps
-         * @apioption  mapNavigation.buttonOptions.theme
+         * @type    {Highcharts.SVGAttributes}
+         * @default {"stroke-width": 1, "text-align": "center"}
          */
         theme: {
+            /** @ignore */
             'stroke-width': 1,
+            /** @ignore */
             'text-align': 'center'
         }
-
-        /*= } =*/
     },
-
     /**
      * The individual buttons for the map navigation. This usually includes
      * the zoom in and zoom out buttons. Properties for each button is
@@ -173,13 +110,8 @@ defaultOptions.mapNavigation = {
      * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
      * individual options can be overridden. But default, the `onclick`, `text`
      * and `y` options are individual.
-     *
-     * @type        {*}
-     * @product     highmaps
-     * @apioptions  mapNavigation.buttons
      */
     buttons: {
-
         /**
          * Options for the zoom in button. Properties for the zoom in and zoom
          * out buttons are inherited from
@@ -187,48 +119,30 @@ defaultOptions.mapNavigation = {
          * individual options can be overridden. By default, the `onclick`,
          * `text` and `y` options are individual.
          *
-         * @type        {*}
-         * @extends     mapNavigation.buttonOptions
-         * @product     highmaps
-         * @apioptions  mapNavigation.buttons.zoomIn
+         * @extends mapNavigation.buttonOptions
          */
         zoomIn: {
-
+            // eslint-disable-next-line valid-jsdoc
             /**
-             * Click handler for the button. Defaults to:
+             * Click handler for the button.
              *
-             * <pre>function () {
-             * this.mapZoom(0.5);
-             * }</pre>
-             *
-             * @type {Function}
-             * @product highmaps
+             * @type    {Function}
+             * @default function () { this.mapZoom(0.5); }
              */
             onclick: function () {
                 this.mapZoom(0.5);
             },
-
             /**
              * The text for the button. The tooltip (title) is a language option
              * given by [lang.zoomIn](#lang.zoomIn).
-             *
-             * @type {String}
-             * @default +
-             * @product highmaps
              */
             text: '+',
-
             /**
              * The position of the zoomIn button relative to the vertical
              * alignment.
-             *
-             * @type {Number}
-             * @default 0
-             * @product highmaps
              */
             y: 0
         },
-
         /**
          * Options for the zoom out button. Properties for the zoom in and
          * zoom out buttons are inherited from
@@ -236,58 +150,38 @@ defaultOptions.mapNavigation = {
          * individual options can be overridden. By default, the `onclick`,
          * `text` and `y` options are individual.
          *
-         * @type        {*}
-         * @extends     mapNavigation.buttonOptions
-         * @product     highmaps
-         * @apioptions  mapNavigation.buttons.zoomOut
+         * @extends mapNavigation.buttonOptions
          */
         zoomOut: {
-
+            // eslint-disable-next-line valid-jsdoc
             /**
-             * Click handler for the button. Defaults to:
+             * Click handler for the button.
              *
-             * <pre>function () {
-             *     this.mapZoom(2);
-             * }</pre>
-             *
-             * @type {Function}
-             * @product highmaps
+             * @type    {Function}
+             * @default function () { this.mapZoom(2); }
              */
             onclick: function () {
                 this.mapZoom(2);
             },
-
             /**
              * The text for the button. The tooltip (title) is a language option
              * given by [lang.zoomOut](#lang.zoomIn).
-             *
-             * @type {String}
-             * @default -
-             * @product highmaps
              */
             text: '-',
-
             /**
              * The position of the zoomOut button relative to the vertical
              * alignment.
-             *
-             * @type {Number}
-             * @default 28
-             * @product highmaps
              */
             y: 28
         }
     },
-
     /**
      * Whether to enable navigation buttons. By default it inherits the
      * [enabled](#mapNavigation.enabled) setting.
      *
-     * @type       {boolean}
-     * @product    highmaps
-     * @apioption  mapNavigation.enableButtons
+     * @type      {boolean}
+     * @apioption mapNavigation.enableButtons
      */
-
     /**
      * Whether to enable map navigation. The default is not to enable
      * navigation, as many choropleth maps are simple and don't need it.
@@ -299,42 +193,34 @@ defaultOptions.mapNavigation = {
      * multitouch zoom, double click zoom, double click zoom to element and
      * mousewheel zoom.
      *
-     * @type       {boolean}
-     * @default    false
-     * @product    highmaps
-     * @apioption  mapNavigation.enabled
+     * @type      {boolean}
+     * @default   false
+     * @apioption mapNavigation.enabled
      */
-
     /**
      * Enables zooming in on an area on double clicking in the map. By default
      * it inherits the [enabled](#mapNavigation.enabled) setting.
      *
-     * @type       {boolean}
-     * @product    highmaps
-     * @apioption  mapNavigation.enableDoubleClickZoom
+     * @type      {boolean}
+     * @apioption mapNavigation.enableDoubleClickZoom
      */
-
     /**
      * Whether to zoom in on an area when that area is double clicked.
      *
      * @sample {highmaps} maps/mapnavigation/doubleclickzoomto/
      *         Enable double click zoom to
      *
-     * @type       {boolean}
-     * @default    false
-     * @product    highmaps
-     * @apioption  mapNavigation.enableDoubleClickZoomTo
+     * @type      {boolean}
+     * @default   false
+     * @apioption mapNavigation.enableDoubleClickZoomTo
      */
-
     /**
      * Enables zooming by mouse wheel. By default it inherits the [enabled](
      * #mapNavigation.enabled) setting.
      *
-     * @type       {boolean}
-     * @product    highmaps
-     * @apioption  mapNavigation.enableMouseWheelZoom
+     * @type      {boolean}
+     * @apioption mapNavigation.enableMouseWheelZoom
      */
-
     /**
      * Whether to enable multitouch zooming. Note that if the chart covers the
      * viewport, this prevents the user from using multitouch and touchdrag on
@@ -342,20 +228,14 @@ defaultOptions.mapNavigation = {
      * chart. By default it inherits the [enabled](#mapNavigation.enabled)
      * setting.
      *
-     * @type       {boolean}
-     * @product    highmaps
-     * @apioption  mapNavigation.enableTouchZoom
+     * @type      {boolean}
+     * @apioption mapNavigation.enableTouchZoom
      */
-
     /**
      * Sensitivity of mouse wheel or trackpad scrolling. 1 is no sensitivity,
      * while with 2, one mousewheel delta will zoom in 50%.
      *
-     * @type       {number}
-     * @default    1.1
-     * @since      4.2.4
-     * @product    highmaps
-     * @apioption  mapNavigation.mouseWheelSensitivity
+     * @since 4.2.4
      */
     mouseWheelSensitivity: 1.1
     // enabled: false,
@@ -365,27 +245,27 @@ defaultOptions.mapNavigation = {
     // enableDoubleClickZoomTo: false
     // enableMouseWheelZoom: null, // inherit from enabled
 };
-
+/* eslint-disable valid-jsdoc */
 /**
  * Utility for reading SVG paths directly.
  *
+ * @requires module:modules/map
+ *
  * @function Highcharts.splitPath
  *
- * @param  {string} path
+ * @param {string} path
  *
- * @return {Array<number|string>}
+ * @return {Highcharts.SVGPathArray}
  */
 H.splitPath = function (path) {
     var i;
-
     // Move letters apart
     path = path.replace(/([A-Za-z])/g, ' $1 ');
     // Trim
     path = path.replace(/^\s*/, '').replace(/\s*$/, '');
-
     // Split on spaces and commas
-    path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
-
+    // Extra comma to escape gulp.scripts task
+    path = path.split(/[ ,,]+/);
     // Parse numbers
     for (i = 0; i < path.length; i++) {
         if (!/[a-zA-Z]/.test(path[i])) {
@@ -394,25 +274,20 @@ H.splitPath = function (path) {
     }
     return path;
 };
-
-// A placeholder for map definitions
+/**
+ * Contains all loaded map data for Highmaps.
+ *
+ * @requires module:modules/map
+ *
+ * @name Highcharts.maps
+ * @type {Highcharts.Dictionary<*>}
+ */
 H.maps = {};
-
-
-
-
-
-// Create symbols for the zoom buttons
-function selectiveRoundedRect(
-    x,
-    y,
-    w,
-    h,
-    rTopLeft,
-    rTopRight,
-    rBottomRight,
-    rBottomLeft
-) {
+/**
+ * Create symbols for the zoom buttons
+ * @private
+ */
+function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
     return [
         'M', x + rTopLeft, y,
         // top side
@@ -452,100 +327,80 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
-    each(['topbutton', 'bottombutton'], function (shape) {
+    ['topbutton', 'bottombutton'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] =
             SVGRenderer.prototype.symbols[shape];
     });
 }
-
-
 /**
- * The factory function for creating new map charts. Creates a new {@link Chart|
- * Chart} object with different default options than the basic Chart.
+ * The factory function for creating new map charts. Creates a new {@link
+ * Highcharts.Chart|Chart} object with different default options than the basic
+ * Chart.
+ *
+ * @requires module:modules/map
  *
  * @function Highcharts.mapChart
  *
- * @param  {string|Highcharts.HTMLDOMElement} [renderTo]
- *         The DOM element to render to, or its id.
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+ *        The DOM element to render to, or its id.
  *
- * @param  {Highcharts.Options} options
- *         The chart options structure as described in the {@link
- *         https://api.highcharts.com/highstock|options reference}.
+ * @param {Highcharts.Options} options
+ *        The chart options structure as described in the
+ *        [options reference](https://api.highcharts.com/highstock).
  *
- * @param  {Function} callback
- *         A function to execute when the chart object is finished loading and
- *         rendering. In most cases the chart is built in one thread, but in
- *         Internet Explorer version 8 or less the chart is sometimes
- *         initialized before the document is ready, and in these cases the
- *         chart object will not be finished synchronously. As a consequence,
- *         code that relies on the newly built Chart object should always run in
- *         the callback. Defining a
- *         {@link https://api.highcharts.com/highstock/chart.events.load|
- *         chart.event.load} handler is equivalent.
+ * @param {Highcharts.ChartCallbackFunction} [callback]
+ *        A function to execute when the chart object is finished loading and
+ *        rendering. In most cases the chart is built in one thread, but in
+ *        Internet Explorer version 8 or less the chart is sometimes
+ *        initialized before the document is ready, and in these cases the
+ *        chart object will not be finished synchronously. As a consequence,
+ *        code that relies on the newly built Chart object should always run in
+ *        the callback. Defining a
+ *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
+ *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
  *         The chart object.
  */
 H.Map = H.mapChart = function (a, b, c) {
-
-    var hasRenderToArg = typeof a === 'string' || a.nodeName,
-        options = arguments[hasRenderToArg ? 1 : 0],
-        hiddenAxis = {
-            endOnTick: false,
-            visible: false,
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false
-        },
-        seriesOptions,
-        defaultCreditsOptions = H.getOptions().credits;
-
+    var hasRenderToArg = typeof a === 'string' || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, hiddenAxis = {
+        endOnTick: false,
+        visible: false,
+        minPadding: 0,
+        maxPadding: 0,
+        startOnTick: false
+    }, seriesOptions, defaultCreditsOptions = H.getOptions().credits;
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
     hiddenAxis.gridZIndex = 10;
     hiddenAxis.tickPositions = undefined;
     // */
-
     // Don't merge the data
     seriesOptions = options.series;
     options.series = null;
-
-    options = merge(
-        {
-            chart: {
-                panning: 'xy',
-                type: 'map'
-            },
-            credits: {
-                mapText: pick(
-                    defaultCreditsOptions.mapText,
-                    ' \u00a9 <a href="{geojson.copyrightUrl}">' +
-                        '{geojson.copyrightShort}</a>'
-                ),
-                mapTextFull: pick(
-                    defaultCreditsOptions.mapTextFull,
-                    '{geojson.copyright}'
-                )
-            },
-            tooltip: {
-                followTouchMove: false
-            },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
+    options = merge({
+        chart: {
+            panning: 'xy',
+            type: 'map'
         },
-        options, // user's options
-
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
-            }
+        credits: {
+            mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">' +
+                '{geojson.copyrightShort}</a>'),
+            mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        xAxis: hiddenAxis,
+        yAxis: merge(hiddenAxis, { reversed: true })
+    }, options, // user's options
+    {
+        chart: {
+            inverted: false,
+            alignTicks: false
         }
-    );
-
-    options.series = seriesOptions;
-
-
+    });
+    options.series = userOptions.series = seriesOptions;
     return hasRenderToArg ?
         new Chart(a, options, c) :
         new Chart(options, b);

@@ -1,11 +1,11 @@
 /* global CodeMirror*/
 
 
-
 var chart = Highcharts.chart('container', {
 
     chart: {
-        type: 'column'
+        type: 'column',
+        styledMode: true
     },
 
     title: {
@@ -73,4 +73,3 @@ CodeMirror.fromTextArea(document.getElementById('pre'), {
     readOnly: true,
     viewportMargin: Infinity
 });
-

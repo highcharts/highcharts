@@ -1,21 +1,20 @@
-
 Highcharts.stockChart('container', {
-    "chart": {
-        "type": "line"
+    chart: {
+        type: "line"
     },
-    "navigator": {
-        "xAxis": {
-            "min": 1389266400000,
-            "max": 1389612055000
+    navigator: {
+        xAxis: {
+            min: 1389266400000,
+            max: 1389612055000
         }
     },
-    "xAxis": {
-        "ordinal": false,
-        "min": 1389266400000,
-        "max": 1389612055000
+    xAxis: {
+        ordinal: false,
+        min: 1389266400000,
+        max: 1389612055000
     },
-    "series": [{
-        "data": [
+    series: [{
+        data: [
             [
                 1389307013063,
                 75.9],

@@ -1,9 +1,8 @@
-
-
 Highcharts.chart('container', {
 
     chart: {
-        type: 'gauge'
+        type: 'gauge',
+        styledMode: true
     },
 
     title: {

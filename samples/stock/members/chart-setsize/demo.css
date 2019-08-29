@@ -8,6 +8,3 @@
 #inner-resizer { /* make room for the resize handle */
     padding: 10px;
 }
-#container {
-	height: 400px;
-}

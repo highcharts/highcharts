@@ -1,4 +1,3 @@
-
 QUnit.test('Drilldown across types', function (assert) {
 
     var chart = Highcharts
@@ -51,6 +50,7 @@ QUnit.test('Drilldown across types', function (assert) {
             drilldown: {
                 series: [{
                     id: 'animals',
+                    name: 'Animals series',
                     data: [
                         ['Cats', 4],
                         ['Dogs', 2],
@@ -87,7 +87,7 @@ QUnit.test('Drilldown across types', function (assert) {
 
     assert.equal(
         chart.series[0].name,
-        'Series 2',
+        'Animals series',
         'Second level name'
     );
 

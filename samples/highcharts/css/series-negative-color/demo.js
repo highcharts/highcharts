@@ -1,6 +1,8 @@
-
 Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
     title: {
         text: 'Monthly temperatures in a random cold place'
     },

@@ -37,7 +37,7 @@
                 height: 400,
                 spacing: [15, 15, 15, 15]
             },
-            pathfinder: {
+            connectors: {
                 animation: false
             },
 
@@ -45,7 +45,7 @@
             // bottom, left, right and all cordners, and connect them to the
             // center
             series: [{
-                pathfinder: {
+                connectors: {
                     marker: {
                         enabled: true
                     }
@@ -252,7 +252,7 @@
         var error = 0.1,
             chart,
             series = squareChartConfig.series[0],
-            opts = series.pathfinder,
+            opts = series.connectors,
             aligns = ['left', 'center', 'right'],
             verticalAligns = ['top', 'middle', 'bottom'];
 
@@ -366,7 +366,7 @@
         var pathWithoutMarkers,
             pathWithMarkers,
             chart = Highcharts.chart('container', {
-                pathfinder: {
+                connectors: {
                     animation: false
                 },
                 series: [{
@@ -381,7 +381,7 @@
                         connect: 'one-one'
                     }]
                 }, {
-                    pathfinder: {
+                    connectors: {
                         marker: {
                             enabled: true
                         }
@@ -399,9 +399,11 @@
             });
 
         pathWithoutMarkers = connectionFromPoint(
-            chart.series[0].points[0]).graphics;
+            chart.series[0].points[0]
+        ).graphics;
         pathWithMarkers = connectionFromPoint(
-            chart.series[1].points[0]).graphics;
+            chart.series[1].points[0]
+        ).graphics;
 
         assert.ok(
             typeof pathWithoutMarkers.start === 'undefined' &&
@@ -414,5 +416,35 @@
                 typeof pathWithMarkers.end === 'object',
             'Start and End markers are appplied when enabled'
         );
+    });
+
+    QUnit.module('pathfinderAlgorithms', () => {
+        const { algorithms } = Highcharts.Pathfinder.prototype;
+
+        QUnit.test('simpleConnect', assert => {
+            const { simpleConnect } = algorithms;
+            const options = {
+                chartObstacles: [
+                    { xMin: -33.5, xMax: 611.5, yMin: -20.5, yMax: 71.5 },
+                    { xMin: 613.5, xMax: 705.5, yMin: -20.5, yMax: 71.5 }
+                ],
+                startDirectionX: true
+            };
+            assert.deepEqual(
+                simpleConnect(
+                    { x: 647.5, y: 25.5 },
+                    { x: 577.5, y: 25.5 },
+                    options
+                ).path,
+                [
+                    'M', 647.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 577.5, 25.5
+                ],
+                'should not switch direction when waypoint equals start or end. #10329.'
+            );
+        });
     });
 }());

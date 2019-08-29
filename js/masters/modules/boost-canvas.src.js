@@ -1,8 +1,11 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/boost-canvas
+ * @requires highcharts
+ *
  * Boost module
  *
- * (c) 2010-2017 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license

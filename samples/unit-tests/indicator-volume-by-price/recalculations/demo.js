@@ -145,7 +145,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     indicator.remove();
     assert.ok(
-        Highcharts.inArray(chart.series, indicator) === -1,
+        chart.series.indexOf(indicator) === -1,
         'Indicator is removed after series remove.'
     );
 });

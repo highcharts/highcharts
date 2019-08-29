@@ -115,3 +115,39 @@ QUnit.test('Inside or outside plot area', function (assert) {
         'All valid points should be translated (#7507)'
     );
 });
+
+QUnit.test('Wind barb data grouping', assert => {
+    const approx = Highcharts.approximations.windbarb;
+
+    assert.deepEqual(
+        approx([1, 1], [0, 180]),
+        [1, 90],
+        'Same wind speed, opposite directions'
+    );
+
+    assert.deepEqual(
+        approx([0, 1], [180, 180]),
+        [0.5, 180],
+        'Wind speed should be averaged'
+    );
+
+    const grouped = approx([1, 2, 3], [10, 20, 30]);
+    assert.strictEqual(
+        grouped[0],
+        2,
+        'Wind speed should be averaged'
+    );
+    assert.close(
+        grouped[1],
+        23.34,
+        0.01,
+        'Wind direction should be weighted by speed'
+    );
+
+    assert.close(
+        approx([1, 1], [359, 1])[1],
+        0,
+        0.01,
+        'Direction should avearage across north'
+    );
+});

@@ -315,3 +315,28 @@ QUnit.test('button width', function (assert) {
         'rangeSelector'
     );
 });
+
+QUnit.test('Rangeselector update', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.update({
+        rangeSelector: {
+            buttons: [{
+                type: "all",
+                text: "All"
+            }]
+        }
+    });
+
+    assert.close(
+        chart.yAxis[0].axisGroup.getBBox().height,
+        240,
+        2,
+        'Range selector should have enough space'
+    );
+});

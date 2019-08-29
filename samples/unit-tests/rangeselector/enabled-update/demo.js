@@ -25,4 +25,3 @@ QUnit.test('RangeSelector enabled', function (assert) {
         'enabled'
     );
 });
-

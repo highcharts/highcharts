@@ -76,7 +76,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
 
             chart.renderer
                 .image(
-                    'https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/' +
+                    'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
                         meteogram.symbols[i] + '.svg',
                     point.plotX + chart.plotLeft - 8,
                     point.plotY + chart.plotTop - 30,
@@ -119,13 +119,13 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
         chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight + (isLong ? 0 : 28),
             'L', x, chart.plotTop + chart.plotHeight + 32, 'Z'])
             .attr({
-                'stroke': chart.options.chart.plotBorderColor,
+                stroke: chart.options.chart.plotBorderColor,
                 'stroke-width': 1
             })
             .add();
     }
 
-      // Center items in block
+    // Center items in block
     chart.get('windbarbs').markerGroup.attr({
         translateX: chart.get('windbarbs').markerGroup.translateX + 8
     });
@@ -162,8 +162,8 @@ Meteogram.prototype.getChartOptions = function () {
 
         defs: {
             patterns: [{
-                'id': 'precipitation-error',
-                'path': {
+                id: 'precipitation-error',
+                path: {
                     d: [
                         'M', 3.3, 0, 'L', -6.7, 10,
                         'M', 6.7, 0, 'L', -3.3, 10,
@@ -209,7 +209,7 @@ Meteogram.prototype.getChartOptions = function () {
             minorTickInterval: 36e5, // one hour
             tickLength: 0,
             gridLineWidth: 1,
-            gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0',
+            gridLineColor: 'rgba(128, 128, 128, 0.1)',
             startOnTick: false,
             endOnTick: false,
             minPadding: 0,
@@ -255,7 +255,7 @@ Meteogram.prototype.getChartOptions = function () {
             maxPadding: 0.3,
             minRange: 8,
             tickInterval: 1,
-            gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0'
+            gridLineColor: 'rgba(128, 128, 128, 0.1)'
 
         }, { // precipitation axis
             title: {
@@ -538,8 +538,7 @@ Meteogram.prototype.parseYrData = function () {
 // End of the Meteogram protype
 
 
-
- // On DOM ready...
+// On DOM ready...
 
 // Set the hash to the yr.no URL we want to parse
 var place,

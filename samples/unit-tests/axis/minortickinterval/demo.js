@@ -11,7 +11,7 @@ QUnit.test('Legacy - null', function (assert) {
             //minorTickInterval: null // default
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
 
@@ -40,7 +40,7 @@ QUnit.test('Legacy - auto, linear', function (assert) {
             minorTickInterval: 'auto'
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -63,7 +63,7 @@ QUnit.test('Legacy - number, linear', function (assert) {
             minorTickInterval: 0.5
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -90,7 +90,7 @@ QUnit.test('Legacy - auto, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -114,7 +114,7 @@ QUnit.test('Legacy - auto, deep log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1.001, 1.002, 1.003, 1.004]
+            data: [1.001, 1.002, 1.003, 1.004]
         }]
     });
     assert.strictEqual(
@@ -138,7 +138,7 @@ QUnit.test('Legacy - number, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -162,7 +162,7 @@ QUnit.test('Typed - null', function (assert) {
             //minorTickInterval: null // default
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
 
@@ -192,7 +192,7 @@ QUnit.test('Typed - minorTicks false', function (assert) {
             minorTicks: false
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
 
@@ -216,7 +216,7 @@ QUnit.test('Typed - auto, linear', function (assert) {
             minorTicks: true
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -240,7 +240,7 @@ QUnit.test('Typed - number, linear', function (assert) {
             minorTicks: true
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -267,7 +267,7 @@ QUnit.test('Typed - auto, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(
@@ -292,7 +292,7 @@ QUnit.test('Typed - auto, deep log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1.001, 1.002, 1.003, 1.004]
+            data: [1.001, 1.002, 1.003, 1.004]
         }]
     });
     assert.strictEqual(
@@ -317,7 +317,7 @@ QUnit.test('Typed - number, log', function (assert) {
             type: 'logarithmic'
         },
         series: [{
-            "data": [1, 2, 3, 4]
+            data: [1, 2, 3, 4]
         }]
     });
     assert.strictEqual(

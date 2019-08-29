@@ -47,6 +47,45 @@ QUnit.test("Categorized", function (assert) {
     $('#container').highcharts().destroy();
 });
 
+QUnit.test("Chart event", function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            events: {
+                exportData: function (event) {
+                    event.dataRows[2][0] = 'Apples';
+                    event.dataRows[2][1] = 4;
+                }
+            }
+        },
+        xAxis: {
+            title: {
+                text: 'Fruit'
+            },
+            type: 'category'
+        },
+        series: [{
+            type: 'line',
+            name: 'Number',
+            data: [
+                ['Bananas', 1],
+                ['Pears', 2],
+                ['Oranges', 3]
+            ]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            ['Fruit', 'Number'],
+            ['Bananas', 1],
+            ['Apples', 4],
+            ['Oranges', 3]
+        ],
+        '2 "Pears" should be replaced with 4 "Apples".'
+    );
+});
 
 QUnit.test("Named points", function (assert) {
     $('#container').highcharts({
@@ -198,7 +237,7 @@ QUnit.test("Numeric", function (assert) {
 
 
 QUnit.test("Pie chart", function (assert) {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         series: [{
             data: [
                 ['', 1], // #7404, missing name
@@ -215,11 +254,24 @@ QUnit.test("Pie chart", function (assert) {
         '"Oranges",3';
 
     assert.equal(
-        $('#container').highcharts().getCSV(),
+        chart.getCSV(),
         csv,
         "Pie chart"
     );
-    $('#container').highcharts().destroy();
+
+    chart.series[0].setData([['p1', 1], ['p1', 2]]);
+
+    csv = '"Category","Series 1"\n' +
+        '"p1",1\n' +
+        '"p1",2';
+
+    assert.equal(
+        chart.getCSV(),
+        csv,
+        "Pie chart/sunburst with the same names (#10737)."
+    );
+
+    chart.destroy();
 });
 
 
@@ -620,7 +672,7 @@ QUnit.test('Stock chart', function (assert) {
 
         navigator: {
             series: {
-                includeInCSVExport: false
+                includeInDataExport: false
             }
         },
         series: [{
@@ -802,5 +854,75 @@ QUnit.test('Boosted chart', function (assert) {
             [30, 4]
         ],
         'Boosted chart'
+    );
+});
+
+QUnit.test('Gantt chart', function (assert) {
+    var chart = Highcharts.ganttChart('container', {
+        title: {
+            text: 'Simple Gantt Chart'
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                id: 's',
+                name: 'Start prototype',
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 20)
+            }, {
+                id: 'b',
+                name: 'Develop',
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                dependency: 's'
+            }, {
+                id: 'a',
+                name: 'Run acceptance tests',
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+            }, {
+                name: 'Test prototype',
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 29),
+                dependency: ['a', 'b']
+            }]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            [
+                "DateTime",
+                "Project 1 (start)",
+                "Project 1 (end)",
+                "Project 1 (y)"
+            ],
+            [
+                "Start prototype",
+                "2014-11-18 00:00:00",
+                "2014-11-20 00:00:00",
+                "Start prototype"
+            ],
+            [
+                "Develop",
+                "2014-11-20 00:00:00",
+                "2014-11-25 00:00:00",
+                "Develop"
+            ],
+            [
+                "Run acceptance tests",
+                "2014-11-23 00:00:00",
+                "2014-11-26 00:00:00",
+                "Run acceptance tests"
+            ],
+            [
+                "Test prototype",
+                "2014-11-27 00:00:00",
+                "2014-11-29 00:00:00",
+                "Test prototype"
+            ]
+        ],
+        'Gantt chart'
     );
 });

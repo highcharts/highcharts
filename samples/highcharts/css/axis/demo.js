@@ -1,7 +1,7 @@
-
 Highcharts.chart('container', {
 
     chart: {
+        styledMode: true,
         type: 'column'
     },
 

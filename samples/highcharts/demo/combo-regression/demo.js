@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     xAxis: {
         min: -0.5,

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     series: [{
-        pathfinder: {
+        connectors: {
             marker: {
                 enabled: true
             }

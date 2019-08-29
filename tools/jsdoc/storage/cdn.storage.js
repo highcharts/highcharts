@@ -35,7 +35,7 @@ const error = require('./errors');
 
 const builtIns = {
   s3: (config) => {
-    return (filename, data, mime) => {
+    return (filename, data, mime, s3Params = {}) => {
       var s3 = new (require('aws-sdk').S3)();
 
       return new Promise((resolve, reject) => {
@@ -44,7 +44,8 @@ const builtIns = {
             Key: filename,
             Body: data,
             ContentType: mime,
-            ACL: config.ACL || 'public-read'
+            ACL: config.ACL || 'public-read',
+            ...s3Params
           }, (err, data) => {
             if (err) return reject(error.exceptionPacket(err, error.cdnError));
             return resolve(data);
@@ -81,10 +82,12 @@ module.exports = {
    * @param {function} strategy - The strategy to use for the push
    * @param {binary} data - The data to push
    * @param {string} mime - The mime type of the data being pushed
+   * @param {object} s3Params - Additional s3 parameters for setting CacheControl
+   *                            or for overriding existing config
    * @return {promise}
    */
-  push: (strategy, filename, data, mime) => {
-    return strategy && strategy(filename, data, mime);
+  push: (strategy, filename, data, mime, s3Params) => {
+    return strategy && strategy(filename, data, mime, s3Params);
   },
 
   /* Namespace for built-in strategies */

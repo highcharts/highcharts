@@ -1,4 +1,3 @@
-
 Highcharts.mapChart('container', {
     chart: {
         map: 'custom/europe'

@@ -1,5 +1,3 @@
-
-
 QUnit.test('Gap size in area range', function (assert) {
     var chart = Highcharts.chart('container', {
 

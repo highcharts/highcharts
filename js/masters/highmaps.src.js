@@ -1,7 +1,8 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highmaps JS v@product.version@ (@product.date@)
+ * @module highcharts/highmaps
  *
- * (c) 2011-2016 Torstein Honsi
+ * (c) 2011-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -32,4 +33,6 @@ import '../modules/overlapping-datalabels.src.js';
 import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 import './modules/map.src.js';
+
+Highcharts.product = 'Highmaps';
 export default Highcharts;

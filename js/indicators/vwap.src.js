@@ -1,22 +1,30 @@
-/**
- * (c) 2010-2017 Paweł Dalek
+/* *
  *
- * Volume Weighted Average Price (VWAP) indicator for Highstock
+ *  (c) 2010-2019 Paweł Dalek
  *
- * License: www.highcharts.com/license
- */
-'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+ *  Volume Weighted Average Price (VWAP) indicator for Highstock
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
-var isArray = H.isArray,
-    seriesType = H.seriesType;
+'use strict';
+
+import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
+var seriesType = H.seriesType;
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
- * @constructor seriesTypes.vwap
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.vwap
+ *
+ * @augments Highcharts.Series
  */
 seriesType('vwap', 'sma',
     /**
@@ -24,11 +32,12 @@ seriesType('vwap', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/vwap
-     *                     Volume Weighted Average Price indicator
-     * @since 6.0.0
+     * @sample stock/indicators/vwap
+     *         Volume Weighted Average Price indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.vwap
      */
     {
@@ -41,18 +50,21 @@ seriesType('vwap', 'sma',
              * The id of volume series which is mandatory. For example using
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
-             *
-             * @type {String}
-             * @since 6.0.0
-             * @product highstock
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         /**
          * Returns the final values of the indicator ready to be presented on a
          * chart
-         * @returns {Object} Object containing computed VWAP
+         * @private
+         * @param {Highcharts.Series} series - series for indicator
+         * @param {object} params - params
+         * @return {object} - computed VWAP
          **/
         getValues: function (series, params) {
             var indicator = this,
@@ -69,7 +81,8 @@ seriesType('vwap', 'sma',
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
-                    true
+                    true,
+                    chart
                 );
             }
 
@@ -89,14 +102,15 @@ seriesType('vwap', 'sma',
         /**
          * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
          * values
-         * @param {Boolean} isOHLC says if data has OHLC format
-         * @param {Array} xValues array of timestamps
-         * @param {Array} yValues
-         *        array of yValues, can be an array of a four arrays (OHLC) or
-         *        array of values (line)
-         * @param {Array} volumeSeries volume series
-         * @param {Number} period number of points to be calculated
-         * @returns {Object} Object contains computed VWAP
+         * @private
+         * @param {boolean} isOHLC - says if data has OHLC format
+         * @param {Array<number>} xValues - array of timestamps
+         * @param {Array<number|Array<number,number,number,number>>} yValues -
+         * array of yValues, can be an array of a four arrays (OHLC) or array of
+         * values (line)
+         * @param {Array<*>} volumeSeries - volume series
+         * @param {number} period - number of points to be calculated
+         * @return {object} - Object contains computed VWAP
          **/
         calculateVWAPValues: function (
             isOHLC,
@@ -168,16 +182,9 @@ seriesType('vwap', 'sma',
  * [type](#series.vwap.type) option is not specified, it is inherited from
  * [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.vwap
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.vwap
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.vwap
- */
-
-/**
- * @extends series.sma.data
- * @product highstock
- * @apioption series.vwap.data
  */

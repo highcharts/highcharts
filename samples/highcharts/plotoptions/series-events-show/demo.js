@@ -1,4 +1,3 @@
-
 var n = 1;
 Highcharts.chart('container', {
     xAxis: {

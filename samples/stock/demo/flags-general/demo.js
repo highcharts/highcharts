@@ -1,5 +1,4 @@
-
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -36,29 +35,17 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
         }, {
             type: 'flags',
             data: [{
-                x: Date.UTC(2015, 5, 8),
+                x: Date.UTC(2017, 11, 1),
+                title: 'A',
+                text: 'Some event with a description'
+            }, {
+                x: Date.UTC(2017, 11, 12),
+                title: 'B',
+                text: 'Some event with a description'
+            }, {
+                x: Date.UTC(2017, 11, 22),
                 title: 'C',
-                text: 'Stocks fall on Greece, rate concerns; US dollar dips'
-            }, {
-                x: Date.UTC(2015, 5, 12),
-                title: 'D',
-                text: 'Zimbabwe ditches \'worthless\' currency for the US dollar '
-            }, {
-                x: Date.UTC(2015, 5, 19),
-                title: 'E',
-                text: 'US Dollar Declines Over the Week on Rate Timeline'
-            }, {
-                x: Date.UTC(2015, 5, 26),
-                title: 'F',
-                text: 'Greek Negotiations Take Sharp Turn for Worse, US Dollar set to Rally '
-            }, {
-                x: Date.UTC(2015, 5, 29),
-                title: 'G',
-                text: 'Euro records stunning reversal against dollar'
-            }, {
-                x: Date.UTC(2015, 5, 30),
-                title: 'H',
-                text: 'Surging US dollar curbs global IT spend'
+                text: 'Some event with a description'
             }],
             onSeries: 'dataseries',
             shape: 'circlepin',

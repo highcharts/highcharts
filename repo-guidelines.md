@@ -4,7 +4,7 @@
 ## Reporting issues
 We use GitHub Issues as our official bug tracker. We strive to keep this a clean, maintainable and searchable record of our open and closed bugs, therefore we kindly ask you to obey some rules before reporting an issue:
 
-1. Make sure the report is accompanied by a reproducible demo. The ideal demo is created by forking [our standard jsFiddle](http://jsfiddle.net/highcharts/llexl/), adding your own code and stripping it down to an absolute minimum needed to demonstrate the bug.
+1. Make sure the report is accompanied by a reproducible demo. The ideal demo is created by forking [our standard jsFiddle](http://jsfiddle.net/highcharts/LLExL/), adding your own code and stripping it down to an absolute minimum needed to demonstrate the bug.
 2. Always add information on what browser it applies to, and other information needed for us to debug.
 3. It may be that the bug is already fixed. Try your chart with our latest work from http://github.highcharts.com/master/highcharts.js before reporting.
 4. For feature requests, tech support and general discussion, don't use GitHub Issues. See [www.highcharts.com/support](http://www.highcharts.com/support) for the appropriate channels.

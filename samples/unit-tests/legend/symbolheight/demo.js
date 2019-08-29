@@ -1,12 +1,10 @@
-
-
 QUnit.test(
     'Legend symbol marker should not exceed symbolHeight (#6202)',
     function (assert) {
 
         var done = assert.async();
 
-        var url = (location.host === 'localhost:9876') ?
+        var url = location.host.substr(0, 12) === 'localhost:98' ?
             'url(base/test/testimage.png)' : // karma
             'url(testimage.png)'; // utils
 

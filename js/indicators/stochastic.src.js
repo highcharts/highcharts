@@ -1,52 +1,60 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
 
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
 
-var each = H.each,
-    merge = H.merge,
-    isArray = H.isArray,
-    defined = H.defined,
-    SMA = H.seriesTypes.sma;
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
 
-// Utils:
-function minInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.min(min, target[index]);
-    }, Infinity);
-}
+import reduceArrayMixin from '../mixins/reduce-array.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-function maxInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.max(min, target[index]);
-    }, 0);
-}
+var merge = H.merge,
+    SMA = H.seriesTypes.sma,
+    getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
-H.seriesType('stochastic', 'sma',
+/**
+ * The Stochastic series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.stochastic
+ *
+ * @augments Highcharts.Series
+ */
+H.seriesType(
+    'stochastic',
+    'sma',
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/stochastic
-     *                     Stochastic oscillator
-     * @since 6.0.0
+     * @sample stock/indicators/stochastic
+     *         Stochastic oscillator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.stochastic
      */
     {
-        name: 'Stochastic (14, 3)',
         /**
-         * @excluding index,period
+         * @excluding index, period
          */
         params: {
             /**
              * Periods for Stochastic oscillator: [%K, %D].
              *
+             * @type    {Array<number,number>}
              * @default [14, 3]
-             * @type {Array}
-             * @since 6.0.0
-             * @product highstock
              */
             periods: [14, 3]
         },
@@ -58,34 +66,22 @@ H.seriesType('stochastic', 'sma',
         },
         /**
          * Smoothed line options.
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         smoothedLine: {
             /**
              * Styles for a smoothed line.
-             *
-             * @since 6.0.0
-             * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
-                 * [plotOptions.stochastic.color](
-                 * #plotOptions.stochastic.color).
+                 * [plotOptions.stochastic.color
+                 * ](#plotOptions.stochastic.color).
                  *
-                 * @type {String}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
@@ -93,12 +89,17 @@ H.seriesType('stochastic', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    H.merge(multipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],
         parallelArrays: ['x', 'y', 'smoothed'],
         pointValKey: 'y',
+        linesApiNames: ['smoothedLine'],
         init: function () {
             SMA.prototype.init.apply(this, arguments);
 
@@ -110,63 +111,6 @@ H.seriesType('stochastic', 'sma',
                     }
                 }
             }, this.options);
-        },
-        toYData: function (point) {
-            return [point.y, point.smoothed];
-        },
-        translate: function () {
-            var indicator = this;
-
-            SMA.prototype.translate.apply(indicator);
-
-            each(indicator.points, function (point) {
-                if (point.smoothed !== null) {
-                    point.plotSmoothed = indicator.yAxis.toPixels(
-                        point.smoothed,
-                        true
-                    );
-                }
-            });
-        },
-        drawGraph: function () {
-            var indicator = this,
-                mainLinePoints = indicator.points,
-                pointsLength = mainLinePoints.length,
-                mainLineOptions = indicator.options,
-                mainLinePath = indicator.graph,
-                gappedExtend = {
-                    options: {
-                        gapSize: mainLineOptions.gapSize
-                    }
-                },
-                smoothing = [],
-                point;
-
-            // Generate points for %K and %D lines:
-            while (pointsLength--) {
-                point = mainLinePoints[pointsLength];
-                smoothing.push({
-                    plotX: point.plotX,
-                    plotY: point.plotSmoothed,
-                    isNull: !defined(point.plotSmoothed)
-                });
-            }
-
-            // Modify options and generate smoothing line:
-            indicator.points = smoothing;
-            indicator.options = merge(
-                mainLineOptions.smoothedLine.styles,
-                gappedExtend
-            );
-            indicator.graph = indicator.graphSmoothed;
-            SMA.prototype.drawGraph.call(indicator);
-            indicator.graphSmoothed = indicator.graph;
-
-            // Restore options and draw a main line:
-            indicator.points = mainLinePoints;
-            indicator.options = mainLineOptions;
-            indicator.graph = mainLinePath;
-            SMA.prototype.drawGraph.call(indicator);
         },
         getValues: function (series, params) {
             var periodK = params.periods[0],
@@ -184,6 +128,7 @@ H.seriesType('stochastic', 'sma',
                 CL, HL, LL, K,
                 D = null,
                 points,
+                extremes,
                 i;
 
 
@@ -203,9 +148,10 @@ H.seriesType('stochastic', 'sma',
                 slicedY = yVal.slice(i - periodK + 1, i + 1);
 
                 // Calculate %K
-                LL = minInArray(slicedY, low); // Lowest low in %K periods
+                extremes = getArrayExtremes(slicedY, low, high);
+                LL = extremes[0]; // Lowest low in %K periods
                 CL = yVal[i][close] - LL;
-                HL = maxInArray(slicedY, high) - LL;
+                HL = extremes[1] - LL;
                 K = CL / HL * 100;
 
                 xData.push(xVal[i]);
@@ -232,29 +178,18 @@ H.seriesType('stochastic', 'sma',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.stochastic
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.stochastic
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.stochastic
  */
-
-/**
- * An array of data points for the series. For the `stochastic` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.stochastic.data
- */
-

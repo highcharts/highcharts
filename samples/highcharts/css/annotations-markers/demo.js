@@ -8,7 +8,8 @@ Highcharts.chart('container', {
     },
 
     chart: {
-        type: 'scatter'
+        type: 'scatter',
+        styledMode: true
     },
 
     series: [{
@@ -70,4 +71,3 @@ Highcharts.chart('container', {
         }]
     }]
 });
-

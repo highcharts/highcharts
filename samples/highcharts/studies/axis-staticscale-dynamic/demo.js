@@ -1,5 +1,3 @@
-
-
 var chart = Highcharts.chart('container', {
 
     chart: {

@@ -1,34 +1,96 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray,
+    splat = U.splat;
+
+import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var pick = H.pick,
-    each = H.each,
     error = H.error,
     Series = H.Series,
-    isArray = H.isArray,
     addEvent = H.addEvent,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
+    ohlcProto = H.seriesTypes.ohlc.prototype,
+    generateMessage = requiredIndicatorMixin.generateMessage;
+
+/**
+ * The parameter allows setting line series type and use OHLC indicators. Data
+ * in OHLC format is required.
+ *
+ * @sample {highstock} stock/indicators/use-ohlc-data
+ *         Plot line on Y axis
+ *
+ * @type      {boolean}
+ * @product   highstock
+ * @apioption plotOptions.line.useOhlcData
+ */
+
+addEvent(H.Series, 'init', function (eventOptions) {
+    var series = this,
+        options = eventOptions.options;
+
+    if (
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        H.extend(series, {
+            pointValKey: ohlcProto.pointValKey,
+            keys: ohlcProto.keys,
+            pointArrayMap: ohlcProto.pointArrayMap,
+            toYData: ohlcProto.toYData
+        });
+    }
+});
+
+addEvent(Series, 'afterSetOptions', function (e) {
+    var options = e.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        dataGrouping &&
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        dataGrouping.approximation = 'ohlc';
+    }
+});
 
 /**
  * The SMA series type.
  *
- * @constructor seriesTypes.sma
- * @augments seriesTypes.line
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.sma
+ *
+ * @augments Highcharts.Series
  */
-seriesType('sma', 'line',
+seriesType(
+    'sma',
+    'line',
     /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.line
-     * @product highstock
-     * @sample {highstock} stock/indicators/sma Simple moving average indicator
-     * @since 6.0.0
-     * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
+     * @sample stock/indicators/sma
+     *         Simple moving average indicator
+     *
+     * @extends      plotOptions.line
+     * @since        6.0.0
+     * @excluding    allAreas, colorAxis, dragDrop, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking, useOhlcData
+     * @product      highstock
      * @optionparent plotOptions.sma
      */
     {
@@ -37,18 +99,12 @@ seriesType('sma', 'line',
          * set, it will be based on a technical indicator type and default
          * params.
          *
-         * @type {String}
-         * @since 6.0.0
-         * @product highstock
+         * @type {string}
          */
         name: undefined,
         tooltip: {
             /**
              * Number of decimals in indicator series.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             valueDecimals: 4
         },
@@ -56,44 +112,91 @@ seriesType('sma', 'line',
          * The main series ID that indicator will be based on. Required for this
          * indicator.
          *
-         * @type {String}
-         * @since 6.0.0
-         * @product highstock
+         * @type {string}
          */
         linkedTo: undefined,
+        /**
+         * Whether to compare indicator to the main series values
+         * or indicator values.
+         *
+         * @sample {highstock} stock/plotoptions/series-comparetomain/
+         *         Difference between comparing SMA values to the main series
+         *         and its own values.
+         *
+         * @type {boolean}
+         */
+        compareToMain: false,
+        /**
+         * Paramters used in calculation of regression series' points.
+         */
         params: {
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             index: 0,
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
              * calculations.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             period: 14
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series.prototype
+     */
+    {
+        processData: function () {
+            var series = this,
+                compareToMain = series.options.compareToMain,
+                linkedParent = series.linkedParent;
+
+            Series.prototype.processData.apply(series, arguments);
+
+            if (linkedParent && linkedParent.compareValue && compareToMain) {
+                series.compareValue = linkedParent.compareValue;
+            }
+        },
         bindTo: {
             series: true,
             eventName: 'updatedData'
         },
+        hasDerivedData: true,
         useCommonDataGrouping: true,
         nameComponents: ['period'],
         nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
         calculateOn: 'init',
+        // Defines on which other indicators is this indicator based on.
+        requiredIndicators: [],
+        requireIndicators: function () {
+            var obj = {
+                allLoaded: true
+            };
+
+            // Check whether all required indicators are loaded, else return
+            // the object with missing indicator's name.
+            this.requiredIndicators.forEach(function (indicator) {
+                if (seriesTypes[indicator]) {
+                    seriesTypes[indicator].prototype.requireIndicators();
+                } else {
+                    obj.allLoaded = false;
+                    obj.needed = indicator;
+                }
+            });
+            return obj;
+        },
         init: function (chart, options) {
-            var indicator = this;
+            var indicator = this,
+                requiredIndicators = indicator.requireIndicators();
+
+            // Check whether all required indicators are loaded.
+            if (!requiredIndicators.allLoaded) {
+                return error(
+                    generateMessage(indicator.type, requiredIndicators.needed)
+                );
+            }
 
             Series.prototype.init.call(
                 indicator,
@@ -107,7 +210,8 @@ seriesType('sma', 'line',
             indicator.dataEventsToUnbind = [];
 
             function recalculateValues() {
-                var oldDataLength = (indicator.xData || []).length,
+                var oldData = indicator.points || [],
+                    oldDataLength = (indicator.xData || []).length,
                     processedData = indicator.getValues(
                         indicator.linkedParent,
                         indicator.options.params
@@ -115,21 +219,78 @@ seriesType('sma', 'line',
                         values: [],
                         xData: [],
                         yData: []
-                    };
+                    },
+                    croppedDataValues = [],
+                    overwriteData = true,
+                    oldFirstPointIndex,
+                    oldLastPointIndex,
+                    croppedData,
+                    min,
+                    max,
+                    i;
 
-                // If number of points is the same, we need to update points to
-                // reflect changes in all, x and y's, values. However, do it
-                // only for non-grouped data - grouping does it for us (#8572)
+                // We need to update points to reflect changes in all,
+                // x and y's, values. However, do it only for non-grouped
+                // data - grouping does it for us (#8572)
                 if (
                     oldDataLength &&
-                    oldDataLength === processedData.xData.length &&
-                    !indicator.cropped && // #8968
                     !indicator.hasGroupedData &&
                     indicator.visible &&
                     indicator.points
                 ) {
-                    indicator.updateData(processedData.values);
-                } else {
+                    // When data is cropped update only avaliable points (#9493)
+                    if (indicator.cropped) {
+                        if (indicator.xAxis) {
+                            min = indicator.xAxis.min;
+                            max = indicator.xAxis.max;
+                        }
+
+                        croppedData = indicator.cropData(
+                            processedData.xData,
+                            processedData.yData,
+                            min,
+                            max
+                        );
+
+                        for (i = 0; i < croppedData.xData.length; i++) {
+                            // (#10774)
+                            croppedDataValues.push([
+                                croppedData.xData[i]
+                            ].concat(
+                                splat(croppedData.yData[i])
+                            ));
+                        }
+
+                        oldFirstPointIndex = processedData.xData.indexOf(
+                            indicator.xData[0]
+                        );
+                        oldLastPointIndex = processedData.xData.indexOf(
+                            indicator.xData[indicator.xData.length - 1]
+                        );
+
+                        // Check if indicator points should be shifted (#8572)
+                        if (
+                            oldFirstPointIndex === -1 &&
+                            oldLastPointIndex === processedData.xData.length - 2
+                        ) {
+                            if (croppedDataValues[0][0] === oldData[0].x) {
+                                croppedDataValues.shift();
+                            }
+                        }
+
+                        indicator.updateData(croppedDataValues);
+
+                    // Omit addPoint() and removePoint() cases
+                    } else if (
+                        processedData.xData.length !== oldDataLength - 1 &&
+                        processedData.xData.length !== oldDataLength + 1
+                    ) {
+                        overwriteData = false;
+                        indicator.updateData(processedData.values);
+                    }
+                }
+
+                if (overwriteData) {
                     indicator.xData = processedData.xData;
                     indicator.yData = processedData.yData;
                     indicator.options.data = processedData.values;
@@ -150,7 +311,9 @@ seriesType('sma', 'line',
                 return error(
                     'Series ' +
                     indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.'
+                    ' not found! Check `linkedTo`.',
+                    false,
+                    chart
                 );
             }
 
@@ -185,8 +348,7 @@ seriesType('sma', 'line',
 
             if (!name) {
 
-                each(
-                    this.nameComponents,
+                (this.nameComponents || []).forEach(
                     function (component, index) {
                         params.push(
                             this.options.params[component] +
@@ -250,33 +412,21 @@ seriesType('sma', 'line',
             };
         },
         destroy: function () {
-            each(this.dataEventsToUnbind, function (unbinder) {
+            this.dataEventsToUnbind.forEach(function (unbinder) {
                 unbinder();
             });
             Series.prototype.destroy.call(this);
         }
-    });
+    }
+);
 
 /**
- * A `SMA` series. If the [type](#series.sma.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `SMA` series. If the [type](#series.sma.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.sma
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.sma
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL, useOhlcData
  * @apioption series.sma
- */
-
-
-/**
- * An array of data points for the series. For the `SMA` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.sma.data
  */

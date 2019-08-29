@@ -1,5 +1,3 @@
-
-
 // Prepare the data
 var data = [],
     n = 1000000,

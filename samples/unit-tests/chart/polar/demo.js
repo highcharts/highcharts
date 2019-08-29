@@ -1,3 +1,56 @@
+QUnit.test('Polar chart with no data (#5226)', function (assert) {
+    assert.expect(0);
+    Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+
+        series: [{
+            type: 'line',
+            name: 'Line',
+            data: []
+        }]
+    });
+});
+QUnit.test("Polar and categorized chart should not render extra alternate band.(#2248)", function (assert) {
+    var chart = $('#container').highcharts({
+            chart: {
+                polar: true
+            },
+            xAxis: {
+                // This alternateGridColor is wrong:
+                alternateGridColor: '#FFC0C0',
+                categories: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
+                // The X axis line is a circle instead of a polygon
+                lineWidth: 0
+            },
+            yAxis: {
+                //This is correct:
+                alternateGridColor: '#C0FFC0',
+                gridLineInterpolation: 'polygon',
+                title: {
+                    text: 'Y-axis'
+                }
+            },
+            series: [{
+                name: 'Serie 1',
+                data: [7.0, 6.9, 9.5, 14.5, 18.2]
+            }, {
+                name: 'Serie 2',
+                data: [-0.2, 0.8, 5.7, 11.3, 17.0]
+            }, {
+                name: 'Serie 3',
+                data: [-0.9, 0.6, 3.5, 8.4, 13.5]
+            }]
+        }).highcharts(),
+        UNDEFINED;
+
+    assert.strictEqual(
+        chart.xAxis[0].alternateBands[4],
+        UNDEFINED,
+        "Zero extra bands.");
+});
+
 QUnit.test('Paddings and extremes', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -90,4 +143,98 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
         increaseHeight();
     }
 
+});
+
+QUnit.test('Polar with overlapping axis labels', assert => {
+
+    const data = [];
+
+    for (let i = 0; i < 100; i++) {
+        data.push({
+            name: 'name' + i,
+            y: i % 20
+        });
+    }
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line',
+            polar: true
+        },
+        title: {
+            text: 'Polar Chart - overlapping axis label (With Category)'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: data
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have some hidden labels'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            allowOverlap: true
+        }
+    });
+
+    assert.notOk(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have no hidden labels'
+    );
+});
+
+QUnit.test('Data validation', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            polar: true
+        },
+
+        yAxis: {
+            min: -10
+        },
+
+        series: [{
+            data: [15, 20, 5, 2, -25]
+        }]
+
+    });
+
+    // #10082
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, true],
+        'Values below Y axis mininum should be treated as null'
+    );
+
+    chart.series[0].points[4].update(25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, false],
+        '... and it should respond to update'
+    );
+
+    chart.series[0].points[2].update(-25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, true, false, false],
+        '... both ways'
+    );
 });

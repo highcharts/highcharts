@@ -3,6 +3,7 @@
     max-width: 1000px;
     margin: 0 auto;
     height: 560px;
+    background: white;
 }
 #mapBox {
     width: 80%;
@@ -26,7 +27,8 @@
     margin: 0.5em 0;
 }
 #up {
-    height: 20px;
+    line-height: 30px;
+    height: 30px;
     max-width: 400px;
     margin: 0 auto;
 }
@@ -56,16 +58,16 @@
     display: block;
     position: absolute;
     left: 40px;
-    right: 110px;
+    right: 65px;
 }
 .selector .custom-combobox .custom-combobox-input {
     position: absolute;
     font-size: 14px;
     color: silver;
-    border-radius: 0;
-    height: 24px;
+    border-radius: 3px 0 0 3px;
+    height: 32px;
     display: block;
-    background: url(https://www.highcharts.com/samples/graphics/search.png) 5px 5px no-repeat white;
+    background: url(https://www.highcharts.com/samples/graphics/search.png) 5px 8px no-repeat white;
     padding: 1px 5px 1px 30px;
     width: 100%;
 }
@@ -78,8 +80,10 @@
 .selector .custom-combobox-toggle {
     position: absolute;
     display: block;
-    right: -78px;
-    border-radius: 0;
+    right: -32px;
+    border-radius: 0 3px 3px 0;
+    height: 32px;
+    width: 32px;
 }
 
 .selector #btn-next-map {

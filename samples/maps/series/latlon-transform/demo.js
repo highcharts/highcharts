@@ -1,5 +1,3 @@
-
-
 var chart,
     transform,
     position;
@@ -69,4 +67,3 @@ chart.series[2].addPoint({
     x: position.x,
     y: position.y
 });
-

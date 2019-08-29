@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
     var ohlc = [],
         volume = [];
 
@@ -89,4 +89,3 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
         }]
     });
 });
-

@@ -1,7 +1,7 @@
-
 Highcharts.chart('container', {
     chart: {
-        type: 'waterfall'
+        type: 'waterfall',
+        styledMode: true
     },
 
     title: {

@@ -1,4 +1,3 @@
-
 Highcharts.stockChart('container', {
 
     title: {
@@ -6,7 +5,8 @@ Highcharts.stockChart('container', {
         align: 'right',
         x: -10,
         verticalAlign: 'bottom',
-        y: -100
+        y: -100,
+        floating: true
     },
 
     rangeSelector: {

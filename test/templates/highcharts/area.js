@@ -9,6 +9,7 @@ TestTemplate.register('highcharts/area', Highcharts.chart, {
     },
 
     series: [{
+        type: 'area',
         data: [1, 3, 2]
     }]
 

@@ -1,5 +1,3 @@
-
-
 var data = [{
     code: 'DK',
     value: 2

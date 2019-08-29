@@ -1,5 +1,3 @@
-
-
 (function (H) {
     Highcharts.Chart.prototype.callbacks.push(function (chart) {
         H.addEvent(chart.container, 'click', function (e) {

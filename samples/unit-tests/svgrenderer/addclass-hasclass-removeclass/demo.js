@@ -92,4 +92,27 @@
         checkElement('HTML group', g, g.div, assert);
 
     });
+
+    QUnit.test('Add multiple class names', assert => {
+        const ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            600,
+            400
+        );
+
+        const circle = ren.circle(100, 100, 100)
+            .attr({
+                fill: 'blue'
+            })
+            .add();
+
+        circle.addClass('highcharts-point highcharts-point-select');
+        circle.addClass('highcharts-point-select highcharts-point');
+
+        assert.strictEqual(
+            circle.element.getAttribute('class'),
+            'highcharts-point highcharts-point-select',
+            'Duplicate class names should not occur (#10265)'
+        );
+    });
 }());

@@ -1,0 +1,10 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#container {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+g.highcharts-series {
+  transition: opacity 0ms;
+}

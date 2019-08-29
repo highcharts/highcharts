@@ -1885,6 +1885,7 @@ var elevationData = [
 Highcharts.chart('container', {
 
     chart: {
+        styledMode: true,
         type: 'area',
         zoomType: 'x',
         panning: true,

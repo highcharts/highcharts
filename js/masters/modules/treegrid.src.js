@@ -1,10 +1,11 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts Gantt JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/treegrid
+ * @requires highcharts
+ *
  * Tree Grid
  *
- * (c) 2016 Jon Arild Nygard
- *
- * --- WORK IN PROGRESS ---
+ * (c) 2016-2019 Jon Arild Nygard
  *
  * License: www.highcharts.com/license
  */

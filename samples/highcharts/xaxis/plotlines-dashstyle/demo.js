@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
     xAxis: {
         plotLines: [{ // mark the weekend

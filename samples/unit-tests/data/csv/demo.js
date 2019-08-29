@@ -29,8 +29,7 @@ QUnit.test('csv-datetime-axis', function (assert) {
             lineWidth: 1
         }]
     });
-    var options = chart.options
-    ;
+    var options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -74,8 +73,7 @@ if (!isNaN(Date.parse('Jan 16'))) { // Only Chrome parses "Jan 16" as of 2017
                     lineWidth: 1
                 }]
             }),
-            options = chart.options
-            ;
+            options = chart.options;
 
         assert.strictEqual(
             (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -137,8 +135,7 @@ QUnit.test('csv-deduce-delimiter', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -198,8 +195,7 @@ QUnit.test('csv-deduce-delimiter-ambigious', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -258,8 +254,7 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -311,8 +306,7 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -363,8 +357,7 @@ QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -416,8 +409,7 @@ QUnit.test('csv-deduce-format-us', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -539,8 +531,7 @@ QUnit.test('csv-datetime-short-year-2000', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -722,6 +713,48 @@ QUnit.test('Comments in CSV', function (assert) {
                 this.columns[1].join(','),
                 'Pears,2,4,6',
                 'Second column ok'
+            );
+        }
+    });
+});
+
+// Highcharts 4.0.4, Issue #3437
+// Data module fails with numeric data in first column
+QUnit.test('Data module numeric x (#3437)', function (assert) {
+    var data = ",Apples,Oranges\n2010,15,3\n2011,5,2\n2012,13,4\n2013,4,10\n2014,2,6";
+    var chart = Highcharts.chart('container', {
+        data: {
+            csv: data
+        }
+    });
+    assert.ok(
+        chart.series.length > 0,
+        "The data module failed to load numeric data"
+    );
+});
+
+QUnit.test('Dot date format', function (assert) {
+    var data = [
+        'Date,Policy Rate',
+        '08.01.2004,8',
+        '09.01.2004,7',
+        '12.01.2004,14',
+        '13.01.2004,5'
+    ].join('\n');
+
+    Highcharts.data({
+        csv: data,
+        parsed: function () {
+            assert.deepEqual(
+                this.columns[0],
+                [
+                    'Date',
+                    Date.UTC(2004, 0, 8),
+                    Date.UTC(2004, 0, 9),
+                    Date.UTC(2004, 0, 12),
+                    Date.UTC(2004, 0, 13)
+                ],
+                'First column ok'
             );
         }
     });

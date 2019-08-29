@@ -50,9 +50,9 @@ $(function () {
         $('#value').html(this.value);
         $('#container').highcharts(options);
     })
-    .attr({
-        value: margin
-    });
+        .attr({
+            value: margin
+        });
     $('#value').html(margin);
 
 });

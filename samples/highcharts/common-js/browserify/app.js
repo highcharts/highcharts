@@ -194,7 +194,7 @@ QUnit.test("Highmaps", function (assert) {
 
     var Highcharts = require('../../../../code/highmaps.src');
     Highcharts.maps["countries/us/us-all"] = require('./us-all');
-    jQueryParked.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-population-density.json', function (data) {
+    jQueryParked.getJSON('https://cdn.jsdelivr.com/gh/highcharts/highcharts@v6.0.4/samples/data/us-population-density.json', function (data) {
         // Make codes uppercase to match the map data
         jQuery.each(data, function () {
             this.code = this.code.toUpperCase();

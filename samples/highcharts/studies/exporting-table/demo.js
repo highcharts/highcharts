@@ -25,10 +25,10 @@ Highcharts.drawTable = function () {
             cellLeft + cellPadding,
             tableTop + (i + 2) * rowHeight - cellPadding
         )
-        .css({
-            fontWeight: 'bold'
-        })
-        .add();
+            .css({
+                fontWeight: 'bold'
+            })
+            .add();
     });
 
     series.forEach(function (serie, i) {
@@ -36,10 +36,10 @@ Highcharts.drawTable = function () {
 
         // Apply the cell text
         renderer.text(
-                serie.name,
-                cellLeft - cellPadding + colWidth,
-                tableTop + rowHeight - cellPadding
-            )
+            serie.name,
+            cellLeft - cellPadding + colWidth,
+            tableTop + rowHeight - cellPadding
+        )
             .attr({
                 align: 'right'
             })
@@ -52,10 +52,10 @@ Highcharts.drawTable = function () {
 
             // Apply the cell text
             renderer.text(
-                    Highcharts.numberFormat(point.y, valueDecimals) + valueSuffix,
-                    cellLeft + colWidth - cellPadding,
-                    tableTop + (row + 2) * rowHeight - cellPadding
-                )
+                Highcharts.numberFormat(point.y, valueDecimals) + valueSuffix,
+                cellLeft + colWidth - cellPadding,
+                tableTop + (row + 2) * rowHeight - cellPadding
+            )
                 .attr({
                     align: 'right'
                 })
@@ -130,7 +130,7 @@ Highcharts.drawTable = function () {
 Highcharts.tableLine = function (renderer, x1, y1, x2, y2) {
     renderer.path(['M', x1, y1, 'L', x2, y2])
         .attr({
-            'stroke': 'silver',
+            stroke: 'silver',
             'stroke-width': 1
         })
         .add();
@@ -182,4 +182,3 @@ window.chart = Highcharts.chart('container', {
         data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
     }]
 });
-

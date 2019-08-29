@@ -1,5 +1,3 @@
-
-
 /**
  * Get the current time
  */
@@ -32,7 +30,7 @@ Highcharts.chart('container', {
         plotBackgroundImage: null,
         plotBorderWidth: 0,
         plotShadow: false,
-        height: 200
+        height: '80%'
     },
 
     credits: {
@@ -134,37 +132,37 @@ Highcharts.chart('container', {
     }]
 },
 
-    // Move
-    function (chart) {
-        setInterval(function () {
+// Move
+function (chart) {
+    setInterval(function () {
 
-            now = getNow();
+        now = getNow();
 
-            if (chart.axes) { // not destroyed
-                var hour = chart.get('hour'),
-                    minute = chart.get('minute'),
-                    second = chart.get('second'),
-                    // run animation unless we're wrapping around from 59 to 0
-                    animation = now.seconds === 0 ?
-                        false : {
-                            easing: 'easeOutBounce'
-                        };
+        if (chart.axes) { // not destroyed
+            var hour = chart.get('hour'),
+                minute = chart.get('minute'),
+                second = chart.get('second'),
+                // run animation unless we're wrapping around from 59 to 0
+                animation = now.seconds === 0 ?
+                    false : {
+                        easing: 'easeOutBounce'
+                    };
 
-                // Cache the tooltip text
-                chart.tooltipText =
+            // Cache the tooltip text
+            chart.tooltipText =
                     pad(Math.floor(now.hours), 2) + ':' +
                     pad(Math.floor(now.minutes * 5), 2) + ':' +
                     pad(now.seconds * 5, 2);
 
 
-                hour.update(now.hours, true, animation);
-                minute.update(now.minutes, true, animation);
-                second.update(now.seconds, true, animation);
-            }
+            hour.update(now.hours, true, animation);
+            minute.update(now.minutes, true, animation);
+            second.update(now.seconds, true, animation);
+        }
 
-        }, 1000);
+    }, 1000);
 
-    });
+});
 
 /**
  * Easing function from https://github.com/danro/easing-js/blob/master/easing.js

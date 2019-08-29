@@ -2,7 +2,8 @@ QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
     Highcharts.chart('container', {
 
         chart: {
-            type: 'column'
+            type: 'column',
+            styledMode: true
         },
 
         title: {

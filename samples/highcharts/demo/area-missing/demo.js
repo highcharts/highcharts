@@ -1,18 +1,14 @@
-
 Highcharts.chart('container', {
     chart: {
-        type: 'area',
-        spacingBottom: 30
+        type: 'area'
     },
     title: {
         text: 'Fruit consumption *'
     },
     subtitle: {
         text: '* Jane\'s banana consumption is unknown',
-        floating: true,
         align: 'right',
-        verticalAlign: 'bottom',
-        y: 15
+        verticalAlign: 'bottom'
     },
     legend: {
         layout: 'vertical',
@@ -22,7 +18,8 @@ Highcharts.chart('container', {
         y: 70,
         floating: true,
         borderWidth: 1,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     xAxis: {
         categories: ['Apples', 'Pears', 'Oranges', 'Bananas', 'Grapes', 'Plums', 'Strawberries', 'Raspberries']
@@ -30,17 +27,6 @@ Highcharts.chart('container', {
     yAxis: {
         title: {
             text: 'Y-Axis'
-        },
-        labels: {
-            formatter: function () {
-                return this.value;
-            }
-        }
-    },
-    tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                this.x + ': ' + this.y;
         }
     },
     plotOptions: {

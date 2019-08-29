@@ -1,14 +1,22 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined,
+    isArray = U.isArray,
+    objectEach = U.objectEach;
 
 var UNDEFINED,
     seriesType = H.seriesType,
-    each = H.each,
     merge = H.merge,
     color = H.color,
-    isArray = H.isArray,
-    defined = H.defined,
     SMA = H.seriesTypes.sma;
 
 // Utils:
@@ -38,7 +46,7 @@ function getClosestPointRange(axis) {
         xData,
         i;
 
-    each(axis.series, function (series) {
+    axis.series.forEach(function (series) {
 
         if (series.xData) {
             xData = series.xData;
@@ -59,6 +67,51 @@ function getClosestPointRange(axis) {
     return closestDataRange;
 }
 
+// Check two lines intersection (line a1-a2 and b1-b2)
+// Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+function checkLineIntersection(a1, a2, b1, b2) {
+    if (a1 && a2 && b1 && b2) {
+
+        var saX = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
+            saY = a2.plotY - a1.plotY, // Auxiliary section a2-a1 Y
+            sbX = b2.plotX - b1.plotX, // Auxiliary section b2-b1 X
+            sbY = b2.plotY - b1.plotY, // Auxiliary section b2-b1 Y
+            sabX = a1.plotX - b1.plotX, // Auxiliary section a1-b1 X
+            sabY = a1.plotY - b1.plotY, // Auxiliary section a1-b1 Y
+
+            // First degree Bézier parameters
+            u,
+            t;
+
+        u = (-saY * sabX + saX * sabY) / (-sbX * saY + saX * sbY);
+        t = (sbX * sabY - sbY * sabX) / (-sbX * saY + saX * sbY);
+
+        if (u >= 0 && u <= 1 && t >= 0 && t <= 1) {
+            return {
+                plotX: a1.plotX + (t * saX),
+                plotY: a1.plotY + (t * saY)
+            };
+        }
+    }
+
+    return false;
+}
+
+// Parameter opt (indicator options object) include indicator, points,
+// nextPoints, color, options, gappedExtend and graph properties
+function drawSenkouSpan(opt) {
+    var indicator = opt.indicator;
+
+    indicator.points = opt.points;
+    indicator.nextPoints = opt.nextPoints;
+    indicator.color = opt.color;
+    indicator.options = merge(opt.options.senkouSpan.styles, opt.gap);
+    indicator.graph = opt.graph;
+    indicator.fillGraph = true;
+    SMA.prototype.drawGraph.call(indicator);
+}
+
+
 // Data integrity in Ichimoku is different than default "averages":
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
@@ -66,7 +119,7 @@ H.approximations['ichimoku-averages'] = function () {
     var ret = [],
         isEmptyRange;
 
-    each(arguments, function (arr, i) {
+    [].forEach.call(arguments, function (arr, i) {
         ret.push(H.approximations.average(arr));
         isEmptyRange = !isEmptyRange && ret[i] === undefined;
     });
@@ -79,23 +132,29 @@ H.approximations['ichimoku-averages'] = function () {
 /**
  * The IKH series type.
  *
- * @constructor seriesTypes.ikh
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ikh
+ *
+ * @augments Highcharts.Series
  */
-seriesType('ikh', 'sma',
+seriesType(
+    'ikh',
+    'sma',
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
-     *                        Ichimoku Kinko Hyo indicator
-     * @since 6.0.0
-     * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     * @sample stock/indicators/ichimoku-kinko-hyo
+     *         Ichimoku Kinko Hyo indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @product      highstock
      * @optionparent plotOptions.ikh
      */
     {
@@ -103,18 +162,10 @@ seriesType('ikh', 'sma',
             period: 26,
             /**
              * The base period for Tenkan calculations.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             periodTenkan: 9,
             /**
              * The base period for Senkou Span B calculations
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             periodSenkouSpanB: 52
         },
@@ -131,148 +182,127 @@ seriesType('ikh', 'sma',
         },
         /**
          * The styles for Tenkan line
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         tenkanLine: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
         },
         /**
          * The styles for Kijun line
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         kijunLine: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
         },
         /**
          * The styles for Chikou line
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         chikouLine: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
         },
         /**
          * The styles for Senkou Span A line
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         senkouSpanA: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
         },
         /**
          * The styles for Senkou Span B line
-         *
-         * @since 6.0.0
-         * @product highstock
          */
         senkouSpanB: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
         },
         /**
-         * The styles for fill between Senkou Span A and B
-         *
-         * @since 6.0.0
-         * @product highstock
+         * The styles for area between Senkou Span A and B.
          */
         senkouSpan: {
+            /**
+            * Color of the area between Senkou Span A and B,
+            * when Senkou Span A is above Senkou Span B. Note that if
+            * a `style.fill` is defined, the `color` takes precedence and
+            * the `style.fill` is ignored.
+            *
+            * @see [senkouSpan.styles.fill](#series.ikh.senkouSpan.styles.fill)
+            *
+            * @sample stock/indicators/ichimoku-kinko-hyo
+            *         Ichimoku Kinko Hyo color
+            *
+            * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+            * @since     7.0.0
+            * @apioption plotOptions.ikh.senkouSpan.color
+            */
+
+            /**
+            * Color of the area between Senkou Span A and B,
+            * when Senkou Span A is under Senkou Span B.
+            *
+            * @sample stock/indicators/ikh-negative-color
+            *         Ichimoku Kinko Hyo negativeColor
+            *
+            * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+            * @since     7.0.0
+            * @apioption plotOptions.ikh.senkouSpan.negativeColor
+            */
+
             styles: {
                 /**
                  * Color of the area between Senkou Span A and B.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
-                 * @product highstock
+                 * @deprecated
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 fill: 'rgba(255, 0, 0, 0.5)'
             }
@@ -280,7 +310,11 @@ seriesType('ikh', 'sma',
         dataGrouping: {
             approximation: 'ichimoku-averages'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         pointArrayMap: [
             'tenkanSen',
             'kijunSen',
@@ -343,15 +377,15 @@ seriesType('ikh', 'sma',
 
             SMA.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
-                each(indicator.pointArrayMap, function (value) {
+            indicator.points.forEach(function (point) {
+                indicator.pointArrayMap.forEach(function (value) {
                     if (defined(point[value])) {
                         point['plot' + value] = indicator.yAxis.toPixels(
                             point[value],
                             true
                         );
 
-                        // add extra parameters for support tooltip in moved
+                        // Add extra parameters for support tooltip in moved
                         // lines
                         point.plotY = point['plot' + value];
                         point.tooltipPos = [point.plotX, point['plot' + value]];
@@ -365,6 +399,7 @@ seriesType('ikh', 'sma',
         // And an arearange
         // In just one series..
         drawGraph: function () {
+
             var indicator = this,
                 mainLinePoints = indicator.points,
                 pointsLength = mainLinePoints.length,
@@ -378,9 +413,47 @@ seriesType('ikh', 'sma',
                 },
                 pointArrayMapLength = indicator.pointArrayMap.length,
                 allIchimokuPoints = [[], [], [], [], [], []],
+                ikhMap = {
+                    tenkanLine: allIchimokuPoints[0],
+                    kijunLine: allIchimokuPoints[1],
+                    chikouLine: allIchimokuPoints[2],
+                    senkouSpanA: allIchimokuPoints[3],
+                    senkouSpanB: allIchimokuPoints[4],
+                    senkouSpan: allIchimokuPoints[5]
+                },
+                intersectIndexColl = [],
+                senkouSpanOptions = indicator.options.senkouSpan,
+                color = senkouSpanOptions.color ||
+                    senkouSpanOptions.styles.fill,
+                negativeColor = senkouSpanOptions.negativeColor,
+
+                // Points to create color and negativeColor senkouSpan
+                points = [
+                    [], // Points color
+                    [] // Points negative color
+                ],
+                // For span, we need an access to the next points, used in
+                // getGraphPath()
+                nextPoints = [
+                    [], // NextPoints color
+                    [] // NextPoints negative color
+                ],
+                lineIndex = 0,
                 position,
                 point,
-                i;
+                i,
+                startIntersect,
+                endIntersect,
+                sectionPoints,
+                sectionNextPoints,
+                pointsPlotYSum,
+                nextPointsPlotYSum,
+                senkouSpanTempColor,
+                concatArrIndex,
+                j,
+                k;
+
+            indicator.ikhMap = ikhMap;
 
             // Generate points for all lines and spans lines:
             while (pointsLength--) {
@@ -396,50 +469,201 @@ seriesType('ikh', 'sma',
                         });
                     }
                 }
+
+                if (negativeColor &&
+                    pointsLength !== mainLinePoints.length - 1) {
+                    // Check if lines intersect
+                    var index = ikhMap.senkouSpanB.length - 1,
+                        intersect = checkLineIntersection(
+                            ikhMap.senkouSpanA[index - 1],
+                            ikhMap.senkouSpanA[index],
+                            ikhMap.senkouSpanB[index - 1],
+                            ikhMap.senkouSpanB[index]
+                        ),
+                        intersectPointObj = {
+                            plotX: intersect.plotX,
+                            plotY: intersect.plotY,
+                            isNull: false,
+                            intersectPoint: true
+                        };
+
+                    if (intersect) {
+                        // Add intersect point to ichimoku points collection
+                        // Create senkouSpan sections
+                        ikhMap.senkouSpanA.splice(index, 0, intersectPointObj);
+                        ikhMap.senkouSpanB.splice(index, 0, intersectPointObj);
+                        intersectIndexColl.push(index);
+                    }
+                }
             }
 
             // Modify options and generate lines:
-            each([
-                'tenkanLine',
-                'kijunLine',
-                'chikouLine',
-                'senkouSpanA',
-                'senkouSpanB',
-                'senkouSpan'
-            ], function (lineName, i) {
-                // First line is rendered by default option
-                indicator.points = allIchimokuPoints[i];
-                indicator.options = merge(
-                    mainLineOptions[lineName].styles,
-                    gappedExtend
-                );
-                indicator.graph = indicator['graph' + lineName];
-
-                // For span, we need an access to the next points, used in
-                // getGraphPath()
-                indicator.nextPoints = allIchimokuPoints[i - 1];
-                if (i === 5) {
-
-                    indicator.points = allIchimokuPoints[i - 1];
+            objectEach(ikhMap, function (values, lineName) {
+                if (mainLineOptions[lineName] && lineName !== 'senkouSpan') {
+                    // First line is rendered by default option
+                    indicator.points = allIchimokuPoints[lineIndex];
                     indicator.options = merge(
                         mainLineOptions[lineName].styles,
                         gappedExtend
                     );
                     indicator.graph = indicator['graph' + lineName];
-                    indicator.nextPoints = allIchimokuPoints[i - 2];
 
-                    indicator.fillGraph = true;
-                    indicator.color = indicator.options.fill;
-                    SMA.prototype.drawGraph.call(indicator);
-                } else {
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
                     SMA.prototype.drawGraph.call(indicator);
+
+                    // Now save line
+                    indicator['graph' + lineName] = indicator.graph;
                 }
 
-                // Now save lines:
-                indicator['graph' + lineName] = indicator.graph;
+                lineIndex++;
             });
+
+            // Generate senkouSpan area:
+
+            // If graphColection exist then remove svg
+            // element and indicator property
+            if (indicator.graphCollection) {
+                indicator.graphCollection.forEach(function (graphName) {
+                    indicator[graphName].destroy();
+                    delete indicator[graphName];
+                });
+            }
+
+            // Clean grapCollection or initialize it
+            indicator.graphCollection = [];
+
+            // When user set negativeColor property
+            if (
+                negativeColor &&
+                ikhMap.senkouSpanA[0] &&
+                ikhMap.senkouSpanB[0]) {
+
+                // Add first and last point to senkouSpan area sections
+                intersectIndexColl.unshift(0);
+                intersectIndexColl.push(ikhMap.senkouSpanA.length - 1);
+
+                // Populate points and nextPoints arrays
+                for (j = 0; j < intersectIndexColl.length - 1; j++) {
+                    startIntersect = intersectIndexColl[j];
+                    endIntersect = intersectIndexColl[j + 1];
+
+                    sectionPoints = ikhMap.senkouSpanB.slice(
+                        startIntersect, endIntersect + 1
+                    );
+
+                    sectionNextPoints = ikhMap.senkouSpanA.slice(
+                        startIntersect, endIntersect + 1
+                    );
+
+                    // Add points to color or negativeColor arrays
+                    // Check the middle point (if exist)
+                    if (Math.floor(sectionPoints.length / 2) >= 1) {
+                        var x = Math.floor(sectionPoints.length / 2);
+
+                        // When middle points has equal values
+                        // Compare all ponints plotY value sum
+                        if (
+                            sectionPoints[x].plotY ===
+                            sectionNextPoints[x].plotY
+                        ) {
+
+                            pointsPlotYSum = 0;
+                            nextPointsPlotYSum = 0;
+
+                            for (k = 0; k < sectionPoints.length; k++) {
+                                pointsPlotYSum +=
+                                sectionPoints[k].plotY;
+                                nextPointsPlotYSum +=
+                                sectionNextPoints[k].plotY;
+                            }
+
+                            concatArrIndex =
+                                pointsPlotYSum > nextPointsPlotYSum ? 0 : 1;
+
+                            points[concatArrIndex] =
+                                points[concatArrIndex].concat(sectionPoints);
+
+                            nextPoints[concatArrIndex] =
+                                nextPoints[concatArrIndex].concat(
+                                    sectionNextPoints
+                                );
+
+                        } else {
+                            // Compare middle point of the section
+                            concatArrIndex =
+                                sectionPoints[x].plotY >
+                                sectionNextPoints[x].plotY ?
+                                    0 : 1;
+
+                            points[concatArrIndex] =
+                                points[concatArrIndex].concat(sectionPoints);
+
+                            nextPoints[concatArrIndex] =
+                                nextPoints[concatArrIndex].concat(
+                                    sectionNextPoints
+                                );
+                        }
+                    } else {
+                        // Compare first point of the section
+                        concatArrIndex =
+                                sectionPoints[0].plotY >
+                                sectionNextPoints[0].plotY ?
+                                    0 : 1;
+
+                        points[concatArrIndex] =
+                            points[concatArrIndex].concat(sectionPoints);
+
+                        nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex].concat(
+                                sectionNextPoints
+                            );
+                    }
+                }
+
+                // Render color and negativeColor paths
+                [
+                    'graphsenkouSpanColor', 'graphsenkouSpanNegativeColor'
+                ].forEach(
+                    function (areaName, i) {
+                        if (points[i].length && nextPoints[i].length) {
+
+                            senkouSpanTempColor = (i === 0) ?
+                                color : negativeColor;
+
+                            drawSenkouSpan({
+                                indicator: indicator,
+                                points: points[i],
+                                nextPoints: nextPoints[i],
+                                color: senkouSpanTempColor,
+                                options: mainLineOptions,
+                                gap: gappedExtend,
+                                graph: indicator[areaName]
+                            });
+
+                            // Now save line
+                            indicator[areaName] = indicator.graph;
+                            indicator.graphCollection.push(areaName);
+                        }
+                    }
+                );
+
+            } else {
+                // When user set only senkouSpan style.fill property
+                drawSenkouSpan({
+                    indicator: indicator,
+                    points: ikhMap.senkouSpanB,
+                    nextPoints: ikhMap.senkouSpanA,
+                    color: color,
+                    options: mainLineOptions,
+                    gap: gappedExtend,
+                    graph: indicator.graphsenkouSpan
+                });
+
+                // Now save line
+                indicator.graphsenkouSpan = indicator.graph;
+            }
+
             // Clean temporary properties:
             delete indicator.nextPoints;
             delete indicator.fillGraph;
@@ -471,9 +695,9 @@ seriesType('ikh', 'sma',
                 spanA[0] = 'L';
 
                 path = SMA.prototype.getGraphPath.call(
-                        indicator,
-                        points
-                    );
+                    indicator,
+                    points
+                );
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -519,7 +743,7 @@ seriesType('ikh', 'sma',
                 SSA,
                 SSB;
 
-            // ikh requires close value
+            // Ikh requires close value
             if (
                 xVal.length <= period ||
                 !isArray(yVal[0]) ||
@@ -529,7 +753,7 @@ seriesType('ikh', 'sma',
             }
 
 
-            // add timestamps at the beginning
+            // Add timestamps at the beginning
             dateStart = xVal[0] - (period * closestPointRange);
 
             for (i = 0; i < period; i++) {
@@ -568,7 +792,7 @@ seriesType('ikh', 'sma',
                     SSB = (pointSSB.high + pointSSB.low) / 2;
                 }
 
-                CS = yVal[i][0];
+                CS = yVal[i][3];
 
                 date = xVal[i];
 
@@ -584,9 +808,9 @@ seriesType('ikh', 'sma',
                 IKH[i + period][1] = KS;
                 IKH[i + period][2] = UNDEFINED;
 
-                if (i >= period) {
-                    IKH[i - period][2] = CS;
-                } else {
+                IKH[i][2] = CS;
+
+                if (i <= period) {
                     IKH[i + period][3] = UNDEFINED;
                     IKH[i + period][4] = UNDEFINED;
                 }
@@ -602,7 +826,7 @@ seriesType('ikh', 'sma',
 
             }
 
-            // add timestamps for further points
+            // Add timestamps for further points
             for (i = 1; i <= period; i++) {
                 xData.push(date + i * closestPointRange);
             }
@@ -613,22 +837,16 @@ seriesType('ikh', 'sma',
                 yData: IKH
             };
         }
-    });
+    }
+);
+
 /**
  * A `IKH` series. If the [type](#series.ikh.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.ikh
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.ikh
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.ikh
- */
-
-/**
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.ikh.data
  */

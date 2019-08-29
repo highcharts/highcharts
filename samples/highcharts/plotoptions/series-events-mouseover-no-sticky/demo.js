@@ -1,4 +1,3 @@
-
 var $report = $('#report');
 
 Highcharts.chart('container', {

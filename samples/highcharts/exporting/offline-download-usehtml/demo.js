@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
 
     exporting: {
@@ -43,4 +41,3 @@ Highcharts.chart('container', {
     }]
 
 });
-

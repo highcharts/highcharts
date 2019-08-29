@@ -2,46 +2,46 @@ $(function () {
 
     // Prepare random data
     var data = [{
-        "code": "12Y",
-        "value": 728
+        code: "12Y",
+        value: 728
     }, {
-        "code": "10Y",
-        "value": 541
+        code: "10Y",
+        value: 541
     }];
 
     var geojson = {
-        "type": "FeatureCollection",
-        "crs": {
-            "type": "name",
-            "properties": {
-                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        type: "FeatureCollection",
+        crs: {
+            type: "name",
+            properties: {
+                name: "urn:ogc:def:crs:OGC:1.3:CRS84"
             }
         },
 
-        "features": [{
-            "type": "Feature",
-            "properties": {
-                "CP_BEAT": "12Y",
-                "POL_BEAT": "12",
-                "POL_DIST": "2",
-                "POL_SECT": "1",
-                "ID": 53,
-                "FULLNAME": null,
-                "ACTION": "P",
-                "AGENCY": "OP",
-                "RESPONSE": null,
-                "MESSAGE": 0.0,
-                "NAME": "12Y",
-                "SOURCETHM": "Pb",
-                "ACRES": 431.053,
-                "RULEID": 2,
-                "RULEID_1": 0,
-                "SHAPE_AREA": 29298982.3469,
-                "SHAPE_LEN": 29524.361276399999042
+        features: [{
+            type: "Feature",
+            properties: {
+                CP_BEAT: "12Y",
+                POL_BEAT: "12",
+                POL_DIST: "2",
+                POL_SECT: "1",
+                ID: 53,
+                FULLNAME: null,
+                ACTION: "P",
+                AGENCY: "OP",
+                RESPONSE: null,
+                MESSAGE: 0.0,
+                NAME: "12Y",
+                SOURCETHM: "Pb",
+                ACRES: 431.053,
+                RULEID: 2,
+                RULEID_1: 0,
+                SHAPE_AREA: 29298982.3469,
+                SHAPE_LEN: 29524.361276399999042
             },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+            geometry: {
+                type: "Polygon",
+                coordinates: [
                     [
                         [-122.253567715369499, 37.850819709676422],
                         [-122.250901591213591, 37.851610510152703],
@@ -64,29 +64,29 @@ $(function () {
                 ]
             }
         }, {
-            "type": "Feature",
-            "properties": {
-                "CP_BEAT": "10Y",
-                "POL_BEAT": "10",
-                "POL_DIST": "2",
-                "POL_SECT": "1",
-                "ID": 40,
-                "FULLNAME": null,
-                "ACTION": "P",
-                "AGENCY": "OP",
-                "RESPONSE": null,
-                "MESSAGE": 0.0,
-                "NAME": "10Y",
-                "SOURCETHM": "Pb",
-                "ACRES": 277.952,
-                "RULEID": 2,
-                "RULEID_1": 0,
-                "SHAPE_AREA": 12112098.0136,
-                "SHAPE_LEN": 16726.632870500001445
+            type: "Feature",
+            properties: {
+                CP_BEAT: "10Y",
+                POL_BEAT: "10",
+                POL_DIST: "2",
+                POL_SECT: "1",
+                ID: 40,
+                FULLNAME: null,
+                ACTION: "P",
+                AGENCY: "OP",
+                RESPONSE: null,
+                MESSAGE: 0.0,
+                NAME: "10Y",
+                SOURCETHM: "Pb",
+                ACRES: 277.952,
+                RULEID: 2,
+                RULEID_1: 0,
+                SHAPE_AREA: 12112098.0136,
+                SHAPE_LEN: 16726.632870500001445
             },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+            geometry: {
+                type: "Polygon",
+                coordinates: [
                     [
                         [-122.268088702101338, 37.836847065503278],
                         [-122.266099940295945, 37.835215040352146],

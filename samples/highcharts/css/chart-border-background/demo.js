@@ -1,7 +1,7 @@
-
 Highcharts.chart('container', {
     chart: {
-        type: 'line'
+        type: 'line',
+        styledMode: true
     },
     title: {
         text: 'Chart border and background by CSS'

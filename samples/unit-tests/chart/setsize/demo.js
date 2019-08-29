@@ -268,7 +268,7 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
 
         var temp = [],
             rain = [],
-        // Nearest hour to now
+            // Nearest hour to now
             done = assert.async();
 
         for (var i = 0; i < 24; i++) {
@@ -312,7 +312,7 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
             chart.setSize(700, 450);
 
             assert.strictEqual(
-                chart.series[1].clipBox.width,
+                Number(chart[chart.series[1].sharedClipKey].attr('width')),
                 chart.series[1].xAxis.len,
                 'Correct clipbox width.'
             );
@@ -429,26 +429,26 @@ QUnit.test('Title resize (#2857)', function (assert) {
 QUnit.test('Plot area update(#3098)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            "type": "pie",
-            "renderTo": "container",
+            type: 'pie',
+            renderTo: 'container',
             plotBackgroundColor: 'rgba(0,255,255,0.25)'
         },
         credits: {
             enabled: false
         },
-        "legend": {
+        legend: {
             backgroundColor: 'pink',
-            "enabled": true,
-            "itemMarginBottom": 10,
-            "itemStyle": {
-                "fontFamily": "Arial, Helvetica, Sans Serif",
-                "fontSize": "10px"
+            enabled: true,
+            itemMarginBottom: 10,
+            itemStyle: {
+                fontFamily: 'Arial, Helvetica, Sans Serif',
+                fontSize: '10px'
             }
         },
         series: [{
-            "showInLegend": true,
-            "dataLabels": {
-                "enabled": false
+            showInLegend: true,
+            dataLabels: {
+                enabled: false
             },
             data: [{
                 name: "Stamm 1 (AM Level) (Stamm 1 (AM Level) Desc)",

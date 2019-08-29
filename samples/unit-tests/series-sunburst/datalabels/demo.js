@@ -71,7 +71,7 @@ QUnit.test('Rotation mode', function (assert) {
             return Number(point.dataLabel.rotation.toFixed(1));
         }),
         [0, 22.5, 67.5, -67.5, -22.5, 22.5, 67.5, -67.5, -22.5],
-        'rotationMode should be perpendicular'
+        'rotationMode should be parallel'
     );
 
     chart.series[0].update({

@@ -54,7 +54,7 @@ renderer.circle(10, 10, 3)
 
 renderer.label('Top left', 20, 20, 'callout')
     .attr({
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 10,
         anchorY: 10,
@@ -72,7 +72,7 @@ renderer.circle(200, 10, 3)
 renderer.label('Top', 200, 20, 'callout')
     .attr({
         align: 'center',
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 200,
         anchorY: 10,
@@ -90,7 +90,7 @@ renderer.circle(390, 10, 3)
 renderer.label('Top right', 380, 20, 'callout')
     .attr({
         align: 'right',
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 390,
         anchorY: 10,
@@ -108,7 +108,7 @@ renderer.circle(390, 150, 3)
 renderer.label('Right', 380, 140, 'callout')
     .attr({
         align: 'right',
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 390,
         anchorY: 150,
@@ -126,7 +126,7 @@ renderer.circle(390, 290, 3)
 renderer.label('Bottom right', 380, 260, 'callout')
     .attr({
         align: 'right',
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 390,
         anchorY: 290,
@@ -144,7 +144,7 @@ renderer.circle(200, 290, 3)
 renderer.label('Bottom', 200, 260, 'callout')
     .attr({
         align: 'center',
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 200,
         anchorY: 290,
@@ -161,7 +161,7 @@ renderer.circle(10, 290, 3)
 
 renderer.label('Bottom left', 20, 260, 'callout')
     .attr({
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 10,
         anchorY: 290,
@@ -178,7 +178,7 @@ renderer.circle(10, 150, 3)
 
 renderer.label('Left', 20, 140, 'callout')
     .attr({
-        'stroke': 'blue',
+        stroke: 'blue',
         'stroke-width': 2,
         anchorX: 10,
         anchorY: 150,

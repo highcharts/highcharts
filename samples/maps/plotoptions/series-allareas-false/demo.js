@@ -1,5 +1,3 @@
-
-
 // Prepare demo data
 var data = [{
     'hc-key': 'us',

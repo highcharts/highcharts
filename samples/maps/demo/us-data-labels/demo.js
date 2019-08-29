@@ -1,4 +1,3 @@
-
 // Load the data from the HTML table and tag it with an upper case name used for joining
 var data = [],
     // Get the map data

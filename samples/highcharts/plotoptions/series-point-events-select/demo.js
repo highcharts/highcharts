@@ -1,5 +1,3 @@
-
-
 // create the chart
 Highcharts.chart('container', {
     xAxis: {

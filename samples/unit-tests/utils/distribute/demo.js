@@ -11,36 +11,40 @@
         row = 0;
 
     function visualize(boxes) {
-        ren.path(['M', 0, row + 55, 'L', len, row + 55])
-        .attr({
-            stroke: 'silver',
-            'stroke-width': 2
-        })
-        .add();
+        ren
+            .path(['M', 0, row + 55, 'L', len, row + 55])
+            .attr({
+                stroke: 'silver',
+                'stroke-width': 2
+            })
+            .add();
 
         each(boxes, function (box, i) {
             if (box.pos !== undefined) {
-                ren.rect(box.pos + 0.5, row + 10.5, box.size - 1, 20)
-                .attr({
-                    'fill': 'rgba(0, 0, 0, 0.1)',
-                    'stroke-width': 1,
-                    'stroke': Highcharts.getOptions().colors[i % 10]
-                })
-                .add();
+                ren
+                    .rect(box.pos + 0.5, row + 10.5, box.size - 1, 20)
+                    .attr({
+                        fill: 'rgba(0, 0, 0, 0.1)',
+                        'stroke-width': 1,
+                        stroke: Highcharts.getOptions().colors[i % 10]
+                    })
+                    .add();
 
-                ren.path(['M', box.pos + box.size / 2, row + 30, 'L', box.target, row + 55, 'z'])
-                .attr({
-                    'stroke-width': 1,
-                    'stroke': Highcharts.getOptions().colors[i % 10]
-                })
-                .add();
+                ren
+                    .path(['M', box.pos + box.size / 2, row + 30, 'L', box.target, row + 55, 'z'])
+                    .attr({
+                        'stroke-width': 1,
+                        stroke: Highcharts.getOptions().colors[i % 10]
+                    })
+                    .add();
             }
 
-            ren.circle(box.target, row + 55, 2)
-            .attr({
-                fill: 'blue'
-            })
-            .add();
+            ren
+                .circle(box.target, row + 55, 2)
+                .attr({
+                    fill: 'blue'
+                })
+                .add();
         });
 
         row += 55;
@@ -98,8 +102,6 @@
         );
     });
 
-
-
     QUnit.test('Crowded boxes', function (assert) {
 
         var boxes = [{
@@ -147,12 +149,14 @@
 
     QUnit.test('Equal, unranked boxes', function (assert) {
 
-        var boxes = Highcharts.map(new Array(60), function (val, i) {
-            return {
+        var boxes = [];
+
+        for (var i = 0, ie = 60; i < ie; ++i) {
+            boxes[i] = {
                 size: 20,
                 target: i * 10
             };
-        });
+        }
 
         Highcharts.distribute(boxes, len, 100);
 
@@ -165,4 +169,3 @@
         );
     });
 }());
-

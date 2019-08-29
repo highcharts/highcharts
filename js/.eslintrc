@@ -7,8 +7,9 @@
         "setInterval": true,
         "setTimeout": true,
         "XMLHttpRequest": true
-    },   
+    },
     "rules": {
+        "array-callback-return": 0,
         "camelcase": [2, {
             "properties": "always"
         }],
@@ -16,11 +17,12 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
+        "indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
         "lines-around-comment": 0,
         "max-len": [
             "error", {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|@apioption|@borrows|@default|@param|@property|@return|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "newline-after-var": 0,
@@ -29,15 +31,21 @@
         "no-debugger": 2,
         "no-empty": 0,                              /*The noop function and empty catches */
         "no-invalid-this": 0,
+        "no-prototype-builtins": 1,                 /*@todo: as error*/
         "no-shadow": 0,                             /*Same variable names in nested scopes. @todo: Fix this, it is useful*/
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
+        "node/no-unsupported-features": 0,
+        "node/no-unsupported-features/es-syntax": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
+        "prefer-rest-params": 0,
+        "prefer-spread": 0,
         "space-before-function-paren": [2, {
             "anonymous": "always",
             "named": "never"
         }], /*JSLint style*/
+        "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "quotes": [2, "single"],
         "spaced-comment": ["error", "always", { "markers": ["="] }],
         "require-jsdoc": 0,
@@ -48,11 +56,11 @@
 
         "security/detect-object-injection": 0,
         "security/detect-non-literal-fs-filename": 0 /* N/A for Highcharts, we do only client side */,
-        
+
         "highcharts/no-newline-in-doclet-code": 2,
         "highcharts/no-newline-in-doclet-link": 2,
         "highcharts/unparsable-doclet": 2
-        
+
     },
     "parserOptions": {
         "sourceType": "module"

@@ -1,8 +1,11 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highstock JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/stock
+ * @requires highcharts
+ *
  * Highstock as a plugin for Highcharts
  *
- * (c) 2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

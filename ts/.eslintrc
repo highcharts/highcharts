@@ -1,0 +1,59 @@
+{
+    "extends": [
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "camelcase": [
+            2,
+            {
+                "properties": "always"
+            }
+        ],
+        "comma-dangle": [
+            2,
+            "never"
+        ],
+        "consistent-return": 0,
+        "function-paren-newline": 0,
+        "func-style": 0,
+        "indent": 0,
+        "max-len": [
+            "error",
+            {
+                "ignoreUrls": true,
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+            }
+        ],
+        "no-dupe-class-members": 0,
+        "no-shadow": 0,
+        "no-undef": 0,
+        "no-undefined": 0,
+        "no-underscore-dangle": 0,
+        "no-unused-expressions": 0,
+        "no-use-before-define": 0,
+        "no-useless-constructor": 0,
+        "no-useless-return": 0,
+        "object-curly-spacing": [2, "always"],
+        "object-shorthand": 0,
+        "prefer-rest-params": 0,
+        "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
+        "@typescript-eslint/array-type": 0,
+        "@typescript-eslint/explicit-function-return-type": 2,
+        "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "@typescript-eslint/no-empty-interface": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-namespace": 0,
+        "@typescript-eslint/no-object-literal-type-assertion": 0,
+        "@typescript-eslint/no-unused-vars": 0,
+        "@typescript-eslint/no-use-before-define": 0,
+        "@typescript-eslint/no-useless-constructor": 2,
+        "node/no-unsupported-features/es-syntax": 0
+    }
+}

@@ -11,7 +11,7 @@ $(function () {
 
         chart.series[0].setData([{
             "hc-key": "in",
-            "value": 10000
+            value: 10000
         }]);
     });
 });

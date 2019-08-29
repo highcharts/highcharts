@@ -1,3 +1,52 @@
+QUnit.test('Defaults', assert => {
+    const chart = Highcharts.chart('container', {
+
+        title: {
+            text: 'Sensible defaults'
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+
+            plotLines: [{
+                value: 5.5
+            }]
+        },
+
+        yAxis: {
+            plotBands: [{
+                from: 100,
+                to: 120
+            }]
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].plotLinesAndBands[0].svgElem.element
+            .getAttribute('stroke-width'),
+        '1',
+        'A default stroke width should be applied to the plot line'
+    );
+    assert.ok(
+        /^#[0-9a-f]{6}$/.test(
+            chart.xAxis[0].plotLinesAndBands[0].svgElem.element
+                .getAttribute('stroke')
+        ),
+        'A default stroke color should be applied to the plot line'
+    );
+
+    assert.ok(
+        /^#[0-9a-f]{6}$/.test(
+            chart.yAxis[0].plotLinesAndBands[0].svgElem.element
+                .getAttribute('fill')
+        ),
+        'A default fill color should be applied to the plot band'
+    );
+});
 
 QUnit.test('General tests', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -110,6 +159,7 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
             width: 600
         },
         xAxis: {
+            showEmpty: true,
             min: Date.UTC(2016, 0, 13),
             max: Date.UTC(2016, 0, 27),
             type: 'datetime',
@@ -158,4 +208,98 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
         'hidden',
         'Inside range, label shown'
     );
+});
+
+// Highcharts 4.0.4, Issue #2361
+// X axis plot bands disappear when zooming in
+QUnit.test('Plotbands clip (#2361)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            minRange: 1,
+            plotBands: [{
+                color: '#FCFFC5',
+                from: 1,
+                to: 3,
+                label: {
+                    text: "I will dissapear if you zoom in <br/>so the start of the band isn't visible"
+                }
+            }]
+        },
+        yAxis: {
+            gridLineWidth: 0
+        },
+
+        series: [{
+            type: "column",
+            data: [1, 2, 3, 4, 5, 6],
+            pointPlacement: "between"
+        }]
+    });
+    assert.notEqual(
+        chart.xAxis[0].plotLinesAndBands[0].label,
+        null,
+        "Plotbands should be visible after zooming "
+    );
+    $('#container').highcharts().xAxis[0].setExtremes(2, 5);
+
+    assert.notEqual(
+        chart.xAxis[0].plotLinesAndBands[0].label,
+        null,
+        "Plotbands should be visible after zooming"
+    );
+    $('#container').highcharts().xAxis[0].setExtremes(4, 5);
+    assert.equal(
+        chart.xAxis[0].plotLinesAndBands[0].label.visibility,
+        'hidden',
+        "Plotbands should be hidden after zooming"
+    );
+});
+
+
+QUnit.test('#8356: support for plot lines & bands labels formatter.', function (assert) {
+    var plotLine,
+        plotBand,
+        formatterCallback = function () {
+            return 'Label is visible.';
+        },
+        chart = Highcharts.chart('container', {
+            xAxis: {
+                plotLines: [{
+                    value: 1,
+                    color: '#f00',
+                    width: 1,
+                    label: {
+                        formatter: formatterCallback
+                    }
+                }],
+                plotBands: [{
+                    from: 2,
+                    to: 5,
+                    color: 'rgba(255, 255, 0, 0.2)',
+                    width: 1,
+                    label: {
+                        formatter: formatterCallback
+                    }
+                }]
+            },
+            series: [{
+                data: [1, 2, 6, 1, 2, 4, 9]
+            }]
+        });
+
+    plotLine = chart.xAxis[0].plotLinesAndBands[0];
+    plotBand =  chart.xAxis[0].plotLinesAndBands[1];
+
+    assert.ok(
+        plotLine.label &&
+          plotLine.label.element.textContent.indexOf(formatterCallback()) > -1,
+        "Plot line label is visible."
+    );
+
+    assert.ok(
+        plotBand.label &&
+          plotBand.label.element.textContent.indexOf(formatterCallback()) > -1,
+        "Plot band label is visible."
+    );
+
 });

@@ -1,5 +1,3 @@
-
-
 /**
  * A small Highcharts snippet/plugin for adding images to axis labels
  */
@@ -34,7 +32,6 @@
         }
     });
 }(Highcharts));
-
 
 
 Highcharts.chart('container', {

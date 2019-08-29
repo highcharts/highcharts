@@ -140,7 +140,8 @@
 
         assert.strictEqual(
             chart.series[0].tracker,
-            null
+            undefined,
+            'Boost module should remove tracker after zoom'
         );
     });
 }());

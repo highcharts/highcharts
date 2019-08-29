@@ -51,8 +51,8 @@ QUnit.test('Item width after update. #6646', function (assert) {
     }, function (chart) {
 
         $(".highcharts-legend .highcharts-series-0 span")
-          .trigger('mouseover')
-          .trigger('mouseout');
+            .trigger('mouseover')
+            .trigger('mouseout');
 
 
         for (var i = chart.series.length - 1; i > -1; i--) {

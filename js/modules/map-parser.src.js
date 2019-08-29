@@ -1,19 +1,18 @@
-/**
- * (c) 2009-2018 Torstein Honsi
+/* *
+ * (c) 2009-2019 Torstein Honsi
+ *
+ * SVG map parser. This file requires data.js.
  *
  * License: www.highcharts.com/license
  */
-/**
- * SVG map parser.
- * This file requires data.js.
- */
+
 /* global document, jQuery, $ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
-
-var each = H.each;
 
 H.wrap(H.Data.prototype, 'init', function (proceed, options) {
     proceed.call(this, options);
@@ -24,9 +23,7 @@ H.wrap(H.Data.prototype, 'init', function (proceed, options) {
 });
 
 H.extend(H.Data.prototype, {
-    /**
-     * Parse an SVG path into a simplified array that Highcharts can read
-     */
+    // Parse an SVG path into a simplified array that Highcharts can read
     pathToArray: function (path, matrix) {
         var i = 0,
             position = 0,
@@ -178,11 +175,9 @@ H.extend(H.Data.prototype, {
         return path;
     },
 
-    /**
-     * Join the path back to a string for compression
-     */
+    // Join the path back to a string for compression
     pathToString: function (arr) {
-        each(arr, function (point) {
+        arr.forEach(function (point) {
             var path = point.path;
 
             // Join all by commas
@@ -198,9 +193,7 @@ H.extend(H.Data.prototype, {
         return arr;
     },
 
-    /**
-     * Scale the path to fit within a given box and round all numbers
-     */
+    // Scale the path to fit within a given box and round all numbers
     roundPaths: function (arr, scale) {
         var mapProto = H.seriesTypes.map.prototype,
             fakeSeries,
@@ -235,10 +228,11 @@ H.extend(H.Data.prototype, {
         fakeSeries.xAxis.min = fakeSeries.minX;
         fakeSeries.yAxis.min = (fakeSeries.minY + scale) / transA;
 
-        each(arr, function (point) {
+        arr.forEach(function (point) {
 
             var i,
                 path;
+
             point.path = path =
                 mapProto.translatePath.call(fakeSeries, point.path, true);
             i = path.length;
@@ -254,10 +248,7 @@ H.extend(H.Data.prototype, {
         return arr;
     },
 
-    /**
-     * Load an SVG file and extract the paths
-     * @param {Object} url
-     */
+    // Load an SVG file and extract the paths
     loadSVG: function () {
 
         var data = this,
@@ -298,6 +289,7 @@ H.extend(H.Data.prototype, {
 
         function getTranslate(elem) {
             var ctm = elem.getCTM();
+
             if (!isNaN(ctm.f)) {
                 return ctm;
             }
@@ -349,16 +341,18 @@ H.extend(H.Data.prototype, {
             allPaths = getPathLikeChildren(xml);
 
             // Skip clip paths
-            each(['defs', 'clipPath'], function (nodeName) {
-                each(xml.getElementsByTagName(nodeName), function (parent) {
-                    each(parent.getElementsByTagName('path'), function (path) {
-                        path.skip = true;
-                    });
+            ['defs', 'clipPath'].forEach(function (nodeName) {
+                xml.getElementsByTagName(nodeName).forEach(function (parent) {
+                    parent.getElementsByTagName('path').forEach(
+                        function (path) {
+                            path.skip = true;
+                        }
+                    );
                 });
             });
 
             // If not all paths belong to the same group, handle groups
-            each(allPaths, function (path, i) {
+            allPaths.forEach(function (path, i) {
                 if (!path.skip) {
                     var itemLineage = [],
                         parentNode,
@@ -392,13 +386,12 @@ H.extend(H.Data.prototype, {
 
             // Iterate groups to find sub paths
             if (handleGroups) {
-                each(
-                    lastCommonAncestor.getElementsByTagName('g'),
+                lastCommonAncestor.getElementsByTagName('g').forEach(
                     function (g) {
                         var groupPath = [],
                             pathHasFill;
 
-                        each(getPathLikeChildren(g), function (path) {
+                        getPathLikeChildren(g).forEach(function (path) {
                             if (!path.skip) {
                                 groupPath = groupPath.concat(
                                     data.pathToArray(
@@ -424,7 +417,7 @@ H.extend(H.Data.prototype, {
             }
 
             // Iterate the remaining paths that are not parts of groups
-            each(allPaths, function (path) {
+            allPaths.forEach(function (path) {
                 if (!path.skip) {
                     arr.push({
                         name: getName(path),

@@ -1,5 +1,3 @@
-
-
 // Create the chart
 Highcharts.chart('container', {
     chart: {
@@ -10,14 +8,14 @@ Highcharts.chart('container', {
 
                     var chart = this,
                         drilldowns = {
-                            'Animals': {
+                            Animals: {
                                 name: 'Animals',
                                 data: [
                                     ['Cows', 2],
                                     ['Sheep', 3]
                                 ]
                             },
-                            'Fruits': {
+                            Fruits: {
                                 name: 'Fruits',
                                 data: [
                                     ['Apples', 5],
@@ -25,7 +23,7 @@ Highcharts.chart('container', {
                                     ['Bananas', 2]
                                 ]
                             },
-                            'Cars': {
+                            Cars: {
                                 name: 'Cars',
                                 data: [
                                     ['Toyota', 1],
@@ -90,4 +88,3 @@ Highcharts.chart('container', {
         series: []
     }
 });
-

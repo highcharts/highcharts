@@ -1,5 +1,3 @@
-
-
 // Define the patterns
 Highcharts.setOptions({
     defs: {
@@ -35,6 +33,10 @@ Highcharts.setOptions({
 });
 
 Highcharts.chart('container', {
+
+    chart: {
+        styledMode: true
+    },
 
     title: {
         text: 'Patterns in styled mode'

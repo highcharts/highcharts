@@ -1,5 +1,3 @@
-
-
 /**
  * Create a constructor for sparklines that takes some sensible defaults and merges in the individual
  * chart options. This function is also available from the jQuery plugin as $(element).highcharts('SparkLine').
@@ -55,16 +53,9 @@ Highcharts.SparkLine = function (a, b, c) {
                 enabled: false
             },
             tooltip: {
-                backgroundColor: null,
-                borderWidth: 0,
-                shadow: false,
-                useHTML: true,
                 hideDelay: 0,
-                shared: true,
-                padding: 0,
-                positioner: function (w, h, point) {
-                    return { x: point.plotX - w / 2, y: point.plotY - h };
-                }
+                outside: true,
+                shared: true
             },
             plotOptions: {
                 series: {

@@ -1,5 +1,3 @@
-
-
 function breakEffect(axis, point, path, color) {
     var renderer = axis.chart.renderer,
         brkLine = point.brkLine;

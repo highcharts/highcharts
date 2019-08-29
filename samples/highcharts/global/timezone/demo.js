@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     global: {
         timezone: 'Europe/Oslo'

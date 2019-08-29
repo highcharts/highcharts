@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Keep the cache size down", function (assert) {
         var ren,
@@ -21,7 +20,6 @@ $(function () {
 
             label.getBBox();
         }
-
 
 
         assert.strictEqual(

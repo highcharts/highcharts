@@ -37,6 +37,9 @@ QUnit.test('Series.drawDataLabels', function (assert) {
                                 H.extend(this.style, obj);
                                 return this;
                             },
+                            setTextPath: function () {
+                                return this;
+                            },
                             destroy: noop,
                             shadow: noop
                         };

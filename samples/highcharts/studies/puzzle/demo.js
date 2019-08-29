@@ -1,5 +1,3 @@
-
-
 (function (H) {
     var addEvent = H.addEvent,
         Chart = H.Chart,
@@ -66,14 +64,15 @@
         }
 
         function drop(point) {
-            point.graphic.attr({
-                translateX: 0,
-                translateY: 0,
-                scaleX: 1,
-                scaleY: 1
-            })
-            .removeClass('highcharts-puzzle-dragging')
-            .addClass('highcharts-puzzle-dropped');
+            point.graphic
+                .attr({
+                    translateX: 0,
+                    translateY: 0,
+                    scaleX: 1,
+                    scaleY: 1
+                })
+                .removeClass('highcharts-puzzle-dragging')
+                .addClass('highcharts-puzzle-dropped');
 
             point.inPuzzle = false;
             stopDrag(point);
@@ -137,13 +136,14 @@
 
                 // Else, move it along
                 } else {
-                    point.graphic.attr({
-                        scaleX: 1,
-                        scaleY: 1,
-                        translateX: translateX,
-                        translateY: translateY
-                    })
-                    .addClass('highcharts-puzzle-dragging');
+                    point.graphic
+                        .attr({
+                            scaleX: 1,
+                            scaleY: 1,
+                            translateX: translateX,
+                            translateY: translateY
+                        })
+                        .addClass('highcharts-puzzle-dragging');
                 }
             }
         }
@@ -214,7 +214,7 @@ for (n in maps) {
 Highcharts.each(mapData.features, function (feature) {
     data.push({
         'hc-key': feature.properties['hc-key'],
-        'value': 1
+        value: 1
     });
 });
 
@@ -237,6 +237,16 @@ Highcharts.mapChart('container', {
         pointFormat: '{point.name}',
         style: {
             fontSize: '20px'
+        }
+    },
+
+    plotOptions: {
+        series: {
+            states: {
+                inactive: {
+                    opacity: 1
+                }
+            }
         }
     },
 

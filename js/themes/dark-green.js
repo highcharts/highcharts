@@ -1,14 +1,17 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * Dark blue theme for Highcharts JS
- * @author Torstein Honsi
- */
+ *  License: www.highcharts.com/license
+ *
+ *  Dark blue theme for Highcharts JS
+ *
+ * */
 
 'use strict';
+
 import Highcharts from '../parts/Globals.js';
+
 Highcharts.theme = {
     colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -114,6 +117,7 @@ Highcharts.theme = {
         }
     },
     legend: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
             font: '9pt Trebuchet MS, Verdana, sans-serif',
             color: '#A0A0A0'
@@ -123,6 +127,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#444'
+        },
+        title: {
+            style: {
+                color: '#C0C0C0'
+            }
         }
     },
     credits: {
@@ -247,14 +256,7 @@ Highcharts.theme = {
             ]
         },
         trackBorderColor: '#666'
-    },
-
-    // special colors for some of the
-    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-    background2: 'rgb(35, 35, 70)',
-    dataLabelsColor: '#444',
-    textColor: '#C0C0C0',
-    maskColor: 'rgba(255,255,255,0.3)'
+    }
 };
 
 // Apply the theme

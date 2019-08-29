@@ -1,4 +1,3 @@
-
 // The demo uses https://api.met.no/ API. Every AJAX
 // call downloads the XML format data, basing on specific capital
 // city latitude and longitude values.

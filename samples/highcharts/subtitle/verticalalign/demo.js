@@ -1,20 +1,18 @@
-
 Highcharts.chart('container', {
-    chart: {
-        marginBottom: 70
+    title: {
+        text: 'Subtitle in the bottom'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    },
-    subtitle: {
-        text: '* Footnote is using verticalAlign: bottom',
-        floating: true,
-        align: 'right',
-        x: -10,
-        verticalAlign: 'bottom',
-        y: -75
+        categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
     },
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    }]
+        data: [1, 4, 3, 5],
+        type: 'column',
+        name: 'Fruits'
+    }],
+    subtitle: {
+        text: '<b>The subtitle may be used as a chart description, then it will be part of exported charts.</b><br><em>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</em>',
+        verticalAlign: 'bottom',
+        align: 'left'
+    }
 });

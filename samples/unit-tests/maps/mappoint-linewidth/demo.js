@@ -1,4 +1,3 @@
-
 // This should maybe be a visual test
 QUnit.test('MapPoint with LineWidth', function (assert) {
     var chart = Highcharts.mapChart('container', {

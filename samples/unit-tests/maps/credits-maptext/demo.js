@@ -1,5 +1,3 @@
-
-
 QUnit.test('Credits', function (assert) {
 
     var chart = new Highcharts.Map({
@@ -114,7 +112,6 @@ QUnit.test('Credits', function (assert) {
         'PrecedenceTestPrecedenceMapTextPrecedenceMapTextFull',
         'Setting map credits default options as well as inline, inline takes precedence'
     );
-
 
 
 });

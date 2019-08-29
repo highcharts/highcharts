@@ -1,17 +1,17 @@
-/**
+/* *
  * (c) 2010-2017 Sebastian Bochan
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    correctFloat = H.correctFloat,
+var correctFloat = H.correctFloat,
     seriesType = H.seriesType,
     merge = H.merge;
 
@@ -19,44 +19,51 @@ var each = H.each,
 /**
  * The pareto series type.
  *
- * @constructor seriesTypes.pareto
- * @augments seriesTypes.line
- */
-
-/**
- * A pareto diagram is a type of chart that contains both bars and a line graph,
- * where individual values are represented in descending order by bars,
- * and the cumulative total is represented by the line.
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.pareto
  *
- * @extends plotOptions.line
- * @product highcharts
- * @sample {highcharts} highcharts/demo/pareto/
- *         Pareto diagram
- * @since 6.0.0
- * @excluding allAreas,boostThreshold,borderColor,borderRadius,
- *         borderWidth,crisp,colorAxis,depth,data,edgeColor,edgeWidth,
- *         findNearestPointBy,gapSize,gapUnit,grouping,groupPadding,
- *         groupZPadding,maxPointWidth,keys,negativeColor,pointInterval,
- *         pointIntervalUnit,pointPadding,pointPlacement,pointRange,pointStart,
- *         pointWidth,shadow,step,softThreshold,
- *         stacking,threshold,zoneAxis,zones
- * @optionparent plotOptions.pareto
+ * @augments Highcharts.Series
  */
+seriesType('pareto', 'line'
 
-seriesType('pareto', 'line', {
     /**
-     * Higher zIndex than column series to draw line above shapes.
-     */
-    zIndex: 3
-}, merge(derivedSeriesMixin, {
-    /**
-     * calculate sum and return percent points
+     * A pareto diagram is a type of chart that contains both bars and a line
+     * graph, where individual values are represented in descending order by
+     * bars, and the cumulative total is represented by the line.
      *
-     * @param  {Object} series
-     * @return {Array} Returns array of points [x,y]
+     * @sample {highcharts} highcharts/demo/pareto/
+     *         Pareto diagram
+     *
+     * @extends      plotOptions.line
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    allAreas, boostThreshold, borderColor, borderRadius,
+     *               borderWidth, crisp, colorAxis, depth, data, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, gapSize, gapUnit,
+     *               grouping, groupPadding, groupZPadding, maxPointWidth, keys,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPadding, pointPlacement, pointRange, pointStart,
+     *               pointWidth, shadow, step, softThreshold, stacking,
+     *               threshold, zoneAxis, zones
+     * @optionparent plotOptions.pareto
      */
-    setDerivedData: function () {
-        if (this.baseSeries.yData.length > 1) {
+    , {
+        /**
+         * Higher zIndex than column series to draw line above shapes.
+         */
+        zIndex: 3
+    }, merge(derivedSeriesMixin, {
+        /**
+         * Calculate sum and return percent points.
+         *
+         * @private
+         * @function Highcharts.Series#setDerivedData
+         *
+         * @return {Array<Array<number,number>>}
+         *         Returns array of points [x,y]
+         */
+        setDerivedData: function () {
             var xValues = this.baseSeries.xData,
                 yValues = this.baseSeries.yData,
                 sum = this.sumPointsPercents(yValues, xValues, null, true);
@@ -65,50 +72,61 @@ seriesType('pareto', 'line', {
                 this.sumPointsPercents(yValues, xValues, sum, false),
                 false
             );
-        }
-    },
-    /**
-     * calculate y sum and each percent point
-     *
-     * @param  {Array} yValues y values
-     * @param  {Array} xValues x values
-     * @param  {Number} sum of all y values
-     * @param  {Boolean} isSum declares if calculate sum of all points
-     * @return {Array} Returns sum of points or array of points [x,y]
-     */
-    sumPointsPercents: function (yValues, xValues, sum, isSum) {
-        var sumY = 0,
-            sumPercent = 0,
-            percentPoints = [],
-            percentPoint;
+        },
+        /**
+         * Calculate y sum and each percent point.
+         *
+         * @private
+         * @function Highcharts.Series#sumPointsPercents
+         *
+         * @param {Array<number>} yValues
+         *        Y values
+         *
+         * @param {Array<number>} xValues
+         *        X values
+         *
+         * @param {number} sum
+         *        Sum of all y values
+         *
+         * @param {boolean} [isSum]
+         *        Declares if calculate sum of all points
+         *
+         * @return {number|Array<number,number>}
+         *         Returns sum of points or array of points [x,sum]
+         */
+        sumPointsPercents: function (yValues, xValues, sum, isSum) {
+            var sumY = 0,
+                sumPercent = 0,
+                percentPoints = [],
+                percentPoint;
 
-        each(yValues, function (point, i) {
-            if (point !== null) {
-                if (isSum) {
-                    sumY += point;
-                } else {
-                    percentPoint = (point / sum) * 100;
-                    percentPoints.push(
-                        [xValues[i], correctFloat(sumPercent + percentPoint)]
-                    );
-                    sumPercent += percentPoint;
+            yValues.forEach(function (point, i) {
+                if (point !== null) {
+                    if (isSum) {
+                        sumY += point;
+                    } else {
+                        percentPoint = (point / sum) * 100;
+                        percentPoints.push([
+                            xValues[i],
+                            correctFloat(sumPercent + percentPoint)
+                        ]);
+                        sumPercent += percentPoint;
+                    }
                 }
-            }
-        });
+            });
 
-        return isSum ? sumY : percentPoints;
-    }
-}));
+            return isSum ? sumY : percentPoints;
+        }
+    }));
 
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.pareto
- * @excluding data,dataParser,dataURL
- * @product highcharts
+ * @extends   series,plotOptions.pareto
+ * @since     6.0.0
+ * @product   highcharts
+ * @excluding data, dataParser, dataURL
  * @apioption series.pareto
  */
 
@@ -116,8 +134,8 @@ seriesType('pareto', 'line', {
  * An integer identifying the index to use for the base series, or a string
  * representing the id of the series.
  *
- * @type {Number|String}
- * @default undefined
+ * @type      {number|string}
+ * @default   undefined
  * @apioption series.pareto.baseSeries
  */
 
@@ -125,9 +143,9 @@ seriesType('pareto', 'line', {
  * An array of data points for the series. For the `pareto` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.column.data
- * @product highcharts
+ * @type      {Array<Array<number|string>|*>}
+ * @extends   series.column.data
+ * @since     6.0.0
+ * @product   highcharts
  * @apioption series.pareto.data
  */

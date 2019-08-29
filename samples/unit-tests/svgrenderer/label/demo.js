@@ -1,3 +1,94 @@
+QUnit.test('Left trim (#5261)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    var correctLabel = ren.label('Hello World', 100, 25)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+
+    var label = ren.label('<br>Hello World', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    // tspan.dy should be the same as the reference
+    assert.strictEqual(
+        label.element.querySelector('tspan').getAttribute('dy'),
+        correctLabel.element.querySelector('tspan').getAttribute('dy'),
+        'Tspan dy offset'
+    );
+
+
+    label = ren.label('Hello World<br>', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    // tspan.dy should be the same as the reference
+    assert.strictEqual(
+        label.element.querySelector('tspan').getAttribute('dy'),
+        correctLabel.element.querySelector('tspan').getAttribute('dy'),
+        'Tspan dy offset'
+    );
+});
+
+QUnit.test('Image labels should have no fill (#4324)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    var image = ren.label(
+        '',
+        100,
+        100,
+        'url(https://smartview.antaris-solutions.net//images/icons/view_alerts.png)'
+    )
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        image.box.element.getAttribute('fill'),
+        null,
+        'No fill for image'
+    );
+
+
+    var circle = ren.label(
+        '',
+        150,
+        100,
+        'circle'
+    )
+        .attr({
+            'stroke-width': 2,
+            stroke: 'blue'
+        })
+        .add();
+
+
+    assert.strictEqual(
+        circle.box.element.getAttribute('fill'),
+        'none',
+        'Fill none for circle'
+    );
+});
+
 QUnit.test('New label with rect symbol (#5324)', function (assert) {
     var renderer = new Highcharts.Renderer(
         document.getElementById('container'),
@@ -31,7 +122,7 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
         400
     );
 
-    var url = (location.host === 'localhost:9876') ?
+    var url = location.host.substr(0, 12) === 'localhost:98' ?
         'url(base/test/testimage.png)' : // karma
         'url(testimage.png)'; // utils
 
@@ -101,6 +192,32 @@ QUnit.test('buildText fontSize (#2794)', function (assert) {
 
 });
 
+// Highcharts 4.0.4, Issue #3507
+// The second line of text appeared inside the rectangle. Should appear inside.
+QUnit.test('Tooltip overflow (#3507)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+    var lbl = ren.label('<span>Header</span><br>Body', 100, 100)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            width: '100px'
+        })
+        .add();
+    var textHeight = lbl.element.childNodes[1].getBBox().height,
+        boxHeight = lbl.element.childNodes[0].getBBox().height;
+
+    assert.ok(
+        boxHeight > textHeight,
+        "The second line of text should appear inside the rectangle"
+    );
+});
+
 // Highcharts 4.0.1, Issue #3132
 // SVGRenderer with fixed width doesn't handle marked-up text
 QUnit.test('SVG text wrap (#3132)', function (assert) {
@@ -109,25 +226,25 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         500,
         300
     );
-    renderer.label('Foo: bar', 100, 150)
-    .attr({
-        'stroke-width': 1,
-        stroke: 'blue'
-    })
-    .css({
-        width: '260px'
-    })
-    .add();
+    renderer.label('Foo: barracuda', 100, 150)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            width: '260px'
+        })
+        .add();
 
-    renderer.label('Foo: <b>bar</b>', 100, 100)
-    .attr({
-        'stroke-width': 1,
-        stroke: 'blue'
-    })
-    .css({
-        width: '260px'
-    })
-    .add();
+    renderer.label('Foo: <b>barracuda</b>', 100, 100)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            width: '260px'
+        })
+        .add();
 
 
     var labelWithMarkup = renderer.box.childNodes[3].childNodes[0].getBBox(),
@@ -135,5 +252,160 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
 
     assert.ok(
         labelWithMarkup.width > label.width,
-        "The width of the label that contains markup should be the greatest");
+        "The width of the label that contains markup should be the greatest"
+    );
+});
+
+QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
+
+    document.getElementById('container').innerHTML = '';
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var label1, label2, label3;
+
+    label1 = ren
+        .label(
+            '<span style="font-size: 10px">I should be inside the box</span>',
+            100,
+            100
+        )
+        .attr({
+            stroke: 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    label2 = ren
+        .label(
+            '<span style="font-size: 10px">I should be inside</span> the box',
+            100,
+            130
+        )
+        .attr({
+            stroke: 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    label3 = ren
+        .label(
+            'No inline span',
+            100,
+            160
+        )
+        .attr({
+            stroke: 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    assert.strictEqual(
+        document.getElementById('container').innerHTML.indexOf('NaN'),
+        -1,
+        'No NaN attribute values should be allowed'
+    );
+
+    assert.ok(
+        label1.element.getBBox().height < label2.element.getBBox().height,
+        'Label with inline style should be smaller'
+    );
+
+    assert.strictEqual(
+        label2.element.getBBox().height,
+        label3.element.getBBox().height,
+        'Label with text outside inner span should be equal'
+    );
+
+    label1 = ren.label('I should be inside the box', 100, 200)
+        .attr({
+            stroke: 'red',
+            'stroke-width': '1px'
+        })
+        .add()
+        .css({
+            fontSize: '30px'
+        });
+
+    assert.ok(
+        label1.box.element.getBBox().height > label1.text.element.getBBox().height,
+        'Border should be higher than text'
+    );
+
+    assert.ok(
+        label1.box.element.getBBox().width > label1.text.element.getBBox().width,
+        'Border should be wider than text'
+    );
+
+    label1 = ren.text('Testing text-anchor', 100, 300)
+        .attr({
+            align: ''
+        })
+        .add()
+        .css({
+            fontSize: '30px'
+        });
+
+    assert.strictEqual(
+        label1.element.attributes["text-anchor"],
+        undefined,
+        'Label text-anchor with empty align attribute should not be set'
+    );
+});
+
+QUnit.test('Labels with useHTML', assert => {
+    document.getElementById('container').innerHTML = '';
+    document.getElementById('container').style.position = 'relative';
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const lbl = ren
+        .label(
+            'This is a long text that requires the label to wrap into multiple lines',
+            10,
+            19,
+            null,
+            0,
+            0,
+            true
+        )
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 2
+        })
+        .css({
+            width: '200px'
+        })
+        .add();
+
+    assert.strictEqual(
+        lbl.text.element.style.width,
+        '200px',
+        'The span should have a fixed width'
+    );
+
+    lbl.attr({
+        text: 'Short'
+    });
+
+    assert.notEqual(
+        lbl.text.element.style.width,
+        '200px',
+        'The span width should adapt to shorter text (#10009)'
+    );
 });

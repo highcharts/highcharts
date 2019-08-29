@@ -1,8 +1,7 @@
-
 var categoryLinks = {
-    'Foo': 'http://www.bing.com/search?q=foo',
-    'Bar': 'http://www.bing.com/search?q=foo+bar',
-    'Foobar': 'http://www.bing.com/serach?q=foobar'
+    Foo: 'http://www.bing.com/search?q=foo',
+    Bar: 'http://www.bing.com/search?q=foo+bar',
+    Foobar: 'http://www.bing.com/serach?q=foobar'
 };
 
 Highcharts.chart('container', {

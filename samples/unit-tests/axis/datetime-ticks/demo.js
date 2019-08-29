@@ -228,13 +228,19 @@ QUnit.test(
             }
         });
 
+        var data = [];
+
+        for (var i = 0, ie = 48; i < ie; ++i) {
+            data[i] = Math.random();
+        }
+
         var chart = Highcharts.chart('container', {
             xAxis: {
                 type: 'datetime'
             },
 
             series: [{
-                data: Highcharts.map(new Array(48), Math.random),
+                data,
                 pointStart: Date.UTC(2013, 0, 1, 12),
                 pointInterval: 36e5 // one hour
             }]

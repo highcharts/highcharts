@@ -20,7 +20,8 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
             }]
         }),
         controller = new TestController(chart),
-        strartingNavYAxisLen = chart.yAxis[1].len;
+        strartingNavYAxisLen = chart.yAxis[1].len,
+        yAxisHeight;
 
     // Drag
     controller.pan([200, 190], [260, 100]);
@@ -36,5 +37,15 @@ QUnit.test("Drag panes on zoomable chart", function (assert) {
         0,
         0.5,
         "Zoom not triggered when dragging panes (#7563)"
+    );
+
+    // #8660
+    yAxisHeight = chart.yAxis[0].height;
+    chart.setSize(null, 300);
+
+    assert.notEqual(
+        yAxisHeight,
+        chart.yAxis[0].height,
+        "The height of the yAxis is proportionally adjusted after resize (#8660)"
     );
 });

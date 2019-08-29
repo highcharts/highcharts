@@ -1,5 +1,41 @@
+QUnit.test('False detection of overlapping labels in different panes (#4911)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: [{
+            height: "50%",
+            top: "50%"
+        }, {
+            height: "50%",
+            top: "0%"
+        }],
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            yAxis: 1,
+            data: [1, 2, 3]
+        }],
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    allowOverlap: false
+                }
+            }
+        }
+    });
 
-
+    chart.series.forEach(function (series) {
+        series.points.forEach(function (point) {
+            assert.strictEqual(
+                point.dataLabel.attr('opacity'),
+                1,
+                'Data label is visible'
+            );
+        });
+    });
+});
 QUnit.test('Bottom -90', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -157,6 +193,7 @@ QUnit.test(
             plotOptions: {
                 series: {
                     dataLabels: {
+                        allowOverlap: true,
                         enabled: true,
                         padding: 0,
                         defer: false
@@ -234,23 +271,127 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            6,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') < 0
+            ),
+            true,
             'All six labels of the second series should be hidden.'
         );
 
         chart.series[0].hide();
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            0,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') >= 0
+            ),
+            true,
             'All six labels of the second series should be visible.'
         );
 
 
     }
 );
+
+QUnit.test(
+    'Data labels with missing values on arearange (#9247)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'arearange',
+                width: 600,
+                height: 400
+            },
+            series: [{
+                data: [
+                    [0, 1],
+                    [2, 3],
+                    [4, 5],
+                    [0, 5]
+                ],
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        if (this.y > 0.5 && this.y < 4.5) {
+                            return this.y;
+                        }
+                        return null;
+                    }
+                }
+            }]
+
+        });
+
+        assert.deepEqual(
+            chart.series[0].points.map(function (p) {
+                return p.dataLabels && p.dataLabels.length;
+            }),
+            [1, 2, 1, 0],
+            'Data labels should only exist inside given range'
+        );
+
+        var dlPositions = [
+            chart.series[0].points[1].dataLabel.translateX,
+            chart.series[0].points[1].dataLabelUpper.translateX
+        ];
+        chart.setSize(500);
+        assert.strictEqual(
+            typeof dlPositions[0],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.strictEqual(
+            typeof dlPositions[1],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabel.translateX,
+            dlPositions[0],
+            'Data label has moved (#9247)'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabelUpper.translateX,
+            dlPositions[1],
+            'Data label has moved (#9247)'
+        );
+
+        // We should be able to destroy without errors
+        chart.destroy();
+    }
+);
+
+QUnit.test('defer:true and exporting (#10661)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            forExport: true
+        },
+        tooltip: {},
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas']
+        },
+        series: [{
+            data: [1000, 4000, 3000],
+            type: 'column',
+            dataLabels: {
+                enabled: true,
+                defer: true
+            }
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(
+            p => p.dataLabel.element.getAttribute('visibility')
+        ),
+        [null, null, null],
+        'Data labels should be visible'
+    );
+
+    assert.deepEqual(
+        chart.series[0].points.map(
+            p => p.dataLabel.element.getAttribute('opacity')
+        ),
+        [null, null, null],
+        'Data labels should be visible'
+    );
+});

@@ -157,3 +157,28 @@ QUnit.test('Scrolling outside range (#3040)', function (assert) {
     });
 
 });
+
+QUnit.test('#10733 - scrollbar had wrong range when extremes was the same.', function (assert) {
+    var H = Highcharts,
+        chart = H.chart('container', {
+            series: [{
+                data: [11],
+                type: "bar"
+            }],
+            xAxis: {
+                categories: ["Category 1"],
+                min: 0,
+                max: 0,
+                scrollbar: {
+                    enabled: true
+                }
+            }
+        }),
+        scrollbar = chart.xAxis[0].scrollbar;
+
+    assert.strictEqual(
+        H.isNumber(scrollbar.from) && H.isNumber(scrollbar.to),
+        true,
+        'Scrollbar starts from left button.'
+    );
+});

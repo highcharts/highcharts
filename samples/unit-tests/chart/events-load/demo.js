@@ -1,7 +1,7 @@
 /* eslint func-style:0 */
 
 (function () {
-    var url = (location.host === 'localhost:9876') ?
+    var url = location.host.substr(0, 12) === 'localhost:98' ?
         'url(base/test/testimage.png)' : // karma
         'url(testimage.png)'; // utils
 
@@ -133,8 +133,8 @@
         }, function () {
             assert.strictEqual(
                 this.container.querySelectorAll('image').length,
-                0,
-                'callback: Image not yet added'
+                1,
+                'callback: Image added after modules\'s callbacks'
             );
 
             done();
@@ -170,6 +170,7 @@
         buildChart();
 
         // The second time, they are obtained from Highcharts cache
+        // No lolex should be used here.
         setTimeout(function () {
             buildChart();
         }, 200);

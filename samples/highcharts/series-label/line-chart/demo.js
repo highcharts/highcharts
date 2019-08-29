@@ -1,4 +1,3 @@
-
 Highcharts.setOptions({
     lang: {
         months: ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli',

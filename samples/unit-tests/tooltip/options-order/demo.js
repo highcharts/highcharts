@@ -8,11 +8,8 @@ QUnit.test('Options importantance order static', function (assert) {
     * 6) user set -> plotOptions.<seriesType>
     * 7) user set -> series
     */
-    var resetTo = {
-        padding: Highcharts.defaultOptions.tooltip.padding,
-        pointFormat: Highcharts.defaultOptions.tooltip.pointFormat,
-        borderRadius: Highcharts.defaultOptions.tooltip.pointFormat
-    };
+    var resetTo = Highcharts.merge(Highcharts.defaultOptions.tooltip);
+
     Highcharts.setOptions({
         tooltip: {
             valueDecimals: '1', // 1)
@@ -186,9 +183,17 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
     * 7) user set -> series
     */
     var resetTo = {
-        padding: Highcharts.defaultOptions.tooltip.padding,
-        pointFormat: Highcharts.defaultOptions.tooltip.pointFormat,
-        borderRadius: Highcharts.defaultOptions.tooltip.pointFormat
+        tooltip: {
+            headerFormat: Highcharts.defaultOptions.tooltip.headerFormat
+        },
+        plotOptions: {
+            line: {
+                tooltip: undefined
+            },
+            series: {
+                tooltip: undefined
+            }
+        }
     };
 
     Highcharts.setOptions({
@@ -337,14 +342,5 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
     );
 
     // Reset
-    delete Highcharts.defaultOptions.tooltip.valueDecimals;
-    delete Highcharts.defaultOptions.tooltip.valueSuffix;
-    delete Highcharts.defaultOptions.tooltip.footerFormat;
-    delete Highcharts.defaultOptions.tooltip.valuePrefix;
-    Highcharts.setOptions({
-        tooltip: resetTo
-    });
-
-    delete Highcharts.defaultOptions.plotOptions.series.tooltip;
-    delete Highcharts.defaultOptions.plotOptions.line.tooltip;
+    Highcharts.setOptions(resetTo);
 });

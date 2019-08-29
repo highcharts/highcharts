@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Pattern fill plugin demo'

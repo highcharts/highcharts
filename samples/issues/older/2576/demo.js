@@ -18,7 +18,7 @@ $(function () {
                 enabled: true,
                 style: {
                     fontWeight: 'bold',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    color: 'gray'
                 }
             }
         },
@@ -27,7 +27,7 @@ $(function () {
                 stacking: 'normal',
                 dataLabels: {
                     enabled: true,
-                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    color: 'white',
                     rotation: 0
                 }
             }
@@ -41,4 +41,3 @@ $(function () {
         }]
     });
 });
-

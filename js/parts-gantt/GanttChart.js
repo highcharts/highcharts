@@ -1,111 +1,113 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Lars A. V. Cabrera
-*
-* License: www.highcharts.com/license
-*/
+/* *
+ *
+ *  (c) 2016-2019 Highsoft AS
+ *
+ *  Author: Lars A. V. Cabrera
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var isArray = U.isArray, splat = U.splat;
 import 'GanttSeries.js';
-
-var each = H.each,
-    map = H.map,
-    merge = H.merge,
-    splat = H.splat,
-    Chart = H.Chart;
-
+var merge = H.merge, Chart = H.Chart;
 /**
- * The GanttChart class.
- * @class Highcharts.ganttChart
- * @memberOf Highcharts
- * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
- *                                         its id.
- * @param {ChartOptions}          options  The chart options structure.
- * @param {Function}              callback Function to run when the chart has
- *                                         loaded.
+ * Factory function for Gantt charts.
+ *
+ * @example
+ * // Render a chart in to div#container
+ * var chart = Highcharts.ganttChart('container', {
+ *     title: {
+ *         text: 'My chart'
+ *     },
+ *     series: [{
+ *         data: ...
+ *     }]
+ * });
+ *
+ * @function Highcharts.ganttChart
+ *
+ * @param {string|Highcharts.HTMLDOMElement} renderTo
+ *        The DOM element to render to, or its id.
+ *
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
+ *
+ * @param {Highcharts.ChartCallbackFunction} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
+ *        handler is equivalent.
+ *
+ * @return {Highcharts.Chart}
+ *         Returns the Chart object.
  */
 H.ganttChart = function (renderTo, options, callback) {
-    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
-        seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
-        defaultLinkedTo;
+    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName, seriesOptions = options.series, defaultOptions = H.getOptions(), defaultLinkedTo, userOptions = options;
     options = arguments[hasRenderToArg ? 1 : 0];
-
     // If user hasn't defined axes as array, make it into an array and add a
     // second axis by default.
-    if (!H.isArray(options.xAxis)) {
+    if (!isArray(options.xAxis)) {
         options.xAxis = [options.xAxis || {}, {}];
     }
-
     // apply X axis options to both single and multi x axes
-    options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
+    options.xAxis = options.xAxis.map(function (xAxisOptions, i) {
         if (i === 1) { // Second xAxis
             defaultLinkedTo = 0;
         }
-        return merge(
-            defaultOptions.xAxis,
-            { // defaults
-                grid: {
-                    enabled: true
-                },
-                opposite: true,
-                linkedTo: defaultLinkedTo
+        return merge(defaultOptions.xAxis, {
+            grid: {
+                enabled: true
             },
-            xAxisOptions, // user options
-            { // forced options
-                type: 'datetime'
-            }
-        );
-    });
-
-    // apply Y axis options to both single and multi y axes
-    options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-        return merge(
-            defaultOptions.yAxis, // #3802
-            { // defaults
-                grid: {
-                    enabled: true
-                },
-
-                staticScale: 50,
-
-                reversed: true,
-
-                // Set default type treegrid, but only if 'categories' is
-                // undefined
-                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
-            },
-            yAxisOptions // user options
-        );
-    });
-
-    options.series = null;
-
-    options = merge(
+            opposite: true,
+            linkedTo: defaultLinkedTo
+        }, xAxisOptions, // user options
         {
-            chart: {
-                type: 'gantt'
+            type: 'datetime'
+        });
+    });
+    // apply Y axis options to both single and multi y axes
+    options.yAxis = (splat(options.yAxis || {})).map(function (yAxisOptions) {
+        return merge(defaultOptions.yAxis, // #3802
+        {
+            grid: {
+                enabled: true
             },
-            title: {
-                text: null
-            },
-            legend: {
-                enabled: false
-            }
+            staticScale: 50,
+            reversed: true,
+            // Set default type treegrid, but only if 'categories' is
+            // undefined
+            type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+        }, yAxisOptions // user options
+        );
+    });
+    options.series = null;
+    options = merge(true, {
+        chart: {
+            type: 'gantt'
         },
-
-        options // user's options
-    );
-
-    options.series = seriesOptions;
-
-    each(options.series, function (series) {
-        each(series.data, function (point) {
+        title: {
+            text: null
+        },
+        legend: {
+            enabled: false
+        }
+    }, options, // user's options
+    // forced options
+    {
+        isGantt: true
+    });
+    options.series = userOptions.series = seriesOptions;
+    options.series.forEach(function (series) {
+        series.data.forEach(function (point) {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
         });
     });
-
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
-        new Chart(options, options);
+        new Chart(options, options); // @todo does not look correct
 };

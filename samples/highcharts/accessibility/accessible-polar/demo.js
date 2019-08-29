@@ -1,7 +1,10 @@
 var chart = Highcharts.chart('container', {
     chart: {
-        polar: true,
-        description: 'Test chart displaying a polar chart concept.'
+        polar: true
+    },
+    caption: {
+        text: 'Test chart displaying a polar chart concept.',
+        align: 'center'
     },
     title: {
         text: 'Budget vs spending',

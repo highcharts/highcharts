@@ -1,4 +1,3 @@
-
 // Highcharts 4.1.10, Issue #4799:
 // Column series on multiple axes with and without grouping render wrong
 QUnit.test('Non-grouped column is centered (#4799)', function (assert) {

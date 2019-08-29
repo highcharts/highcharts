@@ -1,0 +1,15 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+.highcharts-bubble-legend-symbol {
+    fill: #e4d354;
+}
+.highcharts-bubble-legend-connectors {
+    stroke-width: 2;
+}
+.highcharts-bubble-legend-labels {
+    font-size: 14px;
+}
+.highcharts-point {
+    fill: #e4d354;
+    stroke-width: 2;
+}

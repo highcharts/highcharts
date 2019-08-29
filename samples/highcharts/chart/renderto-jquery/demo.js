@@ -1,4 +1,3 @@
-
 var $container = $('<div>').appendTo(document.body);
 
 window.chart = new Highcharts.Chart({

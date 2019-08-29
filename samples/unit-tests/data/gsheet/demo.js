@@ -70,4 +70,3 @@ QUnit.skip('data-google-spreadsheetloading', function (assert) {
         }
     });
 });
-

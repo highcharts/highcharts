@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'on hover, the markers linecolor  is red'

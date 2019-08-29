@@ -1,5 +1,3 @@
-/* global TestController */
-
 QUnit.test('Global marker is null (#6321)', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -85,5 +83,29 @@ QUnit.test('Clicking marker (#6705)', function (assert) {
         clicked,
         true,
         'Click event fired'
+    );
+});
+
+QUnit.test('Bubble data points without z-param.(#8608)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bubble'
+        },
+        series: [{
+            data: [{
+                x: 95,
+                y: 95
+            },
+            {
+                x: 86.5,
+                y: 102.9
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        typeof chart.series[0].points[0].graphic,
+        'object',
+        'Has marker'
     );
 });

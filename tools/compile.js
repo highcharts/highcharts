@@ -1,7 +1,7 @@
 /* eslint-env node, es6 */
 /* eslint no-console:0, no-path-concat:0, no-nested-ternary:0, valid-jsdoc:0 */
 /* eslint-disable func-style */
-const closureCompiler = require('google-closure-compiler-js');
+const ClosureCompiler = require('google-closure-compiler').jsCompiler;
 const statSync = require('fs').statSync;
 const {
     getFile,
@@ -15,32 +15,33 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
     const sourcePath = sourceFolder + path;
     const outputPath = sourcePath.replace('.src.js', '.js');
     const src = getFile(sourcePath);
-    const getErrorMessage = (e) => {
-        return [
-            'Compile error in file: ' + path,
-            '- Type: ' + e.type,
-            '- Line: ' + e.lineNo,
-            '- Char : ' + e.charNo,
-            '- Description: ' + e.description
-        ].join('\n');
-    };
     return new Promise((resolve, reject) => {
-        const out = closureCompiler.compile({
+        const closureCompiler = new ClosureCompiler({
             compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-            jsCode: [{
-                path: filenameIn,
-                src: src
-            }],
             languageIn: 'ES5',
             languageOut: 'ES5',
-            createSourceMap: createSourceMap
+            createSourceMap
         });
-        const errors = out.errors;
-        if (errors.length) {
-            const msg = errors.map(getErrorMessage).join('\n');
-            reject(msg);
-        } else {
-            let compiledCode = out.compiledCode;
+        closureCompiler.run([{
+            path: filenameIn,
+            src
+        }], (exitCode, stdOut, errOut) => {
+            if (exitCode) {
+                const errors = errOut
+                    .split('\n\n\n\n')
+                    .filter(error => (
+                        error.includes('(JSC_PARSE_ERROR)\n\n') &&
+                        !error.includes(' ignoring it\n\n') &&
+                        !error.includes(' tag\n\n')
+                    ));
+                if (errors.length) {
+                    const msg = errors.join('\n\n---\n\n');
+                    console.log(colors.red(msg));
+                    reject(new Error(msg));
+                    return;
+                }
+            }
+            let compiledCode = stdOut[0].src;
             if (createSourceMap) {
                 /**
                  * Hack to insert the file property in sourcemap, and the
@@ -49,9 +50,10 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
                  * this if the configuration is correct.
                  */
                 const sourceMappingURL = filenameOut + '.map';
-                const mapJSON = JSON.parse(out.sourceMap);
+                const mapJSON = JSON.parse(stdOut[0].sourceMap);
                 mapJSON.file = sourceMappingURL;
-                compiledCode = `${compiledCode}\n//# sourceMappingURL=${sourceMappingURL}`;
+                compiledCode =
+                    `${compiledCode}\n//# sourceMappingURL=${sourceMappingURL}`;
 
                 // Write the source map to file.
                 writeFile(outputPath + '.map', JSON.stringify(mapJSON));
@@ -61,11 +63,13 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
             const filesize = statSync(outputPath).size;
             const filesizeKb = (filesize / 1000).toFixed(2) + ' kB';
 
-            if (filesize < 10) {
-                const msg = 'Compiled ' + sourcePath + ' => ' + outputPath +
-                    ', filesize suspiciously small (' + filesizeKb + ')';
+            if (filesize < 100) {
+                const msg = (
+                    'Compiled ' + sourcePath + ' => ' + outputPath +
+                    ', filesize suspiciously small (' + filesizeKb + ')'
+                );
                 console.log(colors.red(msg));
-                reject(msg);
+                reject(new Error(msg));
                 return;
             }
 
@@ -74,7 +78,7 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
                 colors.gray(' (' + filesizeKb + ')')
             );
             resolve();
-        }
+        });
     });
 };
 
@@ -82,7 +86,7 @@ const compile = (files, sourceFolder) => {
     console.log(colors.yellow('Warning: This task may take a few minutes.'));
     const createSourceMap = true;
     const promises = files
-      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
+        .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
     return Promise.all(promises);
 };
 

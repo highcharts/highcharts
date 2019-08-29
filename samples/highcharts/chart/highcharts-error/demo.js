@@ -1,4 +1,3 @@
-
 Highcharts.error = function (code) {
     // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
     // for error id's

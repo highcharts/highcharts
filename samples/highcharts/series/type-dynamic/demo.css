@@ -1,0 +1,33 @@
+#container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#button-row {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: right;
+    font-size: 0;
+}
+#button-row button {
+    background: #eee;
+    transition: background 150ms;
+    border: 1px solid #999;
+    display: inline-block;
+    font-size: 12pt;
+    line-height: 16pt;
+    margin-left: -1px;
+    color: #555;
+}
+#button-row button:first-child {
+    border-top-left-radius: 0.3em;
+    border-bottom-left-radius: 0.3em;
+}
+#button-row button:last-child {
+    border-top-right-radius: 0.3em;
+    border-bottom-right-radius: 0.3em;
+}
+#button-row button:focus, #button-row button:hover {
+    background: #ccc;
+    outline: none;
+}

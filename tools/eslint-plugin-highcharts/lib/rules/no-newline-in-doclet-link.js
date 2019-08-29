@@ -2,6 +2,7 @@
  * @fileoverview No newlines are allowed inside links in doclets.
  * @author Torstein Honsi
  */
+/* eslint-disable */
 'use strict';
 
 const description = 'No newlines are allowed inside links in doclets.';
@@ -36,7 +37,7 @@ module.exports = {
 
             lines.forEach((line, lineNo) => {
                 if (
-                    line.match(/\[[a-zA-z\.\# ]+\]\([\#a-zA-Z\.]+$/)
+                    line.match(/\[[a-zA-z0-9\.\# ]+\]\([\#a-zA-Z0-9\.\-\:\/]+$/)
                 ) {
                     context.report({
                         node: node,

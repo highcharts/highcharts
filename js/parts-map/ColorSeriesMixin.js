@@ -1,109 +1,70 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var defined = H.defined,
-    each = H.each,
-    noop = H.noop,
-    seriesTypes = H.seriesTypes;
-
 /**
  * Mixin for maps and heatmaps
+ *
+ * @private
+ * @mixin Highcharts.colorPointMixin
  */
 H.colorPointMixin = {
-    /**
-     * Color points have a value option that determines whether or not it is
-     * a null point
-     */
-    isValid: function () {
-        // undefined is allowed
-        return (
-            this.value !== null &&
-            this.value !== Infinity &&
-            this.value !== -Infinity
-        );
-    },
-
+    /* eslint-disable valid-jsdoc */
     /**
      * Set the visibility of a single point
+     * @private
+     * @function Highcharts.colorPointMixin.setVisible
+     * @param {boolean} visible
+     * @return {void}
      */
     setVisible: function (vis) {
-        var point = this,
-            method = vis ? 'show' : 'hide';
-
+        var point = this, method = vis ? 'show' : 'hide';
         point.visible = Boolean(vis);
-
         // Show and hide associated elements
-        each(['graphic', 'dataLabel'], function (key) {
+        ['graphic', 'dataLabel'].forEach(function (key) {
             if (point[key]) {
                 point[key][method]();
             }
         });
-    },
-    setState: function (state) {
-        H.Point.prototype.setState.call(this, state);
-        if (this.graphic) {
-            this.graphic.attr({
-                zIndex: state === 'hover' ? 1 : 0
-            });
-        }
     }
+    /* eslint-enable valid-jsdoc */
 };
-
+/**
+ * @private
+ * @mixin Highcharts.colorSeriesMixin
+ */
 H.colorSeriesMixin = {
-    pointArrayMap: ['value'],
-    axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     optionalAxis: 'colorAxis',
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    getSymbol: noop,
-    parallelArrays: ['x', 'y', 'value'],
-    colorKey: 'value',
-
-    /*= if (build.classic) { =*/
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
-    /*= } =*/
-
+    colorAxis: 0,
+    /* eslint-disable valid-jsdoc */
     /**
      * In choropleth maps, the color is a result of the value, so this needs
      * translation too
+     * @private
+     * @function Highcharts.colorSeriesMixin.translateColors
+     * @return {void}
      */
     translateColors: function () {
-        var series = this,
-            nullColor = this.options.nullColor,
-            colorAxis = this.colorAxis,
-            colorKey = this.colorKey;
-
-        each(this.data, function (point) {
-            var value = point[colorKey],
-                color;
-
+        var series = this, points = this.data.length ? this.data : this.points, nullColor = this.options.nullColor, colorAxis = this.colorAxis, colorKey = this.colorKey;
+        points.forEach(function (point) {
+            var value = point[colorKey], color;
             color = point.options.color ||
-                (
-                    point.isNull ?
-                        nullColor :
-                        (colorAxis && value !== undefined) ?
-                            colorAxis.toColor(value, point) :
-                            point.color || series.color
-                );
-
+                (point.isNull ?
+                    nullColor :
+                    (colorAxis && value !== undefined) ?
+                        colorAxis.toColor(value, point) :
+                        point.color || series.color);
             if (color) {
                 point.color = color;
             }
         });
-    },
-
-    /**
-     * Get the color attibutes to apply on the graphic
-     */
-    colorAttribs: function (point) {
-        var ret = {};
-        if (defined(point.color)) {
-            ret[this.colorProp || 'fill'] = point.color;
-        }
-        return ret;
     }
+    /* eslint-enable valid-jsdoc */
 };

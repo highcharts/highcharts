@@ -1,9 +1,8 @@
-
-
 var chart = Highcharts.chart('container', {
 
     chart: {
-        animation: false
+        animation: false,
+        styledMode: true
     },
 
     title: {

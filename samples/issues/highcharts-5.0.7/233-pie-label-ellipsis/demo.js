@@ -1,32 +1,32 @@
 Highcharts.chart('container', {
-    "chart": {
-        "type": "pie",
-        "width": 300,
-        "borderWidth": 1
+    chart: {
+        type: "pie",
+        width: 300,
+        borderWidth: 1
     },
-    "plotOptions": {
-        "series": {
-            "dataLabels": {
-                "enabled": true,
-                "style": {
-                    "fontSize": "8"
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: "8"
                 }
             }
         }
     },
-    "title": {
-        "text": "Stuffed pie"
+    title: {
+        text: "Stuffed pie"
     },
-    "subtitle": {
-        "text": "Data labels should not overflow on sides"
+    subtitle: {
+        text: "Data labels should not overflow on sides"
     },
-    "tooltip": {
-        "valueSuffix": " %"
+    tooltip: {
+        valueSuffix: " %"
     },
-    "series": [{
-        "index": 0,
-        "name": "Percentage",
-        "data": [
+    series: [{
+        index: 0,
+        name: "Percentage",
+        data: [
             [
                 "1. Cloud ALM services (almPaaS)",
                 11

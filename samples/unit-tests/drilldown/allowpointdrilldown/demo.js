@@ -1,4 +1,3 @@
-
 QUnit.test('Drill down on single point is not allowed', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

@@ -514,24 +514,27 @@
 
     });
 
-    QUnit.test('Event order', function (assert) {
+    QUnit.test('Event order', assert => {
         var obj = {},
             calls = [];
 
-        addEvent(obj, 'hit', function () {
-            calls.push('klakk');
-        }, { order: 2 });
-
-        addEvent(obj, 'hit', function () {
-            calls.push('klikk');
-        }, { order: 1 });
+        [
+            undefined,
+            { order: 2 },
+            undefined,
+            { order: 1 }
+        ].forEach(options => {
+            addEvent(obj, 'hit', () => {
+                calls.push(options ? options.order : undefined);
+            }, options);
+        });
 
         fireEvent(obj, 'hit');
 
         assert.deepEqual(
             calls,
-            ['klikk', 'klakk'],
-            'Events should be fired in order'
+            [1, 2, undefined, undefined],
+            'Events should be fired in ascending order'
         );
 
     });

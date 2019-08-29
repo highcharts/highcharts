@@ -1,11 +1,7 @@
-
-
 var transforms = {
-    'default': Highcharts.maps['countries/gb/gb-all']['hc-transform']['default'], // eslint-disable-line dot-notation
+    default: Highcharts.maps['countries/gb/gb-all']['hc-transform']['default'], // eslint-disable-line dot-notation
     custom: Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland']
 };
-
-delete Highcharts.maps['countries/gb/gb-all']['hc-transform']; // Remove transform from map
 
 // Initiate the chart
 Highcharts.mapChart('container', {
@@ -39,5 +35,3 @@ Highcharts.mapChart('container', {
         }]
     }]
 });
-
-

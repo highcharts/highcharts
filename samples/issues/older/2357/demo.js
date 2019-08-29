@@ -3,42 +3,42 @@ $(function () {
         title: {
             text: "Reading point names from different series.<br/>Categories should be Apr, May, Jun."
         },
-        "series": [{
-            "data": [{
+        series: [{
+            data: [{
                 x: 5,
-                "name": "May",
-                "y": 366
+                name: "May",
+                y: 366
             }],
-            "name": "Alpha"
+            name: "Alpha"
         }, {
-            "data": [{
+            data: [{
                 x: 4,
-                "name": "Apr",
-                "y": 984
+                name: "Apr",
+                y: 984
             }, {
                 x: 5,
-                "name": "May",
-                "y": 4800
+                name: "May",
+                y: 4800
             }, {
                 x: 6,
-                "name": "Jun",
-                "y": 5429
+                name: "Jun",
+                y: 5429
             }],
-            "name": "Beta"
+            name: "Beta"
         }, {
-            "data": [{
+            data: [{
                 x: 5,
-                "name": "May",
-                "y": 280
+                name: "May",
+                y: 280
             }, {
                 x: 6,
-                "name": "Jun",
-                "y": 899
+                name: "Jun",
+                y: 899
             }],
-            "name": "Gamma"
+            name: "Gamma"
         }],
-        "xAxis": {
-            "type": "category"
+        xAxis: {
+            type: "category"
         }
     });
 });

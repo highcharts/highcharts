@@ -1,5 +1,3 @@
-
-
 QUnit.test('Point interval unit beyond turboThreshold (#5568)', function (assert) {
 
 

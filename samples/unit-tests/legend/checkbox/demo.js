@@ -86,6 +86,13 @@ QUnit.test(
 QUnit.test(
     'Position checkboxes in navigator after series.update',
     function (assert) {
+
+        var data = [];
+
+        for (var i = 0, ie = 50; i < ie; ++i) {
+            data[i] = Math.random();
+        }
+
         var chart = new Highcharts.chart('container', {
 
             chart: {
@@ -101,7 +108,7 @@ QUnit.test(
             },
 
             series: [{
-                data: Highcharts.map(new Array(50), Math.random),
+                data,
                 dataLabels: {
                     enabled: false
                 },

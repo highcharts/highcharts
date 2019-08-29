@@ -1,5 +1,4 @@
-/**
- *
+/* *
  * Variable Pie module for Highcharts
  *
  * (c) 2010-2017 Grzegorz Blachliński
@@ -7,14 +6,18 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
+ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
-    each = H.each,
-    grep = H.grep,
+    fireEvent = H.fireEvent,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
@@ -23,22 +26,28 @@ var pick = H.pick,
 /**
  * The variablepie series type.
  *
- * @constructor seriesTypes.variablepie
- * @augments seriesTypes.pie
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.variablepie
+ *
+ * @augments Highcharts.Series
  */
-
-seriesType('variablepie', 'pie',
+seriesType(
+    'variablepie',
+    'pie',
     /**
      * A variable pie series is a two dimensional series type, where each point
      * renders an Y and Z value.  Each point is drawn as a pie slice where the
      * size (arc) of the slice relates to the Y value and the radius of pie
      * slice relates to the Z value. Requires `highcharts-more.js`.
      *
-     * @extends plotOptions.pie
-     * @product highcharts
      * @sample {highcharts} highcharts/demo/variable-radius-pie/
      *         Variable-radius pie chart
-     * @since 6.0.0
+     *
+     * @extends      plotOptions.pie
+     * @excluding    dragDrop
+     * @since        6.0.0
+     * @product      highcharts
      * @optionparent plotOptions.variablepie
      */
     {
@@ -46,43 +55,38 @@ seriesType('variablepie', 'pie',
          * The minimum size of the points' radius related to chart's `plotArea`.
          * If a number is set, it applies in pixels.
          *
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/min-max-point-size/
+         * @sample {highcharts} highcharts/variable-radius-pie/min-max-point-size/
          *         Example of minPointSize and maxPointSize
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/min-point-size-100/
+         * @sample {highcharts} highcharts/variable-radius-pie/min-point-size-100/
          *         minPointSize set to 100
-         * @type {String|Number}
+         *
+         * @type  {number|string}
          * @since 6.0.0
-         * @product highcharts
          */
         minPointSize: '10%',
         /**
          * The maximum size of the points' radius related to chart's `plotArea`.
          * If a number is set, it applies in pixels.
          *
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/min-max-point-size/
+         * @sample {highcharts} highcharts/variable-radius-pie/min-max-point-size/
          *         Example of minPointSize and maxPointSize
-         * @type {String|Number}
+         *
+         * @type  {number|string}
          * @since 6.0.0
-         * @product highcharts
          */
         maxPointSize: '100%',
         /**
-         * The minimum possible z value for the point's radius calculation.
-         * If the point's Z value is smaller than zMin, the slice will be drawn
+         * The minimum possible z value for the point's radius calculation. If
+         * the point's Z value is smaller than zMin, the slice will be drawn
          * according to the zMin value.
          *
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/zmin-5/
+         * @sample {highcharts} highcharts/variable-radius-pie/zmin-5/
          *         zMin set to 5, smaller z values are treated as 5
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/zmin-zmax/
+         * @sample {highcharts} highcharts/variable-radius-pie/zmin-zmax/
          *         Series limited by both zMin and zMax
-         * @type {Number}
+         *
+         * @type  {number}
          * @since 6.0.0
-         * @product highcharts
          */
         zMin: undefined,
         /**
@@ -90,27 +94,24 @@ seriesType('variablepie', 'pie',
          * the point's Z value is bigger than zMax, the slice will be drawn
          * according to the zMax value
          *
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/zmin-zmax/
+         * @sample {highcharts} highcharts/variable-radius-pie/zmin-zmax/
          *         Series limited by both zMin and zMax
-         * @type {Number}
+         *
+         * @type  {number}
          * @since 6.0.0
-         * @product highcharts
          */
         zMax: undefined,
         /**
-         * Whether the pie slice's value should be represented by the area
-         * or the radius of the slice. Can be either `area` or `radius`. The
+         * Whether the pie slice's value should be represented by the area or
+         * the radius of the slice. Can be either `area` or `radius`. The
          * default, `area`, corresponds best to the human perception of the size
          * of each pie slice.
          *
-         * @sample {highcharts}
-         *         highcharts/variable-radius-pie/sizeby/
+         * @sample {highcharts} highcharts/variable-radius-pie/sizeby/
          *         Difference between area and radius sizeBy
-         * @type {String}
-         * @validvalue ["area", "radius"]
+         *
+         * @type  {Highcharts.VariablePieSizeByValue}
          * @since 6.0.0
-         * @product highcharts
          */
         sizeBy: 'area',
 
@@ -121,20 +122,16 @@ seriesType('variablepie', 'pie',
         pointArrayMap: ['y', 'z'],
         parallelArrays: ['x', 'y', 'z'],
 
-        /*
-         * It is needed to null series.center on chart redraw. Probably good
-         * idea will be to add this option in directly in pie series.
-         */
+        // It is needed to null series.center on chart redraw. Probably good
+        // idea will be to add this option in directly in pie series.
         redraw: function () {
             this.center = null;
             pieProto.redraw.call(this, arguments);
         },
 
-        /*
-         * For arrayMin and arrayMax calculations array shouldn't have
-         * null/undefined/string values.
-         * In this case it is needed to check if points Z value is a Number.
-         */
+        // For arrayMin and arrayMax calculations array shouldn't have
+        // null/undefined/string values. In this case it is needed to check if
+        // points Z value is a Number.
         zValEval: function (zVal) {
             if (typeof zVal === 'number' && !isNaN(zVal)) {
                 return true;
@@ -142,10 +139,8 @@ seriesType('variablepie', 'pie',
             return null;
         },
 
-        /*
-         * Before standard translate method for pie chart it is needed to
-         * calculate min/max radius of each pie slice based on its Z value.
-         */
+        // Before standard translate method for pie chart it is needed to
+        // calculate min/max radius of each pie slice based on its Z value.
         calculateExtremes: function () {
             var series = this,
                 chart = series.chart,
@@ -162,9 +157,10 @@ seriesType('variablepie', 'pie',
                 // dataLabels, then series.center is changing.
                 positions = series.center || series.getCenter();
 
-            each(['minPointSize', 'maxPointSize'], function (prop) {
+            ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = seriesOptions[prop],
                     isPercent = /%$/.test(length);
+
                 length = parseInt(length, 10);
                 extremes[prop] = isPercent ?
                     smallestSize * length / 100 :
@@ -180,25 +176,36 @@ seriesType('variablepie', 'pie',
             if (zData.length) {
                 zMin = pick(
                     seriesOptions.zMin,
-                    arrayMin(grep(zData, series.zValEval))
+                    arrayMin(zData.filter(series.zValEval))
                 );
                 zMax = pick(
                     seriesOptions.zMax,
-                    arrayMax(grep(zData, series.zValEval))
+                    arrayMax(zData.filter(series.zValEval))
                 );
                 this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
             }
         },
 
-        /*
+        /**
          * Finding radius of series points based on their Z value and min/max Z
-         * value for all series
-         * zMin - min threshold for Z value. If point's Z value is smaller that
-         * zMin, point will have the smallest possible radius.
-         * zMax - max threshold for Z value. If point's Z value is bigger that
-         * zMax, point will have the biggest possible radius.
-         * minSize - minimal pixel size possible for radius
-         * maxSize - minimal pixel size possible for radius
+         * value for all series.
+         *
+         * @private
+         * @function Highcharts.Series#getRadii
+         *
+         * @param {number} zMin
+         *        Min threshold for Z value. If point's Z value is smaller that
+         *        zMin, point will have the smallest possible radius.
+         *
+         * @param {number} zMax
+         *        Max threshold for Z value. If point's Z value is bigger that
+         *        zMax, point will have the biggest possible radius.
+         *
+         * @param {number} minSize
+         *        Minimal pixel size possible for radius.
+         *
+         * @param {numbner} maxSize
+         *        Minimal pixel size possible for radius.
          */
         getRadii: function (zMin, zMax, minSize, maxSize) {
             var i = 0,
@@ -239,10 +246,8 @@ seriesType('variablepie', 'pie',
         },
 
 
-        /**
-         * Extend tranlate by updating radius for each pie slice instead of
-         * using one global radius.
-         */
+        // Extend translate by updating radius for each pie slice instead of
+        // using one global radius.
         translate: function (positions) {
 
             this.generatePoints();
@@ -261,7 +266,8 @@ seriesType('variablepie', 'pie',
                 startAngleRad = Math.PI / 180 * (startAngle - 90),
                 endAngleRad = Math.PI / 180 * (pick(
                     options.endAngle,
-                    startAngle + 360) - 90),
+                    startAngle + 360
+                ) - 90),
                 circ = endAngleRad - startAngleRad, // 2 * Math.PI,
                 points = series.points,
                 // the x component of the radius vector for a given point
@@ -287,27 +293,6 @@ seriesType('variablepie', 'pie',
             if (!positions) {
                 series.center = positions = series.getCenter();
             }
-
-            // Utility for getting the x value from a given y, used for
-            // anticollision logic in data labels. Added point for using
-            // specific points' label distance.
-            series.getX = function (y, left, point) {
-                var radii = point.series.radii[point.index];
-                angle = Math.asin(
-                    Math.max(    // #7663
-                        Math.min(
-                            (y - positions[1]) /
-                            (radii + point.labelDistance),
-                            1
-                        ),
-                        -1
-                    )
-                );
-                return positions[0] +
-                    (left ? -1 : 1) *
-                    (Math.cos(angle) * (radii +
-                    point.labelDistance));
-            };
 
             // Calculate the geometry for each point
             for (i = 0; i < len; i++) {
@@ -383,25 +368,41 @@ seriesType('variablepie', 'pie',
                     point.labelDistance / 5
                 ); // #1678
 
-                point.labelPos = [
-                    positions[0] + pointRadiusX +
-                    // first break of connector
-                    Math.cos(angle) * point.labelDistance,
-                    positions[1] + pointRadiusY +
-                    Math.sin(angle) * point.labelDistance, // a/a
-                    positions[0] + pointRadiusX +
-                    // second break, right outside pie
-                    Math.cos(angle) * finalConnectorOffset,
-                    positions[1] + pointRadiusY +
-                    Math.sin(angle) * finalConnectorOffset, // a/a
-                    positions[0] + pointRadiusX, // landing point for connector
-                    positions[1] + pointRadiusY, // a/a
-                    point.labelDistance < 0 ? // alignment
-                    'center' :
-                    point.half ? 'right' : 'left', // alignment
-                    angle // center angle
-                ];
+                point.labelPosition = {
+                    natural: {
+                        // initial position of the data label - it's utilized
+                        // for finding the final position for the label
+                        x: positions[0] + pointRadiusX +
+                            Math.cos(angle) * point.labelDistance,
+                        y: positions[1] + pointRadiusY +
+                            Math.sin(angle) * point.labelDistance
+                    },
+                    'final': {
+                        // used for generating connector path -
+                        // initialized later in drawDataLabels function
+                        // x: undefined,
+                        // y: undefined
+                    },
+                    // left - pie on the left side of the data label
+                    // right - pie on the right side of the data label
+                    alignment: point.half ? 'right' : 'left',
+                    connectorPosition: {
+                        breakAt: { // used in connectorShapes.fixedOffset
+                            x: positions[0] + pointRadiusX +
+                                Math.cos(angle) * finalConnectorOffset,
+                            y: positions[1] + pointRadiusY +
+                                Math.sin(angle) * finalConnectorOffset
+                        },
+                        touchingSliceAt: { // middle of the arc
+                            x: positions[0] + pointRadiusX,
+                            y: positions[1] + pointRadiusY
+                        }
+                    }
+                };
+
             }
+
+            fireEvent(series, 'afterTranslate');
         }
     }
 );
@@ -410,10 +411,9 @@ seriesType('variablepie', 'pie',
  * A `variablepie` series. If the [type](#series.variablepie.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.variablepie
- * @excluding dataParser,dataURL,stack,xAxis,yAxis
- * @product highcharts
+ * @extends   series,plotOptions.variablepie
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @product   highcharts
  * @apioption series.variablepie
  */
 
@@ -421,42 +421,35 @@ seriesType('variablepie', 'pie',
  * An array of data points for the series. For the `variablepie` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of arrays with 2 values. In this case, the numerical values
- * will be interpreted as `y, z` options. Example:
+ * 1. An array of arrays with 2 values. In this case, the numerical values will
+ *    be interpreted as `y, z` options. Example:
+ *    ```js
+ *    data: [
+ *        [40, 75],
+ *        [50, 50],
+ *        [60, 40]
+ *    ]
+ *    ```
  *
- *  ```js
- *  data: [
- *      [40, 75],
- *      [50, 50],
- *      [60, 40]
- *  ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.variablepie.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        y: 1,
+ *        z: 4,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        y: 7,
+ *        z: 10,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series'
- * [turboThreshold](#series.variablepie.turboThreshold), this option is not
- * available.
- *
- *  ```js
- *  data: [{
- *      y: 1,
- *      z: 4,
- *      name: "Point2",
- *      color: "#00FF00"
- *   }, {
- *      y: 7,
- *      z: 10,
- *      name: "Point1",
- *      color: "#FF00FF"
- *   }]
- *  ```
- *
- * @type {Array<Object|Number>}
- * @extends series.pie.data
- * @excluding marker,x
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -465,7 +458,10 @@ seriesType('variablepie', 'pie',
  *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
- * @product highcharts
+ *
+ * @type      {Array<Array<(number|string),number>|*>}
+ * @extends   series.pie.data
+ * @excluding marker, x
+ * @product   highcharts
  * @apioption series.variablepie.data
  */
-

@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'xrange'
+        type: 'xrange',
+        styledMode: true
     },
     title: {
         text: 'Highcharts X-range'

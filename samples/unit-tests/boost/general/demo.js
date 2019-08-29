@@ -28,24 +28,24 @@ QUnit.test(
     'Boost enabled false and boostThreshold conflict (#9052)',
     function (assert) {
         Highcharts.chart('container', {
-            "plotOptions": {
-                "series": {
-                    "boostThreshold": 1
+            plotOptions: {
+                series: {
+                    boostThreshold: 1
                 }
             },
-            "series": [{
-                "data": [1, 3, 2, 4]
+            series: [{
+                data: [1, 3, 2, 4]
             }],
-            "xAxis": {
-                "max": 10,
-                "min": -10
+            xAxis: {
+                max: 10,
+                min: -10
             },
-            "yAxis": {
-                "max": 10,
-                "min": -10
+            yAxis: {
+                max: 10,
+                min: -10
             },
-            "boost": {
-                "enabled": false
+            boost: {
+                enabled: false
             }
         });
 
@@ -160,5 +160,51 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             5,
             '5 points should be generated for flags series'
         );
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Series update with shared tooltip (#9572)',
+    function (assert) {
+        var i = 0,
+            chart,
+            controller;
+
+        assert.expect(0);
+
+        function getData() {
+            i++;
+            return [
+                ["Time", "2018-11-28", "2018-11-29", "2018-11-30"],
+                ["s1", 1, i, 1],
+                ["s2", 2, i, 2]
+            ];
+        }
+
+        chart = Highcharts.chart('container', {
+            data: {
+                columns: getData()
+            },
+            chart: {
+                width: 600
+            },
+            series: [{
+                boostThreshold: 1
+            }, {
+            }],
+            tooltip: {
+                shared: true
+            }
+        });
+
+        controller = new TestController(chart);
+        controller.moveTo(300, 200);
+        chart.update({
+            data: {
+                columns: getData()
+            },
+            series: [{}, {}],
+            tooltip: {}
+        });
     }
 );

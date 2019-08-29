@@ -1,4 +1,3 @@
-
 QUnit.test('RangeSelector inputs setting not affecting each other.', function (assert) {
     var data = [],
         dayFactor = 1000 * 3600 * 24,
@@ -58,14 +57,12 @@ QUnit.test('RangeSelector input: Re-setting same date after setting extremes in 
 
 QUnit.test('#6537 - 1M button should select range 28.02-31.03', function (assert) {
 
-    Highcharts.setOptions({
-        global: {
-            useUTC: true
-        }
-    });
     var chart = Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 0
+        },
+        time: {
+            useUTC: true
         },
         series: [{
             data: [
@@ -103,9 +100,8 @@ QUnit.test('#6537 - 1M button should select range 28.02-31.03', function (assert
 
     assert.strictEqual(
         Highcharts.dateFormat(null, chart.xAxis[0].min),
-        '2017-02-28 01:00:00',
-        'xAxis minimum correct (Timezone: UTC ' +
-        Math.round((new Date()).getTimezoneOffset() / -60) + ')'
+        '2017-02-28 00:00:00',
+        'xAxis minimum shoule be 1 month prior'
     );
 });
 
@@ -129,9 +125,9 @@ QUnit.test(
                 },
                 series: [{
                     data: [
-              [min, 10],
-              [middle, 11],
-              [max, 10]
+                        [min, 10],
+                        [middle, 11],
+                        [max, 10]
                     ]
                 }]
             }).highcharts();
@@ -156,15 +152,15 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
         },
         series: [{
             data: [
-          [1241136000000, 18.18],
-          [1241395200000, 18.87],
-          [1241481600000, 18.96],
-          [1241568000000, 18.93],
-          [1241654400000, 18.44],
-          [1241740800000, 18.46],
-          [1242000000000, 18.51],
-          [1242086400000, 17.77],
-          [1242172800000, 17.07]
+                [1241136000000, 18.18],
+                [1241395200000, 18.87],
+                [1241481600000, 18.96],
+                [1241568000000, 18.93],
+                [1241654400000, 18.44],
+                [1241740800000, 18.46],
+                [1242000000000, 18.51],
+                [1242086400000, 17.77],
+                [1242172800000, 17.07]
             ]
         }]
     });
@@ -192,11 +188,19 @@ QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (a
         20
     );
 
-    assert.strictEqual(
-        document.activeElement.nodeName.toUpperCase(),
-        'INPUT',
-        'Focused correct elements.'
-    );
+    if (
+        navigator.userAgent.indexOf('Linux') === -1 &&
+        navigator.userAgent.indexOf('Chrome') !== -1
+    ) {
+        assert.strictEqual(
+            document.activeElement.nodeName.toUpperCase(),
+            'INPUT',
+            'Focused correct elements.'
+        );
+
+    } else {
+        assert.ok(true, 'Focused correct elements only runs on select browsers');
+    }
 });
 
 QUnit.test('Check input format', function (assert) {
@@ -273,4 +277,59 @@ QUnit.test('Check input format', function (assert) {
         'Axis has changed'
     );
 
+});
+
+QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
+    var chart = new Highcharts.StockChart('container', {
+            chart: {
+                width: 650
+            },
+            title: false,
+            xAxis: {
+                min: Date.UTC(2007, 8, 5),
+                max: Date.UTC(2007, 8, 25)
+            },
+            series: [{
+                data: [
+                    [Date.UTC(2007, 8, 3), 0.7342],
+                    [Date.UTC(2007, 8, 4), 0.7349],
+                    [Date.UTC(2007, 8, 5), 0.7326],
+                    [Date.UTC(2007, 8, 6), 0.7306],
+                    [Date.UTC(2007, 8, 7), 0.7263],
+                    [Date.UTC(2007, 8, 10), 0.7247],
+                    [Date.UTC(2007, 8, 11), 0.7227],
+                    [Date.UTC(2007, 8, 12), 0.7191],
+                    [Date.UTC(2007, 8, 13), 0.7209],
+                    [Date.UTC(2007, 8, 14), 0.7207],
+                    [Date.UTC(2007, 8, 17), 0.7211],
+                    [Date.UTC(2007, 8, 18), 0.7153],
+                    [Date.UTC(2007, 8, 19), 0.7165],
+                    [Date.UTC(2007, 8, 20), 0.7107],
+                    [Date.UTC(2007, 8, 21), 0.7097],
+                    [Date.UTC(2007, 8, 24), 0.7098],
+                    [Date.UTC(2007, 8, 25), 0.7069],
+                    [Date.UTC(2007, 8, 26), 0.7078],
+                    [Date.UTC(2007, 8, 27), 0.7066],
+                    [Date.UTC(2007, 8, 28), 0.7006]
+                ]
+            }]
+        }),
+        min = chart.xAxis[0].min,
+        newMin,
+        test = new TestController(chart);
+
+    test.triggerEvent('click', 400, 20, {}, true);
+
+    document.activeElement.value = "2007-09-13";
+
+    test.mouseDown(400, 120);
+    test.mouseUp();
+
+    newMin = chart.xAxis[0].min;
+
+    assert.strictEqual(
+        min === newMin,
+        false,
+        'Extremes are updated.'
+    );
 });

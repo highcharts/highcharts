@@ -22,7 +22,7 @@ Highcharts.ganttChart('container', {
     /*
     plotOptions: {
         gantt: {
-            pathfinder: {
+            connectors: {
                 type: 'simpleConnect'
             }
         }

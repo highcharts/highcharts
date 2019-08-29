@@ -114,7 +114,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 100,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor: '#FFFFFF'
     },
     series: [{
         name: 'Rainfall',
@@ -145,5 +145,3 @@ Highcharts.chart('container', {
         linkedTo: 'temp'
     }]
 });
-
-

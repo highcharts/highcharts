@@ -1,4 +1,3 @@
-
 (function () {
 
     /**
@@ -60,7 +59,6 @@
             }
         });
     };
-
 
 
     QUnit.test('alignThreshold, positive-negative', function (assert) {

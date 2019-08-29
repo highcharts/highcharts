@@ -1,4 +1,3 @@
-
 /**
  * Create a global getSVG method that takes an array of charts as an
  * argument

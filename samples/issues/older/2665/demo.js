@@ -15,11 +15,10 @@ $(function () {
             endAngle: 90
         },
 
-        series: [ {
+        series: [{
             data: [1, 1, 1, 1, 1, 1, 1]
         }]
     });
 
 
 });
-

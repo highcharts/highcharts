@@ -1,10 +1,8 @@
-
-
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53f80ce1850b9060c0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Assign id's
-    $.each(data, function () {
-        this.id = this.code;
+    data.forEach(function (p) {
+        p.id = p.code;
     });
 
     // Initiate the chart
@@ -62,13 +60,13 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53
     });
 
     // Activate the buttons
-    $('#ecuador').click(function () {
+    document.getElementById('ecuador').addEventListener('click', function () {
         chart.get('EC').zoomTo();
     });
-    $('#south-korea').click(function () {
+    document.getElementById('south-korea').addEventListener('click', function () {
         chart.get('KR').zoomTo();
     });
-    $('#zoom-out').click(function () {
+    document.getElementById('zoom-out').addEventListener('click', function () {
         chart.mapZoom();
     });
 });

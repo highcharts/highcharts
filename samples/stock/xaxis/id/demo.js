@@ -1,4 +1,3 @@
-
 var chart = Highcharts.stockChart('container', {
     xAxis: {
         id: 'x-axis'

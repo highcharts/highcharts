@@ -1,5 +1,3 @@
-
-
 var gaugeOptions = {
 
     chart: {
@@ -14,7 +12,8 @@ var gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -72,9 +71,11 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
         name: 'Speed',
         data: [80],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">km/h</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px">{y}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">km/h</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' km/h'
@@ -97,9 +98,13 @@ var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, 
         name: 'RPM',
         data: [1],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px">{y:.1f}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">' +
+                '* 1000 / min' +
+                '</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' revolutions/min'
@@ -140,5 +145,3 @@ setInterval(function () {
         point.update(newVal);
     }
 }, 2000);
-
-

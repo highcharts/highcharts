@@ -11,41 +11,41 @@ QUnit.test('hasData', function (assert) {
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         hasData = wordcloudPrototype.hasData;
     assert.strictEqual(
-      hasData.call(undefined),
-      false,
-      'should return false if series is not an object'
+        hasData.call(),
+        false,
+        'should return false if series is not an object'
     );
     assert.strictEqual(
-      hasData.call({
-          visible: undefined,
-          points: ["Point"]
-      }),
-      false,
-      'should return false if series.visible is not explicitly true'
+        hasData.call({
+            visible: undefined,
+            points: ["Point"]
+        }),
+        false,
+        'should return false if series.visible is not explicitly true'
     );
     assert.strictEqual(
-      hasData.call({
-          visible: true,
-          points: undefined
-      }),
-      false,
-      'should return false if series.points is not an array'
+        hasData.call({
+            visible: true,
+            points: undefined
+        }),
+        false,
+        'should return false if series.points is not an array'
     );
     assert.strictEqual(
-      hasData.call({
-          visible: true,
-          points: []
-      }),
-      false,
-      'should return false if series.points has length 0'
+        hasData.call({
+            visible: true,
+            points: []
+        }),
+        false,
+        'should return false if series.points has length 0'
     );
     assert.strictEqual(
-      hasData.call({
-          visible: true,
-          points: ["Point"]
-      }),
-      true,
-      'should return true if series.visible is true, and series.points has length > 0'
+        hasData.call({
+            visible: true,
+            points: ["Point"]
+        }),
+        true,
+        'should return true if series.visible is true, and series.points has length > 0'
     );
 });
 
@@ -105,7 +105,7 @@ QUnit.test('getRotation', function (assert) {
     assert.strictEqual(
         getRotation(-1, 2, -60, 60),
         false,
-        'should return false if orientations is negative.'
+        'should return false if orientations is zero or negative.'
     );
     assert.strictEqual(
         getRotation(3, undefined, -60, 60),
@@ -146,6 +146,11 @@ QUnit.test('getRotation', function (assert) {
         getRotation(3, 2, -60, 60),
         60,
         'should return 60 which is the 3rd of 3 orientations between -60 to 60.'
+    );
+    assert.strictEqual(
+        getRotation(1, 0, 0, 90),
+        0,
+        'should return from when orientations equal 1. #10518'
     );
 });
 
@@ -214,7 +219,7 @@ QUnit.test('deriveFontSize', function (assert) {
  * we can't test something that is not accesible on the Highcharts object.
  */
 QUnit.test('isPolygonsColliding', function (assert) {
-    console.clear();
+    console.clear(); // eslint-disable-line
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
         polygonA = [[10, 10], [20, 30], [30, 10]],

@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
     // Create the chart
     Highcharts.stockChart('container', {
 
@@ -37,5 +37,3 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data)
         }]
     });
 });
-
-

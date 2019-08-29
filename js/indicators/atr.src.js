@@ -1,9 +1,17 @@
-'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
-var isArray = H.isArray,
-    seriesType = H.seriesType,
+'use strict';
+
+import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var isArray = U.isArray;
+
+var seriesType = H.seriesType,
     UNDEFINED;
 
 // Utils:
@@ -34,28 +42,40 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
 
     return [x, y];
 }
+
 /**
  * The ATR series type.
  *
- * @constructor seriesTypes.atr
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.atr
+ *
+ * @augments Highcharts.Series
  */
-seriesType('atr', 'sma',
+seriesType(
+    'atr',
+    'sma',
     /**
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/atr ATR indicator
-     * @since 6.0.0
+     * @sample stock/indicators/atr
+     *         ATR indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.atr
      */
     {
         params: {
             period: 14
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
@@ -117,24 +137,16 @@ seriesType('atr', 'sma',
             };
         }
 
-    });
+    }
+);
 
 /**
- * A `ATR` series. If the [type](#series.atr.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `ATR` series. If the [type](#series.atr.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.atr
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.atr
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.atr
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.atr.data
  */

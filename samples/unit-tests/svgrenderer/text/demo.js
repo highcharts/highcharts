@@ -1,3 +1,67 @@
+QUnit.test('Hide label with useHTML (#4938)', function (assert) {
+    var chart = Highcharts.chart('container', {}),
+        renderer = chart.renderer,
+        g = renderer.g().add(),
+        text = renderer.text('Label', 140, 140, true).add(g);
+    assert.strictEqual(
+        text.attr('visibility'),
+        0,
+        'Text element is visible'
+    );
+    assert.strictEqual(
+        g.attr('visibility'),
+        0,
+        'Group element is visible'
+    );
+    text.hide();
+    assert.strictEqual(
+        text.attr('visibility'),
+        'hidden',
+        'Text element is hidden'
+    );
+    g.hide();
+    assert.strictEqual(
+        g.attr('visibility'),
+        'hidden',
+        'Group element is hidden'
+    );
+});
+
+QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
+
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    // Reference point
+    ren.circle(100, 100, 3)
+        .attr({
+            fill: 'red'
+        })
+        .add();
+
+    // Add an empty text with useHTML, align it to the right
+    var text = ren.text('', 100, 100, true)
+        .attr({
+            align: 'right'
+        })
+        .add();
+
+    // Update the text
+    text.attr({
+        text: 'Hello World'
+    });
+
+
+    assert.strictEqual(
+        text.element.offsetLeft + text.element.offsetWidth,
+        100,
+        'Text is right aligned'
+    );
+
+});
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
 QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
@@ -45,11 +109,11 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 QUnit.test('Text word wrap with markup', function (assert) {
 
     var renderer = new Highcharts
-        .Renderer(
-            document.getElementById('container'),
-            400,
-            300
-        ),
+            .Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
         width = 100;
     renderer.rect(100, 20, width, 100)
         .attr({
@@ -77,7 +141,10 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
     // For some reason Edge gets the BBox width wrong, but the text looks
     // correct
-    if (navigator.userAgent.indexOf('Edge') === -1) {
+    if (
+        navigator.userAgent.indexOf('Edge') === -1 &&
+        navigator.userAgent.indexOf('Trident') === -1
+    ) {
         assert.ok(
             text.getBBox().width <= 100,
             'The text node width should be less than 100'
@@ -86,14 +153,54 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
 });
 
+QUnit.module('whiteSpace: "nowrap"', hooks => {
+    const { Renderer } = Highcharts;
+    const renderer = new Renderer(
+        document.getElementById('container'),
+        400,
+        300
+    );
+    const text = renderer.text('test', 100, 40)
+        .css({
+            whiteSpace: 'nowrap'
+        })
+        .add();
+
+    // Cleanup
+    hooks.after(() => {
+        renderer.destroy();
+        text.destroy();
+    });
+
+
+    QUnit.test('Skip tspans', assert => {
+        text.attr({ text: 'single_word' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'single_word',
+            'should not use tspan when whiteSpace equals "nowrap", and text equals "single_word".'
+        );
+
+        text.attr({ text: 'two words' });
+        assert.strictEqual(
+            text.element.innerHTML,
+            'two words',
+            'should not use tspan when whiteSpace equals "nowrap", and text equals "two words".'
+        );
+
+    });
+
+    // TODO: move rest of nowrap tests into this module.
+});
+
 QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
 
     var renderer = new Highcharts
-        .Renderer(
-            document.getElementById('container'),
-            400,
-            300
-        ),
+            .Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
         width = 100;
     renderer.rect(100, 20, width, 100)
         .attr({
@@ -166,7 +273,7 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
             20,
             true
         )
-        .add();
+            .add();
 
         assert.strictEqual(
             text.getBBox().width,
@@ -368,8 +475,8 @@ QUnit.test('HTML', function (assert) {
         );
 
         text = renderer.text(
-                'The quick brown fox jumped over the lazy dog', 10, 30, true
-            )
+            'The quick brown fox jumped over the lazy dog', 10, 30, true
+        )
             .css({
                 textOverflow: 'ellipsis',
                 width: '100px'
@@ -512,32 +619,74 @@ QUnit.test('Attributes', function (assert) {
 
 });
 
-// Highcharts 4.1.1, Issue #3842:
-// Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer
-QUnit.test('Text height (#3842)', function (assert) {
+QUnit.test('Text height', function (assert) {
 
-    var renderer;
+    const renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+    let fontSize;
 
     try {
+        const label = renderer.text('em')
+            .add();
 
-        renderer = new Highcharts.Renderer(
-            document.getElementById('container'),
-            400,
-            400
+        fontSize = '2vw';
+        label.css({
+            fontSize: fontSize
+        });
+
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            parseInt(window.innerWidth / 50, 10),
+            'Font size in vw'
         );
 
-        var textLabel = renderer.text('Firefox/IE clean', 10, 30).add();
+        fontSize = '2em';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            24,
+            'Font size in em'
+        );
 
-        var textLabelWithShadow = renderer.text('Firefox/IE shadow', 10, 60)
+        fontSize = '2rem';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            32,
+            'Font size in rem'
+        );
+
+        fontSize = '200%';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            24,
+            'Font size in %'
+        );
+
+        const textLabel = renderer.text('Firefox/IE clean', 10, 30).add();
+
+        const textLabelWithShadow = renderer.text('Firefox/IE shadow', 10, 60)
             .css({
                 textOutline: '6px silver'
             })
             .add();
 
+        // Highcharts 4.1.1, Issue #3842:
+        // Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer
         assert.equal(
             textLabelWithShadow.getBBox().height,
             textLabel.getBBox().height,
-            'Shadow text'
+            'Shadow text (#3842)'
         );
 
     } finally {
@@ -546,4 +695,47 @@ QUnit.test('Text height (#3842)', function (assert) {
 
     }
 
+});
+
+
+// Highcharts 4.0.4, Issue #3501
+// After adding a new style the text width is not respected
+QUnit.test('Adding new text style (#3501)', function (assert) {
+    var renderer;
+    try {
+
+        renderer = new Highcharts.Renderer(
+            document.getElementById('container'),
+            500,
+            300
+        );
+
+        var rect = renderer.rect(100, 100, 100, 100)
+            .attr({
+                'stroke-width': 1,
+                stroke: 'blue',
+                fill: 'none'
+            })
+            .add();
+
+        var txt = renderer.text('Initial text adapts to box width', 100, 120)
+            .css({
+                width: '100px'
+            })
+            .add();
+
+        txt.css({ fill: 'red' });
+
+        txt.attr({ text: 'After running .css once, the new text does not respect box width' });
+
+        var rectWidth = rect.element.getBBox().width,
+            textWidth = txt.element.getBBox().width;
+
+        assert.ok(
+            rectWidth > textWidth,
+            "The text width is not respected"
+        );
+    } finally {
+        renderer.destroy();
+    }
 });

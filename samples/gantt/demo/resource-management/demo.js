@@ -78,7 +78,7 @@ cars = [{
         to: today + 3 * day
     }]
 }, {
-    model: 'Peaugeot 208',
+    model: 'Peugeot 208',
     current: 0,
     deals: [{
         rentedTo: 'Harry Peterson',

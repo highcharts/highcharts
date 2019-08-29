@@ -1,9 +1,8 @@
-
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53f80ce1850b9060c0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Prevent logarithmic errors in color calulcation
-    $.each(data, function () {
-        this.value = (this.value < 1 ? 1 : this.value);
+    data.forEach(function (p) {
+        p.value = (p.value < 1 ? 1 : p.value);
     });
 
     // Initiate the chart
@@ -21,7 +20,13 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53
             title: {
                 text: 'Population density per km²',
                 style: {
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                    color: ( // theme
+                        Highcharts.defaultOptions &&
+                        Highcharts.defaultOptions.legend &&
+                        Highcharts.defaultOptions.legend.title &&
+                        Highcharts.defaultOptions.legend.title.style &&
+                        Highcharts.defaultOptions.legend.title.style.color
+                    ) || 'black'
                 }
             }
         },

@@ -1,3 +1,24 @@
+QUnit.test('Pie borderColor null(#1828)', function (assert) {
+    var chart = $("#container").highcharts({
+        chart: {
+            type: 'pie'
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5],
+            borderColor: null,
+            borderWidth: 1
+        }]
+    }).highcharts();
+
+    Highcharts.each(chart.series[0].points, function (point, i) {
+        assert.equal(
+            point.graphic.element.getAttribute('stroke'),
+            point.graphic.element.getAttribute('fill'),
+            'Point ' + i + ' has correct stroke'
+        );
+    });
+});
+
 QUnit.test('Undefined value (#6589)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -45,7 +66,7 @@ QUnit.test('Undefined value (#6589)', function (assert) {
 
 });
 
-QUnit.test('Update to negative (#7113)', function (assert) {
+QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -62,13 +83,14 @@ QUnit.test('Update to negative (#7113)', function (assert) {
     chart.series[0].setData([-10, -10, -10]);
     assert.strictEqual(
         chart.series[0].points[0].graphic,
-        null,
-        'Graphic is removed'
+        undefined,
+        'Graphic should be removed'
     );
-    assert.strictEqual(
-        chart.series[0].group.element.childNodes.length,
-        0,
-        'No remaining graphics'
+
+    // Issue #5526
+    assert.ok(
+        Highcharts.defined(chart.series[0].graph),
+        'Empty pie graphic is created.'
     );
 });
 

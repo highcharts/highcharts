@@ -1,5 +1,3 @@
-
-
 var colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container', {

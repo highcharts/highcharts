@@ -18,12 +18,12 @@ Highcharts.ganttChart('container', {
         }, {
             start: Date.UTC(2018, 11, 2),
             end: Date.UTC(2018, 11, 5),
-            completed: 0.5,
+            completed: 0.444,
             name: 'Development'
         }, {
             start: Date.UTC(2018, 11, 8),
             end: Date.UTC(2018, 11, 9),
-            completed: 0.15,
+            completed: 0.141,
             name: 'Testing'
         }, {
             start: Date.UTC(2018, 11, 9),

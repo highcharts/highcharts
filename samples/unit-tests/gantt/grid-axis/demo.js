@@ -739,7 +739,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     });
 
     axes = Highcharts.grep(chart.xAxis, function (axis) {
-        return !axis.isNavigatorAxis();
+        return !axis.options.isInternal;
     });
 
     Highcharts.each(axes, function (axis) {
@@ -958,6 +958,7 @@ QUnit.module('labels alignment', function () {
         map = Highcharts.map,
         categories = ['Category 1', 'Category 2', 'Category 3'],
         optionsAxis = {
+            showEmpty: true,
             type: 'category',
             grid: {
                 enabled: true
@@ -1184,6 +1185,39 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     assert.ok(
         labelBox.x < axisRight,
         'Last tick label does not pop out'
+    );
+
+    /*
+     * Make sure the tickPositions are not adjusted when they are within min and
+     * max.
+     */
+    const start = 1483225200000; // 1st January 2017
+    const month = 2678400000;
+    const userTickPositions = [start + month, start + 2 * month];
+    const end = start + 3 * month;
+    // Reassign tickPositions
+    ({ xAxis: [{ tickPositions }] } = Highcharts.chart('container', {
+        xAxis: [{
+            type: 'datetime',
+            tickPositions: userTickPositions,
+            grid: {
+                enabled: true
+            }
+        }],
+        series: [{
+            data: [{
+                x: start,
+                y: 0
+            }, {
+                x: end,
+                y: 0
+            }]
+        }]
+    }));
+    assert.deepEqual(
+        tickPositions,
+        userTickPositions,
+        'should not adjust last or first tick when they are within axis min and max. #10470'
     );
 });
 
@@ -1420,5 +1454,70 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
         Highcharts.dateFormat(null, chart.xAxis[0].max),
         Highcharts.dateFormat(null, Date.UTC(2018, 8, 22, 0)),
         'Start on tick, the last tick should be midnight'
+    );
+});
+
+QUnit.test('Chart.update', assert => {
+    const getColumn = format => ({ labels: { format } });
+    const chart = Highcharts.chart('container', {
+        yAxis: {
+            grid: {
+                enabled: true,
+                columns: [getColumn('Column 1'), getColumn('Column 2')]
+            },
+            type: 'category'
+        },
+        series: [{
+            data: [{ x: 0, x2: 100000, y: 0 }]
+        }]
+    });
+    const { yAxis: [axis] } = chart;
+    const getYAxisLabels = () => Array.from(
+        document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
+    )
+        .map((text => text.innerHTML))
+        .reverse();
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should have only one yAxis'
+    );
+
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Column 1', 'Column 2'],
+        'should have two labels after init.'
+    );
+
+    chart.update({
+        yAxis: {
+            grid: {
+                columns: [
+                    getColumn('Updated 1'),
+                    getColumn('Updated 2'),
+                    getColumn('New 3')
+                ]
+            }
+        }
+    }, true, true, true);
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should still have one yAxis after update'
+    );
+
+    // TODO: it would be better to have an event for Axis.remove to listen for.
+    assert.strictEqual(
+        axis === chart.yAxis[0],
+        true,
+        'should not destroy the axis even if oneToOne is true. #9269'
+    );
+
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Updated 1', 'Updated 2', 'New 3'],
+        'should still have two updated labels and a new one after update.'
     );
 });

@@ -1,4 +1,3 @@
-
 // Set up the chart
 var chart = new Highcharts.Chart({
     chart: {

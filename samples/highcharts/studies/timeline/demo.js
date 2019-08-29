@@ -1,5 +1,3 @@
-
-
 var chart,
     dataSequence = [{
         name: '2009',

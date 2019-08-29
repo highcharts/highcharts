@@ -5,14 +5,14 @@
  *
  * License: www.highcharts.com/license
  */
- 
+
 // Colors for data series and points.
 $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1 !default;
 
 // Chart background, point stroke for markers and columns etc
 $background-color: #ffffff !default;
 
-// Neutral colors, grayscale by default. The default colors are defined by mixing the 
+// Neutral colors, grayscale by default. The default colors are defined by mixing the
 // background-color with neutral, with a weight corresponding to the number in the name.
 $neutral-color-100: #000000 !default; // Strong text.
 $neutral-color-80: #333333 !default; // Main text and some strokes.
@@ -74,6 +74,10 @@ $navigator-series-border: $highlight-color-80 !default;
 // Scrollbar
 $scrollbar-track-background: $neutral-color-5 !default;
 $scrollbar-track-border: $neutral-color-5 !default;
+
+// Indicators
+$indicator-positive-line: #06B535;
+$indicator-negative-line: #F21313;
 
 .highcharts-container {
     position: relative;
@@ -225,13 +229,23 @@ $scrollbar-track-border: $neutral-color-5 !default;
 .highcharts-state-hover .highcharts-graph {
     stroke-width: 3;
 }
+
+.highcharts-point-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
+.highcharts-series-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
 .highcharts-state-hover path {
-    transition: stroke-width 50; /* quick in */
+    transition: stroke-width 50ms; /* quick in */
 }
 .highcharts-state-normal path {
     transition: stroke-width 250ms; /* slow out */
 }
-
 /* Legend hover affects points and series */
 g.highcharts-series,
 .highcharts-point,
@@ -290,7 +304,8 @@ g.highcharts-series,
     fill-opacity: 0.25;
     stroke-width: 0;
 }
-.highcharts-series:not(.highcharts-pie-series) .highcharts-point-select {
+.highcharts-series:not(.highcharts-pie-series) .highcharts-point-select,
+.highcharts-markers .highcharts-point-select {
     fill: $neutral-color-20;
     stroke: $neutral-color-100;
 }
@@ -364,6 +379,15 @@ g.highcharts-series,
     fill-opacity: 0.75;
 }
 
+.highcharts-vector-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-windbarb-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+ }
 
 
 /* Legend */
@@ -371,7 +395,7 @@ g.highcharts-series,
     fill: none;
     stroke-width: 0;
 }
-.highcharts-legend-item text {
+.highcharts-legend-item > text {
     fill: $neutral-color-80;
     font-weight: bold;
     font-size: $legend-font-size;
@@ -393,9 +417,24 @@ g.highcharts-series,
 .highcharts-legend-nav-inactive {
     fill: $neutral-color-20;
 }
+circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* tracker */
+    fill: rgba(192, 192, 192, 0.0001);
+}
 .highcharts-legend-title-box {
     fill: none;
     stroke-width: 0;
+}
+
+/* Bubble legend */
+.highcharts-bubble-legend-symbol {
+    stroke-width: 2;
+    fill-opacity: 0.5;
+}
+.highcharts-bubble-legend-connectors {
+    stroke-width: 1;
+}
+.highcharts-bubble-legend-labels {
+    fill: $neutral-color-80;
 }
 
 /* Loading */
@@ -469,6 +508,15 @@ g.highcharts-series,
 .highcharts-sankey-series .highcharts-point-hover.highcharts-link {
     transition: fill 50ms, fill-opacity 50ms;
     fill-opacity: 1;
+}
+.highcharts-venn-series .highcharts-point {
+    fill-opacity: 0.75;
+    stroke: $neutral-color-20;
+    transition: stroke 250ms, fill-opacity 250ms;
+}
+.highcharts-venn-series .highcharts-point-hover {
+    fill-opacity: 1;
+    stroke: $neutral-color-20;
 }
 
 /* Highstock */

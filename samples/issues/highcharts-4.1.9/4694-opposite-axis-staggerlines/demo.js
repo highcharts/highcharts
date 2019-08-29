@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('StaggerLines on opposite xAxis should be placed between title and axis line.', function (assert) {
         var chart = $('#container').highcharts({

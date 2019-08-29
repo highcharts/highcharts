@@ -1,4 +1,3 @@
-
 QUnit.test('Drilldown with Highstock (#5764)', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'pie'
@@ -9,6 +8,7 @@ Highcharts.chart('container', {
     plotOptions: {
         pie: {
             dataLabels: {
+                padding: 0,
                 connectorPadding: 0
             }
         }

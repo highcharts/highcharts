@@ -1,14 +1,13 @@
-
 var H = Highcharts,
     map = H.maps['countries/us/us-all'],
     chart;
 
 // Add series with state capital bubbles
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/us-capitals.json', function (json) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json', function (json) {
     var data = [];
-    $.each(json, function () {
-        this.z = this.population;
-        data.push(this);
+    json.forEach(function (p) {
+        p.z = p.population;
+        data.push(p);
     });
 
     chart = Highcharts.mapChart('container', {
@@ -69,7 +68,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
 });
 
 // Display custom label with lat/lon next to crosshairs
-$('#container').mousemove(function (e) {
+document.getElementById('container').addEventListener('mousemove', function (e) {
     var position;
     if (chart) {
         if (!chart.lab) {
@@ -97,7 +96,7 @@ $('#container').mousemove(function (e) {
     }
 });
 
-$('#container').mouseout(function () {
+document.getElementById('container').addEventListener('mouseout', function () {
     if (chart && chart.lab) {
         chart.lab.destroy();
         chart.lab = null;

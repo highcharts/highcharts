@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Step line types, with null values in the series'

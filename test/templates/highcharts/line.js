@@ -9,6 +9,7 @@ TestTemplate.register('highcharts/line', Highcharts.chart, {
     },
 
     series: [{
+        type: 'line',
         data: [1, 3, 2]
     }]
 

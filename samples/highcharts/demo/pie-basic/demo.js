@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         plotBackgroundColor: null,
@@ -18,10 +17,7 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                }
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
             }
         }
     },

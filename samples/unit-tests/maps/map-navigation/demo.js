@@ -1,5 +1,3 @@
-
-
 QUnit.test('Zoom in - zoomout with padding', function (assert) {
 
     var chart = Highcharts.mapChart('container', {

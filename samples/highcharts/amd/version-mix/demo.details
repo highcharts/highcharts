@@ -1,0 +1,7 @@
+---
+ name: Highcharts AMD Version Mix Demo
+ authors:
+   - Sophie Bremer
+ requiresManualTesting: true
+ js_wrap: b
+...

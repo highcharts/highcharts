@@ -1,4 +1,3 @@
-
 QUnit.test('Check compatibility with broken-axis/highstock (#5950).', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{

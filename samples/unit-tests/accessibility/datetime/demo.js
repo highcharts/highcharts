@@ -1,4 +1,3 @@
-
 QUnit.test('Default datetime format from tooltip', function (assert) {
     var timeStart = new Date(Date.UTC(1995, 10, 15, 10, 45, 12)).getTime(),
         chart = Highcharts.chart('container', {
@@ -74,4 +73,3 @@ QUnit.test('pointDateFormatter', function (assert) {
         '1. 12, 1.'
     );
 });
-

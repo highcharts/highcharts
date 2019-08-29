@@ -1,43 +1,41 @@
-/**
+/* *
  * Parallel coordinates module
  *
- * (c) 2010-2017 Pawel Fus
+ * (c) 2010-2019 Pawel Fus
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
+
+import U from '../parts/Utilities.js';
+var defined = U.defined,
+    erase = U.erase,
+    splat = U.splat;
+
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
-/**
- * Extensions for parallel coordinates plot.
- */
+// Extensions for parallel coordinates plot.
 var Axis = H.Axis,
     Chart = H.Chart,
-    SeriesProto = H.Series.prototype,
     ChartProto = Chart.prototype,
     AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
     pick = H.pick,
-    each = H.each,
     wrap = H.wrap,
     merge = H.merge,
-    erase = H.erase,
-    splat = H.splat,
     extend = H.extend,
-    defined = H.defined,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 
 var defaultXAxisOptions = {
-    /*= if (build.classic) { =*/
     lineWidth: 0,
     tickLength: 0,
-    /*= } =*/
     opposite: true,
     type: 'category'
 };
@@ -56,7 +54,8 @@ var defaultParallelOptions = {
      *         Parallel coordinates demo
      * @sample {highcharts} highcharts/parallel-coordinates/polar/
      *         Star plot, multivariate data in a polar chart
-     * @since 6.0.0
+     *
+     * @since   6.0.0
      * @product highcharts
      */
     parallelCoordinates: false,
@@ -82,31 +81,28 @@ var defaultParallelOptions = {
      *    offset: 0
      * }</pre>
      *
-     * @extends yAxis
-     * @excluding alternateGridColor,breaks,id,gridLineColor,gridLineDashStyle,
-     *            gridLineWidth,minorGridLineColor,minorGridLineDashStyle,
-     *            minorGridLineWidth,plotBands,plotLines,angle,
-     *            gridLineInterpolation,maxColor,maxZoom,minColor,scrollbar,
-     *            stackLabels,stops
-     *
-     * @product highcharts
      * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
      *         Set the same tickAmount for all yAxes
-     * @since 6.0.0
+     *
+     * @extends   yAxis
+     * @since     6.0.0
+     * @product   highcharts
+     * @excluding alternateGridColor, breaks, id, gridLineColor,
+     *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
+     *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
+     *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
+     *            minColor, scrollbar, stackLabels, stops
      */
     parallelAxes: {
-        /*= if (build.classic) { =*/
         lineWidth: 1,
-        /*= } =*/
         /**
          * Titles for yAxes are taken from
-         * [xAxis.categories](#xAxis.categories). All options for
-         * `xAxis.labels` applies to parallel coordinates titles.
-         * For example, to style categories, use
-         * [xAxis.labels.style](#xAxis.labels.style).
+         * [xAxis.categories](#xAxis.categories). All options for `xAxis.labels`
+         * applies to parallel coordinates titles. For example, to style
+         * categories, use [xAxis.labels.style](#xAxis.labels.style).
          *
-         * @excluding align,enabled,margin,offset,position3d,reserveSpace,
-         *            rotation,skew3d,style,text,useHTML,x,y
+         * @excluding align, enabled, margin, offset, position3d, reserveSpace,
+         *            rotation, skew3d, style, text, useHTML, x, y
          */
         title: {
             text: '',
@@ -126,20 +122,21 @@ H.setOptions({
     chart: defaultParallelOptions
 });
 
-/**
- * Initialize parallelCoordinates
- */
+// Initialize parallelCoordinates
 addEvent(Chart, 'init', function (e) {
     var options = e.args[0],
         defaultyAxis = splat(options.yAxis || {}),
         yAxisLength = defaultyAxis.length,
         newYAxes = [];
+
     /**
-     * Flag used in parallel coordinates plot to check if chart has ||-coords.
+     * Flag used in parallel coordinates plot to check if chart has ||-coords
+     * (parallel coords).
      *
-     * @name hasParallelCoordinates
-     * @memberof Chart
-     * @type {Boolean}
+     * @requires module:modules/parallel-coordinates
+     *
+     * @name Highcharts.Chart#hasParallelCoordinates
+     * @type {boolean}
      */
     this.hasParallelCoordinates = options.chart &&
         options.chart.parallelCoordinates;
@@ -165,11 +162,11 @@ addEvent(Chart, 'init', function (e) {
             // Disable boost
             {
                 boost: {
-                    seriesThreshold: Number.MAX_SAFE_INTEGER
+                    seriesThreshold: Number.MAX_VALUE
                 },
                 plotOptions: {
                     series: {
-                        boostThreshold: Number.MAX_SAFE_INTEGER
+                        boostThreshold: Number.MAX_VALUE
                     }
                 }
             }
@@ -183,39 +180,50 @@ addEvent(Chart, 'init', function (e) {
     }
 });
 
-/**
- * Initialize parallelCoordinates
- */
+// Initialize parallelCoordinates
 addEvent(Chart, 'update', function (e) {
     var options = e.options;
+
     if (options.chart) {
         if (defined(options.chart.parallelCoordinates)) {
             this.hasParallelCoordinates = options.chart.parallelCoordinates;
         }
 
-        if (this.hasParallelCoordinates && options.chart.parallelAxes) {
-            this.options.chart.parallelAxes = merge(
-                this.options.chart.parallelAxes,
-                options.chart.parallelAxes
-            );
-            each(this.yAxis, function (axis) {
-                axis.update({}, false);
-            });
+        this.options.chart.parallelAxes = merge(
+            this.options.chart.parallelAxes,
+            options.chart.parallelAxes
+        );
+    }
+
+    if (this.hasParallelCoordinates) {
+        // (#10081)
+        if (options.series) {
+            this.setParallelInfo(options);
         }
+
+        this.yAxis.forEach(function (axis) {
+            axis.update({}, false);
+        });
     }
 });
 
 extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
     /**
-     * Define how many parellel axes we have according to the longest  dataset
+     * Define how many parellel axes we have according to the longest dataset.
      * This is quite heavy - loop over all series and check series.data.length
      * Consider:
-     * - make this an option, so user needs to set this to get better
-     *      performance
-     * - check only first series for number of points and assume the rest is the
-     *      same
      *
-     * @param {Object} options User options
+     * - make this an option, so user needs to set this to get better
+     *   performance
+     *
+     * - check only first series for number of points and assume the rest is the
+     *   same
+     *
+     * @private
+     * @function Highcharts.Chart#setParallelInfo
+     *
+     * @param {Highcharts.Options} options
+     *        User options
      */
     setParallelInfo: function (options) {
         var chart = this,
@@ -225,7 +233,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
             counter: 0
         };
 
-        each(seriesOptions, function (series) {
+        seriesOptions.forEach(function (series) {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
@@ -237,14 +245,10 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 });
 
 
-/**
- * On update, keep parallelPosition.
- */
+// On update, keep parallelPosition.
 AxisProto.keepProps.push('parallelPosition');
 
-/**
- * Update default options with predefined for a parallel coords.
- */
+// Update default options with predefined for a parallel coords.
 addEvent(Axis, 'afterSetOptions', function (e) {
     var axis = this,
         chart = axis.chart,
@@ -277,19 +281,16 @@ addEvent(Axis, 'afterSetOptions', function (e) {
 });
 
 
-/**
- * Each axis should gather extremes from points on a particular position in
- * series.data. Not like the default one, which gathers extremes from all series
- * bind to this axis.
- * Consider:
- * - using series.points instead of series.yData
- */
+/* Each axis should gather extremes from points on a particular position in
+   series.data. Not like the default one, which gathers extremes from all series
+   bind to this axis. Consider using series.points instead of series.yData. */
 addEvent(Axis, 'getSeriesExtremes', function (e) {
     if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
         var index = this.parallelPosition,
             currentPoints = [];
-        each(this.series, function (series) {
-            if (defined(series.yData[index])) {
+
+        this.series.forEach(function (series) {
+            if (series.visible && defined(series.yData[index])) {
                 // We need to use push() beacause of null points
                 currentPoints.push(series.yData[index]);
             }
@@ -307,14 +308,19 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
      * Set predefined left+width and top+height (inverted) for yAxes. This
      * method modifies options param.
      *
-     * @param  {Array} axisPosition
+     * @function Highcharts.Axis#setParallelPosition
+     *
+     * @param  {Array<string>} axisPosition
      *         ['left', 'width', 'height', 'top'] or
      *         ['top', 'height', 'width', 'left'] for an inverted chart.
-     * @param  {Object} options {@link Highcharts.Axis#options}.
+     *
+     * @param  {Highcharts.AxisOptions} options
+     *         {@link Highcharts.Axis#options}.
      */
     setParallelPosition: function (axisPosition, options) {
         var fraction = (this.parallelPosition + 0.5) /
             (this.chart.parallelInfo.counter + 1);
+
         if (this.chart.polar) {
             options.angle = 360 * fraction;
         } else {
@@ -329,28 +335,25 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
 });
 
 
-/**
- * Bind each series to each yAxis.
- * yAxis needs a reference to all series to calculate extremes.
- */
-wrap(SeriesProto, 'bindAxes', function (proceed) {
+// Bind each series to each yAxis. yAxis needs a reference to all series to
+// calculate extremes.
+addEvent(H.Series, 'bindAxes', function (e) {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
-        each(this.chart.axes, function (axis) {
+
+        this.chart.axes.forEach(function (axis) {
             series.insert(axis.series);
             axis.isDirty = true;
         });
         series.xAxis = this.chart.xAxis[0];
         series.yAxis = this.chart.yAxis[0];
-    } else {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        e.preventDefault();
     }
 });
 
 
-/**
- * Translate each point using corresponding yAxis.
- */
+// Translate each point using corresponding yAxis.
 addEvent(H.Series, 'afterTranslate', function () {
     var series = this,
         chart = this.chart,
@@ -401,12 +404,10 @@ addEvent(H.Series, 'afterTranslate', function () {
     }
 }, { order: 1 });
 
-/**
- * On destroy, we need to remove series from each axis.series
- */
+// On destroy, we need to remove series from each axis.series
 H.addEvent(H.Series, 'destroy', function () {
     if (this.chart.hasParallelCoordinates) {
-        each(this.chart.axes || [], function (axis) {
+        (this.chart.axes || []).forEach(function (axis) {
             if (axis && axis.series) {
                 erase(axis.series, this);
                 axis.isDirty = axis.forceRedraw = true;
@@ -440,21 +441,24 @@ function addFormattedValue(proceed) {
              *
              * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if
              *    set
-             * 2. if yAxis is a category, then category name will be displayed
-             * 3. if yAxis is a datetime, then value will use the same format as
+             *
+             * 2. If yAxis is a category, then category name will be displayed
+             *
+             * 3. If yAxis is a datetime, then value will use the same format as
              *    yAxis labels
-             * 4. if yAxis is linear/logarithmic type, then simple value will be
+             *
+             * 4. If yAxis is linear/logarithmic type, then simple value will be
              *    used
              *
-             * @default undefined
-             * @memberof yAxis
              * @sample {highcharts}
              *         /highcharts/parallel-coordinates/tooltipvalueformat/
              *         Different tooltipValueFormats's
+             *
+             * @type      {string}
+             * @default   undefined
+             * @since     6.0.0
+             * @product   highcharts
              * @apioption yAxis.tooltipValueFormat
-             * @product highcharts
-             * @since 6.0.0
-             * @type {String}
              */
             yAxisOptions.tooltipValueFormat,
             yAxisOptions.labels.format
@@ -488,7 +492,7 @@ function addFormattedValue(proceed) {
     return config;
 }
 
-each(['line', 'spline'], function (seriesName) {
+['line', 'spline'].forEach(function (seriesName) {
     wrap(
         H.seriesTypes[seriesName].prototype.pointClass.prototype,
         'getLabelConfig',

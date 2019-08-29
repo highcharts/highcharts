@@ -1,4 +1,3 @@
-
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -352,6 +351,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         }
     });
 
+
     assert.strictEqual(
         chart.series[1].graphchikouLine.attr('stroke'),
         'green',
@@ -368,6 +368,65 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].graphsenkouSpan.attr('fill'),
         'blue',
         'Line color changed'
+    );
+
+    chart.series[1].update({
+        senkouSpan: {
+            color: 'black',
+            styles: {
+                fill: 'purple'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].graphsenkouSpan.attr('fill'),
+        'black',
+        'Line color changed'
+    );
+
+    chart.series[1].update({
+        senkouSpan: {
+            color: null,
+            negativeColor: 'cyan',
+            styles: {
+                fill: 'yellow'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].graphsenkouSpanColor.attr('fill'),
+        'yellow',
+        'Line intersection color changed'
+    );
+
+    assert.strictEqual(
+        chart.series[1].graphsenkouSpanNegativeColor.attr('fill'),
+        'cyan',
+        'Line intersection color changed'
+    );
+
+    chart.series[1].update({
+        senkouSpan: {
+            color: 'tomato',
+            negativeColor: 'olive',
+            styles: {
+                fill: 'orange'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[1].graphsenkouSpanColor.attr('fill'),
+        'tomato',
+        'Line intersection color changed'
+    );
+
+    assert.strictEqual(
+        chart.series[1].graphsenkouSpanNegativeColor.attr('fill'),
+        'olive',
+        'Line intersection color changed'
     );
 
     assert.strictEqual(

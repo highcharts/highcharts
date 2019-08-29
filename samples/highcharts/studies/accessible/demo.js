@@ -1,5 +1,3 @@
-
-
 // Code snippet for adding a HTML table representation of the chart data
 Highcharts.Chart.prototype.callbacks.push(function (chart) {
 

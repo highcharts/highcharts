@@ -15,7 +15,6 @@ Math.easeOutBounce = function (pos) {
 };
 
 
-
 var chart = Highcharts.chart('container', {
 
     chart: {

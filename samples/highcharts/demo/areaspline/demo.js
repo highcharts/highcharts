@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'areaspline'
@@ -14,7 +13,8 @@ Highcharts.chart('container', {
         y: 100,
         floating: true,
         borderWidth: 1,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     xAxis: {
         categories: [

@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outFile": "../../code/modules/bullet.src.js"
+    },
+    "files": [
+        "../modules/bullet.src.ts"
+    ]
+}

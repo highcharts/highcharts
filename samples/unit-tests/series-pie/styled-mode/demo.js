@@ -1,5 +1,8 @@
 QUnit.test('Styled mode for pie type series', function (assert) {
     var chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true
+            },
             series: [{
                 type: 'pie',
                 allowPointSelect: true,

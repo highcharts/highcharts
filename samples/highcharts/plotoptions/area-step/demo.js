@@ -1,5 +1,3 @@
-
-
 $("#container").highcharts({
     chart: {
         type: 'area'

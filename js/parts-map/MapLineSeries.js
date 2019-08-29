@@ -1,85 +1,84 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
-
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
- * A mapline series is a special case of the map series where the value colors
- * are applied to the strokes rather than the fills. It can also be used for
- * freeform drawing, like dividers, in the map.
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.mapline
  *
- * @sample maps/demo/mapline-mappoint/ Mapline and map-point chart
- * @extends plotOptions.map
- * @product highmaps
+ * @augments Highcharts.Series
+ */
+seriesType('mapline', 'map', 
+/**
+ * A mapline series is a special case of the map series where the value
+ * colors are applied to the strokes rather than the fills. It can also be
+ * used for freeform drawing, like dividers, in the map.
+ *
+ * @sample maps/demo/mapline-mappoint/
+ *         Mapline and map-point chart
+ *
+ * @extends      plotOptions.map
+ * @product      highmaps
  * @optionparent plotOptions.mapline
  */
-seriesType('mapline', 'map', {
-    /*= if (build.classic) { =*/
-
+{
     /**
      * The width of the map line.
-     *
-     * @type {Number}
-     * @default 1
-     * @product highmaps
      */
     lineWidth: 1,
-
     /**
      * Fill color for the map line shapes
      *
-     * @type {Color}
-     * @default none
-     * @product highmaps
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     fillColor: 'none'
-    /*= } =*/
 }, {
     type: 'mapline',
     colorProp: 'stroke',
-    /*= if (build.classic) { =*/
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
     },
+    /* eslint-disable valid-jsdoc */
     /**
      * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.mapline#pointAttribs
+     * @param {Highcharts.Point} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var attr = seriesTypes.map.prototype.pointAttribs.call(
-            this,
-            point,
-            state
-        );
-
-        // The difference from a map series is that the stroke takes the point
-        // color
+        var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+        // The difference from a map series is that the stroke takes the
+        // point color
         attr.fill = this.options.fillColor;
-
         return attr;
     },
-    /*= } =*/
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+    /* eslint-enable valid-jsdoc */
 });
-
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.mapline
- * @excluding dataParser,dataURL,marker
- * @product highmaps
+ * @extends   series,plotOptions.mapline
+ * @excluding dataParser, dataURL, marker
+ * @product   highmaps
  * @apioption series.mapline
  */
-
 /**
  * An array of data points for the series. For the `mapline` series type,
  * points can be given in the following ways:
@@ -120,7 +119,8 @@ seriesType('mapline', 'map', {
  *     }]
  *  ```
  *
- * @type {Array<Object>}
- * @product highmaps
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @product   highmaps
  * @apioption series.mapline.data
  */
+''; // adds doclets above to transpiled file

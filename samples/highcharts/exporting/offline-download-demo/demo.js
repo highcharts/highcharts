@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     exporting: {
         chartOptions: { // specific options for the exported image

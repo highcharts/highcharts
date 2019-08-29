@@ -1,5 +1,4 @@
-
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
     // split the data set into ohlc and volume
     var ohlc = [],
@@ -76,8 +75,9 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                 }
             },
             senkouSpan: {
+                color: 'rgba(0, 255, 0, 0.3)',
                 styles: {
-                    fill: 'rgba(0, 255, 0, 0.1)'
+                    fill: 'rgba(0, 0, 255, 0.1)'
                 }
             }
         }]

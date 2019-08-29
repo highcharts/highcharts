@@ -1,4 +1,3 @@
-
 QUnit.test('Label position after redraw (#4133)', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {

@@ -1,3 +1,131 @@
+QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        yAxis: [{
+            id: 'primary',
+            crosshair: true
+        }, {
+            id: 'secondary',
+            crosshair: true,
+            opposite: true
+
+        }],
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            series: {
+                kdNow: true
+            }
+        },
+        series: [{
+            data: [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7]
+        }, {
+            yAxis: 1,
+            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }]
+    });
+
+    var offset = Highcharts.offset(chart.renderTo);
+
+    chart.series[0].points[0].onMouseOver();
+    chart.pointer.onContainerMouseMove({
+        type: 'mousemove',
+        pageX: offset.left + 300,
+        pageY: offset.top + 300,
+        target: chart.container
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].cross.element.nodeName,
+        'path',
+        'Primary axis has cross'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[1].cross.element.nodeName,
+        'path',
+        'Secondary axis has cross'
+    );
+
+});
+
+QUnit.test('Crosshair with snap false (#5066)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        xAxis: {
+            crosshair: {
+                snap: false
+            }
+        },
+
+        yAxis: {
+            crosshair: {
+                snap: false
+            }
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            type: 'column'
+        }]
+
+    });
+
+    var controller = new TestController(chart);
+    controller.mouseMove(100, 100);
+
+    assert.strictEqual(
+        chart.xAxis[0].cross.element.nodeName,
+        'path',
+        'X axis has cross'
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].cross.element.nodeName,
+        'path',
+        'Y axis has cross'
+    );
+
+    chart.renderTo.style.position = 'static';
+});
+QUnit.test("Update crosshair's stroke-width after resize.(#4737)", function (assert) {
+    var chart = $("#container").highcharts({
+            xAxis: {
+                type: "category"
+            },
+            tooltip: {
+                crosshairs: [true, false]
+            },
+            series: [{
+                data: [5, 10, 15]
+            }]
+        }).highcharts(),
+        offset = $("#container").offset(),
+        point = chart.series[0].points[0],
+        x = offset.left + 50,
+        y = offset.top + 50;
+
+    chart.pointer.onContainerMouseMove({
+        pageX: x,
+        pageY: y,
+        target: point.graphic.element
+    });
+
+    chart.setSize(300, 400);
+
+    chart.pointer.onContainerMouseMove({
+        pageX: x + 30,
+        pageY: y,
+        target: point.graphic.element
+    });
+
+    assert.equal(
+        chart.xAxis[0].cross.attr("stroke-width"),
+        chart.xAxis[0].transA,
+        'Proper width after resize'
+    );
+});
+
 QUnit.test('snap', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: {
@@ -207,6 +335,8 @@ QUnit.test('Use correct hover point for axis. #6860', function (assert) {
         'yAxis,side: 1,point: B.0',
         'yAxis on right side is assigned point B.0'
     );
+    // restore to default function
+    AxisPrototype.drawCrosshair = drawCrosshair;
 });
 
 
@@ -239,5 +369,34 @@ QUnit.test('Show crosshair label on logarithmic axis correctly. #8542', function
         chart.yAxis[0].crossLabel.attr('visibility'),
         'visible',
         'Crosshair label is visible on logarithmic axis for the second point (#8542)'
+    );
+});
+
+
+QUnit.test('Set crosshair stroke-width correctly in StyledMode #11246', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'column',
+            styledMode: true
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            crosshair: true
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        Highcharts.defined(chart.xAxis[0].cross.element.attributes['stroke-width']),
+        true,
+        'Crosshair should has stroke-width attribute (#11246)'
     );
 });

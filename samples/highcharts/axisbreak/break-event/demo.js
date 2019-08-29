@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
 
     xAxis: {
@@ -19,7 +18,10 @@ Highcharts.chart('container', {
                     breakLine = axis.breakLine,
                     breakPoint = axis.breakArray[0],
                     pos = breakPoint.to,
-                    path = axis.getPlotLinePath(pos, 2, false, true);
+                    path = axis.getPlotLinePath({
+                        value: pos,
+                        width: 2
+                    });
 
                 if (!breakLine) {
                     breakLine = this.breakLine = chart.renderer.path(path)

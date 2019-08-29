@@ -1,28 +1,4 @@
 /**
- * Tests the isNavigatorAxis() function
- */
-QUnit.test('isNavigatorAxis()', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        chart: {
-            type: 'bar'
-        },
-        series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5]
-        }]
-    });
-
-    assert.notOk(
-        chart.xAxis[0].isNavigatorAxis(),
-        'xAxis[0] is not a navigator axis'
-    );
-
-    assert.ok(
-        chart.xAxis[1].isNavigatorAxis(),
-        'xAxis[1] is a navigator axis'
-    );
-});
-
-/**
  * Tests the isOuterAxis() function
  */
 QUnit.test('isOuterAxis()', function (assert) {
@@ -65,6 +41,11 @@ QUnit.test('isOuterAxis()', function (assert) {
             xAxis: 3
         }]
     });
+
+    assert.notOk(
+        chart.xAxis[0].isOuterAxis(),
+        'Rightmost left x-axis is not outerAxis'
+    );
 
     assert.ok(
         chart.xAxis[1].isOuterAxis(),
@@ -563,7 +544,6 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     });
 
 
-
     function test(type) {
         var axes,
             axis,
@@ -825,7 +805,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     });
 
     axes = Highcharts.grep(chart.xAxis, function (axis) {
-        return !axis.isNavigatorAxis();
+        return !axis.options.isInternal;
     });
 
     Highcharts.each(axes, function (axis) {

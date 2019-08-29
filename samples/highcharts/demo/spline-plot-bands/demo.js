@@ -9,10 +9,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Wind speed during two days'
+        text: 'Wind speed during two days',
+        align: 'left'
     },
     subtitle: {
-        text: '13th & 14th of February, 2018 at two locations in Vik i Sogn, Norway'
+        text: '13th & 14th of February, 2018 at two locations in Vik i Sogn, Norway',
+        align: 'left'
     },
     xAxis: {
         type: 'datetime',

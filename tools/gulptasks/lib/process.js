@@ -1,0 +1,230 @@
+/*
+ * Copyright (C) Highsoft AS
+ */
+
+/* eslint no-use-before-define: 0 */
+
+const LogLib = require('./log');
+const Path = require('path');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Own package directory
+ */
+const CPD = Path.join(__dirname, '..', '..', '..');
+
+/**
+ * Current working directory
+ */
+const CWD = process.cwd();
+
+/**
+ * Configuration file containing running information
+ */
+const CONFIG_FILE = Path.join(
+    CPD, 'node_modules', '_gulptasks_lib_process.json'
+);
+
+/* *
+ *
+ *  Variables
+ *
+ * */
+
+/**
+ * Callbacks to do on exit.
+ */
+let onExitCallbacks;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Executes a single terminal command and returns when finished.
+ * Outputs stdout to the console.
+ *
+ * @param {string} command
+ *        Command to execute in terminal
+ *
+ * @param {boolean} silent
+ *        Silents the command output to stdout
+ *
+ * @return {Promise<string>}
+ *         Promise to keep with all terminal output
+ */
+function exec(command, silent) {
+
+    const ChildProcess = require('child_process');
+
+    return new Promise((resolve, reject) => {
+
+        const cli = ChildProcess.exec(command, (error, stdout) => {
+            if (error) {
+                LogLib.failure(error);
+                reject(error);
+            } else {
+                LogLib.success(
+                    (silent ? 'Command finished (silent):' : 'Command finished:'),
+                    command
+                );
+                resolve(stdout);
+            }
+        });
+
+        if (!silent) {
+            cli.stdout.on('data', data => process.stdout.write(data));
+        }
+    });
+}
+
+/**
+ * Sharing run state between gulp processes.
+ *
+ * @param {string} name
+ *        Individual name
+ *
+ * @param {boolean|number|string} [runningFlag]
+ *        If not set get current flag
+ *
+ * @return {boolean|number|string}
+ *         Current flag
+ */
+function isRunning(name, runningFlag) {
+
+    const config = readConfig();
+    const dictionary = config.isRunning;
+    const key = name.replace(/[^-\w]+/g, '_');
+
+    if (typeof runningFlag === 'undefined') {
+        runningFlag = dictionary[key];
+    } else if (!runningFlag) {
+        if (typeof dictionary[key] !== 'undefined') {
+            delete dictionary[key];
+            writeConfig(config);
+        }
+        runningFlag = dictionary[key];
+    } else {
+        if (dictionary[key] !== runningFlag) {
+            dictionary[key] = runningFlag;
+            writeConfig(config);
+        }
+        onExit(
+            '_lib_process_isRunning_' + key,
+            () => {
+                const exitConfig = readConfig();
+                delete exitConfig.isRunning[key];
+                writeConfig(exitConfig);
+            }
+        );
+    }
+
+    return runningFlag;
+}
+
+/**
+ * Calls a function on any managed process exit. A previous callback with the
+ * same name gets replaced.
+ *
+ * @param {string} name
+ *        Individual name
+ *
+ * @param {Function} [callback]
+ *        Set to undefined to disable. Return false to handle exit yourself.
+ *        Following callbacks will be not called until next exit event.
+ *
+ * @return {void}
+ */
+function onExit(name, callback) {
+
+    if (!onExitCallbacks) {
+
+        onExitCallbacks = {};
+
+        [
+            'exit', 'uncaughtException', 'unhandledRejection', 'SIGBREAK',
+            'SIGHUP', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
+        ].forEach(evt => (
+            process.on(evt, code => {
+
+                const exit = Object
+                    .keys(onExitCallbacks)
+                    .every(key => {
+                        callback = onExitCallbacks[key];
+                        delete onExitCallbacks[key];
+                        return callback(evt, code, key) !== false;
+                    });
+
+                if (exit) {
+                    process.exit(code); // eslint-disable-line no-process-exit
+                }
+            })
+        ));
+    }
+
+    const key = name.replace(/[^-\w]+/g, '_');
+
+    onExitCallbacks[key] = callback;
+}
+
+/**
+ * Reads library-specific configuration file
+ *
+ * @return {object}
+ *         Configuration
+ */
+function readConfig() {
+
+    const FS = require('fs');
+
+    let config = {
+        isProcessing: {},
+        isRunning: {}
+    };
+
+    if (FS.existsSync(CONFIG_FILE)) {
+        try {
+            config = JSON.parse(FS.readFileSync(CONFIG_FILE).toString());
+        } catch (catchedError) {
+            LogLib.warn(catchedError);
+        }
+    }
+
+    return config;
+}
+
+/**
+ * Writes library-specific configuration file.
+ *
+ * @param {object} config
+ *        Configuration
+ *
+ * @return {void}
+ */
+function writeConfig(config) {
+
+    const FS = require('fs');
+
+    FS.writeFileSync(CONFIG_FILE, JSON.stringify(config));
+}
+
+/* *
+ *
+ *  Exports
+ *
+ * */
+
+module.exports = {
+    CPD,
+    CWD,
+    exec,
+    isRunning,
+    onExit
+};

@@ -24,7 +24,7 @@ QUnit.test('Option chart plot border and background update', function (assert) {
         }]
     });
 
-    var testimage = (location.host === 'localhost:9876') ?
+    var testimage = location.host.substr(0, 12) === 'localhost:98' ?
         'base/test/testimage.png' : // karma
         'testimage.png'; // utils
 
@@ -193,6 +193,30 @@ QUnit.test('Option chart.spacing update', function (assert) {
     assert.ok(
         chart.plotBackground.getBBox().height <= chart.chartHeight - 200,
         'Plot area height ok'
+    );
+
+    var titleX = chart.container.querySelector('.highcharts-title')
+            .getAttribute('x'),
+        legendTransform = chart.container.querySelector('.highcharts-legend')
+            .getAttribute('transform');
+
+    chart.update({
+        chart: {
+            spacingLeft: 200
+        }
+    });
+    assert.notEqual(
+        chart.container.querySelector('.highcharts-title')
+            .getAttribute('x'),
+        titleX,
+        'The title should move after update (#8190)'
+    );
+
+    assert.notEqual(
+        chart.container.querySelector('.highcharts-legend')
+            .getAttribute('transform'),
+        legendTransform,
+        'The legend should move after update (#8190)'
     );
 
     // Reset

@@ -10,9 +10,9 @@ QUnit.test('utils.calculateLevelSizes', function (assert) {
             }
         };
     assert.deepEqual(
-      calculateLevelSizes(),
-      undefined,
-      'should return undefined if mapOptionsToLevel is undefined.'
+        calculateLevelSizes(),
+        undefined,
+        'should return undefined if mapOptionsToLevel is undefined.'
     );
     assert.deepEqual(
         calculateLevelSizes(mapOptionsToLevel),

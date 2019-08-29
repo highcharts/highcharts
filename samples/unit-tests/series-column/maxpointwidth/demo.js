@@ -1,4 +1,3 @@
-
 QUnit.test('Max point width', function (assert) {
 
     Highcharts.chart('container', {

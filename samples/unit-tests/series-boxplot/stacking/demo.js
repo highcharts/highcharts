@@ -1,18 +1,17 @@
-
 QUnit.test('Stacked box plot', function (assert) {
 
     $('#container').highcharts({
-        "chart": {
-            "type": "boxplot"
+        chart: {
+            type: "boxplot"
         },
-        "plotOptions": {
-            "series": {
-                "stacking": "normal"
+        plotOptions: {
+            series: {
+                stacking: "normal"
             }
         },
-        "series": [{
-            "name": "Box plot",
-            "data": [
+        series: [{
+            name: "Box plot",
+            data: [
                 [1, 2, 3, 4, 5]
             ]
         }]

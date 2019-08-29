@@ -17,7 +17,8 @@
 /js/modules/exporting.js
 /build
 /code
-/tools/jsdoc/ink-docstrap
+/errors/errors.json
+/errors/errors.xml
 /git-ignore-me.properties
 /highcharts.com.sublime-project
 /highcharts.com.sublime-workspace
@@ -30,14 +31,16 @@
 /highcharts.com.site-access.log
 /highcharts.com.site-error.log
 /test/last-run.json
+/test/visual-test-results.json
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
 /utils/samples/temp/
 /utils/samples/nightly/
 
-tree.json
-tree-namespace.json
+/tree.json
+/tree-namespace.json
+/tree-typescript.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
@@ -63,8 +66,8 @@ nbproject/
 
 *.log
 *.patch
-samples/highcharts/common-js/browserify/demo.js
-samples/highcharts/common-js/webpack/demo.js
+/samples/highcharts/common-js/browserify/demo.js
+/samples/highcharts/common-js/webpack/demo.js
 /samples/cloud/charts
 
 /tmp/report.html
@@ -73,4 +76,5 @@ samples/highcharts/common-js/webpack/demo.js
 
 /tmp/processed.api.json
 /package-lock.json
-/temp.js
+/temp.*
+/env.file

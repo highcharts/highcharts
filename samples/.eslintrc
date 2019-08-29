@@ -23,6 +23,7 @@ rules:
     consistent-return: 0
     eol-last: 0
     func-style: 0
+    function-paren-newline: 0
     indent: [2, 4]
     max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
@@ -31,8 +32,12 @@ rules:
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-undefined: 0
     no-shadow: 0                # 10 violations as of 2015-10-31
+    no-throw-literal: 0
+    node/no-missing-require: 0
     object-curly-spacing: [2, "always"]
+    object-shorthand: 0
     quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
+    prefer-rest-params: 0
     require-jsdoc: 0
     spaced-comment: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style

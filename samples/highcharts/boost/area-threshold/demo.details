@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - PAweł Fus
+ js_wrap: b
+...

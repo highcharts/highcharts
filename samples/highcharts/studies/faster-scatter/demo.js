@@ -1,4 +1,3 @@
-
 /**
  * Faster scatter charts mod for Highcharts
  *

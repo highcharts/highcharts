@@ -1,5 +1,3 @@
-
-
 var data = [{
     name: 'Denmark',
     value: 2

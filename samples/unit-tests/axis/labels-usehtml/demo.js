@@ -1,3 +1,54 @@
+QUnit.test('Auto rotation and useHTML (#4443)', function (assert) {
+
+    $('#container').highcharts({
+
+        chart: {
+            width: 1000,
+            height: 300
+        },
+
+        xAxis: {
+            labels: {
+                useHTML: true,
+                autoRotation: [-25]
+            },
+            categories: [
+                'Jan sad asd asd asd sa',
+                'Feb asd asd sad as as',
+                'Mar sad asd asd asd as'
+            ]
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 7.0, 6.9, 9.5]
+        }]
+    });
+
+    var chart = $('#container').highcharts(),
+        xAxis = chart.xAxis[0];
+
+    assert.strictEqual(
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        0,
+        'Initially not rotated'
+    );
+
+    chart.setSize(400, 300);
+    assert.strictEqual(
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        -25,
+        'Rotated'
+    );
+
+    chart.setSize(1000, 300);
+    assert.strictEqual(
+        xAxis.ticks[xAxis.tickPositions[0]].label.rotation,
+        0,
+        'Not rotated in the end'
+    );
+
+});
+
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -412,4 +463,36 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
         'After resetting, the label width should be released'
     );
 
+});
+
+QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            width: 400
+        },
+
+        xAxis: {
+            categories: ['JanuaryJanuary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            labels: {
+                rotation: 0,
+                useHTML: true
+            }
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+    });
+
+    assert.notEqual(
+        chart.xAxis[0].ticks[0].label.element.style.width,
+        '',
+        'The element should have a width'
+    );
+
+    assert.ok(
+        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >= chart.plotLeft,
+        'The label should be within the tick bounds'
+    );
 });

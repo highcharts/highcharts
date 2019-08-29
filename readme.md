@@ -30,40 +30,70 @@ bower install highcharts
 
 ## Load Highcharts from the CDN as ECMAScript modules
 Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
-without any bundling tools, by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
-
-```js
+without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
+```html
 <script type="module">
-  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
 
-  Highcharts.chart('container', {
-    ...
-  });
+    Highcharts.chart('container', {
+        ...
+    });
 </script>
 ```
-
-
-## Load Highcharts as an AMD module
-Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules using RequireJS. No special RequireJS config is necessary for this example to work.
+The following example shows dynamic import with lazy-loading:
 ```js
-requirejs([
-    'path/to/highcharts.js',
-    'path/to/modules/exporting.js',
-    'path/to/modules/accessibility.src.js'
-], function (Highcharts, exporting, accessibility) {
-    // This function runs when the above files have been loaded
+    import('https://code.highcharts.com/es-modules/masters/highcharts.src.js')
+        .then(imported => imported.default)
+        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js').then(() => Highcharts))
+        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js').then(() => Highcharts))
+        .then(Highcharts => {
+            Highcharts.chart('container', {
+                ...
+            });
+        });
+```
 
-    // We need to initialize module files and pass in Highcharts
-    exporting(Highcharts); // Load exporting before accessibility
-    accessibility(Highcharts);
+## Load Highcharts from the CDN as an AMD module
+Highcharts is compatible with AMD module loaders (such as RequireJS). The
+following example demonstrates loading Highcharts along with two modules from
+our CDN using RequireJS.
+```html
+<html>
+    <head>
+        <script src="require.js"></script>
+        <script>
+            require.config({
+                packages: [{
+                    name: 'highcharts',
+                    main: 'highcharts'
+                }],
+                paths: {
+                    // Change this to your server if you do not wish to use our CDN.
+                    'highcharts': 'https://code.highcharts.com'
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script>
+            require([
+                'highcharts',
+                'highcharts/modules/exporting',
+                'highcharts/modules/accessibility'
+            ], function (Highcharts) {
+                // This function runs when the above files have been loaded.
 
-    // Create a test chart
-    Highcharts.chart('container', {
-        series: [{
-            data: [1,2,3,4,5]
-        }]
-    });
-});
+                // Create a test chart.
+                Highcharts.chart('container', {
+                    series: [{
+                        data: [1,2,3,4,5]
+                    }]
+                });
+            });
+        </script>
+    </body>
+</html>
 ```
 
 ## Load Highcharts as a CommonJS module
@@ -72,7 +102,7 @@ Highcharts is using an UMD module pattern, as a result it has support for Common
 ```js
 // Load Highcharts
 var Highcharts = require('highcharts');
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // var Highcharts = require('highcharts/highstock');
 
 // Load the exporting module, and initialize it.
@@ -84,18 +114,18 @@ Highcharts.chart('container', {
 });
 ```
 
-## Load Highcharts as an ES6 module
-Since Highcharts supports CommonJS, it can be loaded as an ES6 module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/). These have different interpretations of a CommonJS module, which affects your syntax.
+## Load Highcharts as a transpiled ES6/UMD module
+Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
 *The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
 ### Babel
 ```js
 import Highcharts from 'highcharts';
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
@@ -103,21 +133,58 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
-### TypeScript
+### TypeScript + UMD
 ```js
-import * as Highcharts from 'highcharts';
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+import Highcharts from 'highcharts';
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import * as Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+import Exporting from 'highcharts/modules/exporting';
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
 Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "umd",
+    "moduleResolution": "node"
+  }
+}
+```
+### TypeScript + ESM from CDN
+```js
+// Load modules the ES6 way
+import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es6",
+    "paths": {
+      "https://code.highcharts.com/es-modules/masters/*.src.js": [
+        "node_modules/highcharts/*.src"
+      ]
+    }
+  }
+}
 ```
 
 ## Build and debug
@@ -129,8 +196,6 @@ gulp
 ```
 
 ## Generate API docs
-Clone the repositories `api-docs` and `highcharts-docstrap` in the same parent
-folder as this `highcharts` repository. Do not forgett to install depending
-modules in this repositories by `npm i`. Finally you can run in this
-`highcharts` repository the doc generator with `gulp jsdoc --watch`, which also
-starts a new server with the generated API documentation.
+Run in this `highcharts` repository the doc generator with
+`npx gulp jsdoc-watch`, which also starts a new server with the generated API
+documentation.

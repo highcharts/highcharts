@@ -1,4 +1,3 @@
-
 $(function () {
     $("#container").highcharts({
         chart: {

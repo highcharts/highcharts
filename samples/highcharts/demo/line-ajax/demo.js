@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
 
     chart: {
@@ -8,8 +7,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.rawgit.com/highcharts/highcharts/' +
-            '057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/analytics.csv',
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
         beforeParse: function (csv) {
             return csv.replace(/\n\n/g, '\n');
         }

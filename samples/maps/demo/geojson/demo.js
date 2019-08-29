@@ -1,4 +1,3 @@
-
 // Prepare random data
 var data = [
     ['DE.SH', 728],
@@ -19,7 +18,7 @@ var data = [
     ['DE.', 361]
 ];
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/germany.geo.json', function (geojson) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json', function (geojson) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {

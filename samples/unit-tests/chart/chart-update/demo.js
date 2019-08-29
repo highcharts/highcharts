@@ -28,8 +28,9 @@
             }
         });
 
-        assert.ok(
-            chart.credits === null,
+        assert.strictEqual(
+            chart.credits,
+            undefined,
             'Credits removed'
         );
 
@@ -39,8 +40,9 @@
             }
         });
 
-        assert.ok(
-            chart.credits === null,
+        assert.strictEqual(
+            chart.credits,
+            undefined,
             'Still removed'
         );
 
@@ -348,5 +350,30 @@
                 data: [1, 3, 2, 4]
             }]
         }, true, true);
+    });
+
+    QUnit.test('Options for chart.update should not be mutated', function (assert) {
+        var options = {
+            legend: {
+                enabled: false
+            },
+            title: {
+                text: 'Hello Bello'
+            },
+            series: [{
+                data: [1, 4, 3, 5]
+            }]
+        };
+        var chart = Highcharts.chart('container', options);
+
+        var cfg = JSON.stringify(options, null, '  ');
+
+        chart.update(options);
+
+        assert.strictEqual(
+            cfg,
+            JSON.stringify(options, null, '  '),
+            'Options should not be mutated after chart.update'
+        );
     });
 }());

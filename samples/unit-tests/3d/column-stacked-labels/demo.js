@@ -1,4 +1,3 @@
-
 QUnit.test('3D columns stackLabels render', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
@@ -20,6 +19,7 @@ QUnit.test('3D columns stackLabels render', function (assert) {
                 animation: false,
                 stacking: 'normal',
                 dataLabels: {
+                    allowOverlap: true,
                     enabled: true,
                     inside: false
                 }
@@ -31,12 +31,14 @@ QUnit.test('3D columns stackLabels render', function (assert) {
         }]
     });
 
-    var dataLabel = chart.series[0].data[0].dataLabel,
-        stackLabel = chart.yAxis[0].stacks.columnfemale[0].label;
+    var series = chart.series[0],
+        dataLabel = series.data[0].dataLabel,
+        stackLabel = chart.yAxis[0].stacks[series.stackKey][0].label;
 
     dataLabel.x = dataLabel.translateX + dataLabel.element.getBBox().x;
     dataLabel.y = dataLabel.translateY + dataLabel.element.getBBox().y;
-    stackLabel = stackLabel.element.getBBox();
+    stackLabel.x = stackLabel.translateX + stackLabel.element.getBBox().x;
+    stackLabel.y = stackLabel.translateY + stackLabel.element.getBBox().y;
 
     assert.close(
         dataLabel.x,

@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/world-mortality.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json', function (data) {
 
     var points = [],
         regionP,
@@ -14,7 +14,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
         causeName = {
             'Communicable & other Group I': 'Communicable diseases',
             'Noncommunicable diseases': 'Non-communicable diseases',
-            'Injuries': 'Injuries'
+            Injuries: 'Injuries'
         };
 
     for (region in data) {
