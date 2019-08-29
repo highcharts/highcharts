@@ -74,11 +74,12 @@ declare global {
         const noop: Function;
         const product: string;
         const symbolSizes: Dictionary<SizeObject>;
-        const win: Window;
+        const win: GlobalWindow;
         const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
         const version: string;
     }
+    type GlobalWindow = typeof window;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
     interface CallableFunction {
@@ -102,12 +103,6 @@ declare global {
         readonly toElement: Element;
     }
     interface Window {
-        ArrayBuffer: typeof ArrayBuffer;
-        Blob: typeof Blob;
-        Image: typeof Image;
-        TouchEvent: typeof TouchEvent;
-        Uint8Array: Uint8Array & Uint8ArrayConstructor;
-        URL: typeof URL;
         /** @deprecated */
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
@@ -115,7 +110,7 @@ declare global {
         /** @deprecated */
         webkitURL?: typeof URL;
     }
-    const win: Window; // @todo: UMD variable
+    const win: GlobalWindow; // @todo: UMD variable named `window`
 }
 
 /* globals Image, window */
@@ -131,9 +126,13 @@ declare global {
  */
 
 // glob is a temporary fix to allow our es-modules to work.
-var glob = typeof win === 'undefined' ?
-        (typeof window !== 'undefined' ? window : {} as Window) :
-        win,
+var glob = ( // @todo UMD variable named `window`, and glob named `win`
+        typeof win !== 'undefined' ?
+            win :
+            typeof window !== 'undefined' ?
+                window :
+                {} as GlobalWindow
+    ),
     doc = glob.document,
     SVG_NS = 'http://www.w3.org/2000/svg',
     userAgent = (glob.navigator && glob.navigator.userAgent) || '',

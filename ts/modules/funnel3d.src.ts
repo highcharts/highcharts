@@ -661,7 +661,7 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
                     [0.5, fill],
                     [1, color(fill).brighten(-0.2).get()]
                 ]
-            };
+            } as any;
         }
 
         // gradient support
