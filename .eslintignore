@@ -15,6 +15,7 @@ js/modules/export-data.src.js
 js/modules/exporting.src.js
 js/modules/full-screen.src.js
 js/modules/funnel.src.js
+js/modules/funnel3d.src.js
 js/modules/histogram.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js

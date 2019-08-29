@@ -511,7 +511,15 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0);
+                this.renderer = renderer = new H.Renderer(
+                    container,
+                    0,
+                    0,
+                    {},
+                    undefined,
+                    undefined,
+                    renderer.styledMode
+                );
             }
 
 
