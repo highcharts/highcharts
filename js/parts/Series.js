@@ -10,15 +10,16 @@
 'use strict';
 import H from './Globals.js';
 /**
- * @interface Highcharts.PointOptionsObject
- */ /**
-* Individual point events
-* @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PlotSeriesPointEventsOptions}
-*/ /**
-* @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PlotSeriesPointMarkerOptions}
-*/
+ * This is a placeholder type of the possible series options for
+ * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
+ *
+ * In TypeScript is this dynamically generated to reference all possible types
+ * of series options.
+ *
+ * @ignore-declaration
+ * @typedef {Highcharts.SeriesOptions|Highcharts.Dictionary<*>} Highcharts.SeriesOptionsType
+ */
 /**
  * Function callback when a series has been animated.
  *
@@ -353,8 +354,6 @@ H.Series = H.seriesType('line',
  * series type is inherited from [chart.type](#chart.type), so unless the
  * chart is a combination of series types, there is no need to set it on the
  * series level.
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @sample {highcharts} highcharts/series/type/
  *         Line and column in the same chart
@@ -3207,7 +3206,14 @@ null,
                         (point.y / pointStack.total * 100);
                 point.stackY = yValue;
                 // Place the stack label
-                pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                // in case of variwide series (where widths of points are
+                // different in most cases), stack labels are positioned
+                // wrongly, so the call of the setOffset is omited here and
+                // labels are correctly positioned later, at the end of the
+                // variwide's translate function (#10962)
+                if (!series.irregularWidths) {
+                    pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                }
             }
             // Set translated yBottom or remove it
             point.yBottom = defined(yBottom) ?
@@ -4431,8 +4437,6 @@ null,
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL

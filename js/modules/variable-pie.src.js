@@ -45,6 +45,7 @@ seriesType(
      *         Variable-radius pie chart
      *
      * @extends      plotOptions.pie
+     * @excluding    dragDrop
      * @since        6.0.0
      * @product      highcharts
      * @optionparent plotOptions.variablepie

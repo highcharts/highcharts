@@ -482,8 +482,8 @@ import H from './Globals.js';
 * @type {boolean|undefined}
 * @since 7.1.0
 */
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Individual data labels for each point.
 * @name Highcharts.PointOptionsObject#dataLabels

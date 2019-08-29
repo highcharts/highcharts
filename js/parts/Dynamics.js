@@ -403,7 +403,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this, adders = {
             credits: 'addCredits',
             title: 'setTitle',
-            subtitle: 'setSubtitle'
+            subtitle: 'setSubtitle',
+            caption: 'setCaption'
         }, optionsChart, updateAllAxes, updateAllSeries, newWidth, newHeight, runSetSize, isResponsiveOptions = options.isResponsiveOptions, itemsForRemoval = [];
         fireEvent(chart, 'update', { options: options });
         // If there are responsive rules in action, undo the responsive rules
@@ -606,8 +607,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @return {void}
      */
-    setSubtitle: function (options) {
-        this.setTitle(undefined, options);
+    setSubtitle: function (options, redraw) {
+        this.applyDescription('subtitle', options);
+        this.layOutTitles(redraw);
+    },
+    /**
+     * Set the caption options. This can also be done from {@link
+     * Chart#update}.
+     *
+     * @function Highcharts.Chart#setCaption
+     *
+     * @param {Highcharts.CaptionOptions} options
+     *        New caption options. The caption text itself is set by the
+     *        `options.text` property.
+     *
+     * @return {void}
+     */
+    setCaption: function (options, redraw) {
+        this.applyDescription('caption', options);
+        this.layOutTitles(redraw);
     }
 });
 /**

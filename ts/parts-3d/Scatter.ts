@@ -67,6 +67,7 @@ seriesType(
      *         Draggable 3d scatter
      *
      * @extends      plotOptions.scatter
+     * @excluding    dragDrop
      * @product      highcharts
      * @optionparent plotOptions.scatter3d
      */

@@ -61,7 +61,7 @@ H.seriesType(
      * @extends      plotOptions.pie
      * @since        7.1.0
      * @product      highcharts
-     * @excluding    borderColor, borderWidth, depth, dragDrop, linecap, shadow,
+     * @excluding    borderColor, borderWidth, depth, linecap, shadow,
      *               slicedOffset
      * @optionparent plotOptions.item
      */

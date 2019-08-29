@@ -45,11 +45,14 @@ QUnit.module('Styled mode for series types', function () {
             // Don't test indicator series (yet), they have more complex setup
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
 
-            // In solid gauge, the fill conveys magnitued
+            // In solid gauge, the fill conveys magnitude
             type !== 'solidgauge' &&
 
             // Complains about a missing axis
-            type !== 'scatter3d'
+            type !== 'scatter3d' &&
+
+            // Uses CSS for HTML data label positioning
+            type !== 'organization'
         ) {
 
             QUnit.test('Styled mode for ' + type, function (assert) {

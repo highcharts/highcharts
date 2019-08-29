@@ -1,11 +1,12 @@
 QUnit.module('Color axis for series types', function () {
-    Object.keys(Highcharts.seriesTypes).forEach(function (type) {
+    Object.keys(Highcharts.seriesTypes).sort().forEach(function (type) {
 
         if (
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
             type !== 'gauge' &&
             type !== 'solidgauge' &&
             type !== 'networkgraph' &&
+            type !== 'organization' &&
             type !== 'sunburst' &&
             type !== 'sankey' &&
             type !== 'dependencywheel' &&

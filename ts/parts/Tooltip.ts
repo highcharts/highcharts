@@ -511,7 +511,15 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0);
+                this.renderer = renderer = new H.Renderer(
+                    container,
+                    0,
+                    0,
+                    {},
+                    undefined,
+                    undefined,
+                    renderer.styledMode
+                );
             }
 
 
@@ -1392,16 +1400,23 @@ H.Tooltip.prototype = {
         point: Highcharts.Point
     ): void {
         var chart = this.chart,
+            pointer = chart.pointer,
             label = this.getLabel(),
-            pos = ((this.options.positioner as any) || this.getPosition).call(
-                this,
-                label.width,
-                label.height,
-                point
-            ),
+            pos,
             anchorX = (point.plotX as any) + chart.plotLeft,
             anchorY = (point.plotY as any) + chart.plotTop,
             pad;
+
+        // Needed for outside: true (#11688)
+        if (!pointer.chartPosition) {
+            pointer.chartPosition = H.offset(chart.container);
+        }
+        pos = ((this.options.positioner as any) || this.getPosition).call(
+            this,
+            label.width,
+            label.height,
+            point
+        );
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
@@ -1427,8 +1442,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += chart.pointer.chartPosition.left - pos.x;
-            anchorY += chart.pointer.chartPosition.top - pos.y;
+            anchorX += pointer.chartPosition.left - pos.x;
+            anchorY += pointer.chartPosition.top - pos.y;
         }
 
         // do the move

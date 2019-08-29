@@ -18,8 +18,8 @@
  * @since 7.1.0
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * @name Highcharts.PointOptionsObject#accessibility
  * @type {Highcharts.PointAccessibilityOptionsObject|undefined}

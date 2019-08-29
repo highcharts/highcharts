@@ -11,8 +11,8 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var defined = U.defined;
-import 'integrations.js';
-import 'QuadTree.js';
+import './integrations.js';
+import './QuadTree.js';
 var pick = H.pick, addEvent = H.addEvent, Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {

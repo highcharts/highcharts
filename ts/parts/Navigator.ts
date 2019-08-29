@@ -2756,6 +2756,9 @@ if (!H.Navigator) {
                             legend.legendHeight +
                             pick(legendOptions.margin, 10) :
                             0
+                    ) -
+                    (
+                        this.titleOffset ? this.titleOffset[2] : 0
                     );
             }
 

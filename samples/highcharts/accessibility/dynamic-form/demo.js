@@ -17,8 +17,10 @@ var minute = 1000 * 60,
         legend: {
             enabled: false
         },
+        caption: {
+            text: 'Displays balance of your bank accounts over time.'
+        },
         accessibility: {
-            description: 'Displays balance of your bank accounts over time.',
             pointValuePrefix: '$',
             announceNewData: {
                 enabled: true,

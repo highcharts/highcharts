@@ -434,9 +434,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                     };
                 });
                 gWrapper.addedSetters = true;
-            },
-            chart = H.charts[renderer.chartIndex],
-            styledMode = chart && chart.styledMode;
+            };
 
         // Text setter
         wrapper.textSetter = function (value: string): void {
@@ -492,7 +490,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 position: 'absolute'
             });
 
-        if (!styledMode) {
+        if (!renderer.styledMode) {
             wrapper.css({
                 fontFamily: this.style.fontFamily,
                 fontSize: this.style.fontSize

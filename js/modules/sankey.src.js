@@ -170,7 +170,7 @@ seriesType('sankey', 'column',
  * @since        6.0.0
  * @product      highcharts
  * @excluding    animationLimit, boostThreshold, borderRadius,
- *               crisp, cropThreshold, colorAxis, colorKey, depth,
+ *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
  *               edgeColor, edgeWidth, findNearestPointBy, grouping,
  *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPadding,
@@ -314,6 +314,8 @@ seriesType('sankey', 'column',
      * @since     7.1.3
      * @default   0
      * @apioption plotOptions.sankey.minLinkWidth
+     *
+     * @private
      */
     minLinkWidth: 0,
     /**
@@ -517,7 +519,7 @@ seriesType('sankey', 'column',
         var series = this, level = point.isNode ? point.level : point.fromNode.level, levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options, stateOptions = (levelOptions.states && levelOptions.states[state]) || {}, values = [
             'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
         ].reduce(function (obj, key) {
-            obj[key] = pick(stateOptions[key], options[key], levelOptions[key]);
+            obj[key] = pick(stateOptions[key], options[key], levelOptions[key], series.options[key]);
             return obj;
         }, {}), color = pick(stateOptions.color, options.color, values.colorByPoint ? point.color : levelOptions.color);
         // Node attributes

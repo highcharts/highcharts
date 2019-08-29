@@ -776,9 +776,9 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  *         Euler diagram
  *
  * @extends      plotOptions.scatter
- * @excluding    connectEnds, connectNulls, cropThreshold, findNearestPointBy,
- *               getExtremesFromAll, jitter, label, linecap, lineWidth,
- *               linkedTo, marker, negativeColor, pointInterval,
+ * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, jitter, label, linecap,
+ *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
  * @product      highcharts

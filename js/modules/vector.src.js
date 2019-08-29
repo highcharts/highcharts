@@ -34,8 +34,8 @@ seriesType('vector', 'scatter'
      * @since        6.0.0
      * @extends      plotOptions.scatter
      * @excluding    boostThreshold, marker, connectEnds, connectNulls,
-     *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
-     *               linecap, shadow, stacking, step, jitter
+     *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
+     *               dataGrouping, linecap, shadow, stacking, step, jitter
      * @product      highcharts highstock
      * @optionparent plotOptions.vector
      */

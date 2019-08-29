@@ -13,8 +13,10 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Points above 10 trigger alert by screen reader'
     },
+    caption: {
+        text: 'A test case for dynamic data in charts.'
+    },
     accessibility: {
-        description: 'A test case for dynamic data in charts.',
         announceNewData: {
             enabled: true,
             interruptUser: true,

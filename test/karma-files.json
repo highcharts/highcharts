@@ -3,6 +3,7 @@
 	"vendor/moment-2.18.1.js",
 	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
 	"vendor/proj4-2.3.6.js",
+	"https://unpkg.com/topojson-client@3",
 	"node_modules/lolex/lolex.js",
 
 	"code/highcharts.src.js",
@@ -33,6 +34,8 @@
 	"code/modules/histogram-bellcurve.src.js",
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",
+	"code/modules/funnel3d.src.js",
+	"code/modules/pyramid3d.src.js",
 	"code/modules/networkgraph.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
@@ -54,10 +57,13 @@
 	"code/modules/no-data-to-display.src.js",
 	"code/modules/drag-panes.src.js",
 	"code/modules/debugger.src.js",
+	"code/modules/cylinder.src.js",
+	"code/modules/organization.src.js",
+	"code/modules/dotplot.src.js",
 
 	"code/indicators/indicators-all.src.js",
 
-	"samples/data/maps/gb-all.js",
+	"node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
 	"samples/data/maps/bn-all.js",
 	"samples/data/maps/ad-all.js",
 	"samples/data/maps/europe.js",
@@ -66,6 +72,8 @@
 	"samples/data/maps/world.js",
 
 	"samples/data/usdeur.js",
-	"samples/data/ohlc.js"
+	"samples/data/ohlc.js",
+	"samples/data/three-series-1000-points.js",
+	"samples/data/large-dataset.js"
 
 ]

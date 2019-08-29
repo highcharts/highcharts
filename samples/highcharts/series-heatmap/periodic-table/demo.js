@@ -1,6 +1,6 @@
-Highcharts.ajax({
-    url: 'http://utils.highcharts.local/samples/data/periodic-table.json',
-    success: function (periodicTable) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.1.3/samples/data/periodic-table.json',
+    function (periodicTable) {
 
         function setPointsValue(prop, init) {
             return periodicTable.map(function (element) {
@@ -150,4 +150,4 @@ Highcharts.ajax({
             }
         );
     }
-});
+);

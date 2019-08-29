@@ -61,12 +61,14 @@ Highcharts.setOptions({
         // has the same layout option: layoutAlgorithm.
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         },
         packedbubble: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         }
 
@@ -86,6 +88,17 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
+Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
+    if (window.JSONSources[url]) {
+        callback(window.JSONSources[url]);
+    } else {
+        console.log('@getJSON: Loading over network', url);
+        return proceed.call(Highcharts, url, function (data) {
+            window.JSONSources[url] = data;
+            callback(data);
+        });
+    }
+});
 
 if (window.QUnit) {
     /*
@@ -179,12 +192,24 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver();
+        // Network graphs, sankey etc
+        if (
+            chart.series[0].nodes &&
+            chart.series[0].nodes[0] &&
+            typeof chart.series[0].nodes[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].nodes[0].onMouseOver();
+        
+        // Others
+        } else if (
+            chart.series[0].points &&
+            chart.series[0].points[0] &&
+            typeof chart.series[0].points[0].onMouseOver === 'function'
+        ) {
+            chart.series[0].points[0].onMouseOver();
+        }
     }
 };
 
@@ -199,6 +224,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -268,6 +301,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
 
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
+
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
@@ -320,7 +357,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        var remotelocation = __karma__.config.cliArgs.remotelocation;
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {
