@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Range series only. The high or maximum value for each data point.
 * @name Highcharts.PointOptionsObject#high
@@ -105,6 +105,10 @@ seriesType('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
+     */
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
      */
     /**
      * Pixel width of the arearange graph line.

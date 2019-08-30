@@ -29,6 +29,9 @@ hiddenAxisMixin = {
     render: function () {
         this.isDirty = false; // prevent setting Y axis dirty
     },
+    createLabelCollector: function () {
+        return false;
+    },
     setScale: noop,
     setCategories: noop,
     setTitle: noop
@@ -379,14 +382,40 @@ radialAxisMixin = {
                     center[2]) +
                 (titleOptions.y || 0))
         };
+    },
+    /* *
+     * Attach and return collecting function for labels in radial axis for
+     * anti-collision.
+     */
+    createLabelCollector: function () {
+        var axis = this;
+        return function () {
+            if (axis.isRadial &&
+                axis.tickPositions &&
+                // undocumented option for now, but working
+                axis.options.labels.allowOverlap !== true) {
+                return axis.tickPositions
+                    .map(function (pos) {
+                    return axis.ticks[pos] && axis.ticks[pos].label;
+                })
+                    .filter(function (label) {
+                    return Boolean(label);
+                });
+            }
+        };
     }
     /* eslint-enable valid-jsdoc */
 };
 /* eslint-disable no-invalid-this */
 // Actions before axis init.
 addEvent(Axis, 'init', function (e) {
-    var axis = this, chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
+    var chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
         chart.pane && chart.pane[paneIndex];
+    // Prevent changes for colorAxis
+    if (this.coll === 'colorAxis') {
+        this.isRadial = false;
+        return;
+    }
     // Before prototype.init
     if (angular) {
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
@@ -408,21 +437,13 @@ addEvent(Axis, 'init', function (e) {
         this.isRadial = true;
         chart.inverted = false;
         chartOptions.chart.zoomType = null;
-        // Prevent overlapping axis labels (#9761)
-        chart.labelCollectors.push(function () {
-            if (axis.isRadial &&
-                axis.tickPositions &&
-                // undocumented option for now, but working
-                axis.options.labels.allowOverlap !== true) {
-                return axis.tickPositions
-                    .map(function (pos) {
-                    return axis.ticks[pos] && axis.ticks[pos].label;
-                })
-                    .filter(function (label) {
-                    return Boolean(label);
-                });
-            }
-        });
+        if (!this.labelCollector) {
+            this.labelCollector = this.createLabelCollector();
+        }
+        if (this.labelCollector) {
+            // Prevent overlapping axis labels (#9761)
+            chart.labelCollectors.push(this.labelCollector);
+        }
     }
     else {
         this.isRadial = false;
@@ -454,6 +475,15 @@ addEvent(Axis, 'autoLabelAlign', function (e) {
     if (this.isRadial) {
         e.align = undefined;
         e.preventDefault();
+    }
+});
+// Remove label collector function on axis remove/update
+addEvent(Axis, 'destroy', function () {
+    if (this.chart && this.chart.labelCollectors) {
+        var index = this.chart.labelCollectors.indexOf(this.labelCollector);
+        if (index >= 0) {
+            this.chart.labelCollectors.splice(index, 1);
+        }
     }
 });
 // Add special cases within the Tick class' methods for radial axes.

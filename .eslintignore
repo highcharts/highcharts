@@ -8,7 +8,16 @@ js/modules/data.src.js
 js/modules/debugger.src.js
 js/modules/dependency-wheel.src.js
 js/modules/dotplot.src.js
+js/modules/drag-panes.src.js
+js/modules/draggable-points.src.js
+js/modules/drilldown.src.js
+js/modules/export-data.src.js
+js/modules/exporting.src.js
 js/modules/full-screen.src.js
+js/modules/funnel.src.js
+js/modules/funnel3d.src.js
+js/modules/item-series.src.js
+js/modules/histogram.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/modules/sankey.src.js

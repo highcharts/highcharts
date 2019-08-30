@@ -177,6 +177,11 @@ seriesType<Highcharts.OHLCSeriesOptions>(
          */
 
         /**
+         * @default   close
+         * @apioption plotOptions.ohlc.colorKey
+         */
+
+        /**
          * Line color for up points.
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}

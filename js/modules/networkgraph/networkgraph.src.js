@@ -116,10 +116,11 @@ seriesType('networkgraph', 'line',
  *               Networkgraph
  * @since        7.0.0
  * @excluding    boostThreshold, animation, animationLimit, connectEnds,
- *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
- *               negativeColor, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointStart, softThreshold, stack, stacking,
- *               step, threshold, xAxis, yAxis, zoneAxis
+ *               colorAxis, colorKey, connectNulls, dragDrop,
+ *               getExtremesFromAll, label, linecap, negativeColor,
+ *               pointInterval, pointIntervalUnit, pointPlacement,
+ *               pointStart, softThreshold, stack, stacking, step,
+ *               threshold, xAxis, yAxis, zoneAxis
  * @optionparent plotOptions.networkgraph
  */
 {
@@ -448,7 +449,10 @@ seriesType('networkgraph', 'line',
      * @private
      */
     createNode: H.NodesMixin.createNode,
-    destroy: H.NodesMixin.destroy,
+    destroy: function () {
+        this.layout.removeElementFromCollection(this, this.layout.series);
+        H.NodesMixin.destroy.call(this);
+    },
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Extend init with base event, which should stop simulation during
@@ -576,9 +580,9 @@ seriesType('networkgraph', 'line',
         }
         this.layout = layout;
         layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-        layout.addSeries(this);
-        layout.addNodes(this.nodes);
-        layout.addLinks(this.points);
+        layout.addElementsToCollection([this], layout.series);
+        layout.addElementsToCollection(this.nodes, layout.nodes);
+        layout.addElementsToCollection(this.points, layout.links);
     },
     /**
      * Extend the render function to also render this.nodes together with
@@ -922,11 +926,8 @@ seriesType('networkgraph', 'line',
                     link.destroyElements();
                 }
             });
-            this.series.layout.removeNode(this);
         }
-        else {
-            this.series.layout.removeLink(this);
-        }
+        this.series.layout.removeElementFromCollection(this, this.series.layout[this.isNode ? 'nodes' : 'links']);
         return Point.prototype.destroy.apply(this, arguments);
     }
 });

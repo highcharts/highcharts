@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,7 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject, SizeObject {
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
@@ -92,7 +92,9 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
+            [key: string]: SymbolFunction<(
+                SVGElement|SVGPathArray|Array<SVGElement>
+            )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -806,6 +808,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    attr,
     defined,
     erase,
     isArray,
@@ -824,7 +827,6 @@ var SVGElement: Highcharts.SVGElement,
 
     addEvent = H.addEvent,
     animate = H.animate,
-    attr = H.attr,
     charts = H.charts,
     color = H.color,
     css = H.css,
@@ -2654,7 +2656,7 @@ extend((
             delete wrapper[key];
         });
 
-        return;
+        return undefined;
     },
 
     /**
@@ -2734,7 +2736,10 @@ extend((
                     attr(
                         shadow,
                         'height',
-                        Math.max(attr(shadow, 'height') - strokeWidth, 0)
+                        Math.max(
+                            (attr(shadow, 'height') as any) - strokeWidth,
+                            0
+                        )
                     );
                     (shadow as any).cutHeight = strokeWidth;
                 }

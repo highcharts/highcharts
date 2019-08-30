@@ -131,7 +131,7 @@ var correctFloat = H.correctFloat,
  * @return {boolean} - Whether it is a direct property
  */
 function ownProp(obj: unknown, key: string): boolean {
-    return Object.prototype.hasOwnProperty.call(obj, key);
+    return Object.hasOwnProperty.call(obj, key);
 }
 
 /* eslint-disable no-invalid-this */

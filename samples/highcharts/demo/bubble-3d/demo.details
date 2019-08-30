@@ -3,4 +3,5 @@
  authors:
    - Torstein Hønsi
  js_wrap: b
+ alt_text: Highcharts 3D Bubbles chart JavaScript example graph compares series values as radial gradient fill bubble diagram.
 ...

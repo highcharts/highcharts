@@ -55,6 +55,18 @@ function getStatus() {
     });
 }
 
+/**
+ * Returns the lastest commit sha
+ *
+ * @param {Boolean} useShortVersion if you want the short version of the latest git sha.
+ * @return {Promise<String>}
+ *         Promise to keep with results
+ */
+function getLatestCommitShaSync(useShortVersion = false) {
+    const ChildProcess = require('child_process');
+    return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
+}
+
 /* *
  *
  *  Exports
@@ -62,5 +74,6 @@ function getStatus() {
  * */
 
 module.exports = {
-    getStatus
+    getStatus,
+    getLatestCommitShaSync
 };

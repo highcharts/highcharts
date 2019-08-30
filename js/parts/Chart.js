@@ -56,13 +56,33 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ */ /**
+* Modify options for the caption.
+*
+* @function Highcharts.CaptionObject#update
+*
+* @param {Highcharts.CaptionOptions} captionOptions
+*        Options to modify.
+*
+* @param {boolean} [redraw=true]
+*        Whether to redraw the chart after the caption is altered. If doing
+*        more operations on the chart, it is a good idea to set redraw to false
+*        and call {@link Chart#redraw} after.
+*/
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
+var attr = U.attr, defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, attr = H.attr, doc = H.doc, Axis = H.Axis, // @todo add as requirement
+var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, doc = H.doc, Axis = H.Axis, // @todo add as requirement
 createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
 pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, syncTimeout = H.syncTimeout, win = H.win;
@@ -665,74 +685,91 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     setTitle: function (titleOptions, subtitleOptions, redraw) {
-        var chart = this, options = chart.options, styledMode = chart.styledMode, chartTitleOptions, chartSubtitleOptions;
-        chartTitleOptions = options.title = merge(
-        // Default styles
-        (!styledMode && {
-            style: {
-                color: '${palette.neutralColor80}',
-                fontSize: options.isStock ? '16px' : '18px' // #2944
-            }
-        }), options.title, titleOptions);
-        chartSubtitleOptions = options.subtitle = merge(
-        // Default styles
-        (!styledMode && {
-            style: {
-                color: '${palette.neutralColor60}'
-            }
-        }), options.subtitle, subtitleOptions);
-        // add title and subtitle
-        /**
-         * The chart title. The title has an `update` method that allows
-         * modifying the options directly or indirectly via
-         * `chart.update`.
-         *
-         * @sample highcharts/members/title-update/
-         *         Updating titles
-         *
-         * @name Highcharts.Chart#title
-         * @type {Highcharts.TitleObject}
-         */
-        /**
-         * The chart subtitle. The subtitle has an `update` method that
-         * allows modifying the options directly or indirectly via
-         * `chart.update`.
-         *
-         * @name Highcharts.Chart#subtitle
-         * @type {Highcharts.SubtitleObject}
-         */
-        [
-            ['title', titleOptions, chartTitleOptions],
-            ['subtitle', subtitleOptions, chartSubtitleOptions]
-        ].forEach(function (arr, i) {
-            var name = arr[0], title = chart[name], titleOptions = arr[1], chartTitleOptions = arr[2];
-            if (title && titleOptions) {
-                chart[name] = title = title.destroy(); // remove old
-            }
-            if (chartTitleOptions && !title) {
-                chart[name] = chart.renderer.text(chartTitleOptions.text, 0, 0, chartTitleOptions.useHTML)
-                    .attr({
-                    align: chartTitleOptions.align,
-                    'class': 'highcharts-' + name,
-                    zIndex: chartTitleOptions.zIndex || 4
-                })
-                    .add();
-                // Update methods, shortcut to Chart.setTitle
-                chart[name].update = function (o) {
-                    chart.setTitle((!i && o), (i && o));
-                };
-                // Presentational
-                if (!styledMode) {
-                    chart[name].css(chartTitleOptions.style);
-                }
-            }
-        });
-        chart.layOutTitles(redraw);
+        this.applyDescription('title', titleOptions);
+        this.applyDescription('subtitle', subtitleOptions);
+        // The initial call also adds the caption. On update, chart.update will
+        // relay to Chart.setCaption.
+        this.applyDescription('caption', undefined);
+        this.layOutTitles(redraw);
     },
     /**
-     * Internal function to lay out the chart titles and cache the full offset
-     * height for use in `getMargins`. The result is stored in
-     * `this.titleOffset`.
+     * Apply a title, subtitle or caption for the chart
+     *
+     * @private
+     * @function Highcharts.Chart#applyDescription
+     *
+     * @param name {string}
+     *        Either title, subtitle or caption
+     * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
+     *        The options to set, will be merged with default options.
+     *
+     * @return {void}
+     */
+    applyDescription: function (name, explicitOptions) {
+        var chart = this;
+        // Default style
+        var style = name === 'title' ? {
+            color: '${palette.neutralColor80}',
+            fontSize: this.options.isStock ? '16px' : '18px' // #2944
+        } : {
+            color: '${palette.neutralColor60}'
+        };
+        // Merge default options with explicit options
+        var options = this.options[name] = merge(
+        // Default styles
+        (!this.styledMode && { style: style }), this.options[name], explicitOptions);
+        var elem = this[name];
+        if (elem && explicitOptions) {
+            this[name] = elem = elem.destroy(); // remove old
+        }
+        if (options && !elem) {
+            elem = this.renderer.text(options.text, 0, 0, options.useHTML)
+                .attr({
+                align: options.align,
+                'class': 'highcharts-' + name,
+                zIndex: options.zIndex || 4
+            })
+                .add();
+            // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
+            // Chart.setCaption
+            elem.update = function (updateOptions) {
+                var fn = {
+                    title: 'setTitle',
+                    subtitle: 'setSubtitle',
+                    caption: 'setCaption'
+                }[name];
+                chart[fn](updateOptions);
+            };
+            // Presentational
+            if (!this.styledMode) {
+                elem.css(options.style);
+            }
+            /**
+             * The chart title. The title has an `update` method that allows
+             * modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @sample highcharts/members/title-update/
+             *         Updating titles
+             *
+             * @name Highcharts.Chart#title
+             * @type {Highcharts.TitleObject}
+             */
+            /**
+             * The chart subtitle. The subtitle has an `update` method that
+             * allows modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @name Highcharts.Chart#subtitle
+             * @type {Highcharts.SubtitleObject}
+             */
+            this[name] = elem;
+        }
+    },
+    /**
+     * Internal function to lay out the chart title, subtitle and caption, and
+     * cache the full offset height for use in `getMargins`. The result is
+     * stored in `this.titleOffset`.
      *
      * @private
      * @function Highcharts.Chart#layOutTitles
@@ -744,11 +781,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     layOutTitles: function (redraw) {
         var titleOffset = [0, 0, 0], requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
         // Lay out the title and the subtitle respectively
-        ['title', 'subtitle'].forEach(function (key) {
-            var title = this[key], titleOptions = this.options[key], offset = key === 'title' ? -3 :
+        ['title', 'subtitle', 'caption'].forEach(function (key) {
+            var title = this[key], titleOptions = this.options[key], verticalAlign = titleOptions.verticalAlign || 'top', offset = key === 'title' ? -3 :
                 // Floating subtitle (#6574)
-                titleOptions.verticalAlign ? 0 : titleOffset[0] + 2, bottomAlign = (key === 'subtitle' &&
-                titleOptions.verticalAlign === 'bottom'), titleSize, height;
+                verticalAlign === 'top' ? titleOffset[0] + 2 : 0, titleSize, height;
             if (title) {
                 if (!this.styledMode) {
                     titleSize = titleOptions.style.fontSize;
@@ -757,25 +793,37 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 title
                     .css({
                     width: (titleOptions.width ||
-                        spacingBox.width + titleOptions.widthAdjust) + 'px'
+                        spacingBox.width + (titleOptions.widthAdjust || 0)) + 'px'
                 });
                 // Skip the cache for HTML (#3481)
                 height = title.getBBox(titleOptions.useHTML).height;
                 title.align(extend({
-                    y: bottomAlign ? titleSize : offset + titleSize,
+                    y: verticalAlign === 'bottom' ?
+                        titleSize :
+                        offset + titleSize,
                     height: height
                 }, titleOptions), false, 'spacingBox');
                 if (!titleOptions.floating) {
-                    if (!titleOptions.verticalAlign) {
+                    if (verticalAlign === 'top') {
                         titleOffset[0] = Math.ceil(titleOffset[0] +
                             height);
                     }
-                    else if (bottomAlign) {
-                        titleOffset[2] = height;
+                    else if (verticalAlign === 'bottom') {
+                        titleOffset[2] = Math.ceil(titleOffset[2] +
+                            height);
                     }
                 }
             }
         }, this);
+        // Handle title.margin and caption.margin
+        if (titleOffset[0] &&
+            (this.options.title.verticalAlign || 'top') === 'top') {
+            titleOffset[0] += this.options.title.margin;
+        }
+        if (titleOffset[2] &&
+            this.options.caption.verticalAlign === 'bottom') {
+            titleOffset[2] += this.options.caption.margin;
+        }
         requiresDirtyBox = (!this.titleOffset ||
             this.titleOffset.join(',') !== titleOffset.join(','));
         // Used in getMargins
@@ -1031,10 +1079,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.resetMargins();
         // Adjust for title and subtitle
         if (titleOffset[0] && !defined(margin[0])) {
-            this.plotTop = Math.max(this.plotTop, titleOffset[0] + this.options.title.margin + spacing[0]);
+            this.plotTop = Math.max(this.plotTop, titleOffset[0] + spacing[0]);
         }
         if (titleOffset[2] && !defined(margin[2])) {
-            this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + this.options.title.margin + spacing[2]);
+            this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + spacing[2]);
         }
         // Adjust for legend
         if (this.legend && this.legend.display) {
@@ -1053,14 +1101,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getAxisMargins: function () {
         var chart = this, 
         // [top, right, bottom, left]
-        axisOffset = chart.axisOffset = [0, 0, 0, 0], margin = chart.margin;
-        // pre-render axes to get labels offset width
-        if (chart.hasCartesianSeries) {
-            chart.axes.forEach(function (axis) {
+        axisOffset = chart.axisOffset = [0, 0, 0, 0], colorAxis = chart.colorAxis, margin = chart.margin, getOffset = function (axes) {
+            axes.forEach(function (axis) {
                 if (axis.visible) {
                     axis.getOffset();
                 }
             });
+        };
+        // pre-render axes to get labels offset width
+        if (chart.hasCartesianSeries) {
+            getOffset(chart.axes);
+        }
+        else if (colorAxis && colorAxis.length) {
+            getOffset(colorAxis);
         }
         // Add the axis offsets
         marginNames.forEach(function (m, side) {
@@ -1129,7 +1182,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this;
         if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (e) {
-                chart.reflow(e);
+                // a removed event listener still runs in Edge and IE if the
+                // listener was removed while the event runs, so check if the
+                // chart is not destroyed (#11609)
+                if (chart.options) {
+                    chart.reflow(e);
+                }
             });
             addEvent(this, 'destroy', this.unbindReflow);
         }
@@ -1566,8 +1624,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     render: function () {
-        var chart = this, axes = chart.axes, renderer = chart.renderer, options = chart.options, correction = 0, // correction for X axis labels
-        tempWidth, tempHeight, redoHorizontal, redoVertical;
+        var chart = this, axes = chart.axes, colorAxis = chart.colorAxis, renderer = chart.renderer, options = chart.options, correction = 0, // correction for X axis labels
+        tempWidth, tempHeight, redoHorizontal, redoVertical, renderAxes = function (axes) {
+            axes.forEach(function (axis) {
+                if (axis.visible) {
+                    axis.render();
+                }
+            });
+        };
         // Title
         chart.setTitle();
         /**
@@ -1623,11 +1687,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.drawChartBox();
         // Axes
         if (chart.hasCartesianSeries) {
-            axes.forEach(function (axis) {
-                if (axis.visible) {
-                    axis.render();
-                }
-            });
+            renderAxes(axes);
+        }
+        else if (colorAxis && colorAxis.length) {
+            renderAxes(colorAxis);
         }
         // The series
         if (!chart.seriesGroup) {

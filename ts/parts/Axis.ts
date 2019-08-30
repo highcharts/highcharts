@@ -272,30 +272,13 @@ declare global {
             angle?: number;
             gridLineInterpolation?: AxisGridLineInterpolationValue;
             maxColor?: (ColorString|GradientColorObject|PatternObject);
-            maxLength?: (number|string);
             minColor?: (ColorString|GradientColorObject|PatternObject);
-            minLength?: (number|string);
-            resize?: YAxisResizeOptions;
             staticScale?: number;
             stops?: Array<[
                 number,
                 (ColorString|GradientColorObject|PatternObject)
             ]>;
             tooltipValueFormat?: string;
-        }
-        interface YAxisResizeControlledAxisOptions {
-            next?: Array<(string|number)>;
-            prev?: Array<(string|number)>;
-        }
-        interface YAxisResizeOptions {
-            controlledAxis?: YAxisResizeControlledAxisOptions;
-            cursor?: string;
-            enabled?: boolean;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            lineDashStyle?: string;
-            lineWidth?: number;
-            x?: number;
-            y?: number;
         }
         interface ZAxisOptions extends XAxisOptions {
             breaks?: undefined;
@@ -1337,7 +1320,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.afterSetExtremes
          */
 
@@ -1352,7 +1335,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @since     4.1.0
          * @product   highcharts gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointBreak
          */
 
@@ -1361,7 +1344,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @product   highcharts highstock gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
          */
 
@@ -1382,7 +1365,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     1.2.0
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.setExtremes
          */
 
@@ -5675,7 +5658,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.isDirty ||
                     // When x axis is dirty, we need new data extremes for y as
                     // well:
-                    series.xAxis.isDirty as any
+                    series.xAxis && (series.xAxis.isDirty as any)
                 );
             }),
             isDirtyAxisLength;
@@ -6118,7 +6101,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 if (
                     step * tickInterval > range &&
                     spaceNeeded !== Infinity &&
-                    slotSize !== Infinity
+                    slotSize !== Infinity &&
+                    range
                 ) {
                     step = Math.ceil(range / tickInterval);
                 }
@@ -7289,7 +7273,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
-                    (point as any).crosshairPos, // 3D axis extension
+                    this.coll !== 'colorAxis' ?
+                        (point as any).crosshairPos : // 3D axis extension
+                        null,
                     this.isXAxis ?
                         (point as any).plotX :
                         this.len - (point as any).plotY

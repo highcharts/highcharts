@@ -376,12 +376,13 @@ seriesType<Highcharts.SankeySeriesOptions>(
      * @since        6.0.0
      * @product      highcharts
      * @excluding    animationLimit, boostThreshold, borderRadius,
-     *               crisp, cropThreshold, depth, edgeColor, edgeWidth,
-     *               findNearestPointBy, grouping, groupPadding, groupZPadding,
-     *               maxPointWidth, negativeColor, pointInterval,
-     *               pointIntervalUnit, pointPadding, pointPlacement,
-     *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones, minPointLength
+     *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, grouping,
+     *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPadding,
+     *               pointPlacement, pointRange, pointStart, pointWidth,
+     *               shadow, softThreshold, stacking, threshold, zoneAxis,
+     *               zones, minPointLength
      * @optionparent plotOptions.sankey
      */
     {
@@ -536,6 +537,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
          * @since     7.1.3
          * @default   0
          * @apioption plotOptions.sankey.minLinkWidth
+         *
+         * @private
          */
         minLinkWidth: 0,
 
@@ -816,7 +819,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
                     obj[key] = pick(
                         stateOptions[key],
                         (options as any)[key],
-                        levelOptions[key]
+                        levelOptions[key],
+                        (series.options as any)[key]
                     );
                     return obj;
                 }, {}),

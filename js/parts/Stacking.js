@@ -159,9 +159,10 @@ H.StackItem.prototype = {
      * @param {number} xWidth
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
+     * @param {number} [defaultX]
      * @return {void}
      */
-    setOffset: function (xOffset, xWidth, boxBottom, boxTop) {
+    setOffset: function (xOffset, xWidth, boxBottom, boxTop, defaultX) {
         var stackItem = this, axis = stackItem.axis, chart = axis.chart, 
         // stack value translated mapped to chart coordinates
         y = axis.translate(axis.usePercentage ?
@@ -172,11 +173,13 @@ H.StackItem.prototype = {
         // stack height:
         h = defined(y) && Math.abs(y - yZero), 
         // x position:
-        x = chart.xAxis[0].translate(stackItem.x) + xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
+        x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
+            xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible, alignAttr;
         if (label && stackBox) {
             var bBox = label.getBBox(), boxOffsetX = chart.inverted ?
                 (isNegative ? bBox.width : 0) : bBox.width / 2, boxOffsetY = chart.inverted ?
                 bBox.height / 2 : (isNegative ? -4 : bBox.height + 4);
+            stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             // Align the label to the box
             label.align(stackItem.alignOptions, null, stackBox);
             // Set visibility (#678)
@@ -190,15 +193,17 @@ H.StackItem.prototype = {
                 Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-            label.alignAttr = alignAttr;
+            alignAttr.x = label.alignAttr.x;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
             });
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.alignAttr.x - bBox.width / 2, label.alignAttr.y) && chart.isInsidePlot(label.alignAttr.x + (chart.inverted ?
-                    (isNegative ? -bBox.width : bBox.width) :
-                    bBox.width / 2), label.alignAttr.y + bBox.height);
+                visible = chart.isInsidePlot(label.x +
+                    (chart.inverted ? 0 : -bBox.width / 2), label.y) &&
+                    chart.isInsidePlot(label.x + (chart.inverted ?
+                        (isNegative ? -bBox.width : bBox.width) :
+                        bBox.width / 2), label.y + bBox.height);
                 if (!visible) {
                     label.hide();
                 }

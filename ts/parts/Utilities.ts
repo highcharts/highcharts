@@ -157,9 +157,18 @@ declare global {
         function arrayMin(data: Array<any>): number;
         function attr(
             elem: (HTMLDOMElement|SVGDOMElement),
-            prop?: (string|HTMLAttributes|SVGAttributes),
-            value?: (number|string)
-        ): any;
+            prop: (HTMLAttributes|SVGAttributes)
+        ): undefined;
+        function attr(
+            elem: (HTMLDOMElement|SVGDOMElement),
+            prop: string,
+            value?: undefined
+        ): (string|null);
+        function attr(
+            elem: (HTMLDOMElement|SVGDOMElement),
+            prop: string,
+            value: (number|string)
+        ): undefined;
         function clearTimeout(id: number): void;
         function correctFloat(num: number, prec?: number): number;
         function createElement(
@@ -290,7 +299,7 @@ declare global {
             type: string,
             parent: string,
             options: TOptions,
-            props: Dictionary<any>,
+            props?: Dictionary<any>,
             pointProps?: Dictionary<any>
         ): typeof Series;
         function setAnimation(
@@ -1427,6 +1436,20 @@ function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
 }
 
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: (Highcharts.HTMLAttributes|Highcharts.SVGAttributes)
+): undefined;
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: string,
+    value?: undefined
+): (string|null);
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: string,
+    value: (number|string)
+): undefined;
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
  * a key and a value, or let the second argument be a collection of keys and
@@ -1443,25 +1466,25 @@ function defined<T>(obj: T): obj is NonNullable<T> {
  * @param {number|string} [value]
  *        The value if a single property is set.
  *
- * @return {*}
+ * @return {string|null|undefined}
  *         When used as a getter, return the value.
  */
-H.attr = function (
+function attr(
     elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    prop?: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
+    prop: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
     value?: (number|string)
-): any {
-    var ret;
+): (string|null|undefined) {
+    let ret;
 
     // if the prop is a string
     if (isString(prop)) {
         // set the value
         if (defined(value)) {
-            elem.setAttribute(prop as string, value as string);
+            elem.setAttribute(prop, value as string);
 
         // get the value
         } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop as string);
+            ret = elem.getAttribute(prop);
 
             // IE7 and below cannot get class through getAttribute (#7850)
             if (!ret && prop === 'class') {
@@ -1470,13 +1493,13 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (defined(prop) && isObject(prop)) {
+    } else {
         objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
     }
     return ret;
-};
+}
 
 /**
  * Check if an element is an array, and if not, make it into an array.
@@ -2660,7 +2683,7 @@ function objectEach<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
@@ -3069,7 +3092,7 @@ H.fireEvent = function<T> (
 
     // Run the default if not prevented
     if (defaultFunction && !eventArguments.defaultPrevented) {
-        defaultFunction.call(el, eventArguments);
+        (defaultFunction as Function).call(el, eventArguments);
     }
 };
 
@@ -3165,15 +3188,15 @@ H.animate = function (
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -3186,7 +3209,7 @@ H.seriesType = function (
     type: string,
     parent: string,
     options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
+    props?: Highcharts.Dictionary<any>,
     pointProps?: Highcharts.Dictionary<any>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
@@ -3295,13 +3318,14 @@ if ((win as any).jQuery) {
 
             // When called without parameters or with the return argument,
             // return an existing chart
-            return charts[H.attr(this[0], 'data-highcharts-chart')];
+            return charts[(attr(this[0], 'data-highcharts-chart') as any)];
         }
     };
 }
 
 // TODO use named exports when supported.
 const utils = {
+    attr,
     defined,
     erase,
     isArray,

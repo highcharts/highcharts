@@ -94,6 +94,12 @@ declare global {
         {
             inactive?: NetworkgraphSeriesStatesInactiveOptions;
         }
+        interface Series {
+            layout?: NetworkgraphLayout;
+        }
+        interface SeriesTypesDictionary {
+            networkgraph: typeof NetworkgraphSeries;
+        }
         class NetworkgraphPoint
             extends LinePoint
             implements DragNodesPoint, NodesPoint {
@@ -137,12 +143,13 @@ declare global {
             public chart: NetworkgraphChart;
             public createNode: NodesMixin['createNode'];
             public data: Array<NetworkgraphPoint>;
-            public destroy: NodesMixin['destroy'];
+            public destroy(): void;
             public directTouch: boolean;
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public forces: Array<string>;
             public hasDraggableNodes: boolean;
             public isCartesian: boolean;
+            public layout: NetworkgraphLayout;
             public nodeLookup: NodesSeries['nodeLookup'];
             public nodes: Array<NetworkgraphPoint>;
             public noSharedTooltip: boolean;
@@ -300,10 +307,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
      *               Networkgraph
      * @since        7.0.0
      * @excluding    boostThreshold, animation, animationLimit, connectEnds,
-     *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
-     *               negativeColor, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, softThreshold, stack, stacking,
-     *               step, threshold, xAxis, yAxis, zoneAxis
+     *               colorAxis, colorKey, connectNulls, dragDrop,
+     *               getExtremesFromAll, label, linecap, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stack, stacking, step,
+     *               threshold, xAxis, yAxis, zoneAxis
      * @optionparent plotOptions.networkgraph
      */
     {
@@ -656,7 +664,13 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          * @private
          */
         createNode: H.NodesMixin.createNode,
-        destroy: H.NodesMixin.destroy,
+        destroy: function (this: Highcharts.NetworkgraphSeries): void {
+            this.layout.removeElementFromCollection<Highcharts.Series>(
+                this,
+                this.layout.series
+            );
+            H.NodesMixin.destroy.call(this);
+        },
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -849,9 +863,9 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             this.layout = layout;
 
             layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-            layout.addSeries(this);
-            layout.addNodes(this.nodes);
-            layout.addLinks(this.points);
+            layout.addElementsToCollection([this], layout.series);
+            layout.addElementsToCollection(this.nodes, layout.nodes);
+            layout.addElementsToCollection(this.points, layout.links);
         },
 
         /**
@@ -1327,10 +1341,12 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                         }
                     }
                 );
-                this.series.layout.removeNode(this);
-            } else {
-                this.series.layout.removeLink(this);
             }
+
+            this.series.layout.removeElementFromCollection(
+                this,
+                (this.series.layout as any)[this.isNode ? 'nodes' : 'links']
+            );
 
             return Point.prototype.destroy.apply(this, arguments as any);
         }

@@ -28,6 +28,7 @@ Gulp.registry(new GulpForwardReference());
     'dist',
     'dist-ant',
     'dist-upload',
+    'dist-testresults',
     'dist-clean',
     'dist-compress',
     'dist-copy',

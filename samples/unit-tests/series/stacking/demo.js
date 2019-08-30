@@ -134,7 +134,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         var size = 0,
             key;
         for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
+            if (Object.hasOwnProperty.call(obj, key)) {
                 size++;
             }
         }

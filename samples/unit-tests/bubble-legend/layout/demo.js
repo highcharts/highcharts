@@ -104,3 +104,30 @@ QUnit.test('Negative values (#9678)', function (assert) {
 
     });
 });
+
+
+QUnit.test('Bubble legend with maps', function (assert) {
+    var chart = Highcharts.mapChart('container', {
+        legend: {
+            bubbleLegend: {
+                enabled: true
+            }
+        },
+        series: [{
+            mapData: Highcharts.maps['countries/bn/bn-all']
+        }, {
+            joinBy: ['code', 'iso-a2'],
+            type: 'mapbubble',
+            data: [
+                ['tu', 10],
+                ['be', 20]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].ticks).length,
+        0,
+        'Grid lines and ticks should not be rendered (#11448).'
+    );
+});

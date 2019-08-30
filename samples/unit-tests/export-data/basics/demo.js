@@ -47,6 +47,45 @@ QUnit.test("Categorized", function (assert) {
     $('#container').highcharts().destroy();
 });
 
+QUnit.test("Chart event", function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            events: {
+                exportData: function (event) {
+                    event.dataRows[2][0] = 'Apples';
+                    event.dataRows[2][1] = 4;
+                }
+            }
+        },
+        xAxis: {
+            title: {
+                text: 'Fruit'
+            },
+            type: 'category'
+        },
+        series: [{
+            type: 'line',
+            name: 'Number',
+            data: [
+                ['Bananas', 1],
+                ['Pears', 2],
+                ['Oranges', 3]
+            ]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            ['Fruit', 'Number'],
+            ['Bananas', 1],
+            ['Apples', 4],
+            ['Oranges', 3]
+        ],
+        '2 "Pears" should be replaced with 4 "Apples".'
+    );
+});
 
 QUnit.test("Named points", function (assert) {
     $('#container').highcharts({

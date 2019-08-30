@@ -20,7 +20,8 @@ QUnit.test('Markers for arearange.', function (assert) {
                 [10, 20],
                 [30, 35],
                 [30, 31]
-            ]
+            ],
+            boostThreshold: 450
         }]
     });
 
@@ -61,7 +62,7 @@ QUnit.test('Markers for arearange.', function (assert) {
     );
 
     // #7557
-    chart.series[0].setData(randomData(400000));
+    chart.series[0].setData(randomData(450));
     chart.xAxis[0].setExtremes(5, 15);
     chart.xAxis[0].setExtremes(null, null);
 

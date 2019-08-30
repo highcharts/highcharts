@@ -1,21 +1,17 @@
 QUnit.test('No data module with boost', function (assert) {
 
     var data = [],
-        n = 1000000,
+        n = 10,
         i;
 
     for (i = 0; i < n; i += 1) {
-        var x = Math.pow(Math.random(), 2) * 100;
-        data.push([
-            x,
-            Math.pow(Math.random(), 2) * 100
-        ]);
+        data.push([i, i]);
     }
 
     var chart = Highcharts.chart('container', {
 
         chart: {
-            height: '100%'
+            height: '400'
         },
         boost: {
             useGPUTranslations: true,
@@ -23,24 +19,31 @@ QUnit.test('No data module with boost', function (assert) {
         },
         xAxis: {
             min: 0,
-            max: 100
+            max: 10
         },
         yAxis: {
             min: 0,
-            max: 100
+            max: 10
         },
         series: [{
             type: 'scatter',
             data: data,
             marker: {
-                radius: 0.1
-            }
+                radius: 2
+            },
+            boostThreshold: 1
         }]
     });
 
     assert.strictEqual(
-        chart.noDataLabel === undefined,
+        chart.isBoosting,
         true,
+        'The chart should be boosting'
+    );
+
+    assert.strictEqual(
+        chart.noDataLabel,
+        undefined,
         'No-data should be invisible (#9758)'
     );
 

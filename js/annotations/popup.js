@@ -1056,10 +1056,14 @@ addEvent(H.NavigationBindings, 'showPopup', function (config) {
     if (!this.popup) {
         // Add popup to main container
         this.popup = new H.Popup(
-            this.chart.container,
-            this.chart.options.navigation.iconsURL ||
-                this.chart.options.stockTools.gui.iconsURL ||
+            this.chart.container, (
+                this.chart.options.navigation.iconsURL ||
+                (
+                    this.chart.options.stockTools &&
+                    this.chart.options.stockTools.gui.iconsURL
+                ) ||
                 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+            )
         );
     }
 

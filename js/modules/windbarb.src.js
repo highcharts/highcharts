@@ -149,6 +149,10 @@ seriesType('windbarb', 'column'
          */
         vectorLength: 20,
         /**
+         * @default   value
+         */
+        colorKey: 'value',
+        /**
          * Vertical offset from the cartesian position, in pixels. The default
          * value makes sure the symbols don't overlap the X axis when `onSeries`
          * is `null`, and that they don't overlap the linked series when

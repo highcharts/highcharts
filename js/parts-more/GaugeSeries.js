@@ -24,11 +24,11 @@ var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType
  *         Gauge chart
  *
  * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
- *               getExtremesFromAll, marker, negativeColor, pointPlacement,
- *               shadow, softThreshold, stacking, states, step, threshold,
- *               turboThreshold, xAxis, zoneAxis, zones
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+ *               pointPlacement, shadow, softThreshold, stacking, states, step,
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
-    accessibility: {
-        description: 'Random data on a date axis.'
+    caption: {
+        text: 'Random data on a date axis.'
     },
     chart: {
         zoomType: 'x'

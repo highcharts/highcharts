@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  aws-s3: circleci/aws-s3@1.0.11
 ######### Anchors ####################
 defaults: &defaults
   executor: node_image
@@ -121,6 +122,98 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
+  generate_visual_test_images:
+    <<: *defaults
+    description: Generate visual tests reference images
+    steps:
+      - <<: *load_workspace
+      - run:
+          name: Generate visual references
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync:
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing assets in S3 location
+          overwrite: true
+      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+      - <<: *persist_workspace
+
+  test_visual_diff:
+    <<: *defaults
+    description: Uploads visual test results to S3
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+    steps:
+      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
+      - <<: *load_workspace
+      - run:
+          name: "Set application version env var"
+          command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+      - run:
+          name: Generate any new references images
+          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - aws-s3/sync: # fetch remote reference images
+          from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          to: "samples/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
+          from: "samples/"
+          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
+          arguments: |
+            --exclude "*" \
+            --include "*/reference.svg"
+      - run:
+          # run tests in sequence due to all writing to the same file
+          name: "Highcharts visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+      - run:
+          name: "Highmaps visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests maps/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Highstock visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests stock/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run:
+          name: "Gant visual tests"
+          command: >
+            npx karma start test/karma-conf.js --tests gantt/*/* --single-run
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+          when: always
+      - run: "sudo apt-get install -y librsvg2-bin"
+      - run:
+          name: "Generate PNGs and diff"
+          command: |
+            find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \; &&
+            find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \; &&
+            find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
+      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
+      - aws-s3/sync: # delete existing assets in S3 location
+          from: "/home/circleci/repo/tmp/latest/"
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
+          overwrite: true
+      - run:
+          name: "Upload visual test candidates and diff assets"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
+
   build_dist:
     <<: *defaults
     steps:
@@ -201,16 +294,42 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - install_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - lint:
           requires:
             - install_dependencies
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
           requires:
             - lint
+          filters:
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+      - generate_visual_test_images:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-staging
+      - test_browsers:
+          name: "verify-samples-Chrome"
+          browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
+          requires:
+            - install_dependencies
       - test_browsers:
           name: "test-Win.IE8"
           requires:
@@ -239,13 +358,18 @@ workflows:
           filters:
             branches:
               only:
-                - feature/ci-nightly
+                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
+      - test_visual_diff:
+          name: "Test visual differences and distribute diff log to S3."
+          requires:
+            - install_dependencies
+          context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
           requires:

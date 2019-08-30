@@ -707,8 +707,16 @@ wrap(pointerProto, 'getCoordinates', function (
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
             var isXAxis = axis.isXAxis,
                 center = axis.center,
-                x = e.chartX - (center as any)[0] - chart.plotLeft,
-                y = e.chartY - (center as any)[1] - chart.plotTop;
+                x,
+                y;
+
+            // Skip colorAxis
+            if (axis.coll === 'colorAxis') {
+                return;
+            }
+
+            x = e.chartX - (center as any)[0] - chart.plotLeft;
+            y = e.chartY - (center as any)[1] - chart.plotTop;
 
             ret[isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,
