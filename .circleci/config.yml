@@ -155,24 +155,15 @@ jobs:
       - run:
           name: Generate any new references images
           command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - aws-s3/sync: # fetch remote reference images
+      - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
           arguments: |
             --exclude "*" \
             --include "*/reference.svg"
-      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
-      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
+      - run:
+          name: "Upload old and any new reference images"
+          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_S3_BUCKET}"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
