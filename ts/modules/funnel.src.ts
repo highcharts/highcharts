@@ -102,6 +102,7 @@ import '../parts/Series.js';
 // create shortcuts
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
+    fireEvent = Highcharts.fireEvent,
     noop = Highcharts.noop,
     pick = Highcharts.pick;
 
@@ -439,6 +440,8 @@ seriesType<Highcharts.FunnelSeriesOptions>(
                     cumulative += fraction;
                 }
             });
+
+            fireEvent(series, 'afterTranslate');
         },
 
         // Funnel items don't have angles (#2289)

@@ -411,6 +411,11 @@ radialAxisMixin = {
 addEvent(Axis, 'init', function (e) {
     var chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
         chart.pane && chart.pane[paneIndex];
+    // Prevent changes for colorAxis
+    if (this.coll === 'colorAxis') {
+        this.isRadial = false;
+        return;
+    }
     // Before prototype.init
     if (angular) {
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);

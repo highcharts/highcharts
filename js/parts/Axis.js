@@ -4363,7 +4363,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 series.isDirty ||
                 // When x axis is dirty, we need new data extremes for y as
                 // well:
-                series.xAxis.isDirty);
+                series.xAxis && series.xAxis.isDirty);
         }), isDirtyAxisLength;
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
@@ -5461,8 +5461,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             else if (defined(point)) {
                 // #3834
-                pos = pick(point.crosshairPos, // 3D axis extension
-                this.isXAxis ?
+                pos = pick(this.coll !== 'colorAxis' ?
+                    point.crosshairPos : // 3D axis extension
+                    null, this.isXAxis ?
                     point.plotX :
                     this.len - point.plotY);
             }

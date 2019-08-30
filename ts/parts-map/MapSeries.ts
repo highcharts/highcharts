@@ -77,28 +77,25 @@ declare global {
         interface SeriesTypesDictionary {
             map: typeof MapSeries;
         }
-        class MapPoint extends ScatterPoint implements ColorPointMixin {
+        class MapPoint extends ScatterPoint implements ColorMapPointMixin {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];
-            public isValid: ColorPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
+            public isValid: ColorMapPointMixin['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
             public path: SVGPathArray;
             public properties?: object;
             public series: MapSeries;
-            public setVisible: ColorPointMixin['setVisible'];
             public value: (number|null);
             public applyOptions(options: MapPointOptions, x: number): MapPoint;
             public onMouseOver(e?: PointerEventObject): void;
             public zoomTo(): void;
         }
-        class MapSeries extends ScatterSeries implements ColorSeriesMixin {
+        class MapSeries extends ScatterSeries implements ColorMapSeriesMixin {
             public baseTrans: MapBaseTransObject;
             public chart: MapChart;
-            public colorAxis: ColorAxis;
-            public colorAttribs: ColorSeriesMixin['colorAttribs'];
-            public colorKey: ColorSeriesMixin['colorKey'];
+            public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public data: Array<MapPoint>;
             public dataMax: number;
             public dataMin: number;
@@ -112,16 +109,14 @@ declare global {
             public maxY: number;
             public minX?: number;
             public minY: number;
-            public optionalAxis: ColorSeriesMixin['optionalAxis'];
             public options: MapSeriesOptions;
             public pointArrayMap: Array<string>;
             public pointAttrToOptions: unknown;
             public pointClass: typeof MapPoint;
             public points: Array<MapPoint>;
             public preserveAspectRatio: boolean;
-            public trackerGroups: ColorSeriesMixin['trackerGroups'];
+            public trackerGroups: ColorMapSeriesMixin['trackerGroups'];
             public transformGroup: SVGElement;
-            public translateColors: ColorSeriesMixin['translateColors'];
             public useMapGeometry: boolean;
             public valueData?: Array<number>;
             public valueMax: number;
@@ -156,6 +151,7 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
+import './ColorMapSeriesMixin.js';
 
 import U from '../parts/Utilities.js';
 const {
@@ -165,13 +161,14 @@ const {
     splat
 } = U;
 
-var colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin,
+var colorMapPointMixin = H.colorMapPointMixin,
+    colorMapSeriesMixin = H.colorMapSeriesMixin,
     extend = H.extend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
+    fireEvent = H.fireEvent,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -322,13 +319,8 @@ seriesType<Highcharts.MapSeriesOptions>(
         borderWidth: 1,
 
         /**
-         * Set this option to `false` to prevent a series from connecting to
-         * the global color axis. This will cause the series to have its own
-         * legend item.
-         *
-         * @type      {boolean}
-         * @product   highmaps
-         * @apioption plotOptions.series.colorAxis
+         * @default   value
+         * @apioption plotOptions.map.colorKey
          */
 
         /**
@@ -464,7 +456,7 @@ seriesType<Highcharts.MapSeriesOptions>(
         }
 
     // Prototype members
-    }, merge(colorSeriesMixin, {
+    }, merge(colorMapSeriesMixin, {
         type: 'map',
         getExtremesFromAll: true,
         useMapGeometry: true, // get axis extremes from paths, not values
@@ -906,7 +898,7 @@ seriesType<Highcharts.MapSeriesOptions>(
                 }
             });
 
-            series.translateColors();
+            fireEvent(series, 'afterTranslate');
         },
 
         // Get presentational attributes. In the maps series this runs in both
@@ -1381,7 +1373,7 @@ seriesType<Highcharts.MapSeriesOptions>(
             );
             series.chart.redraw();
         }
-    }, colorPointMixin)
+    }, colorMapPointMixin)
 );
 
 /**

@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach;
 import '../parts/Series.js';
-var extend = H.extend, merge = H.merge, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 /**
  * The item series type.
  *
@@ -130,6 +130,7 @@ H.seriesType('item',
         }
         else {
             this.generatePoints();
+            fireEvent(this, 'afterTranslate');
         }
     },
     // Get the semi-circular slots

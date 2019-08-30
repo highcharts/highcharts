@@ -1,4 +1,3 @@
-/* global TestController */
 QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
     var chart = Highcharts.chart('container', {
         yAxis: [{

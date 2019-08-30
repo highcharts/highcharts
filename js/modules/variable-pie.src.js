@@ -17,6 +17,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
+    fireEvent = H.fireEvent,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
@@ -400,6 +401,8 @@ seriesType(
                 };
 
             }
+
+            fireEvent(series, 'afterTranslate');
         }
     }
 );

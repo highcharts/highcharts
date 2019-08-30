@@ -8,6 +8,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                 load: function () {
                     this.addSeries({
                         type: 'mappoint',
+                        colorAxis: false,
                         data: [{
                             x: 200,
                             y: -1100,

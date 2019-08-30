@@ -926,14 +926,14 @@ null,
      */
     /**
      * Whether to display this particular series or series type in the
-     * legend. The default value is `true` for standalone series, `false`
-     * for linked series.
+     * legend. Standalone series are shown in legend by default, and linked
+     * series are not. Since v7.2.0 it is possible to show series that use
+     * colorAxis by setting this option to `true`.
      *
      * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
      *         One series in the legend, one hidden
      *
      * @type      {boolean}
-     * @default   true
      * @apioption plotOptions.series.showInLegend
      */
     /**
@@ -1994,6 +1994,45 @@ null,
      * @apioption plotOptions.series.zones.value
      */
     /**
+     * When using dual or multiple color axes, this number defines which
+     * colorAxis the particular series is connected to. It refers to
+     * either the
+     * {@link #colorAxis.id|axis id}
+     * or the index of the axis in the colorAxis array, with 0 being the
+     * first. Set this option to false to prevent a series from connecting
+     * to the default color axis.
+     *
+     * Since v7.2.0 the option can also be an axis id or an axis index
+     * instead of a boolean flag.
+     *
+     * @sample highcharts/coloraxis/coloraxis-with-pie/
+     *         Color axis with pie series
+     * @sample highcharts/coloraxis/multiple-coloraxis/
+     *         Multiple color axis
+     *
+     * @type      {number|string|boolean}
+     * @default   0
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.colorAxis
+     */
+    /**
+     * Determines what data value should be used to calculate point color
+     * if `colorAxis` is used. Requires to set `min` and `max` if some
+     * custom point property is used or if approximation for data grouping
+     * is set to `'sum'`.
+     *
+     * @sample highcharts/coloraxis/custom-color-key/
+     *         Custom color key
+     * @sample highcharts/coloraxis/changed-default-color-key/
+     *         Changed default color key
+     *
+     * @type      {string}
+     * @default   y
+     * @since     7.2.0
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.colorKey
+     */
+    /**
      * Determines whether the series should look for the nearest point
      * in both dimensions or just the x-dimension when hovering the series.
      * Defaults to `'xy'` for scatter series and `'x'` for most other
@@ -3049,24 +3088,30 @@ null,
      * @return {void}
      */
     getExtremes: function (yData) {
-        var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData, yDataLength, activeYData = [], activeCounter = 0, 
+        var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
         // #2117, need to compensate for log X axis
-        xExtremes = xAxis.getExtremes(), xMin = xExtremes.min, xMax = xExtremes.max, validValue, withinRange, 
+        xExtremes, xMin = 0, xMax = 0, validValue, withinRange, 
         // Handle X outside the viewed area. This does not work with
         // non-sorted data like scatter (#7639).
-        shoulder = this.requireSorting ? this.cropShoulder : 0, x, y, i, j;
+        shoulder = this.requireSorting ? this.cropShoulder : 0, positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false, x, y, i, j;
         yData = yData || this.stackedYData || this.processedYData || [];
         yDataLength = yData.length;
+        if (xAxis) {
+            xExtremes = xAxis.getExtremes();
+            xMin = xExtremes.min;
+            xMax = xExtremes.max;
+        }
         for (i = 0; i < yDataLength; i++) {
             x = xData[i];
             y = yData[i];
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
             validValue = ((isNumber(y) || isArray(y)) &&
-                (!yAxis.positiveValuesOnly || (y.length || y > 0)));
+                ((y.length || y > 0) || !positiveValuesOnly));
             withinRange = (this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
                 this.cropped ||
+                !xAxis || // for colorAxis support
                 ((xData[i + shoulder] || x) >= xMin &&
                     (xData[i - shoulder] || x) <= xMax));
             if (validValue && withinRange) {
