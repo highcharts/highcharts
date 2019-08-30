@@ -100,6 +100,12 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
     }
 });
 
+
+// Handle wrapping, reset functions that are wrapped in the visual samples to
+// prevent the wraps from piling up downstream.
+var origWrap = Highcharts.wrap;
+var wrappedFunctions = [];
+
 if (window.QUnit) {
     /*
      * Compare numbers taking in account an error.
@@ -143,6 +149,13 @@ if (window.QUnit) {
 
             // Reset randomizer
             Math.randomCursor = 0;
+
+            // Wrap the wrap function
+            Highcharts.wrap = function (ob, prop, fn) {
+                // Push original function
+                wrappedFunctions.push([ob, prop, ob[prop]]);
+                origWrap(ob, prop, fn);
+            };
         },
 
         afterEach: function (test) {
@@ -181,6 +194,13 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Unwrap/reset wrapped functions
+            while (wrappedFunctions.length) {
+                const [ ob, prop, fn ] = wrappedFunctions.pop();
+                ob[prop] = fn;
+            }
+            Highcharts.wrap = origWrap;
         }
     });
 }
