@@ -744,11 +744,14 @@ seriesType<Highcharts.SankeySeriesOptions>(
                         node.column = fromColumn + 1;
 
                         // Hanging layout for organization chart
-                        if ((fromNode as any).options.layout === 'hanging') {
+                        if (
+                            fromNode &&
+                            (fromNode.options as any).layout === 'hanging'
+                        ) {
                             node.hangsFrom = fromNode;
                             i = -1; // Reuse existing variable i
                             find(
-                                (fromNode as any).linksFrom,
+                                fromNode.linksFrom,
                                 function (
                                     link: Highcharts.SankeyPoint,
                                     index: number
@@ -1155,7 +1158,7 @@ seriesType<Highcharts.SankeySeriesOptions>(
                 (
                     (chart.plotSizeX as any) - nodeWidth -
                     (options.borderWidth as any)
-                ) / (nodeColumns.length - 1);
+                ) / Math.max(1, nodeColumns.length - 1);
 
             // Calculate level options used in sankey and organization
             series.mapOptionsToLevel = getLevelOptions({

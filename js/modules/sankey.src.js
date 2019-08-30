@@ -475,7 +475,8 @@ seriesType('sankey', 'column',
                     }
                     node.column = fromColumn + 1;
                     // Hanging layout for organization chart
-                    if (fromNode.options.layout === 'hanging') {
+                    if (fromNode &&
+                        fromNode.options.layout === 'hanging') {
                         node.hangsFrom = fromNode;
                         i = -1; // Reuse existing variable i
                         find(fromNode.linksFrom, function (link, index) {
@@ -725,7 +726,7 @@ seriesType('sankey', 'column',
         }, Infinity);
         this.colDistance =
             (chart.plotSizeX - nodeWidth -
-                options.borderWidth) / (nodeColumns.length - 1);
+                options.borderWidth) / Math.max(1, nodeColumns.length - 1);
         // Calculate level options used in sankey and organization
         series.mapOptionsToLevel = getLevelOptions({
             // NOTE: if support for allowTraversingTree is added, then from
