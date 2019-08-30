@@ -21,7 +21,7 @@ Main Rules
 Do's and Don'ts
 ---------------
 
-### Avoid `any` casting
+### Avoid "any" casting
 
 Even in strict mode some casts to `any` are allowed. In most situations you
 should still avoid them, because it disables all further checks. Instead make
@@ -60,7 +60,7 @@ function c<T extends (boolean|number|object|string|symbol)> (
 ```
 
 
-### Avoid `as` casting
+### Avoid "as" casting
 
 Avoid type casting with the `as` keyword. It forces TypeScript to use only the
 given type instead of all the previously detected ones. This excludes often
@@ -80,7 +80,7 @@ function a(el?: (Element|undefined)): void {
 ```
 
 
-### Test agains `undefined` and `null`
+### Test agains "undefined" and "null"
 
 To prevent yourself from pitfalls during runtime, you should check agains
 optional properties as soon as possible to rule them out in further code.
@@ -113,37 +113,6 @@ function a(data?: Array<(number|undefined)>, dOffset?: number): number {
 ```
 
 
-### Type union instead of new interface
-
-Sometimes you just need a pure merge of several classes or interfaces as a new
-type. Instead of creating an empty interface that extends them, you create a
-type union. This also works as an inline type.
-
-*Incorrect:* 
-```ts
-interface A {
-    x: number;
-}
-interface B {
-    x2: number
-}
-interface C extends A, B {
-}
-```  
-*Correct:*
-```ts
-interface A {
-    x: number;
-}
-interface B {
-    x2: number
-}
-type C = (A&B);
-let example1: C = { x: 1, x2: 2 },
-    example2: (A&B) = example1;
-```
-
-
 
 Good to Know
 ------------
@@ -171,4 +140,24 @@ function process (container: (A|B)): (A|B)['data'] {
     }
     return container.data;
 }
+```
+
+
+### Type union instead of new interface
+
+Sometimes you just need a pure merge of several classes or interfaces as a new
+type. Instead of creating an empty interface that extends them, you can create a
+type union. This also works as an inline type.
+
+*Example:*
+```ts
+interface A {
+    x: number;
+}
+interface B {
+    x2: number
+}
+type C = (A&B);
+let example1: C = { x: 1, x2: 2 },
+    example2: (A&B) = example1;
 ```
