@@ -193,8 +193,8 @@ var defined = U.defined,
     objectEach = U.objectEach,
     splat = U.splat;
 
-import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
-import 'ArrowSymbols.js';
+import pathfinderAlgorithms from './PathfinderAlgorithms.js';
+import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
     extend = H.extend,
