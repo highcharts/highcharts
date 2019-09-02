@@ -178,7 +178,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartOptions[type] = splat(chartOptions[type] || {});
         chartOptions[type].push(userOptions);
         if (isColorAxis) {
-            this.isDirtyLegend = true;
+            this.series.forEach(function (series) {
+                series.update({}, false);
+            });
         }
         if (pick(redraw, true)) {
             this.redraw(animation);
@@ -338,8 +340,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'series',
         'colorAxis',
+        'series',
         'pane'
     ],
     /**

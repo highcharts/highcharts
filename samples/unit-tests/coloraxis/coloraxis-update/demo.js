@@ -116,3 +116,38 @@ QUnit.test('Color axis update with responsive rules', function (assert) {
         'Labels are not misaligned'
     );
 });
+
+QUnit.test('Adding color axis', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [3, 2, 1],
+            colorAxis: 1
+        }]
+    });
+
+    chart.update({
+        colorAxis: {}
+    }, true, true);
+
+    assert.notEqual(
+        chart.series[0].points[0].color,
+        chart.series[0].points[1].color,
+        'Colors should be different for the first series after colorAxis has been added.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[0].color,
+        chart.series[1].points[1].color,
+        'Colors should be the same for the second series.'
+    );
+
+    chart.addColorAxis({});
+
+    assert.notEqual(
+        chart.series[1].points[0].color,
+        chart.series[1].points[2].color,
+        'Colors should be different for the second series after the second colorAxis has been added.'
+    );
+});
