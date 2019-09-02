@@ -19,7 +19,7 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         type DataGroupingApproximationValue = (
-            'average'|'averages'|'open'|'high'|'low'|'close'|'sum'
+            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'
         );
         interface Axis {
             getGroupPixelWidth(): number;
@@ -102,7 +102,10 @@ declare global {
             hasProcessed?: boolean;
             preventGraphAnimation?: boolean;
             xData?: Array<number>;
-            yData?: Array<(number|null|undefined)>;
+            yData?: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
             destroyGroupedData(): void;
             generatePoints(): void;
             getDGApproximation(): string;

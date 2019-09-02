@@ -51,6 +51,9 @@ declare global {
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
         }
+        interface SeriesTypesDictionary {
+            [key: string]: typeof Series;
+        }
         interface SVGRenderer {
             inlineWhitelist?: any; // @todo offline exporting module
         }
