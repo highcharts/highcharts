@@ -218,11 +218,11 @@ Highcharts.prepareShot = function (chart) {
         chart.series &&
         chart.series[0]
     ) {
-        const points = chart.series[0].nodes || // Network graphs, sankey etc
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
             chart.series[0].points;
 
         if (points) {
-            for (let i = 0; i < points.length; i++) {
+            for (var i = 0; i < points.length; i++) {
                 if (
                     points[i] &&
                     points[i].graphic &&
