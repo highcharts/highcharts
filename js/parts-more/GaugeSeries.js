@@ -302,9 +302,9 @@ seriesType('gauge', 'line', {
         var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, 80)) * center[2]) /
-                200), baseLength = ((pInt(pick(dialOptions.baseLength, 70)) * radius) /
-                100), rearLength = ((pInt(pick(dialOptions.rearLength, 10)) * radius) /
+            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
+                200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
+                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
                 100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
             // Handle the wrap and overshoot options
             if (isNumber(overshoot)) {

@@ -427,15 +427,15 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
             var dialOptions: Highcharts.GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
                 radius = (
-                    (pInt(pick(dialOptions.radius, 80 as any)) * center[2]) /
+                    (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
                     200
                 ),
                 baseLength = (
-                    (pInt(pick(dialOptions.baseLength, 70 as any)) * radius) /
+                    (pInt(pick(dialOptions.baseLength, '70%')) * radius) /
                     100
                 ),
                 rearLength = (
-                    (pInt(pick(dialOptions.rearLength, 10 as any)) * radius) /
+                    (pInt(pick(dialOptions.rearLength, '10%')) * radius) /
                     100
                 ),
                 baseWidth = dialOptions.baseWidth || 3,
