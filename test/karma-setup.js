@@ -197,7 +197,11 @@ if (window.QUnit) {
 
             // Unwrap/reset wrapped functions
             while (wrappedFunctions.length) {
-                const [ ob, prop, fn ] = wrappedFunctions.pop();
+                //const [ ob, prop, fn ] = wrappedFunctions.pop();
+                var args = wrappedFunctions.pop(),
+                    ob = args[0],
+                    prop = args[1],
+                    fn = args[2];
                 ob[prop] = fn;
             }
             Highcharts.wrap = origWrap;
