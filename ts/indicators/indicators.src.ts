@@ -37,8 +37,8 @@ declare global {
             public getName(): string;
             public getValues(
                 series: Series,
-                params: SmaIndicatorParamsOptions
-            ): SmaValuesObject;
+                params: Dictionary<(number)>
+            ): (boolean|IndicatorValuesObject);
             public destroy(): void;
             public dataEventsToUnbind: Array<Function>;
             public nameBase?: string;
@@ -47,11 +47,12 @@ declare global {
         interface SmaIndicatorOptions extends LineSeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
-            params?: SmaIndicatorParamsOptions;
+            params?: (SmaIndicatorParamsOptions|Dictionary<(number)>);
         }
-        interface SmaIndicatorParamsOptions {
-            index?: number;
-            period?: number;
+        interface SmaIndicatorParamsOptions
+            extends Dictionary<(number)> {
+            index: number;
+            period: number;
         }
         interface SeriesTypesDictionary {
             sma: typeof SmaIndicator;
@@ -71,7 +72,7 @@ declare global {
             /** @requires indicators/indicators */
             requireIndicators(): SmaIndicatorRequireIndicatorsObject;
         }
-        interface SmaValuesObject {
+        interface IndicatorValuesObject {
             values: Array<Array<number>>;
             xData: Array<number>;
             yData: Array<number>;
@@ -302,14 +303,15 @@ seriesType<Highcharts.SmaIndicatorOptions>(
             function recalculateValues(): void {
                 var oldData = indicator.points || [],
                     oldDataLength = (indicator.xData || []).length,
-                    processedData = indicator.getValues(
-                        indicator.linkedParent,
-                        indicator.options.params as any
-                    ) || {
-                        values: [],
-                        xData: [],
-                        yData: []
-                    },
+                    processedData: Highcharts.IndicatorValuesObject =
+                        (indicator.getValues(
+                            indicator.linkedParent,
+                            indicator.options.params as any
+                        ) as any) || {
+                            values: [],
+                            xData: [],
+                            yData: []
+                        },
                     croppedDataValues = [],
                     overwriteData = true,
                     oldFirstPointIndex,
@@ -458,8 +460,8 @@ seriesType<Highcharts.SmaIndicatorOptions>(
         },
         getValues: function (
             series: Highcharts.Series,
-            params: Highcharts.SmaIndicatorParamsOptions
-        ): (boolean|Highcharts.SmaValuesObject) {
+            params: Highcharts.Dictionary<(number)>
+        ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<(

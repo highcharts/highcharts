@@ -1,4 +1,5 @@
 js/indicators/indicators.src.js
+js/indicators/wma.src.js
 js/mixins/**/*.js
 js/modules/networkgraph/*.js
 js/modules/bellcurve.src.js
