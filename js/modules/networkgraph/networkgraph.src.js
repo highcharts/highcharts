@@ -95,8 +95,8 @@ import U from '../../parts/Utilities.js';
 var defined = U.defined;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
-import '/layouts.js';
-import '/draggable-nodes.js';
+import './layouts.js';
+import './draggable-nodes.js';
 var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, pick = H.pick, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
