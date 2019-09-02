@@ -886,8 +886,10 @@ seriesType<Highcharts.MapSeriesOptions>(
 
                 // Record the middle point (loosely based on centroid),
                 // determined by the middleX and middleY options.
-                point.plotX = xAxis.toPixels(point._midX as any, true);
-                point.plotY = yAxis.toPixels(point._midY as any, true);
+                if (isNumber(point._midX) && isNumber(point._midY)) {
+                    point.plotX = xAxis.toPixels(point._midX, true);
+                    point.plotY = yAxis.toPixels(point._midY, true);
+                }
 
                 if (doFullTranslate) {
 

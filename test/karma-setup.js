@@ -218,21 +218,20 @@ Highcharts.prepareShot = function (chart) {
         chart.series &&
         chart.series[0]
     ) {
-        // Network graphs, sankey etc
-        if (
-            chart.series[0].nodes &&
-            chart.series[0].nodes[0] &&
-            typeof chart.series[0].nodes[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].nodes[0].onMouseOver();
-        
-        // Others
-        } else if (
-            chart.series[0].points &&
-            chart.series[0].points[0] &&
-            typeof chart.series[0].points[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].points[0].onMouseOver();
+        const points = chart.series[0].nodes || // Network graphs, sankey etc
+            chart.series[0].points;
+
+        if (points) {
+            for (let i = 0; i < points.length; i++) {
+                if (
+                    points[i] &&
+                    points[i].graphic &&
+                    typeof points[i].onMouseOver === 'function'
+                ) {
+                    points[i].onMouseOver();
+                    break;
+                }
+            }
         }
     }
 };
