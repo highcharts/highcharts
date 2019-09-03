@@ -5,7 +5,7 @@ An item chart in Highcharts is a series type where the values are represented as
 
 The item chart is used for infographics, typically for a low number of individual items within a low number of groups. The most common use case is a parliament, and other use cases may be the distribution of a feature within a group of persons, or percentages represented by a count rather than a scalar value.
 
-<iframe width="320" height="240" style="width: 100%; height: 760px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-item/dynamic></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-item/dynamic"></iframe>
 
 Circular layout
 ---------------
@@ -14,7 +14,7 @@ Item charts can be laid out either as a rectangle or a circle. The circular layo
 
     
     // Circular options
-    center: \['50%', '88%'\],
+    center: ['50%', '88%'[,
     size: '170%',
     startAngle: -100,
     endAngle: 100

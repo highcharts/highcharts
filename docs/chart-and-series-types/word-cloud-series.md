@@ -3,7 +3,7 @@ Word cloud
 
 A word cloud is a visualization of a set of words, where the size and placement of a word is determined by how it is weighted.
 
-<iframe width="320" height="240" style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/wordcloud></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/wordcloud"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/wordcloud/) to check the code
 
@@ -62,7 +62,7 @@ The spiralling algorithm is made accesible by attaching it to the `spirals` prop
     
     Highcharts.seriesTypes.wordcloud.prototype.spirals.archimedean = archimedeanSpiral; 
 
-Afterwards you can use the algorithm by specifying the option **series<wordcloud>.spiral**:
+Afterwards you can use the algorithm by specifying the option `series<wordcloud>.spiral`:
 
     
     Highcharts.chart(..., {
@@ -93,8 +93,7 @@ The placement algorithm is made accesible by attaching it to the `placementStrat
     
     Highcharts.seriesTypes.wordcloud.prototype.placementStrategy.random= randomPlacement; 
 
-Afterwards you can use the algorithm by specifying the option **series<wordcloud>.placementStrategy**:
-
+Afterwards you can use the algorithm by specifying the option `series<wordcloud>.placementStrategy`:
     
     Highcharts.chart(..., {
       series: [{

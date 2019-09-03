@@ -13,12 +13,12 @@ This project is not published as a package in the NPM register, but NPM has supp
 
 The command we will use is `npm install <githubname>/<githubrepo>[#<commit-ish>]`.
 
-The command has support for providing a #<commit-ish> which can be a tag or reference to a specific commit. Using the #<commit-ish> is useful to ensure that everyone working on your project is using the same version of the assembler. This is the recommended approach. The following example installs a version of the assembler tagged as `v1.0.10`:
+The command has support for providing a `#<commit-ish>` which can be a tag or reference to a specific commit. Using the `#<commit-ish>` is useful to ensure that everyone working on your project is using the same version of the assembler. This is the recommended approach. The following example installs a version of the assembler tagged as `v1.0.10`:
 
     
     npm install --save-dev highcharts/highcharts-assembler#v1.0.10 
 
-If versioning is not a concern, then it is possible to install the latest commit from master branch by omitting the #<commit-ish>:
+If versioning is not a concern, then it is possible to install the latest commit from master branch by omitting the `#<commit-ish>`:
 
     
     npm install --save-dev highcharts/highcharts-assembler 

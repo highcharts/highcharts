@@ -51,7 +51,7 @@ Highcharts JS is needed on the server for supporting server-side rendering of ch
 
 To make this work we need to run a headless browser, PhantomJS and PhantomJS needs in it's turn the Highcharts JS files on the server. For licensing reasons the Highcharts export server doesn't ship with Highcharts javascript files. We need to copy the Highcharts files manually to the project.
 
-Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](http://code.highcharts.com)/\[highcharts-version-you-use\]/
+Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](http://code.highcharts.com)/[highcharts-version-you-use[/
 
 The javascript files are already configured in the `resources.json` file which is used by PhantomJS to determine which files need to be injected to PhantomJS. If convenient, you can specify alternative paths in the `resources.json`. So make sure the resources.json matches the files you just copied in this step.
 
@@ -72,13 +72,13 @@ $ mvn clean package
 After compiling and the message BUILD SUCCESS, you will find a file: highcharts-export-web.war in the `highcharts-export/highcharts-export-web/target` folder. 
 
     
-    \[INFO\] ------------------------------------------------------------------------  
-     \[INFO\] BUILD SUCCESS  
-     \[INFO\] ------------------------------------------------------------------------  
-     \[INFO\] Total time: 2.476s  
-     \[INFO\] Finished at: Wed Jun 26 14:52:07 CEST 2013  
-     \[INFO\] Final Memory: 15M/215M  
-     \[INFO\] ------------------------------------------------------------------------  
+    [INFO[ ------------------------------------------------------------------------  
+     [INFO[ BUILD SUCCESS  
+     [INFO[ ------------------------------------------------------------------------  
+     [INFO[ Total time: 2.476s  
+     [INFO[ Finished at: Wed Jun 26 14:52:07 CEST 2013  
+     [INFO[ Final Memory: 15M/215M  
+     [INFO[ ------------------------------------------------------------------------  
      highcharts-export-web $> ls target/  
      classes                highcharts-export-web        maven-archiver  
      generated-sources        **highcharts-export-web.war**    surefire  
@@ -220,12 +220,12 @@ This is how you start a web server in PhantomJS with the highcharts-convert.js s
 Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note these parameters are defined: 'infile', 'callback' and 'constr';
 
     
-    {"infile":"{xAxis: {categories: \['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'\]},series: \[{data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4\]}\]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
+    {"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'[},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[}[};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
 
 This is how you can send a POST from the command line with Curl (MAC & Ubuntu);
 
     
-    curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: \[\\"Jan\\", \\"Feb\\", \\"Mar\\"\]},series: \[{data: \[29.9, 71.5, 106.4\]}\]}"}' 127.0.0.1:3005
+    curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: [\\"Jan\\", \\"Feb\\", \\"Mar\\"[},series: [{data: [29.9, 71.5, 106.4[}[}"}' 127.0.0.1:3005
 
 Example of sending the contents of a file
 
@@ -235,7 +235,7 @@ Example of sending the contents of a file
 This is how you can send a POST from the commandline with Curl (Windows);
 
     
-    curl -H "Content-Type: application/json" -X POST -d "{\\"infile\\":\\"{series:\[{data:\[29.9,71.5,106.4\]}\]}\\"}" 127.0.0.1:3005
+    curl -H "Content-Type: application/json" -X POST -d "{\\"infile\\":\\"{series:[{data:[29.9,71.5,106.4[}[}\\"}" 127.0.0.1:3005
 
 ### 2\. EXPORT SERVER BASED ON PHP AND BATIK
 
@@ -258,8 +258,8 @@ If for any reason the export-server fails to export images, then consider pastin
 
     
     // Troubleshoot snippet  
-    $command = "java -jar ". BATIK\_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
-    $output = shell\_exec($command);  
+    $command = "java -jar ". BATIK[PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
+    $output = shell[exec($command);  
     echo "Command: $command <br>";  
     echo "Output: $output";  
     die;

@@ -5,7 +5,7 @@ A variwide chart is a column chart where each column has a separate width to rep
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.variwide)_
 
-<iframe width="320" height="240" style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/variwide></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/variwide"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variwide/) to check the code.
 

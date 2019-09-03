@@ -1,3 +1,5 @@
+FAQ
+---
 *   [Does Highcharts refer to files outside our domain?](#files-outside-domain)
 *   [My charts are not showing in Internet Explorer 7 or 8](#not-showing-in-explorer)
 *   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with)
@@ -36,12 +38,12 @@ The most common reason why a chart works in modern browsers but fails in IE6, 7 
         xAxis: {
             type: 'datetime'
         },
-        series: \[{
-            data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,  
-                   216.4, 194.1, 95.6, 54.4\],
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,  
+                   216.4, 194.1, 95.6, 54.4[,
             pointStart: Date.UTC(2012, 0, 1),
             pointInterval: 24 \* 3600 \* 1000,
-        }\]
+        }[
     });
 
 [Try it live](http://jsfiddle.net/highcharts/DXnPa/).

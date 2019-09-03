@@ -39,11 +39,11 @@ The Network Graph needs a data format that builds up an array of links, where ea
 
 _See simple Network Graph demo_
 
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/initial-positions></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/initial-positions"></iframe>
 
 > _See a Network Graph with a more complex data structure. Notice: You don't have to specify the `from:` and `to:` property for each point when you define the `keys:` option for `plotOptions.networkgraph.keys`_
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/network-graph></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/network-graph"></iframe>
 
 Algorithm options
 -----------------
@@ -68,7 +68,7 @@ Since version 7.1 additional configuration options are available:
 
 _See the demo below, for a network graph with custom algorithm options applied_
 
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/forces></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/forces"></iframe>
 
 Link configuration options
 --------------------------
@@ -105,12 +105,12 @@ Simple example
         chart: {
             type: ‘networkgraph’
         },
-        series: \[{
-                data: \[
-                    \[‘A’, ‘B’\],
-                    \[‘B’, ‘C’\],
-                    \[‘C’, ‘A’\]
-                }\]
+        series: [{
+                data: [
+                    [‘A’, ‘B’[,
+                    [‘B’, ‘C’[,
+                    [‘C’, ‘A’[
+                }[
         }
 
 Customized length between points and colored links:
@@ -130,33 +130,33 @@ Customized length between points and colored links:
                 }
             }
         },
-        series: \[{
-                data: \[
-                    \[‘A’, ‘B’\],
-                    \[‘B’, ‘C’\],
-                    \[‘C’, ‘A’\]
-                }\]
+        series: [{
+                data: [
+                    [‘A’, ‘B’[,
+                    [‘B’, ‘C’[,
+                    [‘C’, ‘A’[
+                }[
         }
     
 
 _See the demo below for a network graph with customized styled links per data series._
 
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/styled-links></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/styled-links"></iframe>
 
 ### Use Case 2
 
 Comparison of both integrations, Euler and Verlet:
 
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/integration-comparison></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/integration-comparison"></iframe>
 
 ### Use Case 3
 
 dataLabels around the nodes:
 
-<iframe width="320" height="240" style="width: 100%; height: 565px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/textpath-datalabels></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/textpath-datalabels"></iframe>
 
 ### Use Case 4
 
 dataLabels on links:
 
-<iframe width="320" height="240" style="width: 100%; height: 565px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/link-datalabels></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/link-datalabels"></iframe>

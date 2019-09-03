@@ -5,7 +5,7 @@ Below is a list of the main topics regarding series.
 
 *   [What is series?](#series)
 *   [The data in a series](#1)
-/samples/embed/highcharts/series/color-zones-simple*   [Point and marker](#point)
+*   [Point and marker](#point)
 *   [Series options](#2):
     *   [Animation](#3)
     *   [Color](#4)
@@ -23,10 +23,10 @@ What is a series?
 A series is a set of data, for example a line graph or one set of columns. All data plotted on a chart comes from the series object. The series object has the structure:
 
     
-    series: \[{
+    series: [{
         name: ''
-        data: \[\]
-    }\]
+        data: [[
+    }[
 
 Note: The series object is an array, meaning it can contain several series.
 
@@ -40,21 +40,21 @@ The actual data is represented as an array, by the data attribute, and can be pr
 1.  A list of numerical values. In this case, the numerical values will be interpreted as y values and the x values will be automatically calculated, either starting at 0 and incrementing by 1, or from the pointStart and pointInterval options. If the axis is has categories, these will be used. Example:
 
     
-    data: \[0, 5, 3, 5\]
+    data: [0, 5, 3, 5[
 
 [Online example](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/chart/reflow-true/)
 
 2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
 
     
-    data: \[\[5, 2\], \[6, 3\], \[8, 2\]\]
+    data: [[5, 2[, [6, 3[, [8, 2[[
 
 [Online example](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/series/data-array-of-arrays/)
 
 3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highstock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
     
-    data: \[{
+    data: [{
         name: 'Point 1',
         color: '#00FF00',
         y: 0
@@ -62,7 +62,7 @@ The actual data is represented as an array, by the data attribute, and can be pr
         name: 'Point 2',
         color: '#FF00FF',
         y: 5
-    }\]
+    }[
     
 
 [Online example](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/series/data-array-of-objects/)
@@ -75,10 +75,10 @@ For cartesian charts, a point represents a (x, y) pair on the chart. Points can 
 The point option can be applied to all charts. Here is an example showing how to edit the color of a specific point:
 
     
-    series: \[{
-        data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-              { y: 216.4, color: '#BF0B23'}, 194.1, 95.6, 54.4\]
-    }\]
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+              { y: 216.4, color: '#BF0B23'}, 194.1, 95.6, 54.4[
+    }[
     
 
 Line, spline, area and areaspline charts have the option to display point markers, these are slightly different from the point option because they enable altering the style and shape of the point marker.
@@ -86,10 +86,10 @@ Line, spline, area and areaspline charts have the option to display point marker
 Here is an example showing how to alter the color and size of a marker on a specific point.
 
     
-    series: \[{
-        data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-        {y: 216.4, marker: { fillColor: '#BF0B23', radius: 10 } }, 194.1, 95.6, 54.4\]
-    }\]
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+        {y: 216.4, marker: { fillColor: '#BF0B23', radius: 10 } }, 194.1, 95.6, 54.4[
+    }[
     
 
 Series options
@@ -149,9 +149,9 @@ Allows altering the width of a line.
 Code to alter line width:
 
     
-    series: \[{
-        data: \[216.4, 194.1, 95.6\],
-        lineWidth: 5}\],
+    series: [{
+        data: [216.4, 194.1, 95.6[,
+        lineWidth: 5}[,
 
 Stacking
 --------
@@ -200,22 +200,22 @@ Allows to use dashed lines instead of solid, there are several different dash op
 Code to set dashed lines for a individual series (the dashStyle can also be set in plotOptions):
 
     
-    series: \[{
-        data: \[1, 3, 2, 4, 5, 4, 6, 2, 3, 5, 6\],
+    series: [{
+        data: [1, 3, 2, 4, 5, 4, 6, 2, 3, 5, 6[,
         dashStyle: 'longdash'
-    }\]
+    }[
 
 Zones
 -----
 
 In some cases, you would want to display certain sections of the graph different, a common example is to use different colors when data falls in a certain range.  This effect can be achieved by using \`zones\`.  By default zoning is done on the yAxis, but this can be easily changed by setting the \`zoneAxis\` variable on the series.  For the zoning itself, you have to define an array called \`zones\` where each entry corresponds to a zone, delimited by a parameter \`value\`, which is the point up to which the zones goes.  The settings that can be overwritten for each zone are color, fillColor and dashStyle.
 
-<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple></iframe>
+<iframe width="320" height="240"src="https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple"></iframe>
 
 Code used for the zoning:
 
     
-    zones: \[{  
+    zones: [{  
        value: 0,  
        color: '#f7a35c'  
     }, {  
@@ -223,20 +223,20 @@ Code used for the zoning:
        color: '#7cb5ec'  
     }, {  
        color: '#90ed7d'  
-    }\]
+    }[
 
 Another common use of this is to style future, estimated data points differently.
 
-<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-dashstyle-dot></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series/color-zones-dashstyle-dot"></iframe>
 
 Code used for the zoning:
 
     
     zoneAxis: 'x',
-    zones: \[{
+    zones: [{
         value: 8
     }, {
         dashStyle: 'dot'
-    }\]
+    }[
 
 See the [API](https://api.highcharts.com/highcharts/plotOptions.series.zones) for more information.

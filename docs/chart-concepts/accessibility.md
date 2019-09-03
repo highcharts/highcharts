@@ -1,7 +1,7 @@
-#### In many situations, web page content needs to be accessible to users with various disabilities and limitations. Since version 5.0, Highcharts, Highstock and Highmaps come with an Accessibility module to help you make your charts accessible to the broadest range of users possible. 
-
 Using the Accessibility module
 ------------------------------
+
+#### In many situations, web page content needs to be accessible to users with various disabilities and limitations. Since version 5.0, Highcharts, Highstock and Highmaps come with an Accessibility module to help you make your charts accessible to the broadest range of users possible. 
 
 To start using the Accessibility module, simply include the following files after including Highcharts, Highstock or Highmaps:
 

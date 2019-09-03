@@ -18,20 +18,20 @@ We will start off by creating a simple bar chart.
                     text: 'Fruit Consumption'
                 },
                 xAxis: {
-                    categories: \['Apples', 'Bananas', 'Oranges'\]
+                    categories: ['Apples', 'Bananas', 'Oranges'[
                 },
                 yAxis: {
                     title: {
                         text: 'Fruit eaten'
                     }
                 },
-                series: \[{
+                series: [{
                     name: 'Jane',
-                    data: \[1, 0, 4\]
+                    data: [1, 0, 4[
                 }, {
                     name: 'John',
-                    data: \[5, 7, 3\]
-                }\]
+                    data: [5, 7, 3[
+                }[
             });
         });
     
@@ -44,10 +44,10 @@ We will start off by creating a simple bar chart.
                 rangeSelector: {
                     selected: 1
                 },
-                series: \[{
+                series: [{
                     name: 'USD to EUR',
                     data: usdtoeur // predefined JavaScript array
-               }\]
+               }[
            });  
         });
 3.  You should now see this chart on your webpage:

@@ -25,20 +25,20 @@ In the example below the code marked as red represents the options object:
                 text: 'Fruit Consumption'
             },
             xAxis: {
-                categories: \['Apples', 'Bananas', 'Oranges'\]
+                categories: ['Apples', 'Bananas', 'Oranges'[
             },
             yAxis: {
                 title: {
                     text: 'Fruit eaten'
                 }
             },
-            series: \[{
+            series: [{
                 name: 'Jane',
-                data: \[1, 0, 4\]
+                data: [1, 0, 4[
             }, {
                 name: 'John',
-                data: \[5, 7, 3\]
-            }\]
+                data: [5, 7, 3[
+            }[
         });
     });
     
@@ -56,9 +56,9 @@ To get the most out of Highcharts, it is important to understand how the options
     options.chart.type = 'bar';
     
     options.series = new Array();
-    options.series\[0\] = new Object();
-    options.series\[0\].name = 'Jane';
-    options.series\[0\].data = new Array(1, 0, 4);
+    options.series[0[ = new Object();
+    options.series[0[.name = 'Jane';
+    options.series[0[.data = new Array(1, 0, 4);
     
 
 As JavaScript object literals, we would write it like below. Note that the two options objects will produce exactly the same result.
@@ -70,10 +70,10 @@ As JavaScript object literals, we would write it like below. Note that the two o
             renderTo: 'container',
             type: 'bar'
         },
-        series: \[{
+        series: [{
             name: 'Jane',
-            data: \[1, 0, 4\]
-        }\]
+            data: [1, 0, 4[
+        }[
     };
     
 
@@ -89,7 +89,7 @@ In the example above the options object is created by itself and can be added to
     
     options.series.push({
         name: 'John',
-        data: \[3, 4, 2\]
+        data: [3, 4, 2[
     })
     
 
@@ -102,7 +102,7 @@ In the example above the options object is created by itself and can be added to
 is always the same as:
 
     
-    options\['renderTo'\]
+    options['renderTo'[
 
 Global Options
 --------------
@@ -114,11 +114,11 @@ If you want to apply a set of options to all charts on the same page, use Highch
         Highcharts.setOptions({
             chart: {
                 backgroundColor: {
-                    linearGradient: \[0, 0, 500, 500\],
-                    stops: \[
-                        \[0, 'rgb(255, 255, 255)'\],
-                        \[1, 'rgb(240, 240, 255)'\]
-                        \]
+                    linearGradient: [0, 0, 500, 500[,
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'[,
+                        [1, 'rgb(240, 240, 255)'[
+                        [
                 },
                 borderWidth: 2,
                 plotBackgroundColor: 'rgba(255, 255, 255, .9)',
@@ -136,11 +136,11 @@ If you want to apply a set of options to all charts on the same page, use Highch
                 type: 'datetime'
             },
     
-            series: \[{
-                data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4\],
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[,
                 pointStart: Date.UTC(2010, 0, 1),
                 pointInterval: 3600 \* 1000 // one hour
-            }\]
+            }[
         });
     
         var chart2 = new Highcharts.Chart({
@@ -153,11 +153,11 @@ If you want to apply a set of options to all charts on the same page, use Highch
                 type: 'datetime'
             },
     
-            series: \[{
-                data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4\],
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[,
                 pointStart: Date.UTC(2010, 0, 1),
                 pointInterval: 3600 \* 1000 // one hour
-            }\]
+            }[
         });
     });
     

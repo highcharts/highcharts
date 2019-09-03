@@ -3,7 +3,7 @@ Organization chart
 
 An organization chart (org chart) is a diagram that portrays the structure of an organization and the relationships and relative ranks of its parts and positions.
 
-<iframe width="320" height="240" style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/organization-chart></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/organization-chart"></iframe>
 
 Options structure
 -----------------
@@ -22,7 +22,7 @@ The actual HTML rendered inside the chart is determined by `dataLabels.nodeForma
 Levels
 ------
 
-In an org chart typically, we may want to define specific styling for all nodes on a specific level, for example having all C-level positions in the same color. For this, we can use the \[[levels option](https://api.highcharts.com/highcharts/plotOptions.organization.levels) and set the properties there. An example can be seen in the main demo above.
+In an org chart typically, we may want to define specific styling for all nodes on a specific level, for example having all C-level positions in the same color. For this, we can use the [[levels option](https://api.highcharts.com/highcharts/plotOptions.organization.levels) and set the properties there. An example can be seen in the main demo above.
 
 API options
 -----------

@@ -5,7 +5,7 @@ A bell curve series is a graphical representation of a normal (Gaussian) probabi
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bellcurve)_
 
-<iframe width="320" height="240" style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bellcurve/) to check the code.
 
@@ -23,14 +23,14 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
 2\. Set `baseSeries` to the right data series’ `id` or `index`.
 
     
-        series: \[{
+        series: [{
             type: 'bellcurve',
             xAxis: 1,
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: \[3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
-        }\]
+            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4[
+        }[
     
 
 Setting the Bell Curve
@@ -44,15 +44,15 @@ A bell curve series has two additional options:
 The following demo visualizes four intervals for each side of the bell curve, and five points between each Nxσ:
 
     
-        series: \[{
+        series: [{
             type: 'bellcurve',
             intervals: 4,
             pointsInInterval: 5
             …
-        }\]
+        }[
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
 

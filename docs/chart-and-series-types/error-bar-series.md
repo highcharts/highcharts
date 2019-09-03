@@ -10,16 +10,16 @@ Error bars are a graphical representation of the variability of data and are use
 In Highcharts, an error bar series is defined by setting the type to `errorbar`. An error bar series relates to a parent series through the option [linkedTo](http://api.highcharts.com/highcharts/plotOptions.errorbar.linkedTo). By default, the linkedTo option is ":previous", which means that the error bar series by default relates to the series defined before it in the source code. To use another series, the `linkedTo` option relates to the `id` option of the parent series.
 
     
-    series: \[{
+    series: [{
         name: 'Rainfall',
         color: '#4572A7',
         type: 'column',
-        data: \[49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4\]
+        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[
     }, { 
         name: 'Rainfall error',
         type: 'errorbar',
-        data: \[\[48, 51\], \[68, 73\], \[92, 110\], \[128, 136\], \[140, 150\], \[171, 179\], \[135, 143\], \[142, 149\], \[204, 220\], \[189, 199\], \[95, 110\], \[52, 56\]\]
-    }\]
+        data: [[48, 51[, [68, 73[, [92, 110[, [128, 136[, [140, 150[, [171, 179[, [135, 143[, [142, 149[, [204, 220[, [189, 199[, [95, 110[, [52, 56[[
+    }[
 
 ### Styling the error bars
 

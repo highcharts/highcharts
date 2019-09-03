@@ -105,12 +105,12 @@ This is how you start a web server in PhantomJS with the highcharts-convert.js s
 Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note these parameters are defined: 'infile', 'callback' and 'constr';
 
     
-    {"infile":"{xAxis: {categories: \['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'\]},series: \[{data: \[29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4\]}\]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
+    {"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'[},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[}[};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
 
 This is how you can send a POST from the command line with Curl (MAC & Ubuntu);
 
     
-    curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: \[\\"Jan\\", \\"Feb\\", \\"Mar\\"\]},series: \[{data: \[29.9, 71.5, 106.4\]}\]}"}' 127.0.0.1:3005
+    curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: [\\"Jan\\", \\"Feb\\", \\"Mar\\"[},series: [{data: [29.9, 71.5, 106.4[}[}"}' 127.0.0.1:3005
 
 Example of sending the contents of a file
 
@@ -120,7 +120,7 @@ Example of sending the contents of a file
 This is how you can send a POST from the commandline with Curl (Windows);
 
     
-    curl -H "Content-Type: application/json" -X POST -d "{\\"infile\\":\\"{series:\[{data:\[29.9,71.5,106.4\]}\]}\\"}" 127.0.0.1:3005
+    curl -H "Content-Type: application/json" -X POST -d "{\\"infile\\":\\"{series:[{data:[29.9,71.5,106.4[}[}\\"}" 127.0.0.1:3005
 
 ### Setting it up
 

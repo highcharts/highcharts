@@ -44,11 +44,11 @@ The main boost configuration is set in the `boost property in the chart options.
             text: 'Highcharts Boost'
         },
     
-        series: \[{
+        series: [{
     	   boostThreshold: 1, // Boost when there are more than 1                     
                                 // point in the chart.
-            data: \[\[0, 1\], \[1, 2\], \[2, 3\]\],
-        }\]
+            data: [[0, 1[, [1, 2[, [2, 3[[,
+        }[
     };
     
 

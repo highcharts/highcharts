@@ -5,7 +5,7 @@ A vector plot is a type of cartesian chart where each point has an X and Y posit
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.vector)_
 
-<iframe width="320" height="240" style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/vector-plot></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/vector-plot"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/vector-plot/) to check the code.
 

@@ -31,29 +31,29 @@ Next up is adding the a series with type venn where the configurations and data 
 
     
     Highcharts.chart('container', {
-        series: \[{
+        series: [{
             type: 'venn',
-            data: \[/\* Series data \*/\]
-        }\]
+            data: [/\* Series data \*/[
+        }[
     });
 
 The following data will create two sets A and B, where both sets will have a proportional area of size 2.
 
     
     // Series data
-        data: \[{
-            sets: \['A'\],
+        data: [{
+            sets: ['A'[,
             value: 2
         }, {
-            sets: \['B'\],
+            sets: ['B'[,
             value: 2
-        }\]
+        }[
 
 So far there is no relationship between the two sets, and the current data will create two seperated circles for A and B. Another data point can be added to define the relationship between A and B. The following point will define an intersection between A and B, where the area of overlap will have a size of 1.
 
     
     {
-        sets: \['A', 'B'\],
+        sets: ['A', 'B'[,
         value: 1
     }
 
@@ -63,44 +63,44 @@ In the following example A and B will be named as Apples and Bananas, while the 
 
     
     // Series data
-            data: \[{
+            data: [{
                 name: 'Apples',
-                sets: \['A'\],
+                sets: ['A'[,
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: \['B'\],
+                sets: ['B'[,
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: \['A', 'B'\],
+                sets: ['A', 'B'[,
                 value: 1
-            }\]
+            }[
 
 The final visualization should now display a venn diagram of the relation between Apples and Bananas.
 
-<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/mushigh/d34whxmr/embedded/result></iframe>
+<iframe width="100%" height="450" src="https://jsfiddle.net/mushigh/d34whxmr/embedded/result"></iframe>
 
 Its configuration should in full look as the following.
 
     
     Highcharts.chart('container', {
-        series: \[{
+        series: [{
             type: 'venn',
-            data: \[{
+            data: [{
                 name: 'Apples',
-                sets: \['A'\],
+                sets: ['A'[,
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: \['B'\],
+                sets: ['B'[,
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: \['A', 'B'\],
+                sets: ['A', 'B'[,
                 value: 1
-            }\]
-        }\]
+            }[
+        }[
     });
 
 **Relevant features and options**
@@ -128,11 +128,11 @@ The venn series can be used to create both Venn and Euler diagrams.
 
 The unattainable triangle is a reference often used in marketing and advertising, which says that you can either have it fast, cheap, or good, but you can not have it all. In the triangle the three qualities make up the corners, while the sides create the relationship between these qualities. Since the reference is all about relationships this can also be very well displayed as a venn diagram, as can be seen in the following demo [Venn diagram of the Unattainable Triangle.](https://highcharts.com/demo/venn-diagram)
 
-<iframe width="320" height="240" style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/venn-diagram></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/venn-diagram"></iframe>
 
 Euler diagram of the Relationship between Euler and Venn diagrams
 -----------------------------------------------------------------
 
 Euler diagrams are representing a number of sets and the relationship between these sets. An euler diagram will only show the relationships that is relevant, which means that not necessarily every set will overlap each other. While a venn diagram will show all possible relationships between all sets, which means that all sets will overlap each other. A venn diagram is therefore a special case of euler diagrams. This relationship between the euler and venn diagrams can be displayed as an euler diagram, as can be seen in the following demo [Euler diagram of the Relationship between Euler and Venn diagrams.](https://highcharts.com/demo/euler-diagram)
 
-<iframe width="320" height="240" style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/euler-diagram></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/euler-diagram"></iframe>

@@ -5,15 +5,16 @@ A bubble legend is an additional element, which can be added in any position in 
 
 **Demo with autoranges**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/autoranges></iframe>
+
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/autoranges"></iframe>
 
 **Demo with similarto series**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/similartoseries></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/similartoseries"></iframe>
 
 **Demo with ranges**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/ranges></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/ranges"></iframe>
 
 Installation
 ------------
@@ -44,15 +45,15 @@ There are two ways to add the bubble legend to the chart:
                 enabled: true
             }
         },
-        series: \[{
-            data: \[
-                \[9, 81, 63\],
-    	\[98, 5, 89\],
-    	\[51, 50, 73\],
-    	\[41, 22, 14\],
-    	\[58, 24, 20\]
-            \]
-        }\]
+        series: [{
+            data: [
+                [9, 81, 63[,
+    	[98, 5, 89[,
+    	[51, 50, 73[,
+    	[41, 22, 14[,
+    	[58, 24, 20[
+            [
+        }[
     }
 
 **2\. Custom**: with manually defined ranges. Bubbles are calculated based on `ranges`, `minSize`, and `maxSize`, bubble series dimensions are not included.
@@ -67,24 +68,24 @@ There are two ways to add the bubble legend to the chart:
                 enabled: true,
                 minSize: 20,
                 maxSize: 60,
-                ranges: \[{
+                ranges: [{
                     value: 14
                 }, {
                     value: 89
-                }\]
+                }[
             }
         },
-        series: \[{
+        series: [{
             minSize: 20,
             maxSize: 60,
-            data: \[
-                \[9, 81, 63\],
-    	\[98, 5, 89\],
-    	\[51, 50, 73\],
-    	\[41, 22, 14\],
-    	\[58, 24, 20\]
-            \]
-        }\]
+            data: [
+                [9, 81, 63[,
+    	[98, 5, 89[,
+    	[51, 50, 73[,
+    	[41, 22, 14[,
+    	[58, 24, 20[
+            [
+        }[
     }
 
 API document

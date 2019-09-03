@@ -3,7 +3,7 @@ Annotations and fibonacci replacements
 
 A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](http://www.investopedia.com/terms/f/fibonacciretracement.asp).
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=stock/annotations/fibonacci-retracements></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=stock/annotations/fibonacci-retracements"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/annotations/fibonacci-retracements) to check the code.
 
@@ -14,8 +14,8 @@ Annotations can be built from simple blocks such as labels and shapes, and the c
 
     
       {
-        labels: \[ /\* options for labels /\* \],
-        shapes: \[ /\* options for lines /\*, /\* options for backgrounds \*/ \]
+        labels: [ /\* options for labels /\* [,
+        shapes: [ /\* options for lines /\*, /\* options for backgrounds \*/ [
       }
     
 
@@ -29,7 +29,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
 **Step 1. Calculate the retracements:**
 
     
-       levels = \[0, 0.236, 0.382, 0.5, 0.618, 0.786, 1\];
+       levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1[;
        diff = y2 - y1;
        retracementlevel = y2 - diff \* level;
     
@@ -37,7 +37,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
 **Step 2. Build the horizontal lines:**
 
     
-        var lines = \[\];
+        var lines = [[;
     
         Highcharts.each(levels, function (level, i) {
             var retracement = y2 - diff \* level;
@@ -46,7 +46,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
     
             lines.push({
                 type: 'path',
-                points: \[ p1, p2 \],
+                points: [ p1, p2 [,
                 stroke: 'grey'
             });
         });
@@ -57,7 +57,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
 **Step 3. Build the labels:**
 
     
-        var labels = \[\];
+        var labels = [[;
     
         Highcharts.each(levels, function (level, i) {
             var retracement = y2 - diff \* level;
@@ -86,15 +86,15 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
 **Step 4. Set up the backgrounds:**
 
     
-        var backgrounds = \[\];
-        var colors = \[
+        var backgrounds = [[;
+        var colors = [
             'rgba(130, 170, 255, 0.4)',
             'rgba(139, 191, 216, 0.4)',
             'rgba(150, 216, 192, 0.4)',
             'rgba(156, 229, 161, 0.4)',
             'rgba(162, 241, 130, 0.4)',
             'rgba(169, 255, 101, 0.4)'
-        \];
+        [;
     
         Highcharts.each(levels, function (level, i) {
             var retracement = y2 - diff \* level;
@@ -104,9 +104,9 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
             if (i > 0) {
                 backgrounds.push({
                     type: 'path',
-                    points: \[ lines\[i - 1\].points\[0\], lines\[i - 1\].points\[1\], lines\[i\].points\[1\], lines\[i\].points\[0\] \],
+                    points: [ lines[i - 1[.points[0[, lines[i - 1[.points[1[, lines[i[.points[1[, lines[i[.points[0[ [,
                     strokeWidth: 0,
-                    fill: colors\[i - 1\]
+                    fill: colors[i - 1[
                 });
             }
         });

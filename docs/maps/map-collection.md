@@ -28,7 +28,7 @@ You can alternatively link to a specific version or subversion of the map at htt
 2\. Load it in `series.mapData`:
 
     
-    mapData: Highcharts.maps\['custom/world'\],
+    mapData: Highcharts.maps['custom/world'[,
 
 Alternatively, you can set the default map for all series with the [`chart.map`](http://api.highcharts.com/highmaps/chart.map) option:
 
@@ -38,7 +38,7 @@ Alternatively, you can set the default map for all series with the [`chart.map`]
 3\. Join your data with the map. By default Highmaps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
 
     
-    data: \[\['us-ny', 0\], \['us-mi', 5\], \['us-tx', 3\], \['us-ak', 5\]\]
+    data: [['us-ny', 0[, ['us-mi', 5[, ['us-tx', 3[, ['us-ak', 5[[
 
 For other data joining options, see the [`series.joinBy`](http://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](http://api.highcharts.com/highcharts/plotOptions.series.keys) options.
 

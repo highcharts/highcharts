@@ -19,7 +19,7 @@ Furthermore, a waterfall series has two kinds of automatically computed columns.
 Sample code:
 
     
-    data: \[{
+    data: [{
         name: 'Start',
         y: 120000
     }, {
@@ -42,7 +42,7 @@ Sample code:
         name: 'Balance',
         isSum: true,
         color: '#0066FF'
-    }\]
+    }[
 
 ### Colors
 

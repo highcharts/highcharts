@@ -5,7 +5,7 @@ Wind barbs visualize wind speed and direction in one graphical form. The stem di
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.windbarb)_
 
-<iframe width="320" height="240" style="width: 100%; height: 332px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/windbarb-series></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/windbarb-series"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/windbarb-series/) to check the code.
 

@@ -1,4 +1,5 @@
-# Highcharts Documentation
+Highcharts Documentation
+=====
 
 
 Topics

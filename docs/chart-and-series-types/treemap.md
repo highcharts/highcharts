@@ -1,7 +1,7 @@
 Treemap
 -------
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels></iframe>
+<iframe width="320" height="410" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels"></iframe>
 
 ### Requirements
 
@@ -17,7 +17,7 @@ The tree automatically has one node at the top representing the root node. If a 
 The following is an example of how the tree is built in Highcharts:
 
     
-    data: \[{
+    data: [{
         name: 'I have children',
         id: 'id-1'
     }, {
@@ -28,7 +28,7 @@ The following is an example of how the tree is built in Highcharts:
         name: 'I am a smaller child',
         parent: 'id-1',
         value: 1
-    }\]
+    }[
     
 
 ### Algorithms
@@ -83,7 +83,7 @@ A starting point for the function could be the following
 
     
     function myFunction(parent, children) {
-        childrenAreas = \[\];
+        childrenAreas = [[;
         Highcharts.each(children, function(child) {
             // Do some calculations
     
@@ -110,10 +110,10 @@ Afterwards when you declare the chart options, then specify that the series.layo
     
     var chart = new Highcharts.Chart({
         ...
-        series: \[{
+        series: [{
            layoutAlgorithm: "myCustomAlgorithm",
            ...
-        }\],
+        }[,
         ...
     });
     
@@ -127,18 +127,18 @@ Below is an example where the first level will use the Slice And Dice algorithm,
     
     var chart = new Highcharts.Chart({
         ...
-        series: \[{
+        series: [{
            layoutAlgorithm: 'squarified',
            color: 'red',
-           levels: \[{
+           levels: [{
                level: 1,
                layoutAlgorithm: 'sliceAndDice'
            }, {
                level: 2,
                color: 'blue'
-           }\],
+           }[,
            ...
-        }\],
+        }[,
         ...
     });
     
@@ -151,7 +151,7 @@ An [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highchar
 
 ### Use with ColorAxis
 
-<iframe width="320" height="240" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-coloraxis></iframe>
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-coloraxis"></iframe>
 
 For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 
@@ -162,7 +162,7 @@ After the module is included in your project, a colorAxis object can be defined 
         ...
         colorAxis: {
             minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors\[0\]
+            maxColor: Highcharts.getOptions().colors[0[
         },
         ...
     });
@@ -176,15 +176,15 @@ And each point needs its own colorValue.
         colorAxis: {
             ...
         },
-        series: \[{
+        series: [{
             ...
-            data: \[{
+            data: [{
                 name: "Point 1",
                 value: 1,
                 colorValue: 5 // This value decides which color on the scale that the point gets.
-            }\],
+            }[,
             ...
-        }\],
+        }[,
         ...
     });
     
