@@ -42,8 +42,8 @@ declare global {
             public getName(): string;
             public getValues(
                 series: Series,
-                params: object
-            ): IndicatorValuesObject;
+                params: SmaIndicatorParamsOptions
+            ): (boolean|IndicatorValuesObject);
             public destroy(): void;
             public dataEventsToUnbind: Array<Function>;
             public nameBase?: string;
@@ -302,14 +302,15 @@ seriesType<Highcharts.SmaIndicatorOptions>(
             function recalculateValues(): void {
                 var oldData = indicator.points || [],
                     oldDataLength = (indicator.xData || []).length,
-                    processedData = indicator.getValues(
-                        indicator.linkedParent,
-                        indicator.options.params as any
-                    ) || {
-                        values: [],
-                        xData: [],
-                        yData: []
-                    },
+                    processedData: Highcharts.IndicatorValuesObject =
+                        (indicator.getValues(
+                            indicator.linkedParent,
+                            indicator.options.params as any
+                        ) as any) || {
+                            values: [],
+                            xData: [],
+                            yData: []
+                        },
                     croppedDataValues = [],
                     overwriteData = true,
                     oldFirstPointIndex,
