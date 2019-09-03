@@ -6,7 +6,7 @@ function afterSetExtremes(e) {
     var chart = Highcharts.charts[0];
 
     chart.showLoading('Loading data from server...');
-    Highcharts.getJSON('https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
+    $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
             '&end=' + Math.round(e.max) + '&callback=?', function (data) {
 
         chart.series[0].setData(data);
@@ -15,7 +15,7 @@ function afterSetExtremes(e) {
 }
 
 // See source code from the JSONP handler at https://github.com/highcharts/highcharts/blob/master/samples/data/from-sql.php
-Highcharts.getJSON('https://www.highcharts.com/samples/data/from-sql.php?callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/from-sql.php?callback=?', function (data) {
 
     // Add a null value for the end date
     data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
