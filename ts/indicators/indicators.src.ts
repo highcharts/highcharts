@@ -16,6 +16,11 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface IndicatorValuesObject {
+            values: Array<Array<number>>;
+            xData: Array<number>;
+            yData: Array<number>;
+        }
         interface LineSeriesOptions {
             useOhlcData?: boolean;
         }
@@ -38,7 +43,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: SmaIndicatorParamsOptions
-            ): SmaValuesObject;
+            ): IndicatorValuesObject;
             public destroy(): void;
             public dataEventsToUnbind: Array<Function>;
             public nameBase?: string;
@@ -70,11 +75,6 @@ declare global {
         interface Series {
             /** @requires indicators/indicators */
             requireIndicators(): SmaIndicatorRequireIndicatorsObject;
-        }
-        interface SmaValuesObject {
-            values: Array<Array<number>>;
-            xData: Array<number>;
-            yData: Array<number>;
         }
     }
 }
@@ -459,7 +459,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.SmaIndicatorParamsOptions
-        ): (boolean|Highcharts.SmaValuesObject) {
+        ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<(
