@@ -102,10 +102,7 @@ declare global {
             hasProcessed?: boolean;
             preventGraphAnimation?: boolean;
             xData?: Array<number>;
-            yData?: (
-                Array<(number|null|undefined)>|
-                Array<Array<(number|null|undefined)>>
-            );
+            yData?: (Array<(number|null|undefined)>);
             destroyGroupedData(): void;
             generatePoints(): void;
             getDGApproximation(): string;
