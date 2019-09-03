@@ -13,7 +13,7 @@ Main Rules
   reference
 - Do not use `any` type in new code as it is only used for the migration phase
 - Order everything in the internal namespace alphabetical
-- Add paragraphs around conditional types (`A extends B ? C : D`), type lists
+- Add paragraphs around conditional types (`(A extends B ? C : D)`), type lists
   (`(A|B)`), and type unions (`(A&B)`).
 
 
@@ -118,6 +118,40 @@ Good to Know
 ------------
 
 
+### Make use of common ES6 features
+
+TypeScript does transpile most common ES6 features down to ES5-capable browsers
+like Internet Explorer 9+, Chrome 5+, Firefox 4+, Safari 5+. So you can make use
+of them:
+
+* Arrow functions (without own `this` scope):
+  `(a, b) => {console.log('yeah')};`
+
+* Constants and limited variables:
+  `const yes: boolean = true; let degree: number = 180;`
+
+* Default parameter values:
+  `function (required: number, optional: string = ''): void;`
+
+* Destructing arrays:
+  `const sentence = ['Hello', 'world']; let [greeting, pronoun] = test;`
+
+* Destructing objects:
+  `const { chart, isDOMElement } = Highcharts; chart('container');`
+
+* For-of-loops:
+  `const data = [1, 2, 3]; let sum = 0; for (const p of data) { sum += p; }`
+
+* Rest parameter arrays (have to be last):
+  `function rest(name: string, ...optionals: Array<number>): void;`
+
+* Spread arrays and iterators into arrays:
+  `const args = [...arguments, extraArg]; proceed.call(this, ...args);`
+
+* Spread objects into objects:
+  `const obj = { cool: true }; const clone = { isClone: true, ...obj };`
+
+
 ### Type check for interfaces
 
 Even though on runtime every interface becomes just a regular `object` there
@@ -161,3 +195,18 @@ type C = (A&B);
 let example1: C = { x: 1, x2: 2 },
     example2: (A&B) = example1;
 ```
+
+
+### Unit tests can be written in TypeScript
+
+Before the tests are run by Karma, optionally (`--ts`) a compiler will
+transpile necessary TypeScript files (`.ts`) to JavaScript files (`.js`). Both
+files will be placed in the same directory.
+
+If you like to run a new or modified TypeScript-based test in your
+highcharts-utils, you have to run them first in the terminal, so that they get
+transpiled. Highcharts-utils does not support TypeScript yet. If you change
+TypeScript-based code, you have to repeat the step.
+
+The terminal line for running all tests including new TypeScript-based ones is:
+`npx gulp test --ts`
