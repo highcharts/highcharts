@@ -31,6 +31,9 @@ declare class TestUtilities {
     /**
      * Convenient wrapper for installing lolex and bypassing
      * requestAnimationFrame. Returns a clock object.
+     *
+     * @param lolexConfig
+     *        Config supplied to lolex.install
      */
     private static lolexInstall;
     /**
