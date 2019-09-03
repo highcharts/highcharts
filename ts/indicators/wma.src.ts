@@ -190,7 +190,7 @@ seriesType<Highcharts.WmaIndicatorOptions>(
             // Switch index for OHLC / Candlestick
             if (isArray(yVal[0])) {
                 index = (params.index);
-                yValue = yVal[0][index];
+                yValue = (yVal[0] as any)[index];
             }
             // Starting point
             points = [[xValue, (yValue as any)]];
