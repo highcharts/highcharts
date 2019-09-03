@@ -258,7 +258,6 @@ declare global {
             normal?: SeriesStatesNormalOptions;
         }
         interface SeriesTypesDictionary {
-            [key: string]: typeof Series;
             line: typeof LineSeries;
         }
         class LinePoint extends Point {
@@ -3809,7 +3808,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 ) {
                     croppedData = this.cropData(
                         series.xData as any,
-                        series.yData,
+                        series.yData as any,
                         min as any,
                         max as any
                     );

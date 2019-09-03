@@ -1,3 +1,4 @@
+js/indicators/indicators.src.js
 js/mixins/**/*.js
 js/modules/networkgraph/*.js
 js/modules/bellcurve.src.js
@@ -18,6 +19,7 @@ js/modules/funnel.src.js
 js/modules/funnel3d.src.js
 js/modules/item-series.src.js
 js/modules/histogram.src.js
+js/modules/map-parser.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/modules/sankey.src.js

@@ -548,8 +548,10 @@ seriesType('map', 'scatter',
         series.data.forEach(function (point) {
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
-            point.plotX = xAxis.toPixels(point._midX, true);
-            point.plotY = yAxis.toPixels(point._midY, true);
+            if (isNumber(point._midX) && isNumber(point._midY)) {
+                point.plotX = xAxis.toPixels(point._midX, true);
+                point.plotY = yAxis.toPixels(point._midY, true);
+            }
             if (doFullTranslate) {
                 point.shapeType = 'path';
                 point.shapeArgs = {

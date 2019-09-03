@@ -40,8 +40,8 @@ declare global {
             maxPxSize?: BubbleSeries['maxPxSize'];
             minPxSize?: BubbleSeries['minPxSize'];
             specialGroup?: BubbleSeries['specialGroup'];
-            zData?: BubbleSeries['zData'];
             yData?: BubbleSeries['yData'];
+            zData?: BubbleSeries['zData'];
         }
         interface SeriesTypesDictionary {
             bubble: typeof BubbleSeries;

@@ -100,6 +100,12 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
     }
 });
 
+
+// Handle wrapping, reset functions that are wrapped in the visual samples to
+// prevent the wraps from piling up downstream.
+var origWrap = Highcharts.wrap;
+var wrappedFunctions = [];
+
 if (window.QUnit) {
     /*
      * Compare numbers taking in account an error.
@@ -143,6 +149,13 @@ if (window.QUnit) {
 
             // Reset randomizer
             Math.randomCursor = 0;
+
+            // Wrap the wrap function
+            Highcharts.wrap = function (ob, prop, fn) {
+                // Push original function
+                wrappedFunctions.push([ob, prop, ob[prop]]);
+                origWrap(ob, prop, fn);
+            };
         },
 
         afterEach: function (test) {
@@ -181,6 +194,17 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Unwrap/reset wrapped functions
+            while (wrappedFunctions.length) {
+                //const [ ob, prop, fn ] = wrappedFunctions.pop();
+                var args = wrappedFunctions.pop(),
+                    ob = args[0],
+                    prop = args[1],
+                    fn = args[2];
+                ob[prop] = fn;
+            }
+            Highcharts.wrap = origWrap;
         }
     });
 }
@@ -194,21 +218,25 @@ Highcharts.prepareShot = function (chart) {
         chart.series &&
         chart.series[0]
     ) {
-        // Network graphs, sankey etc
-        if (
-            chart.series[0].nodes &&
-            chart.series[0].nodes[0] &&
-            typeof chart.series[0].nodes[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].nodes[0].onMouseOver();
-        
-        // Others
-        } else if (
-            chart.series[0].points &&
-            chart.series[0].points[0] &&
-            typeof chart.series[0].points[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].points[0].onMouseOver();
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
+            chart.series[0].points;
+
+        if (points) {
+            for (var i = 0; i < points.length; i++) {
+                if (
+                    points[i] &&
+                    !points[i].isNull &&
+                    !( // Map point with no extent, like Aruba
+                        points[i].shapeArgs &&
+                        points[i].shapeArgs.d &&
+                        points[i].shapeArgs.d.length === 0
+                    ) &&
+                    typeof points[i].onMouseOver === 'function'
+                ) {
+                    points[i].onMouseOver();
+                    break;
+                }
+            }
         }
     }
 };
