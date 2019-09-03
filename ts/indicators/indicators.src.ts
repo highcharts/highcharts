@@ -42,7 +42,7 @@ declare global {
             public getName(): string;
             public getValues(
                 series: Series,
-                params: SmaIndicatorParamsOptions
+                params: object
             ): IndicatorValuesObject;
             public destroy(): void;
             public dataEventsToUnbind: Array<Function>;
