@@ -1,5 +1,7 @@
-In this folder of the Highcharts repository we will gradually add Highcharts documentation. This will open up for having a version based documentation. Beside that, we also gladly receive suggestions on improving our documentation ads well. 
+Highcharts Documentation
+=====
 
+In this folder of the Highcharts repository we will gradually add Highcharts documentation. This will open up for having a version based documentation. Beside that, we also gladly receive suggestions on improving our documentation ads well. 
 
 
 Please, take first a look at the template below, before you get start writing.

@@ -4,7 +4,10 @@ An item chart in Highcharts is a series type where the values are represented as
 
 The item chart is used for infographics, typically for a low number of individual items within a low number of groups. The most common use case is a parliament, and other use cases may be the distribution of a feature within a group of persons, or percentages represented by a count rather than a scalar value.
 
-[iframe: highcharts/series-item/dynamic]
+<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-item/dynamic"></iframe>
+
+Circular layout
+---------------
 
 ## Circular layout
 Item charts can be laid out either as a rectangle or a circle. The circular layout is enabled by setting a [startAngle](https://api.highcharts.com/highcharts/plotOptions.item.startAngle) and an [endAngle](https://api.highcharts.com/highcharts/plotOptions.item.endAngle). To achieve the typical parliament hemisphere, set the `startAngle` to -100 and the `endAngle` to 100. Then, as the default center is in the middle of the plot area and the default size is that the full circle will fill out the plot area, we can adjust the `size` and `center`. These options provide a reasonable fit for the parliament:

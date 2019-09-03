@@ -49,7 +49,11 @@ Highcharts.stockChart('container', {
 ```
 And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
 
+<<<<<<< HEAD
 [iframe: stock/demo/stock-tools-gui]
+=======
+<iframe width="320" height="500" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui"></iframe>
+>>>>>>> cleaned up for use with doc-builder
 
 **Note:** The buttons graphics of the Stock Toolbar buttons are by default loaded from the Highcharts CDN. If you want to load Stock Tools from your local package, you might also want to set the symbol properties for each of the [`stockTools.gui.definitions`](https://api.highcharts.com/highstock/stockTools.gui.definitions). The icons are available in the Highcharts NPM [package](https://www.npmjs.com/package/highcharts) or clone the highcharts-dist [GitHub repository](https://github.com/highcharts/highcharts-dist).
 
