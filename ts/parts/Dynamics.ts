@@ -376,8 +376,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         (chartOptions as any)[type].push(userOptions);
 
         if (isColorAxis) {
+            this.isDirtyLegend = true;
             this.series.forEach(function (series: Highcharts.Series): void {
-                series.update({}, false);
+                series.bindAxes();
             });
         }
 
