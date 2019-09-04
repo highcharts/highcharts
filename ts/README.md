@@ -9,10 +9,11 @@ out of the doclets to be in sync with the official API documentation.
 Main Rules
 ----------
 - You have to sync types in code, doclets, and internals yourself
+- Order everything in the internal namespace alphabetical
 - Make use of import and export where possible; consult `parts/Utilities.ts` for
   reference
+- Make use of parantheses around type lists. (`Array<(number|null|string)>`)
 - Do not use `any` type in new code as it is only used for the migration phase
-- Order everything in the internal namespace alphabetical
 - Add paragraphs around conditional types (`(A extends B ? C : D)`), type lists
   (`(A|B)`), and type unions (`(A&B)`).
 
@@ -80,9 +81,9 @@ function a(el?: (Element|undefined)): void {
 ```
 
 
-### Test agains "undefined" and "null"
+### Test against "undefined" and "null"
 
-To prevent yourself from pitfalls during runtime, you should check agains
+To prevent yourself from pitfalls during runtime, you should check against
 optional properties as soon as possible to rule them out in further code.
 
 *Incorrect:*
@@ -134,7 +135,7 @@ of them:
   `function (required: number, optional: string = ''): void;`
 
 * Destructing arrays:
-  `const sentence = ['Hello', 'world']; let [greeting, pronoun] = test;`
+  `const sentence = ['Hello', 'world']; let [greeting, pronoun] = sentence;`
 
 * Destructing objects:
   `const { chart, isDOMElement } = Highcharts; chart('container');`
