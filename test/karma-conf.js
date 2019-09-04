@@ -487,23 +487,26 @@ module.exports = function (config) {
                         }
                     }
 
+                    // Warn about things that may potentially break downstream
+                    // samples
+                    if (argv.debug) {
+                        if (js.indexOf('Highcharts.setOptions') !== -1) {
+                            console.log(
+                                `Warning - Highcharts.setOptions found in: ${file.path}`.yellow
+                            );
+                        }
+                        if (
+                            js.indexOf('Highcharts.wrap') !== -1 ||
+                            js.indexOf('H.wrap') !== -1
+                        ) {
+                            console.log(
+                                `Warning - Highcharts.wrap found in: ${file.path}`.yellow
+                            );
+                        }
+                    }
+
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
-                        if (argv.debug) {
-                            if (js.indexOf('Highcharts.setOptions') !== -1) {
-                                console.log(
-                                    `Warning: ${path} contains Highcharts.setOptions`.yellow
-                                );
-                            }
-                            if (
-                                js.indexOf('Highcharts.wrap') !== -1 ||
-                                js.indexOf('H.wrap') !== -1
-                            ) {
-                                console.log(
-                                    `Warning: ${path} contains Highcharts.wrap`.yellow
-                                );
-                            }
-                        }
                         done(js);
                         return;
                     }
@@ -678,9 +681,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
     ) ?
         '' :
         `
-        Highcharts.setOptions(
-            JSON.parse(Highcharts.defaultOptionsRaw)
-        );
+        resetDefaultOptions();
         `;
 
     // Reset modified callbacks
