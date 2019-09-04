@@ -1902,8 +1902,12 @@ Highcharts.chart('container', {
         text: '2017 Tour de France Stage 8: Dole - Station des Rousses'
     },
 
-    subtitle: {
-        text: 'An annotated chart in Highcharts'
+    caption: {
+        text: 'This chart uses the Highcharts Annotations feature to place labels at various points of interest. The labels are responsive and will be hidden to avoid overlap on small screens.'
+    },
+
+    credits: {
+        enabled: false
     },
 
     annotations: [{

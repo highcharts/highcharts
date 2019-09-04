@@ -101,7 +101,7 @@ import U from '../../parts/Utilities.js';
 var isArray = U.isArray,
     splat = U.splat;
 
-import utilities from 'utilities.js';
+import utilities from './utilities.js';
 
 
 /**

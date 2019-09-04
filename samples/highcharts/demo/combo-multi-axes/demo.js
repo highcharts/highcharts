@@ -118,7 +118,24 @@ Highcharts.chart('container', {
                     verticalAlign: 'bottom',
                     x: 0,
                     y: 0
-                }
+                },
+                yAxis: [{
+                    labels: {
+                        align: 'right',
+                        x: 0,
+                        y: -6
+                    },
+                    showLastLabel: false
+                }, {
+                    labels: {
+                        align: 'left',
+                        x: 0,
+                        y: -6
+                    },
+                    showLastLabel: false
+                }, {
+                    visible: false
+                }]
             }
         }]
     }
