@@ -78,11 +78,21 @@ extend(ColorAxis.prototype, {
      * See [the Axis object](/class-reference/Highcharts.Axis) for
      * programmatic access to the axis.
      *
+     * @sample       {highcharts} highcharts/coloraxis/custom-color-key
+     *               Column chart with color axis
+     * @sample       {highcharts} highcharts/coloraxis/horizontal-layout
+     *               Horizontal layout
+     * @sample       {highmaps} maps/coloraxis/dataclasscolor
+     *               With data classes
+     * @sample       {highmaps} maps/coloraxis/mincolor-maxcolor
+     *               Min color and max color
+     *
      * @extends      xAxis
-     * @excluding    allowDecimals, alternateGridColor, breaks, categories,
-     *               crosshair, dateTimeLabelFormats, lineWidth, linkedTo,
-     *               maxZoom, minRange, minTickInterval, offset, opposite,
-     *               plotBands, plotLines, showEmpty, title
+     * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
+     *               categories, crosshair, dateTimeLabelFormats, lineWidth,
+     *               linkedTo, maxZoom, minRange, minTickInterval, offset,
+     *               opposite, pane, plotBands, plotLines, reversedStacks,
+     *               showEmpty, title, zoomEnabled
      * @product      highcharts highstock highmaps
      * @type         {*|Array<*>}
      * @optionparent colorAxis

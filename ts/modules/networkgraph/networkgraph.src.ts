@@ -274,8 +274,8 @@ var defined = U.defined;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
-import '/layouts.js';
-import '/draggable-nodes.js';
+import './layouts.js';
+import './draggable-nodes.js';
 
 
 var addEvent = H.addEvent,

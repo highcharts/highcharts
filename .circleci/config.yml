@@ -195,11 +195,6 @@ jobs:
             find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \; &&
             find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \; &&
             find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
-      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
-      - aws-s3/sync: # delete existing assets in S3 location
-          from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
-          overwrite: true
       - run:
           name: "Upload visual test candidates and diff assets"
           command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"

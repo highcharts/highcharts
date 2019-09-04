@@ -106,6 +106,7 @@ declare global {
         readonly toElement: Element;
     }
     interface Window {
+        TouchEvent?: typeof TouchEvent;
         /** @deprecated */
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
@@ -113,7 +114,7 @@ declare global {
         /** @deprecated */
         webkitURL?: typeof URL;
     }
-    const win: GlobalWindow; // @todo: UMD variable named `window`
+    const win: GlobalWindow|undefined; // @todo: UMD variable named `window`
 }
 
 /* globals Image, window */

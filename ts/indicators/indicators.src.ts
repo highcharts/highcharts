@@ -16,6 +16,11 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface IndicatorValuesObject {
+            values: Array<Array<number>>;
+            xData: Array<number>;
+            yData: Array<number>;
+        }
         interface LineSeriesOptions {
             useOhlcData?: boolean;
         }
@@ -37,7 +42,7 @@ declare global {
             public getName(): string;
             public getValues(
                 series: Series,
-                params: Dictionary<(number)>
+                params: SmaIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
             public destroy(): void;
             public dataEventsToUnbind: Array<Function>;
@@ -47,12 +52,11 @@ declare global {
         interface SmaIndicatorOptions extends LineSeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
-            params?: (SmaIndicatorParamsOptions|Dictionary<(number)>);
+            params?: SmaIndicatorParamsOptions;
         }
-        interface SmaIndicatorParamsOptions
-            extends Dictionary<(number)> {
-            index: number;
-            period: number;
+        interface SmaIndicatorParamsOptions {
+            index?: number;
+            period?: number;
         }
         interface SeriesTypesDictionary {
             sma: typeof SmaIndicator;
@@ -71,11 +75,6 @@ declare global {
         interface Series {
             /** @requires indicators/indicators */
             requireIndicators(): SmaIndicatorRequireIndicatorsObject;
-        }
-        interface IndicatorValuesObject {
-            values: Array<Array<number>>;
-            xData: Array<number>;
-            yData: Array<number>;
         }
     }
 }
@@ -460,7 +459,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
         },
         getValues: function (
             series: Highcharts.Series,
-            params: Highcharts.Dictionary<(number)>
+            params: Highcharts.SmaIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,

@@ -81,11 +81,11 @@ import U from '../parts/Utilities.js';
 var isNumber = U.isNumber,
     splat = U.splat;
 
-import 'CurrentDateIndicator.js';
-import 'GridAxis.js';
+import './CurrentDateIndicator.js';
+import './GridAxis.js';
 import '../modules/static-scale.src.js';
-import 'TreeGrid.js';
-import 'Pathfinder.js';
+import './TreeGrid.js';
+import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
