@@ -225,7 +225,12 @@ Highcharts.prepareShot = function (chart) {
             for (var i = 0; i < points.length; i++) {
                 if (
                     points[i] &&
-                    points[i].graphic &&
+                    !points[i].isNull &&
+                    !( // Map point with no extent, like Aruba
+                        points[i].shapeArgs &&
+                        points[i].shapeArgs.d &&
+                        points[i].shapeArgs.d.length === 0
+                    ) &&
                     typeof points[i].onMouseOver === 'function'
                 ) {
                     points[i].onMouseOver();

@@ -182,7 +182,7 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import utilities from 'utilities.js';
+import utilities from './utilities.js';
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if

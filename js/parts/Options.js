@@ -1772,7 +1772,7 @@ H.defaultOptions = {
      *
      * @sample highcharts/caption/text/
      *         A chart with a caption
-     * @since  next
+     * @since  7.2.0
      */
     caption: {
         /**
