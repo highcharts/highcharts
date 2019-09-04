@@ -1049,7 +1049,6 @@ H.Tooltip.prototype = {
     ): void {
         var tooltip = this,
             chart = this.chart,
-            label,
             options = tooltip.options,
             x,
             y,
@@ -1111,20 +1110,11 @@ H.Tooltip.prototype = {
         if (text === false) {
             this.hide();
         } else {
-
-            label = tooltip.getLabel();
-
-            // show it
-            if (tooltip.isHidden) {
-                label.attr({
-                    opacity: 1
-                }).show();
-            }
-
             // update text
             if (tooltip.split) {
                 this.renderSplit(text as any, splat(pointOrPoints));
             } else {
+                const label = tooltip.getLabel();
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
@@ -1169,7 +1159,13 @@ H.Tooltip.prototype = {
                 } as any);
             }
 
-            this.isHidden = false;
+            // show it
+            if (tooltip.isHidden && tooltip.label) {
+                tooltip.label.attr({
+                    opacity: 1
+                }).show();
+            }
+            tooltip.isHidden = false;
         }
 
         H.fireEvent(this, 'refresh');

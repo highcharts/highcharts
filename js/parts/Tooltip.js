@@ -722,7 +722,7 @@ H.Tooltip.prototype = {
      * @return {void}
      */
     refresh: function (pointOrPoints, mouseEvent) {
-        var tooltip = this, chart = this.chart, label, options = tooltip.options, x, y, point = pointOrPoints, anchor, textConfig = {}, text, pointConfig = [], formatter = options.formatter || tooltip.defaultFormatter, shared = tooltip.shared, currentSeries, styledMode = chart.styledMode;
+        var tooltip = this, chart = this.chart, options = tooltip.options, x, y, point = pointOrPoints, anchor, textConfig = {}, text, pointConfig = [], formatter = options.formatter || tooltip.defaultFormatter, shared = tooltip.shared, currentSeries, styledMode = chart.styledMode;
         if (!options.enabled) {
             return;
         }
@@ -764,18 +764,12 @@ H.Tooltip.prototype = {
             this.hide();
         }
         else {
-            label = tooltip.getLabel();
-            // show it
-            if (tooltip.isHidden) {
-                label.attr({
-                    opacity: 1
-                }).show();
-            }
             // update text
             if (tooltip.split) {
                 this.renderSplit(text, splat(pointOrPoints));
             }
             else {
+                var label = tooltip.getLabel();
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!options.style.width || styledMode) {
                     label.css({
@@ -807,7 +801,13 @@ H.Tooltip.prototype = {
                     h: anchor[2] || 0
                 });
             }
-            this.isHidden = false;
+            // show it
+            if (tooltip.isHidden && tooltip.label) {
+                tooltip.label.attr({
+                    opacity: 1
+                }).show();
+            }
+            tooltip.isHidden = false;
         }
         H.fireEvent(this, 'refresh');
     },
