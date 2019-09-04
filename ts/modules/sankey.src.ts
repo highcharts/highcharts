@@ -20,102 +20,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface SankeyColumnArray<T = SankeyPoint> extends Array<T> {
-            offset(
-                node: T,
-                factor: number
-            ): (Dictionary<number>|undefined);
-            sum(): number;
-            top(factor: number): number;
-        }
-        interface SankeyDataLabelsFormatterCallbackFunction {
-            (
-                this: (
-                    SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
-                )
-            ): (string|undefined);
-        }
-        interface SankeyDataLabelsFormatterContextObject {
-            point: SankeyPoint;
-        }
-        interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
-            nodeFormat?: string;
-            nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
-        }
-        interface SankeyPointOptions
-            extends ColumnPointOptions, NodesPointOptions {
-            column?: number;
-            from?: string;
-            height?: number;
-            level?: number;
-            to?: string;
-            width?: number;
-        }
-        interface SankeySeriesLevelsOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: ColorType;
-            colorByPoint?: boolean;
-            dataLabels?: SankeyDataLabelsOptionsObject;
-            level?: number;
-            linkOpacity?: number;
-            states?: SankeySeriesStatesOptions;
-        }
-        interface SankeySeriesNodesOptions {
-            color?: ColorType;
-            colorIndex?: number;
-            column?: number;
-            id?: string;
-            level?: number;
-            name?: string;
-            offset?: (number|string);
-        }
-        interface SankeySeriesOptions
-            extends ColumnSeriesOptions, NodesSeriesOptions {
-            curveFactor?: number;
-            dataLabels?: SankeyDataLabelsOptionsObject;
-            height?: number;
-            levels?: Array<SankeySeriesLevelsOptions>;
-            linkOpacity?: number;
-            mass?: undefined;
-            minLinkWidth?: number;
-            nodePadding?: number;
-            nodes?: Array<SankeySeriesNodesOptions>;
-            nodeWidth?: number;
-            states?: SankeySeriesStatesOptions;
-            tooltip?: SankeySeriesTooltipOptions;
-            width?: number;
-        }
-        interface SankeySeriesStatesHoverOptions
-            extends ColumnSeriesStatesHoverOptions {
-            linkOpacity?: number;
-        }
-        interface SankeySeriesStatesInactiveOptions
-            extends ColumnSeriesStatesInactiveOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            linkOpacity?: number;
-        }
-        interface SankeySeriesStatesOptions extends ColumnSeriesStatesOptions {
-            hover?: SankeySeriesStatesHoverOptions;
-            inactive?: SankeySeriesStatesInactiveOptions;
-            select?: SankeySeriesStatesSelectOptions;
-        }
-        interface SankeySeriesStatesSelectOptions
-            extends ColumnSeriesStatesSelectOptions {
-            linkOpacity?: number;
-        }
-        interface SankeySeriesTooltipOptions extends TooltipOptions {
-            nodeFormat?: string;
-            nodeFormatter?: FormatterCallbackFunction<SankeyPoint>;
-        }
-        interface Series {
-            invertable?: boolean;
-        }
-        interface SeriesTypesDictionary {
-            sankey: typeof SankeySeries;
-        }
         class SankeyPoint extends ColumnPoint implements NodesPoint {
             public className: NodesPoint['className'];
             public column?: number;
@@ -160,7 +64,9 @@ declare global {
             public isCartesian: boolean;
             public options: SankeySeriesOptions;
             public orderNodes: boolean;
-            public mapOptionsToLevel: (Dictionary<any>|null);
+            public mapOptionsToLevel: (
+                Dictionary<SankeySeriesLevelsOptions>|null
+            );
             public nodeColumns: Array<SankeyColumnArray>;
             public nodeLookup: NodesSeries['nodeLookup'];
             public nodes: Array<SankeyPoint>;
@@ -185,6 +91,81 @@ declare global {
                 node: SankeyPoint,
                 column: SankeyColumnArray
             ): void;
+        }
+        interface SankeyColumnArray<T = SankeyPoint> extends Array<T> {
+            offset(node: T, factor: number): (Dictionary<number>|undefined);
+            sum(): number;
+            top(factor: number): number;
+        }
+        interface SankeyDataLabelsFormatterCallbackFunction {
+            (
+                this: (
+                    SankeyDataLabelsFormatterContextObject|
+                    DataLabelsFormatterContextObject
+                )
+            ): (string|undefined);
+        }
+        interface SankeyDataLabelsFormatterContextObject {
+            point: SankeyPoint;
+        }
+        interface SankeyDataLabelsOptionsObject
+            extends DataLabelsOptionsObject {
+            nodeFormat?: string;
+            nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
+        }
+        interface SankeyPointOptions
+            extends ColumnPointOptions, NodesPointOptions {
+            column?: number;
+            from?: string;
+            height?: number;
+            level?: number;
+            to?: string;
+            width?: number;
+        }
+        interface SankeySeriesLevelsOptions {
+            borderColor?: ColorString;
+            borderWidth?: number;
+            color?: ColorType;
+            colorByPoint?: boolean;
+            dataLabels?: SankeyDataLabelsOptionsObject;
+            level?: number;
+            linkOpacity?: number;
+            states?: Dictionary<SankeySeriesOptions>;
+        }
+        interface SankeySeriesNodesOptions {
+            color?: ColorType;
+            colorIndex?: number;
+            column?: number;
+            id?: string;
+            level?: number;
+            name?: string;
+            offset?: (number|string);
+        }
+        interface SankeySeriesOptions
+            extends ColumnSeriesOptions, NodesSeriesOptions {
+            curveFactor?: number;
+            dataLabels?: SankeyDataLabelsOptionsObject;
+            height?: number;
+            levels?: Array<SankeySeriesLevelsOptions>;
+            linkOpacity?: number;
+            mass?: undefined;
+            minLinkWidth?: number;
+            nodePadding?: number;
+            nodes?: Array<SankeySeriesNodesOptions>;
+            nodeWidth?: number;
+            states?: Dictionary<SankeySeriesOptions>;
+            tooltip?: SankeySeriesTooltipOptions;
+            width?: number;
+        }
+        interface SankeySeriesTooltipOptions extends TooltipOptions {
+            nodeFormat?: string;
+            nodeFormatter?: FormatterCallbackFunction<SankeyPoint>;
+        }
+        interface Series {
+            invertable?: boolean;
+        }
+        interface SeriesTypesDictionary {
+            sankey: typeof SankeySeries;
         }
     }
 }
@@ -1128,9 +1109,7 @@ seriesType<Highcharts.SankeySeriesOptions>(
 
             this.nodeColumns = this.createNodeColumns();
             this.nodeWidth = H.relativeLength(
-                (
-                    this.options as Highcharts.OrganizationSeriesOptions
-                ).nodeWidth,
+                this.options.nodeWidth as any,
                 this.chart.plotSizeX as any
             );
 
