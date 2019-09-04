@@ -333,6 +333,7 @@ workflows:
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
+          browsercount: 2
           requires:
             - "test-Mac.Safari"
           browsers: "Mac.Firefox"
@@ -374,6 +375,7 @@ workflows:
             - "test-Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
+          browsercount: 2
           requires:
             - "test-Win.Chrome"
           browsers: "Mac.Firefox"
