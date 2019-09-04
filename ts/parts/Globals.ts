@@ -24,6 +24,9 @@ declare global {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
         }
+        interface XAxisOptions {
+            stackLabels?: any; // @todo
+        }
         interface Chart {
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
