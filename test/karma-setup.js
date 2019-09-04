@@ -107,6 +107,8 @@ var origWrap = Highcharts.wrap;
 var wrappedFunctions = [];
 
 if (window.QUnit) {
+    QUnit.config.seed = 'randomWord';
+
     /*
      * Compare numbers taking in account an error.
      * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
