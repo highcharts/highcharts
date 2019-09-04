@@ -16,8 +16,6 @@
  */
 declare global {
     namespace Highcharts {
-        type OrganizationSeries = any; // @todo organization module
-        type OrganizationSeriesOptions = any // @todo organization module
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
