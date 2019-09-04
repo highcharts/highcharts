@@ -364,7 +364,7 @@ Highcharts.Pointer.prototype = {
      * @param {boolean|undefined} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The triggering event, containing chart coordinates of the pointer.
      *
      * @return {object}
@@ -386,7 +386,7 @@ Highcharts.Pointer.prototype = {
                 return filter(s) && s.stickyTracking;
             });
         // Use existing hovered point or find the one closest to coordinates.
-        hoverPoint = useExisting ?
+        hoverPoint = useExisting || !e ?
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e);
         // Assign hover series
@@ -448,7 +448,7 @@ Highcharts.Pointer.prototype = {
             tooltip.shared :
             false), hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
         // onMouseOver or already hovering a series with directTouch
-        isDirectTouch = e.type !== 'touchmove' && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
+        isDirectTouch = (!e || e.type !== 'touchmove') && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
             pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e), useSharedTooltip, followPointer, anchor, points;
         // Update variables from hoverData.
         hoverPoint = hoverData.hoverPoint;

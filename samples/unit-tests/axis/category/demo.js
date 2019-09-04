@@ -811,3 +811,32 @@ QUnit.test('Updating above cropThreshold', function (assert) {
         'Categories should be updated when passing crop threshold (#5857)'
     );
 });
+
+QUnit.test('Category axis grid lines when flat axis', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['Jan']
+        },
+        yAxis: {
+            title: null,
+            categories: ['category'],
+            min: 0,
+            max: 0
+        },
+        series: [{
+            name: 'data',
+            data: [0]
+        }]
+    });
+
+    assert.close(
+        Number(
+            chart.container.querySelector('.highcharts-yaxis-grid .highcharts-grid-line')
+                .getAttribute('d')
+                .split(' ')[2]
+        ),
+        chart.plotTop,
+        1,
+        'Ticks should be placed between category, grid line on top (#11199)'
+    );
+});

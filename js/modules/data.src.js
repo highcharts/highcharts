@@ -1846,7 +1846,7 @@ addEvent(Chart, 'init', function (e) {
             afterComplete: function (dataOptions) {
                 var i, series;
                 // Merge series configs
-                if (Object.prototype.hasOwnProperty.call(userOptions, 'series')) {
+                if (Object.hasOwnProperty.call(userOptions, 'series')) {
                     if (typeof userOptions.series === 'object') {
                         i = Math.max(userOptions.series.length, dataOptions && dataOptions.series ?
                             dataOptions.series.length :

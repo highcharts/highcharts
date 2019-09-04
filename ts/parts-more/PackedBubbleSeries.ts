@@ -26,6 +26,9 @@ declare global {
             number,
             PackedBubblePointOptions
         ];
+        interface NetworkgraphLayout {
+            beforeStep?(): void;
+        }
         interface NetworkgraphPackedBubbleIntegrationObject
             extends NetworkgraphIntegrationObject
         {
@@ -146,6 +149,7 @@ declare global {
             public hoverPoint: PackedBubblePoint;
             public index: number;
             public isCartesian: boolean;
+            public layout: PackedBubbleLayout;
             public noSharedTooltip: boolean;
             public onMouseDown: DragNodesMixin['onMouseDown'];
             public onMouseMove: DragNodesMixin['onMouseMove'];
@@ -319,6 +323,7 @@ var seriesType = H.seriesType,
     Point = H.Point,
     pick = H.pick,
     addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     Chart = H.Chart,
     color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
@@ -590,8 +595,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
      *         Split packed bubble chart
 
      * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, jitter, keys, pointPlacement,
-     *               sizeByAbsoluteValue, step, xAxis, yAxis, zMax, zMin
+     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
+     *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
+     *               zMax, zMin
      * @product      highcharts
      * @since        7.0.0
      * @optionparent plotOptions.packedbubble
@@ -940,19 +946,25 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 } else {
                     series.graph.hide();
                     series.parentNodeLayout
-                        .removeNode(series.parentNode as any);
+                        .removeElementFromCollection(
+                            series.parentNode, series.parentNodeLayout.nodes
+                        );
                     if ((series.parentNode as any).dataLabel) {
                         (series.parentNode as any).dataLabel.hide();
                     }
                 }
             } else if (series.layout) {
                 if (series.visible) {
-                    series.layout.addNodes(series.points);
+                    series.layout.addElementsToCollection(
+                        series.points, series.layout.nodes
+                    );
                 } else {
                     series.points.forEach(function (
                         node: Highcharts.PackedBubblePoint
                     ): void {
-                        series.layout.removeNode(node);
+                        series.layout.removeElementFromCollection(
+                            node, series.layout.nodes
+                        );
                     });
                 }
             }
@@ -1070,7 +1082,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             var series = this,
                 chart = series.chart,
                 parentAttribs = {} as Highcharts.SVGAttributes,
-                nodeMarker = this.layout.options.parentNodeOptions.marker,
+                nodeMarker: Highcharts.BubblePointMarkerOptions =
+                    (this.layout.options.parentNodeOptions as any).marker,
                 parentOptions: Highcharts.SVGAttributes = {
                     fill: nodeMarker.fillColor ||
                         (color as any)(series.color).brighten(0.4).get(),
@@ -1102,14 +1115,12 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 width: (series.parentNodeRadius as any) * 2,
                 height: (series.parentNodeRadius as any) * 2
             }, parentOptions);
-            if (!series.graph) {
+            if (!(series.parentNode as any).graphic) {
                 series.graph = (series.parentNode as any).graphic =
                     chart.renderer.symbol(parentOptions.symbol)
-                        .attr(parentAttribs)
                         .add(series.parentNodesGroup);
-            } else {
-                series.graph.attr(parentAttribs);
             }
+            (series.parentNode as any).graphic.attr(parentAttribs);
         },
         /**
          * Creating parent nodes for split series, in which all the bubbles
@@ -1169,8 +1180,12 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                     (parentNode as any).plotY = series.parentNode.plotY;
                 }
                 series.parentNode = parentNode;
-                parentNodeLayout.addSeries(series);
-                parentNodeLayout.addNodes([parentNode as any]);
+                parentNodeLayout.addElementsToCollection(
+                    [series], parentNodeLayout.series
+                );
+                parentNodeLayout.addElementsToCollection(
+                    [parentNode as any], parentNodeLayout.nodes
+                );
             }
         },
         /**
@@ -1256,8 +1271,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             layout.setArea(
                 0, 0, series.chart.plotWidth, series.chart.plotHeight
             );
-            layout.addSeries(series);
-            layout.addNodes(series.points);
+            layout.addElementsToCollection([series], layout.series);
+            layout.addElementsToCollection(series.points, layout.nodes);
         },
         /**
          * Function responsible for adding all the layouts to the chart.
@@ -1345,6 +1360,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             if (useSimulation) {
                 series.deferLayout();
             }
+
+            fireEvent(series, 'afterTranslate');
         },
         /**
          * Check if two bubbles overlaps.
@@ -1798,7 +1815,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                                     plotX: point.plotX,
                                     plotY: point.plotY
                                 }), false);
-                                layout.removeNode(point);
+                                layout.removeElementFromCollection(
+                                    point, layout.nodes
+                                );
                                 point.remove();
                             }
                         }
@@ -1808,8 +1827,17 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             }
         },
         destroy: function (this: Highcharts.PackedBubbleSeries): void {
+            // Remove the series from all layouts series collections #11469
+            if (this.chart.graphLayoutsLookup) {
+                this.chart.graphLayoutsLookup.forEach(function (layout): void {
+                    layout.removeElementFromCollection(this, layout.series);
+                }, this);
+            }
+
             if (this.parentNode) {
-                this.parentNodeLayout.removeNode(this.parentNode);
+                this.parentNodeLayout.removeElementFromCollection(
+                    this.parentNode, this.parentNodeLayout.nodes
+                );
                 if (this.parentNode.dataLabel) {
                     this.parentNode.dataLabel =
                         this.parentNode.dataLabel.destroy();
@@ -1827,7 +1855,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
          */
         destroy: function (this: Highcharts.PackedBubblePoint): void {
             if (this.series.layout) {
-                this.series.layout.removeNode(this);
+                this.series.layout.removeElementFromCollection(
+                    this, this.series.layout.nodes
+                );
             }
             return Point.prototype.destroy.apply(this, arguments as any);
         }

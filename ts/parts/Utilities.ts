@@ -299,7 +299,7 @@ declare global {
             type: string,
             parent: string,
             options: TOptions,
-            props: Dictionary<any>,
+            props?: Dictionary<any>,
             pointProps?: Dictionary<any>
         ): typeof Series;
         function setAnimation(
@@ -2683,7 +2683,7 @@ function objectEach<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
@@ -3092,7 +3092,7 @@ H.fireEvent = function<T> (
 
     // Run the default if not prevented
     if (defaultFunction && !eventArguments.defaultPrevented) {
-        defaultFunction.call(el, eventArguments);
+        (defaultFunction as Function).call(el, eventArguments);
     }
 };
 
@@ -3188,15 +3188,15 @@ H.animate = function (
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -3209,7 +3209,7 @@ H.seriesType = function (
     type: string,
     parent: string,
     options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
+    props?: Highcharts.Dictionary<any>,
     pointProps?: Highcharts.Dictionary<any>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),

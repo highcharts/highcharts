@@ -8,8 +8,10 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Click points to drill down to more detailed data'
     },
+    caption: {
+        text: 'A test case for accessible dynamic drilldown in charts.'
+    },
     accessibility: {
-        description: 'A test case for accessible dynamic drilldown in charts.',
         announceNewData: {
             enabled: true
         }

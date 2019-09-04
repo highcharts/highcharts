@@ -85,7 +85,7 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     };
 }
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
     // create the chart
     Highcharts.stockChart('container', {
 

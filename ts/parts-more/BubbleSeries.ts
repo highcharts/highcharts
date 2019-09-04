@@ -40,8 +40,8 @@ declare global {
             maxPxSize?: BubbleSeries['maxPxSize'];
             minPxSize?: BubbleSeries['minPxSize'];
             specialGroup?: BubbleSeries['specialGroup'];
-            zData?: BubbleSeries['zData'];
             yData?: BubbleSeries['yData'];
+            zData?: BubbleSeries['zData'];
         }
         interface SeriesTypesDictionary {
             bubble: typeof BubbleSeries;
@@ -341,6 +341,11 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
      * @since     4.0.3
      * @product   highcharts
      * @apioption plotOptions.bubble.zMax
+     */
+
+    /**
+     * @default   z
+     * @apioption plotOptions.bubble.colorKey
      */
 
     /**
@@ -703,7 +708,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                     (axis.dataMin as any) <= data[i] &&
                     data[i] <= (axis.dataMax as any)
                 ) {
-                    radius = series.radii[i];
+                    radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(
                         ((data[i] - (min as any)) * transA) - (radius as any),
                         pxMin

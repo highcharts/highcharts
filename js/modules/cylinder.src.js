@@ -42,7 +42,8 @@ seriesType('cylinder', 'column',
  * @extends      plotOptions.column
  * @since        7.0.0
  * @product      highcharts
- * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+ *               dragDrop
  * @optionparent plotOptions.cylinder
  */
 {}, {}, 

@@ -30,7 +30,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        spline: {
+        series: {
             marker: {
                 enabled: true
             }
@@ -158,5 +158,22 @@ Highcharts.chart('container', {
             [Date.UTC(1971, 4, 21), 0.34],
             [Date.UTC(1971, 4, 25), 0]
         ]
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        marker: {
+                            radius: 2.5
+                        }
+                    }
+                }
+            }
+        }]
+    }
 });

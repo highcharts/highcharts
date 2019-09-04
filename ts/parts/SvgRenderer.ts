@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,7 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject, SizeObject {
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
@@ -92,7 +92,9 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
+            [key: string]: SymbolFunction<(
+                SVGElement|SVGPathArray|Array<SVGElement>
+            )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -2654,7 +2656,7 @@ extend((
             delete wrapper[key];
         });
 
-        return;
+        return undefined;
     },
 
     /**

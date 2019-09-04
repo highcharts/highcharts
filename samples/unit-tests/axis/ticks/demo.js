@@ -120,8 +120,6 @@ QUnit.test('Prevent dense ticks(#4477)', function (assert) {
     );
 });
 
-
-
 QUnit.test('Clip tickPositions when axis extremes are set(#4086)', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {

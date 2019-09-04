@@ -19,9 +19,12 @@
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
 // glob is a temporary fix to allow our es-modules to work.
-var glob = typeof win === 'undefined' ?
-    (typeof window !== 'undefined' ? window : {}) :
-    win, doc = glob.document, SVG_NS = 'http://www.w3.org/2000/svg', userAgent = (glob.navigator && glob.navigator.userAgent) || '', svg = (doc &&
+var glob = ( // @todo UMD variable named `window`, and glob named `win`
+typeof win !== 'undefined' ?
+    win :
+    typeof window !== 'undefined' ?
+        window :
+        {}), doc = glob.document, SVG_NS = 'http://www.w3.org/2000/svg', userAgent = (glob.navigator && glob.navigator.userAgent) || '', svg = (doc &&
     doc.createElementNS &&
     !!doc.createElementNS(SVG_NS, 'svg').createSVGRect), isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera, isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1, hasBidiBug = (isFirefox &&
     parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
@@ -32,7 +35,7 @@ var H = {
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: !!win.TouchEvent,
+    hasTouch: !!glob.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,

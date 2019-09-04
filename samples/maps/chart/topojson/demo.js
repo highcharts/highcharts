@@ -21,7 +21,7 @@ function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
 }
 
-$.getJSON(
+Highcharts.getJSON(
     // Map source: https://github.com/deldersveld/topojson/
     'https://cdn.jsdelivr.net/gh/deldersveld/topojson@master/countries/united-states/us-albers.json',
     function (topology) {

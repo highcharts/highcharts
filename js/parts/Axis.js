@@ -767,7 +767,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.afterSetExtremes
          */
         /**
@@ -781,7 +781,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @since     4.1.0
          * @product   highcharts gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointBreak
          */
         /**
@@ -789,7 +789,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          *
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @product   highcharts highstock gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
          */
         /**
@@ -809,7 +809,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     1.2.0
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.setExtremes
          */
         /**
@@ -4363,7 +4363,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 series.isDirty ||
                 // When x axis is dirty, we need new data extremes for y as
                 // well:
-                series.xAxis.isDirty);
+                series.xAxis && series.xAxis.isDirty);
         }), isDirtyAxisLength;
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
@@ -4666,7 +4666,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Guard for very small or negative angles (#9835)
             if (step * tickInterval > range &&
                 spaceNeeded !== Infinity &&
-                slotSize !== Infinity) {
+                slotSize !== Infinity &&
+                range) {
                 step = Math.ceil(range / tickInterval);
             }
             return correctFloat(step * tickInterval);
@@ -5460,8 +5461,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             else if (defined(point)) {
                 // #3834
-                pos = pick(point.crosshairPos, // 3D axis extension
-                this.isXAxis ?
+                pos = pick(this.coll !== 'colorAxis' ?
+                    point.crosshairPos : // 3D axis extension
+                    null, this.isXAxis ?
                     point.plotX :
                     this.len - point.plotY);
             }

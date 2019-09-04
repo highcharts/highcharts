@@ -12,9 +12,11 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import A11yUtilities from '../utilities.js';
 
 var merge = H.merge,
-    pick = H.pick;
+    pick = H.pick,
+    makeHTMLTagFromText = A11yUtilities.makeHTMLTagFromText;
 
 
 /**
@@ -203,29 +205,68 @@ H.extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponen
     /**
      * The default formatter for the screen reader section.
      * @private
+     * @return {string}
      */
     defaultScreenReaderSectionFormatter: function () {
-        var chart = this.chart,
-            options = chart.options,
-            chartTypes = chart.types,
-            axesDesc = this.getAxesDescription();
+        var options = this.chart.options;
+        return this.defaultTypeDescriptionHTML(this.chart) +
+            this.defaultSubtitleHTML(options) +
+            this.defaultCaptionHTML(options) +
+            this.defaultAxisDescriptionHTML('xAxis') +
+            this.defaultAxisDescriptionHTML('yAxis');
+    },
 
-        return '<h5>' +
-        (
-            options.accessibility.typeDescription ||
-            chart.getTypeDescription(chartTypes)
-        ) + '</h5>' + (
-            options.subtitle && options.subtitle.text ?
-                '<div>' + this.htmlencode(options.subtitle.text) + '</div>' : ''
-        ) + (
-            options.accessibility.description ?
-                '<div>' + options.accessibility.description + '</div>' : ''
-        ) + (axesDesc.xAxis ? (
-            '<div>' + axesDesc.xAxis + '</div>'
-        ) : '') +
-        (axesDesc.yAxis ? (
-            '<div>' + axesDesc.yAxis + '</div>'
-        ) : '');
+
+    /**
+     * @private
+     * @param {Highcharts.Options} chartOptions
+     * @return {string}
+     */
+    defaultCaptionHTML: function (chartOptions) {
+        var captionOptions = chartOptions.caption,
+            captionText = captionOptions && captionOptions.text,
+            descriptionText = chartOptions.accessibility.description ||
+                captionText;
+        return descriptionText ?
+            makeHTMLTagFromText('div', descriptionText) : '';
+    },
+
+
+    /**
+     * @private
+     * @param {string} axisCollection
+     * @return {string}
+     */
+    defaultAxisDescriptionHTML: function (axisCollection) {
+        var axisDesc = this.getAxesDescription()[axisCollection];
+        return axisDesc ? makeHTMLTagFromText('div', axisDesc) : '';
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.Chart} chart
+     * @returns {string}
+     */
+    defaultTypeDescriptionHTML: function (chart) {
+        return chart.types ?
+            makeHTMLTagFromText(
+                'h5',
+                chart.options.accessibility.typeDescription ||
+                    chart.getTypeDescription(chart.types)
+            ) : '';
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.Options} chartOptions
+     * @return {string}
+     */
+    defaultSubtitleHTML: function (options) {
+        var subtitle = options.subtitle,
+            text = subtitle && subtitle.text;
+        return text ? makeHTMLTagFromText('div', text) : '';
     },
 
 

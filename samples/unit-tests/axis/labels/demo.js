@@ -136,6 +136,38 @@ QUnit.test('Ellipsis (#3941)', function (assert) {
 
 });
 
+QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
+
+    TestTemplate.test('highcharts/bar', {
+        chart: {
+            type: 'bar'
+        },
+        xAxis: [{
+            categories: ['c1', 'c2', 'c3'],
+            reversed: false
+        }, {
+            categories: ['c1', 'c2', 'c3'],
+            linkedTo: 0
+        }],
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [1, 2, 3]
+        }]
+    }, function (template) {
+        var chart = template.chart,
+            axis1 = chart.axes[0],
+            axis2 = chart.axes[1];
+
+        assert.equal(
+            axis1.ticks[0].label.xy.y,
+            axis2.ticks[0].label.xy.y,
+            'Axes should share the same reversed y offset (#7911)'
+        );
+    });
+
+});
+
 QUnit.test('Show last label hiding interrupted by animation (#5332)', function (assert) {
 
     var done = assert.async();
