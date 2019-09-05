@@ -58,6 +58,9 @@ QUnit.test('The title should have correct font-size (#2944)', function (assert) 
         "30px",
         'Font size is 30px'
     );
+
+    // Reset
+    delete Highcharts.defaultOptions.title.style;
 });
 
 QUnit.test('useHTML and title alignment', function (assert) {

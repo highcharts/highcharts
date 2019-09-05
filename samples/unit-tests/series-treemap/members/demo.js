@@ -293,6 +293,7 @@ QUnit.test('traverseUpButton', assert => {
     const after = () => {
         container.removeChild(renderer.box);
         renderer.destroy();
+        delete series.options.traverseUpButton.text;
     };
 
     // Render button when root id is ''

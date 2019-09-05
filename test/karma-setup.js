@@ -203,6 +203,14 @@ if (window.QUnit) {
                 1
             );
 
+            var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
+            if (defaultOptions !== Highcharts.defaultOptionsRaw) {
+                //var msg = 'Default options changed, make sure the test resets options';
+                //console.log(test.test.testName, msg);
+                //QUnit.config.queue.length = 0;
+                //throw new Error(msg);
+            }
+
             var containerStyle = document.getElementById('container').style;
             containerStyle.width = '';
             containerStyle.height = '';
