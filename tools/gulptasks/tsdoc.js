@@ -31,7 +31,9 @@ function task() {
 
     const processLib = require('./lib/process');
 
-    return processLib.exec('cd ts && npx typedoc --out ../' + TARGET_DIRECTORY);
+    return processLib
+        .exec('cd ts && npx typedoc --out ../' + TARGET_DIRECTORY)
+        .then(() => processLib.openAppFor('build/api-internals/index.html'));
     /*
     const generators = require('highcharts-documentation-generators');
     const log = require('./lib/log');
