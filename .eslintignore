@@ -1,3 +1,4 @@
+js/indicators/accumulation-distribution.src.js
 js/indicators/indicators.src.js
 js/mixins/**/*.js
 js/modules/networkgraph/*.js
@@ -21,8 +22,10 @@ js/modules/item-series.src.js
 js/modules/histogram.src.js
 js/modules/map-parser.src.js
 js/modules/no-data-to-display.src.js
+js/modules/offline-exporting.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
+js/modules/organization.src.js
 js/modules/overlapping-datalabels.src.js
 js/modules/sankey.src.js
 js/modules/xrange.src.js

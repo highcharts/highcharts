@@ -4,11 +4,11 @@
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
- *
  *  Simple polyfills for array functions in old IE browsers (6, 7 and 8) in
  *  Highcharts v7+. These polyfills are sufficient for Highcharts to work, but
  *  for fully compatible polyfills, see MDN.
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 /* global document */
