@@ -20,32 +20,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface SeriesTypesDictionary {
-            xrange: typeof XRangeSeries;
-        }
-        interface XRangePartialFillObject extends PositionObject, SizeObject {
-            r?: number;
-        }
-        interface XRangePointLabelObject extends PointLabelObject {
-            x2?: XRangePoint['x2'];
-            yCategory?: XRangePoint['yCategory'];
-        }
-        interface XRangePointOptions extends ColumnPointOptions {
-            partialFill?: XRangePointPartialFillOptions;
-            x2?: number;
-        }
-        interface XRangePointPartialFillOptions {
-            amount?: number;
-            fill?: ColorType;
-            height?: number;
-            width?: number;
-            r?: number;
-            x?: number;
-            y?: number;
-        }
-        interface XRangeSeriesOptions extends ColumnSeriesOptions {
-            partialFill?: XRangePointPartialFillOptions;
-        }
         class XRangePoint extends ColumnPoint {
             public clipRectArgs?: RectangleObject;
             public len?: number;
@@ -88,6 +62,33 @@ declare global {
             public getColumnMetrics(): ColumnMetricsObject;
             public translate(): void;
             public translatePoint(point: XRangePoint): void;
+        }
+        interface SeriesTypesDictionary {
+            xrange: typeof XRangeSeries;
+        }
+        interface XRangePartialFillObject extends PositionObject, SizeObject {
+            r?: number;
+        }
+        interface XRangePointLabelObject extends PointLabelObject {
+            x2?: XRangePoint['x2'];
+            yCategory?: XRangePoint['yCategory'];
+        }
+        interface XRangePointOptions extends ColumnPointOptions {
+            partialFill?: XRangePointPartialFillOptions;
+            x2?: number;
+        }
+        interface XRangePointPartialFillOptions {
+            amount?: number;
+            fill?: ColorType;
+            height?: number;
+            width?: number;
+            r?: number;
+            x?: number;
+            y?: number;
+        }
+        interface XRangeSeriesOptions extends ColumnSeriesOptions {
+            partialFill?: XRangePointPartialFillOptions;
+            states?: SeriesStatesOptionsObject<XRangeSeries>;
         }
     }
 }
@@ -157,7 +158,7 @@ function getColorByCategory(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.XRangeSeriesOptions>('xrange', 'column'
+seriesType<Highcharts.XRangeSeries>('xrange', 'column'
 
     /**
      * The X-range series displays ranges on the X axis, typically time
@@ -259,8 +260,8 @@ seriesType<Highcharts.XRangeSeriesOptions>('xrange', 'column'
         animate: seriesTypes.line.prototype.animate,
         cropShoulder: 1,
         getExtremesFromAll: true,
-        autoIncrement: H.noop,
-        buildKDTree: H.noop,
+        autoIncrement: H.noop as any,
+        buildKDTree: H.noop as any,
 
         /* eslint-disable valid-jsdoc */
 
@@ -602,7 +603,7 @@ seriesType<Highcharts.XRangeSeriesOptions>('xrange', 'column'
                 pfOptions = point.partialFill,
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
                 pointState = point.state,
-                stateOpts: Highcharts.ColumnSeriesStatesHoverOptions = (
+                stateOpts: Highcharts.SeriesStatesHoverOptionsObject = (
                     (seriesOpts.states as any)[pointState || 'normal'] ||
                     {}
                 ),

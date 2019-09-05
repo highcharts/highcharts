@@ -24,18 +24,7 @@ declare global {
         }
         interface CandlestickSeriesOptions extends OHLCSeriesOptions {
             lineColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: CandlestickSeriesStatesOptions;
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface CandlestickSeriesStatesOptions
-            extends OHLCSeriesStatesOptions
-        {
-            hover?: CandlestickSeriesStatesHoverOptions;
-        }
-        interface CandlestickSeriesStatesHoverOptions
-            extends OHLCSeriesStatesHoverOptions
-        {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<CandlestickSeries>;
             upLineColor?: (ColorString|GradientColorObject|PatternObject);
         }
         interface SeriesTypesDictionary {
@@ -186,7 +175,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType(
+seriesType<Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(

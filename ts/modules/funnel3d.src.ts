@@ -21,38 +21,39 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class Funnel3dPoint extends ColumnPoint {
+            public dlBoxRaw: Dictionary<number>;
+            public options: Funnel3dPointOptions;
+            public series: Funnel3dSeries;
+            public shapeType: string;
+            public y: number;
+        }
         class Funnel3dSeries extends ColumnSeries {
-            public pointsClass: typeof Funnel3dPoint;
-            public options: Funnel3dSeriesOptions;
-            public data: Array<Funnel3dPoint>;
-            public points: Array<Funnel3dPoint>;
-            public bindAxes(): void;
-            public translate3dShapes(): void;
-            public getWidthAt(y: number): number;
             public center: Array<number>;
             public centerX: number;
-        }
-        class Funnel3dPoint extends ColumnPoint {
-            public series: Funnel3dSeries;
-            public options: Funnel3dPointOptions;
-            public y: number;
-            public dlBoxRaw: Dictionary<number>;
-            public shapeType: string;
-        }
-        interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
-            data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
-            width?: (number|string);
-            neckWidth?: (number|string);
-            height?: (number|string);
-            neckHeight?: (number|string);
-            reversed?: boolean;
-            gradientForSides?: boolean;
-            ignoreHiddenPoint?: boolean;
+            public data: Array<Funnel3dPoint>;
+            public options: Funnel3dSeriesOptions;
+            public pointsClass: typeof Funnel3dPoint;
+            public points: Array<Funnel3dPoint>;
+            public bindAxes(): void;
+            public getWidthAt(y: number): number;
+            public translate3dShapes(): void;
         }
         interface Funnel3dPointOptions extends ColumnPointOptions {
             gradientForSides?: boolean;
             dlBox?: BBoxObject;
             y?: number;
+        }
+        interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
+            data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
+            gradientForSides?: boolean;
+            height?: (number|string);
+            ignoreHiddenPoint?: boolean;
+            neckHeight?: (number|string);
+            neckWidth?: (number|string);
+            reversed?: boolean;
+            states?: SeriesStatesOptionsObject<Funnel3dSeries>;
+            width?: (number|string);
         }
         interface SVGElement {
             finishedOnAdd?: boolean;
@@ -116,7 +117,7 @@ var charts = H.charts,
  * @constructor seriesTypes.funnel3d
  * @augments seriesTypes.column
  */
-seriesType<Highcharts.Funnel3dSeriesOptions>('funnel3d', 'column',
+seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
      * A funnel3d is a 3d version of funnel series type. Funnel charts are
      * a type of chart often used to visualize stages in a sales project,
@@ -234,7 +235,7 @@ seriesType<Highcharts.Funnel3dSeriesOptions>('funnel3d', 'column',
             });
         },
 
-        translate3dShapes: H.noop,
+        translate3dShapes: H.noop as any,
 
         translate: function (this: Highcharts.Funnel3dSeries): void {
             H.Series.prototype.translate.apply(this, arguments);

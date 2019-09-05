@@ -18,15 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface MapLinePointOptions extends MapPointOptions {
-
-        }
-        interface MapLineSeriesOptions extends MapSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface SeriesTypesDictionary {
-            mapline: typeof MapLineSeries;
-        }
         class MapLinePoint extends MapPoint {
             public options: MapLinePointOptions;
             public series: MapLineSeries;
@@ -45,6 +36,15 @@ declare global {
                 state: string
             ): SVGAttributes;
         }
+        interface MapLinePointOptions extends MapPointOptions {
+        }
+        interface MapLineSeriesOptions extends MapSeriesOptions {
+            fillColor?: ColorType;
+            states?: SeriesStatesOptionsObject<MapLineSeries>;
+        }
+        interface SeriesTypesDictionary {
+            mapline: typeof MapLineSeries;
+        }
     }
 }
 
@@ -62,7 +62,7 @@ var seriesType = H.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapLineSeriesOptions>(
+seriesType<Highcharts.MapLineSeries>(
     'mapline',
     'map',
 

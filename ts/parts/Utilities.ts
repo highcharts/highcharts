@@ -295,12 +295,12 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TOptions extends SeriesOptions>(
+        function seriesType<TSeries extends Series>(
             type: string,
             parent: string,
-            options: TOptions,
-            props?: Dictionary<any>,
-            pointProps?: Dictionary<any>
+            options: TSeries['options'],
+            props?: Partial<TSeries>,
+            pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
@@ -3205,12 +3205,12 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (
+H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
-    options: Highcharts.SeriesOptionsType,
-    props?: Highcharts.Dictionary<any>,
-    pointProps?: Highcharts.Dictionary<any>
+    options: TSeries['options'],
+    props?: Partial<TSeries>,
+    pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;

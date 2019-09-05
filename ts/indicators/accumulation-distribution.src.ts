@@ -15,22 +15,13 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface AdIndicatorOptions extends SmaIndicatorOptions {
-            params?: AdIndicatorParamsOptions;
-        }
-
-        interface AdIndicatorParamsOptions
-            extends SmaIndicatorParamsOptions {
-            volumeSeriesID?: string;
-        }
-
         class AdIndicator extends SmaIndicator {
-            public pointClass: typeof AdIndicatorPoint;
-            public options: AdIndicatorOptions;
             public data: Array<AdIndicatorPoint>;
-            public points: Array<AdIndicatorPoint>;
-            public nameComponents: Array<string>;
             public nameBase: string;
+            public nameComponents: Array<string>;
+            public options: AdIndicatorOptions;
+            public pointClass: typeof AdIndicatorPoint;
+            public points: Array<AdIndicatorPoint>;
             public getValues(
                 series: Series,
                 params: AdIndicatorParamsOptions
@@ -39,6 +30,14 @@ declare global {
 
         class AdIndicatorPoint extends SmaIndicatorPoint {
             public series: AdIndicator
+        }
+
+        interface AdIndicatorOptions extends SmaIndicatorOptions {
+            params?: AdIndicatorParamsOptions;
+        }
+
+        interface AdIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+            volumeSeriesID?: string;
         }
 
         interface SeriesTypesDictionary {
@@ -84,7 +83,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AdIndicatorOptions>('ad', 'sma',
+seriesType<Highcharts.AdIndicator>('ad', 'sma',
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.

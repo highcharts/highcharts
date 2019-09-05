@@ -31,7 +31,6 @@ declare global {
             public series: OrganizationSeries;
         }
         class OrganizationSeries extends SankeySeries implements NodesSeries {
-            public createNode: (id: string) => NodesPoint;
             public data: Array<OrganizationPoint>;
             public options: OrganizationSeriesOptions;
             public pointClass: typeof OrganizationPoint;
@@ -41,6 +40,7 @@ declare global {
                 dataLabel: SVGElement,
                 options: OrganizationDataLabelsOptionsObject
             ): void;
+            public createNode: (id: string) => NodesPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
                 path: Array<SVGPathArray>,
@@ -109,7 +109,7 @@ declare global {
             linkLineWidth?: number;
             linkRadius?: number;
             nodes?: Array<OrganizationSeriesNodeOptions>;
-            states?: Dictionary<OrganizationSeriesOptions>;
+            states?: SeriesStatesOptionsObject<OrganizationSeries>;
         }
         interface SeriesTypesDictionary {
             organization: typeof OrganizationSeries;
@@ -160,7 +160,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.OrganizationSeriesOptions>(
+H.seriesType<Highcharts.OrganizationSeries>(
     'organization',
     'sankey',
     /**

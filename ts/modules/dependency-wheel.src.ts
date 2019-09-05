@@ -25,6 +25,7 @@ declare global {
         }
         interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
             startAngle?: number;
+            states?: SeriesStatesOptionsObject<DependencyWheelSeries>;
         }
         interface SeriesTypesDictionary {
             dependencywheel: typeof DependencyWheelSeries;
@@ -77,7 +78,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.DependencyWheelSeriesOptions>(
+H.seriesType<Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**

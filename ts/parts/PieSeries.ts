@@ -66,18 +66,13 @@ declare global {
             minSize?: (number|string);
             size?: (number|string|null);
             startAngle?: number;
-            states?: PieSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<PieSeries>;
         }
         interface PieSeriesPositionObject extends PositionObject {
             alignment: AlignValue;
         }
-        interface PieSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
+        interface SeriesStatesHoverOptionsObject {
             brightness?: number;
-        }
-        interface PieSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: PieSeriesStatesHoverOptions;
         }
         interface PlotSeriesOptions {
             center?: PieSeriesOptions['center'];
@@ -340,7 +335,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PieSeriesOptions>(
+seriesType<Highcharts.PieSeries>(
     'pie',
     'line',
 
@@ -1238,7 +1233,7 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @deprecated
          * @function Highcharts.seriesTypes.pie#searchPoint
          */
-        searchPoint: noop,
+        searchPoint: noop as any,
 
         /**
          * Utility for sorting data labels
@@ -1288,13 +1283,13 @@ seriesType<Highcharts.PieSeriesOptions>(
          * @private
          * @function Highcharts.seriesTypes.pie#getSymbol
          */
-        getSymbol: noop,
+        getSymbol: noop as any,
 
         /**
          * @private
          * @type {null}
          */
-        drawGraph: null
+        drawGraph: null as any
 
     },
     /**
