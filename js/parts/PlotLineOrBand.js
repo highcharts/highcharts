@@ -929,7 +929,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      * @function Highcharts.Axis#addPlotBandOrLine
      *
-     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
      *        The plotBand or plotLine configuration object.
      *
      * @param {"plotBands"|"plotLines"} [coll]
@@ -941,8 +941,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
-                userOptions[coll] = userOptions[coll] || [];
-                userOptions[coll].push(options);
+                // Workaround Microsoft/TypeScript issue #32693
+                var updatedOptions = (userOptions[coll] || []);
+                updatedOptions.push(options);
+                userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
         }

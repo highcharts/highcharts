@@ -3,4 +3,5 @@
  authors:
    - Sebastian Bochan
  js_wrap: b
+ alt_text: Highcharts pareto chart JavaScript example visualizes percentage restaurant complaints by combining line and vertical bar graphs.
 ...

@@ -173,7 +173,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
         return;
     }
     for (transform in transforms) {
-        if (Object.prototype.hasOwnProperty.call(transforms, transform) &&
+        if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
             pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
             return this.transformToLatLon(point, transforms[transform]);
@@ -209,7 +209,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
         };
     }
     for (transform in transforms) {
-        if (Object.prototype.hasOwnProperty.call(transforms, transform) &&
+        if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);
             if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {

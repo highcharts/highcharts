@@ -117,7 +117,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-var seriesType = H.seriesType, Series = H.Series, Point = H.Point, pick = H.pick, addEvent = H.addEvent, Chart = H.Chart, color = H.Color, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var seriesType = H.seriesType, Series = H.Series, Point = H.Point, pick = H.pick, addEvent = H.addEvent, fireEvent = H.fireEvent, Chart = H.Chart, color = H.Color, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
@@ -274,8 +274,9 @@ seriesType('packedbubble', 'bubble',
  *         Split packed bubble chart
 
  * @extends      plotOptions.bubble
- * @excluding    connectEnds, connectNulls, jitter, keys, pointPlacement,
- *               sizeByAbsoluteValue, step, xAxis, yAxis, zMax, zMin
+ * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
+ *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
+ *               zMax, zMin
  * @product      highcharts
  * @since        7.0.0
  * @optionparent plotOptions.packedbubble
@@ -586,7 +587,7 @@ seriesType('packedbubble', 'bubble',
             else {
                 series.graph.hide();
                 series.parentNodeLayout
-                    .removeNode(series.parentNode);
+                    .removeElementFromCollection(series.parentNode, series.parentNodeLayout.nodes);
                 if (series.parentNode.dataLabel) {
                     series.parentNode.dataLabel.hide();
                 }
@@ -594,11 +595,11 @@ seriesType('packedbubble', 'bubble',
         }
         else if (series.layout) {
             if (series.visible) {
-                series.layout.addNodes(series.points);
+                series.layout.addElementsToCollection(series.points, series.layout.nodes);
             }
             else {
                 series.points.forEach(function (node) {
-                    series.layout.removeNode(node);
+                    series.layout.removeElementFromCollection(node, series.layout.nodes);
                 });
             }
         }
@@ -698,15 +699,12 @@ seriesType('packedbubble', 'bubble',
             width: series.parentNodeRadius * 2,
             height: series.parentNodeRadius * 2
         }, parentOptions);
-        if (!series.graph) {
+        if (!series.parentNode.graphic) {
             series.graph = series.parentNode.graphic =
                 chart.renderer.symbol(parentOptions.symbol)
-                    .attr(parentAttribs)
                     .add(series.parentNodesGroup);
         }
-        else {
-            series.graph.attr(parentAttribs);
-        }
+        series.parentNode.graphic.attr(parentAttribs);
     },
     /**
      * Creating parent nodes for split series, in which all the bubbles
@@ -748,8 +746,8 @@ seriesType('packedbubble', 'bubble',
                 parentNode.plotY = series.parentNode.plotY;
             }
             series.parentNode = parentNode;
-            parentNodeLayout.addSeries(series);
-            parentNodeLayout.addNodes([parentNode]);
+            parentNodeLayout.addElementsToCollection([series], parentNodeLayout.series);
+            parentNodeLayout.addElementsToCollection([parentNode], parentNodeLayout.nodes);
         }
     },
     /**
@@ -799,8 +797,8 @@ seriesType('packedbubble', 'bubble',
             node.collisionNmb = 1;
         });
         layout.setArea(0, 0, series.chart.plotWidth, series.chart.plotHeight);
-        layout.addSeries(series);
-        layout.addNodes(series.points);
+        layout.addElementsToCollection([series], layout.series);
+        layout.addElementsToCollection(series.points, layout.nodes);
     },
     /**
      * Function responsible for adding all the layouts to the chart.
@@ -865,6 +863,7 @@ seriesType('packedbubble', 'bubble',
         if (useSimulation) {
             series.deferLayout();
         }
+        fireEvent(series, 'afterTranslate');
     },
     /**
      * Check if two bubbles overlaps.
@@ -1162,7 +1161,7 @@ seriesType('packedbubble', 'bubble',
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
-                            layout.removeNode(point);
+                            layout.removeElementFromCollection(point, layout.nodes);
                             point.remove();
                         }
                     }
@@ -1172,8 +1171,14 @@ seriesType('packedbubble', 'bubble',
         }
     },
     destroy: function () {
+        // Remove the series from all layouts series collections #11469
+        if (this.chart.graphLayoutsLookup) {
+            this.chart.graphLayoutsLookup.forEach(function (layout) {
+                layout.removeElementFromCollection(this, layout.series);
+            }, this);
+        }
         if (this.parentNode) {
-            this.parentNodeLayout.removeNode(this.parentNode);
+            this.parentNodeLayout.removeElementFromCollection(this.parentNode, this.parentNodeLayout.nodes);
             if (this.parentNode.dataLabel) {
                 this.parentNode.dataLabel =
                     this.parentNode.dataLabel.destroy();
@@ -1191,7 +1196,7 @@ seriesType('packedbubble', 'bubble',
      */
     destroy: function () {
         if (this.series.layout) {
-            this.series.layout.removeNode(this);
+            this.series.layout.removeElementFromCollection(this, this.series.layout.nodes);
         }
         return Point.prototype.destroy.apply(this, arguments);
     }

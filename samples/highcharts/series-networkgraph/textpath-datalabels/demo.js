@@ -1,37 +1,42 @@
 Highcharts.addEvent(
-    Highcharts.seriesTypes.networkgraph,
+    Highcharts.Series,
     'afterSetOptions',
     function (e) {
         var colors = Highcharts.getOptions().colors,
             i = 0,
             nodes = {};
-        e.options.data.forEach(function (link) {
+        if (
+            this instanceof Highcharts.seriesTypes.networkgraph &&
+            e.options.id === 'language-tree'
+        ) {
+            e.options.data.forEach(function (link) {
 
-            if (link[0] === 'Proto Indo-European') {
-                nodes['Proto Indo-European'] = {
-                    id: 'Proto Indo-European',
-                    marker: {
-                        radius: 28
-                    }
-                };
-                nodes[link[1]] = {
-                    id: link[1],
-                    marker: {
-                        radius: 18
-                    },
-                    color: colors[i++]
-                };
-            } else if (nodes[link[0]] && nodes[link[0]].color) {
-                nodes[link[1]] = {
-                    id: link[1],
-                    color: nodes[link[0]].color
-                };
-            }
-        });
+                if (link[0] === 'Proto Indo-European') {
+                    nodes['Proto Indo-European'] = {
+                        id: 'Proto Indo-European',
+                        marker: {
+                            radius: 28
+                        }
+                    };
+                    nodes[link[1]] = {
+                        id: link[1],
+                        marker: {
+                            radius: 18
+                        },
+                        color: colors[i++]
+                    };
+                } else if (nodes[link[0]] && nodes[link[0]].color) {
+                    nodes[link[1]] = {
+                        id: link[1],
+                        color: nodes[link[0]].color
+                    };
+                }
+            });
 
-        e.options.nodes = Object.keys(nodes).map(function (id) {
-            return nodes[id];
-        });
+            e.options.nodes = Object.keys(nodes).map(function (id) {
+                return nodes[id];
+            });
+        }
     }
 );
 
@@ -41,7 +46,7 @@ Highcharts.chart('container', {
         marginTop: 80
     },
     title: {
-        text: 'The Indo-European Laungauge Tree'
+        text: 'The Indo-European Language Tree'
     },
     subtitle: {
         text: 'A Force-Directed Network Graph in Highcharts'
@@ -57,6 +62,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
+        id: 'language-tree',
         marker: {
             radius: 13
         },

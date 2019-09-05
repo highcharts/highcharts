@@ -251,3 +251,42 @@ QUnit.test('Markers', function (assert) {
         );
     });
 });
+
+QUnit.test('Layout operations', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'networkgraph'
+        },
+        series: [{
+            marker: {
+                radius: 35
+            },
+            data: [{
+                from: 'n1',
+                to: 'n2'
+            }, {
+                from: 'n2',
+                to: 'n3'
+            }]
+        }, {
+            marker: {
+                radius: 35
+            },
+            data: [{
+                from: 'n1',
+                to: 'n2'
+            }, {
+                from: 'n2',
+                to: 'n3'
+            }]
+        }]
+    });
+
+    chart.series[1].remove();
+
+    assert.strictEqual(
+        chart.series[0].layout.series.length,
+        chart.series.length,
+        'Series is removed from layout.series collection.'
+    );
+});

@@ -2568,7 +2568,7 @@ addEvent(
 
                     // Merge series configs
                     if (
-                        Object.prototype.hasOwnProperty.call(
+                        Object.hasOwnProperty.call(
                             userOptions,
                             'series'
                         )

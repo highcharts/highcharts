@@ -48,10 +48,7 @@ declare global {
                 complete?: any,
                 continueAnimation?: any
             ): SVGElement;
-            fillSetter(
-                this: SVGElement,
-                fill: (ColorString|GradientColorObject|PatternObject)
-            ): SVGElement;
+            fillSetter(this: SVGElement, fill: ColorType): SVGElement;
         }
         interface CuboidPathsObject extends SVGPath3dObject {
             front: SVGPathArray;
@@ -69,7 +66,7 @@ declare global {
         }
         interface Elements3dObject {
             base: Element3dMethodsObject;
-            cuboid: (CuboidMethodsObject&Element3dMethodsObject);
+            cuboid: CuboidMethodsObject;
         }
         interface SVGPath3dObject {
             back?: SVGPathArray;
@@ -571,11 +568,7 @@ cuboidMethods = H.merge(element3dMethods, {
     },
     fillSetter: function (
         this: Highcharts.SVGElement,
-        fill: (
-            Highcharts.ColorString|
-            Highcharts.GradientColorObject|
-            Highcharts.PatternObject
-        )
+        fill: Highcharts.ColorType
     ): Highcharts.SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
@@ -909,11 +902,7 @@ H.SVGRenderer.prototype.arc3d = function (
      */
     wrapper.fillSetter = function (
         this: Highcharts.SVGElement,
-        value: (
-            Highcharts.ColorString|
-            Highcharts.GradientColorObject|
-            Highcharts.PatternObject
-        )
+        value: Highcharts.ColorType
     ): Highcharts.SVGElement {
         var darker = color(value).brighten(-0.1).get();
 

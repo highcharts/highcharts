@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {
@@ -8,6 +8,7 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
                 load: function () {
                     this.addSeries({
                         type: 'mappoint',
+                        colorAxis: false,
                         data: [{
                             x: 200,
                             y: -1100,

@@ -79,7 +79,7 @@ seriesType(
      *         Treemap
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker, jitter
+     * @excluding    dragDrop, marker, jitter
      * @product      highcharts
      * @optionparent plotOptions.treemap
      */
@@ -536,6 +536,8 @@ seriesType(
          */
         borderWidth: 1,
 
+        colorKey: 'colorValue',
+
         /**
          * The opacity of a point in treemap. When a point has children, the
          * visibility of the children is determined by the opacity.
@@ -662,13 +664,11 @@ seriesType(
         },
         init: function (chart, options) {
             var series = this,
-                colorSeriesMixin = H.colorSeriesMixin;
+                colorMapSeriesMixin = H.colorMapSeriesMixin;
 
             // If color series logic is loaded, add some properties
-            if (H.colorSeriesMixin) {
-                this.translateColors = colorSeriesMixin.translateColors;
-                this.colorAttribs = colorSeriesMixin.colorAttribs;
-                this.axisTypes = colorSeriesMixin.axisTypes;
+            if (colorMapSeriesMixin) {
+                this.colorAttribs = colorMapSeriesMixin.colorAttribs;
             }
 
             // Handle deprecated options.
@@ -1237,9 +1237,7 @@ seriesType(
             series.calculateChildrenAreas(tree, seriesArea);
 
             // Logic for point colors
-            if (series.colorAxis) {
-                series.translateColors();
-            } else if (!options.colorByPoint) {
+            if (!series.colorAxis && !options.colorByPoint) {
                 series.setColorRecursive(series.tree);
             }
 

@@ -98,9 +98,11 @@ class TestUtilities {
     /**
      * Convenient wrapper for installing lolex and bypassing
      * requestAnimationFrame. Returns a clock object.
+     *
+     * @param lolexConfig
+     *        Config supplied to lolex.install
      */
-    private static lolexInstall (): (LolexClock|undefined) {
-
+    private static lolexInstall (lolexConfig?: any): (LolexClock|undefined) {
         if (!lolex) {
             return;
         }
@@ -113,7 +115,7 @@ class TestUtilities {
         // Abort running animations, otherwise they will take over
         (Highcharts as any).timers.length = 0;
 
-        return lolex.install();
+        return lolex.install(lolexConfig);
     }
 
     /**

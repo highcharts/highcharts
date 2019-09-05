@@ -16,3 +16,8 @@
     font-style: italic;
     fill: #7cb5ec;
 }
+.highcharts-caption {
+    font-family: 'Courier New', monospace;
+    font-style: italic;
+    fill: green;
+}

@@ -40,6 +40,15 @@ declare global {
                 redraw?: boolean,
                 animation?: boolean
             ): Axis;
+            addColorAxis(
+                options: AxisOptions,
+                redraw?: boolean,
+                animation?: boolean
+            ): Axis;
+            createAxis(
+                type: string,
+                options: CreateAxisOptionsObject
+            ): Axis|ColorAxis;
             addSeries(
                 options: SeriesOptionsType,
                 redraw?: boolean,
@@ -59,6 +68,11 @@ declare global {
             animation: (boolean|AnimationOptionsObject);
             options: Options;
             redraw: boolean;
+        }
+        interface CreateAxisOptionsObject {
+            animation: undefined | boolean | AnimationOptionsObject;
+            axis: AxisOptions | ColorAxisOptions;
+            redraw: undefined | boolean;
         }
         interface Point {
             touched?: boolean;
@@ -277,19 +291,96 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         redraw?: boolean,
         animation?: boolean
     ): Highcharts.Axis {
-        var key = isX ? 'xAxis' : 'yAxis',
-            chartOptions = this.options,
-            userOptions = merge(options, {
-                index: (this as any)[key].length,
-                isX: isX
+        return this.createAxis(
+            isX ? 'xAxis' : 'yAxis',
+            { axis: options, redraw: redraw, animation: animation }
+        );
+    },
+
+    /**
+     * Add a color axis to the chart after render time. Note that this method
+     * should never be used when adding data synchronously at chart render time,
+     * as it adds expense to the calculations and rendering. When adding data at
+     * the same time as the chart is initialized, add the axis as a
+     * configuration option instead.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Chart#addColorAxis
+     *
+     * @param {Highcharts.ColorAxisOptions} options
+     *        The axis options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after adding.
+     *
+     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     *        Whether and how to apply animation in the redraw.
+     *
+     * @return {Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    addColorAxis: function (
+        this: Highcharts.Chart,
+        options: Highcharts.ColorAxisOptions,
+        redraw?: boolean,
+        animation?: boolean
+    ): Highcharts.Axis {
+        return this.createAxis(
+            'colorAxis',
+            { axis: options, redraw: redraw, animation: animation }
+        );
+    },
+
+    /**
+     * Factory for creating different axis types.
+     *
+     * @private
+     * @function Highcharts.Chart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {...Array<*>} arguments
+     *        All arguments for the constructor.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    createAxis: function (
+        this: Highcharts.Chart,
+        type: string,
+        options: Highcharts.CreateAxisOptionsObject
+    ): Highcharts.Axis {
+        var chartOptions = this.options,
+            isColorAxis = type === 'colorAxis',
+            axisOptions = options.axis,
+            redraw = options.redraw,
+            animation = options.animation,
+            userOptions = merge(axisOptions, {
+                index: (this as any)[type].length,
+                isX: type === 'xAxis'
             }),
             axis;
 
-        axis = new Axis(this, userOptions);
+        if (isColorAxis) {
+            axis = new H.ColorAxis(this, userOptions);
+
+        } else {
+            axis = new Axis(this, userOptions);
+        }
 
         // Push the new axis options to the chart options
-        (chartOptions as any)[key] = splat((chartOptions as any)[key] || {});
-        (chartOptions as any)[key].push(userOptions);
+        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
+        (chartOptions as any)[type].push(userOptions);
+
+        if (isColorAxis) {
+            this.isDirtyLegend = true;
+            this.series.forEach(function (series: Highcharts.Series): void {
+                series.bindAxes();
+            });
+        }
 
         if (pick(redraw, true)) {
             this.redraw(animation);
@@ -477,8 +568,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'series',
         'colorAxis',
+        'series',
         'pane'
     ],
 
@@ -550,7 +641,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             adders = {
                 credits: 'addCredits',
                 title: 'setTitle',
-                subtitle: 'setSubtitle'
+                subtitle: 'setSubtitle',
+                caption: 'setCaption'
             } as Highcharts.Dictionary<string>,
             optionsChart,
             updateAllAxes,
@@ -828,9 +920,32 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     setSubtitle: function (
         this: Highcharts.Chart,
-        options: Highcharts.SubtitleOptions
+        options: Highcharts.SubtitleOptions,
+        redraw?: boolean
     ): void {
-        this.setTitle(undefined, options);
+        this.applyDescription('subtitle', options);
+        this.layOutTitles(redraw);
+    },
+
+    /**
+     * Set the caption options. This can also be done from {@link
+     * Chart#update}.
+     *
+     * @function Highcharts.Chart#setCaption
+     *
+     * @param {Highcharts.CaptionOptions} options
+     *        New caption options. The caption text itself is set by the
+     *        `options.text` property.
+     *
+     * @return {void}
+     */
+    setCaption: function (
+        this: Highcharts.Chart,
+        options: Highcharts.CaptionOptions,
+        redraw?: boolean
+    ): void {
+        this.applyDescription('caption', options);
+        this.layOutTitles(redraw);
     }
 
 });
@@ -847,6 +962,7 @@ Chart.prototype.collectionsWithInit = {
     // collectionName: [ initializingMethod, [extraArguments] ]
     xAxis: [Chart.prototype.addAxis, [true]],
     yAxis: [Chart.prototype.addAxis, [false]],
+    colorAxis: [Chart.prototype.addColorAxis, [false]],
     series: [Chart.prototype.addSeries]
 };
 

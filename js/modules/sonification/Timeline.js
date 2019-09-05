@@ -50,7 +50,7 @@ import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var splat = U.splat;
 
-import utilities from 'utilities.js';
+import utilities from './utilities.js';
 
 
 /**

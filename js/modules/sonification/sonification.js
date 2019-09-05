@@ -11,13 +11,13 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import Instrument from 'Instrument.js';
-import instruments from 'instrumentDefinitions.js';
-import Earcon from 'Earcon.js';
-import pointSonifyFunctions from 'pointSonify.js';
-import chartSonifyFunctions from 'chartSonify.js';
-import utilities from 'utilities.js';
-import TimelineClasses from 'Timeline.js';
+import Instrument from './Instrument.js';
+import instruments from './instrumentDefinitions.js';
+import Earcon from './Earcon.js';
+import pointSonifyFunctions from './pointSonify.js';
+import chartSonifyFunctions from './chartSonify.js';
+import utilities from './utilities.js';
+import TimelineClasses from './Timeline.js';
 
 // Expose on the Highcharts object
 

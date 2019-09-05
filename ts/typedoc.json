@@ -6,7 +6,8 @@
     "ignoreCompilerErrors": false,
     "includeDeclarations": false,
     "gitRevision": "master",
-    "mode": "file",
+    "mode": "modules",
     "name": "Highcharts Internals",
-    "plugin": "none"
+    "plugin": "none",
+    "theme": "../node_modules/highcharts-documentation-generators/typedoc/theme-internals"
 }

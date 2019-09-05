@@ -223,36 +223,24 @@ declare global {
  * Fires when the mouse leaves the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOut
- * @type {Highcharts.PointMouseOutCallbackFunction}
+ * @type {Highcharts.PointMouseOutCallbackFunction|undefined}
  *//**
  * Fires when the mouse enters the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOver
- * @type {Highcharts.PointMouseOverCallbackFunction}
+ * @type {Highcharts.PointMouseOverCallbackFunction|undefined}
  *//**
  * Fires when the point is removed using the `.remove()` method. One parameter,
  * `event`, is passed to the function. Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#remove
- * @type {Highcharts.PointRemoveCallbackFunction}
- *//**
- * Fires when the point is selected either programmatically or following a click
- * on the point. One parameter, `event`, is passed to the function. Returning
- * `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
- *//**
- * Fires when the point is unselected either programmatically or following a
- * click on the point. One parameter, `event`, is passed to the function.
- * Returning `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointRemoveCallbackFunction|undefined}
  *//**
  * Fires when the point is updated programmatically through the `.update()``
  * method. One parameter, `event`, is passed to the function. The new point
  * options can be accessed through event.options. Returning `false` cancels the
  * operation.
  * @name Highcharts.PointEventsOptionsObject#update
- * @type {Highcharts.PointUpdateCallbackFunction}
+ * @type {Highcharts.PointUpdateCallbackFunction|undefined}
  */
 
 /**
@@ -447,10 +435,9 @@ declare global {
  * @name Highcharts.PointOptionsObject#drilldown
  * @type {string|undefined}
  *//**
- * The id of a series in the drilldown.series array to use for a drilldown for
- * this point.
+ * The individual point events.
  * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PointEventsOptionsObject}
+ * @type {Highcharts.PointEventsOptionsObject|undefined}
  *//**
  * An id for the point. This can be used after render time to get a pointer to
  * the point object through `chart.get()`.
@@ -459,7 +446,7 @@ declare global {
  *//**
  * Options for the point markers of line-like series.
  * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PointMarkerOptionsObject}
+ * @type {Highcharts.PointMarkerOptionsObject|undefined}
  *//**
  * The name of the point as shown in the legend, tooltip, dataLabels etc.
  * @name Highcharts.PointOptionsObject#name

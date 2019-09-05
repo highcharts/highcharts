@@ -61,12 +61,14 @@ Highcharts.setOptions({
         // has the same layout option: layoutAlgorithm.
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         },
         packedbubble: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         }
 
@@ -86,6 +88,23 @@ Highcharts.setOptions({
 
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
+Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
+    if (window.JSONSources[url]) {
+        callback(window.JSONSources[url]);
+    } else {
+        console.log('@getJSON: Loading over network', url);
+        return proceed.call(Highcharts, url, function (data) {
+            window.JSONSources[url] = data;
+            callback(data);
+        });
+    }
+});
+
+
+// Handle wrapping, reset functions that are wrapped in the visual samples to
+// prevent the wraps from piling up downstream.
+var origWrap = Highcharts.wrap;
+var wrappedFunctions = [];
 
 if (window.QUnit) {
     /*
@@ -130,6 +149,13 @@ if (window.QUnit) {
 
             // Reset randomizer
             Math.randomCursor = 0;
+
+            // Wrap the wrap function
+            Highcharts.wrap = function (ob, prop, fn) {
+                // Push original function
+                wrappedFunctions.push([ob, prop, ob[prop]]);
+                origWrap(ob, prop, fn);
+            };
         },
 
         afterEach: function (test) {
@@ -168,6 +194,17 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Unwrap/reset wrapped functions
+            while (wrappedFunctions.length) {
+                //const [ ob, prop, fn ] = wrappedFunctions.pop();
+                var args = wrappedFunctions.pop(),
+                    ob = args[0],
+                    prop = args[1],
+                    fn = args[2];
+                ob[prop] = fn;
+            }
+            Highcharts.wrap = origWrap;
         }
     });
 }
@@ -179,12 +216,28 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver();
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
+            chart.series[0].points;
+
+        if (points) {
+            for (var i = 0; i < points.length; i++) {
+                if (
+                    points[i] &&
+                    !points[i].isNull &&
+                    !( // Map point with no extent, like Aruba
+                        points[i].shapeArgs &&
+                        points[i].shapeArgs.d &&
+                        points[i].shapeArgs.d.length === 0
+                    ) &&
+                    typeof points[i].onMouseOver === 'function'
+                ) {
+                    points[i].onMouseOver();
+                    break;
+                }
+            }
+        }
     }
 };
 
@@ -199,6 +252,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -234,6 +295,23 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 }
 
 /**
+ * Vanilla request for fetching an url using GET.
+ * @param {String} url to fetch
+ * @param {Function} callback to call when done.
+ */
+function xhrLoad(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+}
+
+/**
  * Get a PNG image or image data from the chart SVG.
  * @param  {Object} chart The chart instance
  * @param  {String} path  The sample path
@@ -251,6 +329,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
 
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
+
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
@@ -262,7 +344,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        new Error('Error loading SVG on canvas')
+                        new Error('Error loading SVG on canvas.')
                     );
                 };
                 img.src = url;
@@ -303,23 +385,26 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        // Handle reference, load SVG from file
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
+        // Handle reference, load SVG from bucket or file
+        var url = 'base/samples/' + path + '/reference.svg';
+        if (remotelocation) {
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
+        }
+        xhrLoad(url, function onXHRDone(xhr) {
+            if (xhr.status == 200) {
                 var svg = xhr.responseText;
-
                 svgToPixels(svg, function (data) {
                     referenceData = data;
                     doComparison();
-                });
+                })
+            } else {
+                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
+                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
+                resolve();
             }
-        };
-        xhr.send();
-
+        });
     });
-
 }
 
 // De-randomize Math.random in tests

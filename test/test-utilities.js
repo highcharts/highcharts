@@ -38,8 +38,11 @@ var TestUtilities = /** @class */ (function () {
     /**
      * Convenient wrapper for installing lolex and bypassing
      * requestAnimationFrame. Returns a clock object.
+     *
+     * @param lolexConfig
+     *        Config supplied to lolex.install
      */
-    TestUtilities.lolexInstall = function () {
+    TestUtilities.lolexInstall = function (lolexConfig) {
         if (!lolex) {
             return;
         }
@@ -48,7 +51,7 @@ var TestUtilities = /** @class */ (function () {
         win.requestAnimationFrame = null;
         // Abort running animations, otherwise they will take over
         Highcharts.timers.length = 0;
-        return lolex.install();
+        return lolex.install(lolexConfig);
     };
     /**
      * Convenient wrapper for uninstalling lolex.

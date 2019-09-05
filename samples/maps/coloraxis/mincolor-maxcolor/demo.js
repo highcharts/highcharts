@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
     Highcharts.mapChart('container', {
@@ -19,7 +19,9 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
             max: 1000,
             type: 'logarithmic',
             minColor: '#efecf3',
-            maxColor: '#990041'
+            maxColor: '#990041',
+            lineColor: 'green',
+            lineWidth: 10
         },
 
         legend: {

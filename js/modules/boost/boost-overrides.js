@@ -356,7 +356,7 @@ Series.prototype.enterBoost = function () {
         this.alteredByBoost.push({
             prop: prop,
             val: this[prop],
-            own: this.hasOwnProperty(prop)
+            own: Object.hasOwnProperty.call(this, prop)
         });
     }, this);
 

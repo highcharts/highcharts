@@ -4,8 +4,8 @@ Highcharts.chart('container-column', {
         type: 'column'
     },
 
-    accessibility: {
-        description: 'Disability types of the survey respondents. Blindness and low vision are by far the most common, with 75.8% and 20.4% of respondents respectively.'
+    caption: {
+        text: 'Disability types of the survey respondents. Blindness and low vision are by far the most common, with 75.8% and 20.4% of respondents respectively.'
     },
 
     title: {
@@ -73,8 +73,8 @@ function clearHighlight(chart) {
 }
 
 var chart = Highcharts.chart('container-line', {
-    accessibility: {
-        description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
+    caption: {
+        text: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
     },
     chart: {
         type: 'spline'
@@ -210,8 +210,8 @@ Highcharts.chart('container-pie', {
         type: 'pie'
     },
 
-    accessibility: {
-        description: 'Most commonly used desktop and laptop screen readers as reported in the 2017 Webaim Survey. Shown as percentage of respondents. JAWS is the most used screen reader, with 46.6% of respondents using it. NVDA and VoiceOver follow with almost 32% and 12% respectively.'
+    caption: {
+        text: 'Most commonly used desktop and laptop screen readers as reported in the 2017 Webaim Survey. Shown as percentage of respondents. JAWS is the most used screen reader, with 46.6% of respondents using it. NVDA and VoiceOver follow with almost 32% and 12% respectively.'
     },
 
     title: {

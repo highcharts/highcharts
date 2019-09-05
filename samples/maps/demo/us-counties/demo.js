@@ -1,4 +1,4 @@
-$.getJSON(
+Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c116b6fa6948448/samples/data/us-counties-unemployment.json',
     function (data) {
 

@@ -37,7 +37,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        headerFormat: '<b>{point.x} degrees</b><br>'
+        headerFormat: '<b>{point.x} degrees</b><br>'
     },
 
     series: [{

@@ -2,8 +2,9 @@ var chart = Highcharts.chart('container', {
     chart: {
         polar: true
     },
-    accessibility: {
-        description: 'Test chart displaying a polar chart concept.'
+    caption: {
+        text: 'Test chart displaying a polar chart concept.',
+        align: 'center'
     },
     title: {
         text: 'Budget vs spending',

@@ -11,8 +11,8 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var defined = U.defined;
-import 'integrations.js';
-import 'QuadTree.js';
+import './integrations.js';
+import './QuadTree.js';
 var pick = H.pick, addEvent = H.addEvent, Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
@@ -118,35 +118,17 @@ H.layouts['reingold-fruchterman'].prototype, {
         // available space around the node:
         this.k = this.options.linkLength || this.integration.getK(this);
     },
-    addNodes: function (nodes) {
-        nodes.forEach(function (node) {
-            if (this.nodes.indexOf(node) === -1) {
-                this.nodes.push(node);
+    addElementsToCollection: function (elements, collection) {
+        elements.forEach(function (elem) {
+            if (collection.indexOf(elem) === -1) {
+                collection.push(elem);
             }
-        }, this);
+        });
     },
-    removeNode: function (node) {
-        var index = this.nodes.indexOf(node);
+    removeElementFromCollection: function (element, collection) {
+        var index = collection.indexOf(element);
         if (index !== -1) {
-            this.nodes.splice(index, 1);
-        }
-    },
-    removeLink: function (link) {
-        var index = this.links.indexOf(link);
-        if (index !== -1) {
-            this.links.splice(index, 1);
-        }
-    },
-    addLinks: function (links) {
-        links.forEach(function (link) {
-            if (this.links.indexOf(link) === -1) {
-                this.links.push(link);
-            }
-        }, this);
-    },
-    addSeries: function (series) {
-        if (this.series.indexOf(series) === -1) {
-            this.series.push(series);
+            collection.splice(index, 1);
         }
     },
     clear: function () {

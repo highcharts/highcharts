@@ -10,8 +10,8 @@
 
 'use strict';
 
-import Instrument from 'Instrument.js';
-import utilities from 'utilities.js';
+import Instrument from './Instrument.js';
+import utilities from './utilities.js';
 
 var instruments = {};
 
