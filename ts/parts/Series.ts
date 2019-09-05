@@ -2559,7 +2559,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         /**
          * A name for the dash style to use for the graph.
          *
-         * @see [series.dashStyle](#plotOptions.series.dashStyle)
+         * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          *
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis

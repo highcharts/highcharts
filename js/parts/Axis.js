@@ -463,7 +463,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          */
         /**
          * The dash style for the crosshair. See
-         * [series.dashStyle](#plotOptions.series.dashStyle)
+         * [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          * for possible values.
          *
          * @sample {highcharts|highmaps} highcharts/xaxis/crosshair-dotted/
