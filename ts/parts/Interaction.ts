@@ -40,7 +40,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): SVGElement;
+            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;

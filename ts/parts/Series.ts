@@ -18,248 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type SeriesBlendingValue = ('add'|'darken'|'multiply');
-        type SeriesLinecapValue = ('butt'|'round'|'square'|string);
-        type SeriesFindNearestPointByValue = ('x'|'xy');
-        type SeriesOptionsType = SeriesOptions;
-        type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
-        type SeriesStepValue = ('center'|'left'|'right');
-        interface Chart {
-            runTrackerClick?: boolean;
-        }
-        interface KDNode {
-            [side: string]: (KDNode|Point|undefined);
-            left?: KDNode;
-            point: Point;
-            right?: KDNode;
-        }
-        interface KDPointSearchObject {
-            clientX: number;
-            plotY?: number;
-        }
-        interface LinePointOptions extends PointOptionsObject {
-        }
-        interface LineSeriesOptions extends SeriesOptions {
-            states?: LineSeriesStatesOptions;
-        }
-        interface LineSeriesStatesHoverOptions
-            extends SeriesStatesHoverOptions
-        {
-            // only for inheritance
-        }
-        interface LineSeriesStatesInactiveOptions
-            extends SeriesStatesInactiveOptions
-        {
-            // only for inheritance
-        }
-        interface LineSeriesStatesOptions extends SeriesStatesOptions {
-            hover?: LineSeriesStatesHoverOptions;
-        }
-        interface PlotOptions {
-            [key: string]: PlotSeriesOptions;
-        }
-        interface PlotSeriesOptions {
-            allAreas?: boolean;
-            allowPointSelect?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
-            animationLimit?: number;
-            boostBlending?: SeriesBlendingValue;
-            boostThreshold?: number;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            className?: string;
-            clip?: boolean;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorAxis?: boolean;
-            colorIndex?: number;
-            colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
-            connectEnds?: boolean;
-            connectNulls?: boolean;
-            cropThreshold?: number;
-            cursor?: (string|CursorValue);
-            dashStyle?: DashStyleValue;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
-            dataLabels?: (
-                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
-            );
-            description?: string;
-            enableMouseTracking?: boolean;
-            events?: SeriesEventsOptions;
-            findNearestPointBy?: SeriesFindNearestPointByValue;
-            getExtremesFromAll?: boolean;
-            includeInDataExport?: boolean;
-            isInternal?: boolean;
-            joinBy?: (string|Array<string>);
-            keys?: Array<string>;
-            linecap?: SeriesLinecapValue;
-            lineWidth?: number;
-            linkedTo?: string;
-            marker?: PointMarkerOptionsObject;
-            navigatorOptions?: SeriesOptions;
-            negativeColor?: (ColorString|GradientColorObject|PatternObject);
-            opacity?: number;
-            point?: PlotSeriesPointOptions;
-            pointDescriptionFormatter?: Function;
-            pointInterval?: number;
-            pointIntervalUnit?: SeriesPointIntervalUnitValue;
-            pointPlacement?: (number|string);
-            pointRange?: (number|null);
-            pointStart?: number;
-            pointValKey?: string;
-            selected?: boolean;
-            shadow?: (boolean|ShadowOptionsObject);
-            showCheckbox?: boolean;
-            showInLegend?: boolean;
-            showInNavigator?: boolean;
-            skipKeyboardNavigation?: boolean;
-            softThreshold?: boolean;
-            stacking?: OptionsStackingValue;
-            states?: SeriesStatesOptions;
-            step?: SeriesStepValue;
-            stickyTracking?: boolean;
-            supportingColor?: (ColorString|GradientColorObject|PatternObject);
-            threshold?: number;
-            turboThreshold?: number;
-            visible?: boolean;
-            zIndex?: number;
-            zoneAxis?: string;
-            zones?: Array<PlotSeriesZonesOptions>;
-        }
-        interface PlotSeriesZonesOptions {
-            className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            value?: number;
-        }
-        interface Point {
-            category?: string;
-            clientX?: number;
-            dataGroup?: DataGroupingInfoObject;
-            dist?: number;
-            distX?: number;
-            hasImage?: boolean;
-            index?: number;
-            isInside?: boolean;
-            low?: number;
-            negative?: boolean;
-            options: PointOptionsObject;
-            plotX?: number;
-            plotY?: number;
-            stackTotal?: number;
-            stackY?: (number|null);
-            yBottom?: number;
-            zone?: PlotSeriesZonesOptions;
-        }
-        interface SeriesAfterAnimateCallbackFunction {
-            (this: Series, event: SeriesAfterAnimateEventObject): void;
-        }
-        interface SeriesAfterAnimateEventObject {
-            target: Series;
-            type: 'afterAnimate';
-        }
-        interface SeriesCheckboxClickCallbackFunction {
-            (this: Series, event: SeriesCheckboxClickEventObject): void;
-        }
-        interface SeriesCheckboxClickEventObject {
-            checked: boolean;
-            item: Series;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesClickCallbackFunction {
-            (this: Series, event: SeriesClickEventObject): void;
-        }
-        interface SeriesClickEventObject extends Event {
-            point: Point;
-        }
-        interface SeriesCropDataObject {
-            end: number;
-            start: number;
-            xData: Array<number>;
-            yData: Array<number>;
-        }
-        interface SeriesEventsOptions {
-            afterAnimate?: SeriesAfterAnimateCallbackFunction;
-            checkboxClick?: SeriesCheckboxClickCallbackFunction;
-            click?: SeriesClickCallbackFunction;
-            hide?: SeriesHideCallbackFunction;
-            legendItemClick?: SeriesLegendItemClickCallbackFunction;
-            mouseOut?: SeriesMouseOutCallbackFunction;
-            mouseOver?: SeriesMouseOverCallbackFunction;
-            show?: SeriesShowCallbackFunction;
-        }
-        interface SeriesHideCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesLegendItemClickCallbackFunction {
-            (this: Series, event: SeriesLegendItemClickEventObject): void;
-        }
-        interface SeriesLegendItemClickEventObject {
-            browserEvent: PointerEvent;
-            preventDefault: Function;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesMouseOutCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesMouseOverCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesOptions extends PlotSeriesOptions {
-            data?: Array<PointOptionsType>;
-            grouping?: boolean;
-            id?: string;
-            index?: number;
-            kdNow?: boolean;
-            legendIndex?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            name?: string;
-            selected?: boolean;
-            stack?: (number|string);
-            type?: string;
-            visible?: boolean;
-            xAxis?: (number|string);
-            yAxis?: (number|string);
-            zIndex?: number;
-        }
-        interface SeriesPlotBoxObject {
-            scaleX?: number;
-            scaleY?: number;
-            translateX?: number;
-            translateY?: number;
-        }
-        interface SeriesShowCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesStatesHoverHaloOptions {
-            attributes?: SVGAttributes;
-            opacity?: number;
-            size?: number;
-        }
-        interface SeriesStatesHoverOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            enabled?: boolean;
-            halo?: (boolean|SeriesStatesHoverHaloOptions);
-            lineWidth?: SeriesOptions['lineWidth'];
-            lineWidthPlus?: number;
-            opacity?: SeriesOptions['opacity'];
-        }
-        interface SeriesStatesInactiveOptions {
-            opacity?: number;
-        }
-        interface SeriesStatesNormalOptions {
-            animation?: (boolean|AnimationOptionsObject);
-        }
-        interface SeriesStatesOptions {
-            hover?: SeriesStatesHoverOptions;
-            inactive?: SeriesStatesInactiveOptions;
-            normal?: SeriesStatesNormalOptions;
-        }
-        interface SeriesTypesDictionary {
-            line: typeof LineSeries;
-        }
         class LinePoint extends Point {
             public options: LinePointOptions;
             public series: LineSeries;
@@ -431,6 +189,241 @@ declare global {
             public updateData(data: Array<PointOptionsType>): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
+        interface Chart {
+            runTrackerClick?: boolean;
+        }
+        interface KDNode {
+            [side: string]: (KDNode|Point|undefined);
+            left?: KDNode;
+            point: Point;
+            right?: KDNode;
+        }
+        interface KDPointSearchObject {
+            clientX: number;
+            plotY?: number;
+        }
+        interface LinePointOptions extends PointOptionsObject {
+        }
+        interface LineSeriesOptions extends SeriesOptions {
+            states?: SeriesStatesOptionsObject<LineSeries>;
+        }
+        interface PlotOptions {
+            [key: string]: PlotSeriesOptions;
+        }
+        interface PlotSeriesOptions {
+            allAreas?: boolean;
+            allowPointSelect?: boolean;
+            animation?: (boolean|AnimationOptionsObject);
+            animationLimit?: number;
+            boostBlending?: SeriesBlendingValue;
+            boostThreshold?: number;
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            className?: string;
+            clip?: boolean;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            colorAxis?: boolean;
+            colorIndex?: number;
+            colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
+            connectEnds?: boolean;
+            connectNulls?: boolean;
+            cropThreshold?: number;
+            cursor?: (string|CursorValue);
+            dashStyle?: DashStyleValue;
+            dataGrouping?: PlotSeriesDataGroupingOptions;
+            dataLabels?: (
+                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
+            );
+            description?: string;
+            enableMouseTracking?: boolean;
+            events?: SeriesEventsOptions;
+            findNearestPointBy?: SeriesFindNearestPointByValue;
+            getExtremesFromAll?: boolean;
+            includeInDataExport?: boolean;
+            isInternal?: boolean;
+            joinBy?: (string|Array<string>);
+            keys?: Array<string>;
+            linecap?: SeriesLinecapValue;
+            lineWidth?: number;
+            linkedTo?: string;
+            marker?: PointMarkerOptionsObject;
+            navigatorOptions?: SeriesOptions;
+            negativeColor?: (ColorString|GradientColorObject|PatternObject);
+            opacity?: number;
+            point?: PlotSeriesPointOptions;
+            pointDescriptionFormatter?: Function;
+            pointInterval?: number;
+            pointIntervalUnit?: SeriesPointIntervalUnitValue;
+            pointPlacement?: (number|string);
+            pointRange?: (number|null);
+            pointStart?: number;
+            pointValKey?: string;
+            selected?: boolean;
+            shadow?: (boolean|ShadowOptionsObject);
+            showCheckbox?: boolean;
+            showInLegend?: boolean;
+            showInNavigator?: boolean;
+            skipKeyboardNavigation?: boolean;
+            softThreshold?: boolean;
+            stacking?: OptionsStackingValue;
+            states?: SeriesStatesOptionsObject<Series>;
+            step?: SeriesStepValue;
+            stickyTracking?: boolean;
+            supportingColor?: (ColorString|GradientColorObject|PatternObject);
+            threshold?: number;
+            turboThreshold?: number;
+            visible?: boolean;
+            zIndex?: number;
+            zoneAxis?: string;
+            zones?: Array<PlotSeriesZonesOptions>;
+        }
+        interface PlotSeriesZonesOptions {
+            className?: string;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            value?: number;
+        }
+        interface Point {
+            category?: string;
+            clientX?: number;
+            dataGroup?: DataGroupingInfoObject;
+            dist?: number;
+            distX?: number;
+            hasImage?: boolean;
+            index?: number;
+            isInside?: boolean;
+            low?: number;
+            negative?: boolean;
+            options: PointOptionsObject;
+            plotX?: number;
+            plotY?: number;
+            stackTotal?: number;
+            stackY?: (number|null);
+            yBottom?: number;
+            zone?: PlotSeriesZonesOptions;
+        }
+        interface SeriesAfterAnimateCallbackFunction {
+            (this: Series, event: SeriesAfterAnimateEventObject): void;
+        }
+        interface SeriesAfterAnimateEventObject {
+            target: Series;
+            type: 'afterAnimate';
+        }
+        interface SeriesCheckboxClickCallbackFunction {
+            (this: Series, event: SeriesCheckboxClickEventObject): void;
+        }
+        interface SeriesCheckboxClickEventObject {
+            checked: boolean;
+            item: Series;
+            target: Series;
+            type: 'checkboxClick';
+        }
+        interface SeriesClickCallbackFunction {
+            (this: Series, event: SeriesClickEventObject): void;
+        }
+        interface SeriesClickEventObject extends Event {
+            point: Point;
+        }
+        interface SeriesCropDataObject {
+            end: number;
+            start: number;
+            xData: Array<number>;
+            yData: Array<number>;
+        }
+        interface SeriesEventsOptions {
+            afterAnimate?: SeriesAfterAnimateCallbackFunction;
+            checkboxClick?: SeriesCheckboxClickCallbackFunction;
+            click?: SeriesClickCallbackFunction;
+            hide?: SeriesHideCallbackFunction;
+            legendItemClick?: SeriesLegendItemClickCallbackFunction;
+            mouseOut?: SeriesMouseOutCallbackFunction;
+            mouseOver?: SeriesMouseOverCallbackFunction;
+            show?: SeriesShowCallbackFunction;
+        }
+        interface SeriesHideCallbackFunction {
+            (this: Series, event: Event): void;
+        }
+        interface SeriesLegendItemClickCallbackFunction {
+            (this: Series, event: SeriesLegendItemClickEventObject): void;
+        }
+        interface SeriesLegendItemClickEventObject {
+            browserEvent: PointerEvent;
+            preventDefault: Function;
+            target: Series;
+            type: 'checkboxClick';
+        }
+        interface SeriesMouseOutCallbackFunction {
+            (this: Series, event: PointerEvent): void;
+        }
+        interface SeriesMouseOverCallbackFunction {
+            (this: Series, event: PointerEvent): void;
+        }
+        interface SeriesOptions extends PlotSeriesOptions {
+            data?: Array<PointOptionsType>;
+            grouping?: boolean;
+            id?: string;
+            index?: number;
+            kdNow?: boolean;
+            legendIndex?: number;
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            name?: string;
+            selected?: boolean;
+            stack?: (number|string);
+            type?: string;
+            visible?: boolean;
+            xAxis?: (number|string);
+            yAxis?: (number|string);
+            zIndex?: number;
+        }
+        interface SeriesPlotBoxObject {
+            scaleX?: number;
+            scaleY?: number;
+            translateX?: number;
+            translateY?: number;
+        }
+        interface SeriesShowCallbackFunction {
+            (this: Series, event: Event): void;
+        }
+        interface SeriesStatesHoverHaloOptions {
+            attributes?: SVGAttributes;
+            opacity?: number;
+            size?: number;
+        }
+        interface SeriesStatesHoverOptionsObject {
+            animation?: (boolean|AnimationOptionsObject);
+            enabled?: boolean;
+            halo?: (boolean|SeriesStatesHoverHaloOptions);
+            lineWidth?: SeriesOptions['lineWidth'];
+            lineWidthPlus?: number;
+            opacity?: SeriesOptions['opacity'];
+        }
+        interface SeriesStatesInactiveOptionsObject {
+        }
+        interface SeriesStatesOptionsObject<TSeries extends Series> {
+            hover?: (
+                SeriesStatesHoverOptionsObject&
+                Omit<TSeries['options'], ('states'|'data')>
+            );
+            inactive?: (
+                SeriesStatesInactiveOptionsObject&
+                Omit<TSeries['options'], ('states'|'data')>
+            );
+            normal?: Omit<TSeries['options'], ('states'|'data')>;
+            select?: (
+                SeriesStatesHoverOptionsObject&
+                Omit<TSeries['options'], ('states'|'data')>
+            );
+        }
+        interface SeriesTypesDictionary {
+            line: typeof LineSeries;
+        }
+        type SeriesBlendingValue = ('add'|'darken'|'multiply');
+        type SeriesLinecapValue = ('butt'|'round'|'square'|string);
+        type SeriesFindNearestPointByValue = ('x'|'xy');
+        type SeriesOptionsType = SeriesOptions;
+        type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
+        type SeriesStepValue = ('center'|'left'|'right');
     }
 }
 
@@ -740,7 +733,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType<Highcharts.SeriesOptions>(
+H.Series = H.seriesType<Highcharts.LineSeries>(
     'line',
 
     /**

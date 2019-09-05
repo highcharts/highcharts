@@ -131,6 +131,7 @@ seriesType('sma', 'line',
         if (linkedParent && linkedParent.compareValue && compareToMain) {
             series.compareValue = linkedParent.compareValue;
         }
+        return;
     },
     bindTo: {
         series: true,

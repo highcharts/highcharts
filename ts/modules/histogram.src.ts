@@ -18,29 +18,26 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface HistogramSeriesOptions extends ColumnSeriesOptions {
-            binsNumber?: string;
-            binWidth?: number;
-            baseSeries?: (number|string);
+        class HistogramPoint extends ColumnPoint {
+            public options: HistogramPointOptions;
+            public series: HistogramSeries;
         }
-        class HistogramSeries
-            extends ColumnSeries
-            implements DerivedSeries {
-            public options: HistogramSeriesOptions;
-            public pointClass: typeof HistogramPoint;
-            public data: Array<HistogramPoint>;
-            public points: Array<HistogramPoint>;
+        class HistogramSeries extends ColumnSeries implements DerivedSeries {
             public addBaseSeriesEvents: DerivedSeriesMixin[
                 'addBaseSeriesEvents'
             ];
             public addEvents: DerivedSeriesMixin['addEvents'];
-            public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
-            public setDerivedData: DerivedSeriesMixin['setDerivedData'];
+            public binWidth?: number;
+            public data: Array<HistogramPoint>;
             public eventRemovers: DerivedSeries['eventRemovers'];
             public hasDerivedData: DerivedSeries['hasDerivedData'];
             public init: DerivedSeriesMixin['init'];
             public initialised: DerivedSeries['initialised'];
-            public binWidth?: number;
+            public options: HistogramSeriesOptions;
+            public pointClass: typeof HistogramPoint;
+            public points: Array<HistogramPoint>;
+            public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
+            public setDerivedData: DerivedSeriesMixin['setDerivedData'];
             public userOptions: HistogramSeriesOptions;
             public binsNumber(): number;
             public derivedData(
@@ -49,12 +46,14 @@ declare global {
                 binWidth: number
             ): Array<HistogramPointOptions>;
         }
-        class HistogramPoint extends ColumnPoint {
-            public series: HistogramSeries;
-            public options: HistogramPointOptions;
-        }
         interface HistogramPointOptions extends ColumnPointOptions {
             x2?: number;
+        }
+        interface HistogramSeriesOptions extends ColumnSeriesOptions {
+            baseSeries?: (number|string);
+            binsNumber?: string;
+            binWidth?: number;
+            states?: SeriesStatesOptionsObject<HistogramSeries>;
         }
     }
 }
@@ -122,7 +121,7 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
  * @augments Highcharts.Series
  */
 
-seriesType<Highcharts.HistogramSeriesOptions>(
+seriesType<Highcharts.HistogramSeries>(
     'histogram',
     'column',
     /**

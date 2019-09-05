@@ -16,62 +16,71 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface IndicatorValuesObject {
-            values: Array<Array<number>>;
-            xData: Array<number>;
-            yData: Array<number>;
-        }
-        interface LineSeriesOptions {
-            useOhlcData?: boolean;
-        }
         class SmaIndicator extends LineSeries {
-            public pointClass: typeof SmaIndicatorPoint;
-            public data: Array<SmaIndicatorPoint>;
-            public points: Array<SmaIndicatorPoint>;
-            public options: SmaIndicatorOptions;
             public bindTo: SmaIndicatorBindToObject;
+            public calculateOn: string;
+            public data: Array<SmaIndicatorPoint>;
+            public dataEventsToUnbind: Array<Function>;
             public hasDerivedData: boolean;
-            public useCommonDataGrouping: boolean;
+            public linkedParent: Series;
+            public nameBase?: string;
             public nameComponents: Array<string>;
             public nameSuffixes: Array<string>;
-            public calculateOn: string;
-            public requiredIndicators: Array<string>;
+            public options: SmaIndicatorOptions;
+            public pointClass: typeof SmaIndicatorPoint;
+            public points: Array<SmaIndicatorPoint>;
             public processData: Series['processData'];
-            public requireIndicators(): SmaIndicatorRequireIndicatorsObject;
+            public requiredIndicators: Array<string>;
+            public useCommonDataGrouping: boolean;
+            public destroy(): void;
             public init(chart: Chart, options: SmaIndicatorOptions): void;
             public getName(): string;
             public getValues(
                 series: Series,
                 params: SmaIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-            public destroy(): void;
-            public dataEventsToUnbind: Array<Function>;
-            public nameBase?: string;
-            public linkedParent: Series;
+            public requireIndicators(): SmaIndicatorRequireIndicatorsObject;
         }
+
+        class SmaIndicatorPoint extends LinePoint {
+            public series: SmaIndicator;
+        }
+
+        interface IndicatorValuesObject {
+            values: Array<Array<number>>;
+            xData: Array<number>;
+            yData: Array<number>;
+        }
+
+        interface LineSeriesOptions {
+            useOhlcData?: boolean;
+        }
+
         interface SmaIndicatorOptions extends LineSeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
             params?: SmaIndicatorParamsOptions;
         }
+
         interface SmaIndicatorParamsOptions {
             index?: number;
             period?: number;
         }
+
         interface SeriesTypesDictionary {
             sma: typeof SmaIndicator;
         }
-        class SmaIndicatorPoint extends LinePoint {
-            public series: SmaIndicator;
-        }
+
         interface SmaIndicatorBindToObject {
-            series: boolean;
             eventName: string;
+            series: boolean;
         }
+
         interface SmaIndicatorRequireIndicatorsObject {
             allLoaded: boolean;
             needed?: string;
         }
+
         interface Series {
             /** @requires indicators/indicators */
             requireIndicators(): SmaIndicatorRequireIndicatorsObject;
@@ -153,7 +162,7 @@ addEvent(Series, 'afterSetOptions', function (
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SmaIndicatorOptions>(
+seriesType<Highcharts.SmaIndicator>(
     'sma',
     'line',
     /**
@@ -227,7 +236,9 @@ seriesType<Highcharts.SmaIndicatorOptions>(
      * @lends Highcharts.Series.prototype
      */
     {
-        processData: function (this: Highcharts.SmaIndicator): void {
+        processData: function (
+            this: Highcharts.SmaIndicator
+        ): (boolean|undefined) {
             var series = this,
                 compareToMain = series.options.compareToMain,
                 linkedParent = series.linkedParent;
@@ -237,6 +248,8 @@ seriesType<Highcharts.SmaIndicatorOptions>(
             if (linkedParent && linkedParent.compareValue && compareToMain) {
                 series.compareValue = linkedParent.compareValue;
             }
+
+            return;
         },
         bindTo: {
             series: true,

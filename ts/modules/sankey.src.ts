@@ -153,7 +153,7 @@ declare global {
             nodePadding?: number;
             nodes?: Array<SankeySeriesNodesOptions>;
             nodeWidth?: number;
-            states?: Dictionary<SankeySeriesOptions>;
+            states?: SeriesStatesOptionsObject<SankeySeries>;
             tooltip?: SankeySeriesTooltipOptions;
             width?: number;
         }
@@ -341,7 +341,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SankeySeriesOptions>(
+seriesType<Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**

@@ -35,6 +35,7 @@ declare global {
                 AreaRangeDataLabelsOptionsObject|
                 Array<AreaRangeDataLabelsOptionsObject>
             );
+            states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
         }
         interface Point {
@@ -66,6 +67,7 @@ declare global {
         }
         class AreaRangeSeries extends AreaSeries {
             public data: Array<AreaRangePoint>;
+            public deferTranslatePolar: boolean;
             public lowerStateMarkerGraphic?: SVGElement;
             public options: AreaRangeSeriesOptions;
             public pointClass: typeof AreaRangePoint;
@@ -187,7 +189,7 @@ var noop = H.noop,
  * @excluding    stack, stacking
  * @optionparent plotOptions.arearange
  */
-seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
+seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -684,7 +686,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
 
     /* eslint-enable valid-jsdoc */
 
-    setStackedPoints: noop
+    setStackedPoints: noop as any
 }, {
     /**
      * Range series only. The high or maximum value for each data point.
@@ -758,9 +760,14 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
     },
     haloPath: function (
         this: Highcharts.AreaRangePoint
-    ): (Highcharts.SVGElement|Array<Highcharts.SVGElement>) {
+    ): (Highcharts.SVGElement|Highcharts.SVGPathArray|
+        Array<Highcharts.SVGElement>) {
         var isPolar = this.series.chart.polar,
-            path: (Highcharts.SVGElement|Array<Highcharts.SVGElement>) = [];
+            path: (
+                Highcharts.SVGElement|
+                Highcharts.SVGPathArray|
+                Array<Highcharts.SVGElement>
+            ) = [];
 
         // Bottom halo
         this.plotY = this.plotLow;
