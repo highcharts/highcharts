@@ -1,3 +1,4 @@
+js/indicators/accumulation-distribution.src.js
 js/indicators/indicators.src.js
 js/mixins/**/*.js
 js/modules/networkgraph/*.js
