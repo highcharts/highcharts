@@ -60,6 +60,7 @@
 	"code/modules/cylinder.src.js",
 	"code/modules/organization.src.js",
 	"code/modules/dotplot.src.js",
+	"code/modules/marker-clusters.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

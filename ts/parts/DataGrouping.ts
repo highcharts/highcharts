@@ -71,9 +71,9 @@ declare global {
             groupData: Series['groupData'];
         }
         interface DataGroupingInfoObject {
-            length: number;
+            length?: number;
             options?: SeriesOptionsType;
-            start: number;
+            start?: number;
         }
         interface DataGroupingResultObject {
             groupedXData: Array<number>;
