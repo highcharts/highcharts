@@ -351,7 +351,7 @@ seriesType<Highcharts.SmaIndicator>(
 
                         croppedData = indicator.cropData(
                             processedData.xData,
-                            processedData.yData,
+                            (processedData.yData as any),
                             min as any,
                             max as any
                         );
@@ -398,7 +398,7 @@ seriesType<Highcharts.SmaIndicator>(
 
                 if (overwriteData) {
                     indicator.xData = processedData.xData;
-                    indicator.yData = processedData.yData;
+                    indicator.yData = (processedData.yData as any);
                     indicator.options.data = processedData.values;
                 }
 
