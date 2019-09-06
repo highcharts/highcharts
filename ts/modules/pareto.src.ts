@@ -18,23 +18,23 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class ParetoPoint extends LinePoint {
-            public options: ParetoPointOptions;
-            public series: ParetoSeries;
+        class PareToPoint extends LinePoint {
+            public options: PareToPointOptions;
+            public series: PareToSeries;
         }
-        class ParetoSeries extends LineSeries implements DerivedSeries {
+        class PareToSeries extends LineSeries implements DerivedSeries {
             public addBaseSeriesEvents: (
                 DerivedSeriesMixin['addBaseSeriesEvents']
             );
             public addEvents: DerivedSeriesMixin['addEvents'];
-            public data: Array<ParetoPoint>;
+            public data: Array<PareToPoint>;
             public eventRemovers: DerivedSeries['eventRemovers'];
             public hasDerivedData: DerivedSeries['hasDerivedData'];
             public init: DerivedSeriesMixin['init'];
             public initialised: DerivedSeries['initialised'];
-            public options: ParetoSeriesOptions;
-            public pointClass: typeof ParetoPoint;
-            public points: Array<ParetoPoint>;
+            public options: PareToSeriesOptions;
+            public pointClass: typeof PareToPoint;
+            public points: Array<PareToPoint>;
             public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
             public setDerivedData: DerivedSeries['setDerivedData'];
             public sumPointsPercents<T extends (boolean|undefined)> (
@@ -44,10 +44,13 @@ declare global {
                 isSum?: T
             ): (T extends true ? number : Array<Array<number>>);
         }
-        interface ParetoPointOptions extends LinePointOptions {
+        interface PareToPointOptions extends LinePointOptions {
         }
-        interface ParetoSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptionsObject<ParetoSeries>;
+        interface PareToSeriesOptions extends LineSeriesOptions {
+            states?: SeriesStatesOptionsObject<PareToSeries>;
+        }
+        interface SeriesTypesDictionary {
+            pareto: typeof PareToSeries;
         }
     }
 }
@@ -70,7 +73,7 @@ var correctFloat = H.correctFloat,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ParetoSeries>('pareto', 'line'
+seriesType<Highcharts.PareToSeries>('pareto', 'line'
 
     /**
      * A pareto diagram is a type of chart that contains both bars and a line
@@ -109,7 +112,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
          * @private
          * @function Highcharts.Series#setDerivedData
          */
-        setDerivedData: (function (this: Highcharts.ParetoSeries): void {
+        setDerivedData: (function (this: Highcharts.PareToSeries): void {
             var xValues = (this.baseSeries as any).xData,
                 yValues = (this.baseSeries as any).yData,
                 sum = this.sumPointsPercents(
@@ -146,7 +149,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
          * Returns sum of points or array of points [x,sum]
          */
         sumPointsPercents: function<T extends (boolean|undefined)> (
-            this: Highcharts.ParetoSeries,
+            this: Highcharts.PareToSeries,
             yValues: Array<number>,
             xValues: Array<number>,
             sum: number,
