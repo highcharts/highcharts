@@ -3,6 +3,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
+const os = require('os');
 
 // Internal reference
 const hasJSONSources = {};
@@ -79,7 +80,7 @@ function resolveJSON(js) {
     if (match) {
         let src = match[2];
 
-            
+
         let innerMatch = src.match(
             /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
         );
@@ -99,7 +100,7 @@ function resolveJSON(js) {
             );
 
             if (data) {
-    
+
                 if (/json$/.test(filename)) {
                     return `
                     window.JSONSources['${src}'] = ${data};
@@ -239,8 +240,7 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || 2;
-
+    const browserCount = argv.browsercount || (os.cpus().length - 1);
     if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
@@ -385,7 +385,7 @@ module.exports = function (config) {
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
             'samples/highcharts/studies/logistics/demo.js', // overriding
-            
+
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
 
