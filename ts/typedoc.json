@@ -6,11 +6,11 @@
     "ignoreCompilerErrors": false,
     "includeDeclarations": false,
     "entryPoint": "__global.Highcharts",
-    "exclude": "node_modules/**/*.*",
     "gitRevision": "master",
+    "includes": ".",
     "mode": "file",
     "name": "Highcharts Internals",
     "plugin": "none",
-    "readme": "README.md",
+    "readme": "none",
     "theme": "../node_modules/highcharts-documentation-generators/typedoc/theme-internals"
 }

@@ -15,6 +15,9 @@
  * @private
  */
 declare global {
+    /**
+     * [[include:README.md]]
+     */
     namespace Highcharts {
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
