@@ -497,7 +497,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/series/
          *         A green navigator series
          *
-         * @type {*|Highcharts.SeriesOptionsType}
+         * @type {*|Array<*>|Highcharts.SeriesOptionsType|Array<Highcharts.SeriesOptionsType>}
          */
         series: {
 
