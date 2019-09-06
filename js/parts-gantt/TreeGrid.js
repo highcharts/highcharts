@@ -178,7 +178,8 @@ var renderLabelIcon = function (tick, params) {
         y: labelBox.y - (height / 2)
     }, rotation = params.collapsed ? 90 : 180, shouldRender = params.show && isNumber(iconCenter.y);
     if (isNew) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](options.x, options.y, width, height))
+        tick.labelIcon = icon = renderer
+            .path(renderer.symbols[options.type](options.x, options.y, width, height))
             .addClass('highcharts-label-icon')
             .add(params.group);
     }

@@ -16,7 +16,6 @@
  */
 declare global {
     namespace Highcharts {
-        type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             rightWall?: any; // @todo

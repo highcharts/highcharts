@@ -737,7 +737,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         shapeArgs: point.shapeArgs,
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
-        color: point.isNull ? new H.Color(color).setOpacity(0).get() : color,
+        color: point.isNull ?
+            new H.Color(color as any).setOpacity(0).get() :
+            color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
         pointIndex: pointIndex,
