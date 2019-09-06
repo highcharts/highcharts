@@ -39,19 +39,7 @@ declare global {
             threshold?: number;
             groupPadding?: number;
             pointPadding?: number;
-            states? : AoIndicatorStatesOptions;
-        }
-
-        interface AoIndicatorStatesOptions {
-            hover?: AoIndicatorStatesHoverOptions;
-        }
-
-        interface AoIndicatorStatesHoverOptions {
-            halo?: AoIndicatorStatesHoverHaloOptions;
-        }
-
-        interface AoIndicatorStatesHoverHaloOptions {
-            size?: number;
+            states? : SeriesStatesOptionsObject<AoIndicator>;
         }
 
         class AoIndicatorPoint extends SmaIndicatorPoint {
@@ -242,7 +230,7 @@ H.seriesType<Highcharts.AoIndicator>(
                     (
                         (yVal[longLastIndex] as any)[high] +
                         (yVal[longLastIndex] as any)[low]
-                    ) / 2
+                        ) / 2
                 );
             }
 
