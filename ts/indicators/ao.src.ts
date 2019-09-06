@@ -39,7 +39,7 @@ declare global {
             threshold?: number;
             groupPadding?: number;
             pointPadding?: number;
-            states? : SeriesStatesOptionsObject<AoIndicator>;
+            states?: SeriesStatesOptionsObject<AoIndicator>;
         }
 
         class AoIndicatorPoint extends SmaIndicatorPoint {
@@ -230,7 +230,7 @@ H.seriesType<Highcharts.AoIndicator>(
                     (
                         (yVal[longLastIndex] as any)[high] +
                         (yVal[longLastIndex] as any)[low]
-                        ) / 2
+                    ) / 2
                 );
             }
 
