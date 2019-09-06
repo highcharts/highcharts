@@ -11,6 +11,6 @@
     "mode": "file",
     "name": "Highcharts Internals",
     "plugin": "none",
-    "readme": "none",
+    "readme": "README.md",
     "theme": "../node_modules/highcharts-documentation-generators/typedoc/theme-internals"
 }
