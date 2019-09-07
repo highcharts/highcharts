@@ -44,7 +44,6 @@ declare global {
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
             isSeriesBoosting?: any; // @todo boost module
-            labelBySeries?: any; // @todo series label module
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
