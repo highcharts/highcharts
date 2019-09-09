@@ -1,3 +1,49 @@
+QUnit.test('Setting and resetting', assert => {
+
+    assert.strictEqual(
+        Highcharts.time.options.timezone,
+        undefined,
+        'Default property should be set initially'
+    );
+    Highcharts.setOptions({
+        time: {
+            timezone: 'Europe/Oslo'
+        }
+    });
+    assert.strictEqual(
+        Highcharts.time.options.timezone,
+        'Europe/Oslo',
+        'Time object property should be updated'
+    );
+    Highcharts.setOptions({
+        time: {
+            timezone: undefined
+        }
+    });
+    assert.strictEqual(
+        Highcharts.time.options.timezone,
+        undefined,
+        'Time object property should be reset'
+    );
+    Highcharts.setOptions({
+        global: {
+            timezone: 'Europe/Copenhagen'
+        }
+    });
+    assert.strictEqual(
+        Highcharts.time.options.timezone,
+        'Europe/Copenhagen',
+        'Time object property should be updated from global'
+    );
+
+    // Reset
+    Highcharts.setOptions({
+        global: {
+            timezone: undefined
+        }
+    });
+});
+
 QUnit[TestUtilities.isCET ? 'test' : 'skip'](
     name + ' - set and get hours across DST transition',
     function (assert) {

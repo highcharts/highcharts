@@ -1,3 +1,174 @@
+QUnit.test('Columnrange series should work with broken-axis. (#4868)', function (assert) {
+    var iter = 0;
+
+    $('#container').highcharts({
+        chart: {
+            type: 'columnrange'
+        },
+        yAxis: {
+            breaks: [{
+                from: 10,
+                to: 20
+            }],
+            events: {
+                pointBreak: function () {
+                    iter++;
+                }
+            }
+        },
+        series: [{
+            data: [[0, 5, 15], [1, 0, 30]]
+        }]
+    }).highcharts();
+
+    assert.strictEqual(
+        iter,
+        1,
+        'pointBreak called'
+    );
+});
+
+QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
+    var chart;
+
+    $('#container').highcharts({
+        title: {
+            text: "Y axis translation failed"
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            min: 5
+        },
+        yAxis: {
+            breaks: [{
+                from: 3,
+                to: 8,
+                breakSize: 1
+            }]
+        },
+        chart: {
+            type: "column",
+            zoomType: "x"
+        },
+        series: [{
+            data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
+        }]
+    });
+
+    chart = $('#container').highcharts();
+
+
+    assert.equal(
+        chart.yAxis[0].min,
+        0,
+        'Min makes sense'
+    );
+    assert.equal(
+        chart.yAxis[0].max,
+        3,
+        'Max stops at break'
+    );
+
+});
+
+QUnit.test('Null inside break (#4275)', function (assert) {
+    var chart = $('#container').highcharts({
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: false
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [{
+                from: 5,
+                to: 10,
+                breakSize: 1
+            }]
+        },
+        series: [{
+            marker: {
+                enabled: true
+            },
+            data: (function () {
+                var arr = [],
+                    i;
+                for (i = 0; i < 20; i++) {
+                    if (i <= 5 || i >= 10) {
+                        arr.push(i);
+                    } else {
+                        arr.push(null);
+                    }
+                }
+                return arr;
+            }())
+        }]
+    }).highcharts();
+
+
+    assert.notEqual(
+        chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
+        -1,
+        'Graph has moveTo operator'
+    );
+
+
+    chart = $('#container').highcharts({
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: true
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [{
+                from: 5,
+                to: 10,
+                breakSize: 1
+            }]
+        },
+        series: [{
+            marker: {
+                enabled: true
+            },
+            data: (function () {
+                var arr = [],
+                    i;
+                for (i = 0; i < 20; i++) {
+                    if (i <= 5 || i >= 10) {
+                        arr.push(i);
+                    } else {
+                        arr.push(null);
+                    }
+                }
+                return arr;
+            }())
+        }]
+    }).highcharts();
+
+
+    assert.equal(
+        chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
+        -1,
+        'Graph does not have moveTo operator'
+    );
+
+});
+
 QUnit.test("pointBreak callback wasn't called for xAxis and different series than column.(#4533)", function (assert) {
 
     var iteratorPB = 0,

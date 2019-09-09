@@ -175,10 +175,33 @@ function onExit(name, callback) {
 }
 
 /**
+ * Opens a path or URL in the default application.
+ *
+ * @param {string} pathOrURL
+ * The path or URL to open.
+ *
+ * @return {void}
+ */
+function openAppFor(pathOrURL) {
+
+    switch (process.platform) {
+        default:
+            exec(`xdg-open ${pathOrURL}`);
+            break;
+        case 'darwin':
+            exec(`open ${pathOrURL}`);
+            break;
+        case 'win32':
+            exec(`cmd /c start ${pathOrURL}`);
+            break;
+    }
+}
+
+/**
  * Reads library-specific configuration file
  *
  * @return {object}
- *         Configuration
+ * Configuration
  */
 function readConfig() {
 
@@ -204,7 +227,7 @@ function readConfig() {
  * Writes library-specific configuration file.
  *
  * @param {object} config
- *        Configuration
+ * Configuration
  *
  * @return {void}
  */
@@ -226,5 +249,6 @@ module.exports = {
     CWD,
     exec,
     isRunning,
-    onExit
+    onExit,
+    openAppFor
 };

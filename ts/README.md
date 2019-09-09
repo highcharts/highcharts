@@ -14,8 +14,8 @@ Main Rules
   reference
 - Make use of parantheses around type lists. (`Array<(number|null|string)>`)
 - Do not use `any` type in new code as it is only used for the migration phase
-- Add paragraphs around conditional types (`(A extends B ? C : D)`), type lists
-  (`(A|B)`), and type unions (`(A&B)`).
+- Add paragraphs around conditional types `(A extends B ? C : D)`, type lists
+  `(A|B)`, and type unions `(A&B)`.
 
 
 

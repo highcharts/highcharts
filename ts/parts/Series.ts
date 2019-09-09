@@ -41,7 +41,7 @@ declare global {
             public closestPointRange?: number;
             public closestPointRangePx?: number;
             public coll: 'series';
-            public color?: ColorString;
+            public color?: (ColorString|GradientColorObject|PatternObject);
             public colorCounter: number;
             public colorIndex?: number;
             public cropped?: boolean;

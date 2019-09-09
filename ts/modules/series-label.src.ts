@@ -852,7 +852,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     label.css(extend<Highcharts.CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(series.color as any) :
-                            series.color
+                            (series.color as any)
                     }, (series.options.label as any).style));
                 }
 
