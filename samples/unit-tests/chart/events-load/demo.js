@@ -47,43 +47,45 @@
 
         var flagLoad = false,
             flagCallback = false,
-            done = assert.async(2),
-            chart = Highcharts.chart('container', {
+            done = assert.async(2);
 
-                chart: {
-                    events: {
-                        load: function () {
-                            assert.strictEqual(
-                                chart.container.querySelector('image').getAttribute('width'),
-                                '30',
-                                'events.load: Image width is set async'
-                            );
-                            flagLoad = true;
+        Highcharts.chart('container', {
 
-                            done();
-                        }
+            chart: {
+                events: {
+                    load: function () {
+                        assert.strictEqual(
+                            this.container.querySelector('image')
+                                .getAttribute('width'),
+                            '30',
+                            'events.load: Image width is set async'
+                        );
+                        flagLoad = true;
+
+                        done();
                     }
-                },
+                }
+            },
 
-                series: [{
-                    animation: false,
-                    data: [1, 2, 3],
-                    marker: {
-                        symbol: url
-                    }
-                }]
+            series: [{
+                animation: false,
+                data: [1, 2, 3],
+                marker: {
+                    symbol: url
+                }
+            }]
 
-            }, function () {
-                assert.strictEqual(
-                    this.container.querySelector('image').getAttribute('width'),
-                    '30',
-                    'callback: Image width is set async'
-                );
+        }, function () {
+            assert.strictEqual(
+                this.container.querySelector('image').getAttribute('width'),
+                '30',
+                'callback: Image width is set async'
+            );
 
-                flagCallback = true;
+            flagCallback = true;
 
-                done();
-            });
+            done();
+        });
 
         assert.strictEqual(
             flagLoad,

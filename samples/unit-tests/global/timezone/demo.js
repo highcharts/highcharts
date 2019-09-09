@@ -73,8 +73,8 @@ QUnit.test('timezone', function (assert) {
     // Tear down
     Highcharts.setOptions({
         global: {
-            timezone: null,
-            getTimezoneOffset: null
+            timezone: undefined,
+            getTimezoneOffset: undefined
         }
     });
 });
@@ -152,7 +152,7 @@ QUnit.test('getTimezoneOffset', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: null
+            getTimezoneOffset: undefined
         }
     });
 
@@ -220,7 +220,7 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
     Highcharts.setOptions({
         global: {
             useUTC: true,
-            timezone: null
+            timezone: undefined
         }
     });
 
@@ -265,7 +265,7 @@ QUnit.test('Negative timezoneOffset', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            timezoneOffset: null
+            timezoneOffset: 0
         }
     });
 
@@ -312,7 +312,7 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
 
     Highcharts.setOptions({
         global: {
-            timezone: null
+            timezone: undefined
         }
     });
 });

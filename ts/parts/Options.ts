@@ -4122,13 +4122,23 @@ H.setOptions = function (
     H.defaultOptions = merge(true, H.defaultOptions, options);
 
     // Update the time object
-    (H.time.update as any)(
-        merge<Highcharts.TimeOptions>(
-            H.defaultOptions.global as any,
-            H.defaultOptions.time as any
-        ),
-        false
-    );
+    const timeOptions: Highcharts.Dictionary<unknown> = {};
+    const time = H.defaultOptions.time;
+    const global = H.defaultOptions.global;
+
+    if (time && global) {
+        Object.keys(time).forEach(key => {
+            timeOptions[key] = Highcharts.pick(
+                options.time &&
+                    (options.time as Highcharts.Dictionary<unknown>)[key],
+                options.global &&
+                    (options.global as Highcharts.Dictionary<unknown>)[key],
+                (time as Highcharts.Dictionary<unknown>)[key],
+                (global as Highcharts.Dictionary<unknown>)[key]
+            ) as any;
+        });
+        H.time.update(timeOptions);
+    }
 
     return H.defaultOptions;
 };
