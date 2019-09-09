@@ -22,6 +22,7 @@ declare global {
         type RadialAxisXOptions = XAxisOptions;
         type RadialAxisYOptions = YAxisOptions;
         interface Axis {
+            angleRad?: RadialAxis['angleRad'];
             sector?: number;
         }
         interface AxisPlotBandsOptions {

@@ -4127,7 +4127,7 @@ H.setOptions = function (
     const global = H.defaultOptions.global;
 
     if (time && global) {
-        Object.keys(time).forEach(key => {
+        Object.keys(time).forEach(function (key: string): void {
             timeOptions[key] = Highcharts.pick(
                 options.time &&
                     (options.time as Highcharts.Dictionary<unknown>)[key],

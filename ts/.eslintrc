@@ -51,7 +51,13 @@
         "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "@typescript-eslint/array-type": 0,
-        "@typescript-eslint/explicit-function-return-type": 2,
+        "@typescript-eslint/explicit-function-return-type": [
+            "error",
+            {
+                "allowExpressions": false,
+                "allowTypedFunctionExpressions": false
+            }
+        ],
         "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,

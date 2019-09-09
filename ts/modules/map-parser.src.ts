@@ -483,7 +483,7 @@ H.extend(H.Data.prototype, {
             // Iterate groups to find sub paths
             if (handleGroups) {
                 lastCommonAncestor.getElementsByTagName('g').forEach(
-                    function (g: Highcharts.SVGDOMElement) {
+                    function (g: Highcharts.SVGDOMElement): void {
                         var groupPath: Highcharts.SVGPathArray = [],
                             pathHasFill: (boolean|undefined);
 

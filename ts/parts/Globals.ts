@@ -31,7 +31,6 @@ declare global {
         interface Chart {
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
-            hasParallelCoordinates?: any; // @todo parallel module
             isBoosting?: any; // @todo boost module
             redrawTrigger?: any; // @todo static-scale module
             hideOverlappingLabels: Function; // @todo overlapping module
@@ -57,9 +56,6 @@ declare global {
         }
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
-        }
-        interface SVGRenderer {
-            inlineWhitelist?: any; // @todo offline exporting module
         }
         interface Tick {
             slotWidth?: any; // @todo

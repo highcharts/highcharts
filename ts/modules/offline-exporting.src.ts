@@ -38,6 +38,9 @@ declare global {
         interface ScriptOnLoadCallbackFunction {
             (this: GlobalEventHandlers, ev: Event): void;
         }
+        interface SVGRenderer {
+            inlineWhitelist?: Array<RegExp>;
+        }
         let CanVGRenderer: object;
         function downloadSVGLocal(
             svg: string,
@@ -413,7 +416,9 @@ Highcharts.downloadSVGLocal = function (
             // Workaround for plotband with width, removing title from text
             // nodes
             titleElements = el.getElementsByTagName('title');
-            [].forEach.call(titleElements, function (titleElement) {
+            [].forEach.call(titleElements, function (
+                titleElement: Highcharts.HTMLDOMElement
+            ): void {
                 el.removeChild(titleElement);
             });
         });
@@ -532,8 +537,8 @@ Highcharts.downloadSVGLocal = function (
                     // solution would be nice, but this will do for now.
                     objectURLRevoke = true;
                     // Get RGBColor.js first, then canvg
-                    getScript(libURL + 'rgbcolor.js', function () {
-                        getScript(libURL + 'canvg.js', function () {
+                    getScript(libURL + 'rgbcolor.js', function (): void {
+                        getScript(libURL + 'canvg.js', function (): void {
                             downloadWithCanVG();
                         });
                     });
@@ -544,7 +549,7 @@ Highcharts.downloadSVGLocal = function (
             // Failed to load image
             failCallback,
             // Finally
-            function () {
+            function (): void {
                 if (objectURLRevoke) {
                     finallyHandler();
                 }
