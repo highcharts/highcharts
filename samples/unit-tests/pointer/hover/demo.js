@@ -1,3 +1,34 @@
+QUnit.test("Tooltip isn't displayed when on column, when yAxis.max is lower than column's value. (#4511)", function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            type: "column"
+        },
+        yAxis: {
+            max: 5
+        },
+        tooltip: {
+            shared: true
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4]
+        }]
+    }).highcharts();
+
+
+    chart.pointer.onContainerMouseMove({
+        pageX: 150,
+        pageY: 310,
+        target: chart.series[0].group.element
+    });
+
+    assert.strictEqual(
+        chart.tooltip.isHidden,
+        false,
+        'Tooltip displayed properly'
+    );
+
+});
+
 QUnit.test('JS error on hovering after destroy chart (#4998)', function (assert) {
     var chart,
         options = {
