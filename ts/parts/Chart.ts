@@ -26,7 +26,7 @@ declare global {
             (this: Chart, chart: Chart): void;
         }
         interface ChartLabelCollectorFunction {
-            (this: null): (Array<(SVGElement|undefined)>|undefined);
+            (): (Array<(SVGElement|undefined)>|undefined);
         }
         interface ChartOptions {
             renderer?: string;

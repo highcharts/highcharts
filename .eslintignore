@@ -27,6 +27,7 @@ js/modules/offline-exporting.src.js
 js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/modules/organization.src.js
+js/modules/overlapping-datalabels.src.js
 js/modules/sankey.src.js
 js/modules/xrange.src.js
 js/parts/**/*.js
