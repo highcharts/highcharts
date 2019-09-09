@@ -73,8 +73,8 @@ QUnit.test('timezone', function (assert) {
     // Tear down
     Highcharts.setOptions({
         time: {
-            timezone: null,
-            getTimezoneOffset: null
+            timezone: undefined,
+            getTimezoneOffset: undefined
         }
     });
 });
@@ -152,7 +152,7 @@ QUnit.test('getTimezoneOffset', function (assert) {
     // Reset
     Highcharts.setOptions({
         time: {
-            getTimezoneOffset: null
+            getTimezoneOffset: undefined
         }
     });
 

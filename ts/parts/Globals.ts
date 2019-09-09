@@ -15,12 +15,18 @@
  * @private
  */
 declare global {
+    /**
+     * [[include:README.md]]
+     */
     namespace Highcharts {
         type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
+        }
+        interface XAxisOptions {
+            stackLabels?: any; // @todo
         }
         interface Chart {
             frame3d?: any; // @todo highcharts 3d
