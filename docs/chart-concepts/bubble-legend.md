@@ -1,5 +1,7 @@
-Introduction
+Bubble legend
 ------------
+
+## Introduction
 
 A bubble legend is an additional element, which can be added in any position in the chart legend. The bubble legend allows to present the scale of the bubble series in a simple and transparent way.
 
