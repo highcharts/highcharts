@@ -3523,7 +3523,17 @@ H.setOptions = function (options) {
     // Copy in the default options
     H.defaultOptions = merge(true, H.defaultOptions, options);
     // Update the time object
-    H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time), false);
+    var timeOptions = {};
+    var time = H.defaultOptions.time;
+    var global = H.defaultOptions.global;
+    if (time && global) {
+        Object.keys(time).forEach(function (key) {
+            timeOptions[key] = Highcharts.pick(options.time &&
+                options.time[key], options.global &&
+                options.global[key], time[key], global[key]);
+        });
+        H.time.update(timeOptions);
+    }
     return H.defaultOptions;
 };
 /**

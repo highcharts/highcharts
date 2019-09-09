@@ -99,6 +99,42 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
         });
     }
 });
+function resetDefaultOptions() {
+    var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
+    
+    // Before running setOptions, delete properties that are undefined by
+    // default. For example, in `highcharts/members/setoptions`, properties like
+    // chart.borderWidth and chart.plotBorderWidth are set. The default options
+    // don't contain these props, so a simple merge won't remove them.
+    function deleteAddedProperties(copy, original) {
+        Highcharts.objectEach(copy, function (value, key) {
+            if (
+                Highcharts.isObject(value, true) &&
+                Highcharts.isObject(original[key], true) &&
+                !Highcharts.isClass(value) &&
+                !Highcharts.isDOMElement(value)
+            ) {
+                // Recurse
+                deleteAddedProperties(copy[key], original[key]);
+            } else if (
+                // functions are not saved in defaultOptionsRaw
+                (
+                    typeof value === 'string' ||
+                    typeof value === 'number' ||
+                    typeof value === 'boolean' ||
+                    typeof value === 'undefined'
+                ) &&    
+                !(key in original)
+            ) {
+                delete copy[key];
+            }
+        });
+    }
+
+    deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
+
+    Highcharts.setOptions(defaultOptionsRaw);
+}
 
 
 // Handle wrapping, reset functions that are wrapped in the visual samples to
@@ -166,6 +202,14 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
+            if (defaultOptions !== Highcharts.defaultOptionsRaw) {
+                //var msg = 'Default options changed, make sure the test resets options';
+                //console.log(test.test.testName, msg);
+                //QUnit.config.queue.length = 0;
+                //throw new Error(msg);
+            }
 
             var containerStyle = document.getElementById('container').style;
             containerStyle.width = '';

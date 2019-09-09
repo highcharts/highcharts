@@ -5,9 +5,12 @@
     "excludeProtected": true,
     "ignoreCompilerErrors": false,
     "includeDeclarations": false,
+    "entryPoint": "__global.Highcharts",
     "gitRevision": "master",
+    "includes": ".",
     "mode": "file",
     "name": "Highcharts Internals",
     "plugin": "none",
+    "readme": "none",
     "theme": "../node_modules/highcharts-documentation-generators/typedoc/theme-internals"
 }
