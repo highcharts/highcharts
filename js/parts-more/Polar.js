@@ -174,7 +174,7 @@ if (seriesTypes.spline) {
  */
 H.addEvent(Series, 'afterTranslate', function () {
     var chart = this.chart, points, i;
-    if (chart.polar) {
+    if (chart.polar && this.xAxis) {
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
