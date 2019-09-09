@@ -1,19 +1,37 @@
-QUnit.test('Point selected color after updating. (#3529)', function (assert) {
+QUnit.test('Point color presedence (#4397)', function (assert) {
+
     var chart;
 
     // Initiate the chart
     $('#container').highcharts('Map', {
+
+        title: {
+            text: 'Map with inline point paths'
+        },
+
+        colorAxis: {
+            dataClasses: [{
+                to: 2,
+                color: 'yellow'
+            }, {
+                from: 2,
+                to: 4,
+                color: 'orange'
+            }, {
+                from: 4,
+                color: 'red'
+            }]
+        },
+
+        legend: {
+            align: 'left',
+            floating: true,
+            title: {
+                text: 'Random data'
+            }
+        },
+
         series: [{
-            allowPointSelect: true,
-            cursor: 'pointer',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                },
-                select: {
-                    color: "#ff00ff"
-                }
-            },
             data: [{
                 name: "Northern Territory",
                 value: 1,
@@ -47,7 +65,6 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
                 value: 2,
                 path: "M848,696,853,689,859,689,861,695,856,701,854,711,849,706,848,701z"
             }, {
-                selected: true,
                 name: "Victoria",
                 value: 3,
                 path: "M677,643,670,753,683,762,689,758,698,761,711,769,722,777,744,766,749,762,755,753,758,758,755,765,754,769,766,776,774,780,776,784,795,780,811,765,825,761,842,760,858,761,864,755,829,732,828,728,829,722,827,720,826,712,822,710,816,709,811,711,804,709,800,707,794,710,789,708,774,703,769,701,763,701,762,706,759,708,754,707,749,700,745,692,737,686,730,684,726,677,726,669,724,664,719,663,715,662,711,665,707,659,704,656,704,651,695,646,691,647,685,646z",
@@ -58,86 +75,20 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     });
 
     chart = $('#container').highcharts();
-    chart.series[0].data[4].select();
-    chart.series[0].data[0].update(100);
 
     assert.strictEqual(
-        chart.series[0].data[4].graphic.attr('fill'),
-        '#ff00ff',
-        'Point use selected color.'
-    );
-});
-
-QUnit.test("Empty first series in map should render without problems (#5295)", function (assert) {
-    var chart = Highcharts.mapChart("container", {
-        colorAxis: {
-            min: 0,
-            minColor: "#EFEFFF",
-            maxColor: "#102D4C"
-        },
-        series: [{}, {
-            data: [{
-                "hc-key": "au-nt",
-                value: 0
-            }],
-            mapData: Highcharts.maps['countries/au/au-all'],
-            joinBy: 'hc-key'
-        }]
-    });
-
-    assert.strictEqual(chart.series[1].points[0].color, 'rgb(128,142,166)', 'Color has been set correctly');
-});
-
-QUnit.test('Null points', function (assert) {
-    var chart = Highcharts.mapChart('container', {
-        series: [{
-            mapData: Highcharts.maps['custom/europe'],
-            data: [
-                ['no', 5],
-                ['fr', 3],
-                ['gb', 2],
-                ['it', null]
-            ]
-        }]
-    });
-
-    assert.notOk(
-        chart.series[0].points[0].isNull,
-        'Point with data is not a null point'
+        chart.series[0].points[0].graphic.attr('fill'),
+        'blue',
+        'Point color takes precedence initially'
     );
 
-    assert.notOk(
-        chart.series[0].points[0].graphic.hasClass('highcharts-null-point'),
-        "Point with data doesn't have null point class"
-    );
 
-    assert.ok(
-        chart.series[0].points[3].isNull,
-        'Point with null value is a null point'
-    );
-
-    assert.ok(
-        chart.series[0].points[3].graphic.hasClass('highcharts-null-point'),
-        'Point with null value has null point class'
-    );
-
-    assert.ok(
-        chart.series[0].points[4].isNull,
-        'Point with no data is a null point'
-    );
-
-    assert.ok(
-        chart.series[0].points[4].graphic.hasClass('highcharts-null-point'),
-        'Point with no data has null point class'
-    );
-
-    chart.series[0].update({
-        borderWidth: 0
-    });
-
+    chart.setSize(390, 300, false);
     assert.strictEqual(
-        chart.series[0].group.element.getAttribute('stroke-width'),
-        '0',
-        'The stroke width should be 0'
+        chart.series[0].points[0].graphic.attr('fill'),
+        'blue',
+        'Point color takes precedence after redraw'
     );
+
+
 });

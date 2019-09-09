@@ -1,24 +1,41 @@
-QUnit.test('Point selected color after updating. (#3529)', function (assert) {
+QUnit.test('Color axis update (#3207)', function (assert) {
+
     var chart;
 
     // Initiate the chart
     $('#container').highcharts('Map', {
+
+        title: {
+            text: 'Map with inline point paths'
+        },
+
+        colorAxis: {
+            dataClasses: [{
+                to: 2,
+                color: 'white'
+            }, {
+                from: 2,
+                to: 4,
+                color: 'blue'
+            }, {
+                from: 4,
+                color: 'black'
+            }]
+        },
+
+        legend: {
+            align: 'left',
+            floating: true,
+            title: {
+                text: 'Random data'
+            }
+        },
+
         series: [{
-            allowPointSelect: true,
-            cursor: 'pointer',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                },
-                select: {
-                    color: "#ff00ff"
-                }
-            },
             data: [{
                 name: "Northern Territory",
                 value: 1,
-                path: "M385,111,392,109,400,111,401,105,393,97,392,92,396,86,401,86,404,70,409,72,414,64,411,58,411,53,416,53,417,49,424,45,425,38,432,38,436,32,447,35,458,34,464,36,473,31,481,29,479,18,474,14,467,13,461,7,474,2,484,13,489,10,495,19,507,22,514,19,515,24,538,28,541,28,548,34,552,35,556,31,564,32,565,35,572,34,575,40,579,41,583,36,579,32,587,28,588,28,591,33,595,34,597,35,600,39,595,44,591,50,587,51,588,57,585,62,580,60,570,67,570,76,573,79,569,87,569,89,565,93,559,103,556,105,559,112,578,125,580,129,589,133,591,140,600,138,611,145,619,149,623,157,614,415,564,413,501,412,417,415,395,415zM407,24,417,26,425,22,433,25,444,18,448,12,448,6,442,5,428,10,418,7,414,9,410,15,410,17zM582,92,597,93,600,89,595,85,596,78,586,75,585,78,583,88z",
-                color: 'blue'
+                path: "M385,111,392,109,400,111,401,105,393,97,392,92,396,86,401,86,404,70,409,72,414,64,411,58,411,53,416,53,417,49,424,45,425,38,432,38,436,32,447,35,458,34,464,36,473,31,481,29,479,18,474,14,467,13,461,7,474,2,484,13,489,10,495,19,507,22,514,19,515,24,538,28,541,28,548,34,552,35,556,31,564,32,565,35,572,34,575,40,579,41,583,36,579,32,587,28,588,28,591,33,595,34,597,35,600,39,595,44,591,50,587,51,588,57,585,62,580,60,570,67,570,76,573,79,569,87,569,89,565,93,559,103,556,105,559,112,578,125,580,129,589,133,591,140,600,138,611,145,619,149,623,157,614,415,564,413,501,412,417,415,395,415zM407,24,417,26,425,22,433,25,444,18,448,12,448,6,442,5,428,10,418,7,414,9,410,15,410,17zM582,92,597,93,600,89,595,85,596,78,586,75,585,78,583,88z"
             }, {
                 name: "Tasmania",
                 value: 4,
@@ -47,7 +64,6 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
                 value: 2,
                 path: "M848,696,853,689,859,689,861,695,856,701,854,711,849,706,848,701z"
             }, {
-                selected: true,
                 name: "Victoria",
                 value: 3,
                 path: "M677,643,670,753,683,762,689,758,698,761,711,769,722,777,744,766,749,762,755,753,758,758,755,765,754,769,766,776,774,780,776,784,795,780,811,765,825,761,842,760,858,761,864,755,829,732,828,728,829,722,827,720,826,712,822,710,816,709,811,711,804,709,800,707,794,710,789,708,774,703,769,701,763,701,762,706,759,708,754,707,749,700,745,692,737,686,730,684,726,677,726,669,724,664,719,663,715,662,711,665,707,659,704,656,704,651,695,646,691,647,685,646z",
@@ -58,86 +74,52 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     });
 
     chart = $('#container').highcharts();
-    chart.series[0].data[4].select();
-    chart.series[0].data[0].update(100);
 
-    assert.strictEqual(
-        chart.series[0].data[4].graphic.attr('fill'),
-        '#ff00ff',
-        'Point use selected color.'
+    assert.equal(
+        chart.series[0].points[1].color,
+        'black',
+        'Tasmania is initially black'
     );
-});
+    assert.equal(
+        chart.legend.allItems.length,
+        3,
+        'Three legend items'
+    );
 
-QUnit.test("Empty first series in map should render without problems (#5295)", function (assert) {
-    var chart = Highcharts.mapChart("container", {
-        colorAxis: {
-            min: 0,
-            minColor: "#EFEFFF",
-            maxColor: "#102D4C"
-        },
-        series: [{}, {
-            data: [{
-                "hc-key": "au-nt",
-                value: 0
-            }],
-            mapData: Highcharts.maps['countries/au/au-all'],
-            joinBy: 'hc-key'
+
+    // Update the color axis
+    chart.colorAxis[0].update({
+        dataClasses: [{
+            to: 3,
+            color: 'red'
+        }, {
+            from: 3,
+            color: 'blue'
         }]
     });
 
-    assert.strictEqual(chart.series[1].points[0].color, 'rgb(128,142,166)', 'Color has been set correctly');
-});
-
-QUnit.test('Null points', function (assert) {
-    var chart = Highcharts.mapChart('container', {
-        series: [{
-            mapData: Highcharts.maps['custom/europe'],
-            data: [
-                ['no', 5],
-                ['fr', 3],
-                ['gb', 2],
-                ['it', null]
-            ]
-        }]
-    });
-
-    assert.notOk(
-        chart.series[0].points[0].isNull,
-        'Point with data is not a null point'
+    assert.equal(
+        chart.series[0].points[1].color,
+        'blue',
+        'Tasmania is now blue'
+    );
+    assert.equal(
+        chart.legend.allItems.length,
+        2,
+        'Two legend items'
     );
 
-    assert.notOk(
-        chart.series[0].points[0].graphic.hasClass('highcharts-null-point'),
-        "Point with data doesn't have null point class"
+    // Test the SVG
+    var svg = chart.getSVG();
+    chart.destroy();
+    $('#container').html(svg);
+
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        2,
+        'Export has two legend items'
     );
 
-    assert.ok(
-        chart.series[0].points[3].isNull,
-        'Point with null value is a null point'
-    );
 
-    assert.ok(
-        chart.series[0].points[3].graphic.hasClass('highcharts-null-point'),
-        'Point with null value has null point class'
-    );
-
-    assert.ok(
-        chart.series[0].points[4].isNull,
-        'Point with no data is a null point'
-    );
-
-    assert.ok(
-        chart.series[0].points[4].graphic.hasClass('highcharts-null-point'),
-        'Point with no data has null point class'
-    );
-
-    chart.series[0].update({
-        borderWidth: 0
-    });
-
-    assert.strictEqual(
-        chart.series[0].group.element.getAttribute('stroke-width'),
-        '0',
-        'The stroke width should be 0'
-    );
 });
