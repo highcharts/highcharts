@@ -1,6 +1,7 @@
-## Dependency wheel
+Dependency wheel
+------------
 
-A dependency wheel is a type of flow diagram, where nodes are laid out in a circle, and links are drawn between them. This width of the link and size of the nodes are proportional to the flow quantity or _weight_ of each link.
+A dependency wheel is a type of flow diagram, where nodes are laid out in a circle, and links are drawn between them. This width of the link and size of the nodes are proportional to the flow quantity or weight of each link.
 
 The dependency wheel's use areas are similar to the [Sankey diagram](https://www.highcharts.com/docs/chart-and-series-types/sankey-diagram), but while the Sankey diagram supports multiple columns, and there is a clear direction of flow, the dependency wheel's nodes are laid out on the same level, indicating that the flow is multidirectional.
 
