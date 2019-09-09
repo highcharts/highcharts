@@ -44,7 +44,7 @@ QUnit.test('getTimezoneOffset is negative, crossing midnight (#5935)', function 
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: null
+            getTimezoneOffset: undefined
         }
     });
 });
@@ -102,7 +102,7 @@ QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: null
+            getTimezoneOffset: undefined
         }
     });
 });
@@ -175,7 +175,7 @@ QUnit.test('getTimezoneOffset with bigger interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: null
+            getTimezoneOffset: undefined
         }
     });
 
@@ -189,7 +189,7 @@ QUnit.test(
         Highcharts.setOptions({
             global: {
                 useUTC: true,
-                getTimezoneOffset: null
+                getTimezoneOffset: undefined
             }
         });
         var chart = Highcharts.chart('container', {

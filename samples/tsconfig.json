@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
+        "downlevelIteration": true,
         "sourceMap": true,
-        "noEmit": false,
+        "noEmitOnError": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strict": false,
@@ -14,6 +15,7 @@
             "es5"
         ],
         "types": [
+            // disable node types
         ]
     },
     "files": [

@@ -22,6 +22,16 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class CylinderPoint extends ColumnPoint {
+            public options: CylinderPointOptions;
+            public series: CylinderSeries;
+        }
+        class CylinderSeries extends ColumnSeries {
+            public data: Array<CylinderPoint>;
+            public options: CylinderSeriesOptions;
+            public pointClass: typeof CylinderPoint;
+            public points: Array<CylinderPoint>;
+        }
         interface CylinderMethodsObject extends CuboidMethodsObject {
             parts: Array<string>;
             pathType: string;
@@ -35,9 +45,10 @@ declare global {
             zIndexes: Dictionary<number>;
         }
         interface CylinderPointOptions extends ColumnPointOptions {
-            shapeType: string;
+            shapeType?: string;
         }
         interface CylinderSeriesOptions extends ColumnSeriesOptions {
+            states?: SeriesStatesOptionsObject<CylinderSeries>;
         }
         interface Elements3dObject {
             cylinder?: CylinderMethodsObject;
@@ -62,16 +73,6 @@ declare global {
         }
         interface SeriesTypesDictionary {
             cylinder: typeof CylinderSeries;
-        }
-        class CylinderPoint extends ColumnPoint {
-            public options: CylinderPointOptions;
-            public series: CylinderSeries;
-        }
-        class CylinderSeries extends ColumnSeries {
-            public data: Array<CylinderPoint>;
-            public options: CylinderSeriesOptions;
-            public pointClass: typeof CylinderPoint;
-            public points: Array<CylinderPoint>;
         }
     }
 }
@@ -104,7 +105,7 @@ var charts = H.charts,
   *
   * @augments Highcharts.Series
   */
-seriesType<Highcharts.CylinderSeriesOptions>(
+seriesType<Highcharts.CylinderSeries>(
     'cylinder',
     'column',
     /**
@@ -117,7 +118,8 @@ seriesType<Highcharts.CylinderSeriesOptions>(
      * @extends      plotOptions.column
      * @since        7.0.0
      * @product      highcharts
-     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+     *               dragDrop
      * @optionparent plotOptions.cylinder
      */
     {},

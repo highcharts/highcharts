@@ -39,9 +39,9 @@ seriesType('pareto', 'line'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, borderColor, borderRadius,
-     *               borderWidth, crisp, colorAxis, depth, data, edgeColor,
-     *               edgeWidth, findNearestPointBy, gapSize, gapUnit, grouping,
-     *               groupPadding, groupZPadding, maxPointWidth, keys,
+     *               borderWidth, crisp, colorAxis, depth, data, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, gapSize, gapUnit,
+     *               grouping, groupPadding, groupZPadding, maxPointWidth, keys,
      *               negativeColor, pointInterval, pointIntervalUnit,
      *               pointPadding, pointPlacement, pointRange, pointStart,
      *               pointWidth, shadow, step, softThreshold, stacking,

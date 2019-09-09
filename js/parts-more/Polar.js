@@ -174,7 +174,7 @@ if (seriesTypes.spline) {
  */
 H.addEvent(Series, 'afterTranslate', function () {
     var chart = this.chart, points, i;
-    if (chart.polar) {
+    if (chart.polar && this.xAxis) {
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
@@ -408,7 +408,13 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     };
     if (chart.polar) {
         chart.axes.forEach(function (axis) {
-            var isXAxis = axis.isXAxis, center = axis.center, x = e.chartX - center[0] - chart.plotLeft, y = e.chartY - center[1] - chart.plotTop;
+            var isXAxis = axis.isXAxis, center = axis.center, x, y;
+            // Skip colorAxis
+            if (axis.coll === 'colorAxis') {
+                return;
+            }
+            x = e.chartX - center[0] - chart.plotLeft;
+            y = e.chartY - center[1] - chart.plotTop;
             ret[isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,
                 value: axis.translate(isXAxis ?

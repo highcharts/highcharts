@@ -43,8 +43,8 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLegendItemClickEventObject#type
 * @type {"legendItemClick"}
 */
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * The sequential index of the data point in the legend.
 * @name Highcharts.PointOptionsObject#legendIndex
@@ -632,11 +632,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     adjustMargins: function (margin, spacing) {
-        var chart = this.chart, options = this.options, alignment = this.getAlignment(), titleMarginOption = chart.options.title.margin, titleMargin = titleMarginOption !== undefined ?
-            chart.titleOffset[0] + titleMarginOption :
-            0, titleMarginBottom = titleMarginOption !== undefined ?
-            chart.titleOffset[2] + titleMarginOption :
-            0;
+        var chart = this.chart, options = this.options, alignment = this.getAlignment();
         if (alignment) {
             ([
                 /(lth|ct|rth)/,
@@ -651,12 +647,7 @@ Highcharts.Legend.prototype = {
                         [1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] +
                         pick(options.margin, 12) +
                         spacing[side] +
-                        (side === 0 &&
-                            (chart.titleOffset[0] === 0 ?
-                                0 : titleMargin)) + // #7428, #7894
-                        (side === 2 &&
-                            (chart.titleOffset[2] === 0 ?
-                                0 : titleMarginBottom))));
+                        (chart.titleOffset[side] || 0)));
                 }
             });
         }
@@ -828,16 +819,15 @@ Highcharts.Legend.prototype = {
         if (display) {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
-            var margin = chart.options.title.margin;
             var alignTo = chart.spacingBox;
             var y = alignTo.y;
             if (/(lth|ct|rth)/.test(legend.getAlignment()) &&
                 chart.titleOffset[0] > 0) {
-                y += chart.titleOffset[0] + margin;
+                y += chart.titleOffset[0];
             }
             else if (/(lbh|cb|rbh)/.test(legend.getAlignment()) &&
                 chart.titleOffset[2] > 0) {
-                y -= chart.titleOffset[2] + margin;
+                y -= chart.titleOffset[2];
             }
             if (y !== alignTo.y) {
                 alignTo = merge(alignTo, { y: y });

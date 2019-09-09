@@ -1,7 +1,5 @@
 QUnit.test('yAxis theme settings affected color axis (#5569)', function (assert) {
 
-    var gridLineColor = Highcharts.Axis.prototype.defaultYAxisOptions.gridLineColor;
-
     Highcharts.theme = {
         yAxis: {
             alternateGridColor: '#ff0',
@@ -45,10 +43,5 @@ QUnit.test('yAxis theme settings affected color axis (#5569)', function (assert)
     );
 
     // Undo
-    Highcharts.setOptions({
-        yAxis: {
-            alternateGridColor: null,
-            gridLineColor: gridLineColor
-        }
-    });
+    delete Highcharts.defaultOptions.yAxis;
 });

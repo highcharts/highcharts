@@ -99,6 +99,48 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
         });
     }
 });
+function resetDefaultOptions() {
+    var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
+    
+    // Before running setOptions, delete properties that are undefined by
+    // default. For example, in `highcharts/members/setoptions`, properties like
+    // chart.borderWidth and chart.plotBorderWidth are set. The default options
+    // don't contain these props, so a simple merge won't remove them.
+    function deleteAddedProperties(copy, original) {
+        Highcharts.objectEach(copy, function (value, key) {
+            if (
+                Highcharts.isObject(value, true) &&
+                Highcharts.isObject(original[key], true) &&
+                !Highcharts.isClass(value) &&
+                !Highcharts.isDOMElement(value)
+            ) {
+                // Recurse
+                deleteAddedProperties(copy[key], original[key]);
+            } else if (
+                // functions are not saved in defaultOptionsRaw
+                (
+                    typeof value === 'string' ||
+                    typeof value === 'number' ||
+                    typeof value === 'boolean' ||
+                    typeof value === 'undefined'
+                ) &&    
+                !(key in original)
+            ) {
+                delete copy[key];
+            }
+        });
+    }
+
+    deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
+
+    Highcharts.setOptions(defaultOptionsRaw);
+}
+
+
+// Handle wrapping, reset functions that are wrapped in the visual samples to
+// prevent the wraps from piling up downstream.
+var origWrap = Highcharts.wrap;
+var wrappedFunctions = [];
 
 if (window.QUnit) {
     /*
@@ -143,6 +185,13 @@ if (window.QUnit) {
 
             // Reset randomizer
             Math.randomCursor = 0;
+
+            // Wrap the wrap function
+            Highcharts.wrap = function (ob, prop, fn) {
+                // Push original function
+                wrappedFunctions.push([ob, prop, ob[prop]]);
+                origWrap(ob, prop, fn);
+            };
         },
 
         afterEach: function (test) {
@@ -153,6 +202,14 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
+            if (defaultOptions !== Highcharts.defaultOptionsRaw) {
+                //var msg = 'Default options changed, make sure the test resets options';
+                //console.log(test.test.testName, msg);
+                //QUnit.config.queue.length = 0;
+                //throw new Error(msg);
+            }
 
             var containerStyle = document.getElementById('container').style;
             containerStyle.width = '';
@@ -181,6 +238,17 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Unwrap/reset wrapped functions
+            while (wrappedFunctions.length) {
+                //const [ ob, prop, fn ] = wrappedFunctions.pop();
+                var args = wrappedFunctions.pop(),
+                    ob = args[0],
+                    prop = args[1],
+                    fn = args[2];
+                ob[prop] = fn;
+            }
+            Highcharts.wrap = origWrap;
         }
     });
 }
@@ -194,21 +262,25 @@ Highcharts.prepareShot = function (chart) {
         chart.series &&
         chart.series[0]
     ) {
-        // Network graphs, sankey etc
-        if (
-            chart.series[0].nodes &&
-            chart.series[0].nodes[0] &&
-            typeof chart.series[0].nodes[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].nodes[0].onMouseOver();
-        
-        // Others
-        } else if (
-            chart.series[0].points &&
-            chart.series[0].points[0] &&
-            typeof chart.series[0].points[0].onMouseOver === 'function'
-        ) {
-            chart.series[0].points[0].onMouseOver();
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
+            chart.series[0].points;
+
+        if (points) {
+            for (var i = 0; i < points.length; i++) {
+                if (
+                    points[i] &&
+                    !points[i].isNull &&
+                    !( // Map point with no extent, like Aruba
+                        points[i].shapeArgs &&
+                        points[i].shapeArgs.d &&
+                        points[i].shapeArgs.d.length === 0
+                    ) &&
+                    typeof points[i].onMouseOver === 'function'
+                ) {
+                    points[i].onMouseOver();
+                    break;
+                }
+            }
         }
     }
 };
@@ -224,6 +296,14 @@ function getSVG(chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
         svg = container.querySelector('svg').outerHTML;
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -349,7 +429,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        var remotelocation = __karma__.config.cliArgs.remotelocation;
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {

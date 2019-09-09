@@ -323,6 +323,7 @@ var seriesType = H.seriesType,
     Point = H.Point,
     pick = H.pick,
     addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     Chart = H.Chart,
     color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
@@ -578,7 +579,7 @@ H.layouts.packedbubble = H.extendClass(
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.PackedBubbleSeriesOptions>(
+seriesType<Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**
@@ -594,8 +595,9 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
      *         Split packed bubble chart
 
      * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, jitter, keys, pointPlacement,
-     *               sizeByAbsoluteValue, step, xAxis, yAxis, zMax, zMin
+     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
+     *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
+     *               zMax, zMin
      * @product      highcharts
      * @since        7.0.0
      * @optionparent plotOptions.packedbubble
@@ -1358,6 +1360,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             if (useSimulation) {
                 series.deferLayout();
             }
+
+            fireEvent(series, 'afterTranslate');
         },
         /**
          * Check if two bubbles overlaps.
@@ -1457,7 +1461,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
         placeBubbles: function (
             this: Highcharts.PackedBubbleSeries,
             allDataPoints: Array<Highcharts.PackedBubbleData>
-        ): Array<Array<number>> {
+        ): Array<Highcharts.PackedBubbleData> {
 
             var series = this,
                 checkOverlap = series.checkOverlap,
@@ -1468,8 +1472,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 k = 0,
                 calculatedBubble,
                 sortedArr: Array<Highcharts.PackedBubbleData>,
-                arr = [] as Array<Array<number>>,
-                i;
+                arr = [] as Array<Highcharts.PackedBubbleData>,
+                i: number;
 
             // sort all points
             sortedArr = allDataPoints.sort(function (
@@ -1582,7 +1586,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 // bubble positions merged into one array
 
                 series.resizeRadius();
-                arr = series.chart.rawPositions;
+                arr = series.chart.rawPositions as any;
             }
             return arr;
         },

@@ -18,13 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ErrorBarPointOptions extends BoxPlotPointOptions {
-        }
-        interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            errorbar: typeof ErrorBarSeries;
-        }
         class ErrorBarPoint extends BoxPlotPoint {
             public options: ErrorBarPointOptions;
             public series: ErrorBarSeries;
@@ -42,6 +35,15 @@ declare global {
             public getColumnMetrics(): ColumnMetricsObject;
             public drawDataLabels(): void;
             public toYData(point: ErrorBarPoint): Array<number>;
+        }
+        interface ErrorBarPointOptions extends BoxPlotPointOptions {
+        }
+        interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
+            states?: SeriesStatesOptionsObject<ErrorBarSeries>;
+            whiskerWidth?: number;
+        }
+        interface SeriesTypesDictionary {
+            errorbar: typeof ErrorBarSeries;
         }
     }
 }
@@ -68,7 +70,7 @@ var noop = H.noop,
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar
  */
-seriesType('errorbar', 'boxplot', {
+seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
 
     /**
      * The main color of the bars. This can be overridden by
@@ -112,7 +114,7 @@ seriesType('errorbar', 'boxplot', {
      * @since   3.0
      * @product highcharts
      */
-    whiskerWidth: null
+    whiskerWidth: null as any
 
 // Prototype members
 }, {
@@ -136,7 +138,7 @@ seriesType('errorbar', 'boxplot', {
                 point.y = (point as any)[valKey];
             });
         } :
-        noop,
+        noop as any,
 
     // Get the width and X offset, either on top of the linked series column or
     // standalone

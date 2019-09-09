@@ -14,10 +14,11 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'category',
-        title: {
-            text: 'Column widths are proportional to GDP'
-        }
+        type: 'category'
+    },
+
+    caption: {
+        text: 'Column widths are proportional to GDP'
     },
 
     legend: {

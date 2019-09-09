@@ -20,6 +20,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Options {
+            isGantt?: boolean;
+        }
         function ganttChart(
             renderTo: (string|HTMLDOMElement),
             options: Options,
@@ -32,7 +35,7 @@ import U from '../parts/Utilities.js';
 var isArray = U.isArray,
     splat = U.splat;
 
-import 'GanttSeries.js';
+import './GanttSeries.js';
 
 var merge = H.merge,
     Chart = H.Chart;

@@ -17,6 +17,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
+    fireEvent = H.fireEvent,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
@@ -44,6 +45,7 @@ seriesType(
      *         Variable-radius pie chart
      *
      * @extends      plotOptions.pie
+     * @excluding    dragDrop
      * @since        6.0.0
      * @product      highcharts
      * @optionparent plotOptions.variablepie
@@ -399,6 +401,8 @@ seriesType(
                 };
 
             }
+
+            fireEvent(series, 'afterTranslate');
         }
     }
 );

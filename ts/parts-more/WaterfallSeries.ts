@@ -18,46 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            renderWaterfallStackTotals: (
-                WaterfallAxis['renderWaterfallStackTotals']
-            );
-        }
-        interface Series {
-            showLine?: WaterfallSeries['showLine'];
-        }
-        interface WaterfallAxis extends Axis {
-            dummyStackItem?: StackItem;
-            options: YAxisOptions;
-            waterfallStacks: WaterfallStacksObject;
-            renderWaterfallStackTotals(): void;
-        }
-        interface WaterfallChart extends ColumnChart {
-            axes: Array<WaterfallAxis>;
-        }
-        interface WaterfallPointOptions extends ColumnPointOptions {
-            isSum?: boolean;
-            y?: any;
-        }
-        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface WaterfallStacksObject {
-            changed: boolean;
-            waterfall?: Dictionary<WaterfallStacksItemObject>;
-        }
-        interface WaterfallStacksItemObject {
-            negTotal: number;
-            posTotal: number;
-            stackTotal: number;
-            threshold: number;
-            stateIndex: number;
-            stackState: Array<string>;
-            label?: SVGElement;
-        }
-        interface SeriesTypesDictionary {
-            waterfall: typeof WaterfallSeries;
-        }
         class WaterfallPoint extends ColumnPoint {
             public below?: boolean;
             public isIntermediateSum?: boolean;
@@ -96,6 +56,47 @@ declare global {
             public setStackedPoints(): void;
             public toYData(pt: WaterfallPoint): any;
             public translate(): void;
+        }
+        interface Axis {
+            renderWaterfallStackTotals: (
+                WaterfallAxis['renderWaterfallStackTotals']
+            );
+        }
+        interface Series {
+            showLine?: WaterfallSeries['showLine'];
+        }
+        interface WaterfallAxis extends Axis {
+            dummyStackItem?: StackItem;
+            options: YAxisOptions;
+            waterfallStacks: WaterfallStacksObject;
+            renderWaterfallStackTotals(): void;
+        }
+        interface WaterfallChart extends ColumnChart {
+            axes: Array<WaterfallAxis>;
+        }
+        interface WaterfallPointOptions extends ColumnPointOptions {
+            isSum?: boolean;
+            y?: any;
+        }
+        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
+            upColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<WaterfallSeries>;
+        }
+        interface WaterfallStacksObject {
+            changed: boolean;
+            waterfall?: Dictionary<WaterfallStacksItemObject>;
+        }
+        interface WaterfallStacksItemObject {
+            label?: SVGElement;
+            negTotal: number;
+            posTotal: number;
+            stackState: Array<string>;
+            stackTotal: number;
+            stateIndex: number;
+            threshold: number;
+        }
+        interface SeriesTypesDictionary {
+            waterfall: typeof WaterfallSeries;
         }
     }
 }
@@ -239,7 +240,7 @@ Axis.prototype.renderWaterfallStackTotals = function (
  * @product      highcharts
  * @optionparent plotOptions.waterfall
  */
-seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
+seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     /**
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
@@ -633,7 +634,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
     processData: function (
         this: Highcharts.WaterfallSeries,
         force?: boolean
-    ): void {
+    ): undefined {
         var series = this,
             options = series.options,
             yData = series.yData,
@@ -678,6 +679,8 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
+
+        return;
     },
 
     // Return y value or string if point is sum

@@ -497,7 +497,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/series/
          *         A green navigator series
          *
-         * @type {*|Highcharts.SeriesOptionsType}
+         * @type {*|Array<*>|Highcharts.SeriesOptionsType|Array<Highcharts.SeriesOptionsType>}
          */
         series: {
 
@@ -2756,6 +2756,9 @@ if (!H.Navigator) {
                             legend.legendHeight +
                             pick(legendOptions.margin, 10) :
                             0
+                    ) -
+                    (
+                        this.titleOffset ? this.titleOffset[2] : 0
                     );
             }
 

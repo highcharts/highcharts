@@ -296,9 +296,14 @@ Available arguments for 'gulp test':
     Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
     directory.
 
---difflog
+--visualcompare
+    Performs a visual comparison of the output and creates a reference.svg and candidate.svg
+    when doing so.
+
+--difflog 
     Produces a JSON file containing the number of different pixels for visual tests.
-    Use --remotelocation to specify remote location of reference.svg files to compare with.
+    Use --remotelocation to specify remote location of reference.svg files to compare with,
+    or local file will be expected to exist.
 
 --ts
     Compile TypeScript-based tests.

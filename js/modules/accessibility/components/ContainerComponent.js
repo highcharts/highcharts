@@ -12,8 +12,10 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import A11yUtilities from '../utilities.js';
 
-var doc = H.win.document;
+var doc = H.win.document,
+    stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
 /**
@@ -42,12 +44,12 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
             chartTitle = chart.options.title.text || chart.langFormat(
                 'accessibility.defaultChartTitle', { chart: chart }
             ),
-            svgContainerTitle = this.stripTags(chart.langFormat(
+            svgContainerTitle = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
                     chartTitle: chartTitle
                 }
             )),
-            svgContainerLabel = this.stripTags(chart.langFormat(
+            svgContainerLabel = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: chartTitle
                 }
@@ -83,7 +85,7 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
             chart.langFormat(
                 'accessibility.chartContainerLabel',
                 {
-                    title: this.stripTags(chartTitle),
+                    title: stripHTMLTags(chartTitle),
                     chart: chart
                 }
             )
@@ -94,7 +96,7 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
         if (creditsEl) {
             if (chart.credits.textStr) {
                 creditsEl.setAttribute(
-                    'aria-label', this.stripTags(
+                    'aria-label', stripHTMLTags(
                         chart.langFormat(
                             'accessibility.credits', {
                                 creditsStr: chart.credits.textStr

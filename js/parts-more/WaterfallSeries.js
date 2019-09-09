@@ -380,6 +380,7 @@ seriesType('waterfall', 'column', {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
+        return;
     },
     // Return y value or string if point is sum
     toYData: function (pt) {

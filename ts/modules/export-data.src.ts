@@ -52,31 +52,6 @@ declare global {
             /** @requires modules/export-data */
             viewData(): void;
         }
-        interface ExportingButtonOptionsObject {
-            className?: string;
-            enabled?: boolean;
-            menuClassName?: string;
-            menuItems?: Array<string>;
-            onclick?: Function;
-            symbol?: ('menu'|'menuball'|'exportIcon'|string|SymbolKeyValue);
-            symbolFill?: ColorString;
-            symbolStroke?: ColorString;
-            symbolStrokeWidth?: number;
-            text?: string;
-            theme?: ExportingButtonThemeOptionsObject;
-            titleKey?: string;
-            x?: number;
-            y?: number;
-        }
-        interface ExportingButtonsOptions {
-            [key: string]: ExportingButtonOptionsObject;
-            contextButton: ExportingButtonOptionsObject;
-        }
-        interface ExportingButtonThemeOptionsObject {
-            fill?: ColorType;
-            padding?: number;
-            stroke?: ColorString;
-        }
         interface ExportingCsvOptions {
             columnHeaderFormatter?: (Function|null);
             dateFormat?: string;
@@ -84,40 +59,16 @@ declare global {
             itemDelimiter?: (string|null);
             lineDelimiter?: string;
         }
-        interface ExportingMenuObject {
-            onclick?: EventCallbackFunction<Chart>;
-            separator?: boolean;
-            text?: string;
-            textKey?: string;
-        }
         interface ExportingOptions {
-            allowHTML?: boolean;
-            buttons?: ExportingButtonsOptions;
-            chartOptions?: Options;
             csv?: ExportingCsvOptions;
-            enabled?: boolean;
-            error?: ExportingErrorCallbackFunction;
-            fallbackToExportServer?: boolean;
-            filename?: string;
-            formAttributes?: any;
-            libURL?: string;
-            menuItemDefinitions?: Dictionary<ExportingMenuObject>;
-            printMaxWidth?: number;
-            scale?: number;
             showTable?: boolean;
-            sourceHeight?: number;
-            sourceWidth?: number;
             tableCaption?: (boolean|string);
-            type?: string;
-            url?: string;
-            useMultiLevelHeaders?: boolean;
-            useRowspanHeaders?: boolean;
-            width?: number;
         }
-        interface ExportingPoint extends PointOptionsObject {
-            series: ExportingSeries;
+        interface ExportDataPoint {
+            series: ExportDataSeries;
+            x?: number;
         }
-        interface ExportingSeries {
+        interface ExportDataSeries {
             autoIncrement: Series['autoIncrement'];
             chart: Chart;
             options: SeriesOptions;
@@ -133,9 +84,6 @@ declare global {
             exportKey?: string;
             keyToAxis?: Dictionary<string>;
         }
-        interface Options {
-            exporting?: ExportingOptions;
-        }
     }
     interface MSBlobBuilder extends Blob {
     }
@@ -144,6 +92,31 @@ declare global {
         MSBlobBuilder: typeof MSBlobBuilder;
     }
 }
+
+/**
+ * Function callback to execute while data rows are processed for exporting.
+ * This allows the modification of data rows before processed into the final
+ * format.
+ *
+ * @callback Highcharts.ExportDataCallbackFunction
+ * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *
+ * @param {Highcharts.Chart} this
+ * Chart context where the event occured.
+ *
+ * @param {Highcharts.ExportDataEventObject} event
+ * Event object with data rows that can be modified.
+ */
+
+/**
+ * Contains information about the export data event.
+ *
+ * @interface Highcharts.ExportDataEventObject
+ *//**
+ * Contains the data rows for the current export task and can be modified.
+ * @name Highcharts.ExportDataEventObject#dataRows
+ * @type {Array<Array<string>>}
+ */
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
@@ -179,6 +152,17 @@ function htmlencode(html: string): string {
 }
 
 Highcharts.setOptions({
+    /**
+     * Callback that fires while exporting data. This allows the modification of
+     * data rows before processed into the final format.
+     *
+     * Requires the `export-data` module.
+     *
+     * @type      {Highcharts.ExportDataCallbackFunction}
+     * @context   Highcharts.Chart
+     * @apioption chart.events.exportData
+     */
+
     /**
      * Export-data module required. When set to `false` will prevent the series
      * data from being included in any form of data export.
@@ -424,6 +408,8 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
  *
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
+ *
+ * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
@@ -530,7 +516,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 series,
                 pointArrayMap
             ),
-            mockSeries: Highcharts.ExportingSeries,
+            mockSeries: Highcharts.ExportDataSeries,
             j: number;
 
         if (
@@ -591,7 +577,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportingPoint|Highcharts.Point);
+                    point: (Highcharts.ExportDataPoint|Highcharts.Point);
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -807,6 +793,8 @@ Highcharts.Chart.prototype.getCSV = function (
  *
  * @return {string}
  *         HTML representation of the data.
+ *
+ * @fires Highcharts.Chart#event:afterGetTable
  */
 Highcharts.Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
@@ -1104,6 +1092,8 @@ Highcharts.Chart.prototype.downloadXLS = function (): void {
  *
  * @function Highcharts.Chart#viewData
  * @return {void}
+ *
+ * @fires Highcharts.Chart#event:afterViewData
  */
 Highcharts.Chart.prototype.viewData = function (): void {
     if (!this.dataTableDiv) {

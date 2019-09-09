@@ -447,10 +447,10 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *         Sunburst chart
  *
  * @extends      plotOptions.pie
- * @excluding    allAreas, clip, colorAxis, compare, compareBase, dataGrouping,
- *               depth, endAngle, gapSize, gapUnit, ignoreHiddenPoint,
- *               innerSize, joinBy, legendType, linecap, minSize,
- *               navigatorOptions, pointRange
+ * @excluding    allAreas, clip, colorAxis, colorKey, compare, compareBase,
+ *               dataGrouping, depth, dragDrop, endAngle, gapSize, gapUnit,
+ *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
+ *               minSize, navigatorOptions, pointRange
  * @product      highcharts
  * @optionparent plotOptions.sunburst
  * @private

@@ -20,19 +20,11 @@ declare global {
     namespace Highcharts {
         type OHLCYData = [number, number, number, number];
         interface OHLCPointOptions extends ColumnPointOptions {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
+            upColor?: ColorType;
         }
         interface OHLCSeriesOptions extends ColumnSeriesOptions {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: OHLCSeriesStatesOptions;
-        }
-        interface OHLCSeriesStatesHoverOptions
-            extends ColumnSeriesStatesHoverOptions
-        {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface OHLCSeriesStatesOptions extends ColumnSeriesStatesOptions {
-            hover?: OHLCSeriesStatesHoverOptions;
+            upColor?: ColorType;
+            states?: SeriesStatesOptionsObject<OHLCSeries>;
         }
         interface Series {
             pointArrayMap?: OHLCSeries['pointArrayMap'];
@@ -61,7 +53,7 @@ declare global {
             public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
             public init(): void;
-            public toYData(): OHLCYData;
+            public toYData(point: OHLCPoint): OHLCYData;
         }
     }
 }
@@ -83,7 +75,7 @@ var Point = H.Point,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.OHLCSeriesOptions>(
+seriesType<Highcharts.OHLCSeries>(
     'ohlc',
     'column'
 
@@ -174,6 +166,11 @@ seriesType<Highcharts.OHLCSeriesOptions>(
          * @validvalue ["open", "high", "low", "close"]
          * @product    highstock
          * @apioption  plotOptions.ohlc.pointValKey
+         */
+
+        /**
+         * @default   close
+         * @apioption plotOptions.ohlc.colorKey
          */
 
         /**
@@ -390,7 +387,7 @@ seriesType<Highcharts.OHLCSeriesOptions>(
 
         },
 
-        animate: null // Disable animation
+        animate: null as any // Disable animation
 
         /* eslint-enable valid-jsdoc */
 

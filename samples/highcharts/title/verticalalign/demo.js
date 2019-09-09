@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         align: 'right',
         x: -80,
         verticalAlign: 'bottom',
-        y: -80
+        y: -80,
+        floating: true
     },
 
     xAxis: {

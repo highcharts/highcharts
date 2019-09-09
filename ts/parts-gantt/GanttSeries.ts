@@ -20,6 +20,30 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class GanttPoint extends XRangePoint {
+            public end?: GanttPointOptions['end'];
+            public milestone?: GanttPointOptions['milestone'];
+            public options: GanttPointOptions;
+            public series: GanttSeries;
+            public start?: GanttPointOptions['start'];
+            public applyOptions(
+                options: GanttPointOptions,
+                x: number
+            ): GanttPoint;
+            public isValid(): boolean;
+        }
+        class GanttSeries extends XRangeSeries {
+            public data: Array<GanttPoint>;
+            public keyboardMoveVertical: boolean;
+            public options: GanttSeriesOptions;
+            public pointArrayMap: Array<string>;
+            public pointClass: typeof GanttPoint;
+            public points: Array<GanttPoint>;
+            public setData: Series['setData'];
+            public drawPoint(point: GanttPoint, verb: string): void;
+            public setGanttPointAliases(options: GanttPointOptions): void;
+            public translatePoint(point: GanttPoint): void;
+        }
         interface GanttAnimationOptionsObject extends AnimationOptionsObject {
             reversed?: boolean;
         }
@@ -46,33 +70,10 @@ declare global {
         }
         interface GanttSeriesOptions extends XRangeSeriesOptions {
             connectors?: GanttConnectorsOptions;
+            states?: SeriesStatesOptionsObject<GanttSeries>;
         }
         interface SeriesTypesDictionary {
             gantt: typeof GanttSeries;
-        }
-        class GanttPoint extends XRangePoint {
-            public end?: GanttPointOptions['end'];
-            public milestone?: GanttPointOptions['milestone'];
-            public options: GanttPointOptions;
-            public series: GanttSeries;
-            public start?: GanttPointOptions['start'];
-            public applyOptions(
-                options: GanttPointOptions,
-                x: number
-            ): GanttPoint;
-            public isValid(): boolean;
-        }
-        class GanttSeries extends XRangeSeries {
-            public data: Array<GanttPoint>;
-            public keyboardMoveVertical: boolean;
-            public options: GanttSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof GanttPoint;
-            public points: Array<GanttPoint>;
-            public setData: Series['setData'];
-            public drawPoint(point: GanttPoint, verb: string): void;
-            public setGanttPointAliases(options: GanttPointOptions): void;
-            public translatePoint(point: GanttPoint): void;
         }
     }
 }
@@ -81,11 +82,11 @@ import U from '../parts/Utilities.js';
 var isNumber = U.isNumber,
     splat = U.splat;
 
-import 'CurrentDateIndicator.js';
-import 'GridAxis.js';
+import './CurrentDateIndicator.js';
+import './GridAxis.js';
 import '../modules/static-scale.src.js';
-import 'TreeGrid.js';
-import 'Pathfinder.js';
+import './TreeGrid.js';
+import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
@@ -103,7 +104,7 @@ var dateFormat = H.dateFormat,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.GanttSeriesOptions>('gantt', 'xrange'
+seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
 
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
@@ -319,7 +320,8 @@ seriesType<Highcharts.GanttSeriesOptions>('gantt', 'xrange'
 
         /* eslint-enable valid-jsdoc */
 
-    }, merge(parent.prototype.pointClass.prototype, {
+    },
+    merge<Highcharts.GanttPoint>(parent.prototype.pointClass.prototype as any, {
         // pointProps - point member overrides. We inherit from parent as well.
 
         /* eslint-disable valid-jsdoc */

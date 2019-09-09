@@ -176,7 +176,8 @@ seriesType('timeline', 'line',
             lineWidth: 2,
             height: 15
         },
-        showInLegend: false
+        showInLegend: false,
+        colorKey: 'x'
     },
     /**
      * @lends Highcharts.Series#

@@ -221,6 +221,10 @@ seriesType('bubble', 'scatter', {
      * @apioption plotOptions.bubble.zMax
      */
     /**
+     * @default   z
+     * @apioption plotOptions.bubble.colorKey
+     */
+    /**
      * The minimum for the Z value range. Defaults to the lowest Z value
      * in the data.
      *
@@ -456,7 +460,7 @@ Axis.prototype.beforePadding = function () {
                 if (isNumber(data[i]) &&
                     axis.dataMin <= data[i] &&
                     data[i] <= axis.dataMax) {
-                    radius = series.radii[i];
+                    radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
                     pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
                 }
