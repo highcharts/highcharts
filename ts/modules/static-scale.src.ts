@@ -18,6 +18,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface Chart {
+            redrawTrigger?: string;
             initiatedScale?: boolean;
             /** @requires modules/static-scale */
             adjustHeight(): void;
@@ -117,6 +118,6 @@ Chart.prototype.adjustHeight = function (): void {
         });
         this.initiatedScale = true;
     }
-    this.redrawTrigger = null;
+    this.redrawTrigger = null as any;
 };
 H.addEvent(Chart, 'render', Chart.prototype.adjustHeight);

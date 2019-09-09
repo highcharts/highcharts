@@ -33,7 +33,6 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             hasParallelCoordinates?: any; // @todo parallel module
             isBoosting?: any; // @todo boost module
-            redrawTrigger?: any; // @todo static-scale module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
