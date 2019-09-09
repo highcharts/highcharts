@@ -238,3 +238,25 @@ QUnit.test('Data validation', assert => {
         '... both ways'
     );
 });
+
+
+QUnit.test('Polar and pie in panes (#11897)', assert => {
+    Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+        pane: {
+            center: ['25%', '50%']
+        },
+        series: [{
+            type: 'column',
+            data: [1, 2, 3]
+        }, {
+            type: 'pie',
+            data: [1, 2, 3],
+            center: ['75%', '50%']
+        }]
+    });
+
+    assert.ok(true, "No errors (#11897).");
+});

@@ -1,3 +1,141 @@
+QUnit.test('StaggerLines on opposite xAxis should be placed between title and axis line. (#4694)', function (assert) {
+    var chart = $('#container').highcharts({
+            chart: {
+                marginTop: null
+            },
+            xAxis: {
+                categories: [],
+                opposite: true,
+                labels: {
+                    staggerLines: 3
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 1, 2, 3]
+            }]
+        }).highcharts(),
+        labelsBox = chart.xAxis[0].labelGroup.getBBox(),
+        titleBox = chart.title.getBBox();
+
+
+    assert.strictEqual(
+        labelsBox.y > titleBox.y + titleBox.height,
+        true,
+        'All labels below the title.'
+    );
+
+    assert.strictEqual(
+        labelsBox.y + labelsBox.height < chart.plotTop,
+        true,
+        'All labels above the axis line.'
+    );
+});
+
+QUnit.test('Ellipsis (#3941)', function (assert) {
+    var chart = $('#container').highcharts({
+        chart: {
+            height: 62,
+            margin: 0,
+            marginTop: 11,
+            marginBottom: 10,
+            renderTo: 'container',
+            type: 'column',
+            width: 220
+        },
+
+        credits: {
+            enabled: false
+        },
+        title: {
+            text: null
+        },
+        legend: {
+            enabled: false
+        },
+        rangeSelector: {
+            enabled: false
+        },
+        tooltip: {
+            enabled: false
+        },
+
+        xAxis: {
+            type: 'category',
+            labels: {
+                autoRotation: false,
+                style: {
+                    fontSize: '8px',
+                    textOverflow: 'none'
+                },
+                y: 8
+            }
+        },
+
+        yAxis: {
+            gridLineWidth: 0,
+            labels: {
+                enabled: false
+            },
+            min: 0,
+            title: {
+                text: null
+            },
+            maxPadding: 0.04,
+            endOnTick: false
+        },
+
+        series: [{
+            name: 'Rainfall (mm)',
+            data: [{
+                name: 'LongTextWithNoEllipsis0',
+                y: 0.2
+            }, {
+                name: 'Th',
+                y: 0.4
+            }, {
+                name: 'Fr',
+                y: 0
+            }, {
+                name: 'Sa',
+                y: 8.4
+            }, {
+                name: 'LongTextWithNoEllipsis4',
+                y: 0
+            }, {
+                name: 'Mo',
+                y: 1.2
+            }, {
+                name: 'Tu',
+                y: 0
+            }, {
+                name: 'LongTextWithNoEllipsis7',
+                y: 0
+            }],
+            groupPadding: 0,
+            pointPadding: 0,
+            borderWidth: 0,
+            shadow: false
+        }]
+    }).highcharts();
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks['0'].label.element.textContent,
+        'LongTextWithNoEllipsis0',
+        'No ellipsis'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].ticks['4'].label.element.textContent,
+        'LongTextWithNoEllipsis4',
+        'No ellipsis'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].ticks['7'].label.element.textContent,
+        'LongTextWithNoEllipsis7',
+        'No ellipsis'
+    );
+
+});
+
 QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
 
     TestTemplate.test('highcharts/bar', {
@@ -29,6 +167,7 @@ QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
     });
 
 });
+
 QUnit.test('Show last label hiding interrupted by animation (#5332)', function (assert) {
 
     var done = assert.async();
