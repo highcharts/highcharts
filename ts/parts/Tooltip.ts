@@ -257,6 +257,40 @@ var doc = H.doc,
     syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 
+/**
+ * Used to update the tooltip container when split tooltip has outside=true.
+ *
+ * @private
+ * @todo Reuse functionality on other tooltip types. Issue with finding a common
+ * solution to calculate label position and size.
+ * @todo Export the method to make it available for unit testing
+ * @param {HTMLElement} chartContainer The chart container to align tooltip to.
+ * @param {HTMLElement} container The container for the outside tooltip.
+ * @param {Highcharts.SVGRenderer} renderer The renderer for the outside
+ * tooltip.
+ * @param {Highcharts.SVGElement} label The tooltip label
+ * @return {void}
+ */
+function updateTooltipContainer(
+    chartContainer: HTMLElement,
+    container: HTMLElement,
+    renderer: Highcharts.SVGRenderer,
+    label: Highcharts.SVGElement
+): void {
+    // Position the tooltip container to the chart container
+    const offset = H.offset(chartContainer);
+    container.style.left = offset.left + 'px';
+    container.style.top = offset.top + 'px';
+
+    // Set container size to fit the tooltip
+    const { width, height, x, y } = label.getBBox();
+    renderer.setSize(
+        width + x,
+        height + y,
+        false
+    );
+}
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -377,12 +411,9 @@ H.Tooltip.prototype = {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = (
-            pick(
-                options.outside,
-                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-            ) &&
-            !this.split
+        this.outside = pick(
+            options.outside,
+            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
     },
 
@@ -562,7 +593,9 @@ H.Tooltip.prototype = {
                 this.label.addClass('highcharts-tooltip-' + this.chart.index);
             }
 
-            if (this.outside) {
+            // Split tooltip use updateTooltipContainer to position the tooltip
+            // container.
+            if (tooltip.outside && !tooltip.split) {
                 set = {
                     x: this.label.xSetter as any,
                     y: this.label.ySetter as any
@@ -1381,6 +1414,25 @@ H.Tooltip.prototype = {
                     yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
+
+        /* If we have a seperate tooltip container, then update the necessary
+         * container properties.
+         * Test that tooltip has its own container and renderer before executing
+         * the operation.
+         */
+        const {
+            container,
+            outside,
+            renderer
+        } = tooltip;
+        if (outside && container && renderer) {
+            updateTooltipContainer(
+                chart.container,
+                container,
+                renderer,
+                tooltipLabel
+            );
+        }
     },
 
     /**
