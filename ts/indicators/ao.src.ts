@@ -45,6 +45,11 @@ declare global {
         class AoIndicatorPoint extends SmaIndicatorPoint {
             public series: AoIndicator;
         }
+
+        interface SeriesTypesDictionary {
+            ao: typeof AoIndicator;
+        }
+
     }
 }
 
