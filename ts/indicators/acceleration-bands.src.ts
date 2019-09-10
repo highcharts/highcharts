@@ -31,10 +31,8 @@ declare global {
 
         class AbandsIndicator
             extends SmaIndicator implements MultipleLinesIndicator {
-            public pointClass: typeof AbandsIndicatorPoint;
             public options: AbandsIndicatorOptions;
             public data: Array<AbandsIndicatorPoint>;
-            public points: Array<AbandsIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -98,7 +96,7 @@ function getPointLB(low: number, base: number): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AbandsIndicatorOptions>(
+H.seriesType<Highcharts.AbandsIndicator>(
     'abands',
     'sma',
     /**
