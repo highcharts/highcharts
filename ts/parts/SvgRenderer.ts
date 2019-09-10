@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
-            'topbutton'|'triangle'|'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
+            'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
