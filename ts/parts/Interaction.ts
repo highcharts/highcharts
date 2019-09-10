@@ -1513,18 +1513,18 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.markerGroup,
                         series.dataLabelsGroup,
                         series.labelBySeries
-                    ].forEach(
-                        function (group: Highcharts.SVGElement): void {
-                            if (group) {
-                                group.animate(
-                                    {
-                                        opacity: opacity
-                                    },
-                                    stateAnimation
-                                );
-                            }
+                    ].forEach(function (
+                        group: (Highcharts.SVGElement|undefined)
+                    ): void {
+                        if (group) {
+                            group.animate(
+                                {
+                                    opacity: opacity
+                                },
+                                stateAnimation
+                            );
                         }
-                    );
+                    });
                 }
             }
         }
