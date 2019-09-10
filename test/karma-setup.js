@@ -99,7 +99,8 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
         });
     }
 });
-function resetDefaultOptions() {
+function resetDefaultOptions(path) {
+
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
     
     // Before running setOptions, delete properties that are undefined by
@@ -118,12 +119,7 @@ function resetDefaultOptions() {
                 deleteAddedProperties(copy[key], original[key]);
             } else if (
                 // functions are not saved in defaultOptionsRaw
-                (
-                    typeof value === 'string' ||
-                    typeof value === 'number' ||
-                    typeof value === 'boolean' ||
-                    typeof value === 'undefined'
-                ) &&    
+                typeof value !== 'function' &&    
                 !(key in original)
             ) {
                 delete copy[key];

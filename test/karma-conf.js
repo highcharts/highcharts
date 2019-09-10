@@ -681,7 +681,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
     ) ?
         '' :
         `
-        resetDefaultOptions();
+        resetDefaultOptions('${path}');
         `;
 
     // Reset modified callbacks
