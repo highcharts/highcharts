@@ -1,3 +1,4 @@
+js/indicators/ao.src.js
 js/indicators/accumulation-distribution.src.js
 js/indicators/indicators.src.js
 js/indicators/wma.src.js
@@ -29,6 +30,7 @@ js/modules/oldie-polyfills.src.js
 js/modules/organization.src.js
 js/modules/overlapping-datalabels.src.js
 js/modules/pattern-fill.src.js
+js/modules/pareto.src.js
 js/modules/sankey.src.js
 js/modules/xrange.src.js
 js/parts/**/*.js
