@@ -673,28 +673,25 @@ function createVisualTestTemplate(argv, path, js, assertion) {
     scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
 
     let html = getHTML(path);
+    let resets = [];
 
-    // Reset global options
-    let reset = (
-        scriptBody.indexOf('Highcharts.setOptions') === -1 &&
-        scriptBody.indexOf('Highcharts.getOptions') === -1
-    ) ?
-        '' :
-        `
-        resetDefaultOptions('${path}');
-        `;
+    // Reset global options, but only if necessary
+    if (
+        scriptBody.indexOf('Highcharts.setOptions') !== -1 ||
+        scriptBody.indexOf('Highcharts.getOptions') !== -1
+    ) {
+        resets.push('defaultOptions');
+    }
 
-    // Reset modified callbacks
+    // Reset modified callbacks only if necessary
     if (scriptBody.indexOf('Chart.prototype.callbacks') !== -1) {
-        reset += `
-            Highcharts.Chart.prototype.callbacks =
-                Highcharts.callbacksRaw.slice(0);
-        `;
+        resets.push('callbacks');
     }
 
     var useFakeTime = path.startsWith('gantt/');
     var startOfMockedTime = Date.UTC(2019, 7, 1);
 
+    resets = JSON.stringify(resets);
     return `
         QUnit.test('${path}', function (assert) {
             // Apply demo.html
@@ -721,7 +718,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                         assert.ok(true, 'Chart and SVG should exist.');
                         done();
                     `}
-                    ${reset}
+                    assert.test.resets = ${resets};
                 } else if (attempts < 50) {
                     setTimeout(waitForChartToLoad, 100);
                     attempts++;
@@ -731,7 +728,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                         \`Chart async chart test should load within \${attempts} attempts\`
                     );
                     done();
-                    ${reset}
+                    assert.test.resets = ${resets};
                 }
             }
             waitForChartToLoad();
