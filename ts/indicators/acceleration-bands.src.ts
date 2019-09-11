@@ -40,7 +40,8 @@ declare global {
             public getValues(
                 series: Series,
                 params: AbandsIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (boolean|IndicatorMultipleValuesObject);
+            public yData: Array<Array<number>>;
         }
 
         class AbandsIndicatorPoint extends SmaIndicatorPoint {
@@ -162,7 +163,7 @@ H.seriesType<Highcharts.AbandsIndicator>(
             this: Highcharts.AbandsIndicator,
             series: Highcharts.Series,
             params: Highcharts.AbandsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),
                 index: number = (params.index as any),
@@ -244,9 +245,9 @@ H.seriesType<Highcharts.AbandsIndicator>(
             }
 
             return {
-                values: (ABANDS as any),
+                values: ABANDS,
                 xData: xData,
-                yData: (yData as any)
+                yData: yData
             };
         }
     })

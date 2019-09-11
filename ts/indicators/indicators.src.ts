@@ -38,7 +38,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: SmaIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (boolean|IndicatorValuesObject|IndicatorMultipleValuesObject);
             public requireIndicators(): SmaIndicatorRequireIndicatorsObject;
         }
 
@@ -50,6 +50,12 @@ declare global {
             values: Array<Array<number>>;
             xData: Array<number>;
             yData: Array<number>;
+        }
+
+        interface IndicatorMultipleValuesObject {
+            values: IndicatorValuesObject['values'];
+            xData: IndicatorValuesObject['xData'];
+            yData: Array<Array<number>>;
         }
 
         interface LineSeriesOptions {

@@ -26,6 +26,7 @@ declare global {
                 series: Series,
                 params: AdIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
+            public yData: Array<number>;
         }
 
         class AdIndicatorPoint extends SmaIndicatorPoint {

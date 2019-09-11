@@ -379,7 +379,7 @@ seriesProto.getDGApproximation = function () {
  *
  * @param {Array<number>} xData
  *
- * @param {Array<number>} yData
+ * @param {Array<number>|Array<Array<number>>} yData
  *
  * @param {boolean} groupPositions
  *

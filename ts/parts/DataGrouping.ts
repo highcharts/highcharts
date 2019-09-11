@@ -77,7 +77,10 @@ declare global {
         }
         interface DataGroupingResultObject {
             groupedXData: Array<number>;
-            groupedYData: Array<(null|number)>;
+            groupedYData: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
             groupMap: Array<DataGroupingInfoObject>;
         }
         interface PlotSeriesDataGroupingOptions {
@@ -101,14 +104,12 @@ declare global {
             hasGroupedData?: boolean;
             hasProcessed?: boolean;
             preventGraphAnimation?: boolean;
-            xData?: Array<number>;
-            yData?: (Array<(number|null|undefined)>);
             destroyGroupedData(): void;
             generatePoints(): void;
             getDGApproximation(): string;
             groupData(
                 xData: Array<number>,
-                yData: Array<number>,
+                yData: (Array<number>|Array<Array<number>>),
                 groupPosition: Array<number>,
                 approximation: (string|Function)
             ): DataGroupingResultObject;
@@ -302,7 +303,10 @@ H.approximations = {
 var groupData = function (
     this: Highcharts.Series,
     xData: Array<number>,
-    yData: Array<(null|number)>,
+    yData: (
+        Array<(number|null|undefined)>|
+        Array<Array<(number|null|undefined)>>
+    ),
     groupPositions: Array<number>,
     approximation: (string|Function)
 ): Highcharts.DataGroupingResultObject {
@@ -616,7 +620,7 @@ seriesProto.getDGApproximation = function (this: Highcharts.Series): string {
  *
  * @param {Array<number>} xData
  *
- * @param {Array<number>} yData
+ * @param {Array<number>|Array<Array<number>>} yData
  *
  * @param {boolean} groupPositions
  *

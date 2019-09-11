@@ -31,6 +31,7 @@ declare global {
             public crispCol: ColumnSeries['crispCol'];
             public translate: ColumnSeries['translate'];
             public drawPoints: ColumnSeries['drawPoints'];
+            public yData: Array<number>;
         }
 
         interface AoIndicatorOptions extends SmaIndicatorOptions {
@@ -170,7 +171,8 @@ H.seriesType<Highcharts.AoIndicator>(
             var shortPeriod = 5,
                 longPeriod = 34,
                 xVal: Array<number> = series.xData || [],
-                yVal: Array<number|null|undefined> = series.yData || [],
+                yVal: Array<number|null|undefined> =
+                    (series.yData as any) || [],
                 yValLen: number = yVal.length,
                 AO: Array<Array<number>> = [], // 0- date, 1- Awesome Oscillator
                 xData: Array<number> = [],
