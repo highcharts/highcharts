@@ -253,16 +253,19 @@ if (window.QUnit) {
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
-            if (test.test.resets) {
-                test.test.resets.forEach(key => ({
-                    callbacks: () => {
-                        Highcharts.Chart.prototype.callbacks =
-                            Highcharts.callbacksRaw.slice(0);
-                    },
-                    defaultOptions: () => {
-                        resetDefaultOptions(test.test.testName);
-                    }
-                }[key])());
+            if (test.test.resets && test.test.resets.forEach) {
+                test.test.resets.forEach(function (key) {
+                    var fn = {
+                        callbacks: function () {
+                            Highcharts.Chart.prototype.callbacks =
+                                Highcharts.callbacksRaw.slice(0);
+                        },
+                        defaultOptions: function () {
+                            resetDefaultOptions(test.test.testName);
+                        }
+                    };
+                    fn[key]();
+                });
             }
         }
     });
