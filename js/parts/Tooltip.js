@@ -109,29 +109,6 @@ var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U
  */
 ''; // separates doclets above from variables below
 var doc = H.doc, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, syncTimeout = H.syncTimeout, timeUnits = H.timeUnits;
-/**
- * Used to update the tooltip container when split tooltip has outside=true.
- *
- * @private
- * @todo Reuse functionality on other tooltip types. Issue with finding a common
- * solution to calculate label position and size.
- * @todo Export the method to make it available for unit testing
- * @param {HTMLElement} chartContainer The chart container to align tooltip to.
- * @param {HTMLElement} container The container for the outside tooltip.
- * @param {Highcharts.SVGRenderer} renderer The renderer for the outside
- * tooltip.
- * @param {Highcharts.SVGElement} label The tooltip label
- * @return {void}
- */
-function updateTooltipContainer(chartContainer, container, renderer, label) {
-    // Position the tooltip container to the chart container
-    var offset = H.offset(chartContainer);
-    container.style.left = offset.left + 'px';
-    container.style.top = offset.top + 'px';
-    // Set container size to fit the tooltip
-    var _a = label.getBBox(), width = _a.width, height = _a.height, x = _a.x, y = _a.y;
-    renderer.setSize(width + x, height + y, false);
-}
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -985,7 +962,13 @@ H.Tooltip.prototype = {
          */
         var container = tooltip.container, outside = tooltip.outside, renderer = tooltip.renderer;
         if (outside && container && renderer) {
-            updateTooltipContainer(chart.container, container, renderer, tooltipLabel);
+            // Position the tooltip container to the chart container
+            var offset = H.offset(chart.container);
+            container.style.left = offset.left + 'px';
+            container.style.top = offset.top + 'px';
+            // Set container size to fit the tooltip
+            var _a = tooltipLabel.getBBox(), width = _a.width, height = _a.height, x = _a.x, y = _a.y;
+            renderer.setSize(width + x, height + y, false);
         }
     },
     /**

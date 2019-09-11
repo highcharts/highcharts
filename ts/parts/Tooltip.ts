@@ -257,40 +257,6 @@ var doc = H.doc,
     syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 
-/**
- * Used to update the tooltip container when split tooltip has outside=true.
- *
- * @private
- * @todo Reuse functionality on other tooltip types. Issue with finding a common
- * solution to calculate label position and size.
- * @todo Export the method to make it available for unit testing
- * @param {HTMLElement} chartContainer The chart container to align tooltip to.
- * @param {HTMLElement} container The container for the outside tooltip.
- * @param {Highcharts.SVGRenderer} renderer The renderer for the outside
- * tooltip.
- * @param {Highcharts.SVGElement} label The tooltip label
- * @return {void}
- */
-function updateTooltipContainer(
-    chartContainer: HTMLElement,
-    container: HTMLElement,
-    renderer: Highcharts.SVGRenderer,
-    label: Highcharts.SVGElement
-): void {
-    // Position the tooltip container to the chart container
-    const offset = H.offset(chartContainer);
-    container.style.left = offset.left + 'px';
-    container.style.top = offset.top + 'px';
-
-    // Set container size to fit the tooltip
-    const { width, height, x, y } = label.getBBox();
-    renderer.setSize(
-        width + x,
-        height + y,
-        false
-    );
-}
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -1426,11 +1392,17 @@ H.Tooltip.prototype = {
             renderer
         } = tooltip;
         if (outside && container && renderer) {
-            updateTooltipContainer(
-                chart.container,
-                container,
-                renderer,
-                tooltipLabel
+            // Position the tooltip container to the chart container
+            const offset = H.offset(chart.container);
+            container.style.left = offset.left + 'px';
+            container.style.top = offset.top + 'px';
+
+            // Set container size to fit the tooltip
+            const { width, height, x, y } = tooltipLabel.getBBox();
+            renderer.setSize(
+                width + x,
+                height + y,
+                false
             );
         }
     },
