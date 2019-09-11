@@ -47,7 +47,7 @@ Read more at [highcharts/test](https://github.com/highcharts/highcharts/tree/mas
 
 
 
-Useful Tips For Setting Up Tests
+Useful Tips for Setting Up Tests
 --------------------------------
 
 **Mouse events** are emulated using the
@@ -115,13 +115,13 @@ QUnit.test('My test', function (assert) {
 });
 ```
 
-### Debugging A Test Template
+### Debugging a Test Template
 
 If you like to debug a template-based test in your browser with the help of
 `highcharts-utils`, make sure that there is a copy of the template in
 [`/public/javascript/test-templates`](https://github.com/highcharts/highcharts-utils/tree/master/public/javascript/test-templates).
 
-### Create A New Test Template
+### Create a New Test Template
 
 Do not create several templates for the same series. Instead modify the
 existing one in a way that it stays useable for every test. Options to the

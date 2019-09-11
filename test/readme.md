@@ -20,7 +20,7 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   (except functions) and reverse them after each test case, which is faster than
   the classic destruction and creation of charts for each test.
 
-#### Optimize For Speed
+#### Optimize for Speed
 We want fast running tests. The time it takes to run the test suite is largely
 limited by the time it takes to create chart instances. Therefore, we want to
 limit the number of charts in the test suite.
