@@ -55,6 +55,10 @@ limit the number of charts in the test suite.
 - All the tests run on one Highcharts instance. When running
   `Highcharts.setOptions()`, make sure to unset the changed options, otherwise
   it may break tests downstream.
+- In visual tests, `plotOptions` and `callbacks` are reset after each test. If
+  other properties of Highcharts are mutated, a file `aftereach.js` can be added
+  to reset them. Since the visual tests double as educational demos for the
+  public, it is not recommended to have teardown code in `demo.js`.
 
 #### Link References
 - Highchars Utils: https://github.com/highcharts/highcharts-utils
