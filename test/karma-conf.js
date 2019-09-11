@@ -240,7 +240,7 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || (os.cpus().length - 1);
+    const browserCount = argv.browsercount || (os.cpus().length - 2);
     if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
