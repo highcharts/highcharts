@@ -99,7 +99,7 @@ Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
         });
     }
 });
-function resetDefaultOptions(path) {
+function resetDefaultOptions(testName) {
 
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
     
@@ -245,6 +245,21 @@ if (window.QUnit) {
                 ob[prop] = fn;
             }
             Highcharts.wrap = origWrap;
+
+            // Reset defaultOptions and callbacks if those are mutated. In
+            // karma-konf, the scriptBody is inspected to see if these expensive
+            // operations are necessary. Visual tests only.
+            if (test.test.resets) {
+                test.test.resets.forEach(key => ({
+                    callbacks: () => {
+                        Highcharts.Chart.prototype.callbacks =
+                            Highcharts.callbacksRaw.slice(0);
+                    },
+                    defaultOptions: () => {
+                        resetDefaultOptions(test.test.testName);
+                    }
+                }[key])());
+            }
         }
     });
 }
