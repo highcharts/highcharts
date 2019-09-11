@@ -103,7 +103,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series) {
+                axis.series.forEach(function (series: Highcharts.Series): void {
                     var clipRect = series.sharedClipKey &&
                         (chart as any)[series.sharedClipKey];
 

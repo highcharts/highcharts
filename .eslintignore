@@ -33,6 +33,7 @@ js/modules/overlapping-datalabels.src.js
 js/modules/pareto.src.js
 js/modules/pattern-fill.src.js
 js/modules/pyramid3d.src.js
+js/modules/parallel-coordinates.src.js
 js/modules/sankey.src.js
 js/modules/series-label.src.js
 js/modules/solid-gauge.src.js

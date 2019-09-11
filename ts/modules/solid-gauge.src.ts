@@ -70,6 +70,10 @@ declare global {
             states?: SeriesStatesOptionsObject<SolidGaugeSeries>;
             threshold?: number;
         }
+        interface SymbolOptionsObject {
+            rounded?: boolean;
+            innerR?: number;
+        }
     }
 }
 
@@ -122,13 +126,20 @@ var pick = H.pick,
 wrap(
     Renderer.prototype.symbols,
     'arc',
-    function (proceed, x, y, w, h, options) {
+    function (
+        proceed: Function,
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        options: Highcharts.SymbolOptionsObject
+    ): Highcharts.SVGPathArray {
         var arc = proceed,
             path = arc(x, y, w, h, options);
 
         if (options.rounded) {
             var r = options.r || w,
-                smallR = (r - options.innerR) / 2,
+                smallR = (r - (options.innerR as any)) / 2,
                 x1 = path[1],
                 y1 = path[2],
                 x2 = path[12],
@@ -542,7 +553,10 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
         },
 
         // Extend the pie slice animation by animating from start angle and up.
-        animate: function (this: Highcharts.SolidGaugeSeries, init?: boolean) {
+        animate: function (
+            this: Highcharts.SolidGaugeSeries,
+            init?: boolean
+        ): void {
 
             if (!init) {
                 this.startAngleRad = this.thresholdAngleRad;

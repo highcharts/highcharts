@@ -438,7 +438,7 @@ seriesType<Highcharts.SmaIndicator>(
                 var unbinder = addEvent(
                     indicator.chart,
                     indicator.calculateOn,
-                    function () {
+                    function (): void {
                         recalculateValues();
                         // Call this just once, on init
                         unbinder();

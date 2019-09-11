@@ -40,7 +40,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         labels = labels.concat(collector());
     });
 
-    (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis) {
+    (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis): void {
         if (
             yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap
