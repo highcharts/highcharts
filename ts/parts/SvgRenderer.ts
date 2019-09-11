@@ -186,7 +186,7 @@ declare global {
             ): void;
             public fadeOut(duration?: number): void;
             public fillSetter(
-                value: (Color|ColorString),
+                value: ColorType,
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -3180,7 +3180,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *
@@ -3190,7 +3190,7 @@ extend((
      */
     fillSetter: function (
         this: Highcharts.SVGElement,
-        value: (Highcharts.Color|Highcharts.ColorString),
+        value: Highcharts.ColorType,
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {

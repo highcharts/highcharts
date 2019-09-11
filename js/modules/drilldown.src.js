@@ -503,7 +503,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
         shapeArgs: point.shapeArgs,
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
-        color: point.isNull ? new H.Color(color).setOpacity(0).get() : color,
+        color: point.isNull ?
+            new H.Color(color).setOpacity(0).get() :
+            color,
         lowerSeriesOptions: ddOptions,
         pointOptions: oldSeries.options.data[pointIndex],
         pointIndex: pointIndex,

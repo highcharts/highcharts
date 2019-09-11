@@ -2133,7 +2133,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *

@@ -31,6 +31,7 @@ declare global {
             exportMenuHeight?: number;
             exportMenuWidth?: number;
             exportSVGElements?: Array<SVGElement>;
+            forExport?: boolean;
             fullscreen?: FullScreen;
             isDirtyExporting?: boolean;
             isPrinting?: boolean;
