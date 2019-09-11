@@ -332,14 +332,14 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
         var point,
             len,
             i,
-            y;
+            y: number;
 
         // Parent call:
         seriesTypes.column.prototype.generatePoints.apply(this);
 
         for (i = 0, len = this.points.length; i < len; i++) {
             point = this.points[i];
-            y = this.processedYData[i];
+            y = (this.processedYData[i] as any);
             // override point value for sums
             // #3710 Update point does not propagate to sum
             if (point.isIntermediateSum || point.isSum) {
@@ -359,10 +359,10 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             point,
             shapeArgs,
             y,
-            yValue,
+            yValue: number,
             previousY,
             previousIntermediate,
-            range,
+            range: Array<number>,
             minPointLength = pick(options.minPointLength, 5),
             halfMinPointLength = minPointLength / 2,
             threshold = options.threshold,
@@ -372,7 +372,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             actualStackX,
             dummyStackItem,
             total,
-            pointY,
+            pointY: number,
             yPos,
             hPos;
 
@@ -385,7 +385,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
         for (i = 0, len = points.length; i < len; i++) {
             // cache current point object
             point = points[i];
-            yValue = series.processedYData[i];
+            yValue = (series.processedYData[i] as any);
             shapeArgs = point.shapeArgs;
 
             range = [0, yValue];

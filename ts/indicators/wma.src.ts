@@ -27,6 +27,7 @@ declare global {
                 series: Series,
                 params: Dictionary<number>
             ): (boolean|IndicatorValuesObject);
+            public yData: Array<number>;
         }
 
         class WmaIndicatorPoint extends SmaIndicatorPoint {

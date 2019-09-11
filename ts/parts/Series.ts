@@ -81,7 +81,7 @@ declare global {
             public points: Array<Point>;
             public pointValKey?: string;
             public processedXData: Array<number>;
-            public processedYData: Array<number>;
+            public processedYData: (Array<number>|Array<Array<number>>);
             public requireSorting: boolean;
             public selected: boolean;
             public sharedClipKey?: string;
@@ -94,8 +94,13 @@ declare global {
             public userOptions: SeriesOptionsType;
             public visible: boolean;
             public xAxis: Axis;
+            public xData?: Array<number>;
             public xIncrement?: (number|null);
             public yAxis: Axis;
+            public yData?: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
             public zoneAxis?: string;
             public zones: Array<PlotSeriesZonesOptions>;
             public afterAnimate(): void;
@@ -106,7 +111,10 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<(number|null|undefined)>,
+                yData: (
+                    Array<(number|null|undefined)>|
+                    Array<Array<(number|null|undefined)>>
+                ),
                 min: number,
                 max: number,
                 cropShoulder?: number
@@ -329,7 +337,7 @@ declare global {
             end: number;
             start: number;
             xData: Array<number>;
-            yData: Array<number>;
+            yData: (Array<number>|Array<Array<number>>);
         }
         interface SeriesEventsOptions {
             afterAnimate?: SeriesAfterAnimateCallbackFunction;
@@ -3733,7 +3741,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             var series = this,
                 // copied during slice operation:
                 processedXData: Array<number> = series.xData as any,
-                processedYData: Array<number> = series.yData as any,
+                processedYData: (
+                    Array<number>|Array<Array<number>>
+                ) = (series.yData as any),
                 dataLength = (processedXData as any).length,
                 croppedData: Highcharts.SeriesCropDataObject,
                 cropStart = 0,
@@ -4092,7 +4102,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
         getExtremes: function (
             this: Highcharts.Series,
-            yData?: Array<number>
+            yData?: (Array<number>|Array<Array<number>>)
         ): void {
             var xAxis = this.xAxis,
                 yAxis = this.yAxis,
@@ -4111,7 +4121,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 shoulder = this.requireSorting ? this.cropShoulder : 0,
                 positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
                 x,
-                y,
+                y: (number|Array<number>),
                 i,
                 j;
 
