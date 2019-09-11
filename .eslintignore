@@ -30,14 +30,15 @@ js/modules/oldie.src.js
 js/modules/oldie-polyfills.src.js
 js/modules/organization.src.js
 js/modules/overlapping-datalabels.src.js
+js/modules/parallel-coordinates.src.js
 js/modules/pareto.src.js
 js/modules/pattern-fill.src.js
 js/modules/pyramid3d.src.js
-js/modules/parallel-coordinates.src.js
 js/modules/sankey.src.js
 js/modules/series-label.src.js
 js/modules/solid-gauge.src.js
 js/modules/static-scale.src.js
+js/modules/streamgraph.src.js
 js/modules/xrange.src.js
 js/parts/**/*.js
 js/parts-3d/**/*.js
