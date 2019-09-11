@@ -246,6 +246,10 @@ if (window.QUnit) {
             }
             Highcharts.wrap = origWrap;
 
+            if (typeof test.test.sampleAfterEach === 'function') {
+                test.test.sampleAfterEach();
+            }
+
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
