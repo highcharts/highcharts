@@ -1,4 +1,5 @@
-# Test runner
+Test Runner
+===========
 
 Use `gulp test` to run the tests using karma and QUnit. All tests in the
 `samples/unit-tests` directory will run. For debugging, it may be convenient to
@@ -19,7 +20,7 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   (except functions) and reverse them after each test case, which is faster than
   the classic destruction and creation of charts for each test.
 
-#### Optimize for Speed
+#### Optimize For Speed
 We want fast running tests. The time it takes to run the test suite is largely
 limited by the time it takes to create chart instances. Therefore, we want to
 limit the number of charts in the test suite.
