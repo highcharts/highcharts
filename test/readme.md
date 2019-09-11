@@ -16,8 +16,8 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   several tests, that can be modified for particular test cases. Use
   `TestTemplate.test` inside a `QUnit.test` with templates found in the
   `test/templates` directory. `TestTemplate` handles most option modifications
-  (exception functions) and reverse them after each test case, which is faster
-  then the classic destruction and creation of charts for each test.
+  (except functions) and reverse them after each test case, which is faster than
+  the classic destruction and creation of charts for each test.
 
 #### Optimize for Speed
 We want fast running tests. The time it takes to run the test suite is largely
