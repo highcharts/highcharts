@@ -274,10 +274,7 @@ declare global {
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
-            stops?: Array<[
-                number,
-                (ColorString|GradientColorObject|PatternObject)
-            ]>;
+            stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
         interface ZAxisOptions extends XAxisOptions {
@@ -3035,7 +3032,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Array<number,Highcharts.ColorString>>}
+         * @type      {Array<Highcharts.GradientColorStopObject>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops

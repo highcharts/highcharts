@@ -55,7 +55,7 @@ declare global {
         }
         interface SVGRenderer {
             cylinder(shapeArgs: SVGAttributes): SVGElement;
-            cylinderPath(shapeArgs: SVGPathArray): CylinderPathsObject;
+            cylinderPath(shapeArgs: SVGAttributes): CylinderPathsObject;
             getCurvedPath(points: Array<PositionObject>): SVGPathArray;
             getCylinderBack(
                 topPath: SVGPathArray,

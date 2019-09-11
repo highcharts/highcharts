@@ -160,7 +160,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
                 percentPoints: Array<Array<number>> = [],
                 percentPoint: (number|undefined);
 
-            yValues.forEach(function (point: number, i: number) {
+            yValues.forEach(function (point: number, i: number): void {
                 if (point !== null) {
                     if (isSum) {
                         sumY += point;

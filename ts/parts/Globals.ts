@@ -19,7 +19,6 @@ declare global {
      * [[include:README.md]]
      */
     namespace Highcharts {
-        type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             rightWall?: any; // @todo
@@ -31,9 +30,7 @@ declare global {
         interface Chart {
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
-            hasParallelCoordinates?: any; // @todo parallel module
             isBoosting?: any; // @todo boost module
-            redrawTrigger?: any; // @todo static-scale module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
@@ -56,9 +53,6 @@ declare global {
         }
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
-        }
-        interface SVGRenderer {
-            inlineWhitelist?: any; // @todo offline exporting module
         }
         interface Tick {
             slotWidth?: any; // @todo

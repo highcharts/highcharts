@@ -314,12 +314,13 @@ var renderLabelIcon = function (
         shouldRender = params.show && isNumber(iconCenter.y);
 
     if (isNew) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](
-            options.x,
-            options.y,
-            width,
-            height
-        ))
+        tick.labelIcon = icon = renderer
+            .path(renderer.symbols[options.type](
+                options.x,
+                options.y,
+                width,
+                height
+            ) as any)
             .addClass('highcharts-label-icon')
             .add(params.group);
     }

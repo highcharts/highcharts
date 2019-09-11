@@ -10,12 +10,43 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
 import H from '../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class Pyramid3dPoint extends Funnel3dPoint {
+            options: Pyramid3dPointOptions;
+            series: Pyramid3dSeries;
+        }
+        class Pyramid3dSeries extends Funnel3dSeries {
+            data: Array<Pyramid3dPoint>;
+            options: Pyramid3dSeriesOptions;
+            pointClass: typeof Pyramid3dPoint;
+            points: Array<Pyramid3dPoint>;
+        }
+        interface Pyramid3dPointOptions extends Funnel3dPointOptions {
+        }
+        interface Pyramid3dSeriesOptions extends Funnel3dSeriesOptions {
+            states?: SeriesStatesOptionsObject<Pyramid3dSeries>;
+        }
+        interface SeriesTypesDictionary {
+            pyramid3d: typeof Pyramid3dSeries;
+        }
+    }
+}
+
 import '../parts/Utilities.js';
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
+
 var seriesType = H.seriesType;
+
 /**
  * The pyramid3d series type.
  *
@@ -25,38 +56,41 @@ var seriesType = H.seriesType;
  * @constructor seriesTypes.pyramid3d
  * @augments seriesTypes.funnel3d
  */
-seriesType('pyramid3d', 'funnel3d', 
-/**
- * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
- * a type of chart often used to visualize stages in a sales project,
- * where the top are the initial stages with the most clients.
- *
- * It requires that the `highcharts-3d.js`, `cylinder.js`,
- * `funnel3d.js` and `pyramid3d` modules are loaded.
- *
- * @sample highcharts/demo/pyramid3d/
- *         Pyramid3d
- *
- * @extends      plotOptions.funnel3d
- * @excluding    neckHeight, neckWidth
- * @product      highcharts
- * @since        7.1.0
- * @optionparent plotOptions.pyramid3d
- */
-{
+seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
     /**
-     * A reversed pyramid3d is funnel3d, but the latter supports neck
-     * related options: neckHeight and neckWidth
+     * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
+     * a type of chart often used to visualize stages in a sales project,
+     * where the top are the initial stages with the most clients.
      *
-     * @product highcharts
+     * It requires that the `highcharts-3d.js`, `cylinder.js`,
+     * `funnel3d.js` and `pyramid3d` modules are loaded.
+     *
+     * @sample highcharts/demo/pyramid3d/
+     *         Pyramid3d
+     *
+     * @extends      plotOptions.funnel3d
+     * @excluding    neckHeight, neckWidth
+     * @product      highcharts
+     * @since        7.1.0
+     * @optionparent plotOptions.pyramid3d
      */
-    reversed: true,
-    neckHeight: 0,
-    neckWidth: 0,
-    dataLabels: {
-        verticalAlign: 'top'
+    {
+        /**
+         * A reversed pyramid3d is funnel3d, but the latter supports neck
+         * related options: neckHeight and neckWidth
+         *
+         * @product highcharts
+         */
+        reversed: true,
+
+        neckHeight: 0,
+        neckWidth: 0,
+        dataLabels: {
+            verticalAlign: 'top'
+        }
     }
-});
+);
+
 /**
  * A `pyramid3d` series. If the [type](#series.pyramid3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -68,6 +102,7 @@ seriesType('pyramid3d', 'funnel3d',
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
  * @apioption series.pyramid3d
  */
+
 /**
  * An array of data points for the series. For the `pyramid3d` series
  * type, points can be given in the following ways:
@@ -116,4 +151,5 @@ seriesType('pyramid3d', 'funnel3d',
  * @product   highcharts
  * @apioption series.pyramid3d.data
  */
+
 ''; // adds doclets above to the transpiled file
