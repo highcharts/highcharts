@@ -1,5 +1,14 @@
 QUnit.test('Draggable annotation - exporting', function (assert) {
     var chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'xy'
+            },
+            xAxis: {
+                minRange: 0.1
+            },
+            yAxis: {
+                minRange: 0.1
+            },
             series: [{
                 data: [3, 6]
             }],
@@ -31,6 +40,10 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
             }]
         }),
         annoattionOptions = chart.options.annotations,
+        oldExtremes = [
+            chart.xAxis[0].getExtremes(),
+            chart.yAxis[0].getExtremes()
+        ],
         controller = new TestController(chart);
 
     // Label tests:
@@ -58,7 +71,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         chart.yAxis[0].toPixels(5)
     );
     controller.mouseMove(
-        chart.xAxis[0].toPixels(0.75) - 5,
+        chart.xAxis[0].toPixels(0.75),
         chart.yAxis[0].toPixels(3)
     );
     controller.mouseUp();
@@ -68,5 +81,20 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         3,
         0.5,
         'Correctly updated options for annotation\'s shape (#10605).'
+    );
+
+    [chart.xAxis[0], chart.yAxis[0]].forEach(
+        (axis, i) => {
+            assert.strictEqual(
+                axis.min,
+                oldExtremes[i].min,
+                axis.coll + '.min unchanged after drag&drop (#11801)'
+            );
+            assert.strictEqual(
+                axis.max,
+                oldExtremes[i].max,
+                axis.coll + '.max unchanged after drag&drop (#11801)'
+            );
+        }
     );
 });
