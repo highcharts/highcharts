@@ -840,7 +840,7 @@ H.Tooltip.prototype = {
                     doc.documentElement.clientHeight
                 ) :
                 chart.chartHeight,
-            chartPosition = chart.pointer.chartPosition,
+            chartPosition = chart.pointer.getChartPosition(),
             containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
                 containerScaling ? val * containerScaling.scaleX : val
@@ -1393,9 +1393,9 @@ H.Tooltip.prototype = {
         } = tooltip;
         if (outside && container && renderer) {
             // Position the tooltip container to the chart container
-            const offset = H.offset(chart.container);
-            container.style.left = offset.left + 'px';
-            container.style.top = offset.top + 'px';
+            const chartPosition = chart.pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
 
             // Set container size to fit the tooltip
             const { width, height, x, y } = tooltipLabel.getBBox();
@@ -1428,9 +1428,8 @@ H.Tooltip.prototype = {
             pad;
 
         // Needed for outside: true (#11688)
-        if (!pointer.chartPosition) {
-            pointer.chartPosition = H.offset(chart.container);
-        }
+        const chartPosition = pointer.getChartPosition();
+
         pos = ((this.options.positioner as any) || this.getPosition).call(
             this,
             label.width,
@@ -1462,8 +1461,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += pointer.chartPosition.left - pos.x;
-            anchorY += pointer.chartPosition.top - pos.y;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move

@@ -566,7 +566,7 @@ H.Tooltip.prototype = {
             doc.documentElement.clientWidth - 2 * distance :
             chart.chartWidth, outerHeight = outside ?
             Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, doc.body.offsetHeight, doc.documentElement.offsetHeight, doc.documentElement.clientHeight) :
-            chart.chartHeight, chartPosition = chart.pointer.chartPosition, containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
+            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
         containerScaling ? val * containerScaling.scaleX : val); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
         containerScaling ? val * containerScaling.scaleY : val); }, 
         // Build parameter arrays for firstDimension()/secondDimension()
@@ -963,9 +963,9 @@ H.Tooltip.prototype = {
         var container = tooltip.container, outside = tooltip.outside, renderer = tooltip.renderer;
         if (outside && container && renderer) {
             // Position the tooltip container to the chart container
-            var offset = H.offset(chart.container);
-            container.style.left = offset.left + 'px';
-            container.style.top = offset.top + 'px';
+            var chartPosition = chart.pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
             // Set container size to fit the tooltip
             var _a = tooltipLabel.getBBox(), width = _a.width, height = _a.height, x = _a.x, y = _a.y;
             renderer.setSize(width + x, height + y, false);
@@ -982,9 +982,7 @@ H.Tooltip.prototype = {
     updatePosition: function (point) {
         var chart = this.chart, pointer = chart.pointer, label = this.getLabel(), pos, anchorX = point.plotX + chart.plotLeft, anchorY = point.plotY + chart.plotTop, pad;
         // Needed for outside: true (#11688)
-        if (!pointer.chartPosition) {
-            pointer.chartPosition = H.offset(chart.container);
-        }
+        var chartPosition = pointer.getChartPosition();
         pos = (this.options.positioner || this.getPosition).call(this, label.width, label.height, point);
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
@@ -1000,8 +998,8 @@ H.Tooltip.prototype = {
                 anchorX *= containerScaling.scaleX;
                 anchorY *= containerScaling.scaleY;
             }
-            anchorX += pointer.chartPosition.left - pos.x;
-            anchorY += pointer.chartPosition.top - pos.y;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
         // do the move
         this.move(Math.round(pos.x), Math.round(pos.y || 0), // can be undefined (#3977)
