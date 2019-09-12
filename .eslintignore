@@ -38,7 +38,6 @@ js/modules/**/*.js
 !js/modules/boost/**/*.js
 !js/modules/sonification/**/*.js
 !js/modules/boost-canvas.src.js
-!js/modules/price-indicator.src.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
 !js/modules/sunburst.src.js

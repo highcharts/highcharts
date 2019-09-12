@@ -376,8 +376,6 @@ declare global {
             id?: string;
             index?: number;
             kdNow?: boolean;
-            lastPrice?: LastPriceOptions;
-            lastVisiblePrice?: LastVisiblePriceOptions;
             legendIndex?: number;
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             name?: string;
