@@ -3852,7 +3852,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3863,7 +3862,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -4004,9 +4002,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * The default label formatter. The context is a special config object for
      * the label. In apps, use the
      * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
-     * instead except when a modification is needed.
-     * @private
+     * instead, except when a modification is needed.
+     *
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @this Highcharts.AxisLabelsFormatterContextObject
+     *
      * @return {string}
+     * The formatted label content.
      */
     defaultLabelFormatter: function (
         this: Highcharts.AxisLabelsFormatterContextObject
@@ -4021,7 +4024,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
             i = numericSymbols && numericSymbols.length,
             multi,
-            ret,
+            ret: (string|undefined),
             formatOption = (axis.options.labels as any).format,
 
             // make sure the same symbol is added for all labels on a linear
@@ -4034,7 +4037,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ret = format(formatOption, this, time);
 
         } else if (categories) {
-            ret = value;
+            ret = value as any;
 
         } else if (dateTimeLabelFormat) { // datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
@@ -4070,7 +4073,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         }
 
-        return ret as any;
+        return ret;
     },
 
     /**
