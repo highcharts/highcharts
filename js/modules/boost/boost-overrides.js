@@ -285,7 +285,8 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 wrap(Series.prototype, 'processData', function (proceed) {
 
     var series = this,
-        dataToMeasure = this.options.data;
+        dataToMeasure = this.options.data,
+        firstPoint;
 
     // Used twice in this function, first on this.options.data, the second
     // time it runs the check again after processedXData is built.
@@ -320,6 +321,11 @@ wrap(Series.prototype, 'processData', function (proceed) {
 
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
+            // Force turbo-mode:
+            firstPoint = this.getFirstNotNullPoint(this.options.data);
+            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+                H.error(12, false, this.chart);
+            }
             this.enterBoost();
         } else if (this.exitBoost) {
             this.exitBoost();

@@ -152,6 +152,10 @@ declare global {
                 allowNull?: boolean
             ): Array<Point>;
             public getXExtremes(xData: Array<number>): RangeObject;
+            public getFirstNotNullPoint (
+                this: Highcharts.Series,
+                data: Array<PointOptionsType>
+            ): PointOptionsType;
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -2504,6 +2508,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * and the rest are assumed to be the same format. This saves expensive
          * data checking and indexing in long series. Set it to `0` disable.
          *
+         * Note:
+         * In boost mode turbo threshold is forced. Only array of numbers or
+         * two dimensional arrays are allowed.
+         *
          * @since   2.2
          * @product highcharts highstock gantt
          *
@@ -3626,13 +3634,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // conditional for max performance.
                 if (turboThreshold && dataLength > turboThreshold) {
 
-                    // find the first non-null point
-                    i = 0;
-                    while (firstPoint === null && i < dataLength) {
-                        firstPoint = data[i];
-                        i++;
-                    }
-
+                    firstPoint = series.getFirstNotNullPoint(data);
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
                         for (i = 0; i < dataLength; i++) {
@@ -4175,6 +4177,32 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             this.dataMax = arrayMax(activeYData);
 
             fireEvent(this, 'afterGetExtremes');
+        },
+
+        /**
+         * Find and return the first non null point in the data
+         *
+         * @private
+         * @function Highcharts.Series.getFirstNotNullPoint
+         * @param {Array<Highcharts.PointOptionsType>} data
+         *        Array of options for points
+         *
+         * @return {Highcharts.PointOptionsType}
+         */
+        getFirstNotNullPoint: function (
+            this: Highcharts.Series,
+            data: Array<Highcharts.PointOptionsType>
+        ): Highcharts.PointOptionsType {
+            var firstPoint = null,
+                dataLength = data.length,
+                i = 0;
+
+            while (firstPoint === null && i < dataLength) {
+                firstPoint = data[i];
+                i++;
+            }
+
+            return firstPoint;
         },
 
         /**
