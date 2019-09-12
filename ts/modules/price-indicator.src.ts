@@ -13,7 +13,6 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
-        
         interface Series {
             lastPrice?: SVGElement;
             lastVisiblePrice?: SVGElement;
