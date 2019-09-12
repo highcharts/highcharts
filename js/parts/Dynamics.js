@@ -179,8 +179,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartOptions[type].push(userOptions);
         if (isColorAxis) {
             this.isDirtyLegend = true;
+            // Clear before 'bindAxes' (#11924)
+            this.axes.forEach(function (axis) {
+                axis.series = [];
+            });
             this.series.forEach(function (series) {
                 series.bindAxes();
+                series.isDirtyData = true;
             });
         }
         if (pick(redraw, true)) {
