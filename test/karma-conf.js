@@ -516,7 +516,7 @@ module.exports = function (config) {
                         file.path = file.originalPath + '.preprocessed.js';
                         if (argv.visualcompare) {
                             // QUnit will explode when all tests within a module are skipped. Omitting test instead.
-                            done(`console.log('Not adding test ${path} due to being skipped from demo.html');`);
+                            done(`console.log('Not adding test ${path} due to being skipped from demo.details');`);
                         } else {
                             done(`QUnit.skip('${path}');`);
                         }
