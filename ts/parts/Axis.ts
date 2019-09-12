@@ -406,7 +406,9 @@ declare global {
             public autoLabelAlign(rotation: number): AlignValue;
             public defaultLabelFormatter(): void;
             public destroy(keepEvents?: boolean): void;
-            public drawCrosshair(e?: PointerEventObject, point?: Point): void;
+            public drawCrosshair(
+                e?: (PointerEventObject|null), point?: Point
+            ): void;
             public generateTick(pos: number, i?: number): void;
             public getClosest(): number;
             public getExtremes(): ExtremesObject;
