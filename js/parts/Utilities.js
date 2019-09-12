@@ -2190,8 +2190,9 @@ H.removeEvent = function (el, type, fn) {
             }
         });
     }
-    ['protoEvents', 'hcEvents'].forEach(function (coll) {
-        var eventCollection = el[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll, i) {
+        var eventElem = i ? el : el.prototype;
+        var eventCollection = eventElem && eventElem[coll];
         if (eventCollection) {
             if (type) {
                 events = (eventCollection[type] || []);
@@ -2208,7 +2209,7 @@ H.removeEvent = function (el, type, fn) {
             }
             else {
                 removeAllEvents(eventCollection);
-                el[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
