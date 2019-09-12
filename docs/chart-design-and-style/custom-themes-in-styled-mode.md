@@ -1,5 +1,5 @@
 Custom themes in styled mode
-----------------------------
+===
 
 Highcharts allows you to create your own custom charts’ theme using native CSS rules or SASS (Syntactically Awesome Style Sheets).
 

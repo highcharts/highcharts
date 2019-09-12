@@ -1,5 +1,5 @@
 Timeline chart
-------------
+===
 
 A Timeline chart visualizes important events over a time span. Charts with a Timeline series display every data point as a separate event along a horizontal or vertical line. The Timeline series is also referred to as a Timeline Diagram.
 

@@ -1,5 +1,5 @@
 Treemap
--------
+===
 
 <iframe width="320" height="410" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels"></iframe>
 

@@ -1,5 +1,5 @@
 Organization chart
-------------
+===
 
 An organization chart (org chart) is a diagram that portrays the structure of an organization and the relationships and relative ranks of its parts and positions.
 

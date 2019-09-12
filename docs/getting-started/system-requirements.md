@@ -1,5 +1,5 @@
 System requirements
--------------------
+===
 
 Highcharts is solely based on native browser technologies and doesn't require client side plugins like Flash or Java. Furthermore you don't need to install anything on your server. No PHP or ASP.NET. Highcharts needs only the highcharts.js core to run.
 

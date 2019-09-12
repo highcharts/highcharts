@@ -1,5 +1,5 @@
 Axis resizer
---------
+===
 
 The Resizer module allows the end-user to define which axes can be resized in a multiple-pane Highstock layout. The module allows controlling multiple axes within one config. This feature is very useful, especially when combining multiple technical indicators, where each of them requires a separate axis.
 

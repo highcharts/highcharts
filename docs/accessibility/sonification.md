@@ -1,5 +1,5 @@
 Sonification
-------------
+===
 
 Sonification is a collective term for conveying information or perceptualizing data using non-speech audio. It is used all around us, imagine for example your grandfather’s clock with has an audible tick every second and chimes every hour.
 

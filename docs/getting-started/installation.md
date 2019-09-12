@@ -1,5 +1,5 @@
 Installation
-------------
+===
 
 ### npm and Bower
 

@@ -1,5 +1,5 @@
 Bell curve
-----------
+===
 
 A bell curve series is a graphical representation of a normal (Gaussian) probability distribution. Bell curve is used to visualize the probability of occurring outcomes. The curve is bell-shaped, and its center top point is the mean of the base data.
 

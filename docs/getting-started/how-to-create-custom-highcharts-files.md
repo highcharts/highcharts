@@ -1,5 +1,5 @@
 Creating custom Highcharts files
---------------------------------
+===
 
 By using the Highcharts assembler you can create your own custom Highcharts files. A benefit of using a custom file can be optimization of browser load speed due to lower filesize and less files to request.  
 Follow the steps below to get started.

@@ -1,5 +1,5 @@
 Debugger module
-------------
+===
 
 A debugger module in an easy and quick way to display error messages on the chart. This is a very simple tool that can improve the process of chart creation and debug.
 

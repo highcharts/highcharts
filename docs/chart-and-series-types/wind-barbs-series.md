@@ -1,5 +1,5 @@
 Wind barbs
-----------
+===
 
 Wind barbs visualize wind speed and direction in one graphical form. The stem direction defines the wind direction, while the barbs’ numbers and shapes define the wind speed.
 

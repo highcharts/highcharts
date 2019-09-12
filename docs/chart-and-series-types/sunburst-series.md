@@ -1,5 +1,5 @@
 Sunburst
----------
+===
 
 A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle. The center represents the root node of the tree. The visualization bear a resemblance to both treemap and pie charts.
 

@@ -1,5 +1,5 @@
 Latitude/longitude
-------------------
+===
 
 <iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced"></iframe>
 

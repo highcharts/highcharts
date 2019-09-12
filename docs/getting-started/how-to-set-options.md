@@ -1,5 +1,5 @@
 How to set options
---------------------------
+===
 
 Highcharts use a JavaScript object structure to define the options or settings of a chart. This article explains how the options object works and how to use it.
 

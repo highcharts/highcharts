@@ -1,5 +1,5 @@
 Client side export
-------------------
+===
 
 The offline-exporting module allows for image export of charts without sending data to an external server. This is the solution if you:
 

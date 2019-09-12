@@ -1,5 +1,5 @@
 Accessibility module
---------------------
+===
 
 The accessibility of Highcharts is critical to us. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
 

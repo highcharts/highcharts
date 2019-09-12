@@ -1,5 +1,5 @@
 Technical indicators
---------------------
+===
 
 Technical Indicators, like annotations, are powerful tools that help to understand charts and make decisions with ease. The mathematical algorithms use the existing data to indicate trends, events, etc. and help to set up boundaries for strategies and to look for patterns.
 

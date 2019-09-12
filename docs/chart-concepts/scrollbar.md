@@ -1,5 +1,5 @@
 Scrollbars
-----------
+===
 
 There are two major approaches to scrollbars in Highcharts.
 

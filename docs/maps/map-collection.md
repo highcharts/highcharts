@@ -1,5 +1,5 @@
 Map collection
---------------
+===
 
 For your convenience, Highmaps offers a free [collection of maps](http://code.highcharts.com/mapdata/), optimized for use with Highmaps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
 

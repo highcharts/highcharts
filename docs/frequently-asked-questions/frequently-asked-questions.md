@@ -1,5 +1,5 @@
 FAQ
----
+===
 *   [Does Highcharts refer to files outside our domain?](#files-outside-domain)
 *   [My charts are not showing in Internet Explorer 7 or 8](#not-showing-in-explorer)
 *   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with)

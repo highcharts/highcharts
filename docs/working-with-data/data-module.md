@@ -1,5 +1,5 @@
 Data module
------------
+===
 
 The Data module provides options for loading data from external sources, like CSV files, HTML tables or Google Spreadsheets, in a convenient way, using a declarative options set. Its options are available under the data object. For the full reference and samples, see [api.highcharts.com/highcharts/data](http://api.highcharts.com/highcharts/data).
 

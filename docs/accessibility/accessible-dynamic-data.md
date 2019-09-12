@@ -1,5 +1,5 @@
 Dynamic data with the accessibility module
-------------------------------------------
+===
 
 The Highcharts suite of products has extensive dynamic support. Changes to the layout, design, and data is supported after the chart has been created, using methods like [`chart.update`](https://api.highcharts.com/class-reference/Highcharts.Chart#update) and [`series.setData`](https://api.highcharts.com/class-reference/Highcharts.Series#setData). This gives us some interesting challenges for accessibility, particularly for non-visual users.
 

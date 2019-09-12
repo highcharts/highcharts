@@ -1,5 +1,5 @@
 Map navigation
---------------
+===
 
 Highmaps supports different ways of navigating around the map - zooming, panning, zooming to an area etc. The API options related to this can be viewed at [mapNavigation](https://api.highcharts.com/highmaps/mapNavigation).
 

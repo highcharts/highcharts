@@ -1,5 +1,5 @@
 Histogram
----------
+===
 
 A histogram series is a graphical representation of the data distribution. Histogram creates intervals (bins) and counts how many values fall into each bin.
 

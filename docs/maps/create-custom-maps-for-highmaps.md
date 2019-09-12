@@ -1,5 +1,5 @@
 Creating custom maps 
---------------------
+===
 
 Highmaps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
 

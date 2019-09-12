@@ -1,5 +1,5 @@
 Dependencies between tasks
---------------------------
+===
 
 Visualizing the work breakdown structure of a project involves also describing the dependencies between tasks. They indicate when a task should start or end. Highcharts Gantt uses the [`dependency`](https://api.highcharts.com/gantt/series.gantt.data.dependency) property on the data point for determining relations between dependant tasks and draws arrows between them. Note that the [`dependency`](https://api.highcharts.com/gantt/series.gantt.data.dependency) property also takes an `Array<String|Object>` in case of multiple dependencies.
 

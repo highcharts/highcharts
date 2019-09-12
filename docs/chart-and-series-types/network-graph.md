@@ -1,5 +1,5 @@
 Network graph
-------------
+===
 
 Network graph (force directed graph) is a mathematical structure (graph) to show relations between points in an aesthetically-pleasing way. The graph visualizes how subjects are interconnected with each other. Entities are displayed as nodes and the relationship between them are displayed with lines. The graph is force directed by assigning a weight (force) from the node edges and the other interconnected nodes get assigned a weighted factor. The graph simulates the weight as forces in a physical system, where the forces have impact on the nodes and find the best position on the chart’s plotting area. The Network Graph has various use case such as display relations between people, roads, companies, and products.
 

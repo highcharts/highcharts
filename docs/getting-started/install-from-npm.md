@@ -1,5 +1,5 @@
 Installing with NPM
--------------------
+===
 
 The official npm package contains Highcharts, Highstock and Highmaps plus all modules. Start by installing Highcharts as a node module and save it as a dependency in your package.json:
 

@@ -1,5 +1,5 @@
 Dependency wheel
-------------
+===
 
 A dependency wheel is a type of flow diagram, where nodes are laid out in a circle, and links are drawn between them. This width of the link and size of the nodes are proportional to the flow quantity or weight of each link.
 

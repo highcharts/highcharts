@@ -1,5 +1,5 @@
 Boost module
-------------
+===
 
 Boost is a stripped-down renderer-in-a-module for Highcharts and Highstock. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
 

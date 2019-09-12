@@ -1,5 +1,5 @@
 Gantt task configuration
-------------------------
+===
 
 The bars in the Gantt chart are showing the full duration of a task which are calculated from the [`start`](https://api.highcharts.com/gantt/series.gantt.data.start) and [`end`](https://api.highcharts.com/gantt/series.gantt.data.end) data point properties.
 

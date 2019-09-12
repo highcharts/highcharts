@@ -1,5 +1,5 @@
 Packed bubble
-------------
+===
 
 A bubble chart requires three dimensions of data; the x-value and y-value to position the bubble along the value axes and a third value for its volume. Packed Bubble charts have a simpler data structure, a flat, one-dimensional array with volumes is sufficient. The bubble’s x/y position is automatically calculated using an algorithm that packs the bubbles in a cluster. The series data point configuration has support for setting colors and label values. Drag’n drop feature was also added to give the user a chance to quickly move one bubble between series and then check how their relations will change.
 

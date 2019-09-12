@@ -1,5 +1,5 @@
 Bubble legend
-------------
+===
 
 ## Introduction
 

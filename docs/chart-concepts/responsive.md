@@ -1,5 +1,5 @@
 Responsive charts
------------------
+===
 
 Since Highcharts 5.0 you can create responsive charts much the same way you work with responsive web pages. A top-level option, [responsive](http://api.highcharts.com/highcharts/responsive), exists in the configuration.
 

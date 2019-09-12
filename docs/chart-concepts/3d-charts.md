@@ -1,5 +1,5 @@
-Getting started with Highcharts 3D Support.
--------------------------------------------
+Getting started with Highcharts 3D Support
+===
 
 Highcharts 3D is a Highcharts module providing limited 3D support to charts. It currently allows to create 3D Column charts, 3D Pie charts and 3D Scatter charts.
 

@@ -1,5 +1,5 @@
 Annotations module
------------
+===
 
 The annotations module allows users to annotate a chart freely with labels and shapes. Without the annotations module, the only way to render shapes or labels in any place on a chart was to use the [Renderer API](http://api.highcharts.com/highcharts/Renderer). The Annotations creates a declarative API for adding shapes and labels to a chart. 
 

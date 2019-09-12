@@ -1,5 +1,5 @@
 3d pyramid
-------------
+===
 
 Pyramid 3D series type is a 3D variant of the [Pyramid Chart](https://www.highcharts.com/demo/pyramid). It represents data in the same way as a [Funnel Chart](https://www.highcharts.com/docs/chart-and-series-types/funnel-series) but reversed and without a neck width and neck height. Use this chart type for displaying percentage ratio or for visualizing volumes in different phases.
 

@@ -1,5 +1,5 @@
 Introduction
-------------
+===
 
 Highcharts 7 introduces 3 new options for working with data labels: `dataLabels.alignTo`, `dataLabels.connectorShape` and `dataLabels.crookDistance`.
 

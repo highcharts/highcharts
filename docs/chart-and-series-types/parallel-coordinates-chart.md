@@ -1,5 +1,5 @@
 Parallel coordinates
--------------------
+===
 
 In cartesian charting, it is easy to show the relations between two or three dimensions. For example, scatter charts visualize the relationship between X and Y, 3D scatter charts visualize the relationships between three variables, where bubble charts show the relationship between up to four variables X, Y, Z (radius) and C (color).
 

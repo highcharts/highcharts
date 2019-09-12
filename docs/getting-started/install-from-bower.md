@@ -1,5 +1,5 @@
 Installing with Bower
----------------------
+===
 
 Bower is no longer the dependency manager of choice for front-end projects. While the open source project is still maintained, its creators decided to deprecate it, and advise how to migrate to other solutions—namely Yarn and webpack.
 

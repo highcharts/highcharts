@@ -1,5 +1,5 @@
 Variable radius pie
--------------------
+===
 
 A variable pie chart is a circular chart divided into sectors which are proportional to the quantity or volume they represent. As an addition to the standard pie chart, which requires only one parameter, the variable pie series uses two parameter Y and Z, where Y represents the slice’s volume, and Z represents the slice’s radius.
 

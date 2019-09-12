@@ -1,5 +1,5 @@
 Tilemaps
--------
+===
 
 Tilemaps are maps where each area is represented by tiles of equal shape. Highmaps supports four different tilemap types: Circlemap, Diamondmap, Honeycomb, and Squaremap, each with a different tile shape.
 

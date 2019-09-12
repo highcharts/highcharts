@@ -1,5 +1,5 @@
 Gradients, shadows, and pattern fills in styled mode
-----------------------------------------------------
+===
 
 In Highcharts classic mode, gradients are set as configuration objects to colors, shadows are generally available as API options, and patterns require [the pattern module](https://www.highcharts.com/blog/tutorials/pattern-fills/). 
 

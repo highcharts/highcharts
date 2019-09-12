@@ -1,5 +1,5 @@
 Item Chart
-------------
+===
 
 An item chart in Highcharts is a series type where the values are represented as individual dots or symbols, so that for example a quantity of ten is represented by ten dots. This is similar to a dot chart, except that in the dot chart, the items are rendered on X and Y axis, while in the item chart, they are laid out sequentially.
 

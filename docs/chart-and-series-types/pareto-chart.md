@@ -1,5 +1,5 @@
 Pareto chart
------
+===
 
 The pareto chart is used to graphically summarize and display the relative importance of the differences between groups of data. It suggests that 80% of problems can be traced to as few as 20% of root causes.
 
