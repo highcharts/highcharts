@@ -2957,8 +2957,9 @@ H.removeEvent = function<T> (
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
-        var eventCollection = (el as any)[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
+        const eventElem = i ? el : (el as any).prototype;
+        const eventCollection = eventElem && eventElem[coll];
 
         if (eventCollection) {
             if (type) {
@@ -2980,7 +2981,7 @@ H.removeEvent = function<T> (
                 }
             } else {
                 removeAllEvents(eventCollection);
-                (el as any)[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
