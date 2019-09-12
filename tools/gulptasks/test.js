@@ -94,10 +94,12 @@ function checkSamplesConsistency() {
      */
     products.forEach(
         ({ product, ignore = [] }) => {
+            const filename = path.join('samples', product, 'demo', 'index.htm');
+            if (!FS.existsSync(filename)) {
+                return;
+            }
             const index = FS
-                .readFileSync(
-                    path.join('samples', product, 'demo', 'index.htm')
-                )
+                .readFileSync(filename)
                 .toString()
                 // Remove comments from the html in index
                 .replace(/<!--[\s\S]*-->/gm, '');
