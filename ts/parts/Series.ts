@@ -46,7 +46,6 @@ declare global {
             public colorIndex?: number;
             public cropped?: boolean;
             public cropShoulder: number;
-            public crossLabel?: SVGElement;
             public data: Array<Point>;
             public dataMax: number;
             public dataMin: number;
@@ -71,8 +70,6 @@ declare global {
             public isDirtyData: boolean;
             public kdAxisArray: Array<string>;
             public kdTree?: KDNode;
-            public lastPrice?: SVGElement;
-            public lastVisiblePrice?: SVGElement;
             public linkedSeries: Array<Series>;
             public markerGroup?: SVGElement;
             public name: string;
