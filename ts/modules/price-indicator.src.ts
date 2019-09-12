@@ -13,6 +13,18 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
+        
+        interface Series {
+            lastPrice?: SVGElement;
+            lastVisiblePrice?: SVGElement;
+            crossLabel?: SVGElement;
+        }
+
+        interface PlotSeriesOptions {
+            lastPrice?: LastPriceOptions;
+            lastVisiblePrice?: LastVisiblePriceOptions;
+        }
+
         interface LastPriceOptions extends XAxisCrosshairOptions {
             enabled?: boolean;
         }
@@ -121,7 +133,7 @@ addEvent(H.Series, 'afterRender', function (): void {
             yAxis.cross = serie.lastPrice;
             yValue = isArray(y) ? y[3] : y;
 
-            yAxis.drawCrosshair(null, ({
+            yAxis.drawCrosshair((null as any), ({
                 x: x,
                 y: yValue,
                 plotX: xAxis.toPixels(x, true),
@@ -149,7 +161,7 @@ addEvent(H.Series, 'afterRender', function (): void {
             yAxis.cross = serie.lastVisiblePrice;
             lastPoint = points[pLength - crop];
             // Save price
-            yAxis.drawCrosshair(null, lastPoint);
+            yAxis.drawCrosshair((null as any), lastPoint);
 
             if (yAxis.cross) {
                 serie.lastVisiblePrice = yAxis.cross;
