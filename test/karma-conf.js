@@ -582,6 +582,7 @@ module.exports = function (config) {
                                         0,
                                         'Different pixels\\n' +
                                         '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                        '- samples/${path}/reference.svg\\n' +
                                         '- samples/${path}/diff.gif'
                                     );
                                 }

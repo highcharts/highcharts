@@ -172,6 +172,7 @@ var origAddEvent = Highcharts.addEvent;
 var addedEvents = [];
 
 if (window.QUnit) {
+    //QUnit.config.seed = 'vaolebrok';
     /*
      * Compare numbers taking in account an error.
      * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
@@ -277,6 +278,12 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Renderer samples, no chart instance existed
+            var svgs = document.getElementsByTagName('svg');
+            while (svgs.length) {
+                svgs[0].parentNode.removeChild(svgs[0]);
+            }
 
             // Unwrap/reset wrapped functions
             while (wrappedFunctions.length) {
