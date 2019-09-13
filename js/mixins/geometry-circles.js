@@ -182,6 +182,22 @@ function isPointOutsideAllCircles(point, circles) {
     });
 }
 /**
+ * Calculates the points for the polygon of the intersection area between a set
+ * of circles.
+ *
+ * @private
+ * @param {Array<Highcharts.CircleObject>} circles
+ *        List of circles to calculate polygon of.
+ * @return {Array<Highcharts.GeometryObject>} Return list of points in the
+ * intersection polygon.
+ */
+function getCirclesIntersectionPolygon(circles) {
+    return getCirclesIntersectionPoints(circles)
+        .filter(function (p) {
+        return isPointInsideAllCircles(p, circles);
+    });
+}
+/**
  * Calculate the path for the area of overlap between a set of circles.
  * @todo handle cases with only 1 or 0 arcs.
  * @private
@@ -192,10 +208,7 @@ function isPointOutsideAllCircles(point, circles) {
  *         there are no intersection between all the circles.
  */
 function getAreaOfIntersectionBetweenCircles(circles) {
-    var intersectionPoints = (getCirclesIntersectionPoints(circles)
-        .filter(function (p) {
-        return isPointInsideAllCircles(p, circles);
-    })), result;
+    var intersectionPoints = getCirclesIntersectionPolygon(circles), result;
     if (intersectionPoints.length > 1) {
         // Calculate the center of the intersection points.
         var center_1 = getCenterOfPoints(intersectionPoints);
@@ -281,6 +294,7 @@ var geometryCircles = {
     getAreaOfIntersectionBetweenCircles: getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection: getCircleCircleIntersection,
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,
+    getCirclesIntersectionPolygon: getCirclesIntersectionPolygon,
     getCircularSegmentArea: getCircularSegmentArea,
     getOverlapBetweenCircles: getOverlapBetweenCircles,
     isPointInsideCircle: isPointInsideCircle,
