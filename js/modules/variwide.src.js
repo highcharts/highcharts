@@ -264,7 +264,7 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
 addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
 
-    if (!this.horiz && this.variwide) {
+    if (!this.horiz && this.variwide && this.options.labels.enabled) {
         this.chart.labelCollectors.push(function () {
             return axis.tickPositions.map(function (pos, i) {
                 var label = axis.ticks[pos].label;
