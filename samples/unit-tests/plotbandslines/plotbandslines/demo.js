@@ -199,37 +199,89 @@ QUnit.test('PlotLines on a chart edges (#11405)', function (assert) {
             chart: {
                 spacing: 0
             },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                data: [1, 2, 3]
+            }],
             title: {
                 text: ''
             },
-            series: [{
-                data: [0, 1, 2]
-            }],
             xAxis: {
-                visible: false
+                visible: false,
+                min: 0,
+                max: 2
             },
             yAxis: {
-                gridLineWidth: 0,
+                title: '',
+                labels: '',
+                min: 1,
+                max: 3,
                 plotLines: [{
-                    value: 0,
-                    color: '#FF0000'
+                    value: 1,
+                    color: '#FF0000',
+                    width: 1,
+                    zIndex: 2
+                }, {
+                    value: 3,
+                    color: '#0000FF',
+                    width: 1,
+                    zIndex: 2
                 }]
             }
         }),
-        plotLineY = chart.yAxis[0].plotLinesAndBands[0].svgElem.getBBox().y;
+        yAxes = chart.yAxis,
+        plotLines = yAxes[0].plotLinesAndBands;
 
     assert.strictEqual(
-        plotLineY < chart.chartHeight,
+        plotLines[0].svgElem.getBBox().y < chart.chartHeight &&
+        plotLines[1].svgElem.getBBox().y > 0,
         true,
-        'The plot line should be placed on the chart.'
+        'The plot lines should be placed on the chart.'
     );
 
-    chart.series[0].setData([0, -1, -2]);
-    plotLineY = chart.yAxis[0].plotLinesAndBands[0].svgElem.getBBox().y;
+    yAxes[0].update({
+        reversed: true
+    });
+
+    plotLines = yAxes[0].plotLinesAndBands;
 
     assert.strictEqual(
-        plotLineY > 0,
+        plotLines[0].svgElem.getBBox().y > 0 &&
+        plotLines[1].svgElem.getBBox().y < chart.chartHeight,
         true,
-        'The plot line should be placed on the chart.'
+        'The plot lines should be placed on the chart with reversed yAxis.'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    plotLines = yAxes[0].plotLinesAndBands;
+
+    assert.strictEqual(
+        plotLines[0].svgElem.getBBox().x < chart.chartWidth &&
+        plotLines[1].svgElem.getBBox().x > 0,
+        true,
+        'The plot lines should be placed on the inverted chart with reversed yAxis.'
+    );
+
+    yAxes[0].update({
+        reversed: false
+    });
+
+    plotLines = yAxes[0].plotLinesAndBands;
+
+    assert.strictEqual(
+        plotLines[0].svgElem.getBBox().x > 0 &&
+        plotLines[1].svgElem.getBBox().x < chart.chartWidth,
+        true,
+        'The plot lines should be placed on the inverted chart.'
     );
 });
