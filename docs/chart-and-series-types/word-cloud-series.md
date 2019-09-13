@@ -62,7 +62,7 @@ The spiralling algorithm is made accesible by attaching it to the `spirals` prop
     
     Highcharts.seriesTypes.wordcloud.prototype.spirals.archimedean = archimedeanSpiral; 
 
-Afterwards you can use the algorithm by specifying the option **series<wordcloud>.spiral**:
+Afterwards you can use the algorithm by specifying the option **series`<wordcloud>`.spiral**:
 
     
     Highcharts.chart(..., {
@@ -93,7 +93,7 @@ The placement algorithm is made accesible by attaching it to the `placementStrat
     
     Highcharts.seriesTypes.wordcloud.prototype.placementStrategy.random= randomPlacement; 
 
-Afterwards you can use the algorithm by specifying the option **series<wordcloud>.placementStrategy**:
+Afterwards you can use the algorithm by specifying the option **series`<wordcloud>`.placementStrategy**:
 
     
     Highcharts.chart(..., {

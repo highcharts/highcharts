@@ -7,7 +7,7 @@ Highcharts is also available as packages through npm and Bower. Read more on ins
 
 ### A. Include Highcharts
 
-Include the JavaScript files in the <head> section of your web page as shown below.
+Include the JavaScript files in the `<head>` section of your web page as shown below.
 
 ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>

@@ -19,8 +19,9 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 
 1. Add the map as a JavaScript element:
 
-    
-    <script src\="[http://code.highcharts.com/mapdata/custom/world.js](http://code.highcharts.com/mapdata/custom/world.js)"></script>
+```html
+<script src="[http://code.highcharts.com/mapdata/custom/world.js](http://code.highcharts.com/mapdata/custom/world.js)"></script>
+```
 
 You can alternatively link to a specific version or subversion of the map at http://code.highcharts.com/mapdata/**1.1**/custom/world.js. 
 -----------------------------------------------------------------------------------------------------------------------------------------
