@@ -10,6 +10,10 @@
 
 import H from '../parts/Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         class AtrIndicator extends SmaIndicator {
@@ -81,7 +85,7 @@ function getTR(currentPoint: Array<number>, prevPoint: Array<number>): number {
  * @private
  */
 function populateAverage(
-    points: any,
+    points: Array<Array<(number|Array<number>)>>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number,
@@ -135,8 +139,8 @@ seriesType<Highcharts.AtrIndicator>(
             series: Highcharts.AtrIndicator,
             params: Highcharts.AtrInidicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
-            var period = params.period,
-                xVal = series.xData,
+            var period = (params.period as any),
+                xVal = (series.xData as any),
                 yVal = series.yData,
                 yValLen = yVal ? yVal.length : 0,
                 xValue = (xVal as any)[0],
@@ -145,16 +149,16 @@ seriesType<Highcharts.AtrIndicator>(
                 prevATR = 0,
                 TR = 0,
                 ATR: Array<Array<number>> = [],
-                xData = [],
-                yData = [],
-                point,
-                i,
+                xData: Array<number> = [],
+                yData: Array<number> = [],
+                point: (Array<number>|undefined),
+                i: (number|undefined),
                 points: Array<Array<(number|Array<number>)>>;
 
             points = [[xValue, yValue]];
 
             if (
-                ((xVal as any).length <= (period as any)) ||
+                (xVal.length <= period) ||
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
@@ -165,13 +169,13 @@ seriesType<Highcharts.AtrIndicator>(
 
                 accumulateAverage(points, (xVal as any), yVal, i);
 
-                if ((period as any) < range) {
+                if (period < range) {
                     point = populateAverage(
                         points,
-                        (xVal as any),
+                        xVal,
                         yVal,
                         i,
-                        (period as any),
+                        period,
                         prevATR
                     );
                     prevATR = point[1];
@@ -181,8 +185,8 @@ seriesType<Highcharts.AtrIndicator>(
 
                 } else if (period === range) {
                     prevATR = TR / (i - 1);
-                    ATR.push([(xVal as any)[i - 1], prevATR]);
-                    xData.push((xVal as any)[i - 1]);
+                    ATR.push([xVal[i - 1], prevATR]);
+                    xData.push(xVal[i - 1]);
                     yData.push(prevATR);
                     range++;
                 } else {
@@ -212,4 +216,4 @@ seriesType<Highcharts.AtrIndicator>(
  * @apioption series.atr
  */
 
-''; // to include the above in jsdocs
+''; // to include the above in the js output
