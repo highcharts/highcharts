@@ -146,13 +146,13 @@ var correctFloat = H.correctFloat,
  * The axis of the tick.
  *
  * @param {number} pos
- * The position of the tick on the axis.
+ * The position of the tick on the axis in terms of axis values.
  *
  * @param {string} [type]
- * The type of tick.
+ * The type of tick, either 'minor' or an empty string
  *
  * @param {boolean} [noLabel=false]
- * Wether to disable the label or not. Defaults to false.
+ * Whether to disable the label or not. Defaults to false.
  *
  * @param {object} [parameters]
  * Optional parameters for the tick.
@@ -172,7 +172,7 @@ H.Tick = function (
      */
     this.axis = axis;
     /**
-     * The logical position of the tick on the axis.
+     * The logical position of the tick on the axis in terms of axis values.
      * @name Highcharts.Tick#pos
      * @type {number}
      */
@@ -255,14 +255,16 @@ H.Tick.prototype = {
 
         // set properties for access in render method
         /**
-         * True, if the tick is the first one on the axis.
+         * True if the tick is the first one on the axis.
          * @name Highcharts.Tick#isFirst
+         * @readonly
          * @type {boolean|undefined}
          */
         tick.isFirst = isFirst;
         /**
-         * True, if the tick is the last one on the axis.
+         * True if the tick is the last one on the axis.
          * @name Highcharts.Tick#isLast
+         * @readonly
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
@@ -494,7 +496,7 @@ H.Tick.prototype = {
     },
 
     /**
-     * Gets the x and y positions for ticks.
+     * Gets the x and y positions for ticks in terms of pixels.
      *
      * @private
      * @function Highcharts.Tick#getPosition
