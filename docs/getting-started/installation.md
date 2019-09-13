@@ -44,4 +44,4 @@ But the separate files can't run in the same page along with each other or with 
 
 You are now ready to use Highcharts, see [Your first chart](docs/getting-started/your-first-chart) to get started.
 
-\*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highstock versions) IE VML rendering is built into the library.
+*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highstock versions) IE VML rendering is built into the library.

@@ -91,21 +91,21 @@ The JavaScript representation of the formulas above is as follow:
         y = yData[i];
         sumX += x;
         sumY += y;
-        sumXY += x \* y;
-        sumX2 += x \* x;
+        sumXY += x * y;
+        sumX2 += x * x;
       }
       
       // Get slope and offset:
-      alpha = (n \* sumXY - sumX \* sumY) / (n \* sumX2 - sumX \* sumX);
+      alpha = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
       if (isNaN(alpha)) {
         alpha = 0;
       }
-      beta = (sumY - alpha \* sumX)/ n;
+      beta = (sumY - alpha * sumX)/ n;
     
       // Calculate linear regression:
       for (i = 0; i < n; i++) {
         x = xData[i];
-        y = alpha \* x + beta;
+        y = alpha * x + beta;
     
         // Prepare arrays required for getValues() method
         linearData[i] = [x, y];

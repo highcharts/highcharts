@@ -33,7 +33,7 @@ Next up is adding the a series with type venn where the configurations and data 
     Highcharts.chart('container', {
         series: [{
             type: 'venn',
-            data: [/\* Series data \*/]
+            data: [/* Series data */]
         }]
     });
 

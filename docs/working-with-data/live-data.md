@@ -29,7 +29,7 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
     
     // The x value is the current JavaScript time, which is the Unix time multiplied   
     // by 1000.
-    $x = time() \* 1000;
+    $x = time() * 1000;
     // The y value is a random number
     $y = rand(0, 100);
     
@@ -48,10 +48,10 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
 3.  **Set up the requestData function.** In this case it uses jQuery's $.ajax method to handle the Ajax stuff, but it could just as well use any other Ajax framework. When the data is successfully received from the server, the string is eval'd and added to the chart's first series using the Highcharts addPoint method. If the series length is greater than 20, we shift off the first point so that the series will move to the left rather than just cram the points tighter.
 
     
-    /\*\*
-     \* Request data from the server, add it to the graph and set a timeout   
-     \* to request again
-     \*/
+    /**
+     * Request data from the server, add it to the graph and set a timeout   
+     * to request again
+     */
     function requestData() {
         $.ajax({
             url: 'live-server-data.php',
@@ -87,7 +87,7 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
             xAxis: {
                 type: 'datetime',
                 tickPixelInterval: 150,
-                maxZoom: 20 \* 1000
+                maxZoom: 20 * 1000
             },
             yAxis: {
                 minPadding: 0.2,

@@ -98,7 +98,7 @@ By default, _grouping_ is **true** in Highcharts, displaying the columns next to
     plotOptions.column.groupZPadding: Spacing between columns on the z-axis.
 
   
-**Make sure the depth of the chart is sufficient to display all your columns. You will need at least the following depth: number of columns \* (depth of column + z-padding)**
+**Make sure the depth of the chart is sufficient to display all your columns. You will need at least the following depth: number of columns * (depth of column + z-padding)**
 
 A regular Highcharts column chart also offers the possibility to stack columns together, this is of course still available in 3D charts and works in exactly the same way by setting _stacking_ to **true** and defining a stack number for each series.
 

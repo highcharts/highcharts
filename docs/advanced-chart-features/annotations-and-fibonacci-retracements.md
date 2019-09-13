@@ -14,8 +14,8 @@ Annotations can be built from simple blocks such as labels and shapes, and the c
 
     
       {
-        labels: [ /\* options for labels /\* ],
-        shapes: [ /\* options for lines /\*, /\* options for backgrounds \*/ ]
+        labels: [ /* options for labels /* ],
+        shapes: [ /* options for lines /*, /* options for backgrounds */ ]
       }
     
 
@@ -31,7 +31,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
     
        levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
        diff = y2 - y1;
-       retracementlevel = y2 - diff \* level;
+       retracementlevel = y2 - diff * level;
     
 
 **Step 2. Build the horizontal lines:**
@@ -40,7 +40,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         var lines = [];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff \* level;
+            var retracement = y2 - diff * level;
             var p1 = point(x1, retracement);
             var p2 = point(x2, retracement);
     
@@ -60,7 +60,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         var labels = [];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff \* level;
+            var retracement = y2 - diff * level;
             var p1 = point(x1, retracement);
             var p2 = point(x2, retracement);
     
@@ -97,7 +97,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         ];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff \* level;
+            var retracement = y2 - diff * level;
             var p1 = point(x1, retracement);
             var p2 = point(x2, retracement);
     

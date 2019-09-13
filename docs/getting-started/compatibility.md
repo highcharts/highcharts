@@ -27,7 +27,7 @@ We test our software on many browsers using the latest versions. Knowing that In
 |Android Browser|2.0 + *)|
 
 
-\*) Android 2.x has limited support, see [below](#android2).
+*) Android 2.x has limited support, see [below](#android2).
 
 As with the javascript frameworks, other versions may still work even though they are not tested.
 

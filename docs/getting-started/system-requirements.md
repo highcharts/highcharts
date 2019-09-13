@@ -23,7 +23,7 @@ We test our software on many browsers using the latest versions. Knowing that In
 |Internet Explorer|9.0 +|
 |Android Browser|2.0 + *)|
 
-\*) Android browser 2.x has limited support, see [below](#android).
+*) Android browser 2.x has limited support, see [below](#android).
 
 Supporting IE 6-8
 -----------------

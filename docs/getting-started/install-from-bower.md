@@ -15,7 +15,7 @@ Load Highcharts
     
 <script>  
 // Create the chart
-Highcharts.Chart('container', { /\*Highcharts options\*/ });
+Highcharts.Chart('container', { /*Highcharts options*/ });
 </script>
 ```
 

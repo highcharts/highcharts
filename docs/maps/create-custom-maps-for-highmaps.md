@@ -53,7 +53,7 @@ Highmaps can be used for more than geographic data, and more than the featured m
     $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
-            series: /\* paste your content here \*/
+            series: /* paste your content here */
         });
     });
 

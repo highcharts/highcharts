@@ -219,7 +219,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                           playOptions: {
                                               // Play a rising frequency
                                               frequency: function (time) {
-                                                  return time \* 1760;
+                                                  return time * 1760;
                                               },
                                               duration: 200,
                                               pan: 0.8 // Pan 80% right
@@ -229,7 +229,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                           playOptions: {
                                               // Play another rising frequency
                                               frequency: function (time) {
-                                                  return time \* 2217;
+                                                  return time * 2217;
                                               },
                                               duration: 200,
                                               pan: -0.8 // Pan 80% left

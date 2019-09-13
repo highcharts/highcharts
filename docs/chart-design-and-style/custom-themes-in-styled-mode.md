@@ -45,7 +45,7 @@ Example of yourtheme.css
       stroke: #f45b5b;
     }
      
-    /\* Titles \*/
+    /* Titles */
     .highcharts-title {
       fill: black;
       font-size: 26px;
