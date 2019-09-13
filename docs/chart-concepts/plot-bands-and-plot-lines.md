@@ -10,12 +10,12 @@ Plot bands can be created either on the x-axis or the y-axis. It can also be cre
     
     xAxis: {
       ...,
-      plotBands: \[{
+      plotBands: [{
         color: 'orange', // Color value
         from: 3, // Start of the plot band
         to: 4 // End of the plot band
       }\],
-      plotLines: \[{
+      plotLines: [{
         color: 'red', // Color value
         dashStyle: 'longdashdot', // Style of the plot line. Default to solid
         value: 3, // Value of where the line will appear
@@ -24,10 +24,10 @@ Plot bands can be created either on the x-axis or the y-axis. It can also be cre
     },
     yAxis: {
       ...,
-      plotBands: \[{
+      plotBands: [{
         ... // Same as in the xAxis
       }\],
-      plotLines: \[{
+      plotLines: [{
         ... // Same as in the xAxis
       }\]
     }

@@ -56,11 +56,11 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
         $.ajax({
             url: 'live-server-data.php',
             success: function(point) {
-                var series = chart.series\[0\],
+                var series = chart.series[0\],
                     shift = series.data.length > 20; // shift if the series is   
                                                      // longer than 20  
                 // add the point
-                chart.series\[0\].addPoint(point, true, shift);
+                chart.series[0\].addPoint(point, true, shift);
                 
                 // call it again after one second
                 setTimeout(requestData, 1000);    
@@ -97,9 +97,9 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
                     margin: 80
                 }
             },
-            series: \[{
+            series: [{
                 name: 'Random data',
-                data: \[\]
+                data: [\]
             }\]
         });        
     });

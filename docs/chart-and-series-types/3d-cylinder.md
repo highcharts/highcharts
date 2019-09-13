@@ -40,8 +40,8 @@ Use Cases
                         viewDistance: 25
                     }
                 },
-                series: \[{
-                    data: \[1, 2, 3\]
+                series: [{
+                    data: [1, 2, 3\]
                 }\]
             }
     

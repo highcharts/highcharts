@@ -95,9 +95,9 @@ Technical indicators modules are implemented as series, that means almost all of
 There are no limitations to the number of technical indicators that can be bound to one main series. The following example creates a chart with four series: one main, two SMA, and one EMA:
 
     
-    series: \[{
+    series: [{
       id: ‘main-series’,
-      data: \[ … \]
+      data: [ … \]
     }, {
       type: ‘sma’,
       linkedTo: ‘main-series’,
@@ -131,7 +131,7 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
 1\. Create required yAxis:
 
     
-    yAxis: \[{
+    yAxis: [{
       // Main series yAxis:
       height: ‘50%’
     }, {
@@ -144,9 +144,9 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
 2\. Bind indicator to this yAxis:
 
     
-    series: \[{
+    series: [{
       id: ‘main-series’,
-      data: \[ … \]
+      data: [ … \]
     }, {
       type: ‘stochastic’,
       linkedTo: ‘main-series’,
@@ -168,13 +168,13 @@ Some of the technical indicators require two series for calculations. Here is a 
 These indicators require the following parameter `params.volumeSeriesID` to calculate properly:
 
     
-    series: \[{
+    series: [{
       id: ‘main-series’,
-      data: \[ … \]
+      data: [ … \]
     }, {
       id: ‘volume-series’,
       yAxis: 1,
-      data: \[ … \]
+      data: [ … \]
     }, {
       type: ‘mfi’,
       linkedTo: ‘main-series’,

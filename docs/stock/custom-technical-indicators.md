@@ -23,9 +23,9 @@ Each technical indicator requires the method `getValues()` to be implemented. Th
       ...
       // end of calculations
       return {
-        xData: \[...\], // array of x-values
-        yData: \[...\] // array of y-values
-        values: \[...\], // array of points
+        xData: [...\], // array of x-values
+        yData: [...\] // array of y-values
+        values: [...\], // array of points
       };
     }
     
@@ -79,16 +79,16 @@ The JavaScript representation of the formulas above is as follow:
           sumY = 0,
           sumXY = 0,
           sumX2 = 0,
-          linearData = \[\],
-          linearXData = \[\],
-          linearYData = \[\],
+          linearData = [\],
+          linearXData = [\],
+          linearYData = [\],
           n = xData.length,
           alpha, beta, i, x, y;
     
       // Get sums:
       for (i = 0; i < n; i++) {
-        x = xData\[i\];
-        y = yData\[i\];
+        x = xData[i\];
+        y = yData[i\];
         sumX += x;
         sumY += y;
         sumXY += x \* y;
@@ -104,13 +104,13 @@ The JavaScript representation of the formulas above is as follow:
     
       // Calculate linear regression:
       for (i = 0; i < n; i++) {
-        x = xData\[i\];
+        x = xData[i\];
         y = alpha \* x + beta;
     
         // Prepare arrays required for getValues() method
-        linearData\[i\] = \[x, y\];
-        linearXData\[i\] = x;
-        linearYData\[i\] = y;
+        linearData[i\] = [x, y\];
+        linearXData[i\] = x;
+        linearYData[i\] = y;
       }
     
       return {
@@ -126,10 +126,10 @@ Notice that Linear regression series in this example is still a line series, and
 That’s it; the technical indicator is ready to be used. Keep in mind that the technical indicator is connected to the main series by the [linkedTo](https://api.highcharts.com/highstock/plotOptions.sma.linkedTo) option:
 
     
-    series: \[{
+    series: [{
       id: 'main',
       type: 'scatter',
-      data: \[ ... \]
+      data: [ ... \]
     }, {
       type: 'linearregression',
       linkedTo: 'main'

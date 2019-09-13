@@ -10,10 +10,10 @@ Since version 3.0.8, Highcharts has built-in support for drilldown. By giving a 
 For a basic setup, the drilldown series are defined in a separate array under the `drilldown` configuration. Each series configuration is given an id, which is used for the drilldown parent point to identify its series. 
 
     
-            series: \[{
+            series: [{
                 name: 'Things',
                 colorByPoint: true,
-                data: \[{
+                data: [{
                     name: 'Animals',
                     y: 5,
                     drilldown: 'animals'
@@ -28,27 +28,27 @@ For a basic setup, the drilldown series are defined in a separate array under th
                 }\]
             }\],
             drilldown: {
-                series: \[{
+                series: [{
                     id: 'animals',
-                    data: \[
-                        \['Cats', 4\],
-                        \['Dogs', 2\],
-                        \['Cows', 1\],
-                        \['Sheep', 2\],
-                        \['Pigs', 1\]
+                    data: [
+                        ['Cats', 4\],
+                        ['Dogs', 2\],
+                        ['Cows', 1\],
+                        ['Sheep', 2\],
+                        ['Pigs', 1\]
                     \]
                 }, {
                     id: 'fruits',
-                    data: \[
-                        \['Apples', 4\],
-                        \['Oranges', 2\]
+                    data: [
+                        ['Apples', 4\],
+                        ['Oranges', 2\]
                     \]
                 }, {
                     id: 'cars',
-                    data: \[
-                        \['Toyota', 4\],
-                        \['Opel', 2\],
-                        \['Volkswagen', 2\]
+                    data: [
+                        ['Toyota', 4\],
+                        ['Opel', 2\],
+                        ['Volkswagen', 2\]
                     \]
                 }\]
             }

@@ -31,7 +31,7 @@ The Timeline series data is structured differently for the above alternatives fo
 The data series has no \`x\`property set.
 
     
-     data: \[{
+     data: [{
         name: 'Some date',
         label: 'Event label',
         description: 'Description of this event.'
@@ -48,7 +48,7 @@ Set for each data point the n \`x\` property with a timestamp in milliseconds si
 Examples of data series:
 
     
-    data: \[{
+    data: [{
         x: 1514764800000,
         name: 'Event name',
         label: 'Event label',

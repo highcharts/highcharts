@@ -13,19 +13,19 @@ Data structure
 The data of a stream graph is simply set as Y values and possibly X values. Each band in the stream graph represents a series, and the [series](https://www.highcharts.com/docs/chart-concepts/series) are stacked against each other.
 
     
-        series: \[{
+        series: [{
             "name": "Finland",
-            "data": \[
+            "data": [
                 0, 11, 4, 3, 6, 0, 0, 6
             \]
         }, {
             "name": "Austria",
-            "data": \[
+            "data": [
                 0, 3, 4, 2, 4, 0, 0, 8, 8
             \]
         }, {
             "name": "Sweden",
-            "data": \[
+            "data": [
                 0, 2, 5, 3, 7, 0, 0, 10, 4
             \]
         }\]

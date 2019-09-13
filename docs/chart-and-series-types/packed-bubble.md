@@ -17,8 +17,8 @@ Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubbl
         chart: {
             type: 'packedbubble'
         },
-        series: \[{
-            data: \[50, 12, 33, 45, 60\] // sizes of the bubble
+        series: [{
+            data: [50, 12, 33, 45, 60\] // sizes of the bubble
         }\]
     });
 
@@ -34,9 +34,9 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
         chart: {
             type: 'packedbubble',
         },
-        series: \[{
+        series: [{
             name: 'Coffee', // Coffee series
-            data: \[{
+            data: [{
                 // name property is used for the datalabel
                 // value property is used for the volume of the bubble
                 value: 12,
@@ -53,13 +53,13 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
             }\]
         }, {
             name: 'Energy drinks', // Energy drinks series
-            data: \[{
+            data: [{
                 value: 10,
                 name: 'Tristan'
             }\]
         }, {
             name: 'Tea', // Tea series
-            data: \[5, 6, 8, {
+            data: [5, 6, 8, {
                 value: 10,
                 name: 'Mustapha',
                 color: 'pink'
@@ -93,8 +93,8 @@ Here is an example of setting min and max size for bubbles:
                 maxSize: 300
             }
         },
-        series: \[{
-            data: \[1, 75, 112, 180, 20, 3000\]
+        series: [{
+            data: [1, 75, 112, 180, 20, 3000\]
         }\]
     });
 

@@ -77,7 +77,7 @@ Each range selector button can get a custom action as shown in this example:
 
     
     rangeSelector: {
-    			buttons: \[{
+    			buttons: [{
     				type: 'month',
     				count: 1,
     				text: '1m',

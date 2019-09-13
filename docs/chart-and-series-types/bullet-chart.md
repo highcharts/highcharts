@@ -19,7 +19,7 @@ To create a bullet series, add the following configuration in the series option:
     
     {
         type : 'bullet',
-        data : \[{
+        data : [{
             y : 20,     // The value of a point
             target: 50  // The target value of a point 
         }\],

@@ -57,9 +57,9 @@ To get the most out of Highcharts, it is important to understand how the options
     options.chart.type = 'bar';
     
     options.series = new Array();
-    options.series\[0\] = new Object();
-    options.series\[0\].name = 'Jane';
-    options.series\[0\].data = new Array(1, 0, 4);
+    options.series[0\] = new Object();
+    options.series[0\].name = 'Jane';
+    options.series[0\].data = new Array(1, 0, 4);
     
 
 As JavaScript object literals, we would write it like below. Note that the two options objects will produce exactly the same result.
@@ -71,9 +71,9 @@ As JavaScript object literals, we would write it like below. Note that the two o
             renderTo: 'container',
             type: 'bar'
         },
-        series: \[{
+        series: [{
             name: 'Jane',
-            data: \[1, 0, 4\]
+            data: [1, 0, 4\]
         }\]
     };
     

@@ -120,6 +120,6 @@ For a [pie chart](docs/chart-and-series-types/pie-chart) the depth of the total 
 In addition to x & y coordinates like in a regular [scatter chart](docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent eithe literally or using an array:
 
     
-    {x: 1, y: 1, z: 1} is the same point as \[1,1,1\]
+    {x: 1, y: 1, z: 1} is the same point as [1,1,1\]
 
 <iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/samples/highcharts/3d/scatter></iframe>

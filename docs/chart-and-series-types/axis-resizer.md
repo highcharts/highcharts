@@ -6,7 +6,7 @@ The Resizer module allows the end-user to define which axes can be resized in a 
 Basic configuration:
 
     
-    yAxis: \[{
+    yAxis: [{
       height: '50%',
       resize: {
         enabled: true

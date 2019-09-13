@@ -27,10 +27,10 @@ Here are the steps to create a variable radius pie chart:
 2\. Use Y and Z options in the series to display the volume and the radius for each slice:
 
     
-    series: \[{
+    series: [{
             minPointSize: 100,
             innerSize: '20%',
-            data: \[{
+            data: [{
                 y: 505370,
                 z: 1
             }, {

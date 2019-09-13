@@ -10,15 +10,15 @@ There are a number of ways to do this. One way is to make a specific PHP file th
     
     <?php
     while ($row = mysql\_fetch\_array($result)) {
-       $data\[\] = $row\['value'\];
+       $data[\] = $row['value'\];
     }
     ?>
     var chart = new Highcharts.Chart({
           chart: {
              renderTo: 'container'
           },
-          series: \[{
-             data: \[<?php echo join($data, ',') ?>\],
+          series: [{
+             data: [<?php echo join($data, ',') ?>\],
              pointStart: 0,
              pointInterval
           }\]
@@ -33,15 +33,15 @@ Say you have a datetime x axis and irregular intervals between the points. Then 
     while ($row = mysql\_fetch\_array($result)) {
        extract $row;
        $datetime \*= 1000; // convert from Unix timestamp to JavaScript time
-       $data\[\] = "\[$datetime, $value\]";
+       $data[\] = "[$datetime, $value\]";
     }
     ?>
     var chart = new Highcharts.Chart({
           chart: {
              renderTo: 'container'
           },
-          series: \[{
-             data: \[<?php echo join($data, ',') ?>\]
+          series: [{
+             data: [<?php echo join($data, ',') ?>\]
           }\]
     });
 

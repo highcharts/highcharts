@@ -7,7 +7,7 @@ It lets you define a set of rules, each with a [condition](http://api.highcharts
 
     
     responsive: {  
-      rules: \[{  
+      rules: [{  
         condition: {  
           maxWidth: 500  
         },  

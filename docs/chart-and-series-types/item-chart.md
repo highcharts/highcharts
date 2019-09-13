@@ -14,7 +14,7 @@ Item charts can be laid out either as a rectangle or a circle. The circular layo
 
     
     // Circular options
-    center: \['50%', '88%'\],
+    center: ['50%', '88%'\],
     size: '170%',
     startAngle: -100,
     endAngle: 100

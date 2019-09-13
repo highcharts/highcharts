@@ -51,9 +51,9 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
     
     Highcharts.chart('container', {
         // ...
-        series: \[{
+        series: [{
             // ...
-            data: \[
+            data: [
                 1, 2, { y: 4, color: 'red' }, 5, 7, 9, 11, 13,
                 { y: 6, color: 'red' }, 7, 1
             \],
@@ -62,7 +62,7 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
                     click: function () {
                         // Sonify the point when clicked
                         this.sonify({
-                            instruments: \[{
+                            instruments: [{
                                 instrument: 'triangleMajor',
                                 instrumentMapping: {
                                     volume: function (point) {
@@ -107,7 +107,7 @@ In this example we will show how to use [Series.sonify](https://api.highcharts.c
                         this.sonify({
                             duration: 2200,
                             pointPlayTime: 'x',
-                            instruments: \[{
+                            instruments: [{
                                 instrument: 'triangleMajor',
                                 instrumentMapping: {
                                     volume: 0.8,
@@ -156,7 +156,7 @@ In this example we will show how to sonify a chart with multiple series using [C
                 order: 'sequential',
                 pointPlayTime: 'x',
                 afterSeriesWait: 1000,
-                instruments: \[{
+                instruments: [{
                     instrument: 'triangleMajor',
                     instrumentMapping: {
                         volume: 0.8,
@@ -199,7 +199,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                           this.sonify({
                               duration: 2000,
                               pointPlayTime: 'x',
-                              instruments: \[{
+                              instruments: [{
                                   instrument: 'sineMajor',
                                   instrumentMapping: {
                                       volume: 0.8,
@@ -208,13 +208,13 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                       frequency: 'y'
                                   }
                               }\],
-                              earcons: \[{
+                              earcons: [{
                                   // Define the earcon we want to play
                                   earcon: new Highcharts.sonification.Earcon({
                                       // Global volume for earcon
                                       volume: 0.3,
                                       // Play two instruments for this earcon
-                                      instruments: \[{
+                                      instruments: [{
                                           instrument: 'triangleMajor',
                                           playOptions: {
                                               // Play a rising frequency

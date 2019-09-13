@@ -12,10 +12,10 @@ Highmaps from version 1.1.0 comes with support for latitude/longitude. This feat
 With this feature you can specify the coordinates of map points and bubbles using latitude/longitude directly:
 
     
-    series: \[{
+    series: [{
     	type: 'mappoint',
     	name: 'Cities',
-    	data: \[{
+    	data: [{
     	    name: 'London',
     	    lat: 51.507222,
     	    lon: -0.1275
@@ -57,7 +57,7 @@ It is possible to expand on the definition above for more complex maps. The foll
     		"crs": "+proj=aea +lat\_1=8 +lat\_2=18 +lat\_0=13 +lon\_0=-157 +x\_0=0 +y\_0=0 +datum=NAD83 +units=m +no\_defs",
     		"hitZone": {
     			"type": "Polygon",
-    			"coordinates": \[\[\[1747,3900\],\[3651,2950\],\[3651,-999\],\[1747,-999\],\[1747,3900\]\]\]
+    			"coordinates": [[[1747,3900\],[3651,2950\],[3651,-999\],[1747,-999\],[1747,3900\]\]\]
     		},
     		"xpan": 190,
     		"ypan": 417,
@@ -67,7 +67,7 @@ It is possible to expand on the definition above for more complex maps. The foll
     		"crs": "+proj=tmerc +lat\_0=54 +lon\_0=-142 +k=0.9999 +x\_0=500000 +y\_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no\_defs",
     		"hitZone": {
     			"type": "Polygon",
-    			"coordinates": \[\[\[-999,5188\],\[-707,5188\],\[1747,3900\],\[1747,-999\],\[-999,-999\],\[-999,5188\]\]\]
+    			"coordinates": [[[-999,5188\],[-707,5188\],[1747,3900\],[1747,-999\],[-999,-999\],[-999,5188\]\]\]
     		},
     		"xpan": 5,
     		"ypan": 357,

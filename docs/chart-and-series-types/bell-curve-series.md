@@ -23,13 +23,13 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
 2\. Set `baseSeries` to the right data series’ `id` or `index`.
 
     
-        series: \[{
+        series: [{
             type: 'bellcurve',
             xAxis: 1,
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: \[3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
+            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
         }\]
     
 
@@ -44,7 +44,7 @@ A bell curve series has two additional options:
 The following demo visualizes four intervals for each side of the bell curve, and five points between each Nxσ:
 
     
-        series: \[{
+        series: [{
             type: 'bellcurve',
             intervals: 4,
             pointsInInterval: 5

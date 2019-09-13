@@ -25,7 +25,7 @@ The tree automatically has one node at the top representing the root node. If a 
 The following is an example of how the tree is built in Highcharts:
 
     
-    data: \[{
+    data: [{
         name: 'I have children',
         id: 'id-1'
     }, {

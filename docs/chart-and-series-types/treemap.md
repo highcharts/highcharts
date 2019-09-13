@@ -17,7 +17,7 @@ The tree automatically has one node at the top representing the root node. If a 
 The following is an example of how the tree is built in Highcharts:
 
     
-    data: \[{
+    data: [{
         name: 'I have children',
         id: 'id-1'
     }, {
@@ -83,7 +83,7 @@ A starting point for the function could be the following
 
     
     function myFunction(parent, children) {
-        childrenAreas = \[\];
+        childrenAreas = [\];
         Highcharts.each(children, function(child) {
             // Do some calculations
     
@@ -110,7 +110,7 @@ Afterwards when you declare the chart options, then specify that the series.layo
     
     var chart = new Highcharts.Chart({
         ...
-        series: \[{
+        series: [{
            layoutAlgorithm: "myCustomAlgorithm",
            ...
         }\],
@@ -127,10 +127,10 @@ Below is an example where the first level will use the Slice And Dice algorithm,
     
     var chart = new Highcharts.Chart({
         ...
-        series: \[{
+        series: [{
            layoutAlgorithm: 'squarified',
            color: 'red',
-           levels: \[{
+           levels: [{
                level: 1,
                layoutAlgorithm: 'sliceAndDice'
            }, {
@@ -162,7 +162,7 @@ After the module is included in your project, a colorAxis object can be defined 
         ...
         colorAxis: {
             minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors\[0\]
+            maxColor: Highcharts.getOptions().colors[0\]
         },
         ...
     });
@@ -176,9 +176,9 @@ And each point needs its own colorValue.
         colorAxis: {
             ...
         },
-        series: \[{
+        series: [{
             ...
-            data: \[{
+            data: [{
                 name: "Point 1",
                 value: 1,
                 colorValue: 5 // This value decides which color on the scale that the point gets.

@@ -14,7 +14,7 @@ To create a flag series, add the following configuration in the series option:
     
     {
         type : 'flags',
-        data : \[{
+        data : [{
             x : 0,      // Point where the flag appears
             title : '', // Title of flag displayed on the chart 
             text : ''   // Text displayed when the flag are highlighted.

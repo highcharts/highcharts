@@ -28,7 +28,7 @@ Here are the steps to create a parallel coordinates chart:
 
     
     xAxis: {
-      categories: \[‘Title 1’, ‘Title 2’, ‘Title 3’, … , ‘Title N’\],
+      categories: [‘Title 1’, ‘Title 2’, ‘Title 3’, … , ‘Title N’\],
       labels: {
         styles: {
           color: ‘#DFDFDF’ // changes titles colors
@@ -40,7 +40,7 @@ Here are the steps to create a parallel coordinates chart:
 3\. Each yAxis can be customized separately:
 
     
-     yAxis: \[{
+     yAxis: [{
          lineWidth: 2
          }, {
           tickInterval: 10

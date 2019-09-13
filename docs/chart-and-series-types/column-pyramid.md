@@ -39,8 +39,8 @@ Use Cases
             chart: {
                 type: 'columnpyramid'
             },
-            series: \[{
-                data: \[138.8, 136.4, 104, 101.1, 75\]
+            series: [{
+                data: [138.8, 136.4, 104, 101.1, 75\]
             }\]
         }
 

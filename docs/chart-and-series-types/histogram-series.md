@@ -21,13 +21,13 @@ Two steps are required to create an Histogram chart:
 1\. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
 
     
-        series: \[{
+        series: [{
             type: histogram,
             xAxis: 1,
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: \[3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
+            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
         }\]
     
 

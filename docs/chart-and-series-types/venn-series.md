@@ -31,9 +31,9 @@ Next up is adding the a series with type venn where the configurations and data 
 
     
     Highcharts.chart('container', {
-        series: \[{
+        series: [{
             type: 'venn',
-            data: \[/\* Series data \*/\]
+            data: [/\* Series data \*/\]
         }\]
     });
 
@@ -41,11 +41,11 @@ The following data will create two sets A and B, where both sets will have a pro
 
     
     // Series data
-        data: \[{
-            sets: \['A'\],
+        data: [{
+            sets: ['A'\],
             value: 2
         }, {
-            sets: \['B'\],
+            sets: ['B'\],
             value: 2
         }\]
 
@@ -53,7 +53,7 @@ So far there is no relationship between the two sets, and the current data will 
 
     
     {
-        sets: \['A', 'B'\],
+        sets: ['A', 'B'\],
         value: 1
     }
 
@@ -63,17 +63,17 @@ In the following example A and B will be named as Apples and Bananas, while the 
 
     
     // Series data
-            data: \[{
+            data: [{
                 name: 'Apples',
-                sets: \['A'\],
+                sets: ['A'\],
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: \['B'\],
+                sets: ['B'\],
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: \['A', 'B'\],
+                sets: ['A', 'B'\],
                 value: 1
             }\]
 
@@ -85,19 +85,19 @@ Its configuration should in full look as the following.
 
     
     Highcharts.chart('container', {
-        series: \[{
+        series: [{
             type: 'venn',
-            data: \[{
+            data: [{
                 name: 'Apples',
-                sets: \['A'\],
+                sets: ['A'\],
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: \['B'\],
+                sets: ['B'\],
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: \['A', 'B'\],
+                sets: ['A', 'B'\],
                 value: 1
             }\]
         }\]

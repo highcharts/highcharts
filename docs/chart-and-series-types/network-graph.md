@@ -105,11 +105,11 @@ Simple example
         chart: {
             type: ‘networkgraph’
         },
-        series: \[{
-                data: \[
-                    \[‘A’, ‘B’\],
-                    \[‘B’, ‘C’\],
-                    \[‘C’, ‘A’\]
+        series: [{
+                data: [
+                    [‘A’, ‘B’\],
+                    [‘B’, ‘C’\],
+                    [‘C’, ‘A’\]
                 }\]
         }
 
@@ -130,11 +130,11 @@ Customized length between points and colored links:
                 }
             }
         },
-        series: \[{
-                data: \[
-                    \[‘A’, ‘B’\],
-                    \[‘B’, ‘C’\],
-                    \[‘C’, ‘A’\]
+        series: [{
+                data: [
+                    [‘A’, ‘B’\],
+                    [‘B’, ‘C’\],
+                    [‘C’, ‘A’\]
                 }\]
         }
     

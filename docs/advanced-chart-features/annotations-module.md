@@ -15,8 +15,8 @@ The concept
 A single annotation is composed of simple blocks such as labels and shapes. An annotation contains only a simple label pointing to a top left corner of the chart ((0, 0) point in the chart pixel coordinates). Check the example below:
 
     
-        annotations: \[{
-            labels: \[{
+        annotations: [{
+            labels: [{
                 point: { x: 0, y: 0 },
                 text: ‘Label’
             }\]
@@ -33,8 +33,8 @@ The point option
 In our first annotation, the label was attached to the chart’s pixel coordinates. That means that label will stay at the same place even if the chart is zoomed or panned. The index or the id of the axis need to be specified to attach the label to a point in the chart’s axes coordinates. Check the demo below:
 
     
-      annotations: \[{
-            labels: \[{
+      annotations: [{
+            labels: [{
                 point: {
                     x: 3,
                     y: 129.2,
@@ -75,8 +75,8 @@ Similar to the labels option, the shapes option defines a shape object. The obje
 
     
         
-        annotations: \[{
-            shapes: \[{
+        annotations: [{
+            shapes: [{
                 point: '0',
                 type: 'circle',
                 r: 10
@@ -92,10 +92,10 @@ Similar to the labels option, the shapes option defines a shape object. The obje
 The path type allows to define points property that takes an array of points.
 
     
-     annotations: \[{
-            shapes: \[{
+     annotations: [{
+            shapes: [{
                 type: 'path',
-                points: \['0', '3', {
+                points: ['0', '3', {
                     x: 6,
                     y: 195,
                     xAxis: 0,

@@ -94,7 +94,7 @@ Users can provide their own method by passing a callback function instead of a S
           alignment = labelPosition.alignment,
           stepDistance = 150, // in px - distance between the step and vertical border of the plot area
           stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
-        return \['M',
+        return ['M',
           labelPosition.x + (alignment === 'left' ? 1 : -1) \*
           connectorPadding,
           labelPosition.y,

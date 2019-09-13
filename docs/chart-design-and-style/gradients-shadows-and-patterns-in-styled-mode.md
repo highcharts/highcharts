@@ -25,7 +25,7 @@ An example of using defs is to apply a gradient: 
             y1: 0,
             x2: 0,
             y2: 1,
-            children: \[{
+            children: [{
                 tagName: 'stop',
                 offset: 0
             }, {

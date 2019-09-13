@@ -19,7 +19,7 @@ Furthermore, a waterfall series has two kinds of automatically computed columns.
 Sample code:
 
     
-    data: \[{
+    data: [{
         name: 'Start',
         y: 120000
     }, {

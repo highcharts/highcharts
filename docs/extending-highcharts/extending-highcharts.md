@@ -33,7 +33,7 @@ Events can be added to both a class and an instance. In order to add a general l
             e = chart.pointer.normalize(e);
             console.log('Clicked chart at ' + e.chartX + ', ' + e.chartY);
         });
-        H.addEvent(chart.xAxis\[0\], 'afterSetExtremes', function(e) {
+        H.addEvent(chart.xAxis[0\], 'afterSetExtremes', function(e) {
             console.log('Set extremes to ' + e.min + ', ' + e.max);
         });
     });
