@@ -37,7 +37,7 @@ declare global {
 
         interface AroonIndicatorParamsOptions
             extends SmaIndicatorParamsOptions {
-            period: number;
+            period?: number;
         }
 
         class AroonIndicatorPoint extends SmaIndicatorPoint {
@@ -162,7 +162,7 @@ H.seriesType<Highcharts.AroonIndicator>(
             series: Highcharts.AroonIndicator,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorMultipleValuesObject {
-            var period: number = params.period,
+            var period = params.period,
                 xVal: (Array<number>|undefined) = series.xData,
                 yVal: Array<Array<number>> = series.yData,
                 yValLen = yVal ? yVal.length : 0,
@@ -182,8 +182,8 @@ H.seriesType<Highcharts.AroonIndicator>(
             // For a N-period, we start from N-1 point, to calculate Nth point
             // That is why we later need to comprehend slice() elements list
             // with (+1)
-            for (i = period - 1; i < yValLen; i++) {
-                slicedY = yVal.slice(i - period + 1, i + 2);
+            for (i = (period as any) - 1; i < yValLen; i++) {
+                slicedY = yVal.slice(i - (period as any) + 1, i + 2);
 
                 xLow = getExtremeIndexInArray(slicedY.map(
                     function (elem): number {
@@ -195,8 +195,8 @@ H.seriesType<Highcharts.AroonIndicator>(
                         return H.pick(elem[high], (elem as any));
                     }), 'max');
 
-                aroonUp = (xHigh / period) * 100;
-                aroonDown = (xLow / period) * 100;
+                aroonUp = (xHigh / (period as any)) * 100;
+                aroonDown = (xLow / (period as any)) * 100;
 
                 if ((xVal as any)[i + 1]) {
                     AR.push([(xVal as any)[i + 1], aroonUp, aroonDown]);
