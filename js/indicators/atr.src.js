@@ -112,4 +112,4 @@ seriesType('atr', 'sma',
  * @excluding dataParser, dataURL
  * @apioption series.atr
  */
-''; // to include the above in jsdocs
+''; // to include the above in the js output
