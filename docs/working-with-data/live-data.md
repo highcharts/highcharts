@@ -35,7 +35,7 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
     
     // Create a PHP array and echo it as JSON
     $ret = array($x, $y);
-    echo json\_encode($ret);
+    echo json_encode($ret);
     ?>
     
 

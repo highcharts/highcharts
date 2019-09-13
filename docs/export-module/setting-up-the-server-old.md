@@ -32,8 +32,8 @@ If for any reason the export-server fails to export images, then consider pastin
 
     
     // Troubleshoot snippet  
-    $command = "java -jar ". BATIK\_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
-    $output = shell\_exec($command);  
+    $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
+    $output = shell_exec($command);  
     echo "Command: $command <br>";  
     echo "Output: $output";  
     die;

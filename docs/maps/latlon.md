@@ -51,10 +51,10 @@ It is possible to expand on the definition above for more complex maps. The foll
     
     "hc-transform": {
     	"default": {
-    		"crs": "+proj=lcc +lat\_1=33 +lat\_2=45 +lat\_0=39 +lon\_0=-96 +x\_0=0 +y\_0=0 +datum=NAD83 +units=m +no\_defs"
+    		"crs": "+proj=lcc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
     	},
     	"zone2": {
-    		"crs": "+proj=aea +lat\_1=8 +lat\_2=18 +lat\_0=13 +lon\_0=-157 +x\_0=0 +y\_0=0 +datum=NAD83 +units=m +no\_defs",
+    		"crs": "+proj=aea +lat_1=8 +lat_2=18 +lat_0=13 +lon_0=-157 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
     		"hitZone": {
     			"type": "Polygon",
     			"coordinates": [[[1747,3900],[3651,2950],[3651,-999],[1747,-999],[1747,3900]]]
@@ -64,7 +64,7 @@ It is possible to expand on the definition above for more complex maps. The foll
     		"scale": 0.000123090941806
     	},
     	"zone3": {
-    		"crs": "+proj=tmerc +lat\_0=54 +lon\_0=-142 +k=0.9999 +x\_0=500000 +y\_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no\_defs",
+    		"crs": "+proj=tmerc +lat_0=54 +lon_0=-142 +k=0.9999 +x_0=500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
     		"hitZone": {
     			"type": "Polygon",
     			"coordinates": [[[-999,5188],[-707,5188],[1747,3900],[1747,-999],[-999,-999],[-999,5188]]]
