@@ -7,6 +7,6 @@ The dependency wheel's use areas are similar to the [Sankey diagram](https://www
 
 For more detailed samples and documentation, check the [API](https://api.highcharts.com/highcharts/plotOptions.series.dependencywheel).
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/dependency-wheel"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/dependency-wheel></iframe>
 
 The data structure, as well as the concept of nodes and links, is identical to those of the [Sankey diagram](https://www.highcharts.com/docs/chart-and-series-types/sankey-diagram).

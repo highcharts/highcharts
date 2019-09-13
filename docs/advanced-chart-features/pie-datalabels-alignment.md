@@ -30,7 +30,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-connectors"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-connectors></iframe>
 
 **Demo with plotEdges**
 
@@ -40,7 +40,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-plotedges"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-plotedges></iframe>
 
 ### dataLabels.connectorShape
 
@@ -54,7 +54,7 @@ Specifies the method that is used to generate the connector path. Highcharts pro
       }
     
 
-<iframe width="100%" height="550" src="https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/"></iframe>
+<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/></iframe>
 
 **straight:**
 
@@ -76,7 +76,7 @@ This option can be used with crookDistance parameter. It defines how far from th
       }
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-crookdistance"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-crookdistance></iframe>
 
 Users can provide their own method by passing a callback function instead of a String. Three arguments are passed to the callback:
 
@@ -94,7 +94,7 @@ Users can provide their own method by passing a callback function instead of a S
           alignment = labelPosition.alignment,
           stepDistance = 150, // in px - distance between the step and vertical border of the plot area
           stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
-        return ['M',
+        return \['M',
           labelPosition.x + (alignment === 'left' ? 1 : -1) \*
           connectorPadding,
           labelPosition.y,
@@ -107,11 +107,11 @@ Users can provide their own method by passing a callback function instead of a S
           'L',
           touchingSliceAt.x,
           touchingSliceAt.y
-        [;
+        \];
       }
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-connectorshape-function"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-connectorshape-function></iframe>
 
 API documents
 -------------

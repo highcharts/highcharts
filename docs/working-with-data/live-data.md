@@ -11,7 +11,7 @@ There are basically two ways of working with a live data feed from the server in
 
 This feature was introduced in v6.1. The [data module](https://www.highcharts.com/docs/working-with-data/data-module) can load data directly from files and services online, and keep the chart updated by polling the server periodically. The chart can load data through one of the [data.csv](https://api.highcharts.com/highcharts/data.csv), [data.rows](https://api.highcharts.com/highcharts/data.rows), [data.columns](https://api.highcharts.com/highcharts/data.columns) or [data.googleSpreadsheetKey](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) options, and keep it updated by setting [data.enablePolling](https://api.highcharts.com/highcharts/data.enablePolling) to true. This feature also supports flexibility to the data structure. Data points can be shifted, typically old data points removed and new ones added, and the chart will animate to visualize what changed. A benefit of using this feature is that it is purely declarative, which makes it a good match for graphical user interfaces where chart editors set up a chart based on known sources.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/highcharts/data/livedata-columns/"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/highcharts/data/livedata-columns/></iframe>
 
 2\. API methods
 ---------------
@@ -22,22 +22,21 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
 
 1.  **Set up the server.** In this case, we have a simple PHP script returning a JavaScript array with the JavaScript time and a random y value. This is the contents of the [live-server-data.php](studies/live-server-data.php) file:
 
-    ```
-        <?php
-        // Set the JSON header
-        header("Content-type: text/json");
-        
-        // The x value is the current JavaScript time, which is the Unix time multiplied   
-        // by 1000.
-        $x = time() \* 1000;
-        // The y value is a random number
-        $y = rand(0, 100);
-        
-        // Create a PHP array and echo it as JSON
-        $ret = array($x, $y);
-        echo json[encode($ret);
-        ?>
-    ```
+    
+    <?php
+    // Set the JSON header
+    header("Content-type: text/json");
+    
+    // The x value is the current JavaScript time, which is the Unix time multiplied   
+    // by 1000.
+    $x = time() \* 1000;
+    // The y value is a random number
+    $y = rand(0, 100);
+    
+    // Create a PHP array and echo it as JSON
+    $ret = array($x, $y);
+    echo json\_encode($ret);
+    ?>
     
 
 2.  **Define the chart variable globally**, as we want to access it both from the document ready function and our requestData funcion. If the chart variable is defined inside the document ready callback function, it will not be available in the global scope later.
@@ -57,11 +56,11 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
         $.ajax({
             url: 'live-server-data.php',
             success: function(point) {
-                var series = chart.series[0[,
+                var series = chart.series\[0\],
                     shift = series.data.length > 20; // shift if the series is   
                                                      // longer than 20  
                 // add the point
-                chart.series[0[.addPoint(point, true, shift);
+                chart.series\[0\].addPoint(point, true, shift);
                 
                 // call it again after one second
                 setTimeout(requestData, 1000);    
@@ -98,9 +97,9 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
                     margin: 80
                 }
             },
-            series: [{
+            series: \[{
                 name: 'Random data',
-                data: [[
-            }[
+                data: \[\]
+            }\]
         });        
     });

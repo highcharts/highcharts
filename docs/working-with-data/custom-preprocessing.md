@@ -35,14 +35,14 @@ This example shows how to set up the basic chart options first, then do an ajax 
             text: 'Fruit Consumption'
         },
         xAxis: {
-            categories: [[
+            categories: \[\]
         },
         yAxis: {
             title: {
                 text: 'Units'
             }
         },
-        series: [[
+        series: \[\]
     };
     
 
@@ -68,7 +68,7 @@ This example shows how to set up the basic chart options first, then do an ajax 
                 // the rest of the lines contain data with their name in the first position  
                 else {  
                     var series = {   
-                        data: [[  
+                        data: \[\]  
                     };  
                     items.forEach(function(item, itemNo) {  
                         if (itemNo == 0) {  
@@ -102,18 +102,18 @@ Here is a basic example with a JSON file containing the data shown and using the
 *   The JSON file
 
     
-    [
-    [1,12[,
-    [2,5[,
-    [3,18[,
-    [4,13[,
-    [5,7[,
-    [6,4[,
-    [7,9[,
-    [8,10[,
-    [9,15[,
-    [10,22[
-    [
+    \[
+    \[1,12\],
+    \[2,5\],
+    \[3,18\],
+    \[4,13\],
+    \[5,7\],
+    \[6,4\],
+    \[7,9\],
+    \[8,10\],
+    \[9,15\],
+    \[10,22\]
+    \]
     
 
 *   Using getJSON to preprocess the options and then create the chart.
@@ -125,13 +125,13 @@ Here is a basic example with a JSON file containing the data shown and using the
             chart: {
                 type: 'spline'
             },
-            series: [{}[
+            series: \[{}\]
         };
     
         Highcharts.ajax({  
             url: 'data.json',  
             success: function(data) {
-                options.series[0[.data = data;
+                options.series\[0\].data = data;
                 Highcharts.Chart('container', options);
             }  
         });
@@ -147,7 +147,7 @@ There are two things to note here:
 Preprocess data using XML
 -------------------------
 
-Loading data from an XML file is similar to the CSV approach. Since Highcharts does not come with a predefined XML data syntax, it is entirely up to you to write the XML and to define a parsing function for it. The downside of using XML over CSV is that it adds some markup to the data, leaving a larger footprint. How large the extra footprint is depends on how you mark up your data. For example, if you wrap each point with a `<point>` tag and load 1000 points, it will add some weight. If however you add a comma separated list of point values, it doesn't. The upside to using XML, at least for small data sets, is that you don't have to manually parse the incoming data. You can utilize jQuery's existing DOM parsing abilities to access the XML tree. We set up a live example for this at [data-from-xml.htm](http://highcharts.com/studies/data-from-xml.htm). The data can be viewed at [data.xml](http://highcharts.com/studies/data.xml). Below is the function used to parse the XML data and adding it to the options object.
+Loading data from an XML file is similar to the CSV approach. Since Highcharts does not come with a predefined XML data syntax, it is entirely up to you to write the XML and to define a parsing function for it. The downside of using XML over CSV is that it adds some markup to the data, leaving a larger footprint. How large the extra footprint is depends on how you mark up your data. For example, if you wrap each point with a <point> tag and load 1000 points, it will add some weight. If however you add a comma separated list of point values, it doesn't. The upside to using XML, at least for small data sets, is that you don't have to manually parse the incoming data. You can utilize jQuery's existing DOM parsing abilities to access the XML tree. We set up a live example for this at [data-from-xml.htm](http://highcharts.com/studies/data-from-xml.htm). The data can be viewed at [data.xml](http://highcharts.com/studies/data.xml). Below is the function used to parse the XML data and adding it to the options object.
 
     
     // Load the data from the XML file 
@@ -166,7 +166,7 @@ Loading data from an XML file is similar to the CSV approach. Since Highcharts d
     
             var seriesOptions = {
                 name: $(series).find('name').text(),
-                data: [[
+                data: \[\]
             };
     
             // push data points

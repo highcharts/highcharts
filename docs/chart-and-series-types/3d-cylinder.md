@@ -7,11 +7,11 @@ Here’re both chart types to compare:
 
 **3D column chart**
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/cylinder"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/cylinder></iframe>
 
 **3D cylinder chart**
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/css/column-3d"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/css/column-3d></iframe>
 
 Installation
 ------------
@@ -40,9 +40,9 @@ Use Cases
                         viewDistance: 25
                     }
                 },
-                series: [{
-                    data: [1, 2, 3[
-                }[
+                series: \[{
+                    data: \[1, 2, 3\]
+                }\]
             }
     
 

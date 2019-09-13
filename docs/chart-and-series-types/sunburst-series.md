@@ -3,7 +3,7 @@ Sunburst
 
 A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle. The center represents the root node of the tree. The visualization bear a resemblance to both treemap and pie charts.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/sunburst"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 850px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sunburst></iframe>
 
 Requirements
 ------------
@@ -25,7 +25,7 @@ The tree automatically has one node at the top representing the root node. If a 
 The following is an example of how the tree is built in Highcharts:
 
     
-    data: [{
+    data: \[{
         name: 'I have children',
         id: 'id-1'
     }, {
@@ -36,7 +36,7 @@ The following is an example of how the tree is built in Highcharts:
         name: 'I am a smaller child',
         parent: 'id-1',
         value: 1
-    }[
+    }\]
     
 
 Work with levels

@@ -5,7 +5,7 @@ A variable pie chart is a circular chart divided into sectors which are proporti
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.variablepie)_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/variable-radius-pie"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/variable-radius-pie></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variable-radius-pie/) to check the code.
 
@@ -27,10 +27,10 @@ Here are the steps to create a variable radius pie chart:
 2\. Use Y and Z options in the series to display the volume and the radius for each slice:
 
     
-    series: [{
+    series: \[{
             minPointSize: 100,
             innerSize: '20%',
-            data: [{
+            data: \[{
                 y: 505370,
                 z: 1
             }, {
@@ -51,8 +51,8 @@ Here are the steps to create a variable radius pie chart:
             }, {
                 y: 357022,
                 z: 5
-            }[
-        }[
+            }\]
+        }\]
     
 
 Variable pie series specific options

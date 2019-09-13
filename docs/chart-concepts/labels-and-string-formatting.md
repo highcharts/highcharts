@@ -24,13 +24,13 @@ Format strings are templates for labels, where variables are inserted. Format st
 
 **Numbers** are formatted with a subset of float formatting conventions from the C library function sprintf. The formatting is appended inside the variable brackets, separated by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](http://api.highcharts.com/highcharts/lang). For example:
 
-*   Two decimal places: `"{point.y:.2f}"` [[Demo](http://jsfiddle.net/highcharts/AYWsW/)[
-*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](http://jsfiddle.net/highcharts/rmTWS/)[
-*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](http://jsfiddle.net/highcharts/eeDnv/)[
+*   Two decimal places: `"{point.y:.2f}"` \[[Demo](http://jsfiddle.net/highcharts/AYWsW/)\]
+*   Thousands separator, no decimal places: `{point.y:,.0f}` \[[Demo](http://jsfiddle.net/highcharts/rmTWS/)\]
+*   Thousands separator, one decimal place: `{point.y:,.1f}` \[[Demo, internationalized](http://jsfiddle.net/highcharts/eeDnv/)\]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat). For example:
 
-*   Full date: `{value:%Y-%m-%d}` [[Demo](http://jsfiddle.net/highcharts/PwEnd/)[
+*   Full date: `{value:%Y-%m-%d}` \[[Demo](http://jsfiddle.net/highcharts/PwEnd/)\]
 
 ### Formatter callbacks
 
@@ -41,22 +41,22 @@ For full control over string handling and additional scripting capabilities arou
 Since 6.0.6, the [accessibility module](https://www.highcharts.com/docs/chart-concepts/accessibility) supports more advanced format strings, by also by also handling arrays and plural conditionals. The options this applies to can be found under [lang.accessibility](https://api.highcharts.com/highcharts/lang.accessibility). Arrays can be indexed as follows:
 
     
-    Format: 'This is the first index: {myArray[0[}. The last: {myArray[-1[}.'
-    Context: { myArray: [0, 1, 2, 3, 4, 5[ }
+    Format: 'This is the first index: {myArray\[0\]}. The last: {myArray\[-1\]}.'
+    Context: { myArray: \[0, 1, 2, 3, 4, 5\] }
     Result: 'This is the first index: 0. The last: 5.'
 
 They can also be iterated using the `#each()` function. This will repeat the contents of the bracket expression for each element. Example:
 
     
     Format: 'List contains: {#each(myArray)cm }'
-    Context: { myArray: [0, 1, 2[ }
+    Context: { myArray: \[0, 1, 2\] }
     Result: 'List contains: 0cm 1cm 2cm '
 
 The `#each()` function optionally takes a length parameter. If positive, this parameter specifies the max number of elements to iterate through. If negative, the function will subtract the number from the length of the array. Use this to stop iterating before the array ends. Example:
 
     
-    Format: 'List contains: {#each(myArray, -1), }and {myArray[-1[}.'
-    Context: { myArray: [0, 1, 2, 3[ }
+    Format: 'List contains: {#each(myArray, -1), }and {myArray\[-1\]}.'
+    Context: { myArray: \[0, 1, 2, 3\] }
     Result: 'List contains: 0, 1, 2, and 3.'
 
 Use the `#plural()` function to pick a string depending on whether or not a context object is 1. Basic arguments are `#plural(obj, plural, singular)`. Example:

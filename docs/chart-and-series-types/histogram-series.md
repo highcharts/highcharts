@@ -5,7 +5,7 @@ A histogram series is a graphical representation of the data distribution. Histo
 
 _For more detailed samples and documentation check the [API](http://api.highcharts.com/highcharts/plotOptions.histogram)._
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/histogram"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/histogram></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/histogram/) to check the code.
 
@@ -21,14 +21,14 @@ Two steps are required to create an Histogram chart:
 1\. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
 
     
-        series: [{
+        series: \[{
             type: histogram,
             xAxis: 1,
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4[
-        }[
+            data: \[3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
+        }\]
     
 
 Histogram chart specific options
@@ -57,4 +57,4 @@ Use the following setting to set up a histogram chart with a column chart:
         }
     }
 
-<iframe width="100%" height="470" src="https://jsfiddle.net/mushigh/18b1vun9/5/embedded/result"></iframe>
+<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/mushigh/18b1vun9/5/embedded/result></iframe>

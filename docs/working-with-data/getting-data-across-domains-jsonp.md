@@ -9,16 +9,15 @@ Here is an example:
 
 *   The serverside php file:
 
-    ```
-        <?php
-        header("content-type: application/json"); 
-        
-        $array = array(7,4,2,8,4,1,9,3,2,16,7,12);
-        
-        echo $[GET['callback'[. '('. json[encode($array) . ')';    
-        
-        ?>
-    ```
+    
+    <?php
+    header("content-type: application/json"); 
+    
+    $array = array(7,4,2,8,4,1,9,3,2,16,7,12);
+    
+    echo $\_GET\['callback'\]. '('. json\_encode($array) . ')';    
+    
+    ?>
     
 
 *   The JavaScript calling the callback function using jQuery.
@@ -30,12 +29,12 @@ Here is an example:
                 renderTo: 'container',
                 type: 'spline'
             },
-            series: [{}[
+            series: \[{}\]
         };
         
         var url =  "http://url-to-your-remote-server/jsonp.php?callback=?";
         $.getJSON(url,  function(data) {
-            options.series[0[.data = data;
+            options.series\[0\].data = data;
             var chart = new Highcharts.Chart(options);
         });
     });

@@ -9,7 +9,7 @@ The X-range series requires the following module [modules/xrange.js](https://cod
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.xrange)_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/x-range"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 332px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/x-range></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/x-range/) to check the code.
 

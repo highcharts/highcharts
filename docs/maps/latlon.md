@@ -1,7 +1,7 @@
 Latitude/longitude
 ===
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced></iframe>
 
 Highmaps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highmaps. The latest version of the proj4js library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 
@@ -12,10 +12,10 @@ Highmaps from version 1.1.0 comes with support for latitude/longitude. This feat
 With this feature you can specify the coordinates of map points and bubbles using latitude/longitude directly:
 
     
-    series: [{
+    series: \[{
     	type: 'mappoint',
     	name: 'Cities',
-    	data: [{
+    	data: \[{
     	    name: 'London',
     	    lat: 51.507222,
     	    lon: -0.1275
@@ -27,8 +27,8 @@ With this feature you can specify the coordinates of map points and bubbles usin
     	    name: 'Leeds',
     	    lat: 53.799722,
     	    lon: -1.549167
-    	}[	
-    }[
+    	}\]	
+    }\]
 
 You can also use the [Chart.fromLatLonToPoint](https://api.highcharts.com/class-reference/Highcharts.Chart#fromLatLonToPoint) and [Chart.fromPointToLatLon](https://api.highcharts.com/class-reference/Highcharts.Chart#fromPointToLatLon) functions to convert between map values and latitude/longitude manually.
 
@@ -51,23 +51,23 @@ It is possible to expand on the definition above for more complex maps. The foll
     
     "hc-transform": {
     	"default": {
-    		"crs": "+proj=lcc +lat[1=33 +lat[2=45 +lat[0=39 +lon[0=-96 +x[0=0 +y[0=0 +datum=NAD83 +units=m +no[defs"
+    		"crs": "+proj=lcc +lat\_1=33 +lat\_2=45 +lat\_0=39 +lon\_0=-96 +x\_0=0 +y\_0=0 +datum=NAD83 +units=m +no\_defs"
     	},
     	"zone2": {
-    		"crs": "+proj=aea +lat[1=8 +lat[2=18 +lat[0=13 +lon[0=-157 +x[0=0 +y[0=0 +datum=NAD83 +units=m +no[defs",
+    		"crs": "+proj=aea +lat\_1=8 +lat\_2=18 +lat\_0=13 +lon\_0=-157 +x\_0=0 +y\_0=0 +datum=NAD83 +units=m +no\_defs",
     		"hitZone": {
     			"type": "Polygon",
-    			"coordinates": [[[1747,3900[,[3651,2950[,[3651,-999[,[1747,-999[,[1747,3900[[[
+    			"coordinates": \[\[\[1747,3900\],\[3651,2950\],\[3651,-999\],\[1747,-999\],\[1747,3900\]\]\]
     		},
     		"xpan": 190,
     		"ypan": 417,
     		"scale": 0.000123090941806
     	},
     	"zone3": {
-    		"crs": "+proj=tmerc +lat[0=54 +lon[0=-142 +k=0.9999 +x[0=500000 +y[0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no[defs",
+    		"crs": "+proj=tmerc +lat\_0=54 +lon\_0=-142 +k=0.9999 +x\_0=500000 +y\_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no\_defs",
     		"hitZone": {
     			"type": "Polygon",
-    			"coordinates": [[[-999,5188[,[-707,5188[,[1747,3900[,[1747,-999[,[-999,-999[,[-999,5188[[[
+    			"coordinates": \[\[\[-999,5188\],\[-707,5188\],\[1747,3900\],\[1747,-999\],\[-999,-999\],\[-999,5188\]\]\]
     		},
     		"xpan": 5,
     		"ypan": 357,

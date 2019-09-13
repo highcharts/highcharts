@@ -95,9 +95,9 @@ Technical indicators modules are implemented as series, that means almost all of
 There are no limitations to the number of technical indicators that can be bound to one main series. The following example creates a chart with four series: one main, two SMA, and one EMA:
 
     
-    series: [{
+    series: \[{
       id: ‘main-series’,
-      data: [ … [
+      data: \[ … \]
     }, {
       type: ‘sma’,
       linkedTo: ‘main-series’,
@@ -116,10 +116,10 @@ There are no limitations to the number of technical indicators that can be bound
       params: {
         period: 7
       }
-    }[
+    }\]
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/macd-pivot-points) to check the code.
 
@@ -131,27 +131,27 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
 1\. Create required yAxis:
 
     
-    yAxis: [{
+    yAxis: \[{
       // Main series yAxis:
       height: ‘50%’
     }, {
       // yAxis for Stochastic technical indicator:
       top: ‘50%’,
       height: ‘50%’
-    }[
+    }\]
     
 
 2\. Bind indicator to this yAxis:
 
     
-    series: [{
+    series: \[{
       id: ‘main-series’,
-      data: [ … [
+      data: \[ … \]
     }, {
       type: ‘stochastic’,
       linkedTo: ‘main-series’,
       yAxis: 1
-    }[
+    }\]
     
 
 Multiple series bindings
@@ -168,13 +168,13 @@ Some of the technical indicators require two series for calculations. Here is a 
 These indicators require the following parameter `params.volumeSeriesID` to calculate properly:
 
     
-    series: [{
+    series: \[{
       id: ‘main-series’,
-      data: [ … [
+      data: \[ … \]
     }, {
       id: ‘volume-series’,
       yAxis: 1,
-      data: [ … [
+      data: \[ … \]
     }, {
       type: ‘mfi’,
       linkedTo: ‘main-series’,
@@ -182,4 +182,4 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
       params: {
         volumeSeriesID: ‘volume-series’
       }
-    }[
+    }\]
