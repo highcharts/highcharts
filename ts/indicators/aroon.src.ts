@@ -63,7 +63,7 @@ import multipleLinesMixin from '../mixins/multipe-lines.js';
 function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     var extremeValue = arr[0],
         valueIndex = 0,
-        i;
+        i: (number|undefined);
 
     for (i = 1; i < arr.length; i++) {
         if (
@@ -162,8 +162,8 @@ H.seriesType<Highcharts.AroonIndicator>(
             series: Highcharts.AroonIndicator,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorMultipleValuesObject {
-            var period = params.period,
-                xVal: (Array<number>|undefined) = series.xData,
+            var period = (params.period as any),
+                xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = series.yData,
                 yValLen = yVal ? yVal.length : 0,
                 // 0- date, 1- Aroon Up, 2- Aroon Down
@@ -182,8 +182,8 @@ H.seriesType<Highcharts.AroonIndicator>(
             // For a N-period, we start from N-1 point, to calculate Nth point
             // That is why we later need to comprehend slice() elements list
             // with (+1)
-            for (i = (period as any) - 1; i < yValLen; i++) {
-                slicedY = yVal.slice(i - (period as any) + 1, i + 2);
+            for (i = period - 1; i < yValLen; i++) {
+                slicedY = yVal.slice(i - period + 1, i + 2);
 
                 xLow = getExtremeIndexInArray(slicedY.map(
                     function (elem): number {
@@ -195,12 +195,12 @@ H.seriesType<Highcharts.AroonIndicator>(
                         return H.pick(elem[high], (elem as any));
                     }), 'max');
 
-                aroonUp = (xHigh / (period as any)) * 100;
-                aroonDown = (xLow / (period as any)) * 100;
+                aroonUp = (xHigh / period) * 100;
+                aroonDown = (xLow / period) * 100;
 
-                if ((xVal as any)[i + 1]) {
-                    AR.push([(xVal as any)[i + 1], aroonUp, aroonDown]);
-                    xData.push((xVal as any)[i + 1]);
+                if (xVal[i + 1]) {
+                    AR.push([xVal[i + 1], aroonUp, aroonDown]);
+                    xData.push(xVal[i + 1]);
                     yData.push([aroonUp, aroonDown]);
                 }
             }
@@ -227,4 +227,4 @@ H.seriesType<Highcharts.AroonIndicator>(
  * @apioption series.aroon
  */
 
-''; // to include the above in the jsdocs
+''; // to avoid removal of the above jsdoc

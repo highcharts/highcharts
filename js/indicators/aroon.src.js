@@ -145,4 +145,4 @@ H.merge(multipleLinesMixin, {
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.aroon
  */
-''; // to include the above in the jsdocs
+''; // to avoid removal of the above jsdoc
