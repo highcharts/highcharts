@@ -271,6 +271,7 @@ if (window.QUnit) {
                 }
                 if (currentChart.template) {
                     templateCharts.push(currentChart);
+                    currentChart.renderer.box.isTemplate = true;
                 } else if (currentChart.destroy && currentChart.renderer) {
                     currentChart.destroy();
                 }
@@ -280,9 +281,12 @@ if (window.QUnit) {
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
 
             // Renderer samples, no chart instance existed
-            var svgs = document.getElementsByTagName('svg');
-            while (svgs.length) {
-                svgs[0].parentNode.removeChild(svgs[0]);
+            var svgs = document.getElementsByTagName('svg'),
+                i = svgs.length;
+            while (i--) {
+                if (!svgs[i].isTemplate) {
+                    svgs[i].parentNode.removeChild(svgs[i]);
+                }
             }
 
             // Unwrap/reset wrapped functions
