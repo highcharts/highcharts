@@ -749,6 +749,16 @@ Highcharts.Point.prototype = {
         return zone;
     },
     /**
+     * Utility to check if point has new shape type. Used in column series and
+     * all others that are based on column series.
+     *
+     * @return boolean|undefined
+     */
+    hasNewShapeType: function () {
+        return this.graphic &&
+            this.graphic.element.nodeName !== this.shapeType;
+    },
+    /**
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
      *
