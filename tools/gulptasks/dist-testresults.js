@@ -6,7 +6,7 @@ const gulp = require('gulp');
 const glob = require('glob');
 const { uploadFiles } = require('./lib/uploadS3');
 
-const DEMO_DIR = 'samples/**/demo';
+const SAMPLES_SRC_DIR = 'samples/**';
 const DESTINATION_DIR = 'test/visualtests';
 
 /**
@@ -27,12 +27,12 @@ function uploadVisualTestResults() {
     }
 
     if (argv.tag) {
-        const referenceImages = glob.sync(`${DEMO_DIR}/**/reference.svg`).map(file => ({
+        const referenceImages = glob.sync(`${SAMPLES_SRC_DIR}/reference.svg`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/reference/${argv.tag}/${[...file.split('/')].slice(1).join('/')}`
         }));
 
-        const latestReferenceImages = glob.sync(`${DEMO_DIR}/**/reference.svg`).map(file => ({
+        const latestReferenceImages = glob.sync(`${SAMPLES_SRC_DIR}/reference.svg`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/reference/latest/${[...file.split('/')].slice(1).join('/')}`
         }));
@@ -46,7 +46,7 @@ function uploadVisualTestResults() {
             to: `${DESTINATION_DIR}/diffs/latest/${[...file.split('/')].pop()}`
         }));
 
-        const resultImageFilesLatest = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.png)`).map(file => ({
+        const resultImageFilesLatest = glob.sync(`${SAMPLES_SRC_DIR}/*+(candidate.svg|diff.png)`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/diffs/latest/${[...file.split('/')].slice(1).join('/')}`
         }));
@@ -56,7 +56,7 @@ function uploadVisualTestResults() {
             to: `${DESTINATION_DIR}/diffs/${dateString}/${[...file.split('/')].pop()}`
         }));
 
-        const resultImageFiles = glob.sync(`${DEMO_DIR}/**/*+(candidate.svg|diff.png)`).map(file => ({
+        const resultImageFiles = glob.sync(`${SAMPLES_SRC_DIR}/*+(candidate.svg|diff.png)`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/diffs/${dateString}/${[...file.split('/')].slice(1).join('/')}`
         }));

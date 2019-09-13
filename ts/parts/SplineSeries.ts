@@ -21,6 +21,7 @@ declare global {
         interface SplinePointOptions extends LinePointOptions {
         }
         interface SplineSeriesOptions extends LineSeriesOptions {
+            states?: SeriesStatesOptionsObject<SplineSeries>;
         }
         interface SeriesTypesDictionary {
             spline: typeof SplineSeries;
@@ -62,7 +63,7 @@ var pick = H.pick,
  *
  * @augments Highcarts.Series
  */
-seriesType<Highcharts.SplineSeriesOptions>(
+seriesType<Highcharts.SplineSeries>(
     'spline',
     'line',
     /**

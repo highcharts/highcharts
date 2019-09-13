@@ -606,13 +606,13 @@ function updateFieldBoundaries(field, rectangle) {
  * @extends      plotOptions.column
  * @excluding    allAreas, boostThreshold, clip, colorAxis, compare,
  *               compareBase, crisp, cropTreshold, dataGrouping, dataLabels,
- *               depth, edgeColor, findNearestPointBy, getExtremesFromAll,
- *               grouping, groupPadding, groupZPadding, joinBy, maxPointWidth,
- *               minPointLength, navigatorOptions, negativeColor, pointInterval,
- *               pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *               pointStart, pointWidth, pointStart, pointWidth, shadow,
- *               showCheckbox, showInNavigator, softThreshold, stacking,
- *               threshold, zoneAxis, zones
+ *               depth, dragDrop, edgeColor, findNearestPointBy,
+ *               getExtremesFromAll, grouping, groupPadding, groupZPadding,
+ *               joinBy, maxPointWidth, minPointLength, navigatorOptions,
+ *               negativeColor, pointInterval, pointIntervalUnit, pointPadding,
+ *               pointPlacement, pointRange, pointStart, pointWidth, pointStart,
+ *               pointWidth, shadow, showCheckbox, showInNavigator,
+ *               softThreshold, stacking, threshold, zoneAxis, zones
  * @product      highcharts
  * @since        6.0.0
  * @optionparent plotOptions.wordcloud

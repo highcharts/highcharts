@@ -21,6 +21,7 @@ declare global {
         interface AreaSplinePointOptions extends SplinePointOptions {
         }
         interface AreaSplineSeriesOptions extends SplineSeriesOptions {
+            states?: SeriesStatesOptionsObject<AreaSplineSeries>;
         }
         interface SeriesTypesDictionary {
             areaspline: typeof AreaSplineSeries;
@@ -32,6 +33,7 @@ declare global {
         }
         class AreaSplineSeries extends SplineSeries {
             public data: Array<AreaSplinePoint>;
+            public getStackPoints: AreaSeries['getStackPoints'];
             public options: AreaSplineSeriesOptions;
             public pointClass: typeof AreaSplinePoint;
             public points: Array<AreaSplinePoint>;
@@ -58,7 +60,7 @@ var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSplineSeriesOptions>(
+seriesType<Highcharts.AreaSplineSeries>(
     'areaspline',
     'spline',
 

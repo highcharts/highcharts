@@ -53,7 +53,7 @@ var seriesType = H.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BarSeriesOptions>(
+seriesType<Highcharts.BarSeries>(
     'bar',
     'column',
 

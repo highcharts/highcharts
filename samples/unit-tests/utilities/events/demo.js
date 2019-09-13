@@ -514,6 +514,17 @@
 
     });
 
+    QUnit.test('Unbinding prototype event', function (assert) {
+        var unbind = Highcharts.addEvent(Highcharts.Chart, 'render', function () {
+            assert.ok(false, 'This event should never fire');
+        });
+        unbind();
+        Highcharts.chart('container', {});
+
+        assert.ok(true, 'Chart should render');
+
+    });
+
     QUnit.test('Event order', assert => {
         var obj = {},
             calls = [];

@@ -81,18 +81,12 @@ declare global {
             link?: SVGAttributes;
             marker?: NetworkgraphPointMarkerOptionsObject;
             nodes?: Array<NetworkgraphPointOptions>;
-            states?: NetworkgraphSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<NetworkgraphSeries>;
         }
-        interface NetworkgraphSeriesStatesInactiveOptions
-            extends LineSeriesStatesInactiveOptions
+        interface SeriesStatesInactiveOptionsObject
         {
             animation?: (boolean|AnimationOptionsObject);
             linkOpacity?: number;
-        }
-        interface NetworkgraphSeriesStatesOptions
-            extends LineSeriesStatesOptions
-        {
-            inactive?: NetworkgraphSeriesStatesInactiveOptions;
         }
         interface Series {
             layout?: NetworkgraphLayout;
@@ -274,8 +268,8 @@ var defined = U.defined;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
-import '/layouts.js';
-import '/draggable-nodes.js';
+import './layouts.js';
+import './draggable-nodes.js';
 
 
 var addEvent = H.addEvent,
@@ -293,7 +287,7 @@ var addEvent = H.addEvent,
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.NetworkgraphSeriesOptions>(
+seriesType<Highcharts.NetworkgraphSeries>(
     'networkgraph',
     'line',
 
@@ -307,10 +301,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
      *               Networkgraph
      * @since        7.0.0
      * @excluding    boostThreshold, animation, animationLimit, connectEnds,
-     *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
-     *               negativeColor, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, softThreshold, stack, stacking,
-     *               step, threshold, xAxis, yAxis, zoneAxis
+     *               colorAxis, colorKey, connectNulls, dragDrop,
+     *               getExtremesFromAll, label, linecap, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stack, stacking, step,
+     *               threshold, xAxis, yAxis, zoneAxis
      * @optionparent plotOptions.networkgraph
      */
     {
@@ -646,7 +641,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          */
         forces: ['barycenter', 'repulsive', 'attractive'],
         hasDraggableNodes: true,
-        drawGraph: null,
+        drawGraph: null as any,
         isCartesian: false,
         requireSorting: false,
         directTouch: true,
@@ -655,8 +650,8 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
-        animate: null,
-        buildKDTree: H.noop,
+        animate: null as any,
+        buildKDTree: H.noop as any,
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.

@@ -1743,7 +1743,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Delete all properties
             delete wrapper[key];
         });
-        return;
+        return undefined;
     },
     /**
      * Add a shadow to the element. Must be called after the element is added to
@@ -2133,7 +2133,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *

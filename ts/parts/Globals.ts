@@ -15,33 +15,26 @@
  * @private
  */
 declare global {
+    /**
+     * [[include:README.md]]
+     */
     namespace Highcharts {
-        type ExportingErrorCallbackFunction = any; // @todo offline exporting
-        type NavigationOptions = any; // @todo exporting module
-        type OrganizationSeries = any; // @todo organization module
-        type OrganizationSeriesOptions = any // @todo organization module
-        type PatternObject = object; // @todo pattern module
         type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
         }
+        interface XAxisOptions {
+            stackLabels?: any; // @todo
+        }
         interface Chart {
             frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
-            hasParallelCoordinates?: any; // @todo parallel module
             isBoosting?: any; // @todo boost module
-            isPrinting?: any; // @todo exporting module
-            openMenu?: any; // @todo exporting module
-            redrawTrigger?: any; // @todo static-scale module
-            getFilename: Function; // @todo exporting module
             hideOverlappingLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
-        }
-        interface Options {
-            navigation?: any; // @todo exporting module
         }
         interface PlotSeriesOptions {
             accessibility?: any; // @todo
@@ -54,10 +47,12 @@ declare global {
             fillGraph?: any; // @todo ichimoku indicator
             gappedPath?: any; // @todo broken axis module
             isSeriesBoosting?: any; // @todo boost module
-            labelBySeries?: any; // @todo series label module
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
+        }
+        interface SeriesTypesDictionary {
+            [key: string]: typeof Series;
         }
         interface Tick {
             slotWidth?: any; // @todo
@@ -77,14 +72,23 @@ declare global {
         const isWebKit: boolean;
         const marginNames: Array<string>;
         const noop: Function;
+        const product: string;
         const symbolSizes: Dictionary<SizeObject>;
-        const win: Window;
+        const win: GlobalWindow;
         const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
+        const version: string;
     }
-    type GlobalHighcharts = typeof Highcharts;
+    type GlobalWindow = typeof window;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
+    interface CallableFunction {
+        apply<TScope, TArguments extends any[], TReturn>(
+            this: (this: TScope, ...args: TArguments) => TReturn,
+            thisArg: TScope,
+            args?: (TArguments|IArguments)
+        ): TReturn;
+    }
     interface Document {
         msHidden: boolean;
         webkitHidden: boolean;
@@ -94,21 +98,12 @@ declare global {
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
     }
-    interface Index extends Object {
-        [key: string]: any;
-        [index: number]: any;
-    }
     interface PointerEvent {
         /** @deprecated */
         readonly toElement: Element;
     }
     interface Window {
-        ArrayBuffer: typeof ArrayBuffer;
-        Blob: typeof Blob;
-        Image: typeof Image;
-        TouchEvent: typeof TouchEvent;
-        Uint8Array: Uint8Array & Uint8ArrayConstructor;
-        URL: typeof URL;
+        TouchEvent?: typeof TouchEvent;
         /** @deprecated */
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
@@ -116,7 +111,7 @@ declare global {
         /** @deprecated */
         webkitURL?: typeof URL;
     }
-    const win: Window; // @todo: UMD variable
+    const win: GlobalWindow|undefined; // @todo: UMD variable named `window`
 }
 
 /* globals Image, window */
@@ -132,9 +127,13 @@ declare global {
  */
 
 // glob is a temporary fix to allow our es-modules to work.
-var glob = typeof win === 'undefined' ?
-        (typeof window !== 'undefined' ? window : {} as Window) :
-        win,
+var glob = ( // @todo UMD variable named `window`, and glob named `win`
+        typeof win !== 'undefined' ?
+            win :
+            typeof window !== 'undefined' ?
+                window :
+                {} as GlobalWindow
+    ),
     doc = glob.document,
     SVG_NS = 'http://www.w3.org/2000/svg',
     userAgent = (glob.navigator && glob.navigator.userAgent) || '',
@@ -143,7 +142,7 @@ var glob = typeof win === 'undefined' ?
         doc.createElementNS &&
         !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
     ),
-    isMS = /(edge|msie|trident)/i.test(userAgent) && !(glob as any).opera,
+    isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
     isFirefox = userAgent.indexOf('Firefox') !== -1,
     isChrome = userAgent.indexOf('Chrome') !== -1,
     hasBidiBug = (
@@ -151,13 +150,13 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var H: GlobalHighcharts = {
+var H: typeof Highcharts = {
     product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: !!win.TouchEvent,
+    hasTouch: !!glob.TouchEvent,
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,
@@ -166,7 +165,7 @@ var H: GlobalHighcharts = {
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
     SVG_NS: SVG_NS,
     chartCount: 0,
-    seriesTypes: {},
+    seriesTypes: {} as Highcharts.SeriesTypesDictionary,
     symbolSizes: {},
     svg: svg,
     win: glob,
@@ -196,6 +195,6 @@ var H: GlobalHighcharts = {
      * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
      */
     dateFormats: {}
-} as any;
+} as unknown as typeof Highcharts;
 
 export default H;

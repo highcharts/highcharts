@@ -27,17 +27,7 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             fillOpacity?: number;
             negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: AreaSeriesStatesOptions;
-        }
-        interface AreaSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            fillOpacity?: number;
-            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface AreaSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: AreaSeriesStatesHoverOptions;
+            states?: SeriesStatesOptionsObject<AreaSeries>;
         }
         interface PlotSeriesOptions {
             negativeFillColor?: AreaSeriesOptions['negativeFillColor'];
@@ -88,7 +78,7 @@ var color = H.color,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSeriesOptions>(
+seriesType<Highcharts.AreaSeries>(
     'area',
     'line',
 

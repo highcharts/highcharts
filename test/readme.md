@@ -1,4 +1,5 @@
-# Test runner
+Test Runner
+===========
 
 Use `gulp test` to run the tests using karma and QUnit. All tests in the
 `samples/unit-tests` directory will run. For debugging, it may be convenient to
@@ -16,8 +17,8 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   several tests, that can be modified for particular test cases. Use
   `TestTemplate.test` inside a `QUnit.test` with templates found in the
   `test/templates` directory. `TestTemplate` handles most option modifications
-  (exception functions) and reverse them after each test case, which is faster
-  then the classic destruction and creation of charts for each test.
+  (except functions) and reverse them after each test case, which is faster than
+  the classic destruction and creation of charts for each test.
 
 #### Optimize for Speed
 We want fast running tests. The time it takes to run the test suite is largely
@@ -54,6 +55,10 @@ limit the number of charts in the test suite.
 - All the tests run on one Highcharts instance. When running
   `Highcharts.setOptions()`, make sure to unset the changed options, otherwise
   it may break tests downstream.
+- In visual tests, `plotOptions` and `callbacks` are reset after each test. If
+  other properties of Highcharts are mutated, a file `aftereach.js` can be added
+  to reset them. Since the visual tests double as educational demos for the
+  public, it is not recommended to have teardown code in `demo.js`.
 
 #### Link References
 - Highchars Utils: https://github.com/highcharts/highcharts-utils

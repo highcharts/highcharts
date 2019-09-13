@@ -2190,8 +2190,9 @@ H.removeEvent = function (el, type, fn) {
             }
         });
     }
-    ['protoEvents', 'hcEvents'].forEach(function (coll) {
-        var eventCollection = el[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll, i) {
+        var eventElem = i ? el : el.prototype;
+        var eventCollection = eventElem && eventElem[coll];
         if (eventCollection) {
             if (type) {
                 events = (eventCollection[type] || []);
@@ -2208,7 +2209,7 @@ H.removeEvent = function (el, type, fn) {
             }
             else {
                 removeAllEvents(eventCollection);
-                el[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -2375,15 +2376,15 @@ H.animate = function (el, params, opt) {
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *

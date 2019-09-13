@@ -295,12 +295,12 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TOptions extends SeriesOptions>(
+        function seriesType<TSeries extends Series>(
             type: string,
             parent: string,
-            options: TOptions,
-            props: Dictionary<any>,
-            pointProps?: Dictionary<any>
+            options: TSeries['options'],
+            props?: Partial<TSeries>,
+            pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
@@ -2957,8 +2957,9 @@ H.removeEvent = function<T> (
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
-        var eventCollection = (el as any)[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
+        const eventElem = i ? el : (el as any).prototype;
+        const eventCollection = eventElem && eventElem[coll];
 
         if (eventCollection) {
             if (type) {
@@ -2980,7 +2981,7 @@ H.removeEvent = function<T> (
                 }
             } else {
                 removeAllEvents(eventCollection);
-                (el as any)[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -3188,15 +3189,15 @@ H.animate = function (
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -3205,12 +3206,12 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (
+H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
-    options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
-    pointProps?: Highcharts.Dictionary<any>
+    options: TSeries['options'],
+    props?: Partial<TSeries>,
+    pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;

@@ -18,24 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface BulletPointOptions extends ColumnPointOptions {
-            borderColor?: ColorType;
-            target?: number;
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesOptions extends ColumnSeriesOptions {
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesTargetOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: ColorType;
-            height?: number;
-            width?: (number|string);
-        }
-        interface SeriesTypesDictionary {
-            bullet: typeof BulletSeries;
-        }
         class BulletPoint extends ColumnPoint {
             public borderColor: BulletPointOptions['borderColor'];
             public options: BulletPointOptions;
@@ -54,6 +36,24 @@ declare global {
             public targetData: Array<number>;
             public drawPoints(): void;
             public getExtremes(yData?: Array<number>): void;
+        }
+        interface BulletPointOptions extends ColumnPointOptions {
+            borderColor?: ColorType;
+            target?: number;
+            targetOptions?: BulletSeriesTargetOptions;
+        }
+        interface BulletSeriesOptions extends ColumnSeriesOptions {
+            targetOptions?: BulletSeriesTargetOptions;
+        }
+        interface BulletSeriesTargetOptions {
+            borderColor?: ColorString;
+            borderWidth?: number;
+            color?: ColorType;
+            height?: number;
+            width?: (number|string);
+        }
+        interface SeriesTypesDictionary {
+            bullet: typeof BulletSeries;
         }
     }
 }
@@ -75,7 +75,7 @@ var pick = H.pick,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
+seriesType<Highcharts.BulletSeries>('bullet', 'column'
 
     /**
      * A bullet graph is a variation of a bar graph. The bullet graph features

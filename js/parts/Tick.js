@@ -280,7 +280,10 @@ H.Tick.prototype = {
      * @return {Highcharts.PositionObject}
      */
     getLabelPosition: function (x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
-        var axis = this.axis, transA = axis.transA, reversed = axis.reversed, staggerLines = axis.staggerLines, rotCorr = axis.tickRotCorr || { x: 0, y: 0 }, yOffset = labelOptions.y, 
+        var axis = this.axis, transA = axis.transA, reversed = ( // #7911
+        axis.isLinked && axis.linkedParent ?
+            axis.linkedParent.reversed :
+            axis.reversed), staggerLines = axis.staggerLines, rotCorr = axis.tickRotCorr || { x: 0, y: 0 }, yOffset = labelOptions.y, 
         // Adjust for label alignment if we use reserveSpace: true (#5286)
         labelOffsetCorrection = (!horiz && !axis.reserveSpaceDefault ?
             -axis.labelOffset * (axis.labelAlign === 'center' ? 0.5 : 1) :

@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": false,
     "declaration": false,
+    "downlevelIteration": true,
     "esModuleInterop": true,
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,

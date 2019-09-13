@@ -377,12 +377,9 @@ H.Tooltip.prototype = {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = (
-            pick(
-                options.outside,
-                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-            ) &&
-            !this.split
+        this.outside = pick(
+            options.outside,
+            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
     },
 
@@ -511,7 +508,15 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0);
+                this.renderer = renderer = new H.Renderer(
+                    container,
+                    0,
+                    0,
+                    {},
+                    undefined,
+                    undefined,
+                    renderer.styledMode
+                );
             }
 
 
@@ -554,7 +559,9 @@ H.Tooltip.prototype = {
                 this.label.addClass('highcharts-tooltip-' + this.chart.index);
             }
 
-            if (this.outside) {
+            // Split tooltip use updateTooltipContainer to position the tooltip
+            // container.
+            if (tooltip.outside && !tooltip.split) {
                 set = {
                     x: this.label.xSetter as any,
                     y: this.label.ySetter as any
@@ -833,7 +840,7 @@ H.Tooltip.prototype = {
                     doc.documentElement.clientHeight
                 ) :
                 chart.chartHeight,
-            chartPosition = chart.pointer.chartPosition,
+            chartPosition = chart.pointer.getChartPosition(),
             containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
                 containerScaling ? val * containerScaling.scaleX : val
@@ -1041,7 +1048,6 @@ H.Tooltip.prototype = {
     ): void {
         var tooltip = this,
             chart = this.chart,
-            label,
             options = tooltip.options,
             x,
             y,
@@ -1103,20 +1109,11 @@ H.Tooltip.prototype = {
         if (text === false) {
             this.hide();
         } else {
-
-            label = tooltip.getLabel();
-
-            // show it
-            if (tooltip.isHidden) {
-                label.attr({
-                    opacity: 1
-                }).show();
-            }
-
             // update text
             if (tooltip.split) {
                 this.renderSplit(text as any, splat(pointOrPoints));
             } else {
+                const label = tooltip.getLabel();
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
@@ -1161,7 +1158,13 @@ H.Tooltip.prototype = {
                 } as any);
             }
 
-            this.isHidden = false;
+            // show it
+            if (tooltip.isHidden && tooltip.label) {
+                tooltip.label.attr({
+                    opacity: 1
+                }).show();
+            }
+            tooltip.isHidden = false;
         }
 
         H.fireEvent(this, 'refresh');
@@ -1377,6 +1380,31 @@ H.Tooltip.prototype = {
                     yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
+
+        /* If we have a seperate tooltip container, then update the necessary
+         * container properties.
+         * Test that tooltip has its own container and renderer before executing
+         * the operation.
+         */
+        const {
+            container,
+            outside,
+            renderer
+        } = tooltip;
+        if (outside && container && renderer) {
+            // Position the tooltip container to the chart container
+            const chartPosition = chart.pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
+
+            // Set container size to fit the tooltip
+            const { width, height, x, y } = tooltipLabel.getBBox();
+            renderer.setSize(
+                width + x,
+                height + y,
+                false
+            );
+        }
     },
 
     /**
@@ -1400,9 +1428,8 @@ H.Tooltip.prototype = {
             pad;
 
         // Needed for outside: true (#11688)
-        if (!pointer.chartPosition) {
-            pointer.chartPosition = H.offset(chart.container);
-        }
+        const chartPosition = pointer.getChartPosition();
+
         pos = ((this.options.positioner as any) || this.getPosition).call(
             this,
             label.width,
@@ -1434,8 +1461,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += pointer.chartPosition.left - pos.x;
-            anchorY += pointer.chartPosition.top - pos.y;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move

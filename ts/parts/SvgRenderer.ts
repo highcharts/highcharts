@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
-            'topbutton'|'triangle'|'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
+            'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,7 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject, SizeObject {
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
@@ -92,7 +92,9 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
+            [key: string]: SymbolFunction<(
+                SVGElement|SVGPathArray|Array<SVGElement>
+            )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -184,7 +186,7 @@ declare global {
             ): void;
             public fadeOut(duration?: number): void;
             public fillSetter(
-                value: (Color|ColorString),
+                value: ColorType,
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -2654,7 +2656,7 @@ extend((
             delete wrapper[key];
         });
 
-        return;
+        return undefined;
     },
 
     /**
@@ -3178,7 +3180,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *
@@ -3188,7 +3190,7 @@ extend((
      */
     fillSetter: function (
         this: Highcharts.SVGElement,
-        value: (Highcharts.Color|Highcharts.ColorString),
+        value: Highcharts.ColorType,
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {

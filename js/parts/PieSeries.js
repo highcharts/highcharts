@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Pie series only. Whether to display a slice offset from the center.
 * @name Highcharts.PointOptionsObject#sliced
@@ -184,7 +184,7 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, fireEvent = H.fireEvent, setAnimation = H.setAnimation;
 /**
  * Pie series type.
  *
@@ -204,7 +204,7 @@ seriesType('pie', 'line',
  *
  * @extends      plotOptions.line
  * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
+ *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
  *               getExtremesFromAll, label, lineWidth, marker,
  *               negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointStart, softThreshold, stacking, step,
@@ -267,6 +267,25 @@ seriesType('pie', 'line',
      */
     center: [null, null],
     /**
+     * The color of the pie series. A pie series is represented as an empty
+     * circle if the total sum of its values is 0. Use this property to
+     * define the color of its border.
+     *
+     * In styled mode, the color can be defined by the
+     * [colorIndex](#plotOptions.series.colorIndex) option. Also, the series
+     * color can be set with the `.highcharts-series`,
+     * `.highcharts-color-{n}`, `.highcharts-{type}-series` or
+     * `.highcharts-series-{n}` class, or individual classes given by the
+     * `className` option.
+     *
+     * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+     *         Empty pie series
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   ${palette.neutralColor20}
+     * @apioption plotOptions.pie.color
+     */
+    /**
      * @product highcharts
      *
      * @private
@@ -291,7 +310,7 @@ seriesType('pie', 'line',
      * @apioption plotOptions.pie.colors
      */
     /**
-     * @type    {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+     * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
      * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
      *
      * @private
@@ -320,6 +339,19 @@ seriesType('pie', 'line',
         /** @ignore-option */
         crookDistance: '70%'
     },
+    /**
+     * If the total sum of the pie's values is 0, the series is represented
+     * as an empty circle . The `fillColor` option defines the color of that
+     * circle. Use [pie.borderWidth](#plotOptions.pie.borderWidth) to set
+     * the border thickness.
+     *
+     * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+     *         Empty pie series
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @private
+     */
+    fillColor: undefined,
     /**
      * The end angle of the pie in degrees where 0 is top and 90 is right.
      * Defaults to `startAngle` plus 360.
@@ -759,14 +791,42 @@ seriesType('pie', 'line',
                 }
             };
         }
+        fireEvent(series, 'afterTranslate');
     },
     /**
+     * Called internally to draw auxiliary graph in pie-like series in
+     * situtation when the default graph is not sufficient enough to present
+     * the data well. Auxiliary graph is saved in the same object as
+     * regular graph.
+     *
      * @private
-     * @deprecated
-     * @name Highcharts.seriesTypes.pie#drawGraph
-     * @type {null}
+     * @function Highcharts.seriesTypes.pie#drawEmpty
      */
-    drawGraph: null,
+    drawEmpty: function () {
+        var centerX, centerY, options = this.options;
+        // Draw auxiliary graph if there're no visible points.
+        if (this.total === 0) {
+            centerX = this.center[0];
+            centerY = this.center[1];
+            if (!this.graph) { // Auxiliary graph doesn't exist yet.
+                this.graph = this.chart.renderer.circle(centerX, centerY, 0)
+                    .addClass('highcharts-graph')
+                    .add(this.group);
+            }
+            this.graph.animate({
+                'stroke-width': options.borderWidth,
+                cx: centerX,
+                cy: centerY,
+                r: this.center[2] / 2,
+                fill: options.fillColor || 'none',
+                stroke: options.color ||
+                    '${palette.neutralColor20}'
+            });
+        }
+        else if (this.graph) { // Destroy the graph object.
+            this.graph = this.graph.destroy();
+        }
+    },
     /**
      * Draw the data points
      *
@@ -776,6 +836,7 @@ seriesType('pie', 'line',
      */
     redrawPoints: function () {
         var series = this, chart = series.chart, renderer = chart.renderer, groupTranslation, graphic, pointAttr, shapeArgs, shadow = series.options.shadow;
+        this.drawEmpty();
         if (shadow && !series.shadowGroup && !chart.styledMode) {
             series.shadowGroup = renderer.g('shadow')
                 .attr({ zIndex: -1 })
@@ -893,7 +954,12 @@ seriesType('pie', 'line',
      * @private
      * @function Highcharts.seriesTypes.pie#getSymbol
      */
-    getSymbol: noop
+    getSymbol: noop,
+    /**
+     * @private
+     * @type {null}
+     */
+    drawGraph: null
 }, 
 /**
  * @lends seriesTypes.pie.prototype.pointClass.prototype
@@ -1186,7 +1252,7 @@ seriesType('pie', 'line',
  * @apioption series.pie.data
  */
 /**
- * @type      {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+ * @type      {Highcharts.SeriesPieDataLabelsOptionsObject}
  * @product   highcharts
  * @apioption series.pie.data.dataLabels
  */

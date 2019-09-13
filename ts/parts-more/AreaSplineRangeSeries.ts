@@ -18,13 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface AreaSplineRangePointOptions extends AreaRangePointOptions {
-        }
-        interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            areasplinerange: typeof AreaSplineRangeSeries;
-        }
         class AreaSplineRangePoint extends AreaRangePoint {
             public option: AreaSplineRangePointOptions;
             public series: AreaSplineRangeSeries;
@@ -35,6 +28,14 @@ declare global {
             public options: AreaSplineRangeSeriesOptions;
             public pointClass: typeof AreaSplineRangePoint;
             public points: Array<AreaSplineRangePoint>;
+        }
+        interface AreaSplineRangePointOptions extends AreaRangePointOptions {
+        }
+        interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
+            states?: SeriesStatesOptionsObject<AreaSplineSeries>;
+        }
+        interface SeriesTypesDictionary {
+            areasplinerange: typeof AreaSplineRangeSeries;
         }
     }
 }
@@ -60,11 +61,16 @@ var seriesType = H.seriesType,
  * @product   highcharts highstock
  * @apioption plotOptions.areasplinerange
  */
-seriesType('areasplinerange', 'arearange', null as any, {
-    getPointSpline: (
-        seriesTypes.spline as typeof Highcharts.SplineSeries
-    ).prototype.getPointSpline
-});
+seriesType<Highcharts.AreaSplineSeries>(
+    'areasplinerange',
+    'arearange',
+    null as any,
+    {
+        getPointSpline: (
+            seriesTypes.spline as typeof Highcharts.SplineSeries
+        ).prototype.getPointSpline
+    }
+);
 
 /**
  * A `areasplinerange` series. If the [type](#series.areasplinerange.type)

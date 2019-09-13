@@ -22,6 +22,7 @@ declare global {
         type RadialAxisXOptions = XAxisOptions;
         type RadialAxisYOptions = YAxisOptions;
         interface Axis {
+            angleRad?: RadialAxis['angleRad'];
             sector?: number;
         }
         interface AxisPlotBandsOptions {
@@ -41,6 +42,7 @@ declare global {
             setCategories: Function;
             setScale: Function;
             setTitle: Function;
+            createLabelCollector: RadialAxisMixin['createLabelCollector'];
             redraw(): void;
             render(): void;
         }
@@ -49,6 +51,7 @@ declare global {
             autoConnect?: boolean;
             beforeSetTickPositions: RadialAxisMixin['beforeSetTickPositions'];
             center: Array<number>;
+            createLabelCollector: RadialAxisMixin['createLabelCollector'];
             defaultRadialGaugeOptions: (
                 RadialAxisMixin['defaultRadialGaugeOptions']
             );
@@ -67,6 +70,7 @@ declare global {
             getPosition: RadialAxisMixin['getPosition'];
             getTitlePosition: RadialAxisMixin['getTitlePosition'];
             isCircular?: boolean;
+            labelCollector?: ChartLabelCollectorFunction | boolean;
             max: number;
             min: number;
             minPointOffset: number;
@@ -80,6 +84,9 @@ declare global {
             startAngleRad: number;
         }
         interface RadialAxisMixin {
+            createLabelCollector(
+                this: RadialAxis
+            ): ChartLabelCollectorFunction | boolean;
             defaultRadialGaugeOptions: RadialAxisOptions;
             defaultRadialXOptions: RadialAxisXOptions;
             defaultRadialYOptions: RadialAxisYOptions;
@@ -158,6 +165,9 @@ hiddenAxisMixin = {
     },
     render: function (this: Highcharts.Axis): void {
         this.isDirty = false; // prevent setting Y axis dirty
+    },
+    createLabelCollector: function (): boolean {
+        return false;
     },
     setScale: noop,
     setCategories: noop,
@@ -661,6 +671,40 @@ radialAxisMixin = {
                 ((titleOptions as any).y || 0)
             )
         };
+    },
+
+    /* *
+     * Attach and return collecting function for labels in radial axis for
+     * anti-collision.
+     */
+    createLabelCollector: function (
+        this: Highcharts.RadialAxis
+    ): Highcharts.ChartLabelCollectorFunction {
+        var axis = this;
+
+        return function (
+            this: null
+        ): (Array<(Highcharts.SVGElement|undefined)>|undefined) {
+
+            if (
+                axis.isRadial &&
+                axis.tickPositions &&
+                // undocumented option for now, but working
+                (axis.options.labels as any).allowOverlap !== true
+            ) {
+                return axis.tickPositions
+                    .map(function (
+                        pos: number
+                    ): (Highcharts.SVGElement|undefined) {
+                        return axis.ticks[pos] && axis.ticks[pos].label;
+                    })
+                    .filter(function (
+                        label: (Highcharts.SVGElement|undefined)
+                    ): boolean {
+                        return Boolean(label);
+                    });
+            }
+        };
     }
 
     /* eslint-enable valid-jsdoc */
@@ -674,8 +718,7 @@ addEvent(Axis as any, 'init', function (
     this: Highcharts.RadialAxis,
     e: { userOptions: Highcharts.RadialAxisOptions }
 ): void {
-    var axis = this,
-        chart = this.chart,
+    var chart = this.chart,
         angular = chart.angular,
         polar = chart.polar,
         isX = this.isXAxis,
@@ -685,6 +728,12 @@ addEvent(Axis as any, 'init', function (
         paneIndex = e.userOptions.pane || 0,
         pane = (this as Highcharts.Axis).pane =
             chart.pane && chart.pane[paneIndex];
+
+    // Prevent changes for colorAxis
+    if (this.coll === 'colorAxis') {
+        this.isRadial = false;
+        return;
+    }
 
     // Before prototype.init
     if (angular) {
@@ -710,28 +759,15 @@ addEvent(Axis as any, 'init', function (
         chart.inverted = false;
         (chartOptions.chart as any).zoomType = null as any;
 
-        // Prevent overlapping axis labels (#9761)
-        chart.labelCollectors.push(function (
-        ): (Array<(Highcharts.SVGElement|undefined)>|undefined) {
-            if (
-                axis.isRadial &&
-                axis.tickPositions &&
-                // undocumented option for now, but working
-                (axis.options.labels as any).allowOverlap !== true
-            ) {
-                return axis.tickPositions
-                    .map(function (
-                        pos: number
-                    ): (Highcharts.SVGElement|undefined) {
-                        return axis.ticks[pos] && axis.ticks[pos].label;
-                    })
-                    .filter(function (
-                        label: (Highcharts.SVGElement|undefined)
-                    ): boolean {
-                        return Boolean(label);
-                    });
-            }
-        });
+        if (!this.labelCollector) {
+            this.labelCollector = this.createLabelCollector();
+        }
+        if (this.labelCollector) {
+            // Prevent overlapping axis labels (#9761)
+            chart.labelCollectors.push(
+                this.labelCollector as Highcharts.ChartLabelCollectorFunction
+            );
+        }
     } else {
         this.isRadial = false;
     }
@@ -784,6 +820,21 @@ addEvent(Axis as any, 'autoLabelAlign', function (
     if (this.isRadial) {
         e.align = undefined;
         e.preventDefault();
+    }
+});
+
+// Remove label collector function on axis remove/update
+addEvent(Axis as any, 'destroy', function (
+    this: Highcharts.RadialAxis
+): void {
+    if (this.chart && this.chart.labelCollectors) {
+        var index = this.chart.labelCollectors.indexOf(
+            this.labelCollector as Highcharts.ChartLabelCollectorFunction
+        );
+
+        if (index >= 0) {
+            this.chart.labelCollectors.splice(index, 1);
+        }
     }
 });
 

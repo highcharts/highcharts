@@ -1,0 +1,1 @@
+Click the button and verify that the chart updates with a smooth, bouncing animation.

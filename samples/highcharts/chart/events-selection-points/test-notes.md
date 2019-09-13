@@ -1,0 +1,1 @@
+Click-drag and verify that a group of points are selected.

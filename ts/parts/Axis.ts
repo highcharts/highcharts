@@ -274,10 +274,7 @@ declare global {
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
-            stops?: Array<[
-                number,
-                (ColorString|GradientColorObject|PatternObject)
-            ]>;
+            stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
         interface ZAxisOptions extends XAxisOptions {
@@ -996,7 +993,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash style for the crosshair. See
-         * [series.dashStyle](#plotOptions.series.dashStyle)
+         * [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          * for possible values.
          *
          * @sample {highcharts|highmaps} highcharts/xaxis/crosshair-dotted/
@@ -1320,7 +1317,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.afterSetExtremes
          */
 
@@ -1335,7 +1332,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @since     4.1.0
          * @product   highcharts gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointBreak
          */
 
@@ -1344,7 +1341,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @product   highcharts highstock gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
          */
 
@@ -1365,7 +1362,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     1.2.0
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.setExtremes
          */
 
@@ -3035,7 +3032,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Array<number,Highcharts.ColorString>>}
+         * @type      {Array<Highcharts.GradientColorStopObject>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -5658,7 +5655,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.isDirty ||
                     // When x axis is dirty, we need new data extremes for y as
                     // well:
-                    series.xAxis.isDirty as any
+                    series.xAxis && (series.xAxis.isDirty as any)
                 );
             }),
             isDirtyAxisLength;
@@ -7273,7 +7270,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
-                    (point as any).crosshairPos, // 3D axis extension
+                    this.coll !== 'colorAxis' ?
+                        (point as any).crosshairPos : // 3D axis extension
+                        null,
                     this.isXAxis ?
                         (point as any).plotX :
                         this.len - (point as any).plotY

@@ -24,11 +24,11 @@ var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType
  *         Gauge chart
  *
  * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
- *               getExtremesFromAll, marker, negativeColor, pointPlacement,
- *               shadow, softThreshold, stacking, states, step, threshold,
- *               turboThreshold, xAxis, zoneAxis, zones
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+ *               pointPlacement, shadow, softThreshold, stacking, states, step,
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
@@ -82,7 +82,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -216,7 +216,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -302,10 +302,10 @@ seriesType('gauge', 'line', {
         var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var dialOptions = merge(options.dial, point.dial), radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
-                200, baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
-                100, rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
-                100, baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
+                200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
+                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
+                100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
             // Handle the wrap and overshoot options
             if (isNumber(overshoot)) {
                 overshoot = overshoot / 180 * Math.PI;

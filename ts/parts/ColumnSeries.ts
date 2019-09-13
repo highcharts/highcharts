@@ -41,28 +41,7 @@ declare global {
             pointPadding?: number;
             pointWidth?: number;
             startFromThreshold?: boolean;
-            states?: ColumnSeriesStatesOptions;
-        }
-        interface ColumnSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-        }
-        interface ColumnSeriesStatesInactiveOptions
-            extends LineSeriesStatesInactiveOptions {
-        }
-        interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: ColumnSeriesStatesHoverOptions;
-            inactive?: ColumnSeriesStatesInactiveOptions;
-            select?: ColumnSeriesStatesSelectOptions;
-        }
-        interface ColumnSeriesStatesSelectOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
+            states?: SeriesStatesOptionsObject<ColumnSeries>;
         }
         interface PlotSeriesOptions {
             startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
@@ -73,6 +52,12 @@ declare global {
         interface Series {
             barW?: number;
             pointXOffset?: number;
+        }
+        interface SeriesStatesHoverOptionsObject {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            brightness?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
         }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
@@ -127,8 +112,8 @@ declare global {
  * @type {number}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * A name for the dash style to use for the column or bar. Overrides dashStyle
  * on the series. In styled mode, the stroke dash-array can be set with the same
@@ -174,7 +159,7 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnSeriesOptions>(
+seriesType<Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -926,7 +911,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
         },
 
-        getSymbol: noop,
+        getSymbol: noop as any,
 
         /**
          * Use a solid rectangle like the area series types
@@ -973,7 +958,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
-                stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
+                stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
                 ret: Highcharts.SVGAttributes,
                 p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',

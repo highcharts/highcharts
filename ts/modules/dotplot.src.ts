@@ -24,14 +24,6 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
-        interface DotplotPointOptions extends ColumnPointOptions {
-        }
-        interface DotplotSeriesOptions extends ColumnSeriesOptions {
-            itemPadding?: number;
-        }
-        interface SeriesTypesDictionary {
-            dotplot: typeof DotplotSeries;
-        }
         class DotplotPoint extends ColumnPoint {
             public graphics?: Dictionary<SVGElement>;
             public options: DotplotPointOptions;
@@ -45,6 +37,15 @@ declare global {
             public pointClass: typeof DotplotPoint;
             public points: Array<DotplotPoint>;
             public drawPoints(): void;
+        }
+        interface DotplotPointOptions extends ColumnPointOptions {
+        }
+        interface DotplotSeriesOptions extends ColumnSeriesOptions {
+            itemPadding?: number;
+            states?: SeriesStatesOptionsObject<DotplotSeries>;
+        }
+        interface SeriesTypesDictionary {
+            dotplot: typeof DotplotSeries;
         }
     }
 }
@@ -65,7 +66,7 @@ var extend = H.extend,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DotplotSeriesOptions>('dotplot', 'column', {
+seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',

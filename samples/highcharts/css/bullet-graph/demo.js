@@ -1,4 +1,4 @@
-Highcharts.setOptions({
+var commonBulletOptions = {
     chart: {
         inverted: true,
         marginLeft: 135,
@@ -29,12 +29,11 @@ Highcharts.setOptions({
     exporting: {
         enabled: false
     }
-});
+};
 
-Highcharts.chart('container1', {
+Highcharts.chart('container1', Highcharts.merge(commonBulletOptions, {
     chart: {
-        marginTop: 40,
-        styledMode: true
+        marginTop: 40
     },
     title: {
         text: '2017 YTD'
@@ -67,12 +66,9 @@ Highcharts.chart('container1', {
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'
     }
-});
+}));
 
-Highcharts.chart('container2', {
-    chart: {
-        styledMode: true
-    },
+Highcharts.chart('container2', Highcharts.merge(commonBulletOptions, {
     xAxis: {
         categories: ['<span class="hc-cat-title">Profit</span><br/>%']
     },
@@ -104,13 +100,10 @@ Highcharts.chart('container2', {
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'
     }
-});
+}));
 
 
-Highcharts.chart('container3', {
-    chart: {
-        styledMode: true
-    },
+Highcharts.chart('container3', Highcharts.merge(commonBulletOptions, {
     xAxis: {
         categories: ['<span class="hc-cat-title">New Customers</span><br/>Count']
     },
@@ -145,4 +138,4 @@ Highcharts.chart('container3', {
     credits: {
         enabled: true
     }
-});
+}));

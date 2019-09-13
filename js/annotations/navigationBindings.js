@@ -1325,11 +1325,12 @@ H.setOptions({
             }
         },
         /**
-         * Path where Highcharts will look for icons. Change this to use
-         * icons from a different server.
+         * Path where Highcharts will look for icons. Change this to use icons
+         * from a different server.
          *
-         * @since     7.1.3
+         * @type      {string}
          * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @since     7.1.3
          * @apioption navigation.iconsURL
          */
 

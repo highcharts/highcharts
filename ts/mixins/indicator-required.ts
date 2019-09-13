@@ -21,11 +21,8 @@ declare global {
         interface Indicator {
             generateMessage: RequiredIndicatorMixin['generateMessage'];
             isParentLoaded: RequiredIndicatorMixin['isParentLoaded'];
-            options: IndicatorOptions;
         }
-        interface IndicatorOptions extends SeriesOptions {
-            data?: undefined;
-        }
+
         interface IndicatorCallbackFunction {
             (indicator: Indicator): boolean;
         }

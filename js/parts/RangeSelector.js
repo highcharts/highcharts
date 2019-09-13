@@ -1273,6 +1273,7 @@ RangeSelector.prototype = {
             translateY = (alignTranslateY -
                 groupHeight -
                 (floating ? 0 : options.y) -
+                (chart.titleOffset ? chart.titleOffset[2] : 0) -
                 10 // 10 spacing
             );
         }
@@ -1281,8 +1282,7 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
             if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY =
-                    chart.titleOffset[0] + chart.options.title.margin;
+                translateY = chart.titleOffset[0];
             }
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
         }
