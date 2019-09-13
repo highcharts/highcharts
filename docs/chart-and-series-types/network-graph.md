@@ -107,10 +107,10 @@ Simple example
         },
         series: [{
                 data: [
-                    [‘A’, ‘B’\],
-                    [‘B’, ‘C’\],
-                    [‘C’, ‘A’\]
-                }\]
+                    [‘A’, ‘B’],
+                    [‘B’, ‘C’],
+                    [‘C’, ‘A’]
+                }]
         }
 
 Customized length between points and colored links:
@@ -132,10 +132,10 @@ Customized length between points and colored links:
         },
         series: [{
                 data: [
-                    [‘A’, ‘B’\],
-                    [‘B’, ‘C’\],
-                    [‘C’, ‘A’\]
-                }\]
+                    [‘A’, ‘B’],
+                    [‘B’, ‘C’],
+                    [‘C’, ‘A’]
+                }]
         }
     
 

@@ -19,8 +19,8 @@ A single annotation is composed of simple blocks such as labels and shapes. An a
             labels: [{
                 point: { x: 0, y: 0 },
                 text: ‘Label’
-            }\]
-        }\]
+            }]
+        }]
     
 
 ![bsFqB4efSMVCqMrAKXy_ZO5QHHBOf4ml8RVgrywyUldMb68b6e1kVMXGHKnWIoPyYLiEjgyJzQULx9pefJW5tRsHLO6KE3ODWyzxw9L1WGw5OxRtmldpVNiyNZ3XKzIaCqf-4nzu](https://lh3.googleusercontent.com/bsFqB4efSMVCqMrAKXy_ZO5QHHBOf4ml8RVgrywyUldMb68b6e1kVMXGHKnWIoPyYLiEjgyJzQULx9pefJW5tRsHLO6KE3ODWyzxw9L1WGw5OxRtmldpVNiyNZ3XKzIaCqf-4nzu)
@@ -52,7 +52,7 @@ In our first annotation, the label was attached to the chart’s pixel coordinat
                     y: 100,
                     xAxis: 0
                 }
-            }\],
+            }],
     
 
 Both annotation configurations are represented on this chart (see below). Try to zoom in and out to see the differences:
@@ -85,8 +85,8 @@ Similar to the labels option, the shapes option defines a shape object. The obje
                 type: 'rect',
                 width: 20,
                 height: 20
-            }\]
-        }\]
+            }]
+        }]
     
 
 The path type allows to define points property that takes an array of points.
@@ -100,10 +100,10 @@ The path type allows to define points property that takes an array of points.
                     y: 195,
                     xAxis: 0,
                     yAxis: 0
-                }\],
+                }],
                 markerEnd: 'arrow'
-            }\]
-        }\]
+            }]
+        }]
     
 
 Defining markers for the path

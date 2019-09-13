@@ -27,8 +27,8 @@ Two steps are required to create an Histogram chart:
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
-        }\]
+            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
+        }]
     
 
 Histogram chart specific options

@@ -28,7 +28,7 @@ The following is an example of how the tree is built in Highcharts:
         name: 'I am a smaller child',
         parent: 'id-1',
         value: 1
-    }\]
+    }]
     
 
 ### Algorithms
@@ -83,7 +83,7 @@ A starting point for the function could be the following
 
     
     function myFunction(parent, children) {
-        childrenAreas = [\];
+        childrenAreas = [];
         Highcharts.each(children, function(child) {
             // Do some calculations
     
@@ -113,7 +113,7 @@ Afterwards when you declare the chart options, then specify that the series.layo
         series: [{
            layoutAlgorithm: "myCustomAlgorithm",
            ...
-        }\],
+        }],
         ...
     });
     
@@ -136,9 +136,9 @@ Below is an example where the first level will use the Slice And Dice algorithm,
            }, {
                level: 2,
                color: 'blue'
-           }\],
+           }],
            ...
-        }\],
+        }],
         ...
     });
     
@@ -162,7 +162,7 @@ After the module is included in your project, a colorAxis object can be defined 
         ...
         colorAxis: {
             minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[0\]
+            maxColor: Highcharts.getOptions().colors[0]
         },
         ...
     });
@@ -182,9 +182,9 @@ And each point needs its own colorValue.
                 name: "Point 1",
                 value: 1,
                 colorValue: 5 // This value decides which color on the scale that the point gets.
-            }\],
+            }],
             ...
-        }\],
+        }],
         ...
     });
     

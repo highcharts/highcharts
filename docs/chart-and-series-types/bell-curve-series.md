@@ -29,8 +29,8 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
             yAxis: 1,
             baseSeries: 1
         }, {
-            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4\]
-        }\]
+            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
+        }]
     
 
 Setting the Bell Curve
@@ -49,7 +49,7 @@ The following demo visualizes four intervals for each side of the bell curve, an
             intervals: 4,
             pointsInInterval: 5
             …
-        }\]
+        }]
     
 
 <iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval></iframe>

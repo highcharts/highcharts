@@ -42,7 +42,7 @@ Sample code:
         name: 'Balance',
         isSum: true,
         color: '#0066FF'
-    }\]
+    }]
 
 ### Colors
 

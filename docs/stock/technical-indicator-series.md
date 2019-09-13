@@ -97,7 +97,7 @@ There are no limitations to the number of technical indicators that can be bound
     
     series: [{
       id: ‘main-series’,
-      data: [ … \]
+      data: [ … ]
     }, {
       type: ‘sma’,
       linkedTo: ‘main-series’,
@@ -116,7 +116,7 @@ There are no limitations to the number of technical indicators that can be bound
       params: {
         period: 7
       }
-    }\]
+    }]
     
 
 <iframe width="320" height="240" style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points></iframe>
@@ -138,7 +138,7 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
       // yAxis for Stochastic technical indicator:
       top: ‘50%’,
       height: ‘50%’
-    }\]
+    }]
     
 
 2\. Bind indicator to this yAxis:
@@ -146,12 +146,12 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
     
     series: [{
       id: ‘main-series’,
-      data: [ … \]
+      data: [ … ]
     }, {
       type: ‘stochastic’,
       linkedTo: ‘main-series’,
       yAxis: 1
-    }\]
+    }]
     
 
 Multiple series bindings
@@ -170,11 +170,11 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
     
     series: [{
       id: ‘main-series’,
-      data: [ … \]
+      data: [ … ]
     }, {
       id: ‘volume-series’,
       yAxis: 1,
-      data: [ … \]
+      data: [ … ]
     }, {
       type: ‘mfi’,
       linkedTo: ‘main-series’,
@@ -182,4 +182,4 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
       params: {
         volumeSeriesID: ‘volume-series’
       }
-    }\]
+    }]

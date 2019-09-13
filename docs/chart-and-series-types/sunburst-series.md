@@ -36,7 +36,7 @@ The following is an example of how the tree is built in Highcharts:
         name: 'I am a smaller child',
         parent: 'id-1',
         value: 1
-    }\]
+    }]
     
 
 Work with levels

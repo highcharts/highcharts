@@ -40,8 +40,8 @@ Use Cases
                 type: 'columnpyramid'
             },
             series: [{
-                data: [138.8, 136.4, 104, 101.1, 75\]
-            }\]
+                data: [138.8, 136.4, 104, 101.1, 75]
+            }]
         }
 
 API Docs

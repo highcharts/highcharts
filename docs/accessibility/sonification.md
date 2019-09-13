@@ -56,7 +56,7 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
             data: [
                 1, 2, { y: 4, color: 'red' }, 5, 7, 9, 11, 13,
                 { y: 6, color: 'red' }, 7, 1
-            \],
+            ],
             point: {
                 events: {
                     click: function () {
@@ -77,12 +77,12 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
                                     minFrequency: 520,
                                     maxFrequency: 1050
                                 }
-                            }\]
+                            }]
                         });
                     }
                 }
             }
-        }\]
+        }]
     });
     
 
@@ -120,7 +120,7 @@ In this example we will show how to use [Series.sonify](https://api.highcharts.c
                                     minFrequency: 520,
                                     maxFrequency: 1050
                                 }
-                            }\]
+                            }]
                         });
                     }
                 }
@@ -169,7 +169,7 @@ In this example we will show how to sonify a chart with multiple series using [C
                         minFrequency: 520,
                         maxFrequency: 1050
                     }
-                }\]
+                }]
             });
         };
         
@@ -207,7 +207,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                       pan: 'x',
                                       frequency: 'y'
                                   }
-                              }\],
+                              }],
                               earcons: [{
                                   // Define the earcon we want to play
                                   earcon: new Highcharts.sonification.Earcon({
@@ -234,7 +234,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                               duration: 200,
                                               pan: -0.8 // Pan 80% left
                                           }
-                                      }\]
+                                      }]
                                   }),
                                   // Play this earcon if this point is crossing
                                   // another series.
@@ -252,7 +252,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
                                               });
                                       });
                                   }
-                              }\]
+                              }]
                           });
                       }
                   }

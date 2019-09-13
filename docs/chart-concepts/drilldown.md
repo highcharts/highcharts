@@ -25,32 +25,32 @@ For a basic setup, the drilldown series are defined in a separate array under th
                     name: 'Cars',
                     y: 4,
                     drilldown: 'cars'
-                }\]
-            }\],
+                }]
+            }],
             drilldown: {
                 series: [{
                     id: 'animals',
                     data: [
-                        ['Cats', 4\],
-                        ['Dogs', 2\],
-                        ['Cows', 1\],
-                        ['Sheep', 2\],
-                        ['Pigs', 1\]
-                    \]
+                        ['Cats', 4],
+                        ['Dogs', 2],
+                        ['Cows', 1],
+                        ['Sheep', 2],
+                        ['Pigs', 1]
+                    ]
                 }, {
                     id: 'fruits',
                     data: [
-                        ['Apples', 4\],
-                        ['Oranges', 2\]
-                    \]
+                        ['Apples', 4],
+                        ['Oranges', 2]
+                    ]
                 }, {
                     id: 'cars',
                     data: [
-                        ['Toyota', 4\],
-                        ['Opel', 2\],
-                        ['Volkswagen', 2\]
-                    \]
-                }\]
+                        ['Toyota', 4],
+                        ['Opel', 2],
+                        ['Volkswagen', 2]
+                    ]
+                }]
             }
 
 See it [live on jsFiddle](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/drilldown/basic/).

@@ -39,7 +39,7 @@ The data series has no \`x\`property set.
         name: ‘Another date’,
         label: ‘Another event label’,
         description: ‘Description of second event’
-    }\] 
+    }] 
 
 ### Events tied to a datetime axis
 
@@ -58,7 +58,7 @@ Examples of data series:
         name: 'Event name',
         label: ‘Another event label’,
         description: ‘Description of second event’
-    }\]
+    }]
 
 _The demo below illustrates a timeline of space exploration. The demo shows even intervals_
 

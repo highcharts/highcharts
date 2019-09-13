@@ -18,8 +18,8 @@ Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubbl
             type: 'packedbubble'
         },
         series: [{
-            data: [50, 12, 33, 45, 60\] // sizes of the bubble
-        }\]
+            data: [50, 12, 33, 45, 60] // sizes of the bubble
+        }]
     });
 
 Data format
@@ -50,21 +50,21 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
             }, {
                 value: 7,
                 name: 'Cecile'
-            }\]
+            }]
         }, {
             name: 'Energy drinks', // Energy drinks series
             data: [{
                 value: 10,
                 name: 'Tristan'
-            }\]
+            }]
         }, {
             name: 'Tea', // Tea series
             data: [5, 6, 8, {
                 value: 10,
                 name: 'Mustapha',
                 color: 'pink'
-            }\]
-        }\]
+            }]
+        }]
     });
 
 Notice in the code above, that the Tea data series is set with one dimensional array, except for the last point, which is set with values for volume, name and a color.
@@ -94,8 +94,8 @@ Here is an example of setting min and max size for bubbles:
             }
         },
         series: [{
-            data: [1, 75, 112, 180, 20, 3000\]
-        }\]
+            data: [1, 75, 112, 180, 20, 3000]
+        }]
     });
 
 <iframe width="100%" height="500" style="null" src=https://jsfiddle.net/gvaartjes/vrzfwcdk/embedded/result></iframe>

@@ -22,7 +22,7 @@ To create a bullet series, add the following configuration in the series option:
         data : [{
             y : 20,     // The value of a point
             target: 50  // The target value of a point 
-        }\],
+        }],
         targetOptions: { // Options related with look and position of targets 
             width: '140%',        // The width of the target 
             height: 3,            // The height of the target 

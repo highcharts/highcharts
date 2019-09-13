@@ -33,7 +33,7 @@ Here are the steps to create a Pareto chart:
         labels: {
         	format: "{value}%"
         }
-      }\]
+      }]
     
 
 For more details about yAxis click on the following [link](http://api.highcharts.com/highcharts/yAxis).
@@ -43,7 +43,7 @@ For more details about yAxis click on the following [link](http://api.highcharts
     
     {
         type: 'column',
-        data: [115, 75, 60, 55, 45, 30, 20\]
+        data: [115, 75, 60, 55, 45, 30, 20]
     }
     
 
@@ -58,9 +58,9 @@ For more details about yAxis click on the following [link](http://api.highcharts
     	 }, {
     	  type: 'column',
     	  zIndex: 2,
-              data: [755, 222, 151, 86, 72, 51, 36, 10\]
+              data: [755, 222, 151, 86, 72, 51, 36, 10]
     	 }  
-    \]
+    ]
     
 
 Keep in mind that Highcharts will generate all necessary data points following its algorithm.

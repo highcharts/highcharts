@@ -17,18 +17,18 @@ The data of a stream graph is simply set as Y values and possibly X values. Each
             "name": "Finland",
             "data": [
                 0, 11, 4, 3, 6, 0, 0, 6
-            \]
+            ]
         }, {
             "name": "Austria",
             "data": [
                 0, 3, 4, 2, 4, 0, 0, 8, 8
-            \]
+            ]
         }, {
             "name": "Sweden",
             "data": [
                 0, 2, 5, 3, 7, 0, 0, 10, 4
-            \]
-        }\]
+            ]
+        }]
     
 
 Labelling

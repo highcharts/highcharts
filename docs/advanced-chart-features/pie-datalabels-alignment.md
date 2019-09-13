@@ -107,7 +107,7 @@ Users can provide their own method by passing a callback function instead of a S
           'L',
           touchingSliceAt.x,
           touchingSliceAt.y
-        \];
+        ];
       }
     
 

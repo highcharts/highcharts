@@ -16,7 +16,7 @@ It lets you define a set of rules, each with a [condition](http://api.highcharts
             enabled: false  
           }  
         }  
-      }\]  
+      }]  
     }
 
 One of the most handy options is [chart.className](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/classname/) that can be used to control the style of all other elements in Highcharts styled mode.

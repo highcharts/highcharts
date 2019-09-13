@@ -10,7 +10,7 @@ There are a number of ways to do this. One way is to make a specific PHP file th
     
     <?php
     while ($row = mysql\_fetch\_array($result)) {
-       $data[\] = $row['value'\];
+       $data[] = $row['value'];
     }
     ?>
     var chart = new Highcharts.Chart({
@@ -18,10 +18,10 @@ There are a number of ways to do this. One way is to make a specific PHP file th
              renderTo: 'container'
           },
           series: [{
-             data: [<?php echo join($data, ',') ?>\],
+             data: [<?php echo join($data, ',') ?>],
              pointStart: 0,
              pointInterval
-          }\]
+          }]
     });
 
 **Including x values**
@@ -33,7 +33,7 @@ Say you have a datetime x axis and irregular intervals between the points. Then 
     while ($row = mysql\_fetch\_array($result)) {
        extract $row;
        $datetime \*= 1000; // convert from Unix timestamp to JavaScript time
-       $data[\] = "[$datetime, $value\]";
+       $data[] = "[$datetime, $value]";
     }
     ?>
     var chart = new Highcharts.Chart({
@@ -41,8 +41,8 @@ Say you have a datetime x axis and irregular intervals between the points. Then 
              renderTo: 'container'
           },
           series: [{
-             data: [<?php echo join($data, ',') ?>\]
-          }\]
+             data: [<?php echo join($data, ',') ?>]
+          }]
     });
 
 As an alternative to this low-level approach, also consider [json\_encode](http://php.net/manual/en/function.json-encode.php) for writing the entire options structure in PHP.

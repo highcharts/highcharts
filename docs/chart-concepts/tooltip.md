@@ -58,15 +58,15 @@ Crosshairs can be enabled for the x-axis, y-axis or both:
     
     // Enable for x-axis only
     tooltip: {
-        crosshairs: [true\]
+        crosshairs: [true]
     }
     
     // Enable for y-axis only
     tooltip: {
-        crosshairs: [false, true\]
+        crosshairs: [false, true]
     }
     
     // Enable for both axes
     tooltip: {
-        crosshairs: [true,true\]
+        crosshairs: [true,true]
     }

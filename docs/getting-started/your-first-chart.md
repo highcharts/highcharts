@@ -23,7 +23,7 @@ We will start off by creating a simple bar chart.
                     text: 'Fruit Consumption'
                 },
                 xAxis: {
-                    categories: ['Apples', 'Bananas', 'Oranges'\]
+                    categories: ['Apples', 'Bananas', 'Oranges']
                 },
                 yAxis: {
                     title: {
@@ -32,11 +32,11 @@ We will start off by creating a simple bar chart.
                 },
                 series: [{
                     name: 'Jane',
-                    data: [1, 0, 4\]
+                    data: [1, 0, 4]
                 }, {
                     name: 'John',
-                    data: [5, 7, 3\]
-                }\]
+                    data: [5, 7, 3]
+                }]
             });
         });
     ```
@@ -53,7 +53,7 @@ We will start off by creating a simple bar chart.
                 series: [{
                     name: 'USD to EUR',
                     data: usdtoeur // predefined JavaScript array
-               }\]
+               }]
            });  
         });
     ```

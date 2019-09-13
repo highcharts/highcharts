@@ -31,7 +31,7 @@ An example of using defs is to apply a gradient: 
             }, {
                 tagName: 'stop',
                 offset: 1
-            }\]
+            }]
         }  
     }  
       

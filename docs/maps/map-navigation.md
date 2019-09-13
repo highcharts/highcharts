@@ -7,7 +7,7 @@ Please note that mapNavigation is disabled by default because the implementer sh
 
 ### Buttons
 
-Two buttons, [+\] and [-\], are by default shown on each map when navigation is enabled. These provide zooming in and zooming out.
+Two buttons, [+] and [-], are by default shown on each map when navigation is enabled. These provide zooming in and zooming out.
 
 ### Multitouch
 

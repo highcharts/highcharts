@@ -33,8 +33,8 @@ Next up is adding the a series with type venn where the configurations and data 
     Highcharts.chart('container', {
         series: [{
             type: 'venn',
-            data: [/\* Series data \*/\]
-        }\]
+            data: [/\* Series data \*/]
+        }]
     });
 
 The following data will create two sets A and B, where both sets will have a proportional area of size 2.
@@ -42,18 +42,18 @@ The following data will create two sets A and B, where both sets will have a pro
     
     // Series data
         data: [{
-            sets: ['A'\],
+            sets: ['A'],
             value: 2
         }, {
-            sets: ['B'\],
+            sets: ['B'],
             value: 2
-        }\]
+        }]
 
 So far there is no relationship between the two sets, and the current data will create two seperated circles for A and B. Another data point can be added to define the relationship between A and B. The following point will define an intersection between A and B, where the area of overlap will have a size of 1.
 
     
     {
-        sets: ['A', 'B'\],
+        sets: ['A', 'B'],
         value: 1
     }
 
@@ -65,17 +65,17 @@ In the following example A and B will be named as Apples and Bananas, while the 
     // Series data
             data: [{
                 name: 'Apples',
-                sets: ['A'\],
+                sets: ['A'],
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: ['B'\],
+                sets: ['B'],
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: ['A', 'B'\],
+                sets: ['A', 'B'],
                 value: 1
-            }\]
+            }]
 
 The final visualization should now display a venn diagram of the relation between Apples and Bananas.
 
@@ -89,18 +89,18 @@ Its configuration should in full look as the following.
             type: 'venn',
             data: [{
                 name: 'Apples',
-                sets: ['A'\],
+                sets: ['A'],
                 value: 2
             }, {
                 name: 'Bananas',
-                sets: ['B'\],
+                sets: ['B'],
                 value: 2
             }, {
                 name: 'Fruits',
-                sets: ['A', 'B'\],
+                sets: ['A', 'B'],
                 value: 1
-            }\]
-        }\]
+            }]
+        }]
     });
 
 **Relevant features and options**

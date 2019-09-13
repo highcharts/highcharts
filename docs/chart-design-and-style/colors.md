@@ -23,9 +23,9 @@ Linear gradients in Highcharts have a similar syntax to that of SVG:
     color: {
         linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
         stops: [
-            [0, '#003399'\],
-            [1, '#3366AA'\]
-        \]
+            [0, '#003399'],
+            [1, '#3366AA']
+        ]
     }
 
 The color is given as an object literal containing two properties:
@@ -46,9 +46,9 @@ Since Highcharts 2.3 radial gradients have been supported. They have a similar s
     color: {
         radialGradient: { cx: 0.5, cy: 0.5, r: 0.5 },
         stops: [
-           [0, '#003399'\],
-           [1, '#3366AA'\]
-        \]
+           [0, '#003399'],
+           [1, '#3366AA']
+        ]
     }
 
 The color is given as an object literal containing two properties:

@@ -48,13 +48,13 @@ There are two ways to add the bubble legend to the chart:
         },
         series: [{
             data: [
-                [9, 81, 63\],
-    	[98, 5, 89\],
-    	[51, 50, 73\],
-    	[41, 22, 14\],
-    	[58, 24, 20\]
-            \]
-        }\]
+                [9, 81, 63],
+    	[98, 5, 89],
+    	[51, 50, 73],
+    	[41, 22, 14],
+    	[58, 24, 20]
+            ]
+        }]
     }
 
 **2\. Custom**: with manually defined ranges. Bubbles are calculated based on `ranges`, `minSize`, and `maxSize`, bubble series dimensions are not included.
@@ -73,20 +73,20 @@ There are two ways to add the bubble legend to the chart:
                     value: 14
                 }, {
                     value: 89
-                }\]
+                }]
             }
         },
         series: [{
             minSize: 20,
             maxSize: 60,
             data: [
-                [9, 81, 63\],
-    	[98, 5, 89\],
-    	[51, 50, 73\],
-    	[41, 22, 14\],
-    	[58, 24, 20\]
-            \]
-        }\]
+                [9, 81, 63],
+    	[98, 5, 89],
+    	[51, 50, 73],
+    	[41, 22, 14],
+    	[58, 24, 20]
+            ]
+        }]
     }
 
 API document

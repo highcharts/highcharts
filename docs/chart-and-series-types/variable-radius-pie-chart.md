@@ -51,8 +51,8 @@ Here are the steps to create a variable radius pie chart:
             }, {
                 y: 357022,
                 z: 5
-            }\]
-        }\]
+            }]
+        }]
     
 
 Variable pie series specific options
