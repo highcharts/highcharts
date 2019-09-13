@@ -1002,6 +1002,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options = merge(chart.options, chartOptions);
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(chart.userOptions.plotOptions, chartOptions && chartOptions.plotOptions);
+        // ... and likewise with time, avoid that undefined time properties are
+        // merged over legacy global time options
+        options.time = merge(chart.userOptions.time, chartOptions && chartOptions.time);
         // create a sandbox where a new chart will be generated
         sandbox = createElement('div', null, {
             position: 'absolute',
