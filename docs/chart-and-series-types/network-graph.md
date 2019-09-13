@@ -10,31 +10,33 @@ Add `modules/networkgraph.js` after you have included Highcharts.
 
 _Example of loading both files in a webpage_
 
-    
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/gantt/modules/networkgraph.js"></script> 
+```html
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/gantt/modules/networkgraph.js"></script> 
+```
 
 Data format
 -----------
 
 The Network Graph needs a data format that builds up an array of links, where each link is specified by a `start` and an `end` node.
 
-    
-     `{
-      series: [{ 
-        data: [
-                {from: 'A', to: 'B'},
-                {from: 'A', to: 'C'},
-                {from: 'A', to: 'D'},
-                {from: 'A', to: 'E'},
-                {from: 'A', to: 'F'},
-                {from: 'A', to: 'G'},
-    
-                {from: 'B', to: 'C'},
-                .....
-                 ]
-           }] 
-        }` 
+```js
+    {
+    series: [{ 
+    data: [
+            {from: 'A', to: 'B'},
+            {from: 'A', to: 'C'},
+            {from: 'A', to: 'D'},
+            {from: 'A', to: 'E'},
+            {from: 'A', to: 'F'},
+            {from: 'A', to: 'G'},
+
+            {from: 'B', to: 'C'},
+            .....
+                ]
+        }] 
+    }
+```
     
 
 _See simple Network Graph demo_

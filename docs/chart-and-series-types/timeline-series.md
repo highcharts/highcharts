@@ -12,10 +12,10 @@ Timeline series requires loading both the Highcharts and the `timeline.js` modul
 
 Here is an example for loading Timeline into a webpage:
 
-    
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/timeline.js"></script>
-
+```html
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/timeline.js"></script>
+```
 Data format
 -----------
 

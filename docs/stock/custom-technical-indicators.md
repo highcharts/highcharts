@@ -32,23 +32,24 @@ Each technical indicator requires the method `getValues()` to be implemented. Th
 
 All technical indicators are series types, and to create a new series, in Highcharts, the following method [Highcharts.seriesType()](https://api.highcharts.com/class-reference/Highcharts.html#seriesType) is used.
 
-    
-    <script type="text/javascript" src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
-    
-    Highcharts.seriesType(
-      'linearregression',
-      'sma',
-      {
-        name: 'Linear Regression',
-        params: {} // linear regression doesn’t need params
-      },
-      {
-        getValues: function (series, params) {
-          return this.getLinearRegression(series.xData, series.yData);
-        },
-        getLinearRegression: getLinearRegression
-      }
-    );
+```js
+<script type="text/javascript" src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+
+Highcharts.seriesType(
+  'linearregression',
+  'sma',
+  {
+    name: 'Linear Regression',
+    params: {} // linear regression doesn’t need params
+  },
+  {
+    getValues: function (series, params) {
+      return this.getLinearRegression(series.xData, series.yData);
+    },
+    getLinearRegression: getLinearRegression
+  }
+);
+```
     
 
 The method `getLinearRegression()` includes the technical indicator functionality (mathematical calculation). Notice that the indicators module `indicators.js` is included when creating technical indicators, as it includes the core-logic for all indicators.

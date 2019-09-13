@@ -14,9 +14,10 @@ Getting started
 
 Loading the module `modules/venn.js` will enable the use of `venn` series type. As a module it will require that Highcharts is loaded in advance. The following is an example of how the Venn series can be loaded using the Highcharts CDN. Please see the [Installation article](https://www.highcharts.com/docs/getting-started/installation) for more information on how Highcharts and its modules can be loaded.
 
-    
-    <script href="https://code.highcharts.com/highcharts.js"></script>
-    <script href="https://code.highcharts.com/modules/venn.js"></script> 
+```html
+<script href="https://code.highcharts.com/highcharts.js"></script>
+<script href="https://code.highcharts.com/modules/venn.js"></script> 
+```
 
 ### Creating a venn diagram
 
