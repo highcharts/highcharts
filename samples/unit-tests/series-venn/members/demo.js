@@ -744,3 +744,35 @@ QUnit.module('nelder-mead', () => {
         );
     });
 });
+
+QUnit.module('geometry-circles', () => {
+    const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
+    QUnit.test('getCirclesIntersectionPolygon', assert => {
+        const { getCirclesIntersectionPolygon } = geometryCircles;
+
+        const circlesNotOverlapping = [
+            { r: 1, x: -1, y: 0 },
+            { r: 1, x: 1, y: 0 }
+        ];
+        assert.deepEqual(
+            getCirclesIntersectionPolygon(circlesNotOverlapping),
+            [],
+            'Should not have an intersection polygon when there is no overlap'
+        );
+
+        const circlesOverlapping = [
+            { r: 4, x: 2, y: 0 },
+            { r: 4, x: -2, y: 0 },
+            { r: 4, x: 0, y: 2 }
+        ];
+        assert.deepEqual(
+            getCirclesIntersectionPolygon(circlesOverlapping),
+            [
+                { indexes: [0, 1], x: 0, y: 3.46410161513775 },
+                { indexes: [0, 2], x: -1.64575131106459, y: -1.64575131106459 },
+                { indexes: [1, 2], x: 1.64575131106459, y: -1.64575131106459 }
+            ],
+            'Should have an intersection polygon consisting of 3 points when 3 circles are overlapping'
+        );
+    });
+});

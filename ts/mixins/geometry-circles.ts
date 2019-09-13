@@ -25,6 +25,9 @@ declare global {
             getCirclesIntersectionPoints(
                 circles: Array<CircleObject>
             ): Array<PositionObject>;
+            getCirclesIntersectionPolygon(
+                circles: Array<CircleObject>
+            ): Array<GeometryObject>;
             getCircularSegmentArea(r: number, h: number): number;
             getOverlapBetweenCircles(r1: number, r2: number, d: number): number;
             isPointInsideAllCircles(
@@ -292,6 +295,25 @@ function isPointOutsideAllCircles(
 }
 
 /**
+ * Calculates the points for the polygon of the intersection area between a set
+ * of circles.
+ *
+ * @private
+ * @param {Array<Highcharts.CircleObject>} circles
+ *        List of circles to calculate polygon of.
+ * @return {Array<Highcharts.GeometryObject>} Return list of points in the
+ * intersection polygon.
+ */
+function getCirclesIntersectionPolygon(
+    circles: Array<Highcharts.CircleObject>
+): Array<Highcharts.GeometryObject> {
+    return getCirclesIntersectionPoints(circles)
+        .filter(function (p: Highcharts.PositionObject): boolean {
+            return isPointInsideAllCircles(p, circles);
+        });
+}
+
+/**
  * Calculate the path for the area of overlap between a set of circles.
  * @todo handle cases with only 1 or 0 arcs.
  * @private
@@ -304,12 +326,7 @@ function isPointOutsideAllCircles(
 function getAreaOfIntersectionBetweenCircles(
     circles: Array<Highcharts.CircleObject>
 ): (Highcharts.GeometryIntersectionObject|undefined) {
-    let intersectionPoints = (
-            getCirclesIntersectionPoints(circles)
-                .filter(function (p: Highcharts.PositionObject): boolean {
-                    return isPointInsideAllCircles(p, circles);
-                })
-        ),
+    let intersectionPoints = getCirclesIntersectionPolygon(circles),
         result: (Highcharts.GeometryIntersectionObject|undefined);
 
     if (intersectionPoints.length > 1) {
@@ -423,6 +440,7 @@ const geometryCircles: Highcharts.GeometryCircleMixin = {
     getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection,
     getCirclesIntersectionPoints,
+    getCirclesIntersectionPolygon,
     getCircularSegmentArea,
     getOverlapBetweenCircles,
     isPointInsideCircle,
