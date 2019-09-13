@@ -169,6 +169,7 @@ declare global {
             ): void;
             public getLabelConfig(): PointLabelObject;
             public getZone(): PlotSeriesZonesOptions;
+            public hasNewShapeType (this: Point): boolean|undefined;
             public init(
                 series: Series,
                 options: PointOptionsType,
@@ -1036,6 +1037,19 @@ Highcharts.Point.prototype = {
         }
 
         return zone;
+    },
+
+    /**
+     * Utility to check if point has new shape type. Used in column series and
+     * all others that are based on column series.
+     *
+     * @return boolean|undefined
+     */
+    hasNewShapeType: function (
+        this: Highcharts.Point
+    ): boolean|undefined {
+        return this.graphic &&
+            this.graphic.element.nodeName !== this.shapeType;
     },
 
     /**

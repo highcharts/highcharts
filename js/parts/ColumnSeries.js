@@ -761,8 +761,7 @@ seriesType('column', 'line',
                 shapeArgs = point.shapeArgs;
                 // When updating a series between 2d and 3d or cartesian and
                 // polar, the shape type changes.
-                if (graphic &&
-                    graphic.element.nodeName !== point.shapeType) {
+                if (graphic && point.hasNewShapeType()) {
                     graphic = graphic.destroy();
                 }
                 if (graphic) { // update

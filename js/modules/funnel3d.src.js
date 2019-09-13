@@ -303,7 +303,11 @@ seriesType('funnel3d', 'column',
         seriesTypes.column.prototype.alignDataLabel.apply(series, arguments);
     }
 }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
-    shapeType: 'funnel3d'
+    shapeType: 'funnel3d',
+    hasNewShapeType: H
+        .seriesTypes.column.prototype
+        .pointClass.prototype
+        .hasNewShapeType
 });
 /**
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
