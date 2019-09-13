@@ -22,21 +22,22 @@ The following example uses jQuery for convenience to run the ajax feature. It sh
 
 1.  **Set up the server.** In this case, we have a simple PHP script returning a JavaScript array with the JavaScript time and a random y value. This is the contents of the [live-server-data.php](studies/live-server-data.php) file:
 
-    
-    <?php
-    // Set the JSON header
-    header("Content-type: text/json");
-    
-    // The x value is the current JavaScript time, which is the Unix time multiplied   
-    // by 1000.
-    $x = time() * 1000;
-    // The y value is a random number
-    $y = rand(0, 100);
-    
-    // Create a PHP array and echo it as JSON
-    $ret = array($x, $y);
-    echo json_encode($ret);
-    ?>
+```php
+<?php
+// Set the JSON header
+header("Content-type: text/json");
+
+// The x value is the current JavaScript time, which is the Unix time multiplied   
+// by 1000.
+$x = time() * 1000;
+// The y value is a random number
+$y = rand(0, 100);
+
+// Create a PHP array and echo it as JSON
+$ret = array($x, $y);
+echo json_encode($ret);
+?>
+```
     
 
 2.  **Define the chart variable globally**, as we want to access it both from the document ready function and our requestData funcion. If the chart variable is defined inside the document ready callback function, it will not be available in the global scope later.
