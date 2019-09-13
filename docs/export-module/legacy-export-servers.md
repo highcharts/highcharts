@@ -8,7 +8,7 @@ Previously we had two older varieties of servers to choose from; these export se
 1.  The Java and PhantomJS-based server, which also supports server-side rendering of charts
 2.  PHP and Batik-based
 
-### 1\. Export server based on Java and PhantomJS
+### 1. Export server based on Java and PhantomJS
 
 This solution also includes a standalone solution for creating charts on the server, without a client involved. Highcharts is using this export server at export.highcharts.com, the default Highcharts export server. It's a server which is desgined with a large network load in mind. Requests to this server are concurrently handled by an serverpool.
 
@@ -102,7 +102,7 @@ Upload/copy this to the application server. You're done with setting up the high
 
 By default WebLogic registers its own `URLStreamHandler to handle http` URLs. This results in that the Connection silently returns and empty files being returned from the server. The solution is to get in a reference to Java's default `URLStreamHandler` instead of the one from WebLogic. Follow these steps
 
-1\. Alter this file: highcharts-export\\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java
+1. Alter this file: highcharts-export\\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java
 
 Change line 94,95 from
 
@@ -116,12 +116,12 @@ to
     sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();  
     URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
 
-2\. Goto the folder java/highcharts-export  
-3\. Update your local maven repository, Run: `mvn install`  
-4\. Goto the folder java/highcharts-export/highcharts-export-web  
-5\. Create the .war file, Run: `mvn clean package`
+2. Goto the folder java/highcharts-export  
+3. Update your local maven repository, Run: `mvn install`  
+4. Goto the folder java/highcharts-export/highcharts-export-web  
+5. Create the .war file, Run: `mvn clean package`
 
-### 2\. EXPORT SERVER BASED ON PHP AND BATIK
+### 2. EXPORT SERVER BASED ON PHP AND BATIK
 
 Note that this export server omits server-side rendering. It can be used (only) to convert SVG files to images and PDF.
 
@@ -148,6 +148,6 @@ If for any reason the export-server fails to export images, then consider pastin
     echo "Output: $output";  
     die;
 
-### 3\. Other solutions
+### 3. Other solutions
 
 As an ASP.NET alternative to our Java/PHP based server module, Clément Agarini has kindly shared his [export module for ASP.NET](https://github.com/imclem/Highcharts-export-module-asp.net).

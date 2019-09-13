@@ -6,14 +6,14 @@ There are basically two ways of working with a live data feed from the server in
 1.  Use the **data module and polling**. This is the simple, configuration-only way.
 2.  Set up your own data connection and use Highcharts' **API methods** to keep the chart updated. This allows for more programmatic control.
 
-1\. Data module and polling
+1. Data module and polling
 ---------------------------
 
 This feature was introduced in v6.1. The [data module](https://www.highcharts.com/docs/working-with-data/data-module) can load data directly from files and services online, and keep the chart updated by polling the server periodically. The chart can load data through one of the [data.csv](https://api.highcharts.com/highcharts/data.csv), [data.rows](https://api.highcharts.com/highcharts/data.rows), [data.columns](https://api.highcharts.com/highcharts/data.columns) or [data.googleSpreadsheetKey](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) options, and keep it updated by setting [data.enablePolling](https://api.highcharts.com/highcharts/data.enablePolling) to true. This feature also supports flexibility to the data structure. Data points can be shifted, typically old data points removed and new ones added, and the chart will animate to visualize what changed. A benefit of using this feature is that it is purely declarative, which makes it a good match for graphical user interfaces where chart editors set up a chart based on known sources.
 
 <iframe width="320" height="240" style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/highcharts/data/livedata-columns/></iframe>
 
-2\. API methods
+2. API methods
 ---------------
 
 If the declarative live charts don't cut it, you can set up your own data connection. After a chart has been defined by the configuration object, optionally preprocessed and finally initialized and rendered using Highcharts.chart(), we have the opportunity to alter the chart using a toolbox of API methods. The chart, axis, series and point objects have a range of methods like update, remove, [addSeries](http://api.highcharts.com/highcharts/Chart.addSeries), [addPoint](http://api.highcharts.com/highcharts/Series.addPoint) and so on. The complete list can be seen in [class reference](https://api.highcharts.com/class-reference)

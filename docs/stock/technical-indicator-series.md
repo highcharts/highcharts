@@ -128,7 +128,7 @@ yAxis bindigs
 
 Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Points, Price Envelopes, PSAR, SMA, VbP, VWAP, WMA, Zig Zag) can be placed on the same yAxis as the main series. However, other indicators (A/D, ATR, CCI, CMF, MACD, MFI, Momentum, RoC, RSI, Stochastic) should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:
 
-1\. Create required yAxis:
+1. Create required yAxis:
 
     
     yAxis: [{
@@ -141,7 +141,7 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
     }]
     
 
-2\. Bind indicator to this yAxis:
+2. Bind indicator to this yAxis:
 
     
     series: [{

@@ -13,7 +13,7 @@ There are two main steps to create a technical indicator series:
 1.  Set up the technical indicator structure.
 2.  Create the technical indicator functionality.
 
-### 1\. Set up the structure
+### 1. Set up the structure
 
 Each technical indicator requires the method `getValues()` to be implemented. This method takes two arguments and returns an object. The arguments are the main series and the parameters. The parameters are specific to a technical indicator. Check the structure of the method `getValue()`:
 
@@ -55,7 +55,7 @@ The method `getLinearRegression()` includes the technical indicator functionalit
 
 Now the structure is set, the next step is to create the main indicator functionality.
 
-### 2\. Technical indicator functionality
+### 2. Technical indicator functionality
 
 The technical indicator functionality is represented by the following method `getLinearRegression()`, that calculates the regression points according to xData and yData.
 

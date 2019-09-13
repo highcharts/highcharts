@@ -18,9 +18,9 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
 
 **Two steps are required to create a bell curve:**
 
-1\. Set the series `type` to `bellcurve`.
+1. Set the series `type` to `bellcurve`.
 
-2\. Set `baseSeries` to the right data series’ `id` or `index`.
+2. Set `baseSeries` to the right data series’ `id` or `index`.
 
     
         series: [{

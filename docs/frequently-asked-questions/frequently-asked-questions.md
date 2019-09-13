@@ -117,12 +117,12 @@ My non-English characters don't display right in my charts
 
 If you're using German umlauts, Scandinavian vowels or non-European alphabets, you need to use UTF-8 encoding for your files. There are two ways of doing this.
 
-1\. Make sure your HTML page where your charts are defined, is UTF-8. The file itself and if applicable its database content must be encoded as UTF-8. Additionally, either the `content-type` HTTP header or the corresponding meta tag must reflect this:
+1. Make sure your HTML page where your charts are defined, is UTF-8. The file itself and if applicable its database content must be encoded as UTF-8. Additionally, either the `content-type` HTTP header or the corresponding meta tag must reflect this:
 
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-2\. If you don't have access to change your whole HTML file, you can define your charts in a separate JS file that has UTF-8 encoding. 
+2. If you don't have access to change your whole HTML file, you can define your charts in a separate JS file that has UTF-8 encoding. 
 
     
     <script src="charts.js" charset="UTF-8"></script>

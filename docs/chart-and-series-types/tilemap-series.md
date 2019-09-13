@@ -56,13 +56,13 @@ Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/
 Tips
 ----
 
-1\. The orientation of tilemaps can be inverted by using the [chart.inverted](https://api.highcharts.com/highcharts/chart.inverted) option. For more control over offset tile positioning, also see the [xAxis.reversed](https://api.highcharts.com/highcharts/xAxis.reversed) and [yAxis.reversed](https://api.highcharts.com/highcharts/yAxis.reversed) options.
+1. The orientation of tilemaps can be inverted by using the [chart.inverted](https://api.highcharts.com/highcharts/chart.inverted) option. For more control over offset tile positioning, also see the [xAxis.reversed](https://api.highcharts.com/highcharts/xAxis.reversed) and [yAxis.reversed](https://api.highcharts.com/highcharts/yAxis.reversed) options.
 
 <iframe width="320" height="240" style="width: 100%; height: 590px; border: none;" src=https://www.highcharts.com/samples/embed/maps/demo/honeycomb-usa></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/honeycomb-usa/) to check the code.
 
-2\. The spacing between points in tilemaps can be controlled with the [series.pointPadding](http://api.highcharts.com/highmaps/plotOptions.tilemap.pointPadding) option. Point padding can also be set per [point](http://api.highcharts.com/highmaps/series.tilemap.data.pointPadding).
+2. The spacing between points in tilemaps can be controlled with the [series.pointPadding](http://api.highcharts.com/highmaps/plotOptions.tilemap.pointPadding) option. Point padding can also be set per [point](http://api.highcharts.com/highmaps/series.tilemap.data.pointPadding).
 
 <iframe width="320" height="240" style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/maps/plotoptions/tilemap-pointpadding></iframe>
 

@@ -18,7 +18,7 @@ The histogram series is a column series with no padding between the columns and 
 
 Two steps are required to create an Histogram chart:
 
-1\. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
+1. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
 
     
         series: [{

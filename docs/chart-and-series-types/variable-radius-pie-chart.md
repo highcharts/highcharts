@@ -16,7 +16,7 @@ The variable radius pie series type requires the following module [modules/vari
 
 Here are the steps to create a variable radius pie chart:
 
-1\. set the series type to `variablepie`:
+1. set the series type to `variablepie`:
 
     
      chart: {
@@ -24,7 +24,7 @@ Here are the steps to create a variable radius pie chart:
      },
     
 
-2\. Use Y and Z options in the series to display the volume and the radius for each slice:
+2. Use Y and Z options in the series to display the volume and the radius for each slice:
 
     
     series: [{

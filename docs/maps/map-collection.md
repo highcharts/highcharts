@@ -17,7 +17,7 @@ Using the map collection
 
 In the [map collection reference](http://code.highcharts.com/mapdata/), each map name is followed by a link to an example. View the source of this example to get started. In short, the GeoJSON version of the map is loaded in a script tag in the page. This GeoJSON object is then registered to the Highcharts.maps object, and applied to the mapData option in the chart setup.
 
-1\. Add the map as a JavaScript element:
+1. Add the map as a JavaScript element:
 
     
     <script src\="[http://code.highcharts.com/mapdata/custom/world.js](http://code.highcharts.com/mapdata/custom/world.js)"></script>
@@ -25,7 +25,7 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 You can alternatively link to a specific version or subversion of the map at http://code.highcharts.com/mapdata/**1.1**/custom/world.js. 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
-2\. Load it in `series.mapData`:
+2. Load it in `series.mapData`:
 
     
     mapData: Highcharts.maps['custom/world'],
@@ -35,7 +35,7 @@ Alternatively, you can set the default map for all series with the [`chart.map`]
     
     map: 'custom/world'
 
-3\. Join your data with the map. By default Highmaps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
+3. Join your data with the map. By default Highmaps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
 
     
     data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]

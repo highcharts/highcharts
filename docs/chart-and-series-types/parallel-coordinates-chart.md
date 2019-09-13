@@ -16,7 +16,7 @@ Parallel coordinates chart requires the following module [modules/parallel-coor
 
 Here are the steps to create a parallel coordinates chart:
 
-1\. set `chart.parallelCoordinates` to `true`:
+1. set `chart.parallelCoordinates` to `true`:
 
     
     chart: {
@@ -24,7 +24,7 @@ Here are the steps to create a parallel coordinates chart:
     }
     
 
-2\. Highcharts generates all necessary yAxes according to the dataset, and `xAxis.categories` includes the yAxes’ titles:
+2. Highcharts generates all necessary yAxes according to the dataset, and `xAxis.categories` includes the yAxes’ titles:
 
     
     xAxis: {
@@ -37,7 +37,7 @@ Here are the steps to create a parallel coordinates chart:
     }
     
 
-3\. Each yAxis can be customized separately:
+3. Each yAxis can be customized separately:
 
     
      yAxis: [{
@@ -49,7 +49,7 @@ Here are the steps to create a parallel coordinates chart:
     ]
     
 
-4\. Use “chart.parallelAxes” to set general configurations to all yAxis such as lineWidth, lineColor, etc.
+4. Use “chart.parallelAxes” to set general configurations to all yAxis such as lineWidth, lineColor, etc.
 
     
      

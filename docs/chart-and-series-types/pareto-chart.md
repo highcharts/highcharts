@@ -18,7 +18,7 @@ Pareto chart requires the following module [modules/parallel-coordinates.js](ht
 
 Here are the steps to create a Pareto chart:
 
-1\. Set an additional yAxis, which is assigned only to Pareto series, and visualize points from 0-100% range. As a result the main data and pareto series are transparent.
+1. Set an additional yAxis, which is assigned only to Pareto series, and visualize points from 0-100% range. As a result the main data and pareto series are transparent.
 
     
     yAxis: [{

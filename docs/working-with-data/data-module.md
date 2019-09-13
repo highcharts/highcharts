@@ -15,7 +15,7 @@ CSV can be loaded in two ways. Either [data.csv](http://api.highcharts.com/highc
 
 Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](studies/data-module-csv.htm).
 
-1\. **Contents of the CSV file**
+1. **Contents of the CSV file**
 
     
     Categories,Apples,Pears,Oranges,Bananas
@@ -24,7 +24,7 @@ Here's how to load the data using data.csvURL and apply the csv inside a common 
     Joe,86,76,79,77
     Janet,3,16,13,15
 
-2\. **The chart initialization**
+2. **The chart initialization**
 
     
     Highcharts.chart('container', {  

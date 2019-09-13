@@ -175,11 +175,11 @@ Use Cases
 
 ### Use Case 1
 
-1\. Force-approach algorithm.
+1. Force-approach algorithm.
 
 <iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble></iframe>
 
-2\. Configuration
+2. Configuration
 
     
     plotOptions: {
@@ -193,11 +193,11 @@ Use Cases
 
 ### Use Case 2
 
-1\. Force-approach algorithm with split series.
+1. Force-approach algorithm with split series.
 
 <iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split></iframe>
 
-2\. Configuration:
+2. Configuration:
 
     
     plotOptions: {
@@ -214,6 +214,6 @@ Use Cases
 
 ### Use Case 3
 
-1\. 7.0. Spiral packing - simple, fast alternative of the packed bubble, that may be used for more complicated data sets:
+1. 7.0. Spiral packing - simple, fast alternative of the packed bubble, that may be used for more complicated data sets:
 
 <iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral></iframe>

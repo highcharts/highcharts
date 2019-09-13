@@ -34,7 +34,7 @@ Use Cases
 
 There are two ways to add the bubble legend to the chart:
 
-**1\. Automatic**: without defining ranges. Creates three bubbles in the legend, the smallest and the biggest have the same dimensions and value as their counterparts in bubble series (all bubble series are included). The middle bubble has an average value of the other two. If there is only one bubble point on the chart, the bubble legend will also have only one bubble.
+**1. Automatic**: without defining ranges. Creates three bubbles in the legend, the smallest and the biggest have the same dimensions and value as their counterparts in bubble series (all bubble series are included). The middle bubble has an average value of the other two. If there is only one bubble point on the chart, the bubble legend will also have only one bubble.
 
     
     {
@@ -57,7 +57,7 @@ There are two ways to add the bubble legend to the chart:
         }]
     }
 
-**2\. Custom**: with manually defined ranges. Bubbles are calculated based on `ranges`, `minSize`, and `maxSize`, bubble series dimensions are not included.
+**2. Custom**: with manually defined ranges. Bubbles are calculated based on `ranges`, `minSize`, and `maxSize`, bubble series dimensions are not included.
 
     
     {
