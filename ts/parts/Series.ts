@@ -411,16 +411,16 @@ declare global {
         interface SeriesStatesOptionsObject<TSeries extends Series> {
             hover?: (
                 SeriesStatesHoverOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
             inactive?: (
                 SeriesStatesInactiveOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
-            normal?: Omit<TSeries['options'], ('states'|'data')>;
+            normal?: SeriesStateOptionsObject<TSeries>;
             select?: (
                 SeriesStatesHoverOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
         }
         interface SeriesTypesDictionary {
@@ -432,6 +432,9 @@ declare global {
         type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
+        type SeriesStateOptionsObject<TSeries extends Series> = (
+            Omit<TSeries['options'], ('states'|'data')>
+        );
     }
 }
 
