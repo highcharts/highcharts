@@ -2741,7 +2741,7 @@ null,
             // loops are similar, they are repeated inside each if-else
             // conditional for max performance.
             if (turboThreshold && dataLength > turboThreshold) {
-                firstPoint = series.getFirstNotNullPoint(data);
+                firstPoint = series.getFirstValidPoint(data);
                 if (isNumber(firstPoint)) { // assume all points are numbers
                     for (i = 0; i < dataLength; i++) {
                         xData[i] = this.autoIncrement();
@@ -3135,13 +3135,13 @@ null,
      * Find and return the first non null point in the data
      *
      * @private
-     * @function Highcharts.Series.getFirstNotNullPoint
+     * @function Highcharts.Series.getFirstValidPoint
      * @param {Array<Highcharts.PointOptionsType>} data
      *        Array of options for points
      *
      * @return {Highcharts.PointOptionsType}
      */
-    getFirstNotNullPoint: function (data) {
+    getFirstValidPoint: function (data) {
         var firstPoint = null, dataLength = data.length, i = 0;
         while (firstPoint === null && i < dataLength) {
             firstPoint = data[i];
