@@ -1,5 +1,11 @@
 QUnit.test('Draggable annotation - exporting', function (assert) {
-    var chart = Highcharts.chart('container', {
+    var firedEvents = {
+            add: false,
+            afterUpdate: false,
+            drag: false,
+            remove: false
+        },
+        chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'xy'
             },
@@ -13,6 +19,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
                 data: [3, 6]
             }],
             annotations: [{
+                id: 'first',
                 labels: [{
                     point: {
                         xAxis: 0,
@@ -22,7 +29,21 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
                     },
                     y: 0,
                     text: 'Annotation'
-                }]
+                }],
+                events: {
+                    add: () => {
+                        firedEvents.add = true;
+                    },
+                    afterUpdate: () => {
+                        firedEvents.afterUpdate = true;
+                    },
+                    drag: () => {
+                        firedEvents.drag = true;
+                    },
+                    remove: () => {
+                        firedEvents.remove = true;
+                    }
+                }
             }, {
                 shapes: [{
                     point: {
@@ -94,6 +115,18 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
                 axis.max,
                 oldExtremes[i].max,
                 axis.coll + '.max unchanged after drag&drop (#11801)'
+            );
+        }
+    );
+
+    chart.removeAnnotation('first');
+
+    ['add', 'afterUpdate', 'drag', 'remove'].forEach(
+        eventName => {
+            assert.strictEqual(
+                firedEvents[eventName],
+                true,
+                eventName + ' should be fired (#11970)'
             );
         }
     );

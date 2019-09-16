@@ -191,7 +191,7 @@ declare global {
             ): void;
             public setOptions(
                 itemOptions: SeriesOptionsType
-            ): SeriesOptionsType;
+            ): this['options'];
             public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(data: Array<PointOptionsType>): boolean;
@@ -3074,10 +3074,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {Highcharts.SeriesOptionsType}
          * @fires Highcharts.Series#event:afterSetOptions
          */
-        setOptions: function (
-            this: Highcharts.Series,
+        setOptions: function <TSeries extends Highcharts.Series> (
+            this: TSeries,
             itemOptions: Highcharts.SeriesOptionsType
-        ): Highcharts.SeriesOptionsType {
+        ): TSeries['options'] {
             var chart = this.chart,
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
