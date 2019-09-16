@@ -349,14 +349,17 @@ seriesType('column', 'line',
             borderColor: '${palette.neutralColor100}'
         }
     },
+    /**
+     * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
+     * @default {"formatter": function () { return this.y; }, "padding": 5,
+     *          "style": {"color": "contrast", "fontSize": "11px",
+     *          "fontWeight": "bold", "textOutline": "1px contrast"},
+     *          "x": 0}.
+     */
     dataLabels: {
-        /**
-         * @internal
-         */
+        /** @internal */
         align: null,
-        /**
-         * @internal
-         */
+        /** @internal */
         verticalAlign: null,
         /** @internal */
         y: null

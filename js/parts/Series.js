@@ -1590,6 +1590,10 @@ null,
      *         Multiple data labels on a bar series
      *
      * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
+     * @default {"align": "center", "formatter": function () { return this.y; }, "padding": 5,
+     *          "style": {"color": "contrast", "fontSize": "11px",
+     *          "fontWeight": "bold", "textOutline": "1px contrast"},
+     *          "verticalAlign": "bottom", "x": 0, "y": 0}
      *
      * @private
      */
