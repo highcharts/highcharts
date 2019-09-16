@@ -667,14 +667,6 @@ module.exports = function (config) {
 function createVisualTestTemplate(argv, path, js, assertion) {
     let scriptBody = resolveJSON(js);
 
-    let afterEach = 'undefined';
-    if (fs.existsSync(`samples/${path}/aftereach.js`)) {
-        afterEach = fs.readFileSync(`samples/${path}/aftereach.js`, 'utf8');
-        afterEach = `function () {
-            ${afterEach}
-        }`;
-    }
-
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
@@ -728,7 +720,6 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                         done();
                     `}
                     assert.test.resets = ${resets};
-                    assert.test.sampleAfterEach = ${afterEach};
                 } else if (attempts < 50) {
                     setTimeout(waitForChartToLoad, 100);
                     attempts++;
@@ -739,7 +730,6 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                     );
                     done();
                     assert.test.resets = ${resets};
-                    assert.test.sampleAfterEach = ${afterEach};
                 }
             }
             waitForChartToLoad();
