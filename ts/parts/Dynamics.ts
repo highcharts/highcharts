@@ -377,8 +377,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (isColorAxis) {
             this.isDirtyLegend = true;
+
+            // Clear before 'bindAxes' (#11924)
+            this.axes.forEach(function (axis: Highcharts.Axis): void {
+                axis.series = [];
+            });
+
             this.series.forEach(function (series: Highcharts.Series): void {
                 series.bindAxes();
+                series.isDirtyData = true;
             });
         }
 

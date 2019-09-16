@@ -85,7 +85,37 @@ Highcharts.setOptions({
         animation: false
     }
 });
+// Save default functions from the default options, as they are not stringified
+// to JSON
+/*
+function handleDefaultOptionsFunctions(save) {
+    var defaultOptionsFunctions = {};
+    function saveDefaultOptionsFunctions(original, path) {
+        Highcharts.objectEach(original, function (value, key) {
+            if (
+                Highcharts.isObject(value, true) &&
+                !Highcharts.isClass(value) &&
+                !Highcharts.isDOMElement(value)
+            ) {
+                // Recurse
+                saveDefaultOptionsFunctions(original[key], (path ? path + '.' : '') + key);
 
+            } else if (save && typeof value === 'function') {
+                defaultOptionsFunctions[path + '.' + key] = value;
+
+            } else if ( // restore
+                !save &&
+                typeof value === 'function'
+            ) {
+                console.log('restore', path + '.' + key)
+                original[key] = defaultOptionsFunctions[path + '.' + key];
+            }
+        });
+    }
+    saveDefaultOptionsFunctions(Highcharts.defaultOptions, '');
+}
+handleDefaultOptionsFunctions(true);
+*/
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
@@ -130,6 +160,7 @@ function resetDefaultOptions(testName) {
     deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
 
     Highcharts.setOptions(defaultOptionsRaw);
+    //handleDefaultOptionsFunctions();
 }
 
 
@@ -137,8 +168,11 @@ function resetDefaultOptions(testName) {
 // prevent the wraps from piling up downstream.
 var origWrap = Highcharts.wrap;
 var wrappedFunctions = [];
+var origAddEvent = Highcharts.addEvent;
+var addedEvents = [];
 
 if (window.QUnit) {
+    //QUnit.config.seed = 'vaolebrok';
     /*
      * Compare numbers taking in account an error.
      * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
@@ -188,6 +222,16 @@ if (window.QUnit) {
                 wrappedFunctions.push([ob, prop, ob[prop]]);
                 origWrap(ob, prop, fn);
             };
+
+            // Wrap the addEvent function
+            Highcharts.addEvent = function (el, type, fn, options) {
+                var unbinder = origAddEvent(el, type, fn, options);
+
+                if (typeof el === 'function' && el.prototype) {
+                    addedEvents.push(unbinder);
+                }
+                return unbinder;
+            }
         },
 
         afterEach: function (test) {
@@ -227,6 +271,7 @@ if (window.QUnit) {
                 }
                 if (currentChart.template) {
                     templateCharts.push(currentChart);
+                    currentChart.renderer.box.isTemplate = true;
                 } else if (currentChart.destroy && currentChart.renderer) {
                     currentChart.destroy();
                 }
@@ -234,6 +279,15 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Renderer samples, no chart instance existed
+            var svgs = document.getElementsByTagName('svg'),
+                i = svgs.length;
+            while (i--) {
+                if (!svgs[i].isTemplate) {
+                    svgs[i].parentNode.removeChild(svgs[i]);
+                }
+            }
 
             // Unwrap/reset wrapped functions
             while (wrappedFunctions.length) {
@@ -245,6 +299,12 @@ if (window.QUnit) {
                 ob[prop] = fn;
             }
             Highcharts.wrap = origWrap;
+
+            // Unbind events and reset addEvent
+            while (addedEvents.length) {
+                addedEvents.pop()();
+            }
+            Highcharts.addEvent = origAddEvent;
 
             if (typeof test.test.sampleAfterEach === 'function') {
                 test.test.sampleAfterEach();

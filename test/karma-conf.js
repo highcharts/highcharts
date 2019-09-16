@@ -240,7 +240,7 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || (os.cpus().length - 1);
+    const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
     if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
@@ -516,7 +516,7 @@ module.exports = function (config) {
                         file.path = file.originalPath + '.preprocessed.js';
                         if (argv.visualcompare) {
                             // QUnit will explode when all tests within a module are skipped. Omitting test instead.
-                            done(`console.log('Not adding test ${path} due to being skipped from demo.html');`);
+                            done(`console.log('Not adding test ${path} due to being skipped from demo.details');`);
                         } else {
                             done(`QUnit.skip('${path}');`);
                         }
@@ -582,6 +582,7 @@ module.exports = function (config) {
                                         0,
                                         'Different pixels\\n' +
                                         '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                        '- samples/${path}/reference.svg\\n' +
                                         '- samples/${path}/diff.gif'
                                     );
                                 }

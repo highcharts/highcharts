@@ -1301,3 +1301,13 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
 });
+
+H.wrap(
+    H.Pointer.prototype,
+    'onContainerMouseDown',
+    function (proceed) {
+        if (!this.chart.hasDraggedAnnotation) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
+    }
+);

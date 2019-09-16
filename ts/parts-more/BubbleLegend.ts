@@ -363,6 +363,7 @@ setOptions({ // Set default bubble legend options
             ranges: {
                 /**
                  * Range size value, similar to bubble Z data.
+                 * @type {number}
                  */
                 value: undefined,
                 /**
