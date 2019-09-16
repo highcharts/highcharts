@@ -21,6 +21,8 @@ declare global {
                 series: Series,
                 params: CciIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
+            public pointClass: typeof CciIndicatorPoint;
+            public points: Array<CciIndicatorPoint>;
             public options: CciIndicatorOptions;
             public yData: Array<Array<number>>;
         }
@@ -112,8 +114,8 @@ seriesType<Highcharts.CciIndicator>(
             series: Highcharts.CciIndicator,
             params: Highcharts.CciIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
-            var period = (params.period as any),
-                xVal = (series.xData as any),
+            var period: number = (params.period as any),
+                xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = series.yData,
                 yValLen: number = yVal ? yVal.length : 0,
                 TP: Array<number> = [],
@@ -128,7 +130,7 @@ seriesType<Highcharts.CciIndicator>(
                 smaTP: number,
                 TPtemp: number,
                 meanDev: number,
-                i: (number|undefined);
+                i: number;
 
             // CCI requires close value
             if (
@@ -146,9 +148,9 @@ seriesType<Highcharts.CciIndicator>(
                 range++;
             }
 
-            for (i = period; (i as any) <= yValLen; (i as any)++) {
+            for (i = period; i <= yValLen; i++) {
 
-                p = yVal[(i as any) - 1];
+                p = yVal[i - 1];
                 TPtemp = (p[1] + p[2] + p[3]) / 3;
                 len = TP.push(TPtemp);
                 periodTP = TP.slice(len - period);
@@ -158,8 +160,8 @@ seriesType<Highcharts.CciIndicator>(
 
                 CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
 
-                CCI.push([xVal[(i as any) - 1], CCIPoint]);
-                xData.push(xVal[(i as any) - 1]);
+                CCI.push([xVal[i - 1], CCIPoint]);
+                xData.push(xVal[i - 1]);
                 yData.push(CCIPoint);
             }
 
