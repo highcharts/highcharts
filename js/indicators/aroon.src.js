@@ -35,7 +35,7 @@ function getExtremeIndexInArray(arr, extreme) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('aroon', 'sma',
+H.seriesType('aroon', 'sma', 
 /**
  * Aroon. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -94,7 +94,7 @@ H.seriesType('aroon', 'sma',
     dataGrouping: {
         approximation: 'averages'
     }
-},
+}, 
 /**
  * @lends Highcharts.Series#
  */
@@ -104,7 +104,7 @@ H.merge(multipleLinesMixin, {
     pointValKey: 'y',
     linesApiNames: ['aroonDown'],
     getValues: function (series, params) {
-        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0,
+        var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
         // 0- date, 1- Aroon Up, 2- Aroon Down
         AR = [], xData = [], yData = [], slicedY, low = 2, high = 1, aroonUp, aroonDown, xLow, xHigh, i;
         // For a N-period, we start from N-1 point, to calculate Nth point
