@@ -28,6 +28,8 @@ declare global {
                 params: BbIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
             public options: BbIndicatorOptions;
+            public pointClass: typeof BbIndicatorPoint;
+            public points: Array<BbIndicatorPoint>;
             public yData: Array<Array<number>>;
         }
 
@@ -197,9 +199,9 @@ H.seriesType<Highcharts.BbIndicator>(
             series: Highcharts.BbIndicator,
             params: Highcharts.BbIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
-            var period = (params.period as any),
-                standardDeviation = (params.standardDeviation as any),
-                xVal = (series.xData as any),
+            var period: number = (params.period as any),
+                standardDeviation: number = (params.standardDeviation as any),
+                xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = series.yData,
                 yValLen: number = yVal ? yVal.length : 0,
                 // 0- date, 1-middle line, 2-top line, 3-bottom line
@@ -220,7 +222,7 @@ H.seriesType<Highcharts.BbIndicator>(
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject
                 ),
-                i: (number|undefined);
+                i: number;
 
             if (xVal.length < period) {
                 return false;
@@ -228,9 +230,9 @@ H.seriesType<Highcharts.BbIndicator>(
 
             isOHLC = isArray(yVal[0]);
 
-            for (i = period; (i as any) <= yValLen; (i as any)++) {
-                slicedX = xVal.slice((i as any) - period, i);
-                slicedY = yVal.slice((i as any) - period, i);
+            for (i = period; i <= yValLen; i++) {
+                slicedX = xVal.slice(i - period, i);
+                slicedY = yVal.slice(i - period, i);
 
                 point = SMA.prototype.getValues.call(
                     this,
