@@ -160,7 +160,13 @@ function resetDefaultOptions(testName) {
     deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
 
     Highcharts.setOptions(defaultOptionsRaw);
-    //handleDefaultOptionsFunctions();
+
+    // Create a new Time instance to avoid state leaks related to time and the
+    // legacy global options
+    Highcharts.time = new Highcharts.Time(Highcharts.merge(
+        Highcharts.defaultOptions.global,
+        Highcharts.defaultOptions.time
+    ));
 }
 
 
