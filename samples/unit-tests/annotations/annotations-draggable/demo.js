@@ -126,7 +126,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
             assert.strictEqual(
                 firedEvents[eventName],
                 true,
-                eventName
+                eventName + ' should be fired (#11970)'
             );
         }
     );
