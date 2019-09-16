@@ -305,6 +305,14 @@ workflows:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
+      - test_visual_diff:
+          name: "Test visual differences and distribute diff log to S3."
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              only: tools/run-visual-tests
+          context: highcharts-staging
       - generate_ts_declarations:
           requires:
             - lint
@@ -355,7 +363,6 @@ workflows:
           filters:
             branches:
               only:
-                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
       - checkout_code
