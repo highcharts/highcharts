@@ -39,7 +39,6 @@ js/modules/**/*.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
 !js/modules/tilemap.src.js
-!js/modules/timeline.src.js
 !js/modules/variable-pie.src.js
 !js/modules/variwide.src.js
 !js/modules/vector.src.js
