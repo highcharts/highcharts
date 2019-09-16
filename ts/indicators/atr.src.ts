@@ -56,7 +56,7 @@ var seriesType = H.seriesType,
  * @private
  */
 function accumulateAverage(
-    points: Array<Array<(number|Array<number>)>>,
+    points: Array<[number, Array<number>]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number
@@ -85,7 +85,7 @@ function getTR(currentPoint: Array<number>, prevPoint: Array<number>): number {
  * @private
  */
 function populateAverage(
-    points: Array<Array<(number|Array<number>)>>,
+    points: Array<[number, Array<number>]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number,
@@ -153,7 +153,7 @@ seriesType<Highcharts.AtrIndicator>(
                 yData: Array<number> = [],
                 point: (Array<number>|undefined),
                 i: (number|undefined),
-                points: Array<Array<(number|Array<number>)>>;
+                points: Array<[number, Array<number>]>;
 
             points = [[xValue, yValue]];
 
