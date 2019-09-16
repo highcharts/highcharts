@@ -5,10 +5,16 @@
  */
 (function (H) {
     // Pass error messages
-    H.ColorAxis.prototype.allowNegativeLog = true;
+    H.addEvent(H.ColorAxis, 'init', function (e) {
+        this.allowNegativeLog = e.userOptions.allowNegativeLog;
+    });
 
     // Override conversions
-    H.ColorAxis.prototype.log2lin = function (num) {
+    H.wrap(H.ColorAxis.prototype, 'log2lin', function (proceed, num) {
+        if (!this.allowNegativeLog) {
+            return proceed.call(this, num);
+        }
+
         var isNegative = num < 0,
             adjustedNum = Math.abs(num),
             result;
@@ -17,8 +23,12 @@
         }
         result = Math.log(adjustedNum) / Math.LN10;
         return isNegative ? -result : result;
-    };
-    H.ColorAxis.prototype.lin2log = function (num) {
+    });
+    H.wrap(H.ColorAxis.prototype, 'lin2log', function (proceed, num) {
+        if (!this.allowNegativeLog) {
+            return proceed.call(this, num);
+        }
+
         var isNegative = num < 0,
             absNum = Math.abs(num),
             result = Math.pow(10, absNum);
@@ -26,7 +36,7 @@
             result = (10 * (result - 1)) / (10 - 1);
         }
         return isNegative ? -result : result;
-    };
+    });
 }(Highcharts));
 
 
@@ -42,7 +52,8 @@ Highcharts.chart('container', {
     },
 
     colorAxis: {
-        type: 'logarithmic'
+        type: 'logarithmic',
+        allowNegativeLog: true
     },
 
     series: [{
