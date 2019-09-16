@@ -322,7 +322,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            firstPoint = this.getFirstNotNullPoint(this.options.data);
+            firstPoint = this.getFirstValidPoint(this.options.data);
             if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
                 H.error(12, false, this.chart);
             }

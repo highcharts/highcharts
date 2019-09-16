@@ -152,7 +152,7 @@ declare global {
                 allowNull?: boolean
             ): Array<Point>;
             public getXExtremes(xData: Array<number>): RangeObject;
-            public getFirstNotNullPoint (
+            public getFirstValidPoint (
                 this: Highcharts.Series,
                 data: Array<PointOptionsType>
             ): PointOptionsType;
@@ -3637,7 +3637,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // conditional for max performance.
                 if (turboThreshold && dataLength > turboThreshold) {
 
-                    firstPoint = series.getFirstNotNullPoint(data);
+                    firstPoint = series.getFirstValidPoint(data);
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
                         for (i = 0; i < dataLength; i++) {
@@ -4186,13 +4186,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * Find and return the first non null point in the data
          *
          * @private
-         * @function Highcharts.Series.getFirstNotNullPoint
+         * @function Highcharts.Series.getFirstValidPoint
          * @param {Array<Highcharts.PointOptionsType>} data
          *        Array of options for points
          *
          * @return {Highcharts.PointOptionsType}
          */
-        getFirstNotNullPoint: function (
+        getFirstValidPoint: function (
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>
         ): Highcharts.PointOptionsType {
