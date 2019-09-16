@@ -3074,10 +3074,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {Highcharts.SeriesOptionsType}
          * @fires Highcharts.Series#event:afterSetOptions
          */
-        setOptions: function <T extends Highcharts.Series> (
-            this: T,
+        setOptions: function <TSeries extends Highcharts.Series> (
+            this: TSeries,
             itemOptions: Highcharts.SeriesOptionsType
-        ): T['options'] {
+        ): TSeries['options'] {
             var chart = this.chart,
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
