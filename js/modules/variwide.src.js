@@ -179,7 +179,7 @@ seriesType('variwide', 'column'
                 }
 
                 point.shapeArgs.x = left;
-                point.shapeArgs.width = right - left;
+                point.shapeArgs.width = Math.max(right - left, 1);
 
                 // Crosshair position (#8083)
                 point.plotX = (left + right) / 2;
