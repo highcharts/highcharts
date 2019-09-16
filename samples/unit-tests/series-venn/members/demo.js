@@ -79,85 +79,6 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
-QUnit.test('getAreaOfCircle', assert => {
-    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
-    const { getAreaOfCircle } = vennPrototype.utils.geometryCircles;
-
-    assert.strictEqual(
-        getAreaOfCircle(1),
-        3.141592653589793,
-        'should have area equal 3.141592653589793 when r = 1.'
-    );
-
-    assert.strictEqual(
-        getAreaOfCircle(3),
-        Math.PI * 3 * 3,
-        'should have area equal 28.274333882308138 when r = 3.'
-    );
-
-    assert.throws(
-        () => getAreaOfCircle(0),
-        new Error('radius of circle must be a positive number.'),
-        'should throw an error when r is zero.'
-    );
-
-    assert.throws(
-        () => getAreaOfCircle(-1),
-        new Error('radius of circle must be a positive number.'),
-        'should throw an error when r is negative.'
-    );
-});
-
-QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getAreaOfIntersectionBetweenCircles =
-            vennPrototype.utils.geometryCircles
-                .getAreaOfIntersectionBetweenCircles;
-
-    assert.deepEqual(
-        getAreaOfIntersectionBetweenCircles([
-            { x: 0, y: 0, r: 3 },
-            { x: 5, y: 0, r: 3 }
-        ]).d,
-        [
-            ['M', 2.5, 1.6583123951777],
-            ['A', 3, 3, 0, 0, 1, 2.5, -1.6583123951777],
-            ['A', 3, 3, 0, 0, 1, 2.5, 1.6583123951777]
-        ],
-        'should return a path representing the area of overlap between the two circles.'
-    );
-
-    assert.deepEqual(
-        getAreaOfIntersectionBetweenCircles([
-            { x: 5.75, y: 0, r: 2.763953195770684 },
-            { x: 3.24, y: 0, r: 1.9544100476116797 }
-        ]).d,
-        [
-            ['M', 3.73409987366425, 1.89092145501881],
-            ['A', 2.763953195770684, 2.763953195770684, 0, 0, 1, 3.73409987366425, -1.89092145501881],
-            ['A', 1.9544100476116797, 1.9544100476116797, 0, 0, 1, 3.73409987366425, 1.89092145501881]
-        ],
-        'should return a path representing the area of overlap between the two circles.'
-    );
-});
-
-QUnit.test('getCenterOfPoints', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getCenterOfPoints =
-            vennPrototype.utils.geometry.getCenterOfPoints;
-
-    assert.deepEqual(
-        getCenterOfPoints([
-            { x: -2, y: 1 },
-            { x: -2, y: 3 },
-            { x: 0, y: 3 },
-            { x: 0, y: 1 }
-        ]),
-        { x: -1, y: 2 },
-        'should return center (-1, 2) when points are [(-2, 1), (-2, 3), (0, 3), (0, 1).'
-    );
-});
-
 QUnit.test('getLabelWidth', assert => {
     const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
 
@@ -198,41 +119,6 @@ QUnit.test('getLabelWidth', assert => {
     );
 });
 
-QUnit.test('getOverlapBetweenCircles', assert => {
-    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
-        { getOverlapBetweenCircles } = vennPrototype.utils.geometryCircles;
-
-    assert.strictEqual(
-        getOverlapBetweenCircles(3, 4, 5),
-        6.64167470270706,
-        'should return 6.64167470270706 when r1=3, r2=4 and d=5.'
-    );
-
-    assert.strictEqual(
-        getOverlapBetweenCircles(8, 6, 1),
-        113.09733552923257,
-        'should return 113.09733552923257 when r1=8, r2=6 and d=1. The circles completely overlaps.'
-    );
-
-    assert.strictEqual(
-        getOverlapBetweenCircles(2.5231325220201604, 3.0901936161855166, 0.7011044346618891),
-        19.68884261304518,
-        'should return 19.68884261304518 when r1=2.5231325220201604, r2=3.0901936161855166 and d=0.7011044346618891.'
-    );
-
-    assert.strictEqual(
-        getOverlapBetweenCircles(2, 3, 6),
-        0,
-        'should return 0 when r1=2, r2=3 and d=6. The circles does not overlap.'
-    );
-
-    assert.strictEqual(
-        getOverlapBetweenCircles(1.9544100476116797, 1.9544100476116797, 0),
-        12,
-        'should return the area of one of the circles when they have equal position and radius.'
-    );
-});
-
 QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
     var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
         { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
@@ -262,127 +148,6 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
         getDistanceBetweenCirclesByOverlap(3, 4, 30),
         0,
         'should return a distance of 0 when r1=3, r2=4, and overlap=30. Complete overlap.'
-    );
-});
-
-QUnit.test('getDistanceBetweenPoints', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getDistanceBetweenPoints = vennPrototype.utils.geometry
-            .getDistanceBetweenPoints;
-
-    assert.strictEqual(
-        getDistanceBetweenPoints({ x: 0, y: 0 }, { x: 2, y: 0 }),
-        2,
-        'should return 2 when points have the coordinates (0,0) and (2, 0).'
-    );
-
-    assert.strictEqual(
-        getDistanceBetweenPoints({ x: -1, y: 1 }, { x: 3, y: 4 }),
-        5,
-        'should return 2 when points have the coordinates (-1,1) and (3, 4).'
-    );
-});
-
-QUnit.test('getCircleCircleIntersection', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getCircleCircleIntersection =
-            vennPrototype.utils.geometryCircles.getCircleCircleIntersection;
-    var a = { x: 0, y: 0, r: 3 };
-    var b = { x: 1, y: 0, r: 1 };
-    var c = { x: 5, y: 0, r: 3 };
-
-    assert.deepEqual(
-        getCircleCircleIntersection(b, c),
-        [],
-        'should return empty array if no overlap.'
-    );
-
-    assert.deepEqual(
-        getCircleCircleIntersection(a, b),
-        [],
-        'should return empty array if circles completely overlap.'
-    );
-
-    assert.deepEqual(
-        getCircleCircleIntersection(a, c),
-        [{ x: 2.5, y: 1.6583123951777 }, { x: 2.5, y: -1.6583123951777 }],
-        'should return (2.5, 1.6583123951777) and (2.5, -1.6583123951777) when c1(0, 0, 3) and c2(5, 0, 3).'
-    );
-});
-
-QUnit.test('getCirclesIntersectionPoints', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getCirclesIntersectionPoints =
-            vennPrototype.utils.geometryCircles.getCirclesIntersectionPoints,
-        circles = [
-            { x: 0, y: 0, r: 3 },
-            { x: 5, y: 0, r: 3 },
-            { x: -3, y: 3, r: 3 }
-        ];
-
-    assert.deepEqual(
-        getCirclesIntersectionPoints(circles),
-        [
-            { x: 2.5, y: 1.6583123951777, indexes: [0, 1] },
-            { x: 2.5, y: -1.6583123951777, indexes: [0, 1] },
-            { x: -3, y: 0, indexes: [0, 2] },
-            { x: 0, y: 3, indexes: [0, 2] }
-        ],
-        'should return a list of all the intersection points between the circles.'
-    );
-});
-
-QUnit.test('getCircularSegmentArea', assert => {
-    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
-        { getCircularSegmentArea } = vennPrototype.utils.geometryCircles;
-
-    assert.strictEqual(
-        getCircularSegmentArea(1, 1),
-        Math.PI / 2,
-        'should return PI/2 when r=1 and h=1 and circle area is equal to PI.'
-    );
-
-    assert.strictEqual(
-        getCircularSegmentArea(1, 2),
-        Math.PI,
-        'should return PI when r=1 and h=2 and circle area is equal to PI.'
-    );
-});
-
-QUnit.test('isPointInsideCircle', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        isPointInsideCircle =
-            vennPrototype.utils.geometryCircles.isPointInsideCircle;
-
-    assert.strictEqual(
-        isPointInsideCircle({ x: 1, y: 1 }, { x: 0, y: 0, r: 3 }),
-        true,
-        'should return true for P(1, 1) and C(0, 0, 3).'
-    );
-
-    assert.strictEqual(
-        isPointInsideCircle({ x: 4, y: 1 }, { x: 0, y: 0, r: 3 }),
-        false,
-        'should return true for P(4, 1) and C(0, 0, 3).'
-    );
-});
-
-QUnit.test('isPointInsideAllCircles', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        isPointInsideAllCircles =
-            vennPrototype.utils.geometryCircles.isPointInsideAllCircles,
-        circles = [{ x: 0, y: 0, r: 3 }, { x: 4, y: 0, r: 3 }];
-
-    assert.strictEqual(
-        isPointInsideAllCircles({ x: 2, y: 0 }, circles),
-        true,
-        'should return true for P(2, 0) and [(0, 0, 3), (4, 0, 3)].'
-    );
-
-    assert.strictEqual(
-        isPointInsideAllCircles({ x: -1, y: 0 }, circles),
-        false,
-        'should return true for P(-1, 0) and [(0, 0, 3), (4, 0, 3)].'
     );
 });
 
@@ -745,8 +510,146 @@ QUnit.module('nelder-mead', () => {
     });
 });
 
+QUnit.module('geometry', () => {
+    const { geometry } = Highcharts.seriesTypes.venn.prototype.utils;
+
+    QUnit.test('getCenterOfPoints', function (assert) {
+        const { getCenterOfPoints } = geometry;
+
+        assert.deepEqual(
+            getCenterOfPoints([
+                { x: -2, y: 1 },
+                { x: -2, y: 3 },
+                { x: 0, y: 3 },
+                { x: 0, y: 1 }
+            ]),
+            { x: -1, y: 2 },
+            'should return center (-1, 2) when points are [(-2, 1), (-2, 3), (0, 3), (0, 1).'
+        );
+    });
+
+    QUnit.test('getDistanceBetweenPoints', function (assert) {
+        const { getDistanceBetweenPoints } = geometry;
+
+        assert.strictEqual(
+            getDistanceBetweenPoints({ x: 0, y: 0 }, { x: 2, y: 0 }),
+            2,
+            'should return 2 when points have the coordinates (0,0) and (2, 0).'
+        );
+
+        assert.strictEqual(
+            getDistanceBetweenPoints({ x: -1, y: 1 }, { x: 3, y: 4 }),
+            5,
+            'should return 2 when points have the coordinates (-1,1) and (3, 4).'
+        );
+    });
+});
+
 QUnit.module('geometry-circles', () => {
     const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
+
+    QUnit.test('getAreaOfCircle', assert => {
+        const { getAreaOfCircle } = geometryCircles;
+
+        assert.strictEqual(
+            getAreaOfCircle(1),
+            3.141592653589793,
+            'should have area equal 3.141592653589793 when r = 1.'
+        );
+
+        assert.strictEqual(
+            getAreaOfCircle(3),
+            Math.PI * 3 * 3,
+            'should have area equal 28.274333882308138 when r = 3.'
+        );
+
+        assert.throws(
+            () => getAreaOfCircle(0),
+            new Error('radius of circle must be a positive number.'),
+            'should throw an error when r is zero.'
+        );
+
+        assert.throws(
+            () => getAreaOfCircle(-1),
+            new Error('radius of circle must be a positive number.'),
+            'should throw an error when r is negative.'
+        );
+    });
+    QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
+        const { getAreaOfIntersectionBetweenCircles } = geometryCircles;
+
+        assert.deepEqual(
+            getAreaOfIntersectionBetweenCircles([
+                { x: 0, y: 0, r: 3 },
+                { x: 5, y: 0, r: 3 }
+            ]).d,
+            [
+                ['M', 2.5, 1.6583123951777],
+                ['A', 3, 3, 0, 0, 1, 2.5, -1.6583123951777],
+                ['A', 3, 3, 0, 0, 1, 2.5, 1.6583123951777]
+            ],
+            'should return a path representing the area of overlap between the two circles.'
+        );
+
+        assert.deepEqual(
+            getAreaOfIntersectionBetweenCircles([
+                { x: 5.75, y: 0, r: 2.763953195770684 },
+                { x: 3.24, y: 0, r: 1.9544100476116797 }
+            ]).d,
+            [
+                ['M', 3.73409987366425, 1.89092145501881],
+                ['A', 2.763953195770684, 2.763953195770684, 0, 0, 1, 3.73409987366425, -1.89092145501881],
+                ['A', 1.9544100476116797, 1.9544100476116797, 0, 0, 1, 3.73409987366425, 1.89092145501881]
+            ],
+            'should return a path representing the area of overlap between the two circles.'
+        );
+    });
+
+    QUnit.test('getCircleCircleIntersection', function (assert) {
+        const { getCircleCircleIntersection } = geometryCircles;
+        const a = { x: 0, y: 0, r: 3 };
+        const b = { x: 1, y: 0, r: 1 };
+        const c = { x: 5, y: 0, r: 3 };
+
+        assert.deepEqual(
+            getCircleCircleIntersection(b, c),
+            [],
+            'should return empty array if no overlap.'
+        );
+
+        assert.deepEqual(
+            getCircleCircleIntersection(a, b),
+            [],
+            'should return empty array if circles completely overlap.'
+        );
+
+        assert.deepEqual(
+            getCircleCircleIntersection(a, c),
+            [{ x: 2.5, y: 1.6583123951777 }, { x: 2.5, y: -1.6583123951777 }],
+            'should return (2.5, 1.6583123951777) and (2.5, -1.6583123951777) when c1(0, 0, 3) and c2(5, 0, 3).'
+        );
+    });
+
+    QUnit.test('getCirclesIntersectionPoints', function (assert) {
+        const { getCirclesIntersectionPoints } = geometryCircles;
+        const circles = [
+            { x: 0, y: 0, r: 3 },
+            { x: 5, y: 0, r: 3 },
+            { x: -3, y: 3, r: 3 }
+        ];
+
+        assert.deepEqual(
+            getCirclesIntersectionPoints(circles),
+            [
+                { x: 2.5, y: 1.6583123951777, indexes: [0, 1] },
+                { x: 2.5, y: -1.6583123951777, indexes: [0, 1] },
+                { x: -3, y: 0, indexes: [0, 2] },
+                { x: 0, y: 3, indexes: [0, 2] }
+            ],
+            'should return a list of all the intersection points between the circles.'
+        );
+    });
+
     QUnit.test('getCirclesIntersectionPolygon', assert => {
         const { getCirclesIntersectionPolygon } = geometryCircles;
 
@@ -773,6 +676,89 @@ QUnit.module('geometry-circles', () => {
                 { indexes: [1, 2], x: 1.64575131106459, y: -1.64575131106459 }
             ],
             'Should have an intersection polygon consisting of 3 points when 3 circles are overlapping'
+        );
+    });
+
+    QUnit.test('getCircularSegmentArea', assert => {
+        const { getCircularSegmentArea } = geometryCircles;
+
+        assert.strictEqual(
+            getCircularSegmentArea(1, 1),
+            Math.PI / 2,
+            'should return PI/2 when r=1 and h=1 and circle area is equal to PI.'
+        );
+
+        assert.strictEqual(
+            getCircularSegmentArea(1, 2),
+            Math.PI,
+            'should return PI when r=1 and h=2 and circle area is equal to PI.'
+        );
+    });
+
+    QUnit.test('getOverlapBetweenCircles', assert => {
+        const { getOverlapBetweenCircles } = geometryCircles;
+
+        assert.strictEqual(
+            getOverlapBetweenCircles(3, 4, 5),
+            6.64167470270706,
+            'should return 6.64167470270706 when r1=3, r2=4 and d=5.'
+        );
+
+        assert.strictEqual(
+            getOverlapBetweenCircles(8, 6, 1),
+            113.09733552923257,
+            'should return 113.09733552923257 when r1=8, r2=6 and d=1. The circles completely overlaps.'
+        );
+
+        assert.strictEqual(
+            getOverlapBetweenCircles(2.5231325220201604, 3.0901936161855166, 0.7011044346618891),
+            19.68884261304518,
+            'should return 19.68884261304518 when r1=2.5231325220201604, r2=3.0901936161855166 and d=0.7011044346618891.'
+        );
+
+        assert.strictEqual(
+            getOverlapBetweenCircles(2, 3, 6),
+            0,
+            'should return 0 when r1=2, r2=3 and d=6. The circles does not overlap.'
+        );
+
+        assert.strictEqual(
+            getOverlapBetweenCircles(1.9544100476116797, 1.9544100476116797, 0),
+            12,
+            'should return the area of one of the circles when they have equal position and radius.'
+        );
+    });
+
+    QUnit.test('isPointInsideAllCircles', function (assert) {
+        const { isPointInsideAllCircles } = geometryCircles;
+        const circles = [{ x: 0, y: 0, r: 3 }, { x: 4, y: 0, r: 3 }];
+
+        assert.strictEqual(
+            isPointInsideAllCircles({ x: 2, y: 0 }, circles),
+            true,
+            'should return true for P(2, 0) and [(0, 0, 3), (4, 0, 3)].'
+        );
+
+        assert.strictEqual(
+            isPointInsideAllCircles({ x: -1, y: 0 }, circles),
+            false,
+            'should return true for P(-1, 0) and [(0, 0, 3), (4, 0, 3)].'
+        );
+    });
+
+    QUnit.test('isPointInsideCircle', function (assert) {
+        const { isPointInsideCircle } = geometryCircles;
+
+        assert.strictEqual(
+            isPointInsideCircle({ x: 1, y: 1 }, { x: 0, y: 0, r: 3 }),
+            true,
+            'should return true for P(1, 1) and C(0, 0, 3).'
+        );
+
+        assert.strictEqual(
+            isPointInsideCircle({ x: 4, y: 1 }, { x: 0, y: 0, r: 3 }),
+            false,
+            'should return true for P(4, 1) and C(0, 0, 3).'
         );
     });
 });
