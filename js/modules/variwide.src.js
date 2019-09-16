@@ -264,14 +264,18 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
 addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
 
-    if (!this.horiz && this.variwide && this.options.labels.enabled) {
+    if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
-            return axis.tickPositions.map(function (pos, i) {
-                var label = axis.ticks[pos].label;
+            return axis.tickPositions
+                .filter(function (pos) {
+                    return axis.ticks[pos].label;
+                })
+                .map(function (pos, i) {
+                    var label = axis.ticks[pos].label;
 
-                label.labelrank = axis.zData[i];
-                return label;
-            });
+                    label.labelrank = axis.zData[i];
+                    return label;
+                });
         });
     }
 });
