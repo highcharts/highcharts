@@ -52,7 +52,7 @@ H.extendAnnotation(ElliottWave, CrookedLine,
              */
 
             /**
-             * @ignore-options
+             * @internal
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {

@@ -103,11 +103,11 @@ seriesType(
              * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
              */
             styles: {
-                /** @ignore-options */
+                /** @internal */
                 color: '#0A9AC9',
-                /** @ignore-options */
+                /** @internal */
                 dashStyle: 'LongDash',
-                /** @ignore-options */
+                /** @internal */
                 lineWidth: 1
             }
         },
