@@ -181,7 +181,7 @@ merge(
          *
          * @type {Array<string>}
          */
-        nonDOMEvents: ['add', 'afterUpdate', 'remove'],
+        nonDOMEvents: ['add', 'afterUpdate', 'drag', 'remove'],
 
         /**
          * A basic type of an annotation. It allows to add custom labels
