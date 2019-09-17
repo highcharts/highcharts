@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
@@ -31,7 +34,7 @@ var ContainerComponent = function (chart) {
     this.initBase(chart);
 };
 ContainerComponent.prototype = new AccessibilityComponent();
-H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
+extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.

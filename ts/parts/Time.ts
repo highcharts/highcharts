@@ -15,6 +15,7 @@ import Highcharts from './Globals.js';
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isObject,
     objectEach,
     splat
@@ -146,7 +147,6 @@ declare global {
  */
 
 var H = Highcharts,
-    extend = H.extend,
     merge = H.merge,
     pick = H.pick,
     timeUnits = H.timeUnits,
@@ -640,7 +640,7 @@ Highcharts.Time.prototype = {
 
             // List all format keys. Custom formats can be added from the
             // outside.
-            replacements = H.extend(
+            replacements = extend(
                 {
 
                     // Day

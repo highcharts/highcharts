@@ -55,10 +55,13 @@ declare global {
 }
 
 import U from './Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString,
-    splat = U.splat;
+const {
+    defined,
+    extend,
+    isNumber,
+    isString,
+    splat
+} = U;
 
 import './Chart.js';
 import './Axis.js';
@@ -81,7 +84,6 @@ var addEvent = H.addEvent,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     pick = H.pick,

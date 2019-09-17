@@ -56,6 +56,7 @@ import U from './Utilities.js';
 const {
     attr,
     defined,
+    extend,
     pInt
 } = U;
 
@@ -63,7 +64,6 @@ import './SvgRenderer.js';
 
 var createElement = H.createElement,
     css = H.css,
-    extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,

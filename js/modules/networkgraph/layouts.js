@@ -10,7 +10,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined, extend = U.extend;
 import './integrations.js';
 import './QuadTree.js';
 var pick = H.pick, addEvent = H.addEvent, Chart = H.Chart;
@@ -19,7 +19,7 @@ H.layouts = {
     'reingold-fruchterman': function () {
     }
 };
-H.extend(
+extend(
 /**
  * Reingold-Fruchterman algorithm from
  * "Graph Drawing by Force-directed Placement" paper.

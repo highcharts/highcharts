@@ -83,6 +83,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     objectEach
 } = U;
 
@@ -91,7 +92,6 @@ import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
     doc = H.doc,
-    extend = H.extend,
     merge = H.merge,
     pick = H.pick;
 

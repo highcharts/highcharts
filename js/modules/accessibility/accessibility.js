@@ -37,6 +37,9 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var extend = U.extend;
+
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
@@ -56,7 +59,6 @@ var addEvent = H.addEvent,
     doc = H.win.document,
     pick = H.pick,
     merge = H.merge,
-    extend = H.extend,
     error = H.error;
 
 
@@ -76,7 +78,7 @@ H.AccessibilityComponent = AccessibilityComponent;
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
-H.extend(H.SVGElement.prototype, {
+extend(H.SVGElement.prototype, {
 
     /**
      * @private

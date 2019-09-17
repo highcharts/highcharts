@@ -659,6 +659,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     objectEach,
     splat
@@ -667,7 +668,6 @@ const {
 import './Series.js';
 
 var arrayMax = H.arrayMax,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     noop = H.noop,

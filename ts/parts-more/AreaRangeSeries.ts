@@ -158,6 +158,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isNumber
 } = U;
@@ -167,7 +168,6 @@ import '../parts/Series.js';
 
 var noop = H.noop,
     pick = H.pick,
-    extend = H.extend,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -678,7 +678,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             point = series.points[i];
             point.upperGraphic = point.graphic;
             point.graphic = point.lowerGraphic;
-            H.extend(point, point.origProps as any);
+            extend(point, point.origProps as any);
             delete point.origProps;
             i++;
         }

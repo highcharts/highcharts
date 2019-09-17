@@ -35,6 +35,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    extend,
     objectEach
 } = U;
 
@@ -44,7 +45,6 @@ var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
     doc = H.doc,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     noop = H.noop,
     Pointer = H.Pointer,

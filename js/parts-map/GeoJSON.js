@@ -35,10 +35,11 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var Chart = H.Chart, extend = H.extend, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
+var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.

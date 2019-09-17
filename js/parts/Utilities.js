@@ -1058,7 +1058,7 @@ H.clearTimeout = function (id) {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function (a, b) {
+function extend(a, b) {
     /* eslint-enable valid-jsdoc */
     var n;
     if (!a) {
@@ -1068,7 +1068,7 @@ H.extend = function (a, b) {
         a[n] = b[n];
     }
     return a;
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1111,7 +1111,7 @@ H.css = function (el, styles) {
                 'alpha(opacity=' + (styles.opacity * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 /**
  * Utility function to create an HTML element with attributes and styles.
@@ -1139,7 +1139,7 @@ H.css = function (el, styles) {
 H.createElement = function (tag, attribs, styles, parent, nopad) {
     var el = doc.createElement(tag), css = H.css;
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1171,7 +1171,7 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
 H.extendClass = function (parent, members) {
     var obj = (function () { });
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
 };
 /**
@@ -2246,7 +2246,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
         (el.dispatchEvent || el.fireEvent)) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
         if (el.dispatchEvent) {
             el.dispatchEvent(e);
         }
@@ -2257,7 +2257,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
     else {
         if (!eventArguments.target) {
             // We're running a custom event
-            H.extend(eventArguments, {
+            extend(eventArguments, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -2487,6 +2487,7 @@ var utils = {
     attr: attr,
     defined: defined,
     erase: erase,
+    extend: extend,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,

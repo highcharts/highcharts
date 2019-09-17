@@ -15,6 +15,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber,
     isString,
     splat,
@@ -251,7 +252,6 @@ declare global {
 ''; // separates doclets above from variables below
 
 var doc = H.doc,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     pick = H.pick,

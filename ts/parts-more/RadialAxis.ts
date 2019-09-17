@@ -133,7 +133,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var pInt = U.pInt;
+const {
+    extend,
+    pInt
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Tick.js';
@@ -141,7 +144,6 @@ import './Pane.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    extend = H.extend,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,

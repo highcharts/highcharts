@@ -624,6 +624,7 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject
@@ -631,7 +632,6 @@ const {
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     pick = H.pick,

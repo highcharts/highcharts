@@ -62,14 +62,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    extend,
+    isArray
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     pick = H.pick,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     Axis = H.Axis,

@@ -189,15 +189,17 @@ declare global {
 import '../parts/Point.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    objectEach = U.objectEach,
-    splat = U.splat;
+const {
+    defined,
+    extend,
+    objectEach,
+    splat
+} = U;
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
-    extend = H.extend,
     addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,

@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var extend = U.extend,
+    isArray = U.isArray;
 
 // Utils
 function arrayExtremesOHLC(data) {
@@ -235,7 +236,7 @@ seriesType(
                 attr.translateX = series.yAxis.pos;
                 series.group.animate(
                     attr,
-                    H.extend(H.animObject(series.options.animation), {
+                    extend(H.animObject(series.options.animation), {
                         step: function (val, fx) {
                             series.group.attr({
                                 scaleX: Math.max(0.001, fx.pos)

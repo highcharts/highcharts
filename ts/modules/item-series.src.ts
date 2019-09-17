@@ -73,14 +73,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    defined,
+    extend,
+    isNumber,
+    objectEach
+} = U;
 
 import '../parts/Series.js';
 
-var extend = H.extend,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     merge = H.merge,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 

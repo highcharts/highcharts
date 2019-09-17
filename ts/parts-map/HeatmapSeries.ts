@@ -94,7 +94,11 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -466,7 +470,7 @@ seriesType<Highcharts.HeatmapSeries>(
 
         /* eslint-enable valid-jsdoc */
 
-    }), H.extend({
+    }), extend({
 
         /**
          * Heatmap series only. Padding between the points in the heatmap.
