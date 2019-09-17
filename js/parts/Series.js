@@ -4416,14 +4416,14 @@ null,
      * @return {number}
      */
     pointPlacementToXValue: function () {
-        var series = this, pointPlacement = series.options.pointPlacement;
+        var series = this, axis = series.xAxis, pointPlacement = series.options.pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
         if (pointPlacement === 'between') {
-            pointPlacement = 0.5;
+            pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
         }
         if (isNumber(pointPlacement)) {
             pointPlacement *=
-                pick(series.options.pointRange || series.xAxis.pointRange);
+                pick(series.options.pointRange || axis.pointRange);
         }
         return pointPlacement;
     }

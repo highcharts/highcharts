@@ -6119,15 +6119,16 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         pointPlacementToXValue: function (this: Highcharts.Series): number {
 
             var series = this,
+                axis = series.xAxis,
                 pointPlacement = series.options.pointPlacement;
 
             // Point placement is relative to each series pointRange (#5889)
             if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
+                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
             }
             if (isNumber(pointPlacement)) {
                 (pointPlacement as any) *=
-                    pick(series.options.pointRange || series.xAxis.pointRange);
+                    pick(series.options.pointRange || axis.pointRange);
             }
 
             return pointPlacement as any;
