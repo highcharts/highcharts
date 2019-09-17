@@ -17,30 +17,30 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class AOIndicator extends SMAIndicator {
-            public nameBase: string;
             public data: Array<AOIndicatorPoint>;
+            public nameBase: string;
             public nameComponents: Array<string>;
             public options: AOIndicatorOptions;
             public pointClass: typeof AOIndicatorPoint;
             public points: Array<AOIndicatorPoint>;
+            public yData: Array<number>;
+            public crispCol: ColumnSeries['crispCol'];
+            public drawGraph(): void;
+            public drawPoints: ColumnSeries['drawPoints'];
+            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues(
                 series: Series,
             ): (boolean|IndicatorValuesObject);
-            public drawGraph(): void;
-            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public crispCol: ColumnSeries['crispCol'];
             public translate: ColumnSeries['translate'];
-            public drawPoints: ColumnSeries['drawPoints'];
-            public yData: Array<number>;
         }
 
         interface AOIndicatorOptions extends SMAIndicatorOptions {
             greaterBarColor?: ColorString;
-            lowerBarColor?: ColorString;
-            threshold?: number;
             groupPadding?: number;
+            lowerBarColor?: ColorString;
             pointPadding?: number;
             states?: SeriesStatesOptionsObject<AOIndicator>;
+            threshold?: number;
         }
 
         class AOIndicatorPoint extends SMAIndicatorPoint {

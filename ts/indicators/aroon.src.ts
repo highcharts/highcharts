@@ -19,11 +19,13 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
-            public nameBase: string;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
+            public nameBase: string;
             public options: AroonIndicatorOptions;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
             public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
+            public pointClass: typeof AroonIndicatorPoint;
+            public points: Array<AroonIndicatorPoint>;
+            public pointValKey: MultipleLinesMixin['pointValKey'];
             public yData: Array<Array<number>>;
             public drawGraph: MultipleLinesMixin['drawGraph'];
             public getTranslatedLinesNames: MultipleLinesMixin[

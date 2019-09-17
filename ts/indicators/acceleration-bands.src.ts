@@ -16,32 +16,34 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class ABandsIndicator
+            extends SMAIndicator implements MultipleLinesIndicator {
+            public data: Array<ABandsIndicatorPoint>;
+            public getTranslatedLinesNames: MultipleLinesMixin[
+                'getTranslatedLinesNames'
+            ];
+            public linesApiNames: MultipleLinesMixin['linesApiNames'];
+            public options: ABandsIndicatorOptions;
+            public pointClass: typeof ABandsIndicatorPoint;
+            public points: Array<ABandsIndicatorPoint>;
+            public yData: Array<Array<number>>;
+            public getValues(
+                series: Series,
+                params: ABandsIndicatorParamsOptions
+            ): (boolean|IndicatorMultipleValuesObject);
+        }
+
         interface ABandsIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
-            params?: ABandsIndicatorParamsOptions;
-            lineWidth?: number;
-            topLine?: Dictionary<CSSObject>;
             bottomLine?: Dictionary<CSSObject>;
+            lineWidth?: number;
+            params?: ABandsIndicatorParamsOptions;
+            topLine?: Dictionary<CSSObject>;
         }
 
         interface ABandsIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
             factor?: number;
-        }
-
-        class ABandsIndicator
-            extends SMAIndicator implements MultipleLinesIndicator {
-            public options: ABandsIndicatorOptions;
-            public data: Array<ABandsIndicatorPoint>;
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public getTranslatedLinesNames: MultipleLinesMixin[
-                'getTranslatedLinesNames'
-            ];
-            public getValues(
-                series: Series,
-                params: ABandsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
-            public yData: Array<Array<number>>;
         }
 
         class ABandsIndicatorPoint extends SMAIndicatorPoint {
