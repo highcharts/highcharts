@@ -23,6 +23,7 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
+            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: WMAIndicatorParamsOptions
@@ -61,21 +62,16 @@ var seriesType = H.seriesType;
  * @private
  */
 function accumulateAverage(
-    points: Array<Array<(number|null|undefined)>>,
+    points: Array<Array<number>>,
     xVal: Array<number>,
-    yVal: Array<(
-        number|
-        Array<(number|null|undefined)>|
-        null|
-        undefined
-    )>,
+    yVal: Array<Array<number>>,
     i: number,
     index: number
 ): void {
-    var xValue = xVal[i],
-        yValue = index < 0 ? yVal[i] : (yVal[i] as any)[index];
+    var xValue: number = xVal[i],
+        yValue: (number|Array<number>) = index < 0 ? yVal[i] : yVal[i][index];
 
-    points.push([xValue, yValue]);
+    points.push([xValue, (yValue as any)]);
 }
 
 /**
@@ -105,14 +101,9 @@ function weightedSumArray(
  * @private
  */
 function populateAverage(
-    points: Array<Array<(number|null|undefined)>>,
+    points: Array<Array<number>>,
     xVal: Array<number>,
-    yVal: Array<(
-        number|
-        Array<(number|null|undefined)>|
-        null|
-        undefined
-    )>,
+    yVal: Array<Array<number>>,
     i: number
 ): Array<number> {
     var pLen = points.length,
@@ -160,24 +151,22 @@ seriesType<Highcharts.WMAIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.Series,
-            params: Highcharts.Dictionary<(number)>
+            series: Highcharts.WMAIndicator,
+            params: Highcharts.WMAIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<(
-                    number|Array<(number|null|undefined)>|null|undefined
-                )> = (series.yData as any),
+                yVal: Array<Array<number>> = series.yData,
                 yValLen = yVal ? yVal.length : 0,
                 range = 1,
-                xValue = xVal[0],
-                yValue = yVal[0],
+                xValue: number = xVal[0],
+                yValue: (number|Array<number>) = yVal[0],
                 WMA: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index = -1,
                 i: (number|undefined),
-                points: Array<Array<(number|null|undefined)>>,
+                points: Array<Array<number>>,
                 WMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
@@ -186,8 +175,8 @@ seriesType<Highcharts.WMAIndicator>(
 
             // Switch index for OHLC / Candlestick
             if (isArray(yVal[0])) {
-                index = (params.index);
-                yValue = (yVal[0] as any)[index];
+                index = (params.index as any);
+                yValue = yVal[0][index];
             }
             // Starting point
             points = [[xValue, (yValue as any)]];
