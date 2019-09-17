@@ -777,6 +777,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (redraw) {
         var titleOffset = [0, 0, 0], requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
