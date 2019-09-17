@@ -15,32 +15,32 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class CciIndicator extends SmaIndicator {
-            public data: Array<CciIndicatorPoint>;
+        class CCIIndicator extends SmaIndicator {
+            public data: Array<CCIIndicatorPoint>;
             public getValues(
                 series: Series,
-                params: CciIndicatorParamsOptions
+                params: CCIIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-            public pointClass: typeof CciIndicatorPoint;
-            public points: Array<CciIndicatorPoint>;
-            public options: CciIndicatorOptions;
+            public pointClass: typeof CCIIndicatorPoint;
+            public points: Array<CCIIndicatorPoint>;
+            public options: CCIIndicatorOptions;
             public yData: Array<Array<number>>;
         }
 
-        interface CciIndicatorOptions extends SmaIndicatorOptions {
-            params?: CciIndicatorParamsOptions;
+        interface CCIIndicatorOptions extends SmaIndicatorOptions {
+            params?: CCIIndicatorParamsOptions;
         }
 
-        interface CciIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface CCIIndicatorParamsOptions extends SmaIndicatorParamsOptions {
             // declared for inheritance
         }
 
-        class CciIndicatorPoint extends SmaIndicatorPoint {
-            public series: CciIndicator;
+        class CCIIndicatorPoint extends SmaIndicatorPoint {
+            public series: CCIIndicator;
         }
 
         interface SeriesTypesDictionary {
-            cci: typeof CciIndicator;
+            cci: typeof CCIIndicator;
         }
     }
 }
@@ -86,7 +86,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.CciIndicator>(
+seriesType<Highcharts.CCIIndicator>(
     'cci',
     'sma',
     /**
@@ -111,8 +111,8 @@ seriesType<Highcharts.CciIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.CciIndicator,
-            params: Highcharts.CciIndicatorParamsOptions
+            series: Highcharts.CCIIndicator,
+            params: Highcharts.CCIIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
