@@ -25,7 +25,7 @@ H.errorMessages = {
     },
     "12": {
         "title": "Highcharts expects point configuration to be numbers or arrays in turbo mode",
-        "text": "<h1>Highcharts expects point configuration to be numbers or arrays in turbo mode</h1><p>This error occurs if the series.data option contains object configurations and the number of points exceeds the turboThreshold. It can be fixed by either setting <code>turboThreshold</code> to a higher value, or changing the point configurations to numbers or arrays.</p><p>See <a href=\"https://api.highcharts.com/highcharts#plotOptions.series.turboThreshold\">plotOptions.series.turboThreshold</a></p>"
+        "text": "<h1>Highcharts expects point configuration to be numbers or arrays in turbo mode</h1><p>This error occurs if the <code>series.data</code> option contains object configurations and the number of points exceeds the turboThreshold. It can be fixed by either setting <code>turboThreshold</code> to a higher value, or changing the point configurations to numbers or arrays.</p><p>In boost mode, turbo mode is always on, which means only array of numbers or two dimensional arrays are allowed.</p><p>See <a href=\"https://api.highcharts.com/highcharts#plotOptions.series.turboThreshold\">plotOptions.series.turboThreshold</a></p>"
     },
     "13": {
         "title": "Rendering div not found",

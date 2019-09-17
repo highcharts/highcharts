@@ -127,15 +127,19 @@ jobs:
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - run:
-          name: Generate visual references
-          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing assets in S3 location
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing latest references in S3 location
           overwrite: true
-      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+      - run:
+          name: "Upload test results"
+          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
       - <<: *persist_workspace
 
   test_visual_diff:
