@@ -16,7 +16,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class BbIndicator extends SmaIndicator
+        class BBIndicator extends SmaIndicator
             implements MultipleLinesIndicator {
             public data: Array<BbIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
@@ -25,31 +25,31 @@ declare global {
             ];
             public getValues(
                 series: Series,
-                params: BbIndicatorParamsOptions
+                params: BBIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
-            public options: BbIndicatorOptions;
+            public options: BBIndicatorOptions;
             public pointClass: typeof BbIndicatorPoint;
             public points: Array<BbIndicatorPoint>;
             public yData: Array<Array<number>>;
         }
 
-        interface BbIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface BBIndicatorParamsOptions extends SmaIndicatorParamsOptions {
             standardDeviation?: number;
         }
 
         class BbIndicatorPoint extends SmaIndicatorPoint {
-            public series: BbIndicator;
+            public series: BBIndicator;
         }
 
-        interface BbIndicatorOptions extends SmaIndicatorOptions,
+        interface BBIndicatorOptions extends SmaIndicatorOptions,
             MultipleLinesIndicatorOptions {
             bottomLine?: Dictionary<CSSObject>;
-            params?: BbIndicatorParamsOptions;
+            params?: BBIndicatorParamsOptions;
             topLine?: Dictionary<CSSObject>;
         }
 
         interface SeriesTypesDictionary {
-            bb: typeof BbIndicator;
+            bb: typeof BBIndicator;
         }
     }
 }
@@ -100,7 +100,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.BbIndicator>(
+H.seriesType<Highcharts.BBIndicator>(
     'bb',
     'sma',
     /**
@@ -177,7 +177,7 @@ H.seriesType<Highcharts.BbIndicator>(
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],
         linesApiNames: ['topLine', 'bottomLine'],
-        init: function (this: Highcharts.BbIndicator): void {
+        init: function (this: Highcharts.BBIndicator): void {
             SMA.prototype.init.apply(this, arguments);
 
             // Set default color for lines:
@@ -195,9 +195,9 @@ H.seriesType<Highcharts.BbIndicator>(
             }, this.options);
         },
         getValues: function (
-            this: Highcharts.BbIndicator,
-            series: Highcharts.BbIndicator,
-            params: Highcharts.BbIndicatorParamsOptions
+            this: Highcharts.BBIndicator,
+            series: Highcharts.BBIndicator,
+            params: Highcharts.BBIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
