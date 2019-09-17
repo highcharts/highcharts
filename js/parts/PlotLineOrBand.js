@@ -829,6 +829,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * An array of objects representing plot lines on the X axis
      *
      * @type      {Array<*>}
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *      Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */
