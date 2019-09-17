@@ -3487,6 +3487,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             return x;
         };
+        // Move the line inside the chart (#11405)
+        if ((!this.reversed && value === this.min) ||
+            (this.reversed && value === this.max)) {
+            lineWidth = defined(lineWidth) ? lineWidth * -1 : -1;
+        }
         evt = {
             value: value,
             lineWidth: lineWidth,

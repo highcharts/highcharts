@@ -1912,6 +1912,10 @@ null,
      * and the rest are assumed to be the same format. This saves expensive
      * data checking and indexing in long series. Set it to `0` disable.
      *
+     * Note:
+     * In boost mode turbo threshold is forced. Only array of numbers or
+     * two dimensional arrays are allowed.
+     *
      * @since   2.2
      * @product highcharts highstock gantt
      *
@@ -2737,12 +2741,7 @@ null,
             // loops are similar, they are repeated inside each if-else
             // conditional for max performance.
             if (turboThreshold && dataLength > turboThreshold) {
-                // find the first non-null point
-                i = 0;
-                while (firstPoint === null && i < dataLength) {
-                    firstPoint = data[i];
-                    i++;
-                }
+                firstPoint = series.getFirstValidPoint(data);
                 if (isNumber(firstPoint)) { // assume all points are numbers
                     for (i = 0; i < dataLength; i++) {
                         xData[i] = this.autoIncrement();
@@ -3131,6 +3130,24 @@ null,
         this.dataMin = arrayMin(activeYData);
         this.dataMax = arrayMax(activeYData);
         fireEvent(this, 'afterGetExtremes');
+    },
+    /**
+     * Find and return the first non null point in the data
+     *
+     * @private
+     * @function Highcharts.Series.getFirstValidPoint
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        Array of options for points
+     *
+     * @return {Highcharts.PointOptionsType}
+     */
+    getFirstValidPoint: function (data) {
+        var firstPoint = null, dataLength = data.length, i = 0;
+        while (firstPoint === null && i < dataLength) {
+            firstPoint = data[i];
+            i++;
+        }
+        return firstPoint;
     },
     /**
      * Translate data points from raw data values to chart specific

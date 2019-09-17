@@ -95,9 +95,28 @@ QUnit.test('variwide', function (assert) {
         'Correct number of points after zoom and redraw (#9525)'
     );
 
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: {
+            labels: {
+                enabled: false
+            }
+        }
+    });
+
+    assert.ok(
+        true,
+        'No errors with disabled xAxis labels (#11476)'
+    );
+
     chart.xAxis[0].setExtremes(0, 10000, true, false);
 
     chart.update({
+        chart: {
+            inverted: false
+        },
         series: [{
             data: [
                 [0, 2, 1],
