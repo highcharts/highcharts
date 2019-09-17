@@ -1,3 +1,4 @@
+docs/**/*.js
 js/indicators/**/*.js
 !js/indicators/apo.src.js
 !js/indicators/aroon-oscillator.src.js
