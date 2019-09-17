@@ -110,7 +110,7 @@ import H from '../parts/Globals.js';
 * @since 7.1.0
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -852,7 +852,7 @@ seriesType('packedbubble', 'bubble',
                     point.plotY = (positions[i][1] - chart.plotTop +
                         chart.diffY);
                 }
-                point.marker = H.extend(point.marker, {
+                point.marker = extend(point.marker, {
                     radius: radius,
                     width: 2 * radius,
                     height: 2 * radius

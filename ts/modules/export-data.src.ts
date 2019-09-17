@@ -119,8 +119,11 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isObject = U.isObject;
+const {
+    defined,
+    extend,
+    isObject
+} = U;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -1196,7 +1199,7 @@ var exportingOptions = Highcharts.getOptions().exporting;
 
 if (exportingOptions) {
 
-    Highcharts.extend(exportingOptions.menuItemDefinitions, {
+    extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {
             textKey: 'downloadCSV',
             onclick: function (): void {

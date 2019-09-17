@@ -38,7 +38,7 @@ import Highcharts from '../parts/Globals.js';
 * @type {Array<Array<string>>}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject;
+var defined = U.defined, extend = U.extend, isObject = U.isObject;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
@@ -836,7 +836,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;
 if (exportingOptions) {
-    Highcharts.extend(exportingOptions.menuItemDefinitions, {
+    extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {
             textKey: 'downloadCSV',
             onclick: function () {

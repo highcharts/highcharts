@@ -26,14 +26,17 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    extend = H.extend,
     merge = H.merge,
     pick = H.pick,
     Renderer = H.Renderer,

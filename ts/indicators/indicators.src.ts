@@ -95,8 +95,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    splat = U.splat;
+const {
+    extend,
+    isArray,
+    splat
+} = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
@@ -133,7 +136,7 @@ addEvent(H.Series, 'init', function (
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
     ) {
-        H.extend(series, {
+        extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: (ohlcProto as any).keys, // @todo potentially nonsense
             pointArrayMap: ohlcProto.pointArrayMap,

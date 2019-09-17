@@ -137,6 +137,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     erase,
+    extend,
     isNumber,
     splat
 } = U;
@@ -154,7 +155,6 @@ var addEvent = H.addEvent,
     Point = H.Point,
     color = H.color,
     ColorAxis: Highcharts.ColorAxis,
-    extend = H.extend,
     Legend = H.Legend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     colorPointMixin = H.colorPointMixin,

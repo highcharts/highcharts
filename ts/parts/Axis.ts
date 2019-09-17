@@ -690,6 +690,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isNumber,
     isString,
@@ -711,7 +712,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
@@ -761,7 +761,7 @@ var Axis = function (this: Highcharts.Axis): any {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 } as any;
 
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * The X axis or category axis. Normally this is the horizontal axis,

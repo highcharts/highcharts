@@ -193,9 +193,12 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    isObject = U.isObject,
-    isString = U.isString;
+const {
+    extend,
+    isNumber,
+    isObject,
+    isString
+} = U;
 
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
@@ -205,7 +208,6 @@ import './treemap.src.js';
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
     Series = H.Series,
-    extend = H.extend,
     getCenter = CenteredSeriesMixin.getCenter,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,

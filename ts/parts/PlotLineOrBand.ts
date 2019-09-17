@@ -159,6 +159,7 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     objectEach
 } = U;
 
@@ -483,7 +484,7 @@ H.PlotLineOrBand.prototype = {
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 // Object with members for extending the Axis prototype
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * An array of colored bands stretching across the plot area marking an

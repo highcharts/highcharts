@@ -31,7 +31,7 @@ import Axis from './Axis.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, objectEach = U.objectEach;
+var defined = U.defined, erase = U.erase, extend = U.extend, objectEach = U.objectEach;
 var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -256,7 +256,7 @@ H.PlotLineOrBand.prototype = {
 };
 /* eslint-enable no-invalid-this, valid-jsdoc */
 // Object with members for extending the Axis prototype
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * An array of colored bands stretching across the plot area marking an
      * interval on the axis.

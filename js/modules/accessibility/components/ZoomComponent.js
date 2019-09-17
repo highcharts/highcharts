@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -58,7 +61,7 @@ var ZoomComponent = function (chart) {
     this.init();
 };
 ZoomComponent.prototype = new AccessibilityComponent();
-H.extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
+extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
     /**
      * Initialize the component

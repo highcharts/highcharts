@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var extend = U.extend,
+    isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject;
 
@@ -21,8 +22,7 @@ import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
-var extend = H.extend,
-    merge = H.merge,
+var merge = H.merge,
     noop = H.noop,
     find = H.find,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,

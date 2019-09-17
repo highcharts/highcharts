@@ -26,7 +26,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
 var correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -138,7 +138,7 @@ H.Tick.prototype = {
             tick.shortenLabel = function () {
                 for (i = 0; i < list.length; i++) {
                     label.attr({
-                        text: axis.labelFormatter.call(H.extend(tick.formatCtx, { dateTimeLabelFormat: list[i] }))
+                        text: axis.labelFormatter.call(extend(tick.formatCtx, { dateTimeLabelFormat: list[i] }))
                     });
                     if (label.getBBox().width <
                         axis.getSlotWidth(tick) - 2 *

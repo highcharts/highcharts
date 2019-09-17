@@ -146,6 +146,7 @@ import './ColorMapSeriesMixin.js';
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isArray,
     isNumber,
     objectEach,
@@ -154,7 +155,6 @@ const {
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    extend = H.extend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,

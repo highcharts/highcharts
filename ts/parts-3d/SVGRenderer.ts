@@ -105,6 +105,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    extend,
     objectEach
 } = U;
 
@@ -119,7 +120,6 @@ var animObject = H.animObject,
     charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
-    extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -602,7 +602,7 @@ SVGRenderer.prototype.element3d = function (
     var ret = this.g();
 
     // extend
-    H.extend(ret, (this.elements3d as any)[type]);
+    extend(ret, (this.elements3d as any)[type]);
 
     // init
     ret.initArgs(shapeArgs);

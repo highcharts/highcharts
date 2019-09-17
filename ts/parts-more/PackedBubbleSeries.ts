@@ -306,9 +306,12 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    defined,
+    extend,
+    isArray,
+    isNumber
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -1348,7 +1351,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                             chart.diffY
                         );
                     }
-                    point.marker = H.extend(point.marker, {
+                    point.marker = extend(point.marker, {
                         radius: radius,
                         width: 2 * (radius as any),
                         height: 2 * (radius as any)

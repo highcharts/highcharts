@@ -81,10 +81,12 @@ declare global {
 import '../mixins/centered-series.js';
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    extend,
+    splat
+} = U;
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    extend = H.extend,
     merge = H.merge;
 
 /* eslint-disable valid-jsdoc */

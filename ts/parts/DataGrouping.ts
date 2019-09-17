@@ -143,6 +143,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber
 } = U;
 
@@ -156,7 +157,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     pick = H.pick,
