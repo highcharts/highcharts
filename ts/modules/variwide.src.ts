@@ -1,10 +1,12 @@
 /* *
- * Highcharts variwide module
  *
- * (c) 2010-2019 Torstein Honsi
+ *  Highcharts variwide module
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -363,16 +365,20 @@ addEvent(H.Axis, 'afterRender', function (): void {
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(
             function (): Array<Highcharts.SVGElement> {
-                return axis.tickPositions.map(function (
-                    pos: number,
-                    i: number
-                ): Highcharts.SVGElement {
-                    var label: Highcharts.SVGElement =
-                        axis.ticks[pos].label as any;
+                return axis.tickPositions
+                    .filter(function (pos: number): boolean {
+                        return (axis.ticks as any)[pos].label;
+                    })
+                    .map(function (
+                        pos: number,
+                        i: number
+                    ): Highcharts.SVGElement {
+                        var label: Highcharts.SVGElement =
+                            axis.ticks[pos].label as any;
 
-                    label.labelrank = (axis.zData as any)[i];
-                    return label;
-                });
+                        label.labelrank = (axis.zData as any)[i];
+                        return label;
+                    });
             }
         );
     }

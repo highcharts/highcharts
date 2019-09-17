@@ -1,10 +1,12 @@
 /* *
- * Highcharts variwide module
  *
- * (c) 2010-2019 Torstein Honsi
+ *  Highcharts variwide module
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
@@ -196,7 +198,11 @@ addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
-            return axis.tickPositions.map(function (pos, i) {
+            return axis.tickPositions
+                .filter(function (pos) {
+                return axis.ticks[pos].label;
+            })
+                .map(function (pos, i) {
                 var label = axis.ticks[pos].label;
                 label.labelrank = axis.zData[i];
                 return label;
