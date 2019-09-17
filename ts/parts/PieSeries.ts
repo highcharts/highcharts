@@ -90,7 +90,7 @@ declare global {
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
             public half?: number;
-            public labelDistance?: number;
+            public labelDistance: number;
             public labelPosition?: PiePointLabelPositionObject;
             public name: string;
             public options: PiePointOptions;

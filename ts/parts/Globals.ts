@@ -19,7 +19,6 @@ declare global {
      * [[include:README.md]]
      */
     namespace Highcharts {
-        type VariablePieSeries = any; // @todo variable pie module
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
