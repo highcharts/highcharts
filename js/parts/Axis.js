@@ -3869,7 +3869,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 pointRangePadding = pointRangePadding * ordinalCorrection;
             // pointRange means the width reserved for each point, like in a
             // column chart
-            axis.pointRange = Math.min(pointRange, range);
+            axis.pointRange = Math.min(pointRange, axis.single && hasCategories ? 1 : range);
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
             // is 0 while closestPointRange is some other value
