@@ -1,5 +1,5 @@
 Boost module
-------------
+===
 
 Boost is a stripped-down renderer-in-a-module for Highcharts and Highstock. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
 
@@ -47,8 +47,8 @@ The main boost configuration is set in the `boost property in the chart options.
         series: [{
     	   boostThreshold: 1, // Boost when there are more than 1                     
                                 // point in the chart.
-            data: [[0, 1[, [1, 2[, [2, 3[[,
-        }[
+            data: [[0, 1], [1, 2], [2, 3]],
+        }]
     };
     
 

@@ -1,5 +1,5 @@
 Stock tools
------------
+===
 
 Stock Tools is a Highstock module for building a GUI that enables user interaction with the chart, such as adding annotations, technical indicators or just for zooming in or out. The module is released with Highstock 7 and won't work with previous versions.
 
@@ -253,7 +253,7 @@ _See example below for loading specific indicators._
 And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
     
 
-<iframe width="320" height="500" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui"></iframe>
+<iframe width="320" height="500" style="width: 100%; height: 600px;" src=https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui></iframe>
 
 **Note**: The buttons graphics of the Stock Toolbar buttons are by default loaded from the Highcharts CDN. If you want to load Stock Tools from your local package, you might also want to set the symbol properties for each of the [stockTools.gui.definitions](https://api.highcharts.com/highstock/stockTools.gui.definitions). The icons are available in the Highcharts NPM [package](https://www.npmjs.com/package/highcharts) or clone the highcharts-dist [GitHub repository](https://github.com/highcharts/highcharts-dist).
 

@@ -1,5 +1,5 @@
 Patterns and contrast
----------------------
+===
 
 The default palette of Highcharts is designed with accessibility in mind, so that any two neighbor colors are tested for different types of color blindness. In addition to that, there are a few ways to increase contrast, both for the visually impaired or for grayscale prints, but also for the charts to be more readable in general.
 

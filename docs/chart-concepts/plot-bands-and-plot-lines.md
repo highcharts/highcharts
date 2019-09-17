@@ -14,22 +14,22 @@ Plot bands can be created either on the x-axis or the y-axis. It can also be cre
         color: 'orange', // Color value
         from: 3, // Start of the plot band
         to: 4 // End of the plot band
-      }[,
+      }],
       plotLines: [{
         color: 'red', // Color value
         dashStyle: 'longdashdot', // Style of the plot line. Default to solid
         value: 3, // Value of where the line will appear
         width: 2 // Width of the line    
-      }[
+      }]
     },
     yAxis: {
       ...,
       plotBands: [{
         ... // Same as in the xAxis
-      }[,
+      }],
       plotLines: [{
         ... // Same as in the xAxis
-      }[
+      }]
     }
 
 Labels

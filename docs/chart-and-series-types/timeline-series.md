@@ -1,5 +1,5 @@
 Timeline chart
-------------
+===
 
 A Timeline chart visualizes important events over a time span. Charts with a Timeline series display every data point as a separate event along a horizontal or vertical line. The Timeline series is also referred to as a Timeline Diagram.
 
@@ -12,11 +12,10 @@ Timeline series requires loading both the Highcharts and the `timeline.js` modul
 
 Here is an example for loading Timeline into a webpage:
 
-    ```
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/timeline.js"></script>
-    ```
-
+```html
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/timeline.js"></script>
+```
 Data format
 -----------
 
@@ -29,61 +28,59 @@ The Timeline series data is structured differently for the above alternatives fo
 
 ### Data series for a Timeline chart with time periods
 
-The data series has no `x`property set.
+The data series has no \`x\`property set.
 
-    ```
-        data: [{
-            name: 'Some date',
-            label: 'Event label',
-            description: 'Description of this event.'
-        }, {
-            name: ‘Another date’,
-            label: ‘Another event label’,
-            description: ‘Description of second event’
-        }[ 
-    ```
+    
+     data: [{
+        name: 'Some date',
+        label: 'Event label',
+        description: 'Description of this event.'
+    }, {
+        name: ‘Another date’,
+        label: ‘Another event label’,
+        description: ‘Description of second event’
+    }] 
 
 ### Events tied to a datetime axis
 
-Set for each data point the n `x` property with a timestamp in milliseconds since 1970.
+Set for each data point the n \`x\` property with a timestamp in milliseconds since 1970.
 
 Examples of data series:
 
-    ```
-        data: [{
-            x: 1514764800000,
-            name: 'Event name',
-            label: 'Event label',
-            description: 'Description of this event.'
-        }, {
-            x: 1526774400000,
-            name: 'Event name',
-            label: ‘Another event label’,
-            description: ‘Description of second event’
-        }[
-    ```
+    
+    data: [{
+        x: 1514764800000,
+        name: 'Event name',
+        label: 'Event label',
+        description: 'Description of this event.'
+    }, {
+        x: 1526774400000,
+        name: 'Event name',
+        label: ‘Another event label’,
+        description: ‘Description of second event’
+    }]
 
 _The demo below illustrates a timeline of space exploration. The demo shows even intervals_
 
-<iframe width="100%" height="470" src="https://www.highcharts.com/samples/embed/highcharts/series-timeline/connector-styles"></iframe>
+<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/connector-styles></iframe>
 
 The demo below also illustrates the key moments of space exploration, but it’s extended by further events, and it shows real-time dates distributed along a `datetime` axis.
 
-<iframe width="100%" height="470" src="https://www.highcharts.com/samples/embed/highcharts/series-timeline/datetime-axis"></iframe>
+<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/datetime-axis></iframe>
 
 Vertical timeline
 -----------------
 
 To display a vertical timeline, set `chart.inverted` to `true`.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted></iframe>
 
 Alternate labels
 ----------------
 
 Use the `alternate` property in the `dataLabels` configuration, for placing the data labels alternately (on both sides of the point).
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels></iframe>
 
 Other configuring options
 -------------------------
@@ -92,4 +89,4 @@ Customize a timeline chart with options that are standard to most Highcharts cha
 
 The demo below illustrates styling of different elements in the timeline series chart.
 
-<iframe width="100%" height="470" src="https://jsfiddle.net/gvaartjes/7htbp82f/embedded/result"></iframe>
+<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/gvaartjes/7htbp82f/embedded/result></iframe>

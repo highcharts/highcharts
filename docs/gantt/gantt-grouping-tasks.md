@@ -1,5 +1,5 @@
 Grouping tasks in a hierarchy
------------------------------
+===
 
 Split bigger tasks up in subtasks or group resources together if they belong to the same parent task. Use the [`parent`](https://api.highcharts.com/gantt/series.gantt.data.parent) property of a data point (i.e. the sub task) which value points to the [`id`](https://api.highcharts.com/highcharts/series.area.data.id) of the parent task. The duration of the parent task will then span all sub tasks.
 

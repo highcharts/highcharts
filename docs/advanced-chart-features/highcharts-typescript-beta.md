@@ -1,5 +1,5 @@
 Highcharts TypeScript Declarations (beta)
------------------------------------------
+===
 
 Highcharts 7 is the first release with integrated support for TypeScript through
 declarations files. TypeScript-compatible editors can give you tooltips and
