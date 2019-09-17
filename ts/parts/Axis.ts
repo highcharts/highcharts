@@ -5075,8 +5075,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range
