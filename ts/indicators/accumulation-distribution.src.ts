@@ -15,34 +15,34 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class AdIndicator extends SmaIndicator {
-            public data: Array<AdIndicatorPoint>;
+        class ADIndicator extends SMAIndicator {
+            public data: Array<ADIndicatorPoint>;
             public nameBase: string;
             public nameComponents: Array<string>;
-            public options: AdIndicatorOptions;
-            public pointClass: typeof AdIndicatorPoint;
-            public points: Array<AdIndicatorPoint>;
+            public options: ADIndicatorOptions;
+            public pointClass: typeof ADIndicatorPoint;
+            public points: Array<ADIndicatorPoint>;
             public getValues(
                 series: Series,
-                params: AdIndicatorParamsOptions
+                params: ADIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
             public yData: Array<number>;
         }
 
-        class AdIndicatorPoint extends SmaIndicatorPoint {
-            public series: AdIndicator
+        class ADIndicatorPoint extends SMAIndicatorPoint {
+            public series: ADIndicator
         }
 
-        interface AdIndicatorOptions extends SmaIndicatorOptions {
-            params?: AdIndicatorParamsOptions;
+        interface ADIndicatorOptions extends SMAIndicatorOptions {
+            params?: ADIndicatorParamsOptions;
         }
 
-        interface AdIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface ADIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             volumeSeriesID?: string;
         }
 
         interface SeriesTypesDictionary {
-            ad: typeof AdIndicator;
+            ad: typeof ADIndicator;
         }
     }
 }
@@ -84,7 +84,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AdIndicator>('ad', 'sma',
+seriesType<Highcharts.ADIndicator>('ad', 'sma',
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
@@ -117,7 +117,7 @@ seriesType<Highcharts.AdIndicator>('ad', 'sma',
         nameBase: 'Accumulation/Distribution',
         getValues: function (
             series: Highcharts.Series,
-            params: Highcharts.AdIndicatorParamsOptions
+            params: Highcharts.ADIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
