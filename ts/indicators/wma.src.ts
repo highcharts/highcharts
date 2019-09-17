@@ -25,9 +25,18 @@ declare global {
             public points: Array<WMAIndicatorPoint>;
             public getValues(
                 series: Series,
-                params: Dictionary<number>
+                params: WMAIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-            public yData: Array<number>;
+        }
+
+        interface WMAIndicatorOptions extends SMAIndicatorOptions {
+            params?: WMAIndicatorParamsOptions;
+            states?: SeriesStatesOptionsObject<WMAIndicator>;
+        }
+
+        interface WMAIndicatorParamsOptions
+            extends SMAIndicatorParamsOptions {
+            // for inheitance
         }
 
         class WMAIndicatorPoint extends SMAIndicatorPoint {
@@ -37,18 +46,6 @@ declare global {
         interface SeriesTypesDictionary {
             wma: typeof WMAIndicator;
         }
-
-        interface WMAIndicatorOptions extends SMAIndicatorOptions {
-            params?: WMAIndicatorParamsOptions;
-            states?: SeriesStatesOptionsObject<WMAIndicator>;
-        }
-
-        interface WMAIndicatorParamsOptions
-            extends Dictionary<number> {
-            index: number;
-            period: number;
-        }
-
     }
 }
 

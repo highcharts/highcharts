@@ -22,11 +22,11 @@ declare global {
             public options: ADIndicatorOptions;
             public pointClass: typeof ADIndicatorPoint;
             public points: Array<ADIndicatorPoint>;
+            public yData: Array<number>;
             public getValues(
                 series: Series,
                 params: ADIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-            public yData: Array<number>;
         }
 
         class ADIndicatorPoint extends SMAIndicatorPoint {

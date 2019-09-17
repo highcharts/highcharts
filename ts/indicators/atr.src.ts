@@ -18,6 +18,8 @@ declare global {
     namespace Highcharts {
         class ATRIndicator extends SMAIndicator {
             public data: Array<ATRIndicatorPoint>
+            public pointClass: typeof ATRIndicatorPoint;
+            public points: Array<ATRIndicatorPoint>;
             public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
@@ -29,8 +31,8 @@ declare global {
             params?: ATRIndicatorParamsOptions;
         }
 
-        interface ATRIndicatorParamsOptions {
-            period?: number;
+        interface ATRIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+            // for inheritance
         }
 
         class ATRIndicatorPoint extends SMAIndicatorPoint {
