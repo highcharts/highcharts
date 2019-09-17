@@ -205,11 +205,11 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, syncTimeout = H.syncTimeout, Tick = H.Tick;
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -3112,7 +3112,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3123,7 +3122,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3229,9 +3227,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * The default label formatter. The context is a special config object for
      * the label. In apps, use the
      * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
-     * instead except when a modification is needed.
-     * @private
+     * instead, except when a modification is needed.
+     *
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @this Highcharts.AxisLabelsFormatterContextObject
+     *
      * @return {string}
+     * The formatted label content.
      */
     defaultLabelFormatter: function () {
         var axis = this.axis, value = this.value, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
@@ -3484,6 +3487,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             return x;
         };
+        // Move the line inside the chart (#11405)
+        if ((!this.reversed && value === this.min) ||
+            (this.reversed && value === this.max)) {
+            lineWidth = defined(lineWidth) ? lineWidth * -1 : -1;
+        }
         evt = {
             value: value,
             lineWidth: lineWidth,

@@ -290,11 +290,29 @@ function setState(proceed, state, inherit) {
         this.options.inactiveOtherPoints = false;
     }
 }
+// eslint-disable-next-line valid-jsdoc
+/**
+ * In 3D mode, simple checking for a new shape to animate is not enough.
+ * Additionally check if graphic is a group of elements
+ *
+ * @private
+ */
+function hasNewShapeType(proceed) {
+    var args = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+    }
+    return this.series.chart.is3d() ?
+        this.graphic && this.graphic.element.nodeName !== 'g' :
+        proceed.apply(this, args);
+}
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 wrap(seriesTypes.column.prototype, 'setState', setState);
+wrap(seriesTypes.column.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
 if (seriesTypes.columnrange) {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
     wrap(seriesTypes.columnrange.prototype, 'setState', setState);
+    wrap(seriesTypes.columnrange.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
     seriesTypes.columnrange.prototype.plotGroup =
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =

@@ -152,6 +152,10 @@ declare global {
                 allowNull?: boolean
             ): Array<Point>;
             public getXExtremes(xData: Array<number>): RangeObject;
+            public getFirstValidPoint (
+                this: Highcharts.Series,
+                data: Array<PointOptionsType>
+            ): PointOptionsType;
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -191,7 +195,7 @@ declare global {
             ): void;
             public setOptions(
                 itemOptions: SeriesOptionsType
-            ): SeriesOptionsType;
+            ): this['options'];
             public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(data: Array<PointOptionsType>): boolean;
@@ -411,16 +415,16 @@ declare global {
         interface SeriesStatesOptionsObject<TSeries extends Series> {
             hover?: (
                 SeriesStatesHoverOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
             inactive?: (
                 SeriesStatesInactiveOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
-            normal?: Omit<TSeries['options'], ('states'|'data')>;
+            normal?: SeriesStateOptionsObject<TSeries>;
             select?: (
                 SeriesStatesHoverOptionsObject&
-                Omit<TSeries['options'], ('states'|'data')>
+                SeriesStateOptionsObject<TSeries>
             );
         }
         interface SeriesTypesDictionary {
@@ -432,6 +436,9 @@ declare global {
         type SeriesOptionsType = SeriesOptions;
         type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
         type SeriesStepValue = ('center'|'left'|'right');
+        type SeriesStateOptionsObject<TSeries extends Series> = (
+            Omit<TSeries['options'], ('states'|'data')>
+        );
     }
 }
 
@@ -651,7 +658,8 @@ const {
     isNumber,
     isString,
     objectEach,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 import './Options.js';
@@ -674,7 +682,6 @@ var addEvent = H.addEvent,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /**
@@ -2504,6 +2511,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * and the rest are assumed to be the same format. This saves expensive
          * data checking and indexing in long series. Set it to `0` disable.
          *
+         * Note:
+         * In boost mode turbo threshold is forced. Only array of numbers or
+         * two dimensional arrays are allowed.
+         *
          * @since   2.2
          * @product highcharts highstock gantt
          *
@@ -3071,10 +3082,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {Highcharts.SeriesOptionsType}
          * @fires Highcharts.Series#event:afterSetOptions
          */
-        setOptions: function (
-            this: Highcharts.Series,
+        setOptions: function <TSeries extends Highcharts.Series> (
+            this: TSeries,
             itemOptions: Highcharts.SeriesOptionsType
-        ): Highcharts.SeriesOptionsType {
+        ): TSeries['options'] {
             var chart = this.chart,
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
@@ -3626,13 +3637,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // conditional for max performance.
                 if (turboThreshold && dataLength > turboThreshold) {
 
-                    // find the first non-null point
-                    i = 0;
-                    while (firstPoint === null && i < dataLength) {
-                        firstPoint = data[i];
-                        i++;
-                    }
-
+                    firstPoint = series.getFirstValidPoint(data);
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
                         for (i = 0; i < dataLength; i++) {
@@ -4175,6 +4180,32 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             this.dataMax = arrayMax(activeYData);
 
             fireEvent(this, 'afterGetExtremes');
+        },
+
+        /**
+         * Find and return the first non null point in the data
+         *
+         * @private
+         * @function Highcharts.Series.getFirstValidPoint
+         * @param {Array<Highcharts.PointOptionsType>} data
+         *        Array of options for points
+         *
+         * @return {Highcharts.PointOptionsType}
+         */
+        getFirstValidPoint: function (
+            this: Highcharts.Series,
+            data: Array<Highcharts.PointOptionsType>
+        ): Highcharts.PointOptionsType {
+            var firstPoint = null,
+                dataLength = data.length,
+                i = 0;
+
+            while (firstPoint === null && i < dataLength) {
+                firstPoint = data[i];
+                i++;
+            }
+
+            return firstPoint;
         },
 
         /**
@@ -5792,7 +5823,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (!hasRendered) {
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();
-                }, animDuration as any);
+                }, animDuration || 0);
             }
 
             // Means data is in accordance with what you see

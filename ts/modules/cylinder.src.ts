@@ -126,7 +126,11 @@ seriesType<Highcharts.CylinderSeries>(
     {},
     /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
     {
-        shapeType: 'cylinder'
+        shapeType: 'cylinder',
+        hasNewShapeType: H
+            .seriesTypes.column.prototype
+            .pointClass.prototype
+            .hasNewShapeType
     }
 );
 

@@ -473,7 +473,11 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
             );
         }
     }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
-        shapeType: 'funnel3d'
+        shapeType: 'funnel3d',
+        hasNewShapeType: H
+            .seriesTypes.column.prototype
+            .pointClass.prototype
+            .hasNewShapeType
     }
 );
 

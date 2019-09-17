@@ -102,7 +102,10 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    syncTimeout
+} = U;
 
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -1143,11 +1146,11 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
         }
     });
 
-    chart.seriesLabelTimer = H.syncTimeout(function (): void {
+    chart.seriesLabelTimer = syncTimeout(function (): void {
         if (chart.series && chart.labelSeries) { // #7931, chart destroyed
             chart.drawSeriesLabels();
         }
-    }, chart.renderer.forExport ? 0 : delay);
+    }, chart.renderer.forExport || !delay ? 0 : delay);
 
 }
 

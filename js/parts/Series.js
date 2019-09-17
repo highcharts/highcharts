@@ -203,14 +203,14 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
-removeEvent = H.removeEvent, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
+removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -1912,6 +1912,10 @@ null,
      * and the rest are assumed to be the same format. This saves expensive
      * data checking and indexing in long series. Set it to `0` disable.
      *
+     * Note:
+     * In boost mode turbo threshold is forced. Only array of numbers or
+     * two dimensional arrays are allowed.
+     *
      * @since   2.2
      * @product highcharts highstock gantt
      *
@@ -2737,12 +2741,7 @@ null,
             // loops are similar, they are repeated inside each if-else
             // conditional for max performance.
             if (turboThreshold && dataLength > turboThreshold) {
-                // find the first non-null point
-                i = 0;
-                while (firstPoint === null && i < dataLength) {
-                    firstPoint = data[i];
-                    i++;
-                }
+                firstPoint = series.getFirstValidPoint(data);
                 if (isNumber(firstPoint)) { // assume all points are numbers
                     for (i = 0; i < dataLength; i++) {
                         xData[i] = this.autoIncrement();
@@ -3131,6 +3130,24 @@ null,
         this.dataMin = arrayMin(activeYData);
         this.dataMax = arrayMax(activeYData);
         fireEvent(this, 'afterGetExtremes');
+    },
+    /**
+     * Find and return the first non null point in the data
+     *
+     * @private
+     * @function Highcharts.Series.getFirstValidPoint
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        Array of options for points
+     *
+     * @return {Highcharts.PointOptionsType}
+     */
+    getFirstValidPoint: function (data) {
+        var firstPoint = null, dataLength = data.length, i = 0;
+        while (firstPoint === null && i < dataLength) {
+            firstPoint = data[i];
+            i++;
+        }
+        return firstPoint;
     },
     /**
      * Translate data points from raw data values to chart specific
@@ -4213,7 +4230,7 @@ null,
         if (!hasRendered) {
             series.animationTimeout = syncTimeout(function () {
                 series.afterAnimate();
-            }, animDuration);
+            }, animDuration || 0);
         }
         // Means data is in accordance with what you see
         series.isDirty = false;

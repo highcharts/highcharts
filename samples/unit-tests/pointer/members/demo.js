@@ -1,4 +1,3 @@
-/* global TestController */
 QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', function (assert) {
 
     var events = [],

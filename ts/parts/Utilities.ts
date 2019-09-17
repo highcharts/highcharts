@@ -313,9 +313,9 @@ declare global {
         function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
-            delay?: number,
-            context?: any
-        ): (number|undefined);
+            delay: number,
+            context?: unknown
+        ): number;
         function uniqueKey(): string;
         function wrap(
             obj: any,
@@ -1525,26 +1525,27 @@ function splat(obj: any): Array<any> {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (
+function syncTimeout(
     fn: Function,
-    delay?: number,
-    context?: any
-): (number|undefined) {
-    if (delay) {
+    delay: number,
+    context?: unknown
+): number {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -3337,7 +3338,8 @@ const utils = {
     isString,
     objectEach,
     pInt,
-    splat
+    splat,
+    syncTimeout
 };
 
 export default utils;

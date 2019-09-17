@@ -51,7 +51,8 @@ extend(Highcharts, {
     isString: U.isString,
     objectEach: U.objectEach,
     pInt: U.pInt,
-    splat: U.splat
+    splat: U.splat,
+    syncTimeout: U.syncTimeout
 });
 
 export default Highcharts;

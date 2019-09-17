@@ -1,9 +1,6 @@
 js/indicators/**/*.js
 !js/indicators/apo.src.js
-!js/indicators/aroon.src.js
 !js/indicators/aroon-oscillator.src.js
-!js/indicators/atr.src.js
-!js/indicators/bollinger-bands.src.js
 !js/indicators/cci.src.js
 !js/indicators/chaikin.src.js
 !js/indicators/cmf.src.js
@@ -40,10 +37,6 @@ js/modules/**/*.js
 !js/modules/boost-canvas.src.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
-!js/modules/sunburst.src.js
-!js/modules/tilemap.src.js
-!js/modules/timeline.src.js
-!js/modules/treemap.src.js
 !js/modules/variable-pie.src.js
 !js/modules/variwide.src.js
 !js/modules/vector.src.js

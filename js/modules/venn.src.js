@@ -37,6 +37,8 @@ var addEvent = H.addEvent,
     getAreaOfCircle = geometryCircles.getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles =
         geometryCircles.getAreaOfIntersectionBetweenCircles,
+    getCirclesIntersectionPolygon =
+        geometryCircles.getCirclesIntersectionPolygon,
     getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
     getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
@@ -299,7 +301,16 @@ var getLabelPosition = function getLabelPosition(internal, external) {
     )) {
         // If point was either outside one of the internal, or inside one of the
         // external, then it was invalid and should use a fallback.
-        best = getCenterOfPoints(internal);
+        if (internal.length > 1) {
+            best = getCenterOfPoints(
+                getCirclesIntersectionPolygon(internal)
+            );
+        } else {
+            best = {
+                x: internal[0].x,
+                y: internal[0].y
+            };
+        }
     }
 
     // Return the best point.

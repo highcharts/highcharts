@@ -159,8 +159,18 @@ function resetDefaultOptions(testName) {
 
     deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
 
+    // Delete functions (not automated as they are not serialized in JSON)
+    delete Highcharts.defaultOptions.global.getTimezoneOffset;
+    delete Highcharts.defaultOptions.time.getTimezoneOffset;
+
     Highcharts.setOptions(defaultOptionsRaw);
-    //handleDefaultOptionsFunctions();
+
+    // Create a new Time instance to avoid state leaks related to time and the
+    // legacy global options
+    Highcharts.time = new Highcharts.Time(Highcharts.merge(
+        Highcharts.defaultOptions.global,
+        Highcharts.defaultOptions.time
+    ));
 }
 
 
@@ -306,9 +316,6 @@ if (window.QUnit) {
             }
             Highcharts.addEvent = origAddEvent;
 
-            if (typeof test.test.sampleAfterEach === 'function') {
-                test.test.sampleAfterEach();
-            }
 
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
