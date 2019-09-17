@@ -21,15 +21,15 @@ declare global {
             public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
-                params: ATRInidicatorParamsOptions
+                params: ATRIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
         }
 
         interface ATRIndicatorOptions extends SMAIndicatorOptions {
-            params?: ATRInidicatorParamsOptions;
+            params?: ATRIndicatorParamsOptions;
         }
 
-        interface ATRInidicatorParamsOptions {
+        interface ATRIndicatorParamsOptions {
             period?: number;
         }
 
@@ -137,7 +137,7 @@ seriesType<Highcharts.ATRIndicator>(
     {
         getValues: function (
             series: Highcharts.ATRIndicator,
-            params: Highcharts.ATRInidicatorParamsOptions
+            params: Highcharts.ATRIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period = (params.period as any),
                 xVal = (series.xData as any),
