@@ -16,7 +16,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class BBIndicator extends SmaIndicator
+        class BBIndicator extends SMAIndicator
             implements MultipleLinesIndicator {
             public data: Array<BbIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
@@ -33,15 +33,15 @@ declare global {
             public yData: Array<Array<number>>;
         }
 
-        interface BBIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             standardDeviation?: number;
         }
 
-        class BbIndicatorPoint extends SmaIndicatorPoint {
+        class BbIndicatorPoint extends SMAIndicatorPoint {
             public series: BBIndicator;
         }
 
-        interface BBIndicatorOptions extends SmaIndicatorOptions,
+        interface BBIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
             bottomLine?: Dictionary<CSSObject>;
             params?: BBIndicatorParamsOptions;
