@@ -18,11 +18,11 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
 
-        class WmaIndicator extends SmaIndicator {
-            public data: Array<WmaIndicatorPoint>;
-            public options: WmaIndicatorOptions;
-            public pointClass: typeof WmaIndicatorPoint;
-            public points: Array<WmaIndicatorPoint>;
+        class WMAIndicator extends SMAIndicator {
+            public data: Array<WMAIndicatorPoint>;
+            public options: WMAIndicatorOptions;
+            public pointClass: typeof WMAIndicatorPoint;
+            public points: Array<WMAIndicatorPoint>;
             public getValues(
                 series: Series,
                 params: Dictionary<number>
@@ -30,20 +30,20 @@ declare global {
             public yData: Array<number>;
         }
 
-        class WmaIndicatorPoint extends SmaIndicatorPoint {
-            public series: WmaIndicator;
+        class WMAIndicatorPoint extends SMAIndicatorPoint {
+            public series: WMAIndicator;
         }
 
         interface SeriesTypesDictionary {
-            wma: typeof WmaIndicator;
+            wma: typeof WMAIndicator;
         }
 
-        interface WmaIndicatorOptions extends SmaIndicatorOptions {
-            params?: WmaIndicatorParamsOptions;
-            states?: SeriesStatesOptionsObject<WmaIndicator>;
+        interface WMAIndicatorOptions extends SMAIndicatorOptions {
+            params?: WMAIndicatorParamsOptions;
+            states?: SeriesStatesOptionsObject<WMAIndicator>;
         }
 
-        interface WmaIndicatorParamsOptions
+        interface WMAIndicatorParamsOptions
             extends Dictionary<number> {
             index: number;
             period: number;
@@ -137,7 +137,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WmaIndicator>(
+seriesType<Highcharts.WMAIndicator>(
     'wma',
     'sma',
     /**
