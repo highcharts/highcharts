@@ -52,7 +52,7 @@ QUnit.test("Zooming too tight on left category should show full category (#4536)
     );
 });
 
-QUnit.test('Log axis extremes and precision', function (assert) {
+QUnit.test('Log axis extremes, issue #934', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
@@ -81,35 +81,18 @@ QUnit.test('Log axis extremes and precision', function (assert) {
     assert.strictEqual(
         ext.min,
         1000,
-        'Min is 1000 (#934)'
+        'Min is 1000'
     );
 
     assert.strictEqual(
         ext.max,
         1000000000,
-        'Max is 1000000000 (#934)'
+        'Max is 1000000000'
     );
 
-    chart.update({
-        yAxis: {
-            min: null,
-            max: null
-        },
-        series: [{
-            data: [650]
-        }]
-    }, true, true);
-
-    assert.strictEqual(
-        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label.textStr,
-        '650',
-        'Single value logarithmic yAxis should show the same ' +
-        'tick label as the points value (#11727)'
-    );
 });
 
-
-QUnit.test('Log axis extremes, issue #4360', function (assert) {
+QUnit.test('Log axis extremes and precision', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
@@ -141,7 +124,20 @@ QUnit.test('Log axis extremes, issue #4360', function (assert) {
     assert.strictEqual(
         chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label.textStr,
         '30',
-        'Label is 30'
+        'Label should be exactly 30 (#4360)'
+    );
+
+    chart.update({
+        series: [{
+            data: [650]
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label.textStr,
+        '650',
+        'Single value logarithmic yAxis should show the same ' +
+        'tick label as the points value (#11727)'
     );
 });
 
