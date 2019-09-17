@@ -1288,6 +1288,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Used in getMargins
         this.titleOffset = titleOffset;
 
+        fireEvent(this, 'afterLayOutTitles');
+
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)
