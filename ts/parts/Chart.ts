@@ -1205,6 +1205,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (
         this: Highcharts.Chart,
