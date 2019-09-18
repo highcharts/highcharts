@@ -5,7 +5,7 @@ Below is a list of the main topics regarding series.
 
 *   [What is series?](#series)
 *   [The data in a series](#1)
-/samples/embed/highcharts/series/color-zones-simple*   [Point and marker](#point)
+*   [Point and marker](#point)
 *   [Series options](#2):
     *   [Animation](#3)
     *   [Color](#4)
