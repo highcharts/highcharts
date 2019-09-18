@@ -1,5 +1,5 @@
 Map navigation
---------------
+===
 
 Highmaps supports different ways of navigating around the map - zooming, panning, zooming to an area etc. The API options related to this can be viewed at [mapNavigation](https://api.highcharts.com/highmaps/mapNavigation).
 
@@ -7,7 +7,7 @@ Please note that mapNavigation is disabled by default because the implementer sh
 
 ### Buttons
 
-Two buttons, [+[ and [-[, are by default shown on each map when navigation is enabled. These provide zooming in and zooming out.
+Two buttons, [+] and [-], are by default shown on each map when navigation is enabled. These provide zooming in and zooming out.
 
 ### Multitouch
 
