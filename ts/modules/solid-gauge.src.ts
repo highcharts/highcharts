@@ -88,8 +88,11 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    extend,
+    isNumber,
+    pInt
+} = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
@@ -392,7 +395,7 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
         translate: function (this: Highcharts.SolidGaugeSeries): void {
             var axis = this.yAxis;
 
-            H.extend(axis, colorAxisMethods);
+            extend(axis, colorAxisMethods);
 
             // Prepare data classes
             if (!axis.dataClasses && axis.options.dataClasses) {
@@ -519,7 +522,7 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
 
                     if (graphic) {
                         d = shapeArgs.d;
-                        graphic.animate(H.extend({ fill: toColor }, shapeArgs));
+                        graphic.animate(extend({ fill: toColor }, shapeArgs));
                         if (d) {
                             shapeArgs.d = d; // animate alters it
                         }

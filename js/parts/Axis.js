@@ -205,11 +205,11 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, extend = H.extend, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, color = H.color, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -247,7 +247,7 @@ var Axis = function () {
     this.init.apply(this, arguments);
     /* eslint-enable no-invalid-this, valid-jsdoc */
 };
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
      * though if the chart is inverted this is the vertical axis. In case of
@@ -3487,11 +3487,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             return x;
         };
-        // Move the line inside the chart (#11405)
-        if ((!this.reversed && value === this.min) ||
-            (this.reversed && value === this.max)) {
-            lineWidth = defined(lineWidth) ? lineWidth * -1 : -1;
-        }
         evt = {
             value: value,
             lineWidth: lineWidth,
@@ -3869,7 +3864,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 pointRangePadding = pointRangePadding * ordinalCorrection;
             // pointRange means the width reserved for each point, like in a
             // column chart
-            axis.pointRange = Math.min(pointRange, range);
+            axis.pointRange = Math.min(pointRange, axis.single && hasCategories ? 1 : range);
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
             // is 0 while closestPointRange is some other value
@@ -3948,8 +3943,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min), 16);
+            axis.max = correctFloat(axis.log2lin(axis.max), 16);
         }
         // handle zoomed range
         if (axis.range && defined(axis.max)) {

@@ -287,12 +287,15 @@ declare global {
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    isNumber = U.isNumber,
-    isObject = U.isObject,
-    isString = U.isString,
-    objectEach = U.objectEach;
+const {
+    defined,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    objectEach
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -304,7 +307,6 @@ var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
     merge = H.merge,
-    extend = H.extend,
     error = H.error,
     noop = H.noop,
     fireEvent = H.fireEvent,
@@ -2181,8 +2183,8 @@ seriesType<Highcharts.TreemapSeries>(
             };
 
             Series.prototype.bindAxes.call(this);
-            H.extend(this.yAxis.options, treeAxis);
-            H.extend(this.xAxis.options, treeAxis);
+            extend(this.yAxis.options, treeAxis);
+            extend(this.xAxis.options, treeAxis);
         },
 
         /**

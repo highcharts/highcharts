@@ -60,7 +60,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    extend,
+    splat
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
@@ -71,7 +74,6 @@ var ZAxis: typeof Highcharts.Axis,
     Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,
-    extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
     perspective3D = H.perspective3D,

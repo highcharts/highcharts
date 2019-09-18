@@ -12,6 +12,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
@@ -430,7 +432,7 @@ seriesType('tilemap', 'heatmap'
     translate: function () {
         return this.tileShape.translate.apply(this, Array.prototype.slice.call(arguments));
     }
-}, H.extend({
+}, extend({
     // eslint-disable-next-line valid-jsdoc
     /**
      * @private

@@ -1,7 +1,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined,
+    extend = U.extend;
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
@@ -208,7 +209,7 @@ MockPoint.pointToOptions = function (point) {
     };
 };
 
-H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
+extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
     /**
      * A flag indicating that a point is not the real one.
      *

@@ -21,7 +21,7 @@ import H from '../parts/Globals.js';
 * @type {boolean|undefined}
 */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var extend = U.extend, isNumber = U.isNumber, pInt = U.pInt;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 var pick = H.pick, wrap = H.wrap, Renderer = H.Renderer, colorAxisMethods;
@@ -237,7 +237,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
     // decoration (#5895).
     translate: function () {
         var axis = this.yAxis;
-        H.extend(axis, colorAxisMethods);
+        extend(axis, colorAxisMethods);
         // Prepare data classes
         if (!axis.dataClasses && axis.options.dataClasses) {
             axis.initDataClasses(axis.options);
@@ -290,7 +290,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                 point.startR = radius; // For PieSeries.animate
                 if (graphic) {
                     d = shapeArgs.d;
-                    graphic.animate(H.extend({ fill: toColor }, shapeArgs));
+                    graphic.animate(extend({ fill: toColor }, shapeArgs));
                     if (d) {
                         shapeArgs.d = d; // animate alters it
                     }

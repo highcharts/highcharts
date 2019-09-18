@@ -267,6 +267,7 @@ const {
     attr,
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
@@ -292,7 +293,6 @@ var addEvent = H.addEvent,
     discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     Legend = H.Legend, // @todo add as requirement
@@ -1205,6 +1205,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (
         this: Highcharts.Chart,
@@ -1287,6 +1289,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Used in getMargins
         this.titleOffset = titleOffset;
+
+        fireEvent(this, 'afterLayOutTitles');
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;

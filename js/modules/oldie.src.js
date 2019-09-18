@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pInt = U.pInt;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pInt = U.pInt;
 import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, extend = H.extend, extendClass = H.extendClass, merge = H.merge, noop = H.noop, pick = H.pick, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, discardElement = H.discardElement, doc = H.doc, extendClass = H.extendClass, merge = H.merge, noop = H.noop, pick = H.pick, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
@@ -87,7 +87,7 @@ if (!svg) {
         if (!chartPosition) {
             this.chartPosition = chartPosition = H.offset(this.chart.container);
         }
-        return H.extend(e, {
+        return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
             chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),

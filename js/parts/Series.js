@@ -203,12 +203,12 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
 /**
@@ -4416,14 +4416,14 @@ null,
      * @return {number}
      */
     pointPlacementToXValue: function () {
-        var series = this, pointPlacement = series.options.pointPlacement;
+        var series = this, axis = series.xAxis, pointPlacement = series.options.pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
         if (pointPlacement === 'between') {
-            pointPlacement = 0.5;
+            pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
         }
         if (isNumber(pointPlacement)) {
             pointPlacement *=
-                pick(series.options.pointRange || series.xAxis.pointRange);
+                pick(series.options.pointRange || axis.pointRange);
         }
         return pointPlacement;
     }

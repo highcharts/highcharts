@@ -5,8 +5,8 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
-var extend = H.extend, isBoolean = function (x) {
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
+var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isFn = function (x) {
     return typeof x === 'function';

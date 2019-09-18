@@ -72,9 +72,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString;
+const {
+    defined,
+    extend,
+    isNumber,
+    isString
+} = U;
 
 import './GridAxis.js';
 import Tree from './Tree.js';
@@ -85,7 +88,6 @@ var addEvent = H.addEvent,
     argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,

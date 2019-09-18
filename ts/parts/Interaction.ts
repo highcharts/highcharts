@@ -145,6 +145,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isObject,
     objectEach
@@ -162,7 +163,6 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,

@@ -14,12 +14,12 @@ import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
 /* eslint-disable no-invalid-this */
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, extend = H.extend, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
@@ -1372,8 +1372,8 @@ seriesType('treemap', 'scatter'
             tickPositions: []
         };
         Series.prototype.bindAxes.call(this);
-        H.extend(this.yAxis.options, treeAxis);
-        H.extend(this.xAxis.options, treeAxis);
+        extend(this.yAxis.options, treeAxis);
+        extend(this.xAxis.options, treeAxis);
     },
     /**
      * Workaround for `inactive` state. Since `series.opacity` option is

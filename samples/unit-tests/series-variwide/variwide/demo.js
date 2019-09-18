@@ -110,6 +110,29 @@ QUnit.test('variwide', function (assert) {
         true,
         'No errors with disabled xAxis labels (#11476)'
     );
+
+    chart.xAxis[0].setExtremes(0, 10000, true, false);
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        series: [{
+            data: [
+                [0, 2, 1],
+                [1, 1, 400]
+            ]
+        }],
+        xAxis: {
+            type: 'linear'
+        }
+    }, true, true, false);
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.getBBox().width >= 1,
+        true,
+        'The width of the first point should not be less than 1px (#11510)'
+    );
 });
 
 QUnit.test('variwide null points', function (assert) {

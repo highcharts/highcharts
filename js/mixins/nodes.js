@@ -5,7 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined, extend = U.extend;
 var pick = H.pick, Point = H.Point;
 H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
@@ -26,7 +26,7 @@ H.NodesMixin = {
         var node = findById(this.nodes, id), PointClass = this.pointClass, options;
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
-            node = (new PointClass()).init(this, H.extend({
+            node = (new PointClass()).init(this, extend({
                 className: 'highcharts-node',
                 isNode: true,
                 id: id,

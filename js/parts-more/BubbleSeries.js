@@ -13,7 +13,7 @@ import H from '../parts/Globals.js';
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var extend = U.extend, isNumber = U.isNumber, pInt = U.pInt;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -379,7 +379,7 @@ seriesType('bubble', 'scatter', {
             radius = radii ? radii[i] : 0; // #1737
             if (isNumber(radius) && radius >= this.minPxSize / 2) {
                 // Shape arguments
-                point.marker = H.extend(point.marker, {
+                point.marker = extend(point.marker, {
                     radius: radius,
                     width: 2 * radius,
                     height: 2 * radius

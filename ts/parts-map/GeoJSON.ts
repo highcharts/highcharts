@@ -93,12 +93,15 @@ declare global {
  * @type {number}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     win = H.win,

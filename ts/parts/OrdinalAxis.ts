@@ -60,7 +60,8 @@ import './Axis.js';
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    extend
 } = U;
 
 import './Chart.js';
@@ -72,7 +73,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
-    extend = H.extend,
     noop = H.noop,
     pick = H.pick,
     Series = H.Series,

@@ -10,6 +10,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var attr = U.attr,
+    extend = U.extend,
     isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
@@ -22,7 +23,6 @@ var doc = H.doc,
     addEvent = H.addEvent,
     pick = H.pick,
     merge = H.merge,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';
 

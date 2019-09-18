@@ -247,10 +247,13 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    objectEach = U.objectEach,
-    splat = U.splat;
+const {
+    defined,
+    extend,
+    isNumber,
+    objectEach,
+    splat
+} = U;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -681,7 +684,7 @@ var Data = function (
 };
 
 // Set the prototype properties
-Highcharts.extend(Data.prototype, {
+extend(Data.prototype, {
 
     /**
      * Initialize the Data object with the given options
@@ -2559,7 +2562,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new (Data as any)(Highcharts.extend(userOptions.data, {
+            chart.data = new (Data as any)(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions: Highcharts.Options

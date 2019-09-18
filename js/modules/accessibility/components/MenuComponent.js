@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -135,7 +138,7 @@ var MenuComponent = function (chart) {
     this.init();
 };
 MenuComponent.prototype = new AccessibilityComponent();
-H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
+extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
     /**
      * Init the component

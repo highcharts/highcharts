@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -59,7 +62,7 @@ var RangeSelectorComponent = function (chart) {
     this.initBase(chart);
 };
 RangeSelectorComponent.prototype = new AccessibilityComponent();
-H.extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
+extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.
