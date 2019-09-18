@@ -19,7 +19,8 @@ import H from './Globals.js';
 declare global {
     namespace Highcharts {
         type DataGroupingApproximationValue = (
-            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'
+            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
+            'windbarb'
         );
         interface Axis {
             getGroupPixelWidth(): number;
@@ -32,39 +33,39 @@ declare global {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Dictionary<Function>
+            extends Dictionary<(Function|undefined)>
         {
-            average(
+            average: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            averages(
+            ) => (null|number|undefined);
+            averages: (
                 ...arrs: DataGrounpingApproximationsArray
-            ): (Array<(null|number|undefined)>|undefined);
-            close(
+            ) => (Array<(null|number|undefined)>|undefined);
+            close: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            high(
+            ) => (null|number|undefined);
+            high: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            low(
+            ) => (null|number|undefined);
+            low: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            open(
+            ) => (null|number|undefined);
+            open: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            sum(
+            ) => (null|number|undefined);
+            sum: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            ohlc(
+            ) => (null|number|undefined);
+            ohlc: (
                 open: DataGrounpingApproximationsArray,
                 high: DataGrounpingApproximationsArray,
                 low: DataGrounpingApproximationsArray,
                 close: DataGrounpingApproximationsArray
-            ): ([number, number, number, number]|undefined);
-            range(
+            ) => ([number, number, number, number]|undefined);
+            range: (
                 low: DataGrounpingApproximationsArray,
                 high: DataGrounpingApproximationsArray
-            ): ([number, number]|null|undefined);
+            ) => ([number, number]|null|undefined);
         }
         interface DataGroupingFunctionsObject {
             approximations: DataGroupingApproximationsDictionary;
@@ -342,12 +343,12 @@ var groupData = function (
             return approx;
         }
         if (approximations[approx]) {
-            return approximations[approx];
+            return approximations[approx] as any;
         }
         return approximations[
             (series.getDGApproximation && series.getDGApproximation()) ||
             'average'
-        ];
+        ] as any;
     }
     approximationFn = getApproximation(approximation);
 

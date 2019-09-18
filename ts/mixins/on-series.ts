@@ -18,13 +18,21 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OnSeriesPointType = (FlagsPoint);
-        type OnSeriesType = (FlagsSeries);
+        const OnSeriesMixin: OnSeriesMixin;
         interface OnSeriesMixin {
-            getPlotBox(this: OnSeriesType): SeriesPlotBoxObject;
+            getPlotBox(this: OnSeriesSeries): SeriesPlotBoxObject;
             translate(): void;
         }
-        const OnSeriesMixin: OnSeriesMixin;
+        interface OnSeriesPoint extends Point {
+            stackIndex?: number;
+        }
+        interface OnSeriesSeries extends Series {
+            options: OnSeriesSeriesOptions;
+            onSeries?: OnSeriesSeries;
+        }
+        interface OnSeriesSeriesOptions extends SeriesOptions {
+            onSeries?: (string|null);
+        }
     }
 }
 
@@ -51,7 +59,7 @@ var onSeriesMixin = {
      * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function (
-        this: Highcharts.OnSeriesType
+        this: Highcharts.OnSeriesSeries
     ): Highcharts.SeriesPlotBoxObject {
         return H.Series.prototype.getPlotBox.call(
             (
@@ -68,7 +76,7 @@ var onSeriesMixin = {
      * @function onSeriesMixin.translate
      * @return {void}
      */
-    translate: function (this: Highcharts.OnSeriesType): void {
+    translate: function (this: Highcharts.OnSeriesSeries): void {
 
         seriesTypes.column.prototype.translate.apply(this);
 
@@ -77,18 +85,17 @@ var onSeriesMixin = {
             chart = series.chart,
             points = series.points,
             cursor = points.length - 1,
-            point,
-            lastPoint,
+            point: Highcharts.OnSeriesPoint,
+            lastPoint: (Highcharts.OnSeriesPoint|undefined),
             optionsOnSeries = options.onSeries,
-            onSeries = (
+            onSeries: (Highcharts.OnSeriesSeries|undefined) = (
                 optionsOnSeries &&
                 chart.get(optionsOnSeries)
-            ) as Highcharts.OnSeriesType,
-            onKey = options.onKey || 'y',
+            ) as any,
+            onKey = (options as any).onKey || 'y',
             step = onSeries && onSeries.options.step,
-            onData = (onSeries && onSeries.points) as (
-                Array<Highcharts.OnSeriesPointType>|undefined
-            ),
+            onData: (Array<Highcharts.OnSeriesPoint>|undefined) =
+                 (onSeries && onSeries.points),
             i = onData && onData.length,
             inverted = chart.inverted,
             xAxis = series.xAxis,
@@ -111,8 +118,8 @@ var onSeriesMixin = {
 
             // sort the data points
             stableSort(points, function (
-                a: Highcharts.OnSeriesPointType,
-                b: Highcharts.OnSeriesPointType
+                a: Highcharts.OnSeriesPoint,
+                b: Highcharts.OnSeriesPoint
             ): number {
                 return ((a.x as any) - (b.x as any));
             });
@@ -161,7 +168,7 @@ var onSeriesMixin = {
 
         // Add plotY position and handle stacking
         points.forEach(function (
-            point: Highcharts.OnSeriesPointType,
+            point: Highcharts.OnSeriesPoint,
             i: number
         ): void {
 
