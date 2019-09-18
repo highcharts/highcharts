@@ -41,7 +41,7 @@ js/modules/**/*.js
 !js/modules/vector.src.js
 !js/modules/venn.src.js
 !js/modules/windbarb.src.js
-!js/modules/wordcloud.src.js
+#!js/modules/wordcloud.src.js
 js/themes/**/*.js
 !js/themes/avocado.js
 !js/themes/dark-blue.js
