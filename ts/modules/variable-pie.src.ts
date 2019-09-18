@@ -42,6 +42,9 @@ declare global {
             public redraw(): void;
             public zValEval(zVal: (number|string|undefined)): (boolean|null);
         }
+        interface SeriesTypesDictionary {
+            variablepie: typeof VariablePieSeries;
+        }
         interface VariablePiePointOptions extends PiePointOptions {
         }
         interface VariablePieSeriesOptions extends PieSeriesOptions {
