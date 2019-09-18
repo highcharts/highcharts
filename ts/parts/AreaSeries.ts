@@ -18,23 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface AreaPathObject extends SVGPathArray {
-            xMap?: number;
-        }
-        interface AreaPointOptions extends LinePointOptions {
-        }
-        interface AreaSeriesOptions extends LineSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            fillOpacity?: number;
-            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: SeriesStatesOptionsObject<AreaSeries>;
-        }
-        interface PlotSeriesOptions {
-            negativeFillColor?: AreaSeriesOptions['negativeFillColor'];
-        }
-        interface SeriesTypesDictionary {
-            area: typeof AreaSeries;
-        }
         class AreaPoint extends LinePoint {
             public isCliff?: boolean;
             public leftNull?: boolean;
@@ -49,6 +32,20 @@ declare global {
             public pointClass: typeof AreaPoint;
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
+        }
+        interface AreaPathObject extends SVGPathArray {
+            xMap?: number;
+        }
+        interface AreaPointOptions extends LinePointOptions {
+        }
+        interface AreaSeriesOptions extends LineSeriesOptions {
+            fillColor?: ColorType;
+            fillOpacity?: number;
+            negativeFillColor?: ColorType;
+            states?: SeriesStatesOptionsObject<AreaSeries>;
+        }
+        interface SeriesTypesDictionary {
+            area: typeof AreaSeries;
         }
     }
 }
@@ -556,7 +553,7 @@ seriesType<Highcharts.AreaSeries>(
                 ]]; // area name, main color, fill color
 
             zones.forEach(function (
-                zone: Highcharts.PlotSeriesZonesOptions,
+                zone: Highcharts.SeriesZonesOptions,
                 i: number
             ): void {
                 props.push([

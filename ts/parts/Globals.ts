@@ -36,12 +36,12 @@ declare global {
         interface ChartOptions {
             forExport?: any; // @todo
         }
-        interface PlotSeriesOptions {
-            accessibility?: any; // @todo
-        }
         interface Point {
             startR?: any; // @todo solid-gauge
             tooltipDateKeys?: any; // @todo xrange
+        }
+        interface Options {
+            toolbar?: any; // @todo stock-tools
         }
         interface Series {
             fillGraph?: any; // @todo ichimoku indicator
@@ -50,6 +50,9 @@ declare global {
             resetZones?: any; // @todo macd indicator
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
+        }
+        interface SeriesOptions {
+            accessibility?: any; // @todo
         }
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
@@ -78,6 +81,7 @@ declare global {
         const seriesTypes: SeriesTypesDictionary;
         const svg: boolean;
         const version: string;
+        let theme: (Options|undefined);
     }
     type GlobalWindow = typeof window;
     type GlobalHTMLElement = HTMLElement;

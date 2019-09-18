@@ -25,11 +25,6 @@ declare global {
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
         }
-        interface PlotSeriesOptions {
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
-        }
         interface Options {
             isStock?: boolean;
         }
@@ -41,6 +36,11 @@ declare global {
             compareValue?: number;
             modifyValue?(value?: number, point?: Point): (number|undefined);
             setCompare(compare?: string): void;
+        }
+        interface SeriesOptions {
+            compare?: string;
+            compareBase?: (0|100);
+            compareStart?: boolean;
         }
         interface SVGRenderer {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;

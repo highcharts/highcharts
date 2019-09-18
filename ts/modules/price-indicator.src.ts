@@ -13,17 +13,6 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
-        interface Series {
-            lastPrice?: SVGElement;
-            lastVisiblePrice?: SVGElement;
-            crossLabel?: SVGElement;
-        }
-
-        interface PlotSeriesOptions {
-            lastPrice?: LastPriceOptions;
-            lastVisiblePrice?: LastVisiblePriceOptions;
-        }
-
         interface LastPriceOptions extends XAxisCrosshairOptions {
             enabled?: boolean;
         }
@@ -33,6 +22,15 @@ declare global {
         }
         interface LastVisiblePriceLabelOptions {
             enabled: true;
+        }
+        interface Series {
+            lastPrice?: SVGElement;
+            lastVisiblePrice?: SVGElement;
+            crossLabel?: SVGElement;
+        }
+        interface SeriesOptions {
+            lastPrice?: LastPriceOptions;
+            lastVisiblePrice?: LastVisiblePriceOptions;
         }
     }
 }

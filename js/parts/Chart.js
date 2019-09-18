@@ -210,9 +210,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (typeOptions, type) {
                 if (isObject(typeOptions)) { // #8766
-                    typeOptions.tooltip = (userPlotOptions[type] &&
-                        merge(userPlotOptions[type].tooltip) // override by copy
-                    ) || undefined; // or clear
+                    typeOptions.tooltip = (userPlotOptions[type] && // override by copy:
+                        merge(userPlotOptions[type].tooltip)) || undefined; // or clear
                 }
             });
             // User options have higher priority than default options

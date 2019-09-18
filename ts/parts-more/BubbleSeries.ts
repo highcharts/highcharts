@@ -73,6 +73,7 @@ declare global {
         interface BubbleSeriesOptions extends ScatterSeriesOptions {
             displayNegative?: boolean;
             marker?: BubblePointMarkerOptions;
+            minSize?: (number|string);
             maxSize?: (number|string);
             sizeBy?: BubbleSizeByValue;
             sizeByAbsoluteValue?: boolean;

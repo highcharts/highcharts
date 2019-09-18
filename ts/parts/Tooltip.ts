@@ -28,51 +28,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type TooltipShapeValue = ('callout'|'circle'|'square');
-        interface PlotSeriesOptions {
-            tooltip?: TooltipOptions;
-        }
-        interface Point {
-            tooltipPos?: Array<number>;
-        }
-        interface Series {
-            noSharedTooltip?: boolean;
-            tt?: SVGElement;
-        }
-        interface TooltipFormatterCallbackFunction {
-            (
-                this: TooltipFormatterContextObject,
-                tooltip: Tooltip
-            ): (false|string|Array<string>);
-        }
-        interface TooltipFormatterContextObject {
-            color: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            key: number;
-            percentage?: number;
-            point: Point;
-            points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: Series;
-            total?: number;
-            x: number;
-            y: number;
-        }
-        interface TooltipOptions {
-            distance?: number;
-        }
-        interface TooltipPositionerCallbackFunction {
-            (
-                labelWidth: number,
-                labelHeight: number,
-                point: TooltipPositionerPointObject
-            ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: boolean;
-            negative: boolean;
-            plotX: number;
-            plotY: number;
-        }
         class Tooltip {
             public constructor(chart: Chart, options: TooltipOptions);
             public chart: Chart;
@@ -145,6 +100,51 @@ declare global {
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
         }
+        interface Point {
+            tooltipPos?: Array<number>;
+        }
+        interface Series {
+            noSharedTooltip?: boolean;
+            tt?: SVGElement;
+        }
+        interface SeriesOptions {
+            tooltip?: TooltipOptions;
+        }
+        interface TooltipFormatterCallbackFunction {
+            (
+                this: TooltipFormatterContextObject,
+                tooltip: Tooltip
+            ): (false|string|Array<string>);
+        }
+        interface TooltipFormatterContextObject {
+            color: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            key: number;
+            percentage?: number;
+            point: Point;
+            points?: Array<Highcharts.TooltipFormatterContextObject>;
+            series: Series;
+            total?: number;
+            x: number;
+            y: number;
+        }
+        interface TooltipOptions {
+            distance?: number;
+        }
+        interface TooltipPositionerCallbackFunction {
+            (
+                labelWidth: number,
+                labelHeight: number,
+                point: TooltipPositionerPointObject
+            ): PositionObject;
+        }
+        interface TooltipPositionerPointObject {
+            isHeader: boolean;
+            negative: boolean;
+            plotX: number;
+            plotY: number;
+        }
+        type TooltipShapeValue = ('callout'|'circle'|'square');
     }
 }
 

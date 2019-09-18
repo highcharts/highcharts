@@ -22,11 +22,6 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
@@ -40,11 +35,7 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
-            startFromThreshold?: boolean;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
-        }
-        interface PlotSeriesOptions {
-            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -61,6 +52,11 @@ declare global {
         }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
+        }
+        interface SeriesZonesOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;

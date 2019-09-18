@@ -18,73 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PlotSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            ignoreHiddenPoint?: boolean;
-        }
-        interface PiePointConnectorShapeFunction {
-            (...args: Array<any>): SVGPathArray;
-        }
-        interface PiePointLabelConnectorPositionObject {
-            breakAt: PositionObject;
-            touchingSliceAt: PositionObject;
-        }
-        interface PiePointLabelPositionObject {
-            alignment: AlignValue;
-            connectorPosition: PiePointLabelConnectorPositionObject;
-            'final': Dictionary<undefined>;
-            natural: PositionObject;
-        }
-        interface PiePointOptions extends LinePointOptions {
-            dataLabels?: PieSeriesDataLabelsOptionsObject;
-            sliced?: boolean;
-            visible?: boolean;
-        }
-        interface PiePositionObject extends PositionObject {
-            alignment: AlignValue;
-        }
-        interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
-        {
-            alignTo?: string;
-            connectorColor?: (ColorString|GradientColorObject|PatternObject);
-            connectorPadding?: number;
-            connectorShape?: (string|Function);
-            connectorWidth?: number;
-            crookDistance?: string;
-            distance?: number;
-            softConnector?: boolean;
-        }
-        interface PieSeriesOptions extends LineSeriesOptions {
-            endAngle?: number;
-            center?: [(number|string|null), (number|string|null)];
-            colorByPoint?: boolean;
-            dataLabels?: PieSeriesDataLabelsOptionsObject;
-            ignoreHiddenPoint?: boolean;
-            inactiveOtherPoints?: boolean;
-            innerSize?: (number|string);
-            minSize?: (number|string);
-            size?: (number|string|null);
-            startAngle?: number;
-            states?: SeriesStatesOptionsObject<PieSeries>;
-        }
-        interface PieSeriesPositionObject extends PositionObject {
-            alignment: AlignValue;
-        }
-        interface SeriesStatesHoverOptionsObject {
-            brightness?: number;
-        }
-        interface PlotSeriesOptions {
-            center?: PieSeriesOptions['center'];
-            colorByPoint?: PieSeriesOptions['colorByPoint'];
-            inactiveOtherPoints?: PieSeriesOptions['inactiveOtherPoints'];
-            innerSize?: PieSeriesOptions['innerSize'];
-            minSize?: PieSeriesOptions['minSize'];
-            size?: PieSeriesOptions['size'];
-        }
-        interface SeriesTypesDictionary {
-            pie: typeof PieSeries;
-        }
         class PiePoint extends LinePoint {
             public angle?: number;
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
@@ -126,6 +59,63 @@ declare global {
             public sortByAngle(points: Array<PiePoint>, sign: number): void;
             public translate(positions?: Array<number>): void;
             public updateTotals(): void;
+        }
+        interface PiePointConnectorShapeFunction {
+            (...args: Array<any>): SVGPathArray;
+        }
+        interface PiePointLabelConnectorPositionObject {
+            breakAt: PositionObject;
+            touchingSliceAt: PositionObject;
+        }
+        interface PiePointLabelPositionObject {
+            alignment: AlignValue;
+            connectorPosition: PiePointLabelConnectorPositionObject;
+            'final': Dictionary<undefined>;
+            natural: PositionObject;
+        }
+        interface PiePointOptions extends LinePointOptions {
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
+            sliced?: boolean;
+            visible?: boolean;
+        }
+        interface PiePositionObject extends PositionObject {
+            alignment: AlignValue;
+        }
+        interface PieSeriesDataLabelsOptionsObject
+            extends DataLabelsOptionsObject
+        {
+            alignTo?: string;
+            connectorColor?: (ColorString|GradientColorObject|PatternObject);
+            connectorPadding?: number;
+            connectorShape?: (string|Function);
+            connectorWidth?: number;
+            crookDistance?: string;
+            distance?: number;
+            softConnector?: boolean;
+        }
+        interface PieSeriesOptions extends LineSeriesOptions {
+            endAngle?: number;
+            center?: [(number|string|null), (number|string|null)];
+            colorByPoint?: boolean;
+            dataLabels?: PieSeriesDataLabelsOptionsObject;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            ignoreHiddenPoint?: boolean;
+            inactiveOtherPoints?: boolean;
+            innerSize?: (number|string);
+            minSize?: (number|string);
+            size?: (number|string|null);
+            slicedOffset?: number;
+            startAngle?: number;
+            states?: SeriesStatesOptionsObject<PieSeries>;
+        }
+        interface PieSeriesPositionObject extends PositionObject {
+            alignment: AlignValue;
+        }
+        interface SeriesStatesHoverOptionsObject {
+            brightness?: number;
+        }
+        interface SeriesTypesDictionary {
+            pie: typeof PieSeries;
         }
     }
 }

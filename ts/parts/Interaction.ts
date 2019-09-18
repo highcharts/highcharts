@@ -82,6 +82,9 @@ declare global {
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
         }
+        interface SeriesOptions {
+            inactiveOtherPoints?: boolean;
+        }
         interface TrackerMixin {
             drawTrackerGraph(this: Highcharts.Series): void;
             drawTrackerPoint(this: Series): void;

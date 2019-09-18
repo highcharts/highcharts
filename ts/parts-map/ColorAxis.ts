@@ -68,7 +68,7 @@ declare global {
             stops?: GradientColorObject['stops'];
         }
         interface Options {
-            colorAxis?: Array<ColorAxisOptions>;
+            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
         }
         interface Point {
             dataClass?: number;

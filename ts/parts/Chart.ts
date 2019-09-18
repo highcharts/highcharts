@@ -457,8 +457,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
                 if (isObject(typeOptions)) { // #8766
                     typeOptions.tooltip = (
-                        userPlotOptions[type] &&
-                        merge(userPlotOptions[type].tooltip) // override by copy
+                        userPlotOptions[type] && // override by copy:
+                        merge((userPlotOptions[type] as any).tooltip)
                     ) || undefined; // or clear
                 }
             });
