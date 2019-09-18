@@ -42,6 +42,9 @@ declare global {
             ): SVGAttributes;
             public translate(): void;
         }
+        interface SeriesTypesDictionary {
+            vector: typeof VectorSeries;
+        }
         interface VectorPointOptions extends ScatterPointOptions {
             direction?: number;
             length?: number;
