@@ -950,13 +950,13 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // some series types are defined after this.
 addEvent(Series, 'afterSetOptions', function (
     this: Highcharts.Series,
-    e: { options: Highcharts.PlotSeriesOptions }
+    e: { options: Highcharts.SeriesOptions }
 ): void {
 
     var options = e.options,
         type = this.type,
         plotOptions = this.chart.options.plotOptions as Highcharts.PlotOptions,
-        defaultOptions = defaultPlotOptions[type].dataGrouping,
+        defaultOptions = (defaultPlotOptions[type] as any).dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -970,7 +970,8 @@ addEvent(Series, 'afterSetOptions', function (
             baseOptions,
             defaultOptions,
             plotOptions.series && plotOptions.series.dataGrouping, // #1228
-            plotOptions[type].dataGrouping, // Set by the StockChart constructor
+            // Set by the StockChart constructor:
+            (plotOptions[type] as any).dataGrouping,
             this.userOptions.dataGrouping
         );
     }

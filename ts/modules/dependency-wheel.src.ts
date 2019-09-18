@@ -24,6 +24,7 @@ declare global {
         interface DependencyWheelPointOptions extends SankeyPointOptions {
         }
         interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
+            center?: Array<(number|string|null)>;
             startAngle?: number;
             states?: SeriesStatesOptionsObject<DependencyWheelSeries>;
         }

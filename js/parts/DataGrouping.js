@@ -585,8 +585,8 @@ addEvent(Series, 'afterSetOptions', function (e) {
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }
         options.dataGrouping = merge(baseOptions, defaultOptions, plotOptions.series && plotOptions.series.dataGrouping, // #1228
-        plotOptions[type].dataGrouping, // Set by the StockChart constructor
-        this.userOptions.dataGrouping);
+        // Set by the StockChart constructor:
+        plotOptions[type].dataGrouping, this.userOptions.dataGrouping);
     }
 });
 // When resetting the scale reset the hasProccessed flag to avoid taking

@@ -77,6 +77,7 @@ declare global {
         {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
+            inactiveOtherPoints?: boolean;
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
             link?: SVGAttributes;
             marker?: NetworkgraphPointMarkerOptionsObject;
