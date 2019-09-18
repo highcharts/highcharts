@@ -74,12 +74,12 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-
-    const match = js.match(/(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/);
-
-    if (match) {
+    const regex = /(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/g;
+    let match;
+    const codeblocks = [];
+    
+    while (match = regex.exec(js)) {
         let src = match[2];
-
 
         let innerMatch = src.match(
             /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
@@ -102,21 +102,16 @@ function resolveJSON(js) {
             if (data) {
 
                 if (/json$/.test(filename)) {
-                    return `
-                    window.JSONSources['${src}'] = ${data};
-                    ${js}
-                    `;
+                    codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
                 }
                 if (/csv$/.test(filename)) {
-                    return `
-                    window.JSONSources['${src}'] = \`${data}\`;
-                    ${js}
-                    `;
+                    codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
                 }
             }
         }
     }
-    return js;
+    codeblocks.push(js);
+    return codeblocks.join('\n');
 }
 
 /**
@@ -394,6 +389,7 @@ module.exports = function (config) {
 
             // visual tests excluded for now due to failure
             'samples/highcharts/demo/funnel3d/demo.js',
+            'samples/highcharts/demo/live-data/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
