@@ -50,6 +50,9 @@ declare global {
         interface Point {
             crosshairWidth?: VariwidePoint['crosshairWidth'];
         }
+        interface SeriesTypesDictionary {
+            variwide: typeof VariwideSeries;
+        }
         interface Tick {
             postTranslate(
                 xy: PositionObject,
