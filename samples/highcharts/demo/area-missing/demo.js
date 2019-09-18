@@ -10,6 +10,9 @@ Highcharts.chart('container', {
         align: 'right',
         verticalAlign: 'bottom'
     },
+    accessibility: {
+        description: 'This demo illustrates missing data in an area chart.'
+    },
     legend: {
         layout: 'vertical',
         align: 'left',

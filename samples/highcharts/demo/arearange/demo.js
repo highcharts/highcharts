@@ -17,8 +17,16 @@ Highcharts.getJSON(
                 text: 'Temperature variation by day'
             },
 
+            caption: {
+                text: 'Demonstrating an arearange chart with a low and high value per point.',
+                align: 'center'
+            },
+
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
+                accessibility: {
+                    rangeDescription: 'Range: Jan 1st 2017 to Dec 31 2017.'
+                }
             },
 
             yAxis: {
@@ -30,7 +38,10 @@ Highcharts.getJSON(
             tooltip: {
                 crosshairs: true,
                 shared: true,
-                valueSuffix: '°C'
+                valueSuffix: '°C',
+                dateTimeLabelFormats: {
+                    hour: '%A, %b %e'
+                }
             },
 
             legend: {

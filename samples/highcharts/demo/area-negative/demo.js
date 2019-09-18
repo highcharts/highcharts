@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Area chart with negative values'
     },
+    caption: {
+        text: 'A simple demo showcasing an area chart with negative values.'
+    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

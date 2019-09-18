@@ -72,8 +72,16 @@ Highcharts.chart('container', {
         text: 'July temperatures'
     },
 
+    caption: {
+        text: 'Chart demonstrating using an arearange series in combination with a line series.',
+        align: 'center'
+    },
+
     xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        accessibility: {
+            rangeDescription: 'Range: Jul 1st 2009 to Jul 31st 2009.'
+        }
     },
 
     yAxis: {
@@ -86,9 +94,6 @@ Highcharts.chart('container', {
         crosshairs: true,
         shared: true,
         valueSuffix: '°C'
-    },
-
-    legend: {
     },
 
     series: [{
