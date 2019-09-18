@@ -60,6 +60,9 @@ declare global {
                 directions: Array<number>
             ): Array<number>;
         }
+        interface SeriesTypesDictionary {
+            windbarb: typeof WindbarbSeries;
+        }
         interface WindbarbPointOptions extends ColumnPointOptions {
             direction?: number;
             value?: number;
