@@ -120,7 +120,6 @@ Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
 // Override Highcharts and jQuery ajax functions to load from local
-window.JSONSources = {};
 Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
     var success = attr.success;
     attr.error = function (e) {

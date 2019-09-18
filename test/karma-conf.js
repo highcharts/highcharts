@@ -314,6 +314,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'test/json-sources.js',
             'test/karma-setup.js'
         ], tests),
 
