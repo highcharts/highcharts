@@ -1,8 +1,31 @@
-#container, #sliders {
+#container, table {
     min-width: 310px; 
     max-width: 800px;
     margin: 0 auto;
 }
+
 #container {
     height: 400px; 
+}
+
+table {
+	font-family: 'Verdana';
+	font-size: 12pt;          
+	border-collapse: collapse;
+	border: 1px solid #EBEBEB;
+	margin: 10px auto;
+    text-align: center;
+}
+
+table tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+table tr:nth-child(even) {
+  background-color: #FCF9F9;
+}
+
+th {
+	font-weight: 600;
+    padding: 10px;
 }
