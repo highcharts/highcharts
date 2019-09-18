@@ -1,5 +1,5 @@
-3d cylinder introduction
-------------
+3D cylinder introduction
+===
 
 A 3D cylinder chart is a variation of a 3D column chart and features cylindrical points.
 
