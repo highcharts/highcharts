@@ -48,6 +48,15 @@ var chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
+
+    title: {
+        text: 'Daily company fruit consumption 2015'
+    },
+
+    caption: {
+        text: 'Chart demonstrating more advanced accessibility configuration. The chart is depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
+    },
+
     accessibility: {
         keyboardNavigation: {
             skipNullPoints: true
@@ -60,34 +69,32 @@ var chart = Highcharts.chart('container', {
         },
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
-    title: {
-        text: 'Daily company fruit consumption 2015'
-    },
-    caption: {
-        text: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
-    },
+
     xAxis: [{
-        crosshair: true,
         accessibility: {
             description: 'Months of the year'
         },
         categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     }],
+
     yAxis: {
         title: {
             text: 'Fruits consumed'
         },
         min: 0
     },
+
     plotOptions: {
         series: {
             stickyTracking: true,
             whiskerWidth: 5
         }
     },
+
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Median: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
     },
+
     series: [{
         name: 'Plums',
         data: [

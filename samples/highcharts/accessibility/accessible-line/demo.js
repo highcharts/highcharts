@@ -3,10 +3,6 @@ Highcharts.chart('container', {
         type: 'spline'
     },
 
-    caption: {
-        text: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
-    },
-
     legend: {
         symbolWidth: 40
     },
@@ -17,6 +13,10 @@ Highcharts.chart('container', {
 
     subtitle: {
         text: 'Click on point to visit official website'
+    },
+
+    caption: {
+        text: 'Line chart demonstrating some accessibility features of Highcharts. Chart displays the most commonly used desktop screen readers from January 2009 to July 2015 as reported in the 6th Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
     },
 
     yAxis: {
@@ -33,10 +33,6 @@ Highcharts.chart('container', {
             description: 'Time from January 2009 to July 2015'
         },
         categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
-    },
-
-    tooltip: {
-        split: true
     },
 
     plotOptions: {
@@ -99,5 +95,18 @@ Highcharts.chart('container', {
             dashStyle: 'LongDash',
             color: Highcharts.getOptions().colors[7]
         }
-    ]
+    ],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    itemWidth: 150
+                }
+            }
+        }]
+    }
 });

@@ -3,16 +3,16 @@ Highcharts.chart('container', {
         type: 'pie'
     },
 
-    caption: {
-        text: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
-    },
-
     title: {
         text: 'Desktop screen readers'
     },
 
     subtitle: {
         text: 'Click on point to visit official website'
+    },
+
+    caption: {
+        text: 'Pie chart demonstrating some accessibility features of Highcharts. The chart displays the most commonly used desktop screen readers in July 2015 as reported in the 6th Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
     },
 
     plotOptions: {
@@ -80,5 +80,22 @@ Highcharts.chart('container', {
             website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php',
             color: 'url(#highcharts-default-pattern-5)'
         }]
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            format: '<b>{point.name}</b>'
+                        }
+                    }
+                }
+            }
+        }]
+    }
 });

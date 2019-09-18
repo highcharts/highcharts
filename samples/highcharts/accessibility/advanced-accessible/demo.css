@@ -1,6 +1,6 @@
 #container {
     max-width: 800px;
-    height: 400px;
+    height: 450px;
     margin: 1em auto;
 }
 
@@ -18,7 +18,8 @@ table {
 	border: 1px solid #EBEBEB;
 	margin: 10px auto;
     text-align: center;
-    width: 100%;
+	width: 100%;
+	max-width: 800px;
 }
 
 table tr:nth-child(odd) {
