@@ -4384,11 +4384,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 return x;
             };
 
-        // #11405
-        if (!this.horiz && value === this.min) {
-            lineWidth = defined(lineWidth) ? lineWidth * -1 : -1;
-        }
-
         evt = {
             value: value,
             lineWidth: lineWidth,
@@ -4397,8 +4392,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
         } as any;
-
         fireEvent(this, 'getPlotLinePath', evt, function (e: Event): void {
+
             translatedValue = pick(
                 translatedValue,
                 axis.translate(value as any, null, null, old)

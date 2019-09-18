@@ -3487,10 +3487,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             return x;
         };
-        // #11405
-        if (!this.horiz && value === this.min) {
-            lineWidth = defined(lineWidth) ? lineWidth * -1 : -1;
-        }
         evt = {
             value: value,
             lineWidth: lineWidth,
