@@ -42,6 +42,19 @@ var chart = new Highcharts.Chart({
     subtitle: {
         text: 'Click and drag the plot area to rotate in space'
     },
+    caption: {
+        text: 'Chart demonstrating a 3D scatter plot, where the chart can be ' +
+            'rotated to inspect points from different angles.',
+        useHTML: true,
+        style: {
+            backgroundColor: '#fff',
+            padding: '10px',
+            border: '1px solid #ddd'
+        }
+    },
+    accessibility: {
+        describeSingleSeries: true
+    },
     plotOptions: {
         scatter: {
             width: 10,
@@ -68,8 +81,11 @@ var chart = new Highcharts.Chart({
         enabled: false
     },
     series: [{
-        name: 'Reading',
+        name: 'Data',
         colorByPoint: true,
+        accessibility: {
+            exposeAsGroupOnly: true
+        },
         data: [
             [1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7], [6, 9, 6],
             [7, 0, 5], [2, 3, 3], [3, 9, 8], [3, 6, 5], [4, 9, 4], [2, 3, 3],

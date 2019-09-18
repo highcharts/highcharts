@@ -12,6 +12,10 @@ Highcharts.chart('container', {
     subtitle: {
         text: '3D donut in Highcharts'
     },
+    caption: {
+        text: 'Demonstrating a 3D donut chart.',
+        align: 'center'
+    },
     plotOptions: {
         pie: {
             innerSize: 100,
