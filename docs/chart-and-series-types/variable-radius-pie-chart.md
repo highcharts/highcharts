@@ -5,7 +5,7 @@ A variable pie chart is a circular chart divided into sectors which are proporti
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.variablepie)_
 
-<iframe style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/variable-radius-pie></iframe>
+<iframe style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/variable-radius-pie allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variable-radius-pie/) to check the code.
 

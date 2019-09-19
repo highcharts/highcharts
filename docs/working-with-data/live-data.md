@@ -11,7 +11,7 @@ There are basically two ways of working with a live data feed from the server in
 
 This feature was introduced in v6.1. The [data module](https://www.highcharts.com/docs/working-with-data/data-module) can load data directly from files and services online, and keep the chart updated by polling the server periodically. The chart can load data through one of the [data.csv](https://api.highcharts.com/highcharts/data.csv), [data.rows](https://api.highcharts.com/highcharts/data.rows), [data.columns](https://api.highcharts.com/highcharts/data.columns) or [data.googleSpreadsheetKey](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) options, and keep it updated by setting [data.enablePolling](https://api.highcharts.com/highcharts/data.enablePolling) to true. This feature also supports flexibility to the data structure. Data points can be shifted, typically old data points removed and new ones added, and the chart will animate to visualize what changed. A benefit of using this feature is that it is purely declarative, which makes it a good match for graphical user interfaces where chart editors set up a chart based on known sources.
 
-<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/highcharts/data/livedata-columns/></iframe>
+<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/highcharts/data/livedata-columns/ allow="fullscreen"></iframe>
 
 2. API methods
 ---------------

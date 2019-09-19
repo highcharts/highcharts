@@ -21,7 +21,7 @@ The configuration above generates a resizer between the first and the second `yA
 
 ![6ozu6lnpu-hguF75ugV5qjjtXqjPAlS2mcO6ddNq78llRGLf0K70OHQYJXWHIlRmMGfJBh8Z_Qm0ZvRkTUkFa4Fk2No0SGScyUXuBA5eW7UWqdynnVCNA2FQiE8_T9OF9Mf4j5tV](https://lh5.googleusercontent.com/6ozu6lnpu-hguF75ugV5qjjtXqjPAlS2mcO6ddNq78llRGLf0K70OHQYJXWHIlRmMGfJBh8Z_Qm0ZvRkTUkFa4Fk2No0SGScyUXuBA5eW7UWqdynnVCNA2FQiE8_T9OF9Mf4j5tV)
 
-<iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/candlestick-and-volume></iframe>
+<iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/candlestick-and-volume allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
 

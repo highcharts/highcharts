@@ -7,11 +7,11 @@ Here’re both chart types to compare:
 
 **3D cylinder chart**
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/cylinder></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/cylinder allow="fullscreen"></iframe>
 
 **3D column chart**
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/css/column-3d></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/css/column-3d allow="fullscreen"></iframe>
 
 Installation
 ------------

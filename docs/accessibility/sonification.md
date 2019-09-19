@@ -9,7 +9,7 @@ For Highcharts, we provide a sonification module to allow you full control of pl
 
 Note that this module is still considered experimental and that certain features work best in Google Chrome. Legacy browsers are not supported.
 
-<iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification></iframe>
+<iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification allow="fullscreen"></iframe>
 
 Installation
 ------------
@@ -37,7 +37,7 @@ See the [API documentation](https://api.highcharts.com/class-reference/Highchart
 **Earcons:**  
 Earcons are ear-icons, predefined sounds that play to indicate something noteworthy. You might use an Earcon to play a specific sound to indicate the end of each series, or to indicate a point of interest on the chart.
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-earcon></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-earcon allow="fullscreen"></iframe>
 
 **Instruments**  
 The module makes use of the concept of instruments. When sonifying data, you specify the instruments you want to be playing, and you map data properties to instrument parameters. A common example would be to map y-values to the instrument frequency, which results in a sound that rises in pitch for higher data values. This is in most simple cases fairly intuitive to readers.
@@ -86,7 +86,7 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
     });
     
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/point-basic></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/point-basic allow="fullscreen"></iframe>
 
 In the above example we call [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify) when a point is clicked. The instrument options specify a predefined [Instrument](https://api.highcharts.com/class-reference/Highcharts.Instrument), the mapping of data properties to the instrument parameters, as well as options to pass to the instrument. We use a fixed 200ms duration for the point, map the x-value to panning (left to right), and the y-value to the note frequency. The volume is defined with a callback function, and returns a fixed value depending on the color of the point.
 
@@ -129,7 +129,7 @@ In this example we will show how to use [Series.sonify](https://api.highcharts.c
     });
     
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-basic></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-basic allow="fullscreen"></iframe>
 
 In the above example we sonify a series when the series is clicked. The main difference between sonifying a series and a single point is the addition of the overall `duration` option, as well as the `pointPlayTime` option. Both of these are required in order to sonify the series.
 
@@ -174,7 +174,7 @@ In this example we will show how to sonify a chart with multiple series using [C
         };
         
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-sequential></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-sequential allow="fullscreen"></iframe>
 
 In the above example we are calling [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify) when a button is being pressed. The options are similar to those of [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify), with a few additions.
 
@@ -260,7 +260,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
           }
       });
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-earcon></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-earcon allow="fullscreen"></iframe>
 
 In the above example we use the same approach as with [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify) above, calling \`Series.sonify\` when a series is clicked. In addition, we define an [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon#Earcon).
 

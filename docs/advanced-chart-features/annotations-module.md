@@ -5,7 +5,7 @@ The annotations module allows users to annotate a chart freely with labels and s
 
 Include the following file ‘modules/annotations.js’ after highcharts.js or highstock.js to enable annotations.
 
-<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/annotations></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/annotations allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/annotations/) to check the code.
 

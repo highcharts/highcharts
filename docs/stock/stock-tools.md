@@ -51,7 +51,7 @@ Highcharts.stockChart('container', {
 ```
 And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
 
-<iframe width="320" height="500" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui"></iframe>
+<iframe width="320" height="500" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui" allow="fullscreen"></iframe>
 
 **Note:** The buttons graphics of the Stock Toolbar buttons are by default loaded from the Highcharts CDN. If you want to load Stock Tools from your local package, you might also want to set the symbol properties for each of the [`stockTools.gui.definitions`](https://api.highcharts.com/highstock/stockTools.gui.definitions). The icons are available in the Highcharts NPM [package](https://www.npmjs.com/package/highcharts) or clone the highcharts-dist [GitHub repository](https://github.com/highcharts/highcharts-dist).
 
@@ -253,7 +253,7 @@ _See example below for loading specific indicators._
 And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
     
 
-<iframe width="320" height="500" style="width: 100%; height: 600px;" src=https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui></iframe>
+<iframe width="320" height="500" style="width: 100%; height: 600px;" src=https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui allow="fullscreen"></iframe>
 
 **Note**: The buttons graphics of the Stock Toolbar buttons are by default loaded from the Highcharts CDN. If you want to load Stock Tools from your local package, you might also want to set the symbol properties for each of the [stockTools.gui.definitions](https://api.highcharts.com/highstock/stockTools.gui.definitions). The icons are available in the Highcharts NPM [package](https://www.npmjs.com/package/highcharts) or clone the highcharts-dist [GitHub repository](https://github.com/highcharts/highcharts-dist).
 
@@ -389,4 +389,4 @@ How to implement a custom dialogue window, is best explained with an example whe
 
 _The above code is put together in the below demo_
 
-<iframe src="https://jsfiddle.net/kyd3vpwx/embedded/result,js,html,css/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="482" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;"></iframe>
+<iframe src="https://jsfiddle.net/kyd3vpwx/embedded/result,js,html,css/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="482" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>

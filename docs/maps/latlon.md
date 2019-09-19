@@ -1,7 +1,7 @@
 Latitude/longitude
 ===
 
-<iframe style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced></iframe>
+<iframe style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced allow="fullscreen"></iframe>
 
 Highmaps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highmaps. The latest version of the proj4js library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 

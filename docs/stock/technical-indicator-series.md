@@ -119,7 +119,7 @@ There are no limitations to the number of technical indicators that can be bound
     }]
     
 
-<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points></iframe>
+<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/macd-pivot-points) to check the code.
 

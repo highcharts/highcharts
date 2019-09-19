@@ -7,18 +7,18 @@ Adapt the x axis to the right if the audience read from right to left, for insta
 
 Here is a demo using a column pyramid series to display one pyramid per value along an X axis.
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/column-pyramid></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/column-pyramid allow="fullscreen"></iframe>
 
 Other demos:
 ------------
 
 **Stacked column pyramid**
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-stacked></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-stacked allow="fullscreen"></iframe>
 
 **Inverted column pyramid**
 
-<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-inverted></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-inverted allow="fullscreen"></iframe>
 
 Installation
 ------------
