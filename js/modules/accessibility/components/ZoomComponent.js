@@ -53,13 +53,8 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  * @private
  * @class
  * @name Highcharts.ZoomComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ZoomComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var ZoomComponent = function () {};
 ZoomComponent.prototype = new AccessibilityComponent();
 extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 

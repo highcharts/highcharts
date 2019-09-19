@@ -76,12 +76,8 @@ H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
  * @private
  * @class
  * @name Highcharts.LegendComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var LegendComponent = function (chart) {
-    this.initBase(chart);
-};
+var LegendComponent = function () {};
 LegendComponent.prototype = new AccessibilityComponent();
 extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
