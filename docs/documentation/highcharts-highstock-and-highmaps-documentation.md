@@ -1,5 +1,5 @@
 Topics
-------
+===
 
 *   [Installation](docs/getting-started/installation)
 *   [Your first chart](docs/getting-started/your-first-chart)

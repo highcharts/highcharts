@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U.splat, syncTimeout = U.syncTimeout;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -108,7 +108,7 @@ var defined = U.defined, isNumber = U.isNumber, isString = U.isString, splat = U
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 ''; // separates doclets above from variables below
-var doc = H.doc, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits;
+var doc = H.doc, format = H.format, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.

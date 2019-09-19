@@ -18,8 +18,13 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OptionsOverflowValue = ('allow'|'justify');
-        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+        function dateFormat(
+            format: string,
+            timestamp: number,
+            capitalize?: boolean
+        ): string;
+        function getOptions(): Options;
+        function setOptions(options: Options): Options;
         interface Chart {
             marginRight: ChartOptions['marginRight'];
             polar: ChartOptions['polar'];
@@ -334,19 +339,22 @@ declare global {
             valueSuffix?: string;
             xDateFormat?: string;
         }
-        type DescriptionOptionsType =
-            (TitleOptions|SubtitleOptions|CaptionOptions);
-
         let defaultOptions: Options;
         let defaultPlotOptions: PlotOptions;
         let time: Time;
-        function dateFormat(
-            format: string,
-            timestamp: number,
-            capitalize?: boolean
-        ): string;
-        function getOptions(): Options;
-        function setOptions(options: Options): Options;
+        type DescriptionOptionsType =
+            (TitleOptions|SubtitleOptions|CaptionOptions);
+        type OptionsOverflowValue = ('allow'|'justify');
+        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+        type PlotOptions = {
+            [TSeriesType in keyof SeriesTypesDictionary]?: (
+                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
+                (
+                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
+                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
+                )>
+            )
+        };
     }
 }
 

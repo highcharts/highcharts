@@ -1,5 +1,5 @@
 Server-side data grouping
--------------------------
+===
 
 Since Highcharts version 7.1 it is possible to perform data grouping on the server side in a node environment. Client-side data grouping has been a part of Highstock since its beginning, but there are cases where it is beneficial to move the grouping to the server.
 

@@ -21,7 +21,8 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -270,7 +271,7 @@ seriesType('heatmap', 'scatter',
         Series.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
-}), H.extend({
+}), extend({
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding

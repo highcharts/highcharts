@@ -79,7 +79,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    extend
+} = U;
 
 var pick = H.pick,
     Point = H.Point;
@@ -115,7 +118,7 @@ H.NodesMixin = {
             options = this.options.nodes && findById(this.options.nodes, id);
             node = (new PointClass()).init(
                 this,
-                H.extend({
+                extend({
                     className: 'highcharts-node',
                     isNode: true,
                     id: id,

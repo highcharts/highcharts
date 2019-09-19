@@ -1,5 +1,5 @@
 Understanding Highstock
------------------------
+===
 
 Highstock is based on Highcharts, meaning it has all the core functionality of Highcharts, plus some additional features.
 

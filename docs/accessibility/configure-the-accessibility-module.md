@@ -1,5 +1,5 @@
 Configuring the accessibility module
-------------------------------------
+===
 
 The Accessibility module is highly configurable. While the goal of the module is to provide the most accessible charts possible out of the box, it can sometimes be advantageous to make changes to the configuration.
 

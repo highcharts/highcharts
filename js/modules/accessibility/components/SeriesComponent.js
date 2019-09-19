@@ -13,7 +13,8 @@
 import H from '../../../parts/Globals.js';
 
 import U from '../../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -567,7 +568,7 @@ var SeriesComponent = function (chart) {
     this.init();
 };
 SeriesComponent.prototype = new AccessibilityComponent();
-H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
+extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
     /**
      * Init the component.

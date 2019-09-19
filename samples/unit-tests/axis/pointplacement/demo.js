@@ -26,4 +26,29 @@ QUnit.test('Axis pointPlacement', assert => {
         'No padded ticks'
     );
 
+    chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
+        series: [{
+            data: [1, 4, 3, 5],
+            type: 'column',
+            pointPlacement: 'between',
+            pointPadding: 0,
+            groupPadding: 0
+        }]
+    });
+
+    var isInsidePlot = true;
+
+    chart.series[0].points.forEach(p => {
+        if (isInsidePlot) {
+            isInsidePlot = chart.isInsidePlot(p.plotX, p.plotY, true);
+        }
+    });
+
+    assert.ok(
+        isInsidePlot,
+        'All points are between appropriate ticks when the chart is inverted.'
+    );
 });

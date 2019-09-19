@@ -18,7 +18,7 @@ The tickInterval option decides the interval of the tick marks in axis units. Th
 
 On **categorized** axes, a null tickInterval will default to 1, one category.
 
-Note that **datetime** axes are based on milliseconds, so for example an interval of one day is expressed as 24 \* 3600 \* 1000. 
+Note that **datetime** axes are based on milliseconds, so for example an interval of one day is expressed as 24 * 3600 * 1000. 
 
 On **logarithmic** axes, the tickInterval is based on powers, so a tickInterval of 1 means one tick on each of 0.1, 1, 10, 100 etc. A tickInterval of 2 means a tick of 0.1, 10, 1000 etc. A tickInterval of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
@@ -80,15 +80,15 @@ It is possible to have multiple axes and linking them with different data series
             text: 'Rainfall'
         },
         opposite: true
-    }[,
+    }],
     
     series: [{
         yAxis: 0,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4[
+        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
     },{
         yAxis: 1,
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6[
-    }[
+        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+    }]
     
 
 Note that several axes are created using a list, so the first yAxis starts with index 0. And the "opposite: true" option puts the axis on the right side of the chart.
@@ -111,7 +111,7 @@ An axis can be either, linear, logarithmic, datetime or categories. The axis typ
     
     // Categories are set by using an array
     xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges'[
+        categories: ['Apples', 'Bananas', 'Oranges']
     }
     
 
@@ -142,11 +142,11 @@ The numbers along the axis are of linear scale. This is the default axis type. I
             },
             series: [{
                 name: 'Jane',
-                data: [1, 0, 4[
+                data: [1, 0, 4]
             }, {
                 name: 'John',
-                data: [5, 7, 3[
-            }[
+                data: [5, 7, 3]
+            }]
         }});
 
 ![linear_example.png](linear_example.png)

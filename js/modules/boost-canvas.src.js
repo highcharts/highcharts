@@ -14,7 +14,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 import '../parts/Color.js';
 import '../parts/Series.js';
@@ -26,7 +27,6 @@ var win = H.win,
     Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     merge = H.merge,
@@ -107,7 +107,7 @@ H.initCanvasBoost = function () {
     }
 
 
-    H.extend(Series.prototype, {
+    extend(Series.prototype, {
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later

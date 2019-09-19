@@ -294,6 +294,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     objectEach,
     syncTimeout
 } = U;
@@ -308,7 +309,6 @@ var animObject = H.animObject,
     noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
-    extend = H.extend,
     format = H.format,
     pick = H.pick,
     Chart = H.Chart,

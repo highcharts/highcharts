@@ -1,5 +1,5 @@
-Getting started with Highcharts 3D Support.
--------------------------------------------
+Getting started with Highcharts 3D Support
+===
 
 Highcharts 3D is a Highcharts module providing limited 3D support to charts. It currently allows to create 3D Column charts, 3D Pie charts and 3D Scatter charts.
 
@@ -7,8 +7,9 @@ Highcharts 3D is a Highcharts module providing limited 3D support to charts. It 
 
 To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional 3D plugin module:
 
-    
-    <script src="[https://code.highcharts.com/highcharts-3d.js](\"https:/code.highcharts.com/highcharts-3d.js\")"><script>
+```html
+<script src="[https://code.highcharts.com/highcharts-3d.js](\"https:/code.highcharts.com/highcharts-3d.js\")"><script>
+````
 
 (This should be included after highcharts.js)
 
@@ -86,7 +87,7 @@ A 3D chart of type [columns](docs/chart-and-series-types/column-chart) will draw
     
     plotOptions.column.depth: The depth of each individual column.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 550px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive></iframe>
 
 ### Displaying multiple columns
 
@@ -98,11 +99,11 @@ By default, _grouping_ is **true** in Highcharts, displaying the columns next to
     plotOptions.column.groupZPadding: Spacing between columns on the z-axis.
 
   
-**Make sure the depth of the chart is sufficient to display all your columns. You will need at least the following depth: number of columns \* (depth of column + z-padding)**
+**Make sure the depth of the chart is sufficient to display all your columns. You will need at least the following depth: number of columns * (depth of column + z-padding)**
 
 A regular Highcharts column chart also offers the possibility to stack columns together, this is of course still available in 3D charts and works in exactly the same way by setting _stacking_ to **true** and defining a stack number for each series.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping></iframe>
 
 3D Pie
 ------
@@ -112,7 +113,7 @@ For a [pie chart](docs/chart-and-series-types/pie-chart) the depth of the total 
     
     plotOptions.pie.depth: Defines the 'thickness' of the pie.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie></iframe>
 
 3D Scatter
 ----------
@@ -120,6 +121,6 @@ For a [pie chart](docs/chart-and-series-types/pie-chart) the depth of the total 
 In addition to x & y coordinates like in a regular [scatter chart](docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent eithe literally or using an array:
 
     
-    {x: 1, y: 1, z: 1} is the same point as [1,1,1[
+    {x: 1, y: 1, z: 1} is the same point as [1,1,1]
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/samples/highcharts/3d/scatter"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/samples/highcharts/3d/scatter></iframe>

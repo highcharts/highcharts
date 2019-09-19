@@ -18,7 +18,7 @@ To create a flag series, add the following configuration in the series option:
             x : 0,      // Point where the flag appears
             title : '', // Title of flag displayed on the chart 
             text : ''   // Text displayed when the flag are highlighted.
-        }[,
+        }],
         onSeries : '',  // Id of which series it should be placed on. If not defined 
                         // the flag series will be put on the X axis
         shape : 'flag'  // Defines the shape of the flags.

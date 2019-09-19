@@ -319,6 +319,7 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
@@ -336,7 +337,6 @@ var VMLRenderer,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,
-    extend = H.extend,
     extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
@@ -452,7 +452,7 @@ if (!svg) {
             this.chartPosition = chartPosition = H.offset(this.chart.container);
         }
 
-        return H.extend(e, {
+        return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
             chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),

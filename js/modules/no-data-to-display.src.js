@@ -11,10 +11,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Series.js';
 import '../parts/Options.js';
-var chartPrototype = H.Chart.prototype, defaultOptions = H.getOptions(), extend = H.extend;
+var chartPrototype = H.Chart.prototype, defaultOptions = H.getOptions();
 // Add language option
 extend(defaultOptions.lang, 
 /**

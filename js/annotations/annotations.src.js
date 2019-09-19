@@ -13,6 +13,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined,
     erase = U.erase,
+    extend = U.extend,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -1197,7 +1198,7 @@ H.extendAnnotation = function (
  *
  ******************************************************************** */
 
-H.extend(chartProto, /** @lends Highcharts.Chart# */ {
+extend(chartProto, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
         var Constructor =
             Annotation.types[userOptions.type] || Annotation,

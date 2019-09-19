@@ -12,6 +12,8 @@
 'use strict';
 /* global MSBlobBuilder */
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Chart.js';
 import '../parts/Options.js';
 import '../mixins/download-url.js';
@@ -487,7 +489,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
                 'for charts with embedded HTML');
         }
         else {
-            Highcharts.downloadSVGLocal(svg, Highcharts.extend({ filename: chart.getFilename() }, options), fallbackToExportServer);
+            Highcharts.downloadSVGLocal(svg, extend({ filename: chart.getFilename() }, options), fallbackToExportServer);
         }
     }, 
     // Return true if the SVG contains images with external data. With the

@@ -125,13 +125,13 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach, syncTimeout = U.syncTimeout;
+var extend = U.extend, objectEach = U.objectEach, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-var animObject = H.animObject, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, extend = H.extend, format = H.format, pick = H.pick, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
+var animObject = H.animObject, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, pick = H.pick, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**

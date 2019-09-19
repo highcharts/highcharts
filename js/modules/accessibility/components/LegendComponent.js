@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import A11yUtilities from '../utilities.js';
@@ -80,7 +83,7 @@ var LegendComponent = function (chart) {
     this.initBase(chart);
 };
 LegendComponent.prototype = new AccessibilityComponent();
-H.extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
+extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * The legend needs updates on every render, in order to update positioning

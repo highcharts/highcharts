@@ -1,5 +1,5 @@
 Compliance
-----------
+===
 
 Enabling the Accessibility module goes a long way to ensure that your charts comply with existing accessibility standards, including the Section 508 standard of the US Government, and the international WCAG 2.1 standard. We aim to be innovative and leading in this field, and make sure we involve users with disabilities when developing our accessibility features. The features provided go far beyond basic compliance, and our goal is to provide the most accessible charts possible.
 

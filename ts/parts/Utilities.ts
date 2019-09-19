@@ -1580,7 +1580,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T extends object> (a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1591,7 +1591,7 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
-};
+}
 
 
 /* eslint-disable valid-jsdoc */
@@ -1644,7 +1644,7 @@ H.css = function (
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 
 /**
@@ -1681,7 +1681,7 @@ H.createElement = function (
         css = H.css;
 
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1718,7 +1718,7 @@ H.extendClass = function<T, TReturn = T> (
     var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
 };
 
@@ -3029,7 +3029,7 @@ H.fireEvent = function<T> (
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
             (el as any).dispatchEvent(e);
@@ -3042,7 +3042,7 @@ H.fireEvent = function<T> (
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
-            H.extend(eventArguments as any, {
+            extend(eventArguments as any, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -3330,6 +3330,7 @@ const utils = {
     attr,
     defined,
     erase,
+    extend,
     isArray,
     isClass,
     isDOMElement,
