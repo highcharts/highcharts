@@ -7,15 +7,15 @@ A bubble legend is an additional element, which can be added in any position in 
 
 **Demo with autoranges**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/autoranges></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/bubble-legend/autoranges></iframe>
 
 **Demo with similarto series**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/similartoseries></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/bubble-legend/similartoseries></iframe>
 
 **Demo with ranges**
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/bubble-legend/ranges></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/bubble-legend/ranges></iframe>
 
 Installation
 ------------

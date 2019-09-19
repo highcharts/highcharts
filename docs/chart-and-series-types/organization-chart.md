@@ -3,7 +3,7 @@ Organization chart
 
 An organization chart (org chart) is a diagram that portrays the structure of an organization and the relationships and relative ranks of its parts and positions.
 
-<iframe width="320" height="240" style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/organization-chart></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/organization-chart></iframe>
 
 Options structure
 -----------------

@@ -30,7 +30,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-connectors></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors></iframe>
 
 **Demo with plotEdges**
 
@@ -40,7 +40,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-plotedges></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges></iframe>
 
 ### dataLabels.connectorShape
 
@@ -76,7 +76,7 @@ This option can be used with crookDistance parameter. It defines how far from th
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-crookdistance></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance></iframe>
 
 Users can provide their own method by passing a callback function instead of a String. Three arguments are passed to the callback:
 
@@ -111,7 +111,7 @@ Users can provide their own method by passing a callback function instead of a S
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-connectorshape-function></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function></iframe>
 
 API documents
 -------------

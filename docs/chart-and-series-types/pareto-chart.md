@@ -7,7 +7,7 @@ The Pareto series is represented by a line series of datapoints extracted from a
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.pareto)_
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/pareto></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/pareto></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/pareto/) to check the code.
 

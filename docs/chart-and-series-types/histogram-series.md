@@ -5,7 +5,7 @@ A histogram series is a graphical representation of the data distribution. Histo
 
 _For more detailed samples and documentation check the [API](http://api.highcharts.com/highcharts/plotOptions.histogram)._
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/histogram></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/histogram></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/histogram/) to check the code.
 

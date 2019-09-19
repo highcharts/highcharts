@@ -5,13 +5,13 @@ A 3D cylinder chart is a variation of a 3D column chart and features cylindrical
 
 Here’re both chart types to compare:
 
-**3D column chart**
-
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/cylinder></iframe>
-
 **3D cylinder chart**
 
-<iframe width="320" height="240" style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/css/column-3d></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/cylinder></iframe>
+
+**3D column chart**
+
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/css/column-3d></iframe>
 
 Installation
 ------------

@@ -73,7 +73,7 @@ Notice in the code above, that the Tea data series is set with one dimensional a
 
 Here is an demo for a packed bubble chart with a more complex setup and larger dataset:
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble></iframe>
 
 Bubble sizes
 ------------
@@ -131,7 +131,7 @@ Whether to split series into individual groups or to mix all series together.
         }
     }
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split></iframe>
 
 ### SIMULATION
 
@@ -149,7 +149,7 @@ Whether to split series into individual groups or to mix all series together.
           }
       } 
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral></iframe>
 
 ### DRAG AND DROP
 
@@ -177,7 +177,7 @@ Use Cases
 
 1. Force-approach algorithm.
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble></iframe>
 
 2. Configuration
 
@@ -195,7 +195,7 @@ Use Cases
 
 1. Force-approach algorithm with split series.
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split></iframe>
 
 2. Configuration:
 
@@ -216,4 +216,4 @@ Use Cases
 
 1. 7.0. Spiral packing - simple, fast alternative of the packed bubble, that may be used for more complicated data sets:
 
-<iframe width="320" height="240" style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral></iframe>
+<iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral></iframe>

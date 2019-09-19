@@ -73,14 +73,14 @@ Vertical timeline
 
 To display a vertical timeline, set `chart.inverted` to `true`.
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted></iframe>
 
 Alternate labels
 ----------------
 
 Use the `alternate` property in the `dataLabels` configuration, for placing the data labels alternately (on both sides of the point).
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels></iframe>
 
 Other configuring options
 -------------------------

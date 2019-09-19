@@ -5,7 +5,7 @@ A bullet graph is a variation of a bar graph. The bullet series features a singl
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bullet)_
 
-<iframe width="320" height="240" style="width: 100%; height: 349px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/bullet-graph></iframe>
+<iframe style="width: 100%; height: 349px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bullet-graph></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bullet-graph/) to check the code.
 
