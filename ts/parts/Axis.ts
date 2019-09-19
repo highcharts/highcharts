@@ -92,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: Array<XAxisOptions>;
-            yAxis?: Array<YAxisOptions>;
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;

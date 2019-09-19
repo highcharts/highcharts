@@ -37,7 +37,7 @@ declare global {
             public translate(): void;
         }
         interface SeriesTypesDictionary {
-            'solidgauge': typeof SolidGaugeSeries;
+            solidgauge: typeof SolidGaugeSeries;
         }
         interface SolidGaugeAxis extends RadialAxis {
             dataClasses: ColorAxis['dataClasses'];

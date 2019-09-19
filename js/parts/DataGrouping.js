@@ -256,9 +256,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 var seriesProto = Series.prototype, baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
-/**
- * @ignore
- */
+/** @ignore */
 commonOptions = {
     // enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
