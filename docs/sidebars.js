@@ -144,7 +144,7 @@ module.exports = {
             'chart-design-and-style/themes',
             'chart-design-and-style/style-by-css',
             'chart-design-and-style/custom-themes-in-styled-mode',
-            'chart-design-and-style/gradients-shadows-and-patterns-in-styled-mode'
+            'chart-design-and-style/gradients-shadows-and-patterns'
         ],
         'Accessibility': [
             'accessibility/accessibility-module',
