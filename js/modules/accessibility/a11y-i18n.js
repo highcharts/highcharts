@@ -480,9 +480,9 @@ H.setOptions({
              * @since 6.0.6
              */
             exporting: {
-                chartMenuLabel: 'Chart export',
-                menuButtonLabel: 'View export menu',
-                exportRegionLabel: 'Chart export menu'
+                chartMenuLabel: 'Chart menu',
+                menuButtonLabel: 'View chart menu',
+                exportRegionLabel: 'Chart menu'
             },
 
             /**
