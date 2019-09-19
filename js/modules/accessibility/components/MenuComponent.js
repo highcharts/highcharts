@@ -156,12 +156,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         var chart = this.chart,
             component = this;
 
-        this.addEvent(chart, 'exportMenuHidden', function () {
-            component.onMenuHidden();
+        this.addEvent(chart, 'exportMenuShown', function () {
+            component.onMenuShown();
         });
 
-        this.addEvent(chart, 'contextMenuShown', function () {
-            component.onMenuShown();
+        this.addEvent(chart, 'exportMenuHidden', function () {
+            component.onMenuHidden();
         });
     },
 
