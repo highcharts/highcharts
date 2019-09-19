@@ -83,7 +83,7 @@ function copyDeprecatedSeriesOptions(chart) {
                     // Note that skipKeyboardNavigation has inverted option
                     // value, since we set enabled rather than disabled
                     oldOption === 'skipKeyboardNavigation' ?
-                        !optionVal : optionVal,
+                        !optionVal : optionVal
                 );
                 warn(
                     chart,
