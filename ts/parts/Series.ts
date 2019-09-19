@@ -316,7 +316,7 @@ declare global {
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
             data?: Array<PointOptionsType>;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
+            dataGrouping?: DataGroupingOptionsObject;
             dataLabels?: (
                 DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
             );
@@ -425,15 +425,6 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
         }
-        type PlotOptions = {
-            [TSeriesType in keyof SeriesTypesDictionary]?: (
-                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
-                (
-                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
-                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
-                )>
-            )
-        };
         type SeriesBlendingValue = ('add'|'darken'|'multiply');
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');

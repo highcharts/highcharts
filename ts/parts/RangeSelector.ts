@@ -54,7 +54,7 @@ declare global {
             _offsetMin?: number;
             _range?: number;
             count?: number;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
+            dataGrouping?: DataGroupingOptionsObject;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;

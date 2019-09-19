@@ -18,15 +18,18 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type DataGroupingApproximationValue = (
-            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'
-        );
         interface Axis {
             getGroupPixelWidth(): number;
             setDataGrouping(
-                dataGrouping?: (boolean|PlotSeriesDataGroupingOptions),
+                dataGrouping?: (boolean|DataGroupingOptionsObject),
                 redraw?: boolean
             ): void;
+        }
+        interface ColumnSeriesOptions {
+            groupPixelWidth?: number;
+        }
+        interface ColumnRangeSeriesOptions {
+            groupPixelWidth?: number;
         }
         interface DataGrounpingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
@@ -75,15 +78,7 @@ declare global {
             options?: SeriesOptionsType;
             start: number;
         }
-        interface DataGroupingResultObject {
-            groupedXData: Array<number>;
-            groupedYData: (
-                Array<(number|null|undefined)>|
-                Array<Array<(number|null|undefined)>>
-            );
-            groupMap: Array<DataGroupingInfoObject>;
-        }
-        interface PlotSeriesDataGroupingOptions {
+        interface DataGroupingOptionsObject {
             approximation?: (DataGroupingApproximationValue|Function);
             dateTimeLabelFormats?: Dictionary<Array<string>>;
             enabled?: boolean;
@@ -92,6 +87,14 @@ declare global {
             groupPixelWidth?: number;
             smoothed?: boolean;
             units?: Array<[string, (Array<number>|null)]>;
+        }
+        interface DataGroupingResultObject {
+            groupedXData: Array<number>;
+            groupedYData: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
+            groupMap: Array<DataGroupingInfoObject>;
         }
         interface Series {
             cropStart?: number;
@@ -120,6 +123,9 @@ declare global {
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
+        type DataGroupingApproximationValue = (
+            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'
+        );
     }
 }
 
@@ -490,10 +496,7 @@ var dataGrouping = {
 var seriesProto = Series.prototype,
     baseProcessData = seriesProto.processData,
     baseGeneratePoints = seriesProto.generatePoints,
-
-    /**
-     * @ignore
-     */
+    /** @ignore */
     commonOptions = {
         // enabled: null, // (true for stock charts, false for basic),
         // forced: undefined,
@@ -545,7 +548,6 @@ var seriesProto = Series.prototype,
         }
         // smoothed = false, // enable this for navigator series only
     },
-
     specificOptions = { // extends common options
         line: {},
         spline: {},
@@ -955,8 +957,10 @@ addEvent(Series, 'afterSetOptions', function (
 
     var options = e.options,
         type = this.type,
-        plotOptions = this.chart.options.plotOptions as Highcharts.PlotOptions,
-        defaultOptions = (defaultPlotOptions[type] as any).dataGrouping,
+        plotOptions: Highcharts.PlotOptions =
+            this.chart.options.plotOptions as any,
+        defaultOptions: Highcharts.DataGroupingOptionsObject =
+            (defaultPlotOptions[type] as any).dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -1057,7 +1061,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  */
 Axis.prototype.setDataGrouping = function (
     this: Highcharts.Axis,
-    dataGrouping?: (boolean|Highcharts.PlotSeriesDataGroupingOptions),
+    dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
     redraw?: boolean
 ): void {
     var i;
@@ -1068,7 +1072,7 @@ Axis.prototype.setDataGrouping = function (
         dataGrouping = {
             forced: false,
             units: null as any
-        } as Highcharts.PlotSeriesDataGroupingOptions;
+        } as Highcharts.DataGroupingOptionsObject;
     }
 
     // Axis is instantiated, update all series
