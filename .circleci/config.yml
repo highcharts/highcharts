@@ -30,12 +30,6 @@ add_gh_user_config: &add_gh_user_config
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
 
-run_reference_creation: &run_reference_creation
-  - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-  - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-  - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-  - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-
 #######################################
 
 executors:
@@ -133,7 +127,10 @@ jobs:
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - <<: *run_reference_creation
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
@@ -152,11 +149,14 @@ jobs:
       - <<: *load_workspace
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
-      - run: git fetch origin master:master
-      - run: git checkout master
-      - <<: *run_reference_creation
+      - run: git fetch origin master:master && git checkout master
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: git checkout ${CIRCLE_BRANCH}
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/*,stock/*/*,maps/*/*,gantt/*/* --single-run --browsercount 1 --visualcompare
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/*,stock/*/*,maps/*/*,gantt/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: echo 'Exec comment on PR'
       - <<: *persist_workspace
 
   nightly_visual_diff:
@@ -173,7 +173,10 @@ jobs:
       - run:
           name: "Set application version env var"
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-      - <<: *run_reference_creation
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
@@ -188,24 +191,24 @@ jobs:
           name: "Highcharts visual tests"
           command: >
             npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
       - run:
           name: "Highmaps visual tests"
           command: >
             npx karma start test/karma-conf.js --tests maps/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Highstock visual tests"
           command: >
             npx karma start test/karma-conf.js --tests stock/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Gant visual tests"
           command: >
             npx karma start test/karma-conf.js --tests gantt/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run: "sudo apt-get install -y librsvg2-bin"
       - run:
