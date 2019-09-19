@@ -56,9 +56,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    erase = U.erase,
-    splat = U.splat;
+const {
+    defined,
+    erase,
+    extend,
+    splat
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
@@ -74,7 +77,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     wrap = H.wrap,
     merge = H.merge,
-    extend = H.extend,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 

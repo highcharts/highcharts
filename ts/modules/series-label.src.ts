@@ -34,9 +34,6 @@ declare global {
             right: number;
             top: number;
         }
-        interface PlotSeriesOptions {
-            label?: SeriesLabelOptionsObject;
-        }
         interface Point {
             chartCenterY?: number;
             chartX?: number;
@@ -65,6 +62,9 @@ declare global {
             minFontSize?: (number|null);
             onArea?: (boolean|null);
             style?: CSSObject;
+        }
+        interface SeriesOptions {
+            label?: SeriesLabelOptionsObject;
         }
     }
 }
@@ -103,6 +103,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isNumber,
     syncTimeout
 } = U;
@@ -112,7 +113,6 @@ import '../parts/Series.js';
 
 var labelDistance = 3,
     addEvent = H.addEvent,
-    extend = H.extend,
     pick = H.pick,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,

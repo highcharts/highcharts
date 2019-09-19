@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
@@ -98,7 +101,7 @@ var InfoRegionComponent = function (chart) {
     this.init();
 };
 InfoRegionComponent.prototype = new AccessibilityComponent();
-H.extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent */ { // eslint-disable-line
+extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent */ { // eslint-disable-line
 
     /**
      * Init the component

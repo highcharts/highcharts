@@ -260,6 +260,7 @@ Chart.prototype.applyFixed = function () {
             .add();
         this.moveFixedElements();
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
     }
     else {
         // Set the size of the fixed renderer to the visible width

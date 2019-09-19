@@ -1,5 +1,5 @@
 Responsive charts
------------------
+===
 
 Since Highcharts 5.0 you can create responsive charts much the same way you work with responsive web pages. A top-level option, [responsive](http://api.highcharts.com/highcharts/responsive), exists in the configuration.
 
@@ -16,7 +16,7 @@ It lets you define a set of rules, each with a [condition](http://api.highcharts
             enabled: false  
           }  
         }  
-      }[  
+      }]  
     }
 
 One of the most handy options is [chart.className](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/classname/) that can be used to control the style of all other elements in Highcharts styled mode.
@@ -25,6 +25,4 @@ In general, the _responsive_ configuration lets you define size-dependent settin
 
 What what happens to the legend in this sample as you scale up or down the browser window size:
 
-<div>
-  <iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/responsive/legend"></iframe>
-</div>
+<iframe width="320" height="240" style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/responsive/legend></iframe>

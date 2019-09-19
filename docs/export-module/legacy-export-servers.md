@@ -8,7 +8,7 @@ Previously we had two older varieties of servers to choose from; these export se
 1.  The Java and PhantomJS-based server, which also supports server-side rendering of charts
 2.  PHP and Batik-based
 
-### 1\. Export server based on Java and PhantomJS
+### 1. Export server based on Java and PhantomJS
 
 This solution also includes a standalone solution for creating charts on the server, without a client involved. Highcharts is using this export server at export.highcharts.com, the default Highcharts export server. It's a server which is desgined with a large network load in mind. Requests to this server are concurrently handled by an serverpool.
 
@@ -39,7 +39,7 @@ Highcharts JS is needed on the server for supporting server-side rendering of ch
 
 To make this work we need to run a headless browser, PhantomJS and PhantomJS needs in it's turn the Highcharts JS files on the server. For licensing reasons the Highcharts export server doesn't ship with Highcharts javascript files. We need to copy the Highcharts files manually to the project.
 
-Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](http://code.highcharts.com)/[highcharts-version-you-use[/
+Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](http://code.highcharts.com)/[highcharts-version-you-use]/
 
 The javascript files are already configured in the `resources.json` file which is used by PhantomJS to determine which files need to be injected to PhantomJS. If convenient, you can specify alternative paths in the `resources.json`. So make sure the resources.json matches the files you just copied in this step.
 
@@ -60,13 +60,13 @@ $ mvn clean package
 After compiling and the message BUILD SUCCESS, you will find a file: highcharts-export-web.war in the `highcharts-export/highcharts-export-web/target` folder.
 
     
-    [INFO[ ------------------------------------------------------------------------  
-     [INFO[ BUILD SUCCESS  
-     [INFO[ ------------------------------------------------------------------------  
-     [INFO[ Total time: 2.476s  
-     [INFO[ Finished at: Wed Jun 26 14:52:07 CEST 2013  
-     [INFO[ Final Memory: 15M/215M  
-     [INFO[ ------------------------------------------------------------------------  
+    [INFO] ------------------------------------------------------------------------  
+     [INFO] BUILD SUCCESS  
+     [INFO] ------------------------------------------------------------------------  
+     [INFO] Total time: 2.476s  
+     [INFO] Finished at: Wed Jun 26 14:52:07 CEST 2013  
+     [INFO] Final Memory: 15M/215M  
+     [INFO] ------------------------------------------------------------------------  
      highcharts-export-web $> ls target/  
      classes                highcharts-export-web        maven-archiver  
      generated-sources        **highcharts-export-web.war**    surefire  
@@ -102,7 +102,7 @@ Upload/copy this to the application server. You're done with setting up the high
 
 By default WebLogic registers its own `URLStreamHandler to handle http` URLs. This results in that the Connection silently returns and empty files being returned from the server. The solution is to get in a reference to Java's default `URLStreamHandler` instead of the one from WebLogic. Follow these steps
 
-1\. Alter this file: highcharts-export\\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java
+1. Alter this file: highcharts-export\\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java
 
 Change line 94,95 from
 
@@ -116,12 +116,12 @@ to
     sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();  
     URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
 
-2\. Goto the folder java/highcharts-export  
-3\. Update your local maven repository, Run: `mvn install`  
-4\. Goto the folder java/highcharts-export/highcharts-export-web  
-5\. Create the .war file, Run: `mvn clean package`
+2. Goto the folder java/highcharts-export  
+3. Update your local maven repository, Run: `mvn install`  
+4. Goto the folder java/highcharts-export/highcharts-export-web  
+5. Create the .war file, Run: `mvn clean package`
 
-### 2\. EXPORT SERVER BASED ON PHP AND BATIK
+### 2. EXPORT SERVER BASED ON PHP AND BATIK
 
 Note that this export server omits server-side rendering. It can be used (only) to convert SVG files to images and PDF.
 
@@ -142,12 +142,12 @@ If for any reason the export-server fails to export images, then consider pastin
 
     
     // Troubleshoot snippet  
-    $command = "java -jar ". BATIK[PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
-    $output = shell[exec($command);  
+    $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";   
+    $output = shell_exec($command);  
     echo "Command: $command <br>";  
     echo "Output: $output";  
     die;
 
-### 3\. Other solutions
+### 3. Other solutions
 
 As an ASP.NET alternative to our Java/PHP based server module, Clément Agarini has kindly shared his [export module for ASP.NET](https://github.com/imclem/Highcharts-export-module-asp.net).

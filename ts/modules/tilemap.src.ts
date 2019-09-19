@@ -14,6 +14,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 /**
  * Internal types
  * @private
@@ -875,7 +880,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
             );
         }
 
-    }, H.extend({
+    }, extend({
 
         // eslint-disable-next-line valid-jsdoc
         /**

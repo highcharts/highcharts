@@ -1,11 +1,11 @@
 Variable radius pie
--------------------
+===
 
 A variable pie chart is a circular chart divided into sectors which are proportional to the quantity or volume they represent. As an addition to the standard pie chart, which requires only one parameter, the variable pie series uses two parameter Y and Z, where Y represents the slice’s volume, and Z represents the slice’s radius.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.variablepie)_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/variable-radius-pie"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/variable-radius-pie></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variable-radius-pie/) to check the code.
 
@@ -16,7 +16,7 @@ The variable radius pie series type requires the following module [modules/vari
 
 Here are the steps to create a variable radius pie chart:
 
-1\. set the series type to `variablepie`:
+1. set the series type to `variablepie`:
 
     
      chart: {
@@ -24,7 +24,7 @@ Here are the steps to create a variable radius pie chart:
      },
     
 
-2\. Use Y and Z options in the series to display the volume and the radius for each slice:
+2. Use Y and Z options in the series to display the volume and the radius for each slice:
 
     
     series: [{
@@ -51,8 +51,8 @@ Here are the steps to create a variable radius pie chart:
             }, {
                 y: 357022,
                 z: 5
-            }[
-        }[
+            }]
+        }]
     
 
 Variable pie series specific options

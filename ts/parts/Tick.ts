@@ -124,6 +124,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber
 } = U;
 
@@ -288,7 +289,7 @@ H.Tick.prototype = {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
                     (label as any).attr({
-                        text: axis.labelFormatter.call(H.extend(
+                        text: axis.labelFormatter.call(extend(
                             tick.formatCtx,
                             { dateTimeLabelFormat: list[i] }
                         ))

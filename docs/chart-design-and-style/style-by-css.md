@@ -1,5 +1,5 @@
 Style by CSS
------------
+===
 
 Highcharts optionally features _styled mode_, where the graphic design is clearly separated from the chart functionality.
 

@@ -44,12 +44,12 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
-        interface PlotSeriesOptions {
-            legendType?: ('point'|'series');
-        }
         interface Point extends LegendItemObject {
         }
         interface Series extends LegendItemObject {
+        }
+        interface SeriesOptions {
+            legendType?: ('point'|'series');
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);

@@ -78,7 +78,7 @@ seriesType<Highcharts.AreaSplineSeries>(
      * @product   highcharts highstock
      * @apioption plotOptions.areaspline
      */
-    defaultPlotOptions.area,
+    defaultPlotOptions.area as any,
     {
         getStackPoints: areaProto.getStackPoints,
         getGraphPath: areaProto.getGraphPath,

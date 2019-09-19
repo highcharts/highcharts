@@ -1,5 +1,5 @@
 Custom themes in styled mode
-----------------------------
+===
 
 Highcharts allows you to create your own custom charts’ theme using native CSS rules or SASS (Syntactically Awesome Style Sheets).
 
@@ -45,7 +45,7 @@ Example of yourtheme.css
       stroke: #f45b5b;
     }
      
-    /\* Titles \*/
+    /* Titles */
     .highcharts-title {
       fill: black;
       font-size: 26px;

@@ -24,9 +24,6 @@ declare global {
         interface ColumnSeries {
             polarArc: PolarSeries['polarArc'];
         }
-        interface PlotSeriesOptions {
-            connectEnds?: boolean;
-        }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
             ttBelow?: boolean;
@@ -79,6 +76,9 @@ declare global {
             searchPointByAngle(e: PointerEventObject): (Point|undefined);
             translate(): void;
             toXY(point: Point): void;
+        }
+        interface SeriesOptions {
+            connectEnds?: boolean;
         }
         interface SVGRenderer {
             clipCircle(x: number, y: number, r: number): SVGElement;

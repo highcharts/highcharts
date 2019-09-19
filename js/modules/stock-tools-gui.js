@@ -9,7 +9,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var extend = U.extend,
+    isArray = U.isArray;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
@@ -846,7 +847,7 @@ H.Toolbar = function (options, langOptions, chart) {
     fireEvent(this, 'afterInit');
 };
 
-H.extend(H.Chart.prototype, {
+extend(H.Chart.prototype, {
     /*
      * Verify if Toolbar should be added.
      *

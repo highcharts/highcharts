@@ -118,17 +118,30 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
-    if (window.JSONSources[url]) {
-        callback(window.JSONSources[url]);
+
+// Override Highcharts and jQuery ajax functions to load from local
+Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+    var success = attr.success;
+    attr.error = function (e) {
+        throw new Error('Failed to load: ' + attr.url);
+    };
+    if (attr.url && window.JSONSources[attr.url]) {
+        success.call(attr, window.JSONSources[attr.url]);
     } else {
-        console.log('@getJSON: Loading over network', url);
-        return proceed.call(Highcharts, url, function (data) {
-            window.JSONSources[url] = data;
-            callback(data);
-        });
+        console.log('@ajax: Loading over network', attr.url);
+        attr.success = function (data) {
+            window.JSONSources[attr.url] = data;
+            success.call(this, data);
+        };
+        return proceed.call(this, attr);
     }
 });
+if (window.$) {
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+}
+
 function resetDefaultOptions(testName) {
 
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
@@ -182,6 +195,21 @@ var origAddEvent = Highcharts.addEvent;
 var addedEvents = [];
 
 if (window.QUnit) {
+    // Fix the number localization in IE
+    if (
+        /msie/.test(navigator.userAgent) &&
+        !Number.prototype._toString
+    ) {
+        Number.prototype._toString = Number.prototype.toString;
+        Number.prototype.toString = function(radix) {
+            if (radix) {
+                return Number.prototype._toString.apply(this, arguments);
+            } else {
+                return this.toLocaleString('en', { useGrouping: false, maximumFractionDigits: 20 });
+            }
+        }
+    }
+
     //QUnit.config.seed = 'vaolebrok';
     /*
      * Compare numbers taking in account an error.
@@ -193,6 +221,15 @@ if (window.QUnit) {
      * @param  {String} message  Optional
      */
     QUnit.assert.close = function (number, expected, error, message) {
+        // Remove fix of number localization in IE
+        if (
+            /msie/.test(navigator.userAgent) &&
+            Number.prototype._toString
+        ) {
+            Number.prototype.toString = Number.prototype._toString;
+            delete Number.prototype._toString;
+        }
+
         if (error === void 0 || error === null) {
             error = 0.00001; // default error
         }
@@ -581,19 +618,3 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         return ret;
     };
 }());
-
-// Override getJSON
-window.JSONSources = {};
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-/*
-window.onbeforeunload = function () {
-    console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
-    if (currentTests.length) {
-        return false;
-    }
-};
-*/

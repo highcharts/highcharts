@@ -811,6 +811,7 @@ const {
     attr,
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
@@ -834,7 +835,6 @@ var SVGElement: Highcharts.SVGElement,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -1016,7 +1016,7 @@ extend((
     ): void {
         var renderer = this.renderer,
             colorObject,
-            gradName: string,
+            gradName: keyof Highcharts.GradientColorObject,
             gradAttr: Highcharts.SVGAttributes,
             radAttr: Highcharts.SVGAttributes,
             gradients: Highcharts.Dictionary<Highcharts.SVGElement>,
@@ -1040,7 +1040,7 @@ extend((
             }
 
             if (gradName) {
-                gradAttr = (color as any)[gradName];
+                gradAttr = color[gradName] as any;
                 gradients = renderer.gradients;
                 stops = color.stops;
                 radialReference = (elem as any).radialReference;

@@ -1,5 +1,5 @@
 Gantt task configuration
-------------------------
+===
 
 The bars in the Gantt chart are showing the full duration of a task which are calculated from the [`start`](https://api.highcharts.com/gantt/series.gantt.data.start) and [`end`](https://api.highcharts.com/gantt/series.gantt.data.end) data point properties.
 
@@ -21,4 +21,4 @@ Use a progress bar to get a quick overview of the percent complete of a task. Tu
 
 _See example below, for demonstrating progress bars_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/gantt/demo/progress-indicator"></iframe>
+<iframe width="320" height="240" style="width: 100%; height: 549px;" src=https://www.highcharts.com/samples/embed/gantt/demo/progress-indicator></iframe>

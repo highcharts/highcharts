@@ -63,13 +63,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isArray,
     isNumber,
     isObject
 } = U;
 
-var extend = H.extend,
-    isBoolean = function (x: unknown): x is boolean {
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     isFn = function (x: unknown): x is Function {

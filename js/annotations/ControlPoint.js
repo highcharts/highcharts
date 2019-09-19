@@ -1,5 +1,7 @@
 import H from './../parts/Globals.js';
-import './../parts/Utilities.js';
+import U from './../parts/Utilities.js';
+var extend = U.extend;
+
 import eventEmitterMixin from './eventEmitterMixin.js';
 
 /**
@@ -47,7 +49,7 @@ function ControlPoint(chart, target, options, index) {
  * @property {Object} events
  */
 
-H.extend(
+extend(
     ControlPoint.prototype,
     eventEmitterMixin
 );
