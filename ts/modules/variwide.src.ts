@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -147,7 +149,6 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                 this.xAxis.variwide = true;
                 this.xAxis.zData = this.zData; // Used for label rank
             }
-
             return;
         },
 
@@ -166,8 +167,8 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
          * @param {number} x
          *        The X pixel position in undistorted axis pixels
          *
-         * @param {Highcharts.Point} [point]
-         *        If point is given, updates crosshairWidth.
+         * @param {Highcharts.Point} point
+         *        For crosshairWidth for every point
          *
          * @return {number}
          *         Distorted X position
@@ -190,7 +191,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                 slotLeft = (pick(relZ[i], totalZ) / totalZ) * len,
                 slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len,
                 xInsideLinearSlot = x - linearSlotLeft,
-                ret: (number|undefined);
+                ret;
 
             // Set crosshairWidth for every point (#8173)
             if (point) {
@@ -198,8 +199,8 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
             }
 
             ret = slotLeft +
-                xInsideLinearSlot * (slotRight - slotLeft) /
-                (linearSlotRight - linearSlotLeft);
+            xInsideLinearSlot * (slotRight - slotLeft) /
+            (linearSlotRight - linearSlotLeft);
 
             return ret;
         },
@@ -263,7 +264,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                 }
 
                 (point.shapeArgs as any).x = left;
-                (point.shapeArgs as any).width = right - left;
+                (point.shapeArgs as any).width = Math.max(right - left, 1);
 
                 // Crosshair position (#8083)
                 point.plotX = (left + right) / 2;
@@ -300,13 +301,16 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
             ): void {
                 xValue = point.x;
                 pointWidth = (point.shapeArgs as any).width;
-                stack = yAxis.stacks[(series.negStacks &&
-                    (point.y as any) <
-                        (options.startFromThreshold ?
+                stack = yAxis.stacks[(
+                    series.negStacks &&
+                    (point.y as any) < (
+                        options.startFromThreshold ?
                             0 :
-                            options.threshold as any) ?
-                    '-' :
-                    '') + series.stackKey];
+                            (options.threshold as any)
+                    ) ?
+                        '-' :
+                        ''
+                ) + series.stackKey];
                 pointStack = stack[xValue as any];
 
                 if (stack && pointStack && !point.isNull) {
@@ -334,7 +338,7 @@ H.Tick.prototype.postTranslate = function (
     index: number
 ): void {
     var axis = this.axis,
-        pos: number = xy[xOrY] - axis.pos;
+        pos = xy[xOrY] - axis.pos;
 
     if (!axis.horiz) {
         pos = axis.len - pos;
@@ -351,7 +355,9 @@ H.Tick.prototype.postTranslate = function (
 
 // Same width as the category (#8083)
 addEvent(H.Axis, 'afterDrawCrosshair', function (
-    e: { point: Highcharts.Point }
+    e: {
+        point: Highcharts.VariwidePoint;
+    }
 ): void {
     if (this.variwide && this.cross) {
         this.cross.attr(
@@ -370,7 +376,7 @@ addEvent(H.Axis, 'afterRender', function (): void {
             function (): Array<Highcharts.SVGElement> {
                 return axis.tickPositions
                     .filter(function (pos: number): boolean {
-                        return (axis.ticks as any)[pos].label;
+                        return axis.ticks[pos].label as any;
                     })
                     .map(function (
                         pos: number,
@@ -388,13 +394,16 @@ addEvent(H.Axis, 'afterRender', function (): void {
 });
 
 addEvent(H.Tick, 'afterGetPosition', function (
-    e: { pos: Highcharts.PositionObject }
+    e: {
+        pos: Highcharts.PositionObject;
+        xOrY: keyof Highcharts.PositionObject;
+    }
 ): void {
     var axis = this.axis,
         xOrY: keyof Highcharts.PositionObject = axis.horiz ? 'x' : 'y';
 
     if (axis.variwide) {
-        (this as any)[xOrY + 'Orig'] = (e.pos as any)[xOrY];
+        (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
 });
@@ -404,11 +413,11 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
     proceed: Function,
     x: number,
     y: number,
-    label: SVGElement,
+    label: Highcharts.SVGElement,
     horiz: boolean,
-    labelOptions: Highcharts.PositionObject,
+    labelOptions: Highcharts.DataLabelsOptionsObject,
     tickmarkOffset: number,
-    index: number,
+    index: number
 ): Highcharts.PositionObject {
     var args = Array.prototype.slice.call(arguments, 1),
         xy: Highcharts.PositionObject,

@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 'use strict';
 import H from '../parts/Globals.js';
@@ -84,8 +86,8 @@ seriesType('variwide', 'column'
      * @param {number} x
      *        The X pixel position in undistorted axis pixels
      *
-     * @param {Highcharts.Point} [point]
-     *        If point is given, updates crosshairWidth.
+     * @param {Highcharts.Point} point
+     *        For crosshairWidth for every point
      *
      * @return {number}
      *         Distorted X position
@@ -131,7 +133,7 @@ seriesType('variwide', 'column'
                 right = Math.round(right) - crisp;
             }
             point.shapeArgs.x = left;
-            point.shapeArgs.width = right - left;
+            point.shapeArgs.width = Math.max(right - left, 1);
             // Crosshair position (#8083)
             point.plotX = (left + right) / 2;
             // Adjust the tooltip position
@@ -157,10 +159,9 @@ seriesType('variwide', 'column'
             xValue = point.x;
             pointWidth = point.shapeArgs.width;
             stack = yAxis.stacks[(series.negStacks &&
-                point.y <
-                    (options.startFromThreshold ?
-                        0 :
-                        options.threshold) ?
+                point.y < (options.startFromThreshold ?
+                    0 :
+                    options.threshold) ?
                 '-' :
                 '') + series.stackKey];
             pointStack = stack[xValue];
