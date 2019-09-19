@@ -30,6 +30,12 @@ add_gh_user_config: &add_gh_user_config
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
 
+run_reference_creation: &run_reference_creation
+  - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+  - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+  - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+  - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+
 #######################################
 
 executors:
@@ -122,15 +128,12 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
-  generate_visual_test_images:
+  generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - <<: *run_reference_creation
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
@@ -142,7 +145,19 @@ jobs:
           when: always
       - <<: *persist_workspace
 
-  test_visual_diff:
+  visual_comparison_with_master:
+    <<: *defaults
+    description: Visual diff and compare PR with master
+    steps:
+      - <<: *load_workspace
+      - run: git fetch origin master:master
+      - run: git checkout master
+      - <<: *run_reference_creation
+      - run: git checkout ${CIRCLE_BRANCH}
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/*,stock/*/*,maps/*/*,gantt/*/* --single-run --browsercount 1 --visualcompare
+      - <<: *persist_workspace
+
+  nightly_visual_diff:
     <<: *defaults
     description: Uploads visual test results to S3
     parameters:
@@ -156,18 +171,7 @@ jobs:
       - run:
           name: "Set application version env var"
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-      - run:
-          name: Generate Highcharts new references images
-          command: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - run:
-          name: Generate Highmaps new references images
-          command: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - run:
-          name: Generate Highstock new references images
-          command: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - run:
-          name: Generate Gantt new references images
-          command: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - <<: *run_reference_creation
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
@@ -315,7 +319,14 @@ workflows:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
-      - generate_visual_test_images:
+      - visual_comparison_with_master:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              only: tools/visual-test-compare
+              # later change to ignore: master
+      - generate_release_reference_images:
           requires:
             - install_dependencies
           filters:
@@ -366,7 +377,7 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
-      - test_visual_diff:
+      - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
           requires:
             - install_dependencies
