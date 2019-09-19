@@ -150,6 +150,8 @@ jobs:
     description: Visual diff and compare PR with master
     steps:
       - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
       - run: git fetch origin master:master
       - run: git checkout master
       - <<: *run_reference_creation
