@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class CCIIndicator extends SmaIndicator {
+        class CCIIndicator extends SMAIndicator {
             public data: Array<CCIIndicatorPoint>;
             public getValues(
                 series: Series,
@@ -27,15 +27,15 @@ declare global {
             public yData: Array<Array<number>>;
         }
 
-        interface CCIIndicatorOptions extends SmaIndicatorOptions {
+        interface CCIIndicatorOptions extends SMAIndicatorOptions {
             params?: CCIIndicatorParamsOptions;
         }
 
-        interface CCIIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface CCIIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             // declared for inheritance
         }
 
-        class CCIIndicatorPoint extends SmaIndicatorPoint {
+        class CCIIndicatorPoint extends SMAIndicatorPoint {
             public series: CCIIndicator;
         }
 

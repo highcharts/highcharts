@@ -38,6 +38,7 @@ declare global {
         interface WMAIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
             // for inheitance
+            index: number;
         }
 
         class WMAIndicatorPoint extends SMAIndicatorPoint {
@@ -62,7 +63,7 @@ var seriesType = H.seriesType;
  * @private
  */
 function accumulateAverage(
-    points: Array<Array<number>>,
+    points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number,
@@ -71,14 +72,14 @@ function accumulateAverage(
     var xValue: number = xVal[i],
         yValue: (number|Array<number>) = index < 0 ? yVal[i] : yVal[i][index];
 
-    points.push([xValue, (yValue as any)]);
+    points.push([xValue, yValue]);
 }
 
 /**
  * @private
  */
 function weightedSumArray(
-    array: Array<Array<(number|null|undefined)>>,
+    array: Array<[(number|null), (number|Array<number>)]>,
     pLen: number
 ): number {
     // The denominator is the sum of the number of days as a triangular number.
@@ -89,10 +90,10 @@ function weightedSumArray(
     // reduce VS loop => reduce
     return (array.reduce(
         function (
-            prev: Array<(number|null|undefined)>,
-            cur: Array<(number|null|undefined)>,
+            prev: [(number|null), (number|Array<number>)],
+            cur: [(number|null), (number|Array<number>)],
             i: number
-        ): Array<(number|null)> {
+        ): [(number|null), (number|Array<number>)] {
             return [null, (prev[1] as any) + (cur[1] as any) * (i + 1)];
         })[1] as any) / denominator;
 }
@@ -101,7 +102,7 @@ function weightedSumArray(
  * @private
  */
 function populateAverage(
-    points: Array<Array<number>>,
+    points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number
@@ -166,7 +167,7 @@ seriesType<Highcharts.WMAIndicator>(
                 yData: Array<number> = [],
                 index = -1,
                 i: (number|undefined),
-                points: Array<Array<number>>,
+                points: Array<[number, (number|Array<number>)]>,
                 WMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
@@ -175,11 +176,11 @@ seriesType<Highcharts.WMAIndicator>(
 
             // Switch index for OHLC / Candlestick
             if (isArray(yVal[0])) {
-                index = (params.index as any);
+                index = params.index;
                 yValue = yVal[0][index];
             }
             // Starting point
-            points = [[xValue, (yValue as any)]];
+            points = [[xValue, yValue]];
 
             // Accumulate first N-points
             while (range !== period) {
