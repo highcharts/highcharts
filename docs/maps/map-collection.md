@@ -20,7 +20,7 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 1. Add the map as a JavaScript element:
 
 ```html
-<script src="[http://code.highcharts.com/mapdata/custom/world.js](http://code.highcharts.com/mapdata/custom/world.js)"></script>
+<script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
 ```
 
 <p>You can alternatively link to a specific version or subversion of the map at <code>http://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.js</code>.</p>
@@ -28,41 +28,40 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 2. Load it in `series.mapData`:
-
-    
-    mapData: Highcharts.maps['custom/world'],
-
+```js
+mapData: Highcharts.maps['custom/world'],
+```
 Alternatively, you can set the default map for all series with the [`chart.map`](http://api.highcharts.com/highmaps/chart.map) option:
 
-    
-    map: 'custom/world'
+```js
+map: 'custom/world'
 
 3. Join your data with the map. By default Highmaps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
-
-    
-    data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
-
+```js 
+data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
+```
 For other data joining options, see the [`series.joinBy`](http://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](http://api.highcharts.com/highcharts/plotOptions.series.keys) options.
 
 ### Install from npm
 
 Our map collection is available on npm as [@highcharts/map-collection](https://www.npmjs.com/package/@highcharts/map-collection) and can be installed as following:
-
-    
-    npm i @highcharts/map-collection
+```sh
+npm i @highcharts/map-collection
+```
 
 To load a map in Node.js and use it in Highmaps you can do the following:
 
+```js    
+var Highcharts = require('highcharts/highmaps.js'),
+    map = require('@highcharts/map-collection/custom/world.geo.json');
     
-    var Highcharts = require('highcharts/highmaps.js'),
-        map = require('@highcharts/map-collection/custom/world.geo.json');
-     
-    Highcharts.mapChart('container', {
-      chart: {
-        map: geojson
-      },
-      // ...
-    });
+Highcharts.mapChart('container', {
+    chart: {
+    map: geojson
+    },
+    // ...
+});
+```
     
 
 Map properties
@@ -95,8 +94,9 @@ The following table outlines the properties available in the Highmaps Map Collec
 
 The **hc-key** property reflects the naming convention of the maps, and can be used for dynamic drilldown purposes. This is illustrated in the [Map drilldown demo](maps/demo/map-drilldown). The property follows the following format:
 
-    
-    <unique admin0 id>-<unique admin1 id>-<unique admin2 id>-...
+```
+<unique admin0 id>-<unique admin1 id>-<unique admin2 id>-...
+```
 
 Attempts are made to use commonly known codes for each level, to increase readability. As an example, most countries are identified by their two letter ISO-3166 code. Most admin1 areas are identified by their postal codes. For United States, admin2 (county) areas are identified by their FIPS codes.
 
