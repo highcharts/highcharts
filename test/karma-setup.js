@@ -417,7 +417,12 @@ function getSVG(chart) {
     if (chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
-        svg = container.querySelector('svg').outerHTML;
+        svg = container.querySelector('svg')
+            .outerHTML
+            .replace(
+                /<svg /,
+                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+            );
 
         if (chart.styledMode) {
             svg = svg.replace(
