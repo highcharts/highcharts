@@ -1898,7 +1898,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(menu, menuStyle);
         css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
-        fireEvent(chart, 'contextMenuShown');
+        fireEvent(chart, 'exportMenuShown');
     },
 
     /**
