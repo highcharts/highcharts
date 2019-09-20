@@ -3,7 +3,7 @@ Sunburst
 
 A Sunburst displays hierarchical data, where a level in the hierarchy is represented by a circle. The center represents the root node of the tree. The visualization bear a resemblance to both treemap and pie charts.
 
-<iframe width="320" height="240" style="width: 100%; height: 850px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sunburst></iframe>
+<iframe style="width: 100%; height: 850px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sunburst allow="fullscreen"></iframe>
 
 Requirements
 ------------

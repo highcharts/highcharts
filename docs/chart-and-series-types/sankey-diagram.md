@@ -5,7 +5,7 @@ A Sankey diagram is a type of flow diagram, in which the width of the link betwe
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.sankey)_
 
-<iframe width="320" height="240" style="width: 100%; height: 485px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sankey-diagram></iframe>
+<iframe style="width: 100%; height: 485px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sankey-diagram allow="fullscreen"></iframe>
 
 Data structure
 --------------

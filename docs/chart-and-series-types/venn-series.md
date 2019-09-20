@@ -80,7 +80,7 @@ In the following example A and B will be named as Apples and Bananas, while the 
 
 The final visualization should now display a venn diagram of the relation between Apples and Bananas.
 
-<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/mushigh/d34whxmr/embedded/result></iframe>
+<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/mushigh/d34whxmr/embedded/result allow="fullscreen"></iframe>
 
 Its configuration should in full look as the following.
 
@@ -129,11 +129,11 @@ The venn series can be used to create both Venn and Euler diagrams.
 
 The unattainable triangle is a reference often used in marketing and advertising, which says that you can either have it fast, cheap, or good, but you can not have it all. In the triangle the three qualities make up the corners, while the sides create the relationship between these qualities. Since the reference is all about relationships this can also be very well displayed as a venn diagram, as can be seen in the following demo [Venn diagram of the Unattainable Triangle.](https://highcharts.com/demo/venn-diagram)
 
-<iframe width="320" height="240" style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/venn-diagram></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/venn-diagram allow="fullscreen"></iframe>
 
 Euler diagram of the Relationship between Euler and Venn diagrams
 -----------------------------------------------------------------
 
 Euler diagrams are representing a number of sets and the relationship between these sets. An euler diagram will only show the relationships that is relevant, which means that not necessarily every set will overlap each other. While a venn diagram will show all possible relationships between all sets, which means that all sets will overlap each other. A venn diagram is therefore a special case of euler diagrams. This relationship between the euler and venn diagrams can be displayed as an euler diagram, as can be seen in the following demo [Euler diagram of the Relationship between Euler and Venn diagrams.](https://highcharts.com/demo/euler-diagram)
 
-<iframe width="320" height="240" style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/euler-diagram></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/euler-diagram allow="fullscreen"></iframe>
