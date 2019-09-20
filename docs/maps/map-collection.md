@@ -70,141 +70,28 @@ Map properties
 
 The following table outlines the properties available in the Highmaps Map Collection maps, and their meaning. The properties are accessible from the **point.properties** object ([example](http://jsfiddle.net/oysteinmoseng/52rgg5zq/)).
 
-Property
+| Property       | Example values                        | Description                                                                                                                                                                                                                                                                                                                                                                           | Availability                                                      |
+| -------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| hc-group       | admin1, admin2, special               | The administrative group the area belongs to. Admin0 is countries, admin1 is first level administrative division (USA States, German Bundesländer, Canada Provinces). Admin2 is second level adm.div. (USA counties, German Kreise, Norwegian Kommuner). "Special" is used to denote an area where this grouping does not make sense (e.g. congressional districts, historical maps). | All maps                                                          |
+| hc-middle-x    | 0.65                                  | Data label X position. Defined as fraction of map bounding box width. 0 is left aligned, 1 is right aligned.                                                                                                                                                                                                                                                                          | All maps                                                          |
+| hc-middle-y    | 0.65                                  | Data label Y position. Defined as fraction of map bounding box height. 0 is top aligned, 1 is bottom aligned                                                                                                                                                                                                                                                                          | All maps                                                          |
+| hc-key         | us, us-ma-027, gb-hi                  | Unique hierarchical identifier for the area. Consistent across maps, and reflected in the naming convention of the maps. More detailed description below.                                                                                                                                                                                                                             | All maps                                                          |
+| hc-a2          | KV, PA, BB                            | Two letter abbreviation of area name. Usually same as postal code/ISO code, but not always. Not guaranteed to be unique within map.                                                                                                                                                                                                                                                   | All maps                                                          |
+| name           | Fremont, Brandenburg, Saipan          | Name of the area                                                                                                                                                                                                                                                                                                                                                                      | All maps                                                          |
+| iso-a2         | US, MC, LV                            | ISO 2 letter country code                                                                                                                                                                                                                                                                                                                                                             | Most admin0 areas                                                 |
+| iso-a3         | USA, MCO, LVA                         | ISO 3 letter country code                                                                                                                                                                                                                                                                                                                                                             | Most admin0 areas                                                 |
+| continent      | Asia, North America                   | Continent the area lies within                                                                                                                                                                                                                                                                                                                                                        | Most admin0 areas                                                 |
+| country-abbrev | Pan., C.R.                            | Abbreviated country name                                                                                                                                                                                                                                                                                                                                                              | Most admin0 areas                                                 |
+| region         | Midwest, South, Highlands and Islands | The region the area lies within                                                                                                                                                                                                                                                                                                                                                       | Most admin1 areas within country maps                             |
+| subregion      | Southern Europe, Highland             | The subregion the area lies within                                                                                                                                                                                                                                                                                                                                                    | Most admin0 and admin1 areas                                      |
+| fips           | 120, GM10, US05, 56031                | FIPS code for the area. Format may vary between maps as to whether the country code is included.                                                                                                                                                                                                                                                                                      | Most admin1 areas within country maps, as well as USA admin2 maps |
+| hasc           | DE.BB, US.AR                          | HASC code for the area                                                                                                                                                                                                                                                                                                                                                                | Most admin1 areas within country maps                             |
+| postal-code    | AK, NY, TI                            | Postal code for the area, usually two letters wide                                                                                                                                                                                                                                                                                                                                    | Most admin1 areas within country maps                             |
+| type           | State, Emirate, Fylke, Land           | Description of the area type                                                                                                                                                                                                                                                                                                                                                          | Most admin1 areas within country maps                             |
 
-Example values
 
-Description
 
-Availability
 
-hc-group
-
-admin1, admin2, special
-
-The administrative group the area belongs to. Admin0 is countries, admin1 is first level administrative division (USA States, German Bundesländer, Canada Provinces). Admin2 is second level adm.div. (USA counties, German Kreise, Norwegian Kommuner). "Special" is used to denote an area where this grouping does not make sense (e.g. congressional districts, historical maps).
-
-All maps
-
-hc-middle-x
-
-0.65
-
-Data label X position. Defined as fraction of map bounding box width. 0 is left aligned, 1 is right aligned.
-
-All maps
-
-hc-middle-y
-
-0.65
-
-Data label Y position. Defined as fraction of map bounding box height. 0 is top aligned, 1 is bottom aligned.
-
-All maps
-
-hc-key
-
-us, us-ma-027, gb-hi
-
-Unique hierarchical identifier for the area. Consistent across maps, and reflected in the naming convention of the maps. More detailed description below.
-
-All maps
-
-hc-a2
-
-KV, PA, BB
-
-Two letter abbreviation of area name. Usually same as postal code/ISO code, but not always. Not guaranteed to be unique within map.
-
-All maps
-
-name
-
-Fremont, Brandenburg, Saipan
-
-Name of the area
-
-All maps
-
-iso-a2
-
-US, MC, LV
-
-ISO 2 letter country code
-
-Most admin0 areas
-
-iso-a3
-
-USA, MCO, LVA
-
-ISO 3 letter country code
-
-Most admin0 areas
-
-continent
-
-Asia, North America
-
-Continent the area lies within
-
-Most admin0 areas
-
-country-abbrev
-
-Pan., C.R.
-
-Abbreviated country name
-
-Most admin0 areas
-
-region
-
-Midwest, South, Highlands and Islands
-
-The region the area lies within
-
-Most admin1 areas within country maps
-
-subregion
-
-Southern Europe, Highland
-
-The subregion the area lies within
-
-Most admin0 and admin1 areas
-
-fips
-
-120, GM10, US05, 56031
-
-FIPS code for the area. Format may vary between maps as to whether the country code is included.
-
-Most admin1 areas within country maps, as well as USA admin2 maps
-
-hasc
-
-DE.BB, US.AR
-
-HASC code for the area
-
-Most admin1 areas within country maps
-
-postal-code
-
-AK, NY, TI
-
-Postal code for the area, usually two letters wide
-
-Most admin1 areas within country maps
-
-type
-
-State, Emirate, Fylke, Land
-
-Description of the area type
-
-Most admin1 areas within country maps
 
 The **hc-key** property reflects the naming convention of the maps, and can be used for dynamic drilldown purposes. This is illustrated in the [Map drilldown demo](maps/demo/map-drilldown). The property follows the following format:
 
