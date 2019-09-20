@@ -23,7 +23,8 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 <script src="[http://code.highcharts.com/mapdata/custom/world.js](http://code.highcharts.com/mapdata/custom/world.js)"></script>
 ```
 
-You can alternatively link to a specific version or subversion of the map at http://code.highcharts.com/mapdata/**1.1**/custom/world.js. 
+<p>You can alternatively link to a specific version or subversion of the map at <code>http://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.js</code>.</p>
+
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 2. Load it in `series.mapData`:
