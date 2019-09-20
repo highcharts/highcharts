@@ -98,7 +98,7 @@ declare global {
             _minY?: number;
         }
         interface MapPointOptions extends ScatterPointOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dataLabels?: DataLabelsOptionsObject;
             drilldown?: string;
             id?: string;
@@ -113,7 +113,7 @@ declare global {
             extends ColorSeriesOptions, ScatterSeriesOptions
         {
             data?: Array<MapPointOptions|PointOptionsType>;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            nullColor?: ColorType;
             nullInteraction?: boolean;
             states?: SeriesStatesOptionsObject<MapSeries>;
         }
@@ -146,6 +146,7 @@ import './ColorMapSeriesMixin.js';
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isArray,
     isNumber,
     objectEach,
@@ -154,7 +155,6 @@ const {
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    extend = H.extend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,

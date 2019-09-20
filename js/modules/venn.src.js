@@ -24,7 +24,8 @@ var nelderMead = NelderMeadModule.nelderMead;
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
+var extend = U.extend,
+    isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
     isString = U.isString;
@@ -33,7 +34,6 @@ import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     color = H.Color,
-    extend = H.extend,
     getAreaOfCircle = geometryCircles.getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles =
         geometryCircles.getAreaOfIntersectionBetweenCircles,

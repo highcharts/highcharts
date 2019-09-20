@@ -1,11 +1,11 @@
 Stream graph
-------------
+===
 
 A stream graph is a type of stacked area graph which is displaced around a central axis, resulting in a flowing and organic shape.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.streamgraph)_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph"></iframe>
+<iframe style="width: 100%; height: 660px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph allow="fullscreen"></iframe>
 
 Data structure
 --------------
@@ -17,18 +17,18 @@ The data of a stream graph is simply set as Y values and possibly X values. Each
             "name": "Finland",
             "data": [
                 0, 11, 4, 3, 6, 0, 0, 6
-            [
+            ]
         }, {
             "name": "Austria",
             "data": [
                 0, 3, 4, 2, 4, 0, 0, 8, 8
-            [
+            ]
         }, {
             "name": "Sweden",
             "data": [
                 0, 2, 5, 3, 7, 0, 0, 10, 4
-            [
-        }[
+            ]
+        }]
     
 
 Labelling

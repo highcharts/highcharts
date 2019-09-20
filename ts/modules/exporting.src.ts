@@ -264,8 +264,11 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isObject = U.isObject,
-    objectEach = U.objectEach;
+const {
+    extend,
+    isObject,
+    objectEach
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -283,7 +286,6 @@ var defaultOptions = H.defaultOptions,
     css = H.css,
     merge = H.merge,
     pick = H.pick,
-    extend = H.extend,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
@@ -1896,6 +1898,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(menu, menuStyle);
         css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
+        fireEvent(chart, 'exportMenuShown');
     },
 
     /**

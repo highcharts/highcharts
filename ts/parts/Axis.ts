@@ -92,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: Array<XAxisOptions>;
-            yAxis?: Array<YAxisOptions>;
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -367,7 +367,7 @@ declare global {
             public plotLinesAndBandsGroups: Dictionary<SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
-            public pos?: number;
+            public pos: number;
             public positiveValuesOnly: boolean;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
@@ -690,6 +690,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isNumber,
     isString,
@@ -711,7 +712,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
@@ -761,7 +761,7 @@ var Axis = function (this: Highcharts.Axis): any {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 } as any;
 
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
@@ -4940,7 +4940,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // pointRange means the width reserved for each point, like in a
             // column chart
-            axis.pointRange = Math.min(pointRange, range);
+            axis.pointRange = Math.min(
+                pointRange,
+                axis.single && hasCategories ? 1 : range
+            );
 
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
@@ -5064,8 +5067,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range

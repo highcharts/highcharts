@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -50,15 +53,10 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  * @private
  * @class
  * @name Highcharts.ZoomComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ZoomComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var ZoomComponent = function () {};
 ZoomComponent.prototype = new AccessibilityComponent();
-H.extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
+extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
     /**
      * Initialize the component

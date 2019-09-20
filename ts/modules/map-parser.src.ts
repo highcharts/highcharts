@@ -42,7 +42,11 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import './data.src.js';
 
 /* eslint-disable no-invalid-this */
@@ -61,7 +65,7 @@ H.wrap(H.Data.prototype, 'init', function (
 
 /* eslint-enable no-invalid-this */
 
-H.extend(H.Data.prototype, {
+extend(H.Data.prototype, {
     // Parse an SVG path into a simplified array that Highcharts can read
     pathToArray: function (
         this: Highcharts.Data,

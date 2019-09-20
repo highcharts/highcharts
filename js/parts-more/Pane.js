@@ -14,8 +14,8 @@ import H from '../parts/Globals.js';
  */
 import '../mixins/centered-series.js';
 import U from '../parts/Utilities.js';
-var splat = U.splat;
-var CenteredSeriesMixin = H.CenteredSeriesMixin, extend = H.extend, merge = H.merge;
+var extend = U.extend, splat = U.splat;
+var CenteredSeriesMixin = H.CenteredSeriesMixin, merge = H.merge;
 /* eslint-disable valid-jsdoc */
 /**
  * The Pane object allows options that are common to a set of X and Y axes.

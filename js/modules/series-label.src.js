@@ -40,10 +40,10 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/y5A37/
  */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, syncTimeout = U.syncTimeout;
+var extend = U.extend, isNumber = U.isNumber, syncTimeout = U.syncTimeout;
 import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, addEvent = H.addEvent, extend = H.extend, pick = H.pick, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
+var labelDistance = 3, addEvent = H.addEvent, pick = H.pick, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
 H.setOptions({
     /**
      * @optionparent plotOptions

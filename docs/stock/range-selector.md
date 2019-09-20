@@ -104,7 +104,7 @@ Each range selector button can get a custom action as shown in this example:
     			}, {
     				type: 'all',
     				text: 'All'
-    			}[
+    			}]
     },
     
 

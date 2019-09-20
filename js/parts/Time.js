@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -57,7 +57,7 @@ var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat
 * @name Highcharts.AxisTickPositionsArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
-var H = Highcharts, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
+var H = Highcharts, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using
@@ -451,7 +451,7 @@ Highcharts.Time.prototype = {
         hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang.weekdays, shortWeekdays = lang.shortWeekdays, pad = H.pad, 
         // List all format keys. Custom formats can be added from the
         // outside.
-        replacements = H.extend({
+        replacements = extend({
             // Day
             // Short weekday, like 'Mon'
             a: shortWeekdays ?

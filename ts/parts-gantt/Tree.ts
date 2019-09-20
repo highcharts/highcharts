@@ -68,10 +68,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    extend,
+    isNumber
+} = U;
 
-var extend = H.extend,
-    pick = H.pick,
+var pick = H.pick,
     isFunction = function (x: unknown): x is Function {
         return typeof x === 'function';
     };

@@ -51,12 +51,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+const {
+    extend,
+    objectEach
+} = U;
 
 import '../parts/Series.js';
 
-var extend = H.extend,
-    pick = H.pick,
+var pick = H.pick,
     seriesType = H.seriesType;
 
 /**

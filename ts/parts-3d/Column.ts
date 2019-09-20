@@ -39,6 +39,7 @@ declare global {
             edgeColor?: ColorString;
             edgeWidth?: number;
             groupZPadding?: number;
+            inactiveOtherPoints?: boolean;
         }
         interface Series {
             translate3dShapes(): void;

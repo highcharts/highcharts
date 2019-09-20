@@ -77,13 +77,13 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat, syncTimeout = U.syncTimeout;
+var attr = U.attr, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
+createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
 pick = H.pick, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -210,9 +210,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (typeOptions, type) {
                 if (isObject(typeOptions)) { // #8766
-                    typeOptions.tooltip = (userPlotOptions[type] &&
-                        merge(userPlotOptions[type].tooltip) // override by copy
-                    ) || undefined; // or clear
+                    typeOptions.tooltip = (userPlotOptions[type] && // override by copy:
+                        merge(userPlotOptions[type].tooltip)) || undefined; // or clear
                 }
             });
             // User options have higher priority than default options
@@ -777,6 +776,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (redraw) {
         var titleOffset = [0, 0, 0], requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
@@ -828,6 +829,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.titleOffset.join(',') !== titleOffset.join(','));
         // Used in getMargins
         this.titleOffset = titleOffset;
+        fireEvent(this, 'afterLayOutTitles');
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)

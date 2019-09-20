@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -30,8 +33,6 @@ H.Chart.prototype.showExportMenu = function () {
 
 
 /**
- * Hide export menu.
- *
  * @private
  * @function Highcharts.Chart#hideExportMenu
  */
@@ -122,33 +123,84 @@ H.Chart.prototype.highlightLastExportItem = function () {
 
 
 /**
+ * @private
+ * @param {Highcharts.Chart} chart
+ */
+function exportingShouldHaveA11y(chart) {
+    var exportingOpts = chart.options.exporting;
+    return exportingOpts &&
+        exportingOpts.enabled !== false &&
+        exportingOpts.accessibility &&
+        exportingOpts.accessibility.enabled &&
+        chart.exportSVGElements &&
+        chart.exportSVGElements[0] &&
+        chart.exportSVGElements[0].element;
+}
+
+
+/**
  * The MenuComponent class
  *
  * @private
  * @class
  * @name Highcharts.MenuComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var MenuComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var MenuComponent = function () {};
 MenuComponent.prototype = new AccessibilityComponent();
-H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
+extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
     /**
      * Init the component
      */
     init: function () {
-        var chart = this.chart;
-        // Hide the export menu from screen readers when it is hidden visually
-        this.addEvent(chart, 'exportMenuHidden', function () {
-            var menu = this.exportContextMenu;
-            if (menu) {
-                menu.setAttribute('aria-hidden', true);
-            }
+        var chart = this.chart,
+            component = this;
+
+        this.addEvent(chart, 'exportMenuShown', function () {
+            component.onMenuShown();
         });
+
+        this.addEvent(chart, 'exportMenuHidden', function () {
+            component.onMenuHidden();
+        });
+    },
+
+
+    /**
+     * @private
+     */
+    onMenuHidden: function () {
+        var menu = this.chart.exportContextMenu;
+        if (menu) {
+            menu.setAttribute('aria-hidden', 'true');
+        }
+        this.setExportButtonExpandedState('false');
+    },
+
+
+    /**
+     * @private
+     */
+    onMenuShown: function () {
+        var menu = this.chart.exportContextMenu;
+        if (menu) {
+            this.addAccessibleContextMenuAttribs();
+            this.unhideElementFromScreenReaders(menu);
+            this.chart.highlightExportItem(0);
+        }
+        this.setExportButtonExpandedState('true');
+    },
+
+
+    /**
+     * @private
+     * @param {string} stateStr
+     */
+    setExportButtonExpandedState: function (stateStr) {
+        var button = this.exportButtonProxy;
+        if (button) {
+            button.setAttribute('aria-expanded', stateStr);
+        }
     },
 
 
@@ -157,39 +209,14 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * proxy overlay.
      */
     onChartRender: function () {
-        var component = this,
-            chart = this.chart,
+        var chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
         // Always start with a clean slate
         this.removeElement(this.exportProxyGroup);
 
         // Set screen reader properties on export menu
-        if (
-            chart.options.exporting &&
-            chart.options.exporting.enabled !== false &&
-            chart.options.exporting.accessibility &&
-            chart.options.exporting.accessibility.enabled &&
-            chart.exportSVGElements &&
-            chart.exportSVGElements[0] &&
-            chart.exportSVGElements[0].element
-        ) {
-            // Set event handler on button if not already done
-            var button = chart.exportSVGElements[0],
-                buttonElement = button.element,
-                oldExportCallback = buttonElement.onclick;
-            if (this.wrappedButton !== buttonElement) {
-                buttonElement.onclick = function () {
-                    oldExportCallback.apply(
-                        this,
-                        Array.prototype.slice.call(arguments)
-                    );
-                    component.addAccessibleContextMenuAttribs();
-                    chart.highlightExportItem(0);
-                };
-                this.wrappedButton = buttonElement;
-            }
-
+        if (exportingShouldHaveA11y(chart)) {
             // Proxy button and group
             this.exportProxyGroup = this.addProxyGroup(
                 // Wrap in a region div if verbosity is high
@@ -202,6 +229,7 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 } : null
             );
 
+            var button = this.chart.exportSVGElements[0];
             this.exportButtonProxy = this.createProxyButton(
                 button,
                 this.exportProxyGroup,
@@ -209,7 +237,8 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.menuButtonLabel',
                         { chart: chart }
-                    )
+                    ),
+                    'aria-expanded': 'false'
                 }
             );
         }
@@ -217,13 +246,11 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
 
     /**
-     * Add ARIA to context menu
      * @private
      */
     addAccessibleContextMenuAttribs: function () {
         var chart = this.chart,
-            exportList = chart.exportDivElements,
-            contextMenu = chart.exportContextMenu;
+            exportList = chart.exportDivElements;
 
         if (exportList && exportList.length) {
             // Set tabindex on the menu items to allow focusing by script
@@ -231,21 +258,23 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             exportList.forEach(function (item) {
                 if (item.tagName === 'DIV' &&
                     !(item.children && item.children.length)) {
-                    item.setAttribute('role', 'menuitem');
-                    item.setAttribute('tabindex', -1);
+                    item.setAttribute('role', 'listitem');
+                    item.setAttribute('tabindex', 0);
+                } else {
+                    item.setAttribute('aria-hidden', 'true');
                 }
             });
+
             // Set accessibility properties on parent div
-            exportList[0].parentNode.setAttribute('role', 'menu');
-            exportList[0].parentNode.setAttribute(
+            var parentDiv = exportList[0].parentNode;
+            parentDiv.setAttribute('role', 'list');
+            parentDiv.removeAttribute('aria-hidden');
+            parentDiv.setAttribute(
                 'aria-label',
                 chart.langFormat(
                     'accessibility.exporting.chartMenuLabel', { chart: chart }
                 )
             );
-        }
-        if (contextMenu) {
-            this.unhideElementFromScreenReaders(contextMenu);
         }
     },
 
@@ -257,69 +286,27 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
-            a11yOptions = chart.options.accessibility,
             component = this;
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow prev handler
-                [[
-                    keys.left, keys.up
-                ], function () {
-                    var i = chart.highlightedExportItemIx || 0;
-
-                    // Try to highlight prev item in list. Highlighting e.g.
-                    // separators will fail.
-                    while (i--) {
-                        if (chart.highlightExportItem(i)) {
-                            return this.response.success;
-                        }
-                    }
-
-                    // We failed, so wrap around or move to prev module
-                    if (a11yOptions.keyboardNavigation.wrapAround) {
-                        chart.highlightLastExportItem();
-                        return this.response.success;
-                    }
-                    return this.response.prev;
+                [[keys.left, keys.up], function () {
+                    component.onKbdPrevious(this);
                 }],
 
                 // Arrow next handler
-                [[
-                    keys.right, keys.down
-                ], function () {
-                    var i = (chart.highlightedExportItemIx || 0) + 1;
-
-                    // Try to highlight next item in list. Highlighting e.g.
-                    // separators will fail.
-                    for (;i < chart.exportDivElements.length; ++i) {
-                        if (chart.highlightExportItem(i)) {
-                            return this.response.success;
-                        }
-                    }
-
-                    // We failed, so wrap around or move to next module
-                    if (a11yOptions.keyboardNavigation.wrapAround) {
-                        chart.highlightExportItem(0);
-                        return this.response.success;
-                    }
-                    return this.response.next;
+                [[keys.right, keys.down], function () {
+                    component.onKbdNext(this);
                 }],
 
                 // Click handler
-                [[
-                    keys.enter, keys.space
-                ], function () {
-                    component.fakeClickEvent(
-                        chart.exportDivElements[chart.highlightedExportItemIx]
-                    );
-                    return this.response.success;
+                [[keys.enter, keys.space], function () {
+                    component.onKbdClick(this);
                 }],
 
                 // ESC handler
-                [[
-                    keys.esc
-                ], function () {
+                [[keys.esc], function () {
                     return this.response.prev;
                 }]
             ],
@@ -348,6 +335,76 @@ H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 chart.hideExportMenu();
             }
         });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @return {number} Response code
+     */
+    onKbdPrevious: function (keyboardNavigationHandler) {
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
+            response = keyboardNavigationHandler.response,
+            i = chart.highlightedExportItemIx || 0;
+
+        // Try to highlight prev item in list. Highlighting e.g.
+        // separators will fail.
+        while (i--) {
+            if (chart.highlightExportItem(i)) {
+                return response.success;
+            }
+        }
+
+        // We failed, so wrap around or move to prev module
+        if (a11yOptions.keyboardNavigation.wrapAround) {
+            chart.highlightLastExportItem();
+            return response.success;
+        }
+        return response.prev;
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @return {number} Response code
+     */
+    onKbdNext: function (keyboardNavigationHandler) {
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
+            response = keyboardNavigationHandler.response,
+            i = (chart.highlightedExportItemIx || 0) + 1;
+
+        // Try to highlight next item in list. Highlighting e.g.
+        // separators will fail.
+        for (;i < chart.exportDivElements.length; ++i) {
+            if (chart.highlightExportItem(i)) {
+                return response.success;
+            }
+        }
+
+        // We failed, so wrap around or move to next module
+        if (a11yOptions.keyboardNavigation.wrapAround) {
+            chart.highlightExportItem(0);
+            return response.success;
+        }
+        return response.next;
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @return {number} Response code
+     */
+    onKbdClick: function (keyboardNavigationHandler) {
+        var chart = this.chart;
+        this.fakeClickEvent(
+            chart.exportDivElements[chart.highlightedExportItemIx]
+        );
+        return keyboardNavigationHandler.response.success;
     }
 
 });

@@ -1,5 +1,5 @@
 Gantt axis grid
----------------
+===
 
 Both vertical and horizontal axis of a Gantt Chart are rendered with the [`Axis.grid`](https://api.highcharts.com/gantt/xAxis.grid) option enabled by default, which turns axis ticks into table cells.
 
@@ -10,7 +10,7 @@ The default settings for Gantt renders a dual [`datetime`](https://api.highchart
 
 _Test the automatic date interval logic of the horizontal axis in the below example, by dragging the navigators handlebars._
 
-<iframe width="320" height="840" src="https://www.highcharts.com/samples/embed/gantt/demo/with-stock-navigation"></iframe>
+<iframe width="320" height="840" style="width: 100%; height:549px" src="https://www.highcharts.com/samples/embed/gantt/demo/with-navigation"></iframe>
 
 If the min and maximum width of the chart is set, there is more control over the number of ticks displayed in the Gantt chart. This would allow for further customization of the [`labels`](https://api.highcharts.com/gantt/xAxis.labels) and [`tickInterval`](https://api.highcharts.com/gantt/xAxis.tickInterval) properties on axis.
 

@@ -102,7 +102,7 @@ declare global {
                 Array<Array<(number|null|undefined)>>
             );
             public zoneAxis?: string;
-            public zones: Array<PlotSeriesZonesOptions>;
+            public zones: Array<SeriesZonesOptions>;
             public afterAnimate(): void;
             public animate(init?: boolean): void;
             public applyZones(): void;
@@ -152,6 +152,10 @@ declare global {
                 allowNull?: boolean
             ): Array<Point>;
             public getXExtremes(xData: Array<number>): RangeObject;
+            public getFirstValidPoint (
+                this: Highcharts.Series,
+                data: Array<PointOptionsType>
+            ): PointOptionsType;
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -215,83 +219,6 @@ declare global {
         interface LineSeriesOptions extends SeriesOptions {
             states?: SeriesStatesOptionsObject<LineSeries>;
         }
-        interface PlotOptions {
-            [key: string]: PlotSeriesOptions;
-        }
-        interface PlotSeriesOptions {
-            allAreas?: boolean;
-            allowPointSelect?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
-            animationLimit?: number;
-            boostBlending?: SeriesBlendingValue;
-            boostThreshold?: number;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            className?: string;
-            clip?: boolean;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorAxis?: boolean;
-            colorIndex?: number;
-            colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
-            connectEnds?: boolean;
-            connectNulls?: boolean;
-            cropThreshold?: number;
-            cursor?: (string|CursorValue);
-            dashStyle?: DashStyleValue;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
-            dataLabels?: (
-                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
-            );
-            description?: string;
-            enableMouseTracking?: boolean;
-            events?: SeriesEventsOptions;
-            findNearestPointBy?: SeriesFindNearestPointByValue;
-            getExtremesFromAll?: boolean;
-            includeInDataExport?: boolean;
-            isInternal?: boolean;
-            joinBy?: (string|Array<string>);
-            keys?: Array<string>;
-            linecap?: SeriesLinecapValue;
-            lineWidth?: number;
-            linkedTo?: string;
-            marker?: PointMarkerOptionsObject;
-            navigatorOptions?: SeriesOptions;
-            negativeColor?: (ColorString|GradientColorObject|PatternObject);
-            opacity?: number;
-            point?: PlotSeriesPointOptions;
-            pointDescriptionFormatter?: Function;
-            pointInterval?: number;
-            pointIntervalUnit?: SeriesPointIntervalUnitValue;
-            pointPlacement?: (number|string);
-            pointRange?: (number|null);
-            pointStart?: number;
-            pointValKey?: string;
-            selected?: boolean;
-            shadow?: (boolean|ShadowOptionsObject);
-            showCheckbox?: boolean;
-            showInLegend?: boolean;
-            showInNavigator?: boolean;
-            skipKeyboardNavigation?: boolean;
-            softThreshold?: boolean;
-            stacking?: OptionsStackingValue;
-            states?: SeriesStatesOptionsObject<Series>;
-            step?: SeriesStepValue;
-            stickyTracking?: boolean;
-            supportingColor?: (ColorString|GradientColorObject|PatternObject);
-            threshold?: number;
-            turboThreshold?: number;
-            visible?: boolean;
-            zIndex?: number;
-            zoneAxis?: string;
-            zones?: Array<PlotSeriesZonesOptions>;
-        }
-        interface PlotSeriesZonesOptions {
-            className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            value?: number;
-        }
         interface Point {
             category?: string;
             clientX?: number;
@@ -309,7 +236,7 @@ declare global {
             stackTotal?: number;
             stackY?: (number|null);
             yBottom?: number;
-            zone?: PlotSeriesZonesOptions;
+            zone?: SeriesZonesOptions;
         }
         interface SeriesAfterAnimateCallbackFunction {
             (this: Series, event: SeriesAfterAnimateEventObject): void;
@@ -367,22 +294,87 @@ declare global {
         interface SeriesMouseOverCallbackFunction {
             (this: Series, event: PointerEvent): void;
         }
-        interface SeriesOptions extends PlotSeriesOptions {
+        interface SeriesOptions {
+            allAreas?: boolean;
+            allowPointSelect?: boolean;
+            animation?: (boolean|AnimationOptionsObject);
+            animationLimit?: number;
+            boostBlending?: SeriesBlendingValue;
+            boostThreshold?: number;
+            borderColor?: ColorType;
+            borderWidth?: number;
+            className?: string;
+            clip?: boolean;
+            color?: ColorType;
+            colorAxis?: boolean;
+            colorByPoint?: boolean;
+            colorIndex?: number;
+            colors?: Array<ColorType>;
+            connectEnds?: boolean;
+            connectNulls?: boolean;
+            cropThreshold?: number;
+            cursor?: (string|CursorValue);
+            dashStyle?: DashStyleValue;
             data?: Array<PointOptionsType>;
+            dataGrouping?: DataGroupingOptionsObject;
+            dataLabels?: (
+                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
+            );
+            description?: string;
+            enableMouseTracking?: boolean;
+            events?: SeriesEventsOptions;
+            findNearestPointBy?: SeriesFindNearestPointByValue;
+            getExtremesFromAll?: boolean;
             grouping?: boolean;
             id?: string;
             index?: number;
+            includeInDataExport?: boolean;
+            isInternal?: boolean;
+            joinBy?: (string|Array<string>);
             kdNow?: boolean;
+            keys?: Array<string>;
             legendIndex?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            linecap?: SeriesLinecapValue;
+            lineColor?: ColorType;
+            lineWidth?: number;
+            linkedTo?: string;
+            marker?: PointMarkerOptionsObject;
             name?: string;
+            navigatorOptions?: SeriesOptions;
+            negativeColor?: ColorType;
+            negativeFillColor?: ColorType;
+            opacity?: number;
+            point?: PlotSeriesPointOptions;
+            pointDescriptionFormatter?: Function;
+            pointInterval?: number;
+            pointIntervalUnit?: SeriesPointIntervalUnitValue;
+            pointPlacement?: (number|string);
+            pointRange?: (number|null);
+            pointStart?: number;
+            pointValKey?: string;
             selected?: boolean;
+            shadow?: (boolean|ShadowOptionsObject);
+            showCheckbox?: boolean;
+            showInLegend?: boolean;
+            showInNavigator?: boolean;
+            skipKeyboardNavigation?: boolean;
+            softThreshold?: boolean;
             stack?: (number|string);
+            stacking?: OptionsStackingValue;
+            startFromThreshold?: boolean;
+            states?: SeriesStatesOptionsObject<Series>;
+            step?: SeriesStepValue;
+            stickyTracking?: boolean;
+            supportingColor?: ColorType;
+            threshold?: number;
+            turboThreshold?: number;
             type?: string;
             visible?: boolean;
             xAxis?: (number|string);
             yAxis?: (number|string);
             zIndex?: number;
+            zoneAxis?: string;
+            zones?: Array<SeriesZonesOptions>;
         }
         interface SeriesPlotBoxObject {
             scaleX?: number;
@@ -425,6 +417,13 @@ declare global {
         }
         interface SeriesTypesDictionary {
             line: typeof LineSeries;
+        }
+        interface SeriesZonesOptions {
+            className?: string;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            value?: number;
         }
         type SeriesBlendingValue = ('add'|'darken'|'multiply');
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
@@ -650,6 +649,7 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isString,
@@ -670,7 +670,6 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
@@ -2507,6 +2506,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * and the rest are assumed to be the same format. This saves expensive
          * data checking and indexing in long series. Set it to `0` disable.
          *
+         * Note:
+         * In boost mode turbo threshold is forced. Only array of numbers or
+         * two dimensional arrays are allowed.
+         *
          * @since   2.2
          * @product highcharts highstock gantt
          *
@@ -3163,7 +3166,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         options.threshold ||
                         0,
                     className: 'highcharts-negative'
-                } as Highcharts.PlotSeriesZonesOptions;
+                } as Highcharts.SeriesZonesOptions;
                 if (!styledMode) {
                     zone.color = options.negativeColor;
                     zone.fillColor = options.negativeFillColor;
@@ -3629,13 +3632,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // conditional for max performance.
                 if (turboThreshold && dataLength > turboThreshold) {
 
-                    // find the first non-null point
-                    i = 0;
-                    while (firstPoint === null && i < dataLength) {
-                        firstPoint = data[i];
-                        i++;
-                    }
-
+                    firstPoint = series.getFirstValidPoint(data);
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
                         for (i = 0; i < dataLength; i++) {
@@ -4178,6 +4175,32 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             this.dataMax = arrayMax(activeYData);
 
             fireEvent(this, 'afterGetExtremes');
+        },
+
+        /**
+         * Find and return the first non null point in the data
+         *
+         * @private
+         * @function Highcharts.Series.getFirstValidPoint
+         * @param {Array<Highcharts.PointOptionsType>} data
+         *        Array of options for points
+         *
+         * @return {Highcharts.PointOptionsType}
+         */
+        getFirstValidPoint: function (
+            this: Highcharts.Series,
+            data: Array<Highcharts.PointOptionsType>
+        ): Highcharts.PointOptionsType {
+            var firstPoint = null,
+                dataLength = data.length,
+                i = 0;
+
+            while (firstPoint === null && i < dataLength) {
+                firstPoint = data[i];
+                i++;
+            }
+
+            return firstPoint;
         },
 
         /**
@@ -5335,7 +5358,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         ): Array<Array<string>> {
             // Add the zone properties if any
             this.zones.forEach(function (
-                zone: Highcharts.PlotSeriesZonesOptions,
+                zone: Highcharts.SeriesZonesOptions,
                 i: number
             ): void {
                 var propset = [
@@ -5408,7 +5431,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // Create the clips
                 extremes = axis.getExtremes();
                 zones.forEach(function (
-                    threshold: Highcharts.PlotSeriesZonesOptions,
+                    threshold: Highcharts.SeriesZonesOptions,
                     i: number
                 ): void {
 
@@ -6091,15 +6114,16 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         pointPlacementToXValue: function (this: Highcharts.Series): number {
 
             var series = this,
+                axis = series.xAxis,
                 pointPlacement = series.options.pointPlacement;
 
             // Point placement is relative to each series pointRange (#5889)
             if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
+                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
             }
             if (isNumber(pointPlacement)) {
                 (pointPlacement as any) *=
-                    pick(series.options.pointRange || series.xAxis.pointRange);
+                    pick(series.options.pointRange || axis.pointRange);
             }
 
             return pointPlacement as any;

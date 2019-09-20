@@ -140,7 +140,10 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    extend
+} = U;
 
 
 import './integrations.js';
@@ -157,7 +160,7 @@ H.layouts = {
     }
 } as any;
 
-H.extend(
+extend(
     /**
      * Reingold-Fruchterman algorithm from
      * "Graph Drawing by Force-directed Placement" paper.

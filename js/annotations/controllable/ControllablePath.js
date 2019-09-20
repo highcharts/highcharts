@@ -1,6 +1,8 @@
 'use strict';
 import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
+var extend = U.extend;
+
 import controllableMixin from './controllableMixin.js';
 import markerMixin from './markerMixin.js';
 
@@ -144,7 +146,7 @@ H.merge(
 
             controllableMixin.render.call(this);
 
-            H.extend(this.graphic, {
+            extend(this.graphic, {
                 markerStartSetter: markerMixin.markerStartSetter,
                 markerEndSetter: markerMixin.markerEndSetter
             });

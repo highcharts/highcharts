@@ -1,5 +1,5 @@
 Technical indicators
---------------------
+===
 
 Technical Indicators, like annotations, are powerful tools that help to understand charts and make decisions with ease. The mathematical algorithms use the existing data to indicate trends, events, etc. and help to set up boundaries for strategies and to look for patterns.
 
@@ -97,7 +97,7 @@ There are no limitations to the number of technical indicators that can be bound
     
     series: [{
       id: ‘main-series’,
-      data: [ … [
+      data: [ … ]
     }, {
       type: ‘sma’,
       linkedTo: ‘main-series’,
@@ -116,10 +116,10 @@ There are no limitations to the number of technical indicators that can be bound
       params: {
         period: 7
       }
-    }[
+    }]
     
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points"></iframe>
+<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/macd-pivot-points) to check the code.
 
@@ -128,7 +128,7 @@ yAxis bindigs
 
 Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Points, Price Envelopes, PSAR, SMA, VbP, VWAP, WMA, Zig Zag) can be placed on the same yAxis as the main series. However, other indicators (A/D, ATR, CCI, CMF, MACD, MFI, Momentum, RoC, RSI, Stochastic) should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:
 
-1\. Create required yAxis:
+1. Create required yAxis:
 
     
     yAxis: [{
@@ -138,20 +138,20 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
       // yAxis for Stochastic technical indicator:
       top: ‘50%’,
       height: ‘50%’
-    }[
+    }]
     
 
-2\. Bind indicator to this yAxis:
+2. Bind indicator to this yAxis:
 
     
     series: [{
       id: ‘main-series’,
-      data: [ … [
+      data: [ … ]
     }, {
       type: ‘stochastic’,
       linkedTo: ‘main-series’,
       yAxis: 1
-    }[
+    }]
     
 
 Multiple series bindings
@@ -170,11 +170,11 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
     
     series: [{
       id: ‘main-series’,
-      data: [ … [
+      data: [ … ]
     }, {
       id: ‘volume-series’,
       yAxis: 1,
-      data: [ … [
+      data: [ … ]
     }, {
       type: ‘mfi’,
       linkedTo: ‘main-series’,
@@ -182,4 +182,4 @@ These indicators require the following parameter `params.volumeSeriesID` to calc
       params: {
         volumeSeriesID: ‘volume-series’
       }
-    }[
+    }]

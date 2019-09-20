@@ -73,6 +73,7 @@ declare global {
         interface BubbleSeriesOptions extends ScatterSeriesOptions {
             displayNegative?: boolean;
             marker?: BubblePointMarkerOptions;
+            minSize?: (number|string);
             maxSize?: (number|string);
             sizeBy?: BubbleSizeByValue;
             sizeByAbsoluteValue?: boolean;
@@ -99,8 +100,11 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    extend,
+    isNumber,
+    pInt
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -577,7 +581,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
             if (isNumber(radius) && radius >= this.minPxSize / 2) {
                 // Shape arguments
-                point.marker = H.extend(point.marker, {
+                point.marker = extend(point.marker, {
                     radius: radius,
                     width: 2 * radius,
                     height: 2 * radius

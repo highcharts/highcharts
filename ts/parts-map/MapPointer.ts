@@ -35,11 +35,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Pointer.js';
 
-var extend = H.extend,
-    pick = H.pick,
+var pick = H.pick,
     Pointer = H.Pointer,
     wrap = H.wrap;
 

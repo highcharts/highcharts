@@ -1,11 +1,11 @@
 Bullet chart
-------------
+===
 
 A bullet graph is a variation of a bar graph. The bullet series features a single measure, compares it to a target, and displays it in the context of qualitative ranges of performance, that could be set using [plotBands](http://api.highcharts.com/highcharts/yAxis.plotBands) on yAxis.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bullet)_
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/bullet-graph"></iframe>
+<iframe style="width: 100%; height: 349px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bullet-graph allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bullet-graph/) to check the code.
 
@@ -22,7 +22,7 @@ To create a bullet series, add the following configuration in the series option:
         data : [{
             y : 20,     // The value of a point
             target: 50  // The target value of a point 
-        }[,
+        }],
         targetOptions: { // Options related with look and position of targets 
             width: '140%',        // The width of the target 
             height: 3,            // The height of the target 

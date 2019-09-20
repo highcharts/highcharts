@@ -25,11 +25,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = H.Axis, correctFloat = H.correctFloat, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, format = H.format, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = H.Axis, correctFloat = H.correctFloat, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -256,9 +256,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 var seriesProto = Series.prototype, baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
-/**
- * @ignore
- */
+/** @ignore */
 commonOptions = {
     // enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
@@ -585,8 +583,8 @@ addEvent(Series, 'afterSetOptions', function (e) {
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }
         options.dataGrouping = merge(baseOptions, defaultOptions, plotOptions.series && plotOptions.series.dataGrouping, // #1228
-        plotOptions[type].dataGrouping, // Set by the StockChart constructor
-        this.userOptions.dataGrouping);
+        // Set by the StockChart constructor:
+        plotOptions[type].dataGrouping, this.userOptions.dataGrouping);
     }
 });
 // When resetting the scale reset the hasProccessed flag to avoid taking

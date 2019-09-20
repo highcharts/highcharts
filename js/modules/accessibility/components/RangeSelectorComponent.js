@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
@@ -52,14 +55,10 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
  * @private
  * @class
  * @name Highcharts.RangeSelectorComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var RangeSelectorComponent = function (chart) {
-    this.initBase(chart);
-};
+var RangeSelectorComponent = function () {};
 RangeSelectorComponent.prototype = new AccessibilityComponent();
-H.extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
+extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.

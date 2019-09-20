@@ -18,37 +18,36 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
 
-        class WmaIndicator extends SmaIndicator {
-            public data: Array<WmaIndicatorPoint>;
-            public options: WmaIndicatorOptions;
-            public pointClass: typeof WmaIndicatorPoint;
-            public points: Array<WmaIndicatorPoint>;
+        class WMAIndicator extends SMAIndicator {
+            public data: Array<WMAIndicatorPoint>;
+            public options: WMAIndicatorOptions;
+            public pointClass: typeof WMAIndicatorPoint;
+            public points: Array<WMAIndicatorPoint>;
+            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
-                params: Dictionary<number>
+                params: WMAIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-            public yData: Array<number>;
         }
 
-        class WmaIndicatorPoint extends SmaIndicatorPoint {
-            public series: WmaIndicator;
+        interface WMAIndicatorOptions extends SMAIndicatorOptions {
+            params?: WMAIndicatorParamsOptions;
+            states?: SeriesStatesOptionsObject<WMAIndicator>;
+        }
+
+        interface WMAIndicatorParamsOptions
+            extends SMAIndicatorParamsOptions {
+            // for inheitance
+            index: number;
+        }
+
+        class WMAIndicatorPoint extends SMAIndicatorPoint {
+            public series: WMAIndicator;
         }
 
         interface SeriesTypesDictionary {
-            wma: typeof WmaIndicator;
+            wma: typeof WMAIndicator;
         }
-
-        interface WmaIndicatorOptions extends SmaIndicatorOptions {
-            params?: WmaIndicatorParamsOptions;
-            states?: SeriesStatesOptionsObject<WmaIndicator>;
-        }
-
-        interface WmaIndicatorParamsOptions
-            extends Dictionary<number> {
-            index: number;
-            period: number;
-        }
-
     }
 }
 
@@ -64,19 +63,14 @@ var seriesType = H.seriesType;
  * @private
  */
 function accumulateAverage(
-    points: Array<Array<(number|null|undefined)>>,
+    points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
-    yVal: Array<(
-        number|
-        Array<(number|null|undefined)>|
-        null|
-        undefined
-    )>,
+    yVal: Array<Array<number>>,
     i: number,
     index: number
 ): void {
-    var xValue = xVal[i],
-        yValue = index < 0 ? yVal[i] : (yVal[i] as any)[index];
+    var xValue: number = xVal[i],
+        yValue: (number|Array<number>) = index < 0 ? yVal[i] : yVal[i][index];
 
     points.push([xValue, yValue]);
 }
@@ -85,7 +79,7 @@ function accumulateAverage(
  * @private
  */
 function weightedSumArray(
-    array: Array<Array<(number|null|undefined)>>,
+    array: Array<[(number|null), (number|Array<number>)]>,
     pLen: number
 ): number {
     // The denominator is the sum of the number of days as a triangular number.
@@ -96,10 +90,10 @@ function weightedSumArray(
     // reduce VS loop => reduce
     return (array.reduce(
         function (
-            prev: Array<(number|null|undefined)>,
-            cur: Array<(number|null|undefined)>,
+            prev: [(number|null), (number|Array<number>)],
+            cur: [(number|null), (number|Array<number>)],
             i: number
-        ): Array<(number|null)> {
+        ): [(number|null), (number|Array<number>)] {
             return [null, (prev[1] as any) + (cur[1] as any) * (i + 1)];
         })[1] as any) / denominator;
 }
@@ -108,14 +102,9 @@ function weightedSumArray(
  * @private
  */
 function populateAverage(
-    points: Array<Array<(number|null|undefined)>>,
+    points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
-    yVal: Array<(
-        number|
-        Array<(number|null|undefined)>|
-        null|
-        undefined
-    )>,
+    yVal: Array<Array<number>>,
     i: number
 ): Array<number> {
     var pLen = points.length,
@@ -137,7 +126,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.WmaIndicator>(
+seriesType<Highcharts.WMAIndicator>(
     'wma',
     'sma',
     /**
@@ -163,24 +152,22 @@ seriesType<Highcharts.WmaIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.Series,
-            params: Highcharts.Dictionary<(number)>
+            series: Highcharts.WMAIndicator,
+            params: Highcharts.WMAIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<(
-                    number|Array<(number|null|undefined)>|null|undefined
-                )> = (series.yData as any),
+                yVal: Array<Array<number>> = series.yData,
                 yValLen = yVal ? yVal.length : 0,
                 range = 1,
-                xValue = xVal[0],
-                yValue = yVal[0],
+                xValue: number = xVal[0],
+                yValue: (number|Array<number>) = yVal[0],
                 WMA: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index = -1,
                 i: (number|undefined),
-                points: Array<Array<(number|null|undefined)>>,
+                points: Array<[number, (number|Array<number>)]>,
                 WMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
@@ -189,11 +176,11 @@ seriesType<Highcharts.WmaIndicator>(
 
             // Switch index for OHLC / Candlestick
             if (isArray(yVal[0])) {
-                index = (params.index);
-                yValue = (yVal[0] as any)[index];
+                index = params.index;
+                yValue = yVal[0][index];
             }
             // Starting point
-            points = [[xValue, (yValue as any)]];
+            points = [[xValue, yValue]];
 
             // Accumulate first N-points
             while (range !== period) {

@@ -24,8 +24,8 @@ QUnit.test('setAxisTranslation', assert => {
     );
     assert.strictEqual(
         axis.pointRange,
-        0,
-        'should have pointRange equal 0 when min and max is 0.'
+        1,
+        'should have pointRange equal 1 when min and max is 0 but axis has categories'
     );
     assert.strictEqual(
         axis.minPixelPadding,

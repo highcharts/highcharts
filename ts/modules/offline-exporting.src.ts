@@ -81,6 +81,11 @@ declare global {
     }
 }
 
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Chart.js';
 import '../parts/Options.js';
 import '../mixins/download-url.js';
@@ -731,7 +736,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             } else {
                 Highcharts.downloadSVGLocal(
                     svg,
-                    Highcharts.extend(
+                    extend(
                         { filename: chart.getFilename() },
                         options
                     ),

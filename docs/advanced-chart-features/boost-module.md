@@ -1,5 +1,5 @@
 Boost module
-------------
+===
 
 Boost is a stripped-down renderer-in-a-module for Highcharts and Highstock. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
 
@@ -45,14 +45,19 @@ The main boost configuration is set in the `boost property in the chart options.
         },
     
         series: [{
-    	   boostThreshold: 1, // Boost when there are more than 1                     
+    	      boostThreshold: 1,  // Boost when there are more than 1
                                 // point in the chart.
-            data: [[0, 1[, [1, 2[, [2, 3[[,
-        }[
+            data: [ [0, 1], [1, 2], [2, 3] ]
+        }]
     };
     
 
 _Configuration for a boosted line chart._
+
+Configuration Data Options
+---------------------
+
+In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
 Series boosting versus chart boosting
 -------------------------------------

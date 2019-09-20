@@ -1,5 +1,5 @@
 Introduction
-------------
+===
 
 A column pyramid chart, like the column chart, is often used to visualize comparisons of data sets with discrete data, where the focus is on the values instead of categories as people read from left to right. This demo visualizes comparisons of the height of five pyramids.
 
@@ -7,18 +7,18 @@ Adapt the x axis to the right if the audience read from right to left, for insta
 
 Here is a demo using a column pyramid series to display one pyramid per value along an X axis.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/column-pyramid"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/column-pyramid allow="fullscreen"></iframe>
 
 Other demos:
 ------------
 
 **Stacked column pyramid**
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/columnpyramid-stacked"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-stacked allow="fullscreen"></iframe>
 
 **Inverted column pyramid**
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/columnpyramid-inverted"></iframe>
+<iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/columnpyramid-inverted allow="fullscreen"></iframe>
 
 Installation
 ------------
@@ -40,8 +40,8 @@ Use Cases
                 type: 'columnpyramid'
             },
             series: [{
-                data: [138.8, 136.4, 104, 101.1, 75[
-            }[
+                data: [138.8, 136.4, 104, 101.1, 75]
+            }]
         }
 
 API Docs

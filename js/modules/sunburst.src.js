@@ -42,13 +42,13 @@ import H from '../parts/Globals.js';
 * @since 6.0.0
 */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../parts/Series.js';
 import './treemap.src.js';
-var CenteredSeriesMixin = H.CenteredSeriesMixin, Series = H.Series, extend = H.extend, getCenter = CenteredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
+var CenteredSeriesMixin = H.CenteredSeriesMixin, Series = H.Series, getCenter = CenteredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
     return typeof x === 'boolean';
 }, merge = H.merge, noop = H.noop, rad2deg = 180 / Math.PI, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
 // TODO introduce step, which should default to 1.

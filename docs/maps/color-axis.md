@@ -1,5 +1,5 @@
 Color axis
-----------
+===
 
 The values on a [choropleth](http://en.wikipedia.org/wiki/Choropleth_map) geo map or heat map are plotted against a color axis. The Highmaps color axis is a special case of an axis that is drawn inside the legend, displaying a gradient or single items depending on whether the axis is scalar or has data classes. See detailed reference and live examples in the [API](http://api.highcharts.com/highmaps/colorAxis).
 

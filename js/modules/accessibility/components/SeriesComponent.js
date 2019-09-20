@@ -13,7 +13,8 @@
 import H from '../../../parts/Globals.js';
 
 import U from '../../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -559,15 +560,10 @@ H.Point.prototype.getA11yTimeDescription = function () {
  * @private
  * @class
  * @name Highcharts.SeriesComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var SeriesComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var SeriesComponent = function () {};
 SeriesComponent.prototype = new AccessibilityComponent();
-H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
+extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
     /**
      * Init the component.
