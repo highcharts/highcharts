@@ -1,5 +1,5 @@
 Axis resizer
---------
+===
 
 The Resizer module allows the end-user to define which axes can be resized in a multiple-pane Highstock layout. The module allows controlling multiple axes within one config. This feature is very useful, especially when combining multiple technical indicators, where each of them requires a separate axis.
 
@@ -14,14 +14,14 @@ Basic configuration:
     }, {
       height: '50%',
       top: '50%'
-    }[
+    }]
     
 
 The configuration above generates a resizer between the first and the second `yAxis`. Now, the end-user can simply resize one `yAxis` to increase its height, and to decrease the second `yAxis`:
 
 ![6ozu6lnpu-hguF75ugV5qjjtXqjPAlS2mcO6ddNq78llRGLf0K70OHQYJXWHIlRmMGfJBh8Z_Qm0ZvRkTUkFa4Fk2No0SGScyUXuBA5eW7UWqdynnVCNA2FQiE8_T9OF9Mf4j5tV](https://lh5.googleusercontent.com/6ozu6lnpu-hguF75ugV5qjjtXqjPAlS2mcO6ddNq78llRGLf0K70OHQYJXWHIlRmMGfJBh8Z_Qm0ZvRkTUkFa4Fk2No0SGScyUXuBA5eW7UWqdynnVCNA2FQiE8_T9OF9Mf4j5tV)
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=stock/demo/candlestick-and-volume"></iframe>
+<iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/candlestick-and-volume allow="fullscreen"></iframe>
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
 

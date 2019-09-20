@@ -146,6 +146,7 @@ declare global {
             curveFactor?: number;
             dataLabels?: SankeyDataLabelsOptionsObject;
             height?: number;
+            inactiveOtherPoints?: boolean;
             levels?: Array<SankeySeriesLevelsOptions>;
             linkOpacity?: number;
             mass?: undefined;

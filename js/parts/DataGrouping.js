@@ -256,9 +256,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 var seriesProto = Series.prototype, baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
-/**
- * @ignore
- */
+/** @ignore */
 commonOptions = {
     // enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
@@ -585,8 +583,8 @@ addEvent(Series, 'afterSetOptions', function (e) {
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }
         options.dataGrouping = merge(baseOptions, defaultOptions, plotOptions.series && plotOptions.series.dataGrouping, // #1228
-        plotOptions[type].dataGrouping, // Set by the StockChart constructor
-        this.userOptions.dataGrouping);
+        // Set by the StockChart constructor:
+        plotOptions[type].dataGrouping, this.userOptions.dataGrouping);
     }
 });
 // When resetting the scale reset the hasProccessed flag to avoid taking

@@ -107,6 +107,7 @@ declare global {
         interface TimelineSeriesOptions extends LineSeriesOptions {
             data?: Array<TimelinePointOptions>;
             dataLabels?: TimelineDataLabelsOptionsObject;
+            ignoreHiddenPoint?: boolean;
             radius?: number;
             radiusPlus?: number;
             states?: SeriesStatesOptionsObject<TimelineSeries>;

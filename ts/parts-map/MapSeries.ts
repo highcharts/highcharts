@@ -98,7 +98,7 @@ declare global {
             _minY?: number;
         }
         interface MapPointOptions extends ScatterPointOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: ColorType;
             dataLabels?: DataLabelsOptionsObject;
             drilldown?: string;
             id?: string;
@@ -113,7 +113,7 @@ declare global {
             extends ColorSeriesOptions, ScatterSeriesOptions
         {
             data?: Array<MapPointOptions|PointOptionsType>;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            nullColor?: ColorType;
             nullInteraction?: boolean;
             states?: SeriesStatesOptionsObject<MapSeries>;
         }

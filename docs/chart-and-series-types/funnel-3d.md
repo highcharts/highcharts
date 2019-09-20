@@ -1,9 +1,9 @@
-3d funnel
-------------
+3D funnel
+===
 
 Funnel 3D series type is the 3D variant of the [Funnel Chart](https://www.highcharts.com/docs/chart-and-series-types/funnel-series). Funnel Chart is mostly used to display the different stages in the sales process with having qualified leads on the top and closed deals at the bottom. A business is bound to lose a number of potential deals for each phase in the sales process, and that is why a typical funnel has a high number of leads at the top where the funnel narrows as more clients drop off. Funnel Chart is used to see how effective a sales team can turn leads into closed deals.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/view.php?path=highcharts/demo/funnel3d"></iframe>
+<iframe style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/funnel3d allow="fullscreen"></iframe>
 
 Setting up
 ----------

@@ -1,5 +1,5 @@
 Getting started with Gantt
---------------------------
+===
 
 Gantt chart visualizes the work breakdown structure for projects. It illustrates the time intervals of the project tasks and their dependencies. The breakdown of the project is described in tasks which are listed on the vertical axis where the duration of the tasks is offset against the horizontal axis.
 
@@ -47,4 +47,4 @@ Simple example
 
 _See below the simple live example of a Gantt chart_
 
-<iframe src="https://jsfiddle.net/87toLqnp/embedded/result,js/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;"></iframe>
+<iframe src="https://jsfiddle.net/87toLqnp/embedded/result,js/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>

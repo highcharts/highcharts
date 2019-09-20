@@ -35,14 +35,14 @@ This example shows how to set up the basic chart options first, then do an ajax 
             text: 'Fruit Consumption'
         },
         xAxis: {
-            categories: [[
+            categories: []
         },
         yAxis: {
             title: {
                 text: 'Units'
             }
         },
-        series: [[
+        series: []
     };
     
 
@@ -68,7 +68,7 @@ This example shows how to set up the basic chart options first, then do an ajax 
                 // the rest of the lines contain data with their name in the first position  
                 else {  
                     var series = {   
-                        data: [[  
+                        data: []  
                     };  
                     items.forEach(function(item, itemNo) {  
                         if (itemNo == 0) {  
@@ -103,17 +103,17 @@ Here is a basic example with a JSON file containing the data shown and using the
 
     
     [
-    [1,12[,
-    [2,5[,
-    [3,18[,
-    [4,13[,
-    [5,7[,
-    [6,4[,
-    [7,9[,
-    [8,10[,
-    [9,15[,
-    [10,22[
-    [
+    [1,12],
+    [2,5],
+    [3,18],
+    [4,13],
+    [5,7],
+    [6,4],
+    [7,9],
+    [8,10],
+    [9,15],
+    [10,22]
+    ]
     
 
 *   Using getJSON to preprocess the options and then create the chart.
@@ -125,13 +125,13 @@ Here is a basic example with a JSON file containing the data shown and using the
             chart: {
                 type: 'spline'
             },
-            series: [{}[
+            series: [{}]
         };
     
         Highcharts.ajax({  
             url: 'data.json',  
             success: function(data) {
-                options.series[0[.data = data;
+                options.series[0].data = data;
                 Highcharts.Chart('container', options);
             }  
         });
@@ -166,7 +166,7 @@ Loading data from an XML file is similar to the CSV approach. Since Highcharts d
     
             var seriesOptions = {
                 name: $(series).find('name').text(),
-                data: [[
+                data: []
             };
     
             // push data points

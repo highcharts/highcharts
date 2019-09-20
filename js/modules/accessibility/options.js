@@ -398,7 +398,7 @@ var options = {
              * @since 7.1.0
              * @type {Array<string>}
              */
-            order: ['series', 'zoom', 'rangeSelector', 'chartMenu', 'legend'],
+            order: ['series', 'zoom', 'rangeSelector', 'legend', 'chartMenu'],
 
             /**
              * Whether or not to wrap around when reaching the end of arrow-key

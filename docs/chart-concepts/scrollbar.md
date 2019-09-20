@@ -1,16 +1,16 @@
 Scrollbars
-----------
+===
 
 There are two major approaches to scrollbars in Highcharts.
 
-1\. Native scrollbars for mobile
+1. Native scrollbars for mobile
 --------------------------------
 
 These scrollbars are applied by setting a [scrollablePlotArea with a minWidth](https://api.highcharts.com/highcharts/chart.scrollablePlotArea.minWidth). When the width of the plot area becomes less than this, it is applied to a separate div in the page, where native, smooth scrolling is applied, while the axes, titles, legend and other elements stay fixed. This provides a great way to support long data series in a narrow mobile view. See the effect below in a mobile browser or just a small desktop browser window.
 
-<iframe width="320" height="240" src="https://www.highcharts.com/samples/embed/highcharts/chart/scrollable-plotarea/"></iframe>
+<iframe style="width: 100%; height: 460px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/chart/scrollable-plotarea/ allow="fullscreen"></iframe>
 
-2\. Axis scrollbars through an API option
+2. Axis scrollbars through an API option
 -----------------------------------------
 
 These scrollbars are enabled per axis and appear next to the axis. Scrollbars can be applied to any axis in Highstock.
@@ -23,4 +23,4 @@ Scrollbars are not limited to stock charts or Y axis. Using theÂ _highstock.js_Â
 *   [Heatmap with two scrollable axes (zoom in first)](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/heatmap-scrollbars/)
 *   [Scrollable Y axis on stock chart (zoom in first)](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/scrollbar/)
 
-<iframe width="100%" height="450" src="https://www.highcharts.com/samples/embed/stock/yaxis/inverted-bar-scrollbar"></iframe>
+<iframe width="100%" height="450" style="border: none;" src=https://www.highcharts.com/samples/embed/stock/yaxis/inverted-bar-scrollbar allow="fullscreen"></iframe>

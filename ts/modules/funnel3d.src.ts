@@ -45,6 +45,7 @@ declare global {
             y?: number;
         }
         interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
+            center?: Array<(number|string|null)>;
             data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
             gradientForSides?: boolean;
             height?: (number|string);

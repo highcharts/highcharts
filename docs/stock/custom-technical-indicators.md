@@ -1,5 +1,5 @@
 Custom technical indicators
----------------------------
+===
 
 This article shows how to create custom technical indicators, in this case, linear regression. To read more about technical indicators offered by Highcharts click [here](https://www.highcharts.com/docs/stock/technical-indicator-series).
 
@@ -13,7 +13,7 @@ There are two main steps to create a technical indicator series:
 1.  Set up the technical indicator structure.
 2.  Create the technical indicator functionality.
 
-### 1\. Set up the structure
+### 1. Set up the structure
 
 Each technical indicator requires the method `getValues()` to be implemented. This method takes two arguments and returns an object. The arguments are the main series and the parameters. The parameters are specific to a technical indicator. Check the structure of the method `getValue()`:
 
@@ -23,39 +23,40 @@ Each technical indicator requires the method `getValues()` to be implemented. Th
       ...
       // end of calculations
       return {
-        xData: [...[, // array of x-values
-        yData: [...[ // array of y-values
-        values: [...[, // array of points
+        xData: [...], // array of x-values
+        yData: [...] // array of y-values
+        values: [...], // array of points
       };
     }
     
 
 All technical indicators are series types, and to create a new series, in Highcharts, the following method [Highcharts.seriesType()](https://api.highcharts.com/class-reference/Highcharts.html#seriesType) is used.
 
-    
-    <script type="text/javascript" src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
-    
-    Highcharts.seriesType(
-      'linearregression',
-      'sma',
-      {
-        name: 'Linear Regression',
-        params: {} // linear regression doesn’t need params
-      },
-      {
-        getValues: function (series, params) {
-          return this.getLinearRegression(series.xData, series.yData);
-        },
-        getLinearRegression: getLinearRegression
-      }
-    );
+```js
+<script type="text/javascript" src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+
+Highcharts.seriesType(
+  'linearregression',
+  'sma',
+  {
+    name: 'Linear Regression',
+    params: {} // linear regression doesn’t need params
+  },
+  {
+    getValues: function (series, params) {
+      return this.getLinearRegression(series.xData, series.yData);
+    },
+    getLinearRegression: getLinearRegression
+  }
+);
+```
     
 
 The method `getLinearRegression()` includes the technical indicator functionality (mathematical calculation). Notice that the indicators module `indicators.js` is included when creating technical indicators, as it includes the core-logic for all indicators.
 
 Now the structure is set, the next step is to create the main indicator functionality.
 
-### 2\. Technical indicator functionality
+### 2. Technical indicator functionality
 
 The technical indicator functionality is represented by the following method `getLinearRegression()`, that calculates the regression points according to xData and yData.
 
@@ -79,38 +80,38 @@ The JavaScript representation of the formulas above is as follow:
           sumY = 0,
           sumXY = 0,
           sumX2 = 0,
-          linearData = [[,
-          linearXData = [[,
-          linearYData = [[,
+          linearData = [],
+          linearXData = [],
+          linearYData = [],
           n = xData.length,
           alpha, beta, i, x, y;
     
       // Get sums:
       for (i = 0; i < n; i++) {
-        x = xData[i[;
-        y = yData[i[;
+        x = xData[i];
+        y = yData[i];
         sumX += x;
         sumY += y;
-        sumXY += x \* y;
-        sumX2 += x \* x;
+        sumXY += x * y;
+        sumX2 += x * x;
       }
       
       // Get slope and offset:
-      alpha = (n \* sumXY - sumX \* sumY) / (n \* sumX2 - sumX \* sumX);
+      alpha = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
       if (isNaN(alpha)) {
         alpha = 0;
       }
-      beta = (sumY - alpha \* sumX)/ n;
+      beta = (sumY - alpha * sumX)/ n;
     
       // Calculate linear regression:
       for (i = 0; i < n; i++) {
-        x = xData[i[;
-        y = alpha \* x + beta;
+        x = xData[i];
+        y = alpha * x + beta;
     
         // Prepare arrays required for getValues() method
-        linearData[i[ = [x, y[;
-        linearXData[i[ = x;
-        linearYData[i[ = y;
+        linearData[i] = [x, y];
+        linearXData[i] = x;
+        linearYData[i] = y;
       }
     
       return {
@@ -129,11 +130,11 @@ That’s it; the technical indicator is ready to be used. Keep in mind that the 
     series: [{
       id: 'main',
       type: 'scatter',
-      data: [ ... [
+      data: [ ... ]
     }, {
       type: 'linearregression',
       linkedTo: 'main'
-    }[
+    }]
     
 
 For live demos check the links below:

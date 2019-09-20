@@ -1,5 +1,5 @@
 Getting started with Highmaps
------------------------------
+===
 
 Highmaps is Highcharts for geo maps. Mainly [choropleth maps](http://en.wikipedia.org/wiki/Choropleth_map) where the color intensity relates to some value of a geographic area, but Highmaps also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more. Highmaps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
 

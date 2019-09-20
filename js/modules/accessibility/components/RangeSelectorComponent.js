@@ -55,12 +55,8 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
  * @private
  * @class
  * @name Highcharts.RangeSelectorComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var RangeSelectorComponent = function (chart) {
-    this.initBase(chart);
-};
+var RangeSelectorComponent = function () {};
 RangeSelectorComponent.prototype = new AccessibilityComponent();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
 
