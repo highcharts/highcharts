@@ -367,7 +367,7 @@ declare global {
             public plotLinesAndBandsGroups: Dictionary<SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
-            public pos?: number;
+            public pos: number;
             public positiveValuesOnly: boolean;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
