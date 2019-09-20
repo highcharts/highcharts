@@ -1,7 +1,7 @@
 Treemap
 ===
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels></iframe>
+<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels allow="fullscreen"></iframe>
 
 ### Requirements
 
@@ -151,7 +151,7 @@ An [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highchar
 
 ### Use with ColorAxis
 
-<iframe width="320" height="240" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-coloraxis></iframe>
+<iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis allow="fullscreen"></iframe>
 
 For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 

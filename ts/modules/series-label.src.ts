@@ -34,9 +34,6 @@ declare global {
             right: number;
             top: number;
         }
-        interface PlotSeriesOptions {
-            label?: SeriesLabelOptionsObject;
-        }
         interface Point {
             chartCenterY?: number;
             chartX?: number;
@@ -65,6 +62,9 @@ declare global {
             minFontSize?: (number|null);
             onArea?: (boolean|null);
             style?: CSSObject;
+        }
+        interface SeriesOptions {
+            label?: SeriesLabelOptionsObject;
         }
     }
 }

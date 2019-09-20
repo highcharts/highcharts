@@ -17,13 +17,15 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class AroonIndicator
-            extends SmaIndicator implements MultipleLinesIndicator {
+            extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
-            public nameBase: string;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
+            public nameBase: string;
             public options: AroonIndicatorOptions;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
             public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
+            public pointClass: typeof AroonIndicatorPoint;
+            public points: Array<AroonIndicatorPoint>;
+            public pointValKey: MultipleLinesMixin['pointValKey'];
             public yData: Array<Array<number>>;
             public drawGraph: MultipleLinesMixin['drawGraph'];
             public getTranslatedLinesNames: MultipleLinesMixin[
@@ -32,7 +34,7 @@ declare global {
         }
 
         interface AroonIndicatorOptions
-            extends SmaIndicatorOptions, MultipleLinesIndicatorOptions {
+            extends SMAIndicatorOptions, MultipleLinesIndicatorOptions {
             aroonDown?: Dictionary<CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: AroonIndicatorParamsOptions;
@@ -40,11 +42,11 @@ declare global {
         }
 
         interface AroonIndicatorParamsOptions
-            extends SmaIndicatorParamsOptions {
+            extends SMAIndicatorParamsOptions {
             period?: number;
         }
 
-        class AroonIndicatorPoint extends SmaIndicatorPoint {
+        class AroonIndicatorPoint extends SMAIndicatorPoint {
             public series: AroonIndicator;
         }
 

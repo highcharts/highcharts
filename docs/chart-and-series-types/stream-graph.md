@@ -5,7 +5,7 @@ A stream graph is a type of stacked area graph which is displaced around a centr
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.streamgraph)_
 
-<iframe width="320" height="240" style="width: 100%; height: 660px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph></iframe>
+<iframe style="width: 100%; height: 660px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/streamgraph allow="fullscreen"></iframe>
 
 Data structure
 --------------

@@ -239,6 +239,7 @@ declare global {
             cropThreshold?: number;
             data?: Array<TreemapPointOptions>;
             drillUpButton?: TreemapSeriesUpButtonOptions;
+            ignoreHiddenPoint?: boolean;
             interactByLeaf?: boolean;
             layoutAlgorithm?: TreemapSeriesLayoutAlgorithmValue;
             layoutStartingDirection?: TreemapSeriesLayoutStartingDirectionValue;

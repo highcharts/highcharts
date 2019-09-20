@@ -18,9 +18,47 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PlotSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            ignoreHiddenPoint?: boolean;
+        class PiePoint extends LinePoint {
+            public angle?: number;
+            public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
+            public delayedRendering?: boolean;
+            public half?: number;
+            public labelDistance: number;
+            public labelPosition?: PiePointLabelPositionObject;
+            public name: string;
+            public options: PiePointOptions;
+            public series: PieSeries;
+            public shadowGroup?: SVGElement;
+            public sliced?: boolean;
+            public slicedTranslation?: TranslationAttributes;
+            public getConnectorPath(): void;
+            public getTranslate(): TranslationAttributes;
+            public isValid(): boolean;
+            public setVisible(vis: boolean, redraw?: boolean): void;
+            public slice(
+                sliced: boolean,
+                redraw?: boolean,
+                animation?: (boolean|AnimationOptionsObject)
+            ): void;
+        }
+        class PieSeries extends LineSeries {
+            public center: Array<number>;
+            public endAngleRad?: number;
+            public data: Array<PiePoint>;
+            public getCenter: CenteredSeriesMixin['getCenter'];
+            public maxLabelDistance: number;
+            public options: PieSeriesOptions;
+            public pointClass: typeof PiePoint;
+            public points: Array<PiePoint>;
+            public shadowGroup?: SVGElement;
+            public startAngleRad?: number;
+            public total?: number;
+            public drawEmpty(): void;
+            public getX(y: number, left: boolean, point: PiePoint): number;
+            public redrawPoints(): void;
+            public sortByAngle(points: Array<PiePoint>, sign: number): void;
+            public translate(positions?: Array<number>): void;
+            public updateTotals(): void;
         }
         interface PiePointConnectorShapeFunction {
             (...args: Array<any>): SVGPathArray;
@@ -60,11 +98,13 @@ declare global {
             center?: [(number|string|null), (number|string|null)];
             colorByPoint?: boolean;
             dataLabels?: PieSeriesDataLabelsOptionsObject;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
             ignoreHiddenPoint?: boolean;
             inactiveOtherPoints?: boolean;
             innerSize?: (number|string);
             minSize?: (number|string);
             size?: (number|string|null);
+            slicedOffset?: number;
             startAngle?: number;
             states?: SeriesStatesOptionsObject<PieSeries>;
         }
@@ -74,58 +114,8 @@ declare global {
         interface SeriesStatesHoverOptionsObject {
             brightness?: number;
         }
-        interface PlotSeriesOptions {
-            center?: PieSeriesOptions['center'];
-            colorByPoint?: PieSeriesOptions['colorByPoint'];
-            inactiveOtherPoints?: PieSeriesOptions['inactiveOtherPoints'];
-            innerSize?: PieSeriesOptions['innerSize'];
-            minSize?: PieSeriesOptions['minSize'];
-            size?: PieSeriesOptions['size'];
-        }
         interface SeriesTypesDictionary {
             pie: typeof PieSeries;
-        }
-        class PiePoint extends LinePoint {
-            public angle?: number;
-            public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
-            public delayedRendering?: boolean;
-            public half?: number;
-            public labelDistance?: number;
-            public labelPosition?: PiePointLabelPositionObject;
-            public name: string;
-            public options: PiePointOptions;
-            public series: PieSeries;
-            public shadowGroup?: SVGElement;
-            public sliced?: boolean;
-            public slicedTranslation?: TranslationAttributes;
-            public getConnectorPath(): void;
-            public getTranslate(): TranslationAttributes;
-            public isValid(): boolean;
-            public setVisible(vis: boolean, redraw?: boolean): void;
-            public slice(
-                sliced: boolean,
-                redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject)
-            ): void;
-        }
-        class PieSeries extends LineSeries {
-            public center: Array<number>;
-            public endAngleRad?: number;
-            public data: Array<PiePoint>;
-            public getCenter: CenteredSeriesMixin['getCenter'];
-            public maxLabelDistance: number;
-            public options: PieSeriesOptions;
-            public pointClass: typeof PiePoint;
-            public points: Array<PiePoint>;
-            public shadowGroup?: SVGElement;
-            public startAngleRad?: number;
-            public total?: number;
-            public drawEmpty(): void;
-            public getX(y: number, left: boolean, point: PiePoint): number;
-            public redrawPoints(): void;
-            public sortByAngle(points: Array<PiePoint>, sign: number): void;
-            public translate(positions?: Array<number>): void;
-            public updateTotals(): void;
         }
     }
 }

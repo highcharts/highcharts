@@ -16,29 +16,31 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class AtrIndicator extends SmaIndicator {
-            public data: Array<AtrIndicatorPoint>
+        class ATRIndicator extends SMAIndicator {
+            public data: Array<ATRIndicatorPoint>
+            public pointClass: typeof ATRIndicatorPoint;
+            public points: Array<ATRIndicatorPoint>;
             public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
-                params: AtrInidicatorParamsOptions
+                params: ATRIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
         }
 
-        interface AtrIndicatorOptions extends SmaIndicatorOptions {
-            params?: AtrInidicatorParamsOptions;
+        interface ATRIndicatorOptions extends SMAIndicatorOptions {
+            params?: ATRIndicatorParamsOptions;
         }
 
-        interface AtrInidicatorParamsOptions {
-            period?: number;
+        interface ATRIndicatorParamsOptions extends SMAIndicatorParamsOptions {
+            // for inheritance
         }
 
-        class AtrIndicatorPoint extends SmaIndicatorPoint {
-            public series: AtrIndicator
+        class ATRIndicatorPoint extends SMAIndicatorPoint {
+            public series: ATRIndicator
         }
 
         interface SeriesTypesDictionary {
-            atr: typeof AtrIndicator;
+            atr: typeof ATRIndicator;
         }
     }
 }
@@ -111,7 +113,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AtrIndicator>(
+seriesType<Highcharts.ATRIndicator>(
     'atr',
     'sma',
     /**
@@ -136,8 +138,8 @@ seriesType<Highcharts.AtrIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.AtrIndicator,
-            params: Highcharts.AtrInidicatorParamsOptions
+            series: Highcharts.ATRIndicator,
+            params: Highcharts.ATRIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period = (params.period as any),
                 xVal = (series.xData as any),

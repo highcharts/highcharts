@@ -68,7 +68,6 @@ module.exports = {
             'chart-and-series-types/angular-gauges',
             'chart-and-series-types/area-chart',
             'chart-and-series-types/areaspline-chart',
-            'chart-and-series-types/axis-resizer',
             'chart-and-series-types/bar-chart',
             'chart-and-series-types/bell-curve-series',
             'chart-and-series-types/box-plot-series',
@@ -111,6 +110,7 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/axis-resizer',
             'advanced-chart-features/boost-module',
             'chart-concepts/bubble-legend',
             'stock/custom-technical-indicators',
@@ -144,7 +144,7 @@ module.exports = {
             'chart-design-and-style/themes',
             'chart-design-and-style/style-by-css',
             'chart-design-and-style/custom-themes-in-styled-mode',
-            'chart-design-and-style/gradients-shadows-and-patterns-in-styled-mode'
+            'chart-design-and-style/gradients-shadows-and-patterns'
         ],
         'Accessibility': [
             'accessibility/accessibility-module',

@@ -92,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: Array<XAxisOptions>;
-            yAxis?: Array<YAxisOptions>;
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -367,7 +367,7 @@ declare global {
             public plotLinesAndBandsGroups: Dictionary<SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
-            public pos?: number;
+            public pos: number;
             public positiveValuesOnly: boolean;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;

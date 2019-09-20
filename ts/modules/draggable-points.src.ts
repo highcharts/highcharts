@@ -149,9 +149,6 @@ declare global {
             target: Point;
             type: 'drop';
         }
-        interface PlotSeriesOptions {
-            dragDrop?: DragDropOptionsObject;
-        }
         interface PointOptionsObject {
             dragDrop?: DragDropOptionsObject;
         }
@@ -185,6 +182,9 @@ declare global {
         }
         interface SeriesDragDropPropsResizeSideFunction {
             (...args: Array<any>): string;
+        }
+        interface SeriesOptions {
+            dragDrop?: DragDropOptionsObject;
         }
     }
 }

@@ -47,13 +47,13 @@ declare global {
             len: number;
             to: number;
         }
-        interface PlotSeriesOptions {
-            gapSize?: number;
-            gapUnit?: string;
-        }
         interface Series {
             /** @requires modules/broken-axis */
             drawBreaks(axis: Axis, keys: Array<string>): void;
+        }
+        interface SeriesOptions {
+            gapSize?: number;
+            gapUnit?: string;
         }
         interface XAxisBreaksOptions {
             inclusive?: boolean;

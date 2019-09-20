@@ -82,7 +82,7 @@ seriesType('wma', 'sma',
         }
         // Switch index for OHLC / Candlestick
         if (isArray(yVal[0])) {
-            index = (params.index);
+            index = params.index;
             yValue = yVal[0][index];
         }
         // Starting point

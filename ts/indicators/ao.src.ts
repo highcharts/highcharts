@@ -16,39 +16,39 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class AoIndicator extends SmaIndicator {
+        class AOIndicator extends SMAIndicator {
+            public data: Array<AOIndicatorPoint>;
             public nameBase: string;
-            public data: Array<AoIndicatorPoint>;
             public nameComponents: Array<string>;
-            public options: AoIndicatorOptions;
-            public pointClass: typeof AoIndicatorPoint;
-            public points: Array<AoIndicatorPoint>;
+            public options: AOIndicatorOptions;
+            public pointClass: typeof AOIndicatorPoint;
+            public points: Array<AOIndicatorPoint>;
+            public yData: Array<number>;
+            public crispCol: ColumnSeries['crispCol'];
+            public drawGraph(): void;
+            public drawPoints: ColumnSeries['drawPoints'];
+            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues(
                 series: Series,
             ): (boolean|IndicatorValuesObject);
-            public drawGraph(): void;
-            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public crispCol: ColumnSeries['crispCol'];
             public translate: ColumnSeries['translate'];
-            public drawPoints: ColumnSeries['drawPoints'];
-            public yData: Array<number>;
         }
 
-        interface AoIndicatorOptions extends SmaIndicatorOptions {
+        interface AOIndicatorOptions extends SMAIndicatorOptions {
             greaterBarColor?: ColorString;
-            lowerBarColor?: ColorString;
-            threshold?: number;
             groupPadding?: number;
+            lowerBarColor?: ColorString;
             pointPadding?: number;
-            states?: SeriesStatesOptionsObject<AoIndicator>;
+            states?: SeriesStatesOptionsObject<AOIndicator>;
+            threshold?: number;
         }
 
-        class AoIndicatorPoint extends SmaIndicatorPoint {
-            public series: AoIndicator;
+        class AOIndicatorPoint extends SMAIndicatorPoint {
+            public series: AOIndicator;
         }
 
         interface SeriesTypesDictionary {
-            ao: typeof AoIndicator;
+            ao: typeof AOIndicator;
         }
 
     }
@@ -70,7 +70,7 @@ var correctFloat = H.correctFloat,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AoIndicator>(
+H.seriesType<Highcharts.AOIndicator>(
     'ao',
     'sma',
     /**
@@ -138,7 +138,7 @@ H.seriesType<Highcharts.AoIndicator>(
         translate: H.seriesTypes.column.prototype.translate,
         drawPoints: H.seriesTypes.column.prototype.drawPoints,
 
-        drawGraph: function (this: Highcharts.AoIndicator): void {
+        drawGraph: function (this: Highcharts.AOIndicator): void {
             var indicator = this,
                 options = indicator.options,
                 points = indicator.points,

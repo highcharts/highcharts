@@ -27,12 +27,8 @@ var doc = H.win.document,
  * @private
  * @class
  * @name Highcharts.ContainerComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ContainerComponent = function (chart) {
-    this.initBase(chart);
-};
+var ContainerComponent = function () {};
 ContainerComponent.prototype = new AccessibilityComponent();
 extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
 
@@ -118,7 +114,6 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      */
     destroy: function () {
         this.chart.renderTo.setAttribute('aria-hidden', true);
-        this.destroyBase();
     }
 
 });

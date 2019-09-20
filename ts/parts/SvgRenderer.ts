@@ -1016,7 +1016,7 @@ extend((
     ): void {
         var renderer = this.renderer,
             colorObject,
-            gradName: string,
+            gradName: keyof Highcharts.GradientColorObject,
             gradAttr: Highcharts.SVGAttributes,
             radAttr: Highcharts.SVGAttributes,
             gradients: Highcharts.Dictionary<Highcharts.SVGElement>,
@@ -1040,7 +1040,7 @@ extend((
             }
 
             if (gradName) {
-                gradAttr = (color as any)[gradName];
+                gradAttr = color[gradName] as any;
                 gradients = renderer.gradients;
                 stops = color.stops;
                 radialReference = (elem as any).radialReference;

@@ -560,13 +560,8 @@ H.Point.prototype.getA11yTimeDescription = function () {
  * @private
  * @class
  * @name Highcharts.SeriesComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var SeriesComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var SeriesComponent = function () {};
 SeriesComponent.prototype = new AccessibilityComponent();
 extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
