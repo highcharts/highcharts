@@ -24,7 +24,7 @@ import U from './../parts/Utilities.js';
 declare global {
     namespace Highcharts {
         type ClusterAlgorithms = (
-            'grid'|'kmeans'
+            'grid'|'kmeans'|'optimizedKmeans'
         );
         interface LayoutAlgorithmOptions {
             type: (ClusterAlgorithms | Function);
@@ -33,6 +33,8 @@ declare global {
             distance: (number | string);
             processedDistance: number;
             iterations?: number;
+            kmeansThreshold?: number;
+            drawGridLines?: boolean;
         }
         interface StyleOptions {
             symbol: string;
@@ -40,6 +42,20 @@ declare global {
             lineColor: ColorString;
             lineWidth: number;
             radius: number;
+        }
+        interface GridOffsetObject {
+            plotLeft: number;
+            plotTop: number;
+        }
+        interface SortedKmeansClusterObject {
+            clusterIndex: number;
+            distance: number;
+        }
+        interface RealExtremesObject {
+            minX: number;
+            maxX: number;
+            minY: number;
+            maxY: number;
         }
         interface ClusterZonesOptions {
             from: number;
@@ -61,11 +77,16 @@ declare global {
         interface PointMarkerOptionsObject {
             cluster?: MarkerClusterOptions;
         }
+        interface PointOptionsObject {
+            lat?: number;
+            lon?: number;
+        }
         interface SplittedDataObject {
             index: number;
             x: number;
             y: number;
-            options?: PointOptionsObject;
+            options?: (string | number | PointOptionsObject |
+            (string | number)[] | null);
         }
         interface SplittedDataArray extends Array<SplittedDataObject> {
             posX?: number;
@@ -96,15 +117,23 @@ declare global {
             grid(
                 processedXData: Array<number>,
                 processedYData: Array<number>,
+                visibleDataIndexes: Array<number>,
                 options: LayoutAlgorithmOptions
             ): SplittedData;
             kmeans(
                 processedXData: Array<number>,
                 processedYData: Array<number>,
+                visibleDataIndexes: Array<number>,
+                options: LayoutAlgorithmOptions
+            ): SplittedData;
+            optimizedKmeans(
+                processedXData: Array<number>,
+                processedYData: Array<number>,
+                visibleDataIndexes: Array<number>,
                 options: LayoutAlgorithmOptions
             ): SplittedData;
         }
-        interface PreventClusterColisionsProps {
+        interface PreventClusterCollisionsProps {
             x: number;
             y: number;
             key: string;
@@ -127,6 +156,10 @@ declare global {
         }
         interface GroupMapOptionsObject extends SeriesOptionsType {
             formatPrefix?: string;
+            userOptions?: string | number |
+            PointOptionsObject | (string | number)[] | null;
+            x?: number;
+            y?: number;
         }
         interface GroupMapObject {
             options?: GroupMapOptionsObject;
@@ -137,6 +170,10 @@ declare global {
             groupedXData: Array<number>;
             groupedYData: Array<number>;
             groupMap: Array<GroupMapObject>;
+            initMinX?: number | null;
+            initMaxX?: number | null;
+            initMinY?: number | null;
+            initMaxY?: number | null;
         }
         interface BaseClustersObject {
             clusters: Array<ClusterAndNoiseObject>;
@@ -145,23 +182,35 @@ declare global {
         interface Point {
             isCluster: boolean;
             clusteredData: Array<SplittedDataObject>;
-            clusteredDataLen: number;
+            clusterPointsAmount: number;
         }
         interface Series {
             clusters: ClusteredDataObject;
             clusterAlgorithms: ClusterAlgorithmsDictionary;
-            clusteredSeriesData?: (Array<Point>|null);
-            baseClusters?: BaseClustersObject;
-            computeViewOffset(
-                axis: Axis
+            clusteredSeriesData?: (Array<Point|null>|null);
+            gridValueSize?: number;
+            baseClusters?: (BaseClustersObject | null);
+            initMaxX: (number | null);
+            initMinX: (number | null);
+            initMaxY: (number | null);
+            initMinY: (number | null);
+            getRealExtremes(): RealExtremesObject;
+            getGridOffset(): GridOffsetObject;
+            getClusterDistancesFromPoint(
+                clusters: Array<Highcharts.KmeansClusterObject>,
+                pointX: number,
+                pointY: number
+            ): Array<SortedKmeansClusterObject>;
+            getScaledGridSize(
+                options: Highcharts.LayoutAlgorithmOptions
             ): number;
             computeClusterPosition(
                 points: Array<PointPositionObject>
             ): PointPositionObject;
-            preventClusterColisions(
-                props: PreventClusterColisionsProps
+            preventClusterCollisions(
+                props: PreventClusterCollisionsProps
             ): PointPositionObject;
-            isValidSplittedDataObject(
+            isValidGroupedDataObject(
                 groupedData: SplittedData
             ): boolean;
             getClusteredData(
@@ -169,6 +218,9 @@ declare global {
                 options: MarkerClusterOptions
             ): (ClusteredDataObject | boolean);
             destroyClusteredData (): void;
+        }
+        interface Chart {
+            debugGridLines: Array<SVGElement>;
         }
     }
 }
@@ -207,12 +259,15 @@ var Series = H.Series,
  * package, or online at [code.highcharts.com/modules/marker-clusters.js
  * ](code.highcharts.com/modules/marker-clusters.js).
  *
- * @sample maps/marker-clusters/basic
+ * @sample maps/marker-clusters/europe
  *         Maps marker clusters
  * @sample highcharts/marker-clusters/basic
  *         Scatter marker clusters
+ * @sample maps/marker-clusters/optimized-kmeans
+ *         Marker clusters with colorAxis
  *
  * @product      highcharts highmaps
+ * @since        next
  * @optionparent plotOptions.scatter.marker.cluster
  * @optionparent plotOptions.mappoint.marker.cluster
  */
@@ -263,31 +318,47 @@ clusterDefaultOptions = {
      * distance or iterations.
      */
     layoutAlgorithm: {
+        /* eslint-disable max-len */
         /**
          * Type of the algorithm used to combine points into a cluster.
-         * There are two available algorithms:
+         * There are three available algorithms:
          *
-         * 1) `kmeans` - made based on K-Means clustering technique. In the
+         * 1) `grid` - grid-based clustering technique. Points are assigned
+         * to squares of set size depending on their position on the plot
+         * area. Points inside the grid square are combined into a cluster.
+         * The grid size can be controlled by `gridSize` property
+         * (grid size changes at certain zoom levels).
+         *
+         * 2) `kmeans` - based on K-Means clustering technique. In the
          * first step, points are divided using the grid method (distance
          * property is a grid size) to find the initial amount of clusters.
          * Next, each point is classified by computing the distance between
-         * each cluster center and that point. When the closest cluster]
+         * each cluster center and that point. When the closest cluster
          * distance is lower than distance property set by a user the point
          * is added to this cluster otherwise is classified as `noise`. The
          * algorithm is repeated until each cluster center not change its
          * previous position more than one pixel. This technique is more
-         * accurate but also more time consuming than the `grid` algorithm.
+         * accurate but also more time consuming than the `grid` algorithm,
+         * especially for big datasets.
          *
-         * 2) `grid` - grid-based clustering technique. Points are assigned to
-         * a grid element depending on their position on the plot area.
-         * Points inside the grid item are combined into a cluster.
-         * The grid item size can be controlled by `gridSize` property.
+         * 3) `optimizedKmeans` - based on K-Means clustering technique. This
+         * algorithm uses k-means algorithm only on the chart initialization
+         * or when chart extremes have greater range than on initialization.
+         * When a chart is redrawn the algorithm checks only clustered points
+         * distance from the cluster center and rebuild it when the point is
+         * spaced enough to be outside the cluster. It provides performance
+         * improvement and more stable clusters position yet can be used rather
+         * on small and sparse datasets.
          *
+         * By default, the algorithm depends on visible quantity of points
+         * and kmeansThreshold. When there are more visible points than the
+         * kmeansThreshold the `grid` algorithm is used, otherwise `kmeans`.
          *
          * The custom clustering algorithm can be added by assigning a callback
          * function as the type property. This function takes an array of
-         * processedXData, processedYData and layoutAlgorithm options as
-         * arguments and should return an object with grouped data.
+         * processedXData, processedYData, processedXData indexes and
+         * layoutAlgorithm options as arguments and should return an object
+         * with grouped data.
          *
          * The algorithm should return an object like that:
          * <pre>{
@@ -311,28 +382,31 @@ clusterDefaultOptions = {
          * array has only one point or fewer points than set in
          * `cluster.minimumClusterSize` it won't be combined into a cluster.
          *
-         * @sample highcharts/marker-clusters/grid
-         *         Grid algorithm
+         * @sample maps/marker-clusters/optimized-kmeans
+         *         Optimized K-Means algorithm
          * @sample highcharts/marker-clusters/kmeans
          *         K-Means algorithm
+         * @sample highcharts/marker-clusters/grid
+         *         Grid algorithm
          * @sample maps/marker-clusters/custom-alg
          *         Custom algorithm
          *
          * @type {string|Function}
          * @see [cluster.minimumClusterSize](#plotOptions.scatter.marker.cluster.minimumClusterSize)
-         *
+         * @optionparent plotOptions.scatter.marker.cluster.layoutAlgorithm.type
+         * @optionparent plotOptions.mappoint.marker.cluster.layoutAlgorithm.type
          */
-        type: 'kmeans',
+        /* eslint-enable max-len */
         /**
          * When `type` is set to the `grid`,
-         * `gridSize` is a size of a grid item element either as a number
+         * `gridSize` is a size of a grid square element either as a number
          * defining pixels, or a percentage defining a percentage
          * of the plot area width.
          *
          * @type    {number|string}
          */
+        gridSize: 50,
         /* eslint-disable max-len */
-        gridSize: 40,
         /**
          * When `type` is set to `kmeans`,
          * `iterations` are the number of iterations that this algorithm will be
@@ -352,7 +426,16 @@ clusterDefaultOptions = {
          *
          * @type    {number|string}
          */
-        distance: 30
+        distance: 40,
+        /**
+         * When `type` is set to `undefined` and there are more visible points
+         * than the kmeansThreshold the `grid` algorithm is used to find
+         * clusters, otherwise `kmeans`. It ensures good performance on
+         * large datasets and better clusters arrangement after the zoom.
+         *
+         * @type    {number}
+         */
+        kmeansThreshold: 100
     },
     style: {
         /**
@@ -499,7 +582,7 @@ clusterDefaultOptions = {
      */
     dataLabels: {
         enabled: true,
-        format: '{point.clusteredDataLen}',
+        format: '{point.clusterPointsAmount}',
         verticalAlign: 'middle',
         align: 'center'
     }
@@ -512,10 +595,127 @@ extend(H.defaultOptions.plotOptions, {
         },
         tooltip: {
             clusterFormat: '<span>Clustered points: ' +
-                '{point.clusteredDataLen}</span><br/>'
+                '{point.clusterPointsAmount}</span><br/>'
         }
     }
 });
+
+// Utils.
+
+/* eslint-disable require-jsdoc */
+function drawGridLines(
+    series: Highcharts.Series,
+    options: Highcharts.LayoutAlgorithmOptions
+): void {
+    var chart = series.chart,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        xAxisLen = series.xAxis.len,
+        yAxisLen = series.yAxis.len,
+        i, j, elem, text,
+        currentX = 0,
+        currentY = 0,
+        scaledGridSize = 50,
+        gridX = 0,
+        gridY = 0,
+        gridOffset = series.getGridOffset(),
+        mapXSize, mapYSize;
+
+    if (chart.debugGridLines && chart.debugGridLines.length) {
+        chart.debugGridLines.forEach(function (gridItem) {
+            if (gridItem && gridItem.destroy) {
+                gridItem.destroy();
+            }
+        });
+    }
+
+    if (options.drawGridLines) {
+        chart.debugGridLines = [];
+        scaledGridSize = series.getScaledGridSize(options);
+
+        mapXSize = Math.abs(
+            xAxis.toPixels(xAxis.dataMax || 0) -
+            xAxis.toPixels(xAxis.dataMin || 0)
+        );
+
+        mapYSize = Math.abs(
+            yAxis.toPixels(yAxis.dataMax || 0) -
+            yAxis.toPixels(yAxis.dataMin || 0)
+        );
+
+        gridX = Math.ceil(mapXSize / scaledGridSize);
+        gridY = Math.ceil(mapYSize / scaledGridSize);
+
+        for (i = 0; i < gridX; i++) {
+            currentX = i * scaledGridSize;
+
+            if (
+                gridOffset.plotLeft + currentX >= 0 &&
+                gridOffset.plotLeft + currentX < xAxisLen
+            ) {
+
+                for (j = 0; j < gridY; j++) {
+                    currentY = j * scaledGridSize;
+
+                    if (
+                        gridOffset.plotTop + currentY >= 0 &&
+                        gridOffset.plotTop + currentY < yAxisLen
+                    ) {
+                        if (j % 2 === 0 && i % 2 === 0) {
+                            var rect = chart.renderer
+                                .rect(
+                                    gridOffset.plotLeft + currentX,
+                                    gridOffset.plotTop + currentY,
+                                    scaledGridSize * 2,
+                                    scaledGridSize * 2
+                                )
+                                .attr({
+                                    stroke: 'red',
+                                    'stroke-width': '2px'
+                                })
+                                .add()
+                                .toFront();
+
+                            chart.debugGridLines.push(rect);
+                        }
+
+                        elem = chart.renderer
+                            .rect(
+                                gridOffset.plotLeft + currentX,
+                                gridOffset.plotTop + currentY,
+                                scaledGridSize,
+                                scaledGridSize
+                            )
+                            .attr({
+                                stroke: 'rgba(0, 0, 0, 0.3)',
+                                'stroke-width': '1px'
+                            })
+                            .add()
+                            .toFront();
+
+                        text = chart.renderer
+                            .text(
+                                j + '-' + i,
+                                gridOffset.plotLeft + currentX + 2,
+                                gridOffset.plotTop + currentY + 7
+                            )
+                            .css({
+                                fill: 'rgba(0, 0, 0, 0.7)',
+                                fontSize: '7px'
+                            })
+                            .add()
+                            .toFront();
+
+                        chart.debugGridLines.push(elem);
+                        chart.debugGridLines.push(text);
+                    }
+                }
+            }
+        }
+    }
+}
+/* eslint-enable require-jsdoc */
+
 
 // Cluster symbol.
 SvgRenderer.prototype.symbols.cluster = function (
@@ -554,41 +754,175 @@ SvgRenderer.prototype.symbols.cluster = function (
     return outer2.concat(outer1, inner);
 };
 
-Series.prototype.computeViewOffset = function (
-    this: Highcharts.Series,
-    axis: Highcharts.Axis
-): number {
-    if (defined(axis.min) && defined(axis.dataMin)) {
-        return axis.dataMin < axis.min ?
-            Math.abs(axis.toPixels(axis.min) - axis.toPixels(axis.dataMin)) :
-            0;
+Series.prototype.getGridOffset = function (
+    this: Highcharts.Series
+): Highcharts.GridOffsetObject {
+    var series = this,
+        chart = series.chart,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        plotLeft = 0,
+        plotTop = 0;
+
+    if (xAxis.dataMin && xAxis.dataMax) {
+        plotLeft = xAxis.reversed ?
+            xAxis.toPixels(xAxis.dataMax) : xAxis.toPixels(xAxis.dataMin);
+    } else {
+        plotLeft = chart.plotLeft;
     }
 
-    return 0;
+    if (yAxis.dataMin && yAxis.dataMax) {
+        plotTop = yAxis.reversed ?
+            yAxis.toPixels(yAxis.dataMin) : yAxis.toPixels(yAxis.dataMax);
+    } else {
+        plotTop = chart.plotTop;
+    }
+
+    return {
+        plotLeft: plotLeft,
+        plotTop: plotTop
+    };
+};
+
+Series.prototype.getScaledGridSize = function (
+    this: Highcharts.Series,
+    options: Highcharts.LayoutAlgorithmOptions
+): number {
+    var series = this,
+        xAxis = series.xAxis,
+        search = true,
+        k = 1,
+        divider = 1,
+        gridSize,
+        scale,
+        level;
+
+    if (!series.gridValueSize) {
+        series.gridValueSize = Math.abs(
+            xAxis.toValue(options.processedGridSize) - xAxis.toValue(0)
+        );
+    }
+
+    gridSize = xAxis.toPixels(series.gridValueSize) - xAxis.toPixels(0);
+    scale = options.processedGridSize / gridSize;
+
+    // Find the level and its divider.
+    while (search && scale !== 1) {
+        level = Math.pow(2, k);
+
+        if (scale > 0.75 && scale < 1.25) {
+            search = false;
+        } else if (scale >= (1 / level) && scale < 2 * (1 / level)) {
+            search = false;
+            divider = level;
+        } else if (scale <= level && scale > level / 2) {
+            search = false;
+            divider = 1 / level;
+        }
+
+        k++;
+    }
+
+    return (options.processedGridSize / divider) / scale;
+};
+
+Series.prototype.getRealExtremes = function (
+    this: Highcharts.Series
+): Highcharts.RealExtremesObject {
+    var series = this,
+        chart = series.chart,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        realMinX = xAxis ? xAxis.toValue(chart.plotLeft) : 0,
+        realMaxX = xAxis ?
+            xAxis.toValue(chart.plotLeft + chart.plotWidth) : 0,
+        realMinY = yAxis ? yAxis.toValue(chart.plotTop) : 0,
+        realMaxY = yAxis ?
+            yAxis.toValue(chart.plotTop + chart.plotHeight) : 0,
+        temp;
+
+    if (realMinX > realMaxX) {
+        temp = realMaxX;
+        realMaxX = realMinX;
+        realMinX = temp;
+    }
+
+    if (realMinY > realMaxY) {
+        temp = realMaxY;
+        realMaxY = realMinY;
+        realMinY = temp;
+    }
+
+    return {
+        minX: realMinX,
+        maxX: realMaxX,
+        minY: realMinY,
+        maxY: realMaxY
+    };
+};
+
+Series.prototype.getClusterDistancesFromPoint = function (
+    this: Highcharts.Series,
+    clusters: Array<Highcharts.KmeansClusterObject>,
+    pointX: number,
+    pointY: number
+): Array<Highcharts.SortedKmeansClusterObject> {
+    var series = this,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        pointClusterDistance = [],
+        j,
+        distance;
+
+    for (j = 0; j < clusters.length; j++) {
+        distance = Math.sqrt(
+            Math.pow(
+                xAxis.toPixels(pointX) -
+                xAxis.toPixels(clusters[j].posX),
+                2
+            ) +
+            Math.pow(
+                yAxis.toPixels(pointY) -
+                yAxis.toPixels(clusters[j].posY),
+                2
+            )
+        );
+
+        pointClusterDistance.push({
+            clusterIndex: j,
+            distance: distance
+        });
+    }
+
+    return pointClusterDistance.sort(
+        (a, b) => a.distance - b.distance
+    );
 };
 
 Series.prototype.clusterAlgorithms = {
     grid: function (
         this: Highcharts.Series,
-        processedXData: Array<number>,
-        processedYData: Array<number>,
+        dataX: Array<number>,
+        dataY: Array<number>,
+        dataIndexes: Array<number>,
         options: Highcharts.LayoutAlgorithmOptions
     ): Highcharts.SplittedData {
         var series = this,
-            chart = series.chart,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            gridSize = options.processedGridSize,
             grid: Highcharts.SplittedData = {},
-            offsetX = series.computeViewOffset(xAxis),
-            offsetY = series.computeViewOffset(yAxis),
-            x, y, gridX, gridY, key, i;
+            gridOffset = series.getGridOffset(),
+            scaledGridSize, x, y, gridX, gridY, key, i;
 
-        for (i = 0; i < processedXData.length; i++) {
-            x = xAxis.toPixels(processedXData[i]) + offsetX - chart.plotLeft;
-            y = yAxis.toPixels(processedYData[i]) + offsetY - chart.plotTop;
-            gridX = Math.floor(x / gridSize);
-            gridY = Math.floor(y / gridSize);
+        drawGridLines(series, options);
+
+        scaledGridSize = series.getScaledGridSize(options);
+
+        for (i = 0; i < dataX.length; i++) {
+            x = xAxis.toPixels(dataX[i]) - gridOffset.plotLeft;
+            y = yAxis.toPixels(dataY[i]) - gridOffset.plotTop;
+            gridX = Math.floor(x / scaledGridSize);
+            gridY = Math.floor(y / scaledGridSize);
             key = gridY + '-' + gridX;
 
             if (!grid[key]) {
@@ -596,9 +930,9 @@ Series.prototype.clusterAlgorithms = {
             }
 
             grid[key].push({
-                index: i,
-                x: processedXData[i],
-                y: processedYData[i]
+                index: dataIndexes[i],
+                x: dataX[i],
+                y: dataY[i]
             });
         }
 
@@ -606,17 +940,17 @@ Series.prototype.clusterAlgorithms = {
     },
     kmeans: function (
         this: Highcharts.Series,
-        processedXData: Array<number>,
-        processedYData: Array<number>,
+        dataX: Array<number>,
+        dataY: Array<number>,
+        dataIndexes: Array<number>,
         options: Highcharts.LayoutAlgorithmOptions
     ): Highcharts.SplittedData {
         var series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            // xAxis = series.xAxis,
+            // yAxis = series.yAxis,
             clusters: Array<Highcharts.KmeansClusterObject> = [],
             noise = [],
-            grid: Highcharts.SplittedData = {},
-            group = {},
+            group: Highcharts.SplittedData = {},
             pointMaxDistance = options.processedDistance,
             iterations = options.iterations,
             // Max pixel difference beetwen new and old cluster position.
@@ -628,27 +962,27 @@ Series.prototype.clusterAlgorithms = {
             tempPos,
             pointClusterDistance:
             Array<Highcharts.PointClusterDistanceObject> = [],
-            distance, key, i, j;
+            groupedData, key, i, j;
 
         options.processedGridSize = options.processedDistance;
 
         // Use grid method to get groupedData object.
-        grid = series.clusterAlgorithms.grid.call(
-            series, processedXData, processedYData, options
+        groupedData = series.clusterAlgorithms.grid.call(
+            series, dataX, dataY, dataIndexes, options
         );
 
         // Find clusters amount and its start positions
         // based on grid grouped data.
-        for (key in grid) {
-            if (grid[key].length > 1) {
-                tempPos = series.computeClusterPosition(grid[key]);
+        for (key in groupedData) {
+            if (groupedData[key].length > 1) {
+                tempPos = series.computeClusterPosition(groupedData[key]);
 
                 clusters.push({
                     posX: tempPos.x,
                     posY: tempPos.y,
                     oldX: 0,
                     oldY: 0,
-                    startPointsLen: grid[key].length,
+                    startPointsLen: groupedData[key].length,
                     points: []
                 });
             }
@@ -663,32 +997,15 @@ Series.prototype.clusterAlgorithms = {
 
             noise.length = 0;
 
-            for (i = 0; i < processedXData.length; i++) {
-                pointClusterDistance.length = 0;
-                pointX = processedXData[i];
-                pointY = processedYData[i];
+            for (i = 0; i < dataX.length; i++) {
+                pointX = dataX[i];
+                pointY = dataY[i];
 
-                for (j = 0; j < clusters.length; j++) {
-                    distance = Math.sqrt(
-                        Math.pow(
-                            xAxis.toPixels(pointX) -
-                            xAxis.toPixels(clusters[j].posX),
-                            2
-                        ) +
-                        Math.pow(
-                            yAxis.toPixels(pointY) -
-                            yAxis.toPixels(clusters[j].posY),
-                            2
-                        )
-                    );
-
-                    pointClusterDistance.push({
-                        clusterIndex: j,
-                        distance: distance
-                    });
-                }
-
-                pointClusterDistance.sort((a, b) => a.distance - b.distance);
+                pointClusterDistance = series.getClusterDistancesFromPoint(
+                    clusters,
+                    pointX,
+                    pointY
+                );
 
                 if (
                     pointClusterDistance.length &&
@@ -697,14 +1014,36 @@ Series.prototype.clusterAlgorithms = {
                     clusters[pointClusterDistance[0].clusterIndex].points.push({
                         x: pointX,
                         y: pointY,
-                        index: i
+                        index: dataIndexes[i]
                     });
                 } else {
                     noise.push({
                         x: pointX,
                         y: pointY,
-                        index: i
+                        index: dataIndexes[i]
                     });
+                }
+            }
+
+            // When cluster points array has only one point the
+            // point should be classified again.
+            for (j = 0; j < clusters.length; j++) {
+                if (clusters[j].points.length === 1) {
+                    pointClusterDistance = series.getClusterDistancesFromPoint(
+                        clusters,
+                        clusters[j].points[0].x,
+                        clusters[j].points[0].y
+                    );
+
+                    if (pointClusterDistance[1].distance < pointMaxDistance) {
+                        // Add point to the next closest cluster.
+                        clusters[pointClusterDistance[1].clusterIndex].points
+                            .push(clusters[j].points[0]);
+
+                        // Clear points array.
+                        clusters[pointClusterDistance[0].clusterIndex]
+                            .points.length = 0;
+                    }
                 }
             }
 
@@ -734,22 +1073,125 @@ Series.prototype.clusterAlgorithms = {
 
             // If iterations property is set repeat the algorithm
             // specified amount of times.
-            if (iterations && currentIteration >= iterations - 1) {
-                repeat = false;
-            } else if (iterations) {
-                repeat = true;
+            if (iterations) {
+                repeat = currentIteration < iterations - 1;
             }
 
             currentIteration++;
         }
 
         clusters.forEach(function (cluster, i) {
-            (group as any)['cluster' + i] = cluster.points;
+            group['cluster' + i] = cluster.points;
         });
 
         noise.forEach(function (noise, i) {
-            (group as any)['noise' + i] = [noise];
+            group['noise' + i] = [noise];
         });
+
+        return group;
+    },
+    optimizedKmeans: function (
+        this: Highcharts.Series,
+        processedXData: Array<number>,
+        processedYData: Array<number>,
+        dataIndexes: Array<number>,
+        options: Highcharts.LayoutAlgorithmOptions
+    ): Highcharts.SplittedData {
+        var series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            pointMaxDistance = options.processedDistance,
+            group: Highcharts.SplittedData = {},
+            extremes = series.getRealExtremes(),
+            clusterStyleOptions =
+                ((series.options.marker || {}).cluster || {}).style,
+            offset, distance, radius;
+
+        if (!series.clusters || (
+            series.initMaxX && series.initMaxX < extremes.maxX ||
+            series.initMinX && series.initMinX > extremes.minX ||
+            series.initMaxY && series.initMaxY < extremes.maxY ||
+            series.initMinY && series.initMinY > extremes.minY
+        )) {
+            series.initMaxX = extremes.maxX;
+            series.initMinX = extremes.minX;
+            series.initMaxY = extremes.maxY;
+            series.initMinY = extremes.minY;
+
+            group = series.clusterAlgorithms.kmeans.call(
+                series,
+                processedXData,
+                processedYData,
+                dataIndexes,
+                options
+            );
+
+            series.baseClusters = null;
+        } else {
+            if (!series.baseClusters) {
+                series.baseClusters = {
+                    clusters: series.clusters.clusters,
+                    noise: series.clusters.noise
+                };
+            }
+
+            series.baseClusters.clusters.forEach(function (cluster) {
+                cluster.pointsOutside = [];
+                cluster.pointsInside = [];
+
+                cluster.data.forEach(function (dataPoint) {
+
+                    distance = Math.sqrt(
+                        Math.pow(
+                            xAxis.toPixels(dataPoint.x) -
+                            xAxis.toPixels(cluster.x),
+                            2
+                        ) +
+                        Math.pow(
+                            yAxis.toPixels(dataPoint.y) -
+                            yAxis.toPixels(cluster.y),
+                            2
+                        )
+                    );
+
+                    if (
+                        cluster.clusterZone &&
+                        cluster.clusterZone.style &&
+                        cluster.clusterZone.style.radius
+                    ) {
+                        radius = cluster.clusterZone.style.radius;
+                    } else if (clusterStyleOptions) {
+                        radius = clusterStyleOptions.radius;
+                    } else {
+                        radius = 15;
+                    }
+
+                    offset = pointMaxDistance - radius >= 0 ?
+                        pointMaxDistance - radius : radius;
+
+                    if (
+                        distance > radius + offset &&
+                        defined(cluster.pointsOutside)
+                    ) {
+                        cluster.pointsOutside.push(dataPoint);
+                    } else if (defined(cluster.pointsInside)) {
+                        cluster.pointsInside.push(dataPoint);
+                    }
+                });
+
+                if (cluster.pointsInside.length) {
+                    group[cluster.id] = cluster.pointsInside;
+                }
+
+                cluster.pointsOutside.forEach(function (p, i) {
+                    group[cluster.id + '_noise' + i] = [p];
+                });
+            });
+
+            series.baseClusters.noise.forEach(function (noise) {
+                group[noise.id] = noise.data;
+            });
+        }
 
         return group;
     }
@@ -775,30 +1217,30 @@ Series.prototype.computeClusterPosition = function (
     };
 };
 
-Series.prototype.preventClusterColisions = function (
+Series.prototype.preventClusterCollisions = function (
     this: Highcharts.Series,
-    props: Highcharts.PreventClusterColisionsProps
+    props: Highcharts.PreventClusterCollisionsProps
 ): Highcharts.PointPositionObject {
     var series = this,
-        chart = series.chart,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
         gridX = +props.key.split('-')[1],
         gridY = +props.key.split('-')[0],
         gridSize = props.gridSize,
         groupedData = props.groupedData,
-        zoneOptions = (series.options.marker as any).cluster.zones,
         defaultRadius = props.defaultRadius,
         clusterRadius = props.clusterRadius,
-        offsetX = series.computeViewOffset(xAxis),
-        offsetY = series.computeViewOffset(yAxis),
         gridXPx = gridX * gridSize,
         gridYPx = gridY * gridSize,
-        xPixel = xAxis.toPixels(props.x) - chart.plotLeft,
-        yPixel = yAxis.toPixels(props.y) - chart.plotTop,
+        xPixel = xAxis.toPixels(props.x),
+        yPixel = yAxis.toPixels(props.y),
         gridsToCheckCollision = [],
         pointsLen = 0,
         radius = 0,
+        clusterStyleOptions =
+            ((series.options.marker || {}).cluster || {}).style,
+        zoneOptions: (Array<Highcharts.ClusterZonesOptions> | undefined),
+        gridOffset = series.getGridOffset(),
         nextXPixel,
         nextYPixel,
         signX,
@@ -813,15 +1255,20 @@ Series.prototype.preventClusterColisions = function (
         x,
         y;
 
+    if (series.options.marker && series.options.marker.cluster) {
+        zoneOptions = series.options.marker.cluster.zones;
+    }
+
+    // Distance to the grid start.
+    xPixel -= gridOffset.plotLeft;
+    yPixel -= gridOffset.plotTop;
+
     if (
         xPixel >= 0 &&
         xPixel <= xAxis.len &&
         yPixel >= 0 &&
         yPixel <= yAxis.len
     ) {
-        xPixel += offsetX;
-        yPixel += offsetY;
-
         for (i = 1; i < 5; i++) {
             signX = i % 2 === 1 ? -1 : 1;
             signY = i < 3 ? -1 : 1;
@@ -852,11 +1299,11 @@ Series.prototype.preventClusterColisions = function (
                     groupedData[item].posY = nextClusterPos.y;
                 }
 
-                nextXPixel = xAxis.toPixels(groupedData[item].posX as number) -
-                    chart.plotLeft + offsetX;
+                nextXPixel = xAxis.toPixels(groupedData[item].posX || 0) -
+                    gridOffset.plotLeft;
 
-                nextYPixel = yAxis.toPixels(groupedData[item].posY as number) -
-                    chart.plotTop + offsetY;
+                nextYPixel = yAxis.toPixels(groupedData[item].posY || 0) -
+                    gridOffset.plotTop;
 
                 itemX = +item.split('-')[1];
                 itemY = +item.split('-')[0];
@@ -869,17 +1316,24 @@ Series.prototype.preventClusterColisions = function (
                             pointsLen >= zoneOptions[i].from &&
                             pointsLen <= zoneOptions[i].to
                         ) {
-                            radius = zoneOptions[i].style.radius ||
-                                (series.options.marker as any)
-                                    .cluster.style.radius;
+                            if (zoneOptions[i].style.radius) {
+                                radius = zoneOptions[i].style.radius;
+                            } else if (clusterStyleOptions) {
+                                radius = clusterStyleOptions.radius;
+                            } else {
+                                radius = 15;
+                            }
                         }
                     }
                 }
 
-                if (groupedData[item].length > 1) {
-                    radius = radius !== 0 ? radius :
-                        (series.options.marker as any).cluster.style.radius;
-                } else {
+                if (
+                    groupedData[item].length > 1 &&
+                    radius === 0 &&
+                    clusterStyleOptions
+                ) {
+                    radius = clusterStyleOptions.radius;
+                } else if (groupedData[item].length === 1) {
                     radius = defaultRadius;
                 }
 
@@ -904,8 +1358,8 @@ Series.prototype.preventClusterColisions = function (
             }
         });
 
-        x = xAxis.toValue(xPixel + chart.plotLeft - offsetX);
-        y = yAxis.toValue(yPixel + chart.plotTop - offsetY);
+        x = xAxis.toValue(xPixel + gridOffset.plotLeft);
+        y = yAxis.toValue(yPixel + gridOffset.plotTop);
 
         groupedData[props.key].posX = x;
         groupedData[props.key].posY = y;
@@ -922,7 +1376,7 @@ Series.prototype.preventClusterColisions = function (
     };
 };
 
-Series.prototype.isValidSplittedDataObject = function (
+Series.prototype.isValidGroupedDataObject = function (
     this: Highcharts.Series,
     groupedData: Highcharts.SplittedData
 ): boolean {
@@ -962,19 +1416,19 @@ Series.prototype.getClusteredData = function (
     options: Highcharts.MarkerClusterOptions
 ): (Highcharts.ClusteredDataObject | boolean) {
     var series = this,
-        minimumClusterSize = (options.minimumClusterSize as number) > 2 ?
-            options.minimumClusterSize : 2,
         groupedXData = [],
         groupedYData = [],
         clusters = [], // Container for clusters.
         noise = [], // Container for points not belonging to any cluster.
         groupMap = [],
         index = 0,
+        minimumClusterSize = options.minimumClusterSize || 2,
         point,
-        pointOptions,
         points,
+        pointUserOptions,
         pointsLen,
         clusterPos,
+        pointOptions,
         clusterTempPos,
         zoneOptions,
         clusterZone,
@@ -982,9 +1436,13 @@ Series.prototype.getClusteredData = function (
         i,
         k;
 
+    // Prevent minimumClusterSize lower than 2.
+    minimumClusterSize = minimumClusterSize > 2 ?
+        minimumClusterSize : 2;
+
     // Check if groupedData is valid when user uses a custom algorithm.
     if (isFunction(options.layoutAlgorithm.type)) {
-        if (!series.isValidSplittedDataObject(groupedData)) {
+        if (!series.isValidGroupedDataObject(groupedData)) {
             error(
                 'Highcharts marker-clusters module: ' +
                 'The custom algorithm result is not valid!',
@@ -997,7 +1455,7 @@ Series.prototype.getClusteredData = function (
     }
 
     for (k in groupedData) {
-        if (groupedData[k].length >= (minimumClusterSize as number)) {
+        if (groupedData[k].length >= minimumClusterSize) {
 
             points = groupedData[k];
             pointsLen = points.length;
@@ -1022,7 +1480,7 @@ Series.prototype.getClusteredData = function (
                 options.layoutAlgorithm.type === 'grid' &&
                 !options.allowOverlap
             ) {
-                clusterPos = series.preventClusterColisions.call(
+                clusterPos = series.preventClusterCollisions.call(
                     this,
                     {
                         x: clusterTempPos.x,
@@ -1030,10 +1488,11 @@ Series.prototype.getClusteredData = function (
                         key: k,
                         groupedData: groupedData,
                         gridSize: options.layoutAlgorithm.processedGridSize,
-                        defaultRadius: (series.options as any).marker.radius +
-                            (series.options as any).marker.lineWidth,
+                        defaultRadius: (series.options.marker || {}).radius ||
+                            3 + ((series.options.marker || {}).lineWidth || 0),
                         clusterRadius: (zoneOptions && zoneOptions.radius) ?
-                            zoneOptions.radius : (options.style as any).radius
+                            zoneOptions.radius :
+                            (options.style || {}).radius || 15
                     }
                 );
             } else {
@@ -1069,8 +1528,10 @@ Series.prototype.getClusteredData = function (
             // Save cluster data points options.
             if (series.options.data && series.options.data.length) {
                 for (i = 0; i < pointsLen; i++) {
-                    (points[i] as any).options =
-                        series.options.data[points[i].index];
+                    if (isObject(series.options.data[points[i].index])) {
+                        points[i].options =
+                            series.options.data[points[i].index];
+                    }
                 }
             }
 
@@ -1080,7 +1541,9 @@ Series.prototype.getClusteredData = function (
             for (i = 0; i < groupedData[k].length; i++) {
                 // Points not belonging to any cluster.
                 point = groupedData[k][i];
-                pointOptions = {};
+                pointOptions = null;
+                pointUserOptions =
+                    ((series.options || {}).data || [])[point.index];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 
@@ -1092,15 +1555,24 @@ Series.prototype.getClusteredData = function (
                     data: groupedData[k]
                 });
 
-                pointOptions = merge(
-                    (series.options as any).data[point.index],
-                    { x: point.x, y: point.y }
-                );
+                if (
+                    pointUserOptions &&
+                    typeof pointUserOptions === 'object' &&
+                    !isArray(pointUserOptions)
+                ) {
+                    pointOptions = merge(
+                        pointUserOptions,
+                        { x: point.x, y: point.y }
+                    );
+                } else {
+                    pointOptions = {
+                        userOptions: pointUserOptions,
+                        x: point.x,
+                        y: point.y
+                    };
+                }
 
-                groupMap.push({
-                    options: pointOptions
-                });
-
+                groupMap.push({ options: pointOptions });
                 index++;
             }
         }
@@ -1124,12 +1596,12 @@ Series.prototype.destroyClusteredData = function (
 
     // Clear previous groups.
     (clusteredSeriesData || []).forEach(function (
-        point: Highcharts.Point,
+        point: (Highcharts.Point | null),
         i: number
     ): void {
-        if (point) {
-            (clusteredSeriesData as any)[i] =
-                point.destroy ? point.destroy() : null;
+        if (point && point.destroy && clusteredSeriesData) {
+            point.destroy();
+            clusteredSeriesData[i] = null;
         }
     });
     this.clusteredSeriesData = null;
@@ -1142,21 +1614,34 @@ Series.prototype.generatePoints = function (
     var series = this,
         chart = series.chart,
         marker = series.options.marker,
+        realExtremes = series.getRealExtremes(),
+        visibleXData = [],
+        visibleYData = [],
+        visibleDataIndexes = [],
+        kmeansThreshold,
         type,
         algorithm,
         clusteredData,
         groupedData,
         options,
-        point;
+        point,
+        i;
 
     if (marker && marker.cluster && marker.cluster.enabled) {
         type = marker.cluster.layoutAlgorithm.type;
 
-        if (isFunction(type)) {
-            algorithm = type;
-        } else {
-            algorithm = series.clusterAlgorithms[type] ?
-                series.clusterAlgorithms[type] : series.clusterAlgorithms.grid;
+        // Get only visible data.
+        for (i = 0; i < series.processedXData.length; i++) {
+            if (
+                series.processedXData[i] >= realExtremes.minX &&
+                series.processedXData[i] <= realExtremes.maxX &&
+                series.processedYData[i] >= realExtremes.minY &&
+                series.processedYData[i] <= realExtremes.maxY
+            ) {
+                visibleXData.push(series.processedXData[i]);
+                visibleYData.push(series.processedYData[i]);
+                visibleDataIndexes.push(i);
+            }
         }
 
         options = marker.cluster.layoutAlgorithm;
@@ -1170,28 +1655,36 @@ Series.prototype.generatePoints = function (
             options.distance :
             relativeLength(options.distance, 1) * chart.plotWidth;
 
+        kmeansThreshold = options.kmeansThreshold || 100;
+
+        if (isFunction(type)) {
+            algorithm = type;
+        } else if (series.clusterAlgorithms[type]) {
+            algorithm = series.clusterAlgorithms[type];
+        } else {
+            algorithm = visibleXData.length < kmeansThreshold ?
+                series.clusterAlgorithms.kmeans : series.clusterAlgorithms.grid;
+        }
+
         groupedData = algorithm.call(
             this,
-            series.processedXData,
-            series.processedYData,
+            visibleXData,
+            visibleYData,
+            visibleDataIndexes,
             options
         );
 
-        clusteredData = series.getClusteredData.call(
+        clusteredData = groupedData ? series.getClusteredData.call(
             this, groupedData, marker.cluster
-        );
+        ) : groupedData;
 
         if (clusteredData) {
-            series.processedXData =
-                (clusteredData as Highcharts.ClusteredDataObject).groupedXData;
-            series.processedYData =
-                (clusteredData as Highcharts.ClusteredDataObject).groupedYData;
+            series.processedXData = clusteredData.groupedXData;
+            series.processedYData = clusteredData.groupedYData;
 
             series.hasGroupedData = true;
-            series.clusters =
-                (clusteredData as Highcharts.ClusteredDataObject);
-            series.groupMap =
-                (clusteredData as Highcharts.ClusteredDataObject).groupMap;
+            series.clusters = clusteredData;
+            series.groupMap = clusteredData.groupMap;
         }
 
         baseGeneratePoints.apply(this);
@@ -1204,7 +1697,7 @@ Series.prototype.generatePoints = function (
                 point = series.points[cluster.index];
                 point.isCluster = true;
                 point.clusteredData = cluster.data;
-                point.clusteredDataLen = cluster.data.length;
+                point.clusterPointsAmount = cluster.data.length;
                 cluster.point = point;
             });
 
@@ -1229,7 +1722,7 @@ Series.prototype.generatePoints = function (
 // clustered point.
 addEvent(Point, 'update', function (
     this: Highcharts.Point
-): (boolean|undefined) {
+): (boolean | void) {
     if (this.dataGroup) {
         error(
             'Highcharts marker-clusters module: ' +
@@ -1268,8 +1761,11 @@ addEvent(Series, 'afterRender', function (
 });
 
 // Cluster zoom on click.
-addEvent(H.Point, 'click', function (e) {
-    var point = (e as any).point || e.target,
+addEvent(H.Point, 'click', function (
+    this: Highcharts.Point,
+    e: Highcharts.PointClickEventObject
+): void {
+    var point = e.point || e.target,
         series = point.series,
         xAxis = point.series.xAxis,
         yAxis = point.series.yAxis,
@@ -1278,7 +1774,8 @@ addEvent(H.Point, 'click', function (e) {
         sortedDataY, minX, minY, maxX, maxY, temp;
 
     if (point && point.isCluster) {
-        zoomOnClick = series.options.marker.cluster.zoomOnClick;
+        zoomOnClick =
+            (((series.options || {}).marker || {}).cluster || {}).zoomOnClick;
 
         if (zoomOnClick) {
             sortedDataX = point.clusteredData.map(
@@ -1313,6 +1810,7 @@ addEvent(H.Point, 'click', function (e) {
             }
 
             chart.zoom({
+                originalEvent: e,
                 xAxis: [{
                     axis: xAxis,
                     min: minX - offsetX,

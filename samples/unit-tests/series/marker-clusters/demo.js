@@ -1,160 +1,121 @@
-QUnit.test('General marker-clusters', function (assert) {
-    var chart = Highcharts.chart('container', {
-            chart: {
-                width: 500
+var options = {
+    chart: {
+        width: 500
+    },
+    plotOptions: {
+        scatter: {
+            tooltip: {
+                headerFormat: '',
+                pointFormat: 'value: {point.y}',
+                clusterFormat: 'Cluster size: {point.clusterPointsAmount}'
             },
-            plotOptions: {
-                scatter: {
-                    tooltip: {
-                        headerFormat: '',
-                        pointFormat: 'value: {point.y}',
-                        clusterFormat: 'Cluster size: {point.clusteredDataLen}'
+            dataLabels: {
+                enabled: true
+            },
+            marker: {
+                cluster: {
+                    enabled: true,
+                    layoutAlgorithm: {
+                        type: 'grid'
                     },
                     dataLabels: {
-                        enabled: true
-                    },
-                    marker: {
-                        cluster: {
-                            enabled: true,
-                            layoutAlgorithm: {
-                                type: 'grid',
-                                gridSize: 50
-                            },
-                            dataLabels: {
-                                enabled: true,
-                                format: '{point.clusteredDataLen}',
-                                verticalAlign: 'middle',
-                                align: 'center',
-                                style: {
-                                    fontSize: '9px'
-                                }
-                            }
+                        enabled: true,
+                        format: '{point.clusterPointsAmount}',
+                        verticalAlign: 'middle',
+                        align: 'center',
+                        style: {
+                            fontSize: '9px'
                         }
                     }
                 }
-            },
-            series: [{
-                type: 'scatter',
-                data: [{
-                    x: 751,
-                    y: 356
-                }, {
-                    x: 573,
-                    y: 285
-                }, {
-                    x: 427,
-                    y: 339
-                }, {
-                    x: 775,
-                    y: 578
-                }, {
-                    x: 770,
-                    y: 570
-                }, {
-                    x: 780,
-                    y: 560
-                }, {
-                    x: 785,
-                    y: 580
-                }, {
-                    x: 770,
-                    y: 550
-                }, {
-                    x: 740,
-                    y: 520
-                }, {
-                    x: 710,
-                    y: 538
-                }, {
-                    x: 720,
-                    y: 540
-                }, {
-                    x: 710,
-                    y: 630
-                }, {
-                    x: 715,
-                    y: 670
-                }, {
-                    x: 720,
-                    y: 620
-                }, {
-                    x: 740,
-                    y: 616
-                }, {
-                    x: 788,
-                    y: 620
-                }, {
-                    x: 780,
-                    y: 616
-                }, {
-                    x: 778,
-                    y: 618
-                }, {
-                    x: 783,
-                    y: 617
-                }]
-            }]
-        }),
+            }
+        }
+    },
+    series: [{
+        type: 'scatter',
+        data: [{
+            x: 751,
+            y: 356
+        }, {
+            x: 573,
+            y: 285
+        }, {
+            x: 427,
+            y: 339
+        }, {
+            x: 775,
+            y: 578
+        }, {
+            x: 770,
+            y: 570
+        }, {
+            x: 780,
+            y: 560
+        }, {
+            x: 785,
+            y: 580
+        }, {
+            x: 770,
+            y: 550
+        }, {
+            x: 740,
+            y: 520
+        }, {
+            x: 710,
+            y: 538
+        }, {
+            x: 720,
+            y: 540
+        }, {
+            x: 710,
+            y: 630
+        }, {
+            x: 715,
+            y: 670
+        }, {
+            x: 720,
+            y: 620
+        }, {
+            x: 740,
+            y: 616
+        }, {
+            x: 788,
+            y: 620
+        }, {
+            x: 780,
+            y: 616
+        }, {
+            x: 778,
+            y: 618
+        }, {
+            x: 783,
+            y: 617
+        }, {
+            x: 880,
+            y: 451
+        }]
+    }]
+};
+
+QUnit.test('General marker-clusters', function (assert) {
+    var chart = Highcharts.chart('container', options),
         series = chart.series[0],
-        clusteredPointsLen = series.clusters.noise.length,
         clusterOptions = series.options.marker.cluster,
-        xAxis = chart.xAxis[0],
-        yAxis = chart.yAxis[0],
-        cluster,
-        nextCluster,
         posX = 0,
         posY = 0,
-        distance,
+        cluster,
         clusters,
-        result,
-        key,
-        i;
-
-    for (i = 0; i < series.clusters.clusters.length; i++) {
-        clusteredPointsLen += series.clusters.clusters[i].data.length;
-    }
-
-    assert.deepEqual(
-        [
-            series.clusters.clusters.length,
-            series.clusters.noise.length,
-            clusteredPointsLen
-        ],
-        [
-            5,
-            5,
-            series.xData.length
-        ],
-        'Cluster and noise amount should be correct.'
-    );
-
-    cluster = series.clusters.clusters[0];
-
-    cluster.data.forEach(function (p) {
-        posX += p.x;
-        posY += p.y;
-    });
-
-    assert.deepEqual(
-        [cluster.x, cluster.y],
-        [posX / cluster.data.length, posY / cluster.data.length],
-        'Cluster position should be an average of clustered points.'
-    );
-
-    key = Math.floor((yAxis.toPixels(cluster.y) - chart.plotTop) / clusterOptions.layoutAlgorithm.gridSize) +
-      '-' +
-      Math.floor((xAxis.toPixels(cluster.x) - chart.plotLeft) / clusterOptions.layoutAlgorithm.gridSize);
-
-    assert.strictEqual(
-        cluster.id,
-        key,
-        'Cluster grid id should be correct.'
-    );
+        result;
 
     series.update({
         marker: {
             cluster: {
-                minimumClusterSize: 3
+                minimumClusterSize: 3,
+                layoutAlgorithm: {
+                    type: 'grid',
+                    gridSize: 50,
+                    drawGridLines: true
+                }
             }
         }
     });
@@ -181,32 +142,21 @@ QUnit.test('General marker-clusters', function (assert) {
     });
 
     cluster = series.clusters.clusters[0];
+    cluster.data.forEach(function (p) {
+        posX += p.x;
+        posY += p.y;
+    });
+
+    assert.deepEqual(
+        [cluster.x, cluster.y],
+        [posX / cluster.data.length, posY / cluster.data.length],
+        'Cluster position should be an average of clustered points.'
+    );
 
     assert.strictEqual(
         +(cluster.point.graphic.getBBox().width / 2).toFixed(2),
         18,
         'Cluster marker size should be two times bigger than radius.'
-    );
-
-    series.update({
-        marker: {
-            cluster: {
-                allowOverlap: false
-            }
-        }
-    });
-
-    cluster = series.clusters.clusters[0];
-    nextCluster = series.clusters.clusters[1];
-
-    distance = Math.sqrt(
-        Math.pow(cluster.point.plotX - nextCluster.point.plotX, 2) +
-        Math.pow(cluster.point.plotY - nextCluster.point.plotY, 2)
-    );
-
-    assert.ok(
-        distance >= series.options.marker.cluster.style.radius * 2,
-        'Clusters should not overlap.'
     );
 
     series.update({
@@ -246,18 +196,18 @@ QUnit.test('General marker-clusters', function (assert) {
         }
     });
 
-    clusters = series.clusters.clusters;
 
+    clusters = series.clusters.clusters;
     assert.deepEqual(
         [
             clusters[0].point.graphic.fillColor,
             clusters[1].point.graphic.fillColor,
-            clusters[4].point.graphic.fillColor,
+            clusters[3].point.graphic.fillColor,
             clusters[0].point.graphic.radius,
             clusters[1].point.graphic.radius,
-            clusters[4].point.graphic.radius
+            clusters[3].point.graphic.radius
         ],
-        ['#ff9603', '#25b35b', '#ff5500', 15, 13, 18],
+        ['#ff5500', '#ff9603', '#ff5500', 18, 15, 18],
         'Clusters should have zones applied properly.'
     );
 
@@ -265,7 +215,7 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.strictEqual(
         chart.tooltip.label.text.element.textContent,
-        'Cluster size: 3',
+        'Cluster size: ' + clusters[0].data.length,
         'Clusters tooltip format should be consistent with tooltip.clusterFormat.'
     );
 
@@ -273,30 +223,30 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.strictEqual(
         chart.tooltip.label.text.element.textContent,
-        'value: 356',
+        'value: ' + series.clusters.noise[0].point.y,
         'Noise tooltip format should be consistent with tooltip.pointFormat.'
     );
 
     series.addPoint({
         x: 785,
-        y: 614
+        y: 617
     });
 
     assert.strictEqual(
-        series.clusters.clusters[4].data.length,
+        series.clusters.clusters[3].data.length,
         5,
         'After addPoint() cluster size should be updated.'
     );
 
     series.addPoint({
-        x: 782,
-        y: 615
+        x: 784,
+        y: 618
     });
 
     assert.deepEqual(
         [
-            series.clusters.clusters[4].clusterZone,
-            series.clusters.clusters[4].point.graphic.fillColor
+            series.clusters.clusters[3].clusterZone,
+            series.clusters.clusters[3].point.graphic.fillColor
         ],
         [
             series.options.marker.cluster.zones[3],
@@ -306,12 +256,12 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     assert.strictEqual(
-        series.clusters.clusters[4].point.graphic.className,
+        series.clusters.clusters[3].point.graphic.className,
         'test-class-name',
         'Cluster class name should be consistent with zone.className.'
     );
 
-    series.clusters.clusters[4].point.firePointEvent('click');
+    series.clusters.clusters[3].point.firePointEvent('click');
 
     assert.deepEqual(
         [
@@ -322,12 +272,299 @@ QUnit.test('General marker-clusters', function (assert) {
         ],
         [
             777,
-            788,
-            612,
-            622
+            789,
+            615,
+            621
         ],
         'After click on cluster chart should be zoomed to the cluster data range.'
     );
 
     chart.zoomOut();
+});
+
+QUnit.test('Grid algorithm tests.', function (assert) {
+    var chart = Highcharts.chart('container', options),
+        series = chart.series[0],
+        xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        cluster,
+        clusteredPointsLen,
+        clusterOptions,
+        gridOffset,
+        distance,
+        result,
+        key,
+        i;
+
+    series.update({
+        marker: {
+            cluster: {
+                layoutAlgorithm: {
+                    type: 'grid',
+                    gridSize: 50
+                }
+            }
+        }
+    });
+
+    clusteredPointsLen = series.clusters.noise.length;
+    clusterOptions = series.options.marker.cluster;
+
+    for (i = 0; i < series.clusters.clusters.length; i++) {
+        clusteredPointsLen += series.clusters.clusters[i].data.length;
+    }
+
+    assert.deepEqual(
+        [
+            series.clusters.clusters.length,
+            series.clusters.noise.length,
+            clusteredPointsLen
+        ],
+        [
+            4,
+            4,
+            series.xData.length
+        ],
+        'Cluster and noise amount should be correct.'
+    );
+
+    cluster = series.clusters.clusters[0];
+    gridOffset = series.getGridOffset();
+
+    assert.deepEqual(
+        [xAxis.toPixels(xAxis.dataMin), yAxis.toPixels(yAxis.dataMax)],
+        [gridOffset.plotLeft, gridOffset.plotTop],
+        'getGridOffset() should return correct plot values.'
+    );
+
+    key =
+        Math.floor((yAxis.toPixels(cluster.y) - gridOffset.plotTop) /
+        clusterOptions.layoutAlgorithm.gridSize) +
+        '-' +
+        Math.floor((xAxis.toPixels(cluster.x) - gridOffset.plotLeft) /
+        clusterOptions.layoutAlgorithm.gridSize);
+
+    assert.strictEqual(
+        cluster.id,
+        key,
+        'Cluster grid id should be correct.'
+    );
+
+    series.update({
+        marker: {
+            cluster: {
+                allowOverlap: false
+            }
+        }
+    });
+
+    result = true;
+
+    series.clusters.clusters.forEach(function (cluster, i) {
+        if (result) {
+            series.clusters.clusters.forEach(function (nextCluster, j) {
+                if (i !== j && result) {
+                    distance = Math.sqrt(
+                        Math.pow(cluster.point.plotX - nextCluster.point.plotX, 2) +
+                        Math.pow(cluster.point.plotY - nextCluster.point.plotY, 2)
+                    );
+
+                    if (
+                        distance <
+                        cluster.point.graphic.radius +
+                        nextCluster.point.graphic.radius
+                    ) {
+                        result = false;
+                    }
+                }
+            });
+        }
+    });
+
+    assert.ok(result, 'Clusters should not overlap when allowOverlap = false.');
+});
+
+QUnit.test('Kmeans algorithm tests.', function (assert) {
+    var chart = Highcharts.chart('container', options),
+        series = chart.series[0],
+        xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        maxDistance = 40,
+        clustersTest = [],
+        noiseTest = [],
+        pointClusterDistance = [],
+        pointX,
+        pointY,
+        distance,
+        clusters,
+        result,
+        i;
+
+    series.update({
+        marker: {
+            cluster: {
+                layoutAlgorithm: {
+                    type: 'kmeans',
+                    distance: maxDistance,
+                    drawGridLines: false
+                }
+            }
+        }
+    });
+
+    clusters = series.clusters.clusters;
+
+    for (i = 0; i < series.xData.length; i++) {
+        pointClusterDistance = [];
+        pointX = series.xData[i];
+        pointY = series.yData[i];
+
+        for (var j = 0; j < clusters.length; j++) {
+            distance = Math.sqrt(
+                Math.pow(
+                    xAxis.toPixels(pointX) -
+                    xAxis.toPixels(clusters[j].x),
+                    2
+                ) +
+                Math.pow(
+                    yAxis.toPixels(pointY) -
+                    yAxis.toPixels(clusters[j].y),
+                    2
+                )
+            );
+
+            pointClusterDistance.push({
+                clusterIndex: j,
+                distance: distance
+            });
+        }
+
+        pointClusterDistance.sort(
+            (a, b) => a.distance - b.distance
+        );
+
+        if (
+            pointClusterDistance.length &&
+            pointClusterDistance[0].distance < maxDistance
+        ) {
+            if (!clustersTest[pointClusterDistance[0].clusterIndex]) {
+                clustersTest[pointClusterDistance[0].clusterIndex] = [];
+            }
+
+            clustersTest[pointClusterDistance[0].clusterIndex].push({
+                x: pointX,
+                y: pointY
+            });
+        } else {
+            noiseTest.push({
+                x: pointX,
+                y: pointY
+            });
+        }
+    }
+
+    result = true;
+
+    clustersTest.forEach(function (cluster, index) {
+        if (cluster.length !== clusters[index].data.length) {
+            result = false;
+        }
+    });
+
+    assert.ok(result, 'Clusters should have only points that are spaced closer than the distance set by a user.');
+
+    assert.strictEqual(
+        noiseTest.length,
+        series.clusters.noise.length,
+        'Noise points amount should be correct.'
+    );
+});
+
+QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
+    var chart = Highcharts.chart('container', options),
+        series = chart.series[0],
+        xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        maxDistance = 50,
+        groupedPointsKM = [],
+        groupedPointsOKM = [];
+
+    xAxis.setExtremes(600, 800, false);
+    yAxis.setExtremes(500, 700, false);
+    chart.redraw();
+
+    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+    series.clusters = null;
+
+    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+
+    assert.deepEqual(
+        groupedPointsKM,
+        groupedPointsOKM,
+        'optimizedKmeans should use kmeans on initialization.'
+    );
+
+    xAxis.setExtremes(650, 800, false);
+    yAxis.setExtremes(530, 700, false);
+    chart.redraw();
+
+    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+
+    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+
+    assert.notDeepEqual(
+        groupedPointsKM,
+        groupedPointsOKM,
+        'optimizedKmeans should not use kmeans when extremes range is smaller than on chart init.'
+    );
+
+    xAxis.setExtremes(250, 800, false);
+    yAxis.setExtremes(250, 800, false);
+    chart.redraw();
+
+    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+
+    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+        series,
+        series.xData,
+        series.yData,
+        [],
+        { processedDistance: maxDistance }
+    );
+
+    assert.deepEqual(
+        groupedPointsKM,
+        groupedPointsOKM,
+        'optimizedKmeans should use kmeans again when extremes range is greater than on chart init.'
+    );
 });

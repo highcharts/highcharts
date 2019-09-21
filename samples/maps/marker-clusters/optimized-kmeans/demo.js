@@ -3,7 +3,7 @@ Highcharts.mapChart('container', {
         map: 'countries/gb/gb-all'
     },
     title: {
-        text: 'Marker clusters custom algorithm'
+        text: 'Optimalized K-Means algorithm'
     },
     mapNavigation: {
         enabled: true
@@ -12,132 +12,18 @@ Highcharts.mapChart('container', {
         headerFormat: '',
         pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
     },
+    colorAxis: {
+        min: 0,
+        max: 5
+    },
     plotOptions: {
-        series: {
-            tooltip: {
-                headerFormat: '',
-                pointFormat: '{point.name}'
-            },
+        mappoint: {
             marker: {
                 cluster: {
                     enabled: true,
-                    minimumClusterSize: 2,
                     layoutAlgorithm: {
-                        gridSize: 50,
-                        type: function (
-                            processedXData,
-                            processedYData,
-                            dataIndexes,
-                            options
-                        ) {
-                            var series = this,
-                                xAxis = series.xAxis,
-                                yAxis = series.yAxis,
-                                group = {},
-                                offset = 5,
-                                distance, radius;
-
-                            if (!series.clusters) {
-                                group = series.clusterAlgorithms.grid.call(
-                                    series,
-                                    processedXData,
-                                    processedYData,
-                                    dataIndexes,
-                                    options
-                                );
-                            } else {
-                                if (!series.baseClusters) {
-                                    series.baseClusters = {
-                                        clusters: series.clusters.clusters,
-                                        noise: series.clusters.noise
-                                    };
-                                }
-
-                                series.baseClusters.clusters.forEach(function (cluster) {
-                                    cluster.pointsOutside = [];
-                                    cluster.pointsInside = [];
-
-                                    cluster.data.forEach(function (dataPoint) {
-
-                                        distance = Math.sqrt(
-                                            Math.pow(
-                                                xAxis.toPixels(dataPoint.x) -
-                                                xAxis.toPixels(cluster.x),
-                                                2
-                                            ) +
-                                            Math.pow(
-                                                yAxis.toPixels(dataPoint.y) -
-                                                yAxis.toPixels(cluster.y),
-                                                2
-                                            )
-                                        );
-
-                                        if (
-                                            cluster.clusterZone &&
-                                            cluster.clusterZone.style &&
-                                            cluster.clusterZone.style.radius
-                                        ) {
-                                            radius = cluster.clusterZone.style.radius;
-                                        } else {
-                                            radius = series.options.marker.cluster.style.radius || 15;
-                                        }
-
-                                        if (distance > radius + offset) {
-                                            cluster.pointsOutside.push(dataPoint);
-                                        } else {
-                                            cluster.pointsInside.push(dataPoint);
-                                        }
-                                    });
-
-                                    if (cluster.pointsInside.length) {
-                                        group[cluster.id] = cluster.pointsInside;
-                                    }
-
-                                    cluster.pointsOutside.forEach(function (p, i) {
-                                        group[cluster.id + '_noise' + i] = [p];
-                                    });
-                                });
-
-                                series.baseClusters.noise.forEach(function (noise) {
-                                    group[noise.id] = [noise];
-                                });
-                            }
-
-                            return group;
-                        }
-                    },
-                    style: {
-                        lineColor: 'rgba(0, 0, 0, 0.1)'
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.clusterPointsAmount}',
-                        style: {
-                            fontSize: '9px'
-                        }
-                    },
-                    zones: [{
-                        from: 1,
-                        to: 2,
-                        style: {
-                            fillColor: '#99D18E',
-                            radius: 13
-                        }
-                    }, {
-                        from: 3,
-                        to: 4,
-                        style: {
-                            fillColor: '#5AAC44',
-                            radius: 15
-                        }
-                    }, {
-                        from: 5,
-                        to: 10,
-                        style: {
-                            fillColor: '#49852E',
-                            radius: 17
-                        }
-                    }]
+                        type: 'optimalizedKmeans'
+                    }
                 }
             }
         }
@@ -145,10 +31,11 @@ Highcharts.mapChart('container', {
     series: [{
         name: 'Basemap',
         borderColor: '#A0A0A0',
-        nullColor: 'rgba(252, 233, 179, 0.2)',
+        nullColor: 'rgba(200, 200, 200, 0.3)',
         showInLegend: false
     }, {
         type: 'mappoint',
+        colorKey: 'clusterPointsAmount',
         name: 'Cities',
         color: Highcharts.getOptions().colors[1],
         data: [{
