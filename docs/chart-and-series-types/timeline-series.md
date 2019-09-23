@@ -28,7 +28,7 @@ The Timeline series data is structured differently for the above alternatives fo
 
 ### Data series for a Timeline chart with time periods
 
-The data series has no \`x\`property set.
+The data series has no `x`property set.
 
     
      data: [{
@@ -43,7 +43,7 @@ The data series has no \`x\`property set.
 
 ### Events tied to a datetime axis
 
-Set for each data point the n \`x\` property with a timestamp in milliseconds since 1970.
+Set for each data point the n `x` property with a timestamp in milliseconds since 1970.
 
 Examples of data series:
 
