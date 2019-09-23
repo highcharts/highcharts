@@ -149,12 +149,12 @@ jobs:
       - <<: *load_workspace
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
-      - run: git fetch origin master:master && git checkout master
+      - run: git fetch origin master:master && git checkout master && npm i
       - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: git checkout ${CIRCLE_BRANCH}
+      - run: git checkout ${CIRCLE_BRANCH} && npm i
       - run: npx karma start test/karma-conf.js --tests highcharts/*/*,stock/*/*,maps/*/*,gantt/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
       - run: echo 'Exec comment on PR'
       - <<: *persist_workspace
