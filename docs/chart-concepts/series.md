@@ -1,22 +1,6 @@
 Series
 ======
 
-Below is a list of the main topics regarding series.
-
-*   [What is series?](#series)
-*   [The data in a series](#1)
-*   [Point and marker](#point)
-*   [Series options](#2):
-    *   [Animation](#3)
-    *   [Color](#4)
-    *   [Point selection](#6)
-    *   [Line width](#7)
-    *   [Stacking](#9)
-    *   [Cursor](#10)
-    *   [Data labels](#11)
-    *   [Dash style](#12)
-    *   [Zones](#zones)
-
 What is a series?
 -----------------
 
@@ -92,8 +76,7 @@ Here is an example showing how to alter the color and size of a marker on a spec
     }]
     
 
-Series options
-==============
+## Series options
 
 The series options can be defined in two places within the Highchars options structure.
 
@@ -102,18 +85,15 @@ The series options can be defined in two places within the Highchars options str
 
 Here is an overview over the most common options that can be applied to a data series:
 
-Animation
----------
+### Animation
 
 Allows disabling or altering the characteristics of the initial animation of a series. Animation is enabled by default.
 
-Color
------
+### Color
 
 Allows changing the color of a series.
 
-Point selection
----------------
+### Point selection
 
 Allows the selection and highlighting of a single point. Can be used to remove, edit or display information about a point.
 
@@ -137,8 +117,7 @@ Code to get the selected points:
     var selectedPoints = chart.getSelectedPoints();
     
 
-Line width
-----------
+### Line width
 
 Allows altering the width of a line.
 
@@ -153,18 +132,15 @@ Code to alter line width:
         data: [216.4, 194.1, 95.6],
         lineWidth: 5}],
 
-Stacking
---------
+### Stacking
 
 Stacking allows series to be placed on top of each other without overlapping. See [Stacking charts](docs/advanced-chart-features/stacking-charts) for more information.
 
-Cursor
-------
+### Cursor
 
 Allows the cursor to change appearence to indicate that points and series are clickable.
 
-Data labels
------------
+### Data labels
 
 Allows data labels to be displayed for each point of data in a series on the chart.
 
@@ -188,8 +164,7 @@ Note: You may wish to disable mouse tracking, which highlights the series and po
 
 The text displayed on datalabels may also be be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
 
-Dash style
-----------
+### Dash style
 
 Allows to use dashed lines instead of solid, there are several different dash options available.
 
@@ -205,8 +180,7 @@ Code to set dashed lines for a individual series (the dashStyle can also be set 
         dashStyle: 'longdash'
     }]
 
-Zones
------
+### Zones
 
 In some cases, you would want to display certain sections of the graph different, a common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes.  The settings that can be overwritten for each zone are color, fillColor and dashStyle.
 
