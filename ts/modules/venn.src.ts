@@ -450,7 +450,7 @@ var getLabelPosition = function getLabelPosition(
             }, best);
     }, {
         point: undefined as any,
-        margin: -Number.MAX_VALUE // @todo MIN_VALUE
+        margin: -Number.MAX_VALUE
     }).point;
 
     // Use nelder mead to optimize the initial label position.
