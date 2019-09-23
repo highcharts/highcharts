@@ -5,12 +5,6 @@ The tooltip appears when hovering over a point in a series. By default the toolt
 
 ![tooltip.png](tooltip.png)
 
-Some basic concepts:
-
-*   [Appearance](#app)
-*   [Tooltip formatter](#formatter)
-*   [Crosshairs](#cross)
-
 Appearance
 ----------
 
