@@ -9,8 +9,9 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick;
+import U from './Utilities.js';
+var pick = U.pick;
+var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval;
 /* ************************************************************************** *
  * Methods defined on the Axis prototype
  * ************************************************************************** */

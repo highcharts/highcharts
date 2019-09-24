@@ -128,7 +128,8 @@ import U from './Utilities.js';
 const {
     defined,
     extend,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import './Color.js';
@@ -141,7 +142,6 @@ var animObject = H.animObject,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     svg = H.svg;
@@ -820,7 +820,7 @@ seriesType<Highcharts.ColumnSeries>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold),
+                var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,

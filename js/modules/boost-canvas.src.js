@@ -15,7 +15,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var extend = U.extend,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    pick = U.pick;
 
 import '../parts/Color.js';
 import '../parts/Series.js';
@@ -30,7 +31,6 @@ var win = H.win,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
     wrap = H.wrap,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv;

@@ -51,12 +51,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 var charts = H.charts,
     noop = H.noop,
-    pick = H.pick,
     Pointer = H.Pointer;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -311,13 +311,13 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                         minPixelPadding = axis.minPixelPadding,
                         min = axis.toPixels(
                             Math.min(
-                                pick(axis.options.min, axis.dataMin),
+                                pick(axis.options.min, axis.dataMin as any),
                                 axis.dataMin as any
                             )
                         ),
                         max = axis.toPixels(
                             Math.max(
-                                pick(axis.options.max, axis.dataMax),
+                                pick(axis.options.max, axis.dataMax as any),
                                 axis.dataMax as any
                             )
                         ),
@@ -326,11 +326,11 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
                     // Store the bounds for use in the touchmove handler
                     bounds.min = Math.min(
-                        axis.pos as any,
+                        axis.pos,
                         absMin - minPixelPadding
                     );
                     bounds.max = Math.max(
-                        (axis.pos as any) + axis.len,
+                        axis.pos + axis.len,
                         absMax + minPixelPadding
                     );
                 }

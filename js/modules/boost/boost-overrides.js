@@ -13,7 +13,8 @@
 import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    pick = U.pick;
 
 import '../../parts/Color.js';
 import '../../parts/Series.js';
@@ -32,7 +33,6 @@ var boostEnabled = butils.boostEnabled,
     Point = H.Point,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
-    pick = H.pick,
     wrap = H.wrap,
     plotOptions = H.getOptions().plotOptions;
 

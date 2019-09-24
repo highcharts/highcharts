@@ -18,6 +18,8 @@ WIP on vertical scrollable plot area (#9378). To do:
  */
 'use strict';
 import H from './Globals.js';
+import U from './Utilities.js';
+var pick = U.pick;
 var addEvent = H.addEvent, Chart = H.Chart;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
@@ -253,7 +255,7 @@ Chart.prototype.applyFixed = function () {
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-            fill: H.color(this.options.chart.backgroundColor || '#fff').setOpacity(H.pick(scrollableOptions.opacity, 0.85)).get(),
+            fill: H.color(this.options.chart.backgroundColor || '#fff').setOpacity(pick(scrollableOptions.opacity, 0.85)).get(),
             zIndex: -1
         })
             .addClass('highcharts-scrollable-mask')

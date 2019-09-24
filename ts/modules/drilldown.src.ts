@@ -296,6 +296,7 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     objectEach,
+    pick,
     syncTimeout
 } = U;
 
@@ -310,7 +311,6 @@ var animObject = H.animObject,
     color = H.color,
     defaultOptions = H.defaultOptions,
     format = H.format,
-    pick = H.pick,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
@@ -1160,9 +1160,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
             }
         });
 
-        (animateFrom as any).x += (
-            pick(xAxis.oldPos, xAxis.pos) - (xAxis.pos as any)
-        );
+        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
         this.points.forEach(function (point: Highcharts.Point): void {
             var animateTo = point.shapeArgs;
@@ -1488,10 +1486,10 @@ H.addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 
     this.points.forEach(function (point: Highcharts.Point): void {
         var dataLabelsOptions = point.options.dataLabels,
-            pointCSS: Highcharts.CSSObject = pick<Highcharts.CSSObject>(
+            pointCSS: Highcharts.CSSObject = pick(
                 point.dlOptions as any,
                 dataLabelsOptions && (dataLabelsOptions as any).style,
-                {}
+                {} as Highcharts.CSSObject
             );
 
         if (point.drilldown && point.dataLabel) {

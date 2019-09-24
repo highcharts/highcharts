@@ -7,6 +7,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -113,10 +115,10 @@ H.merge(multipleLinesMixin, {
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 2);
             xLow = getExtremeIndexInArray(slicedY.map(function (elem) {
-                return H.pick(elem[low], elem);
+                return pick(elem[low], elem);
             }), 'min');
             xHigh = getExtremeIndexInArray(slicedY.map(function (elem) {
-                return H.pick(elem[high], elem);
+                return pick(elem[high], elem);
             }), 'max');
             aroonUp = (xHigh / period) * 100;
             aroonDown = (xLow / period) * 100;

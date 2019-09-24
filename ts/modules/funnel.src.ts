@@ -93,7 +93,11 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 
@@ -101,8 +105,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     fireEvent = Highcharts.fireEvent,
-    noop = Highcharts.noop,
-    pick = Highcharts.pick;
+    noop = Highcharts.noop;
 
 /**
  * @private
@@ -481,7 +484,7 @@ seriesType<Highcharts.FunnelSeries>(
                 leftSide = point.half;
                 sign = leftSide ? 1 : -1;
                 y = point.plotY;
-                point.labelDistance = pick<number>(
+                point.labelDistance = pick(
                     point.options.dataLabels &&
                     point.options.dataLabels.distance,
                     labelDistance

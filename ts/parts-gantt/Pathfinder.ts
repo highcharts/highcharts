@@ -193,6 +193,7 @@ const {
     defined,
     extend,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -202,7 +203,6 @@ import './ArrowSymbols.js';
 var deg2rad = H.deg2rad,
     addEvent = H.addEvent,
     merge = H.merge,
-    pick = H.pick,
     max = Math.max,
     min = Math.min;
 

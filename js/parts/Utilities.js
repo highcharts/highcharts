@@ -1081,16 +1081,16 @@ function extend(a, b) {
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-H.pick = function () {
-    /* eslint-enable valid-jsdoc */
-    var args = arguments, i, arg, length = args.length;
-    for (i = 0; i < length; i++) {
-        arg = args[i];
+function pick() {
+    var args = arguments;
+    var length = args.length;
+    for (var i = 0; i < length; i++) {
+        var arg = args[i];
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
-};
+}
 /**
  * Set CSS on a given element.
  *
@@ -1418,7 +1418,7 @@ H.getMagnitude = function (num) {
 H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = H.pick(magnitude, 1);
+    magnitude = pick(magnitude, 1);
     normalized = interval / magnitude;
     // multiples for a linear scale
     if (!multiples) {
@@ -1618,7 +1618,7 @@ H.correctFloat = function (num, prec) {
  * so it should be moved to the SVGRenderer.
  */
 H.setAnimation = function (animation, chart) {
-    chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
+    chart.renderer.globalAnimation = pick(animation, chart.options.chart.animation, true);
 };
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -1723,8 +1723,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
     // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
     // Language
-    decimalPoint = H.pick(decimalPoint, lang.decimalPoint);
-    thousandsSep = H.pick(thousandsSep, lang.thousandsSep);
+    decimalPoint = pick(decimalPoint, lang.decimalPoint);
+    thousandsSep = pick(thousandsSep, lang.thousandsSep);
     // Start building the return
     ret = number < 0 ? '-' : '';
     // Add the leftover after grouping into thousands. For example, in the
@@ -1813,7 +1813,7 @@ H.getStyle = function (el, prop, toInt) {
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
     if (style) {
         style = style.getPropertyValue(prop);
-        if (H.pick(toInt, prop !== 'opacity')) {
+        if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
@@ -2495,6 +2495,7 @@ var utils = {
     isObject: isObject,
     isString: isString,
     objectEach: objectEach,
+    pick: pick,
     pInt: pInt,
     splat: splat,
     syncTimeout: syncTimeout

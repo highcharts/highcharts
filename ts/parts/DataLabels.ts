@@ -662,6 +662,7 @@ const {
     extend,
     isArray,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -671,7 +672,6 @@ var arrayMax = H.arrayMax,
     format = H.format,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

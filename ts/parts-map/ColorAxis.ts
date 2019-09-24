@@ -139,6 +139,7 @@ const {
     erase,
     extend,
     isNumber,
+    pick,
     splat
 } = U;
 
@@ -160,8 +161,7 @@ var addEvent = H.addEvent,
     colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
     noop = H.noop,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

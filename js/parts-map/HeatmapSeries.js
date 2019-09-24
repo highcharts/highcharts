@@ -22,13 +22,13 @@ import H from '../parts/Globals.js';
 * @type {number|null|undefined}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class

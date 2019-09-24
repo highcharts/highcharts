@@ -144,15 +144,15 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     defined,
-    extend
+    extend,
+    pick
 } = U;
 
 
 import './integrations.js';
 import './QuadTree.js';
 
-var pick = H.pick,
-    addEvent = H.addEvent,
+var addEvent = H.addEvent,
     Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

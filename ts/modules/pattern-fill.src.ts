@@ -155,12 +155,14 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var erase = U.erase;
+const {
+    erase,
+    pick
+} = U;
 
 var addEvent = H.addEvent,
     wrap = H.wrap,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 
 /**
@@ -318,7 +320,7 @@ H.SVGRenderer.prototype.addPattern = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): (Highcharts.SVGElement|undefined) {
     var pattern: (Highcharts.SVGElement|undefined),
-        animate = H.pick(animation, true),
+        animate = pick(animation, true),
         animationOptions = H.animObject(animate),
         path: Highcharts.SVGAttributes,
         defaultSize = 32,
@@ -579,7 +581,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
 
         // Add it. This function does nothing if an element with this ID
         // already exists.
-        this.addPattern(pattern, !this.forExport && H.pick(
+        this.addPattern(pattern, !this.forExport && pick(
             (pattern as any).animation,
             this.globalAnimation,
             { duration: 100 }

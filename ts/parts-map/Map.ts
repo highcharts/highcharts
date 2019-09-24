@@ -28,7 +28,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -38,7 +39,6 @@ import '../parts/SvgRenderer.js';
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     merge = H.merge,
-    pick = H.pick,
     Renderer = H.Renderer,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;

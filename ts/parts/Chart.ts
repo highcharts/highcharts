@@ -273,6 +273,7 @@ const {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
     splat,
     syncTimeout
@@ -299,7 +300,6 @@ var addEvent = H.addEvent,
     marginNames = H.marginNames,
     merge = H.merge,
     Pointer = H.Pointer, // @todo add as requirement
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     win = H.win;
@@ -1023,7 +1023,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             points = points.concat(
                 (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
                     function (point: Highcharts.Point): boolean {
-                        return pick(point.selectedStaging, point.selected);
+                        return pick(
+                            point.selectedStaging, point.selected as any
+                        );
                     }
                 )
             );

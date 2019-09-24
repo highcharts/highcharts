@@ -47,12 +47,15 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    pick
+} = U;
+
 import './Options.js';
 import './Series.js';
 
-var pick = H.pick,
-    seriesType = H.seriesType;
+var seriesType = H.seriesType;
 
 /**
  * Spline series type.

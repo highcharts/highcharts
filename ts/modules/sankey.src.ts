@@ -293,20 +293,22 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isObject = U.isObject;
+const {
+    defined,
+    isObject,
+    pick
+} = U;
 
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-// Note: replace this with destructuring assignment in the future
-var getLevelOptions = mixinTreeSeries.getLevelOptions;
-
+const {
+    getLevelOptions
+} = mixinTreeSeries;
 
 var find = H.find,
     merge = H.merge,
     seriesType = H.seriesType,
-    pick = H.pick,
     Point = H.Point;
 
 // eslint-disable-next-line valid-jsdoc

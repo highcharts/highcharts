@@ -15,13 +15,15 @@
 
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    objectEach = U.objectEach;
+const {
+    isArray,
+    objectEach,
+    pick
+} = U;
 
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    pick = H.pick,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent;
 

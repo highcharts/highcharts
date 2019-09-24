@@ -96,7 +96,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -110,7 +111,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     fireEvent = H.fireEvent,
     Series = H.Series,
     seriesType = H.seriesType,

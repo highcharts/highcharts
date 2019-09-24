@@ -11,8 +11,6 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -64,13 +62,15 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
-var min = Math.min,
-    max = Math.max,
-    abs = Math.abs,
-    pick = H.pick;
+const {
+    min,
+    max,
+    abs
+} = Math;
 
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and

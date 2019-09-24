@@ -38,7 +38,8 @@
 
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    pick = U.pick;
 
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import AccessibilityComponent from './AccessibilityComponent.js';
@@ -58,7 +59,6 @@ import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
     doc = H.win.document,
-    pick = H.pick,
     merge = H.merge;
 
 

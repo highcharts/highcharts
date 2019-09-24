@@ -428,8 +428,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
-var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`

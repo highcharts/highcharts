@@ -1,6 +1,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+var objectEach = U.objectEach,
+    pick = U.pick;
 
 var fireEvent = H.fireEvent;
 
@@ -132,7 +133,7 @@ var eventEmitterMixin = {
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
                 // ControlPoints vs Annotation:
-                fireEvent(H.pick(emitter.target, emitter), 'afterUpdate');
+                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
                 emitter.onMouseUp(e);
             }
         );

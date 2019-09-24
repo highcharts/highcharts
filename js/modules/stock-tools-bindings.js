@@ -42,10 +42,10 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined,
     extend = U.extend,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    pick = U.pick;
 
 var fireEvent = H.fireEvent,
-    pick = H.pick,
     merge = H.merge,
     correctFloat = H.correctFloat,
     bindingsUtils = H.NavigationBindings.prototype.utils,
