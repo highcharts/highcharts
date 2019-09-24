@@ -146,6 +146,11 @@ jobs:
     <<: *defaults
     description: Visual diff and compare PR with master
     steps:
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
       - <<: *load_workspace
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
@@ -155,9 +160,21 @@ jobs:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: git checkout ${CIRCLE_BRANCH} && npm i
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/*,stock/*/*,maps/*/*,gantt/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
-      - run: echo 'Exec comment on PR'
-      - <<: *persist_workspace
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
+      - run: mkdir ../visual-test-results
+      - run:
+          name: Save test results
+          command: |
+            find samples/ -type f -regex ".*\(reference\|candidate\).svg" -exec cp {} ../test-results/ \;
+          when: always
+      - store_test_results:
+          path: ../visual-test-results
+      - store_artifacts:
+          path: ../visual-test-results
 
   nightly_visual_diff:
     <<: *defaults
