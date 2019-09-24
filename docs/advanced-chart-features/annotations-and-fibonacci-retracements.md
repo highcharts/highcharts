@@ -1,7 +1,7 @@
 Annotations and fibonacci replacements
 ===
 
-A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](http://www.investopedia.com/terms/f/fibonacciretracement.asp).
+A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp).
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/stock/annotations/fibonacci-retracements" allow="fullscreen"></iframe>
 
