@@ -31,7 +31,7 @@ In the [map collection reference](http://code.highcharts.com/mapdata/), each map
 ```js
 mapData: Highcharts.maps['custom/world'],
 ```
-Alternatively, you can set the default map for all series with the [`chart.map`](http://api.highcharts.com/highmaps/chart.map) option:
+Alternatively, you can set the default map for all series with the [`chart.map`](https://api.highcharts.com/highmaps/chart.map) option:
 
 ```js
 map: 'custom/world'
@@ -40,7 +40,7 @@ map: 'custom/world'
 ```js 
 data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
 ```
-For other data joining options, see the [`series.joinBy`](http://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](http://api.highcharts.com/highcharts/plotOptions.series.keys) options.
+For other data joining options, see the [`series.joinBy`](https://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](https://api.highcharts.com/highcharts/plotOptions.series.keys) options.
 
 ### Install from npm
 
@@ -107,7 +107,7 @@ Some maps may provide additional properties that are not mentioned in the above 
 Using parts of a map
 --------------------
 
-If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](http://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
+If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
 
 Modify our maps
 ---------------

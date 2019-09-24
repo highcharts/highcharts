@@ -43,7 +43,7 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 ![map-from-svg-9.png](map-from-svg-9.png)
 
-14. The actual map shape data is available under the "View data" link. Click it and copy the whole contents of the text area to the right. This is a JSON object containing the template for the entire [series](http://api.highcharts.com/highmaps/series) options of a new map chart, combining real area data and separator lines.
+14. The actual map shape data is available under the "View data" link. Click it and copy the whole contents of the text area to the right. This is a JSON object containing the template for the entire [series](https://api.highcharts.com/highmaps/series) options of a new map chart, combining real area data and separator lines.
 
 ![map-from-svg-10.png](map-from-svg-10.png)
 
@@ -57,6 +57,6 @@ Highmaps can be used for more than geographic data, and more than the featured m
         });
     });
 
-16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](http://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
+16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](https://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
 
 Good luck, and don't hesitate to contact us via our [Support Page](support) if you have any problems or corrections to this article.

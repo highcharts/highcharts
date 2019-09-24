@@ -64,7 +64,7 @@ Android 2.x
 Android 2.x doesn't have SVG support built in, so we have created a separate renderer based on the canvg library for this system. This solution has some limitations:
 
 *   Shared tooltip is always enabled.
-*   During first render, the canvg renderer + rgbcolor.js + canvg.js (concatenated to one file) will be downloaded from code.highcharts.com This is configurable with the [global.canvasToolsURL](http://api.highcharts.com/highcharts#global.canvasToolsURL) option.
+*   During first render, the canvg renderer + rgbcolor.js + canvg.js (concatenated to one file) will be downloaded from code.highcharts.com This is configurable with the [global.canvasToolsURL](https://api.highcharts.com/highcharts#global.canvasToolsURL) option.
 *   Chart and series animation is turned off.
 *   Show/hide series from the legend is not enabled.
 *   Series and point touch events are not enabled.

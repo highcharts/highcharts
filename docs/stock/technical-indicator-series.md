@@ -88,7 +88,7 @@ Technical indicators require the [indicators/indicators.js](https://code.highcha
 *   [Zig Zag](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/zigzag/)
     
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highstock/plotOptions.sma)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highstock/plotOptions.sma)_
 
 Technical indicators modules are implemented as series, that means almost all of the default options for [series](https://www.highcharts.com/docs/chart-concepts/series) are available. The main option, which needs to be set for an indicator, is `series.linkedTo`. That option binds an indicator to a series: an indicator will use `series.data` for all calculations, even when the dataset is changing (e.g. by `series.addPoint()`). Additionally, each indicator has its own list of parameters, available under `params` options, which allows easy customisation (e.g. `params.period`, `params.algorithm`).
 

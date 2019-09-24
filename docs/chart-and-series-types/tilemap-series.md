@@ -3,7 +3,7 @@ Tilemaps
 
 Tilemaps are maps where each area is represented by tiles of equal shape. Highmaps supports four different tilemap types: Circlemap, Diamondmap, Honeycomb, and Squaremap, each with a different tile shape.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.tilemap)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.tilemap)_
 
 Honeycomb maps
 --------------
@@ -62,7 +62,7 @@ Tips
 
 Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/honeycomb-usa/) to check the code.
 
-2. The spacing between points in tilemaps can be controlled with the [series.pointPadding](http://api.highcharts.com/highmaps/plotOptions.tilemap.pointPadding) option. Point padding can also be set per [point](http://api.highcharts.com/highmaps/series.tilemap.data.pointPadding).
+2. The spacing between points in tilemaps can be controlled with the [series.pointPadding](https://api.highcharts.com/highmaps/plotOptions.tilemap.pointPadding) option. Point padding can also be set per [point](https://api.highcharts.com/highmaps/series.tilemap.data.pointPadding).
 
 <iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/maps/plotoptions/tilemap-pointpadding allow="fullscreen"></iframe>
 

@@ -16,6 +16,6 @@ The title and subtitle can be set as shown in the example below.
     }
     
 
-The title and subtitle can also be moved around by the default attributes of the title and subtitle options (align, float, margin, verticalAlign, x, y). For all available options, see [options.title](http://api.highcharts.com/highcharts/title) and [options.subtitle](http://api.highcharts.com/highcharts/subtitle).
+The title and subtitle can also be moved around by the default attributes of the title and subtitle options (align, float, margin, verticalAlign, x, y). For all available options, see [options.title](https://api.highcharts.com/highcharts/title) and [options.subtitle](https://api.highcharts.com/highcharts/subtitle).
 
 Titles can be modified dynamically after render time by the [Chart.setTitle](https://api.highcharts.com/class-reference/Highcharts.Chart#setTitle) method.

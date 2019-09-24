@@ -24,7 +24,7 @@ To create a flag series, add the following configuration in the series option:
         shape : 'flag'  // Defines the shape of the flags.
     }
 
-For an overview of the flag series options see the [API reference](http://api.highcharts.com/highstock/plotOptions.flags).
+For an overview of the flag series options see the [API reference](https://api.highcharts.com/highstock/plotOptions.flags).
 
 Flagseries examples
 -------------------

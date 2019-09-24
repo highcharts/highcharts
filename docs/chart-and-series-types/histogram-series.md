@@ -3,7 +3,7 @@ Histogram
 
 A histogram series is a graphical representation of the data distribution. Histogram creates intervals (bins) and counts how many values fall into each bin.
 
-_For more detailed samples and documentation check the [API](http://api.highcharts.com/highcharts/plotOptions.histogram)._
+_For more detailed samples and documentation check the [API](https://api.highcharts.com/highcharts/plotOptions.histogram)._
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/histogram allow="fullscreen"></iframe>
 
@@ -14,7 +14,7 @@ How to create a Histogram
 
 The histogram requires the following module [modules/histogram-bellcurve.js](https://code.highcharts.com/modules/histogram-bellcurve.js).
 
-The histogram series is a column series with no padding between the columns and with self-setting data. Unlike most other Highcharts series, the [data](http://api.highcharts.com/highcharts/series.histogram) property is not available - it is set internally based on the base series data (more precisely y values of the data).
+The histogram series is a column series with no padding between the columns and with self-setting data. Unlike most other Highcharts series, the [data](https://api.highcharts.com/highcharts/series.histogram) property is not available - it is set internally based on the base series data (more precisely y values of the data).
 
 Two steps are required to create an Histogram chart:
 
@@ -39,7 +39,7 @@ A histogram series has two additional options:
 *   **binsNumber**: to suggest how many bins the histogram should create. `binsNumber` can be a number or a function which returns a number or one of the string: `square-root`, `sturges` or `rice`.
 *   **binWidth**: to control the width of each bin. `binWidth` takes precedence over `binsNumber`.
 
-For the full set of options, [see the API](http://api.highcharts.com/highcharts/plotOptions.histogram).
+For the full set of options, [see the API](https://api.highcharts.com/highcharts/plotOptions.histogram).
 
 Histogram using pre-aggregated data
 -----------------------------------

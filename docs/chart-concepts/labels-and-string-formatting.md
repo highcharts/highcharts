@@ -18,11 +18,11 @@ Please note that this may become a security risk by running unauthorized code in
 
 ### Format strings
 
-Format strings are templates for labels, where variables are inserted. Format strings were introduced in Highcharts 2.3 and improved in 3.0 to allow number and date formatting. Examples of format strings are [xAxis.labels.format](http://api.highcharts.com/highcharts/xAxis.labels.format), [tooltip.pointFormat](http://api.highcharts.com/highcharts/tooltip.pointFormat) and [legend.labelFormat](http://api.highcharts.com/highcharts/legend.labelFormat). 
+Format strings are templates for labels, where variables are inserted. Format strings were introduced in Highcharts 2.3 and improved in 3.0 to allow number and date formatting. Examples of format strings are [xAxis.labels.format](https://api.highcharts.com/highcharts/xAxis.labels.format), [tooltip.pointFormat](https://api.highcharts.com/highcharts/tooltip.pointFormat) and [legend.labelFormat](https://api.highcharts.com/highcharts/legend.labelFormat). 
 
 **Variables** are inserted with a bracket notation, for example `"The point value at {point.x} is {point.y}"`.
 
-**Numbers** are formatted with a subset of float formatting conventions from the C library function sprintf. The formatting is appended inside the variable brackets, separated by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](http://api.highcharts.com/highcharts/lang). For example:
+**Numbers** are formatted with a subset of float formatting conventions from the C library function sprintf. The formatting is appended inside the variable brackets, separated by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
 
 *   Two decimal places: `"{point.y:.2f}"` [[Demo](http://jsfiddle.net/highcharts/AYWsW/)]
 *   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](http://jsfiddle.net/highcharts/rmTWS/)]
@@ -34,7 +34,7 @@ Format strings are templates for labels, where variables are inserted. Format st
 
 ### Formatter callbacks
 
-For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](http://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](http://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](http://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#numberFormat) from the formatters.
+For full control over string handling and additional scripting capabilities around the labels, you might need to use formatter callbacks. These formatters return HTML (subset). Examples of these are [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter), [tooltip.formatter](https://api.highcharts.com/highcharts/tooltip.formatter) and [legend.labelFormatter](https://api.highcharts.com/highcharts/legend.labelFormatter). Often times you'll need to call [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat) and [Highcharts.numberFormat()](https://api.highcharts.com/class-reference/Highcharts#numberFormat) from the formatters.
 
 ### Advanced format strings
 

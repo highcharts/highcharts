@@ -19,7 +19,7 @@ Normally there is only one point in a gauge series, but it also handles multiple
 Solid gauges
 ------------
 
-Since Highcharts 4, we also provide a second type of gauges, the `solidgauge`. It is similar to the gauge series, but has a solid color displaying the value, and responds to color setting on the Y axis, similar to the colorAxis of a map. Read more in the [API](http://api.highcharts.com/highcharts/plotOptions.solidgauge).
+Since Highcharts 4, we also provide a second type of gauges, the `solidgauge`. It is similar to the gauge series, but has a solid color displaying the value, and responds to color setting on the Y axis, similar to the colorAxis of a map. Read more in the [API](https://api.highcharts.com/highcharts/plotOptions.solidgauge).
 
 Gauge examples
 --------------

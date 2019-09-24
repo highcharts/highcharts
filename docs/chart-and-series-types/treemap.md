@@ -6,7 +6,7 @@ Treemap
 ### Requirements
 
 The treemap chart requires the file`modules/treemap.js`.  
-For use with [colorAxis](http://api.highcharts.com/highmaps/colorAxis), the `modules/heatmap.js` must be included as well.
+For use with [colorAxis](https://api.highcharts.com/highmaps/colorAxis), the `modules/heatmap.js` must be included as well.
 
 ### Data structure
 
@@ -155,7 +155,7 @@ An [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highchar
 
 For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 
-After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](http://api.highcharts.com/highmaps/colorAxis) for details about its options.
+After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
     
     var chart = new Highcharts.Chart({
@@ -193,7 +193,7 @@ And each point needs its own colorValue.
 
 ### Options
 
-For an overview over the options for the treemap, see the [API](http://api.highcharts.com/highcharts/plotOptions.treemap).
+For an overview over the options for the treemap, see the [API](https://api.highcharts.com/highcharts/plotOptions.treemap).
 
 ### Mode demos
 

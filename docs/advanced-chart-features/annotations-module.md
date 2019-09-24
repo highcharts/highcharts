@@ -1,7 +1,7 @@
 Annotations module
 ===
 
-The annotations module allows users to annotate a chart freely with labels and shapes. Without the annotations module, the only way to render shapes or labels in any place on a chart was to use the [Renderer API](http://api.highcharts.com/highcharts/Renderer). The Annotations creates a declarative API for adding shapes and labels to a chart. 
+The annotations module allows users to annotate a chart freely with labels and shapes. Without the annotations module, the only way to render shapes or labels in any place on a chart was to use the [Renderer API](https://api.highcharts.com/highcharts/Renderer). The Annotations creates a declarative API for adding shapes and labels to a chart. 
 
 Include the following file ‘modules/annotations.js’ after highcharts.js or highstock.js to enable annotations.
 
@@ -109,4 +109,4 @@ The path type allows to define points property that takes an array of points.
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](http://api.highcharts.com/highcharts/defs.markers).
+It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://api.highcharts.com/highcharts/defs.markers).

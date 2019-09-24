@@ -5,4 +5,4 @@ The legend displays the series in a chart with a predefined symbol and the name 
 
 ![legend.png](legend.png)
 
-For more information see the [API reference](http://api.highcharts.com/highcharts/legend) for legend options.
+For more information see the [API reference](https://api.highcharts.com/highcharts/legend) for legend options.
