@@ -46,7 +46,7 @@ For full fail-proofed development you may convert your project's source code to 
     
     npm install typescript && npx tsc --init 
 
-More information about migrating JavaScript projects to TypeScript can be found in the official [TypeScript handbook](http://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
+More information about migrating JavaScript projects to TypeScript can be found in the official [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
 
 Solving Problems
 ----------------
@@ -104,7 +104,7 @@ The Highcharts libraries come with a huge amount of possibilities right out of t
 *   Set proper types for your extensions
 *   Declare additional interfaces with your extensions to the Highcharts namespace
 *   Make use of existing [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and [interfaces](https://api.highcharts.com/class-reference/Highcharts.Dictionary_T_)
-*   For a deep dive into TypeScript declaration take a look at the official [TypeScript guide](http://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
+*   For a deep dive into TypeScript declaration take a look at the official [TypeScript guide](https://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
 
 ### Example
 

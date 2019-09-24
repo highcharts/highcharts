@@ -246,7 +246,7 @@ The `index.php` file that handles the POST can be downloaded from our [GitHub
 1.  Make sure that PHP and Java is installed on your server.
 2.  Upload the `index.php` file from the [exporting-server](https://github.com/highcharts/highcharts-export-server/tree/master/php/php-batik) repository to your server.
 3.  In your FTP program, create directory called `temp` in the same directory as `index.php` and chmod this new directory to 777 (Linux/Unix servers only).
-4.  Download Batik from the [Batik Distribution Mirror](http://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.  
+4.  Download Batik from the [Batik Distribution Mirror](https://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.  
     
 5.  Upload `batik-rasterizer.jar` and the entire `lib` directory to a location on your web server.
 6.  In the options in the top of the index.php file, set the path to batik-rasterier.jar.
