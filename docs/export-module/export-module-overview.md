@@ -5,13 +5,13 @@ The exporting module allows your users to download the chart as PDF, PNG, JPG o
 
 Additionally there's the [export data module](https://api.highcharts.com/highcharts/exporting.csv) that enables exporting the chart data to CSV, XLS or HTML table formats.
 
-To enable exporting, the module needs to be included, it can be downloaded from [http://code.highcharts.com/](http://code.highcharts.com/) and included after highcharts.js or highstock.js. The module can also be included directly from [http://code.highcharts.com/](http://code.highcharts.com/) like this:
+To enable exporting, the module needs to be included, it can be downloaded from [https://code.highcharts.com/](https://code.highcharts.com/) and included after highcharts.js or highstock.js. The module can also be included directly from [https://code.highcharts.com/](https://code.highcharts.com/) like this:
 
     
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>  
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>  
     <!-- optional -->  
-    <script src="http://code.highcharts.com/modules/offline-exporting.js"></script>  
-    <script src="http://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>  
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
 ### The button
 

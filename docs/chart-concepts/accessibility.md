@@ -6,9 +6,9 @@ Using the Accessibility module
 To start using the Accessibility module, simply include the following files after including Highcharts, Highstock or Highmaps:
 
     
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>
-    <script src="http://code.highcharts.com/modules/export-data.js"></script>
-    <script src="http://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 The export-data plugin is an optional dependency, required for the "View as data table" and related features.
 
