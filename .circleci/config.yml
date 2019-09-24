@@ -169,7 +169,7 @@ jobs:
       - run:
           name: Save test results
           command: |
-            find samples/ -type f -regex ".*\(reference\|candidate\).svg" -exec cp {} ../visual-test-results/ \;
+            find samples/ -type f -regex ".*\(reference\|candidate\).svg" -exec cp --parents {} ../visual-test-results/ \;
           when: always
       - store_test_results:
           path: ../visual-test-results
