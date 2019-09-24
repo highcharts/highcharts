@@ -92,12 +92,12 @@ import H from '../../parts/Globals.js';
 * @since 7.1.0
 */
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+var defined = U.defined, pick = U.pick;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, pick = H.pick, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class

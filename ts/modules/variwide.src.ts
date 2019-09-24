@@ -71,14 +71,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    pick
+} = U;
 
 import '../parts/AreaSeries.js';
 
 var addEvent = H.addEvent,
     seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    pick = H.pick;
+    seriesTypes = H.seriesTypes;
 
 /**
  * @private

@@ -104,8 +104,8 @@ import H from '../parts/Globals.js';
 * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
 */
 import U from '../parts/Utilities.js';
-var erase = U.erase;
-var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge, pick = H.pick;
+var erase = U.erase, pick = U.pick;
+var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge;
 /**
  * Utility function to compute a hash value from an object. Modified Java
  * String.hashCode implementation in JS. Use the preSeed parameter to add an
@@ -231,7 +231,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  * The added pattern. Undefined if the pattern already exists.
  */
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
-    var pattern, animate = H.pick(animation, true), animationOptions = H.animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
+    var pattern, animate = pick(animation, true), animationOptions = H.animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
         ren.rect(0, 0, width, height)
             .attr({
             fill: fill
@@ -409,7 +409,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
         }
         // Add it. This function does nothing if an element with this ID
         // already exists.
-        this.addPattern(pattern, !this.forExport && H.pick(pattern.animation, this.globalAnimation, { duration: 100 }));
+        this.addPattern(pattern, !this.forExport && pick(pattern.animation, this.globalAnimation, { duration: 100 }));
         value = 'url(' + this.url + '#' + pattern.id + ')';
     }
     else {

@@ -103,16 +103,18 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isObject = U.isObject;
+const {
+    defined,
+    isNumber,
+    isObject,
+    pick
+} = U;
 
 var addEvent = H.addEvent,
     color = H.color,
     columnType = H.seriesTypes.column,
     correctFloat = H.correctFloat,
     merge = H.merge,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,

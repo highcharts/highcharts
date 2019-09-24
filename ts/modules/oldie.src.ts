@@ -323,6 +323,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    pick,
     pInt
 } = U;
 
@@ -340,7 +341,6 @@ var VMLRenderer,
     extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,

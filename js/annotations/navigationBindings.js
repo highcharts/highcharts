@@ -14,14 +14,14 @@ var attr = U.attr,
     isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
-    objectEach = U.objectEach;
+    objectEach = U.objectEach,
+    pick = U.pick;
 
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     win = H.win,
     addEvent = H.addEvent,
-    pick = H.pick,
     merge = H.merge,
     fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';

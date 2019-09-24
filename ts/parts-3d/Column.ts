@@ -47,12 +47,15 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     perspective = H.perspective,
-    pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,

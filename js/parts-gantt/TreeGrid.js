@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick;
 import './GridAxis.js';
 import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -24,7 +24,7 @@ var addEvent = H.addEvent, argsToArray = function (args) {
 }, isObject = function (x) {
     // Always use strict mode.
     return U.isObject(x, true);
-}, pick = H.pick, wrap = H.wrap, GridAxis = H.Axis, GridAxisTick = H.Tick;
+}, wrap = H.wrap, GridAxis = H.Axis, GridAxisTick = H.Tick;
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {

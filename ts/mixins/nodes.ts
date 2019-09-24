@@ -81,11 +81,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
-    extend
+    extend,
+    pick
 } = U;
 
-var pick = H.pick,
-    Point = H.Point;
+var Point = H.Point;
 
 H.NodesMixin = {
 

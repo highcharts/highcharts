@@ -292,7 +292,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import './ColumnSeries.js';
@@ -308,7 +309,6 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

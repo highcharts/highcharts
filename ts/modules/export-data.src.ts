@@ -122,15 +122,15 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
-    isObject
+    isObject,
+    pick
 } = U;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var pick = Highcharts.pick,
-    win = Highcharts.win,
+var win = Highcharts.win,
     doc = win.document,
     seriesTypes = Highcharts.seriesTypes,
     downloadURL = Highcharts.downloadURL,

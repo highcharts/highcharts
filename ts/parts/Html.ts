@@ -57,6 +57,7 @@ const {
     attr,
     defined,
     extend,
+    pick,
     pInt
 } = U;
 
@@ -67,7 +68,6 @@ var createElement = H.createElement,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     win = H.win;

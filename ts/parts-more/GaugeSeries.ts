@@ -86,8 +86,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    isNumber,
+    pick,
+    pInt
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Point.js';
@@ -96,7 +99,6 @@ import '../parts/Interaction.js';
 
 var merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;

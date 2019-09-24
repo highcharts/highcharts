@@ -817,6 +817,7 @@ const {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -841,7 +842,6 @@ var SVGElement: Highcharts.SVGElement,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
@@ -959,9 +959,7 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
-            pick<(boolean|Highcharts.AnimationOptionsObject)>(
-                options, this.renderer.globalAnimation, true
-            )
+            pick(options, this.renderer.globalAnimation, true)
         );
 
         // When the page is hidden save resources in the background by not
@@ -2242,8 +2240,6 @@ extend((
             renderer = wrapper.renderer,
             width,
             height,
-            rotation,
-            rad,
             element = wrapper.element,
             styles = wrapper.styles,
             fontSize,
@@ -2254,8 +2250,7 @@ extend((
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             cacheKey;
 
-        rotation = pick(rot, wrapper.rotation);
-        rad = rotation * deg2rad;
+        const rotation = pick(rot, wrapper.rotation, 0);
 
         fontSize = renderer.styledMode ? (
             element &&
@@ -2280,7 +2275,7 @@ extend((
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation || 0,
+                rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
                 styles && styles.textOverflow // #5968
@@ -2382,6 +2377,7 @@ extend((
 
                 // Adjust for rotated text
                 if (rotation) {
+                    const rad = rotation * deg2rad;
                     bBox.width = Math.abs(height * Math.sin(rad)) +
                         Math.abs(width * Math.cos(rad));
                     bBox.height = Math.abs(height * Math.cos(rad)) +

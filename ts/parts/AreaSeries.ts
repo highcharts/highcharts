@@ -52,7 +52,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Color.js';
@@ -62,7 +63,6 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
 
@@ -406,7 +406,7 @@ seriesType<Highcharts.AreaSeries>(
                 seriesIndex = this.index,
                 i,
                 areaPath: Highcharts.AreaPathObject,
-                plotX: number,
+                plotX: number|undefined,
                 stacks = yAxis.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
@@ -414,7 +414,7 @@ seriesType<Highcharts.AreaSeries>(
                 ),
                 isNull,
                 yBottom,
-                connectNulls = H.pick( // #10574
+                connectNulls = pick( // #10574
                     options.connectNulls,
                     stacking === 'percent'
                 ),

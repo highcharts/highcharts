@@ -7,9 +7,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 
-var correctFloat = H.correctFloat,
-    pick = H.pick;
+var correctFloat = H.correctFloat;
 
 // Utils
 function accumulatePoints(sum, yVal, i, index, subtract) {

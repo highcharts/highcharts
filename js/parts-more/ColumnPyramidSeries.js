@@ -9,8 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import U from '../parts/Utilities.js';
+var pick = U.pick;
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The ColumnPyramidSeries class

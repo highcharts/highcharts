@@ -5,8 +5,8 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend;
-var pick = H.pick, Point = H.Point;
+var defined = U.defined, extend = U.extend, pick = U.pick;
+var Point = H.Point;
 H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
     /**

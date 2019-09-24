@@ -18,6 +18,7 @@ const {
     extend,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -148,7 +149,6 @@ declare global {
 
 var H = Highcharts,
     merge = H.merge,
-    pick = H.pick,
     timeUnits = H.timeUnits,
     win = H.win;
 
@@ -623,7 +623,7 @@ Highcharts.Time.prototype = {
         if (!defined(timestamp) || isNaN(timestamp as any)) {
             return (H.defaultOptions.lang as any).invalidDate || '';
         }
-        format = H.pick(format, '%Y-%m-%d %H:%M:%S');
+        format = pick(format, '%Y-%m-%d %H:%M:%S');
 
         var time = this,
             date = new this.Date(timestamp as any),

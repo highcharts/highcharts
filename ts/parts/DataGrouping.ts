@@ -151,7 +151,8 @@ import U from './Utilities.js';
 const {
     defined,
     extend,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import './Axis.js';
@@ -166,7 +167,6 @@ var addEvent = H.addEvent,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     Tooltip = H.Tooltip;

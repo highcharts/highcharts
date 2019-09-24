@@ -654,6 +654,7 @@ const {
     isNumber,
     isString,
     objectEach,
+    pick,
     splat,
     syncTimeout
 } = U;
@@ -673,7 +674,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
@@ -4306,23 +4306,21 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 }
 
                 if (isArray(stackValues)) {
-                    yBottom = (stackValues as any)[0];
-                    yValue = (stackValues as any)[1];
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
 
                     if (yBottom === stackThreshold &&
                         (stackIndicator as any).key ===
                             (stack as any)[xValue as any].base
                     ) {
-                        yBottom = (
-                            pick<number>(
-                                (isNumber(threshold) && threshold) as any,
-                                yAxis.min
-                            )
+                        yBottom = pick<number|undefined, number>(
+                            (isNumber(threshold) && threshold) as any,
+                            yAxis.min as any
                         );
                     }
 
                     // #1200, #1232
-                    if (yAxis.positiveValuesOnly && (yBottom as any) <= 0) {
+                    if (yAxis.positiveValuesOnly && yBottom <= 0) {
                         yBottom = null as any;
                     }
 
@@ -4699,7 +4697,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 chart = series.chart,
                 i,
                 point,
-                symbol,
                 graphic,
                 verb,
                 options = series.options,
@@ -4744,7 +4741,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     if (enabled && !point.isNull) {
 
                         // Shortcuts
-                        symbol = pick(pointMarkerOptions.symbol, series.symbol);
+                        const symbol = pick<string|undefined, string>(
+                            pointMarkerOptions.symbol, series.symbol as any
+                        );
 
                         markerAttribs = series.markerAttribs(
                             point,

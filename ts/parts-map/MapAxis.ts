@@ -31,12 +31,15 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Axis.js';
 
 var addEvent = H.addEvent,
-    Axis = H.Axis,
-    pick = H.pick;
+    Axis = H.Axis;
 
 /* eslint-disable no-invalid-this */
 

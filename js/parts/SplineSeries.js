@@ -9,10 +9,11 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var pick = U.pick;
 import './Options.js';
 import './Series.js';
-var pick = H.pick, seriesType = H.seriesType;
+var seriesType = H.seriesType;
 /**
  * Spline series type.
  *

@@ -18,6 +18,7 @@ const {
     extend,
     isNumber,
     isString,
+    pick,
     splat,
     syncTimeout
 } = U;
@@ -254,7 +255,6 @@ declare global {
 var doc = H.doc,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     timeUnits = H.timeUnits;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -1219,7 +1219,7 @@ H.Tooltip.prototype = {
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick<(number|string)>(
+                    colorClass = 'highcharts-color-' + pick(
                         point.colorIndex, series.colorIndex, 'none'
                     ),
                     target,

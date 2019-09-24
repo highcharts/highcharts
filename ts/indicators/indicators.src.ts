@@ -98,13 +98,13 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
+    pick,
     splat
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var pick = H.pick,
-    error = H.error,
+var error = H.error,
     Series = H.Series,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
