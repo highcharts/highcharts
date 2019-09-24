@@ -172,7 +172,7 @@ Some useful functions are:
     // Get time in millis for your local time
     Date.parse("Month day, year");
     
-    // Built in Highcharts date formatter based on the [PHP strftime](http://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
+    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
     Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
 
 Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.

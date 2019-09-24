@@ -6,7 +6,7 @@ For your convenience, Highmaps offers a free [collection of maps](https://code.h
 License
 -------
 
-The Highmaps Map Collection comes with the license of the source data. For Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions etc), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is [Public Domain](http://en.wikipedia.org/wiki/Public_domain). For Admin2, we have only compiled selected countries, and these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps. 
+The Highmaps Map Collection comes with the license of the source data. For Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions etc), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is [Public Domain](https://en.wikipedia.org/wiki/Public_domain). For Admin2, we have only compiled selected countries, and these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps. 
 
 For maps loaded using the default GeoJSON input into the mapData option, a short version of the copyright will be printed in the chart's credits label.
 

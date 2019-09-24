@@ -1,7 +1,7 @@
 Setting up your own export server
 =================================
 
-There may be cases where you don't want to use Highcharts' export server running at [export.highcharts.com](http://export.highcharts.com), for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
+There may be cases where you don't want to use Highcharts' export server running at [export.highcharts.com](https://export.highcharts.com), for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
 
 Before setting up your own server, consider using the [client side export module](docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
 
@@ -142,7 +142,7 @@ Typical use cases are:
 *   you want to include your charts in emails or automated management reports
 *   you want to have a consistency between graphs you present on your website and your backend produced reports
 
-We're using [PhantomJS ](http://phantomjs.org)for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
+We're using [PhantomJS ](https://phantomjs.org)for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
 
 ##### COMMAND LINE USAGE
 
