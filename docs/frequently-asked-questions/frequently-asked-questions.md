@@ -46,7 +46,7 @@ The most common reason why a chart works in modern browsers but fails in IE6, 7 
         }]
     });
 
-[Try it live](http://jsfiddle.net/highcharts/DXnPa/).
+[Try it live](https://jsfiddlefiddle.net/highcharts/DXnPa/).
 
 Another case where legacy IE fails to show charts, is when the security setting "ActiveX controls and plug-ins" => "Binary and script behavious" is disabled. This happens very rarely on user computers, but we have seen it from time to time on company networks. In this case, IE fails to draw any of the vector graphics, only the the text is shown. 
 
@@ -74,11 +74,11 @@ Technically Highcharts Stock is implemented as a set of plugins for Highcharts. 
 
 Examples:
 
-*   [Using flags in Highcharts](http://jsfiddle.net/highcharts/2BGSK/)
+*   [Using flags in Highcharts](https://jsfiddlefiddle.net/highcharts/2BGSK/)
     
-*   [Enabling a scrollbar in Highcharts](http://jsfiddle.net/highcharts/fj6d2/)
+*   [Enabling a scrollbar in Highcharts](https://jsfiddlefiddle.net/highcharts/fj6d2/)
     
-*   [Gap size in Highcharts](http://jsfiddle.net/highcharts/VwkHu/)
+*   [Gap size in Highcharts](https://jsfiddlefiddle.net/highcharts/VwkHu/)
     
 
 * * *
@@ -86,7 +86,7 @@ Examples:
 Can I add a data table to the exported chart?
 ---------------------------------------------
 
-If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/exporting-table/) for source code and live example.
+If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](https://jsfiddlefiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/exporting-table/) for source code and live example.
 
 * * *
 
@@ -107,7 +107,7 @@ Can I export multiple charts to the same image or PDF?
 
 Currently this isn't implemented in the core, but there are a couple of paths you can go to achieve this. 
 
-1.  Use our hack for [exporting multiple charts](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
+1.  Use our hack for [exporting multiple charts](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
 2.  Create a HTML file on your server that contains all your desired charts, and do a pure server side conversion of this. See [Can I generate charts on the server without using a browser?](#server-side-charts)
 
 * * *
@@ -139,7 +139,7 @@ Yes. See our article, [Render charts on the server](docs/export-module/render-ch
 How do I define irregular time data?
 ------------------------------------
 
-To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [http://jsfiddle.net/highcharts/Jx5n2/](http://jsfiddle.net/highcharts/Jx5n2/).
+To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [https://jsfiddlefiddle.net/highcharts/Jx5n2/](https://jsfiddlefiddle.net/highcharts/Jx5n2/).
 
 If you want the line to be broken for missing dates, insert null values instead.
 

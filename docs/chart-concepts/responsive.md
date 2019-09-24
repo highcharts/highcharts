@@ -19,9 +19,9 @@ It lets you define a set of rules, each with a [condition](https://api.highchart
       }]  
     }
 
-One of the most handy options is [chart.className](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/classname/) that can be used to control the style of all other elements in Highcharts styled mode.
+One of the most handy options is [chart.className](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/classname/) that can be used to control the style of all other elements in Highcharts styled mode.
 
-In general, the _responsive_ configuration lets you define size-dependent settings for all aspects of the chart. Typical use could be to [move the legend](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/legend/) or modify how much space [the axes take up](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/axis/). Responsiveness is also a great concept in charts with many graphical elements, like [stock charts](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/demo/responsive/).
+In general, the _responsive_ configuration lets you define size-dependent settings for all aspects of the chart. Typical use could be to [move the legend](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/legend/) or modify how much space [the axes take up](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/responsive/axis/). Responsiveness is also a great concept in charts with many graphical elements, like [stock charts](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/demo/responsive/).
 
 What what happens to the legend in this sample as you scale up or down the browser window size:
 

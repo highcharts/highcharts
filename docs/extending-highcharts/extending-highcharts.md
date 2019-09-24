@@ -66,7 +66,7 @@ It's best explained by a code sample:
     });
     
 
-[Try it live](http://jsfiddle.net/highcharts/DuuBr/)
+[Try it live](https://jsfiddlefiddle.net/highcharts/DuuBr/)
 
 Example extension
 -----------------
@@ -149,4 +149,4 @@ Now the trackball will be displayed, but we also need to hide it when the toolti
         });
     });
 
-That was all, the whole [sample can be viewed in jsFiddle](http://jsfiddle.net/highcharts/nhVbs/).
+That was all, the whole [sample can be viewed in jsFiddle](https://jsfiddlefiddle.net/highcharts/nhVbs/).
