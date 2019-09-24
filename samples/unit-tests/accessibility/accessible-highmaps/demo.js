@@ -20,7 +20,9 @@ QUnit.test('Basic map', function (assert) {
 QUnit.test('Map with series info', function (assert) {
     var chart = Highcharts.mapChart('container', {
         accessibility: {
-            describeSingleSeries: true
+            series: {
+                describeSingleSeries: true
+            }
         },
         chart: {
             map: 'custom/europe'
@@ -47,7 +49,9 @@ QUnit.test('Map with series info', function (assert) {
 QUnit.test('Map with point info', function (assert) {
     var chart = Highcharts.mapChart('container', {
         accessibility: {
-            pointDescriptionThreshold: false
+            series: {
+                pointDescriptionEnabledThreshold: false
+            }
         },
         chart: {
             map: 'custom/europe'
@@ -68,7 +72,9 @@ QUnit.test('Map with point info', function (assert) {
 QUnit.test('Map navigation', function (assert) {
     var chart = Highcharts.mapChart('container', {
         accessibility: {
-            pointDescriptionThreshold: false
+            series: {
+                pointDescriptionEnabledThreshold: false
+            }
         },
         chart: {
             map: 'custom/europe'

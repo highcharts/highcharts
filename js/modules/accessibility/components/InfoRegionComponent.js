@@ -113,7 +113,7 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
                     .replace(
                         '<table ',
                         '<table tabindex="0" summary="' + chart.langFormat(
-                            'accessibility.tableSummary', { chart: chart }
+                            'accessibility.table.tableSummary', { chart: chart }
                         ) + '"'
                     );
             }
@@ -146,9 +146,7 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
             tableShortcut = this.tableHeading =
                 this.tableHeading || this.createElement('h6'),
             tableShortcutAnchor = this.tableAnchor =
-                this.tableAnchor || this.createElement('a'),
-            chartHeading = this.chartHeading =
-                this.chartHeading || this.createElement('h6');
+                this.tableAnchor || this.createElement('a');
 
         hiddenSection.setAttribute('id', hiddenSectionId);
         if (a11yOptions.landmarkVerbosity === 'all') {
@@ -157,19 +155,22 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
         hiddenSection.setAttribute(
             'aria-label',
             chart.langFormat(
-                'accessibility.screenReaderRegionLabel', { chart: chart }
+                'accessibility.screenReaderRegion.beforeRegionLabel',
+                { chart: chart }
             )
         );
 
-        hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter ?
-            a11yOptions.screenReaderSectionFormatter(chart) :
-            this.defaultScreenReaderSectionFormatter(chart);
+        hiddenSection.innerHTML =
+            a11yOptions.screenReaderSection.beforeChartFormatter ?
+                a11yOptions.screenReaderSection.beforeChartFormatter(chart) :
+                this.defaultScreenReaderSectionFormatter(chart);
 
         // Add shortcut to data table if export-data is loaded
-        if (chart.getCSV && chart.options.accessibility.addTableShortcut) {
+        if (chart.getCSV) {
             var tableId = 'highcharts-data-table-' + chart.index;
             tableShortcutAnchor.innerHTML = chart.langFormat(
-                'accessibility.viewAsDataTable', { chart: chart }
+                'accessibility.table.viewAsDataTableButtonText',
+                { chart: chart }
             );
             tableShortcutAnchor.href = '#' + tableId;
             // Make this unreachable by user tabbing
@@ -177,25 +178,18 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
             tableShortcutAnchor.setAttribute('role', 'button');
             tableShortcutAnchor.setAttribute('aria-expanded', false);
             tableShortcutAnchor.onclick =
-                chart.options.accessibility.onTableAnchorClick || function () {
+                a11yOptions.screenReaderSection.onViewDataTableClick ||
+                function () {
                     chart.viewData();
                 };
             tableShortcut.appendChild(tableShortcutAnchor);
             hiddenSection.appendChild(tableShortcut);
         }
 
-        // Note: JAWS seems to refuse to read aria-label on the container, so
-        // add an h6 element as title for the chart.
-        chartHeading.innerHTML = chart.langFormat(
-            'accessibility.chartHeading', { chart: chart }
-        );
-        chartHeading.setAttribute('aria-hidden', false);
-        chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
         chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
         this.unhideElementFromScreenReaders(hiddenSection);
 
-        // Visually hide the section and the chart heading
-        merge(true, chartHeading.style, this.hiddenStyle);
+        // Visually hide the section
         merge(true, hiddenSection.style, this.hiddenStyle);
     },
 
@@ -395,7 +389,7 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
 
         // Just use from and to.
         // We have the range and the unit to use, find the desc format
-        var a11yOptions = chart.options.accessibility;
+        var srSectionOpts = chart.options.accessibility.screenReaderSection;
         return chart.langFormat(
             'accessibility.axis.rangeFromTo',
             {
@@ -403,11 +397,11 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
                 axis: axis,
                 rangeFrom: axis.isDatetimeAxis ?
                     chart.time.dateFormat(
-                        a11yOptions.axisRangeDateFormat, axis.min
+                        srSectionOpts.axisRangeDateFormat, axis.min
                     ) : axis.min,
                 rangeTo: axis.isDatetimeAxis ?
                     chart.time.dateFormat(
-                        a11yOptions.axisRangeDateFormat, axis.max
+                        srSectionOpts.axisRangeDateFormat, axis.max
                     ) : axis.max
             }
         );

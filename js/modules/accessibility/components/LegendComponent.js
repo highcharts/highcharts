@@ -114,7 +114,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         // Add proxy group
         this.legendProxyGroup = this.addProxyGroup({
             'aria-label': chart.langFormat(
-                'accessibility.legendLabel'
+                'accessibility.legend.legendLabel'
             ),
             'role': a11yOptions.landmarkVerbosity === 'all' ?
                 'region' : null
@@ -130,7 +130,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                         tabindex: -1,
                         'aria-pressed': !item.visible,
                         'aria-label': chart.langFormat(
-                            'accessibility.legendItem',
+                            'accessibility.legend.legendItem',
                             {
                                 chart: chart,
                                 itemName: stripHTMLTags(item.name)

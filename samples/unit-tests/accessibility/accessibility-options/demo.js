@@ -57,11 +57,13 @@ QUnit.test('No data', function (assert) {
     );
 });
 
-QUnit.test('pointDescriptionThreshold', function (assert) {
+QUnit.test('pointDescriptionEnabledThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionThreshold: 7,
-                describeSingleSeries: true
+                series: {
+                    pointDescriptionEnabledThreshold: 7,
+                    describeSingleSeries: true
+                }
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -93,7 +95,11 @@ QUnit.test('pointDescriptionThreshold', function (assert) {
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointNavigationThreshold: 7
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        pointNavigationEnabledThreshold: 7
+                    }
+                }
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -132,10 +138,12 @@ QUnit.test('pointNavigationThreshold', function (assert) {
 QUnit.test('seriesDescriptionFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
         accessibility: {
-            seriesDescriptionFormatter: function (series) {
-                return 'yo ' + series.name;
-            },
-            describeSingleSeries: true
+            series: {
+                descriptionFormatter: function (series) {
+                    return 'yo ' + series.name;
+                },
+                describeSingleSeries: true
+            }
         },
         series: [{
             data: [1, 2, 3, 4, 5, 6],
@@ -163,8 +171,10 @@ QUnit.test('seriesDescriptionFormatter', function (assert) {
 QUnit.test('pointDescriptionFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return 'yo' + point.index;
+                point: {
+                    descriptionFormatter: function (point) {
+                        return 'yo' + point.index;
+                    }
                 }
             },
             series: [{

@@ -173,6 +173,7 @@ KeyboardNavigation.prototype = {
             }
             if (preventDefault) {
                 e.preventDefault();
+                e.stopPropagation();
             }
         }
     },
@@ -258,7 +259,8 @@ KeyboardNavigation.prototype = {
             exitAnchor = this.exitAnchor = doc.createElement('h6'),
             keyboardNavigation = this,
             exitAnchorLabel = chart.langFormat(
-                'accessibility.svgContainerEnd', { chart: chart }
+                'accessibility.screenReaderRegion.endOfChartMarker',
+                { chart: chart }
             );
 
         exitAnchor.innerHTML = exitAnchorLabel;

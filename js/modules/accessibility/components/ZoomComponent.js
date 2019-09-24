@@ -90,7 +90,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 button.element.setAttribute(
                     'aria-label',
                     chart.langFormat(
-                        'accessibility.mapZoom' + (i ? 'Out' : 'In'),
+                        'accessibility.zoom.mapZoom' + (i ? 'Out' : 'In'),
                         { chart: chart }
                     )
                 );
@@ -135,7 +135,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
             proxyButton(
                 chart.resetZoomButton, 'resetZoomProxyButton',
                 'resetZoomProxyGroup', chart.langFormat(
-                    'accessibility.resetZoomButton',
+                    'accessibility.zoom.resetZoomButton',
                     { chart: chart }
                 )
             );

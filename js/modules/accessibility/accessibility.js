@@ -53,6 +53,7 @@ import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
 import defaultOptions from './options.js';
+import defaultLangOptions from './langOptions.js';
 import copyDeprecatedOptions from './deprecatedOptions.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
@@ -68,6 +69,10 @@ merge(true, H.defaultOptions, defaultOptions, {
         highContrastTheme: highContrastTheme
     }
 });
+merge(true, H.defaultOptions, {
+    lang: defaultLangOptions
+});
+
 
 // Expose classes on Highcharts namespace
 H.KeyboardNavigationHandler = KeyboardNavigationHandler;
