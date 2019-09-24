@@ -23,7 +23,7 @@ API
 
 For more specific information on Highcharts and Highstock options and functions, visit our API sites which also include several live and customizeable examples.
 
-*   [Highcharts API reference](http://api.highcharts.com/highcharts)
-*   [Highstock API reference](http://api.highcharts.com/highstock)
-*   [Highmaps API reference](http://api.highcharts.com/highmaps)
+*   [Highcharts API reference](https://api.highcharts.com/highcharts)
+*   [Highstock API reference](https://api.highcharts.com/highstock)
+*   [Highmaps API reference](https://api.highcharts.com/highmaps)
 

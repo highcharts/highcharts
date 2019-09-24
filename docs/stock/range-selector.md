@@ -108,4 +108,4 @@ Each range selector button can get a custom action as shown in this example:
     },
     
 
-See the [API reference](http://api.highcharts.com/highstock/rangeSelector) for the rangeSelector option for more information on how to set up the range selector tool.
+See the [API reference](https://api.highcharts.com/highstock/rangeSelector) for the rangeSelector option for more information on how to set up the range selector tool.

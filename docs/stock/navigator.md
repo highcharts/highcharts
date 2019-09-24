@@ -12,7 +12,7 @@ The navigator is enabled by default for the first series in all Highstock charts
         showInNavigator: true
     }
 
-To configure the options for the navigator series, you can set per-series options on [`series.navigatorOptions`](http://api.highcharts.com/highstock/plotOptions.series.navigatorOptions) and options for all navigator series on [`navigator.series`](https://api.highcharts.com/highstock/navigator.series).
+To configure the options for the navigator series, you can set per-series options on [`series.navigatorOptions`](https://api.highcharts.com/highstock/plotOptions.series.navigatorOptions) and options for all navigator series on [`navigator.series`](https://api.highcharts.com/highstock/navigator.series).
 
 [Live example of multiple navigator series](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/navigator/multiple-series/)
 

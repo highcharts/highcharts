@@ -100,4 +100,4 @@ Plot bands and plot lines examples
 *   [Removing a plot band](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/xaxis/plotbands-id/)
 *   [Toggle plot band](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/members/axis-addplotband/)
 
-For more information and examples look in the api for [plotBands](http://api.highcharts.com/highcharts/xAxis.plotBands), [plotLines](http://api.highcharts.com/highcharts/xAxis.plotLines), [addPlotBand](http://api.highcharts.com/highcharts/Axis.addPlotBand) and [addPlotLine](http://api.highcharts.com/highcharts/Axis.addPlotLine).
+For more information and examples look in the api for [plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands), [plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines), [addPlotBand](https://api.highcharts.com/highcharts/Axis.addPlotBand) and [addPlotLine](https://api.highcharts.com/highcharts/Axis.addPlotLine).

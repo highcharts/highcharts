@@ -1,7 +1,7 @@
 Data module
 ===
 
-The Data module provides options for loading data from external sources, like CSV files, HTML tables or Google Spreadsheets, in a convenient way, using a declarative options set. Its options are available under the data object. For the full reference and samples, see [api.highcharts.com/highcharts/data](http://api.highcharts.com/highcharts/data).
+The Data module provides options for loading data from external sources, like CSV files, HTML tables or Google Spreadsheets, in a convenient way, using a declarative options set. Its options are available under the data object. For the full reference and samples, see [api.highcharts.com/highcharts/data](https://api.highcharts.com/highcharts/data).
 
 TABULAR STRUCTURE
 -----------------
@@ -11,7 +11,7 @@ The sources for the data module (CSV file, HTML tables or Google spreadsheets), 
 LOADING CSV
 -----------
 
-CSV can be loaded in two ways. Either [data.csv](http://api.highcharts.com/highcharts/data.csv), that holds a CSV string to be read into the chart, or, since v6.1, [data.csvURL](http://api.highcharts.com/highcharts/data.csvURL) that points to a file location. By default, the first row of the CSV data is interpreted as series names, the first column signifies category names or X values/dates, and subsequent columns hold data values.
+CSV can be loaded in two ways. Either [data.csv](https://api.highcharts.com/highcharts/data.csv), that holds a CSV string to be read into the chart, or, since v6.1, [data.csvURL](https://api.highcharts.com/highcharts/data.csvURL) that points to a file location. By default, the first row of the CSV data is interpreted as series names, the first column signifies category names or X values/dates, and subsequent columns hold data values.
 
 Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](studies/data-module-csv.htm).
 
@@ -52,7 +52,7 @@ If the data is dynamic and the chart should be kept updated, set [enablePolling]
 Loading data from a table
 -------------------------
 
-In some cases it could be useful to load the chart data from a table, rather than generating the table from the chart data. In this case, all you need to do is make the [data.table](http://api.highcharts.com/highcharts/data.table) option point to the id of the table:
+In some cases it could be useful to load the chart data from a table, rather than generating the table from the chart data. In this case, all you need to do is make the [data.table](https://api.highcharts.com/highcharts/data.table) option point to the id of the table:
 
     
     Highcharts.chart('container', {  
@@ -69,4 +69,4 @@ View a live sample of [data fetched from a table](http://jsfiddle.net/gh/get/jqu
 Loading from Google Spreadsheets
 --------------------------------
 
-Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allow to edit and keep updated. See the [API docs](http://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.
+Loading the chart data from Google Spreadsheets is a good idea if you want to set up a chart based on data that other team members should be allow to edit and keep updated. See the [API docs](https://api.highcharts.com/highcharts/data.googleSpreadsheetKey) for explanation and sample.

@@ -58,7 +58,7 @@ The color is given as an object literal containing two properties:
 
 When a radial gradient is used as the color of a pie slice or the background color of a gauge or polar chart, the gradient is drawn relative to the full circle, not only the specific shape.
 
-In Internet Explorer 8 and less, radial gradients are not natively supported. Instead, we emulate the effect by loading a graphic pattern image. This image is by default loaded from the Highcharts CDN. To load it from your own server, set the [VMLRadialGradientURL](http://api.highcharts.com/highcharts#global.VMLRadialGradientURL).
+In Internet Explorer 8 and less, radial gradients are not natively supported. Instead, we emulate the effect by loading a graphic pattern image. This image is by default loaded from the Highcharts CDN. To load it from your own server, set the [VMLRadialGradientURL](https://api.highcharts.com/highcharts#global.VMLRadialGradientURL).
 
 See the demo of [radial gradients in a pie chart](demo/pie-gradient).
 

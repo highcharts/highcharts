@@ -8,7 +8,7 @@ In [styled mode](docs/chart-design-and-style/style-by-css) however, we have remo
 1. Define the SVG structure
 ----------------------------
 
-SVG allows graphical objects to be defined for later usage in the [defs tag](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs). So in Highcharts 5, we added a direct API for adding defs through the [SVGRenderer.definition](http://api.highcharts.com/highcharts/SVGRenderer.definition) function and the general [defs option structure](http://api.highcharts.com/highcharts/defs). For maximum flexibility, this structure accepts a JSON-serialized SVG structure that is directly inserted. Some key property names are reserved:
+SVG allows graphical objects to be defined for later usage in the [defs tag](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs). So in Highcharts 5, we added a direct API for adding defs through the [SVGRenderer.definition](https://api.highcharts.com/highcharts/SVGRenderer.definition) function and the general [defs option structure](https://api.highcharts.com/highcharts/defs). For maximum flexibility, this structure accepts a JSON-serialized SVG structure that is directly inserted. Some key property names are reserved:
 
 *   `tagName` corresponds to the SVG tag.
 *   `textContent` is inserted directly into the generated tag.
