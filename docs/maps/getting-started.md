@@ -9,12 +9,12 @@ Load the required files
 For basics, see [Highcharts installation](docs/getting-started/installation). The framework requirements and installation is the same for Highmaps as for Highcharts. To load Highmaps as a standalone product (if you don't have a license for Highcharts), include this script tag:
 
     
-    <script src="http://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 
 If you already have Highcharts installed in the web page and want to run Highmaps as a plugin, include this script tag _after_ `highcharts.js`:
 
     
-    <script src="http://code.highcharts.com/maps/modules/map.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 
 Load the map
 ------------
@@ -23,7 +23,7 @@ Highmaps loads its maps from [GeoJSON](http://en.wikipedia.org/wiki/GeoJSON), a
 
 There are three basic sources for your map:
 
-1.  Use our [Map collection](http://code.highcharts.com/mapdata/). Read the [tutorial article](docs/maps/map-collection) on the map collection to get started.
+1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](docs/maps/map-collection) on the map collection to get started.
 2.  Find an SVG map online and convert it using our (experimental) [online converter](studies/map-from-svg.htm). 
 3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highmaps](docs/maps/custom-maps).
 

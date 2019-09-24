@@ -11,16 +11,16 @@ To get started quickly it's recommended to use the default toolbar of the Stock 
 
 1. First load Highstock and the bundle with all the technical indicators for convenience.
   ```html
-  <script src="http://code.highcharts.com/indicators/indicators-all.js"></script>
+  <script src="https://code.highcharts.com/indicators/indicators-all.js"></script>
   ```
   See the example below when you only need some specific indicators for your project. Load first the `indicator.js` base module and specific indicators successively. Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) base module. The base module includes SMA (Simple Moving Average). Find here a list of [available technical indicators](https://www.highcharts.com/docs/stock/technical-indicator-series).
 
   _See example below for loading specific indicators._
   ```html
-  <script src="http://code.highcharts.com/indicators/indicators.js"></script>
-  <script src="http://code.highcharts.com/indicators/rsi.js"></script>
-  <script src="http://code.highcharts.com/indicators/ema.js"></script> 
-  <script src="http://code.highcharts.com/indicators/macd.js"></script> 
+  <script src="https://code.highcharts.com/indicators/indicators.js"></script>
+  <script src="https://code.highcharts.com/indicators/rsi.js"></script>
+  <script src="https://code.highcharts.com/indicators/ema.js"></script> 
+  <script src="https://code.highcharts.com/indicators/macd.js"></script> 
   <script src="/ .... other technical indicators ...  "
   ```
 

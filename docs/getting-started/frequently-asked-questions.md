@@ -157,4 +157,4 @@ See [Preprocessing data from a database](docs/working-with-data/data-from-a-dat
 Your map of my country does not include a disputed area
 -------------------------------------------------------
 
-We do our best not to take sides in border conflicts, however we realize the need for maps including disputed areas. To solve this, we try to keep our default maps conforming to neutral de facto borders or conventions, while providing alternative maps that include disputed areas. For a complete list of all of our maps, visit our [Map Collection](http://code.highcharts.com/mapdata).
+We do our best not to take sides in border conflicts, however we realize the need for maps including disputed areas. To solve this, we try to keep our default maps conforming to neutral de facto borders or conventions, while providing alternative maps that include disputed areas. For a complete list of all of our maps, visit our [Map Collection](https://code.highcharts.com/mapdata).

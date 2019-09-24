@@ -1,7 +1,7 @@
 Map collection
 ===
 
-For your convenience, Highmaps offers a free [collection of maps](http://code.highcharts.com/mapdata/), optimized for use with Highmaps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
+For your convenience, Highmaps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highmaps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
 
 License
 -------
@@ -15,15 +15,15 @@ Using the map collection
 
 ### Install from our CDN
 
-In the [map collection reference](http://code.highcharts.com/mapdata/), each map name is followed by a link to an example. View the source of this example to get started. In short, the GeoJSON version of the map is loaded in a script tag in the page. This GeoJSON object is then registered to the Highcharts.maps object, and applied to the mapData option in the chart setup.
+In the [map collection reference](https://code.highcharts.com/mapdata/), each map name is followed by a link to an example. View the source of this example to get started. In short, the GeoJSON version of the map is loaded in a script tag in the page. This GeoJSON object is then registered to the Highcharts.maps object, and applied to the mapData option in the chart setup.
 
 1. Add the map as a JavaScript element:
 
 ```html
-<script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
+<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
 ```
 
-<p>You can alternatively link to a specific version or subversion of the map at <code>http://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.js</code>.</p>
+<p>You can alternatively link to a specific version or subversion of the map at <code>https://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.js</code>.</p>
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ If you can't find the exact map that you want in the collection, it is easy to u
 Modify our maps
 ---------------
 
-Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](docs/maps/custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](http://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
+Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](docs/maps/custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
 
 Disclaimer
 ----------
