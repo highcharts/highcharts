@@ -27,7 +27,7 @@ Typical use cases are:
 *   you want to include your charts in emails or automated management reports
 *   you want to have a consistency between graphs you present on your website and your backend produced reports
 
-We're using [PhantomJS](http://phantomjs.org) for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary, it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
+We're using [PhantomJS](https://phantomjs.org) for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary, it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
 
 ### Command line usage
 
@@ -124,7 +124,7 @@ This is how you can send a POST from the commandline with Curl (Windows);
 
 ### Setting it up
 
-1.  For download and install of PhantomJS, see [http://phantomjs.org/download.html](http://phantomjs.org/download.html)
+1.  For download and install of PhantomJS, see [https://phantomjs.org/download.html](https://phantomjs.org/download.html)
 2.  Clone the [highcharts-export-server](https://github.com/highcharts/highcharts-export-server) repository from GitHub or download the zip file containing the repository and copy the [phantomjs](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs) folder to your installation folder
 3.  In the copied phantomjs folder is a file named [resources.json](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs/resources.json). This file specifies the Highcharts javascript files for creating the charts. Make sure the files can be looked up through the resources.json file. The files will be looked up relative to the working directory of PhantomJS, but you can also specify your own locations.
 4.  If you experience issues with PDF export not matching the page size, try changing the dpiCorrection setting in the highcharts-convert.js script. The issue is likely related to this PhantomJS [bug](https://github.com/ariya/phantomjs/issues/12685).

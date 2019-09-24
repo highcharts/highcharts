@@ -1,7 +1,7 @@
 Getting started with Highmaps
 ===
 
-Highmaps is Highcharts for geo maps. Mainly [choropleth maps](http://en.wikipedia.org/wiki/Choropleth_map) where the color intensity relates to some value of a geographic area, but Highmaps also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more. Highmaps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
+Highmaps is Highcharts for geo maps. Mainly [choropleth maps](https://en.wikipedia.org/wiki/Choropleth_map) where the color intensity relates to some value of a geographic area, but Highmaps also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more. Highmaps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
 
 Load the required files
 -----------------------
@@ -19,7 +19,7 @@ If you already have Highcharts installed in the web page and want to run Highmap
 Load the map
 ------------
 
-Highmaps loads its maps from [GeoJSON](http://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps#Highcharts.geojson) and [see the live demo](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highmaps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), an open standard for description of geographic features. Most GIS software supports this format as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/highmaps#Highcharts.geojson) and [see the live demo](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/demo/geojson-multiple-types/).
 
 There are three basic sources for your map:
 

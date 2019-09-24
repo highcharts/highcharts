@@ -176,4 +176,4 @@ In Highcharts, animation is enabled or disabled in two separate places.
 The animation can either be set as a boolean or a configuration object. If true, it will use the 'swing' jQuery easing and a duration of 500 ms. If used as a configuration object, the following properties are supported:
 
 *   duration - The duration of the animation in milliseconds.
-*   easing - When using jQuery as the general framework, the easing can be set to linear or swing. More easing functions are available with the use of jQuery plug-ins, most notably the jQuery UI suite. See the [jQuery docs](http://api.jquery.com/animate/). When using MooTools as the general framework, use the property name transition instead of easing.
+*   easing - When using jQuery as the general framework, the easing can be set to linear or swing. More easing functions are available with the use of jQuery plug-ins, most notably the jQuery UI suite. See the [jQuery docs](https://api.jquery.com/animate/). When using MooTools as the general framework, use the property name transition instead of easing.

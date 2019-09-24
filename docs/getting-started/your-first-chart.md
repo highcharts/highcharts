@@ -59,7 +59,7 @@ We will start off by creating a simple bar chart.
     ```
 3.  You should now see this chart on your webpage:
     
-    ![bar-fruit-consumption.png](http://assets.highcharts.com/images/bar-fruit-consumption.png)
+    ![bar-fruit-consumption.png](https://assets.highcharts.com/images/bar-fruit-consumption.png)
     
 4.  Optionally, you can apply a global theme to your charts. A theme is just a set of options that are applied globally through the [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions()) method. The download package comes with four predefined themes. To apply a theme from one of these files, add this directly after the highcharts.js file inclusion:
 
