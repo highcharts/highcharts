@@ -13,9 +13,9 @@ Pie chart features
 Donut chart
 -----------
 
-A donut chart is created by adding multiple pie series to the chart, setting the size and innerSize of each series to create concentric rings. See the [demo page for donuts](http://highcharts.com/demo/pie-donut).
+A donut chart is created by adding multiple pie series to the chart, setting the size and innerSize of each series to create concentric rings. See the [demo page for donuts](https://highcharts.com/demo/pie-donut).
 
 Radial gradient colors
 ----------------------
 
-A 3D-like ball look is created by applying radial gradient background colors for the slices. See the [demo page for radial gradients](http://highcharts.com/demo/pie-gradient).
+A 3D-like ball look is created by applying radial gradient background colors for the slices. See the [demo page for radial gradients](https://highcharts.com/demo/pie-gradient).

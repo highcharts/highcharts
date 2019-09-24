@@ -29,6 +29,6 @@ For an overview of the flag series options see the [API reference](https://api.h
 Flagseries examples
 -------------------
 
-*   [Flags marking events](http://highcharts.com/stock/demo/flags-general)
-*   [Flags placement](http://highcharts.com/stock/demo/flags-placement)
-*   [Flags shapes and colors](http://highcharts.com/stock/demo/flags-shapes)
+*   [Flags marking events](https://highcharts.com/stock/demo/flags-general)
+*   [Flags placement](https://highcharts.com/stock/demo/flags-placement)
+*   [Flags shapes and colors](https://highcharts.com/stock/demo/flags-shapes)

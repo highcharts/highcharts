@@ -98,7 +98,7 @@ How can I get the best performance out of Highcharts?
 When working with series with a high number of data points, there are a few things to consider.
 
 1.  First of all, consider using [the Boost module](news/175-highcharts-performance-boost).
-2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [http://highcharts.com/demo/line-time-series](http://highcharts.com/demo/line-time-series).
+2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
 4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.
 
