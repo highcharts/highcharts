@@ -24,6 +24,6 @@ Since Highcharts 4, we also provide a second type of gauges, the `solidgauge`. I
 Gauge examples
 --------------
 
-*   [Spedometer with dual axes](http://jsfiddle.net/highcharts/EjRLw/)
-*   [The Highcharts Clock](http://jsfiddle.net/highcharts/3CUgG/)
-*   [VU meter](http://jsfiddle.net/highcharts/wCJjE/)
+*   [Spedometer with dual axes](https://jsfiddlefiddle.net/highcharts/EjRLw/)
+*   [The Highcharts Clock](https://jsfiddlefiddle.net/highcharts/3CUgG/)
+*   [VU meter](https://jsfiddlefiddle.net/highcharts/wCJjE/)

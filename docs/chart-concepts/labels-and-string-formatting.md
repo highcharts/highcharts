@@ -24,13 +24,13 @@ Format strings are templates for labels, where variables are inserted. Format st
 
 **Numbers** are formatted with a subset of float formatting conventions from the C library function sprintf. The formatting is appended inside the variable brackets, separated by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
 
-*   Two decimal places: `"{point.y:.2f}"` [[Demo](http://jsfiddle.net/highcharts/AYWsW/)]
-*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](http://jsfiddle.net/highcharts/rmTWS/)]
-*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](http://jsfiddle.net/highcharts/eeDnv/)]
+*   Two decimal places: `"{point.y:.2f}"` [[Demo](https://jsfiddlefiddle.net/highcharts/AYWsW/)]
+*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddlefiddle.net/highcharts/rmTWS/)]
+*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddlefiddle.net/highcharts/eeDnv/)]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts#dateFormat). For example:
 
-*   Full date: `{value:%Y-%m-%d}` [[Demo](http://jsfiddle.net/highcharts/PwEnd/)]
+*   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddlefiddle.net/highcharts/PwEnd/)]
 
 ### Formatter callbacks
 

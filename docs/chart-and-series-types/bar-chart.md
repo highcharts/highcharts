@@ -14,4 +14,4 @@ The bar chart can be used as a trellis chart by drawing several bar charts in a 
 
 ![trellis.png](trellis.png)
 
-The example can be found at [http://jsfiddle.net/highcharts/VqruM/](http://jsfiddle.net/highcharts/VqruM/).
+The example can be found at [https://jsfiddlefiddle.net/highcharts/VqruM/](https://jsfiddlefiddle.net/highcharts/VqruM/).

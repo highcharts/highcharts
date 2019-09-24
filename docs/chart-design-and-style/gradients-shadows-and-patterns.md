@@ -39,7 +39,7 @@ An example of using defs is to apply a gradient: 
 
 The _key_ (see code comment) doesn't have a general meaning, but can be used for later reference or when merging options. For instance the structure can be modified in depth through `Highcharts.setOptions`. 
 
-An alternative way to define the SVG structure is to add it to a second SVG in the same HTML document. This is the fastest way of reusing definitions by copy-pasting from online SVG examples. [View sample](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/).
+An alternative way to define the SVG structure is to add it to a second SVG in the same HTML document. This is the fastest way of reusing definitions by copy-pasting from online SVG examples. [View sample](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/).
 
 2. Apply it in the CSS
 -----------------------
@@ -51,7 +51,7 @@ As for shadow, there is a built-in definition in Highcharts. Set `filter: url(#d
 Samples
 -------
 
-1.  [Gradients](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient/). The sample shows two gradients. Stop colors are also defined from the CSS.
-2.  [Shadows and glows](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/shadow/). The sample shows how to apply an SVG filter. For a simple drop shadow, the built-in `#drop-shadow` filter can be used.
-3.  [Patterns](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/pattern/). The sample shows how to add pattern patterns in the defs, and add colors an apply them in CSS. 
-4.  [Borrow definitions](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/) from another SVG in the page.
+1.  [Gradients](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient/). The sample shows two gradients. Stop colors are also defined from the CSS.
+2.  [Shadows and glows](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/shadow/). The sample shows how to apply an SVG filter. For a simple drop shadow, the built-in `#drop-shadow` filter can be used.
+3.  [Patterns](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/pattern/). The sample shows how to add pattern patterns in the defs, and add colors an apply them in CSS. 
+4.  [Borrow definitions](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/) from another SVG in the page.

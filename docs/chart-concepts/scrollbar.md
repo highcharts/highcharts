@@ -19,8 +19,8 @@ The full documentation and available options can be seen in our [API docs](http
 
 Scrollbars are not limited to stock charts or Y axis. Using the _highstock.js_ file, it can be applied to regular Highcharts axes too. See examples of:
 
-*   [Scrollable bar chart](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/inverted-bar-scrollbar/)
-*   [Heatmap with two scrollable axes (zoom in first)](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/heatmap-scrollbars/)
-*   [Scrollable Y axis on stock chart (zoom in first)](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/scrollbar/)
+*   [Scrollable bar chart](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/inverted-bar-scrollbar/)
+*   [Heatmap with two scrollable axes (zoom in first)](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/heatmap-scrollbars/)
+*   [Scrollable Y axis on stock chart (zoom in first)](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/yaxis/scrollbar/)
 
 <iframe width="100%" height="450" style="border: none;" src=https://www.highcharts.com/samples/embed/stock/yaxis/inverted-bar-scrollbar allow="fullscreen"></iframe>

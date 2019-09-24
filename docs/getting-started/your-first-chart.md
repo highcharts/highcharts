@@ -71,5 +71,5 @@ For more details on how the options or settings in Highcharts work see [How to 
 
 Below is a list of online examples of the examples shown in this article:
 
-*   [Simple bar chart](http://jsfiddle.net/highcharts/kh5jY/)
-*   [Highstock Example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/)
+*   [Simple bar chart](https://jsfiddlefiddle.net/highcharts/kh5jY/)
+*   [Highstock Example](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/)

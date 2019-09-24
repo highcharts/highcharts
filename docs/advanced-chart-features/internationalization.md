@@ -31,11 +31,11 @@ In RTL languages you may want to put the Y axis on the right side and reverse th
 Numbers
 -------
 
-Numbers can be internationalized by extending the numberFormat function. See the example of [Arabic digits in Highcharts](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/highcharts-numberformat/). 
+Numbers can be internationalized by extending the numberFormat function. See the example of [Arabic digits in Highcharts](https://jsfiddlefiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/highcharts-numberformat/). 
 
 Live demo
 ---------
 
-See a [live Arabic chart](http://jsfiddle.net/highcharts/buYCZ/) demo.  
-See a [live Arabic chart](http://jsfiddle.net/highcharts/ebqj2e19/) demo.  
-See a [live Chinese chart](http://jsfiddle.net/highcharts/u923mpct/) demo.
+See a [live Arabic chart](https://jsfiddlefiddle.net/highcharts/buYCZ/) demo.  
+See a [live Arabic chart](https://jsfiddlefiddle.net/highcharts/ebqj2e19/) demo.  
+See a [live Chinese chart](https://jsfiddlefiddle.net/highcharts/u923mpct/) demo.

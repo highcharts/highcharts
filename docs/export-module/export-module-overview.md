@@ -52,6 +52,6 @@ Normally Highcharts sends data to the export server for saving a graph as an im
 |resources|Stringified JSON which can contain three properties js and css. Example: `{"css": "g.highcharts-series path {stroke-width:2;stroke: pink}", "js": "document.body.style.webkitTransform = \"rotate(-10deg)\";" }`css: css inserted in the body of the page, js: javascript inserted in the body of the page|
 |async|Can be of true or false. Default is false. When setting async to true a download link is returned to the client, instead of an image. This download link can be reused for 30 seconds. After that, the file will be deleted from the server.|
 
-See here for an example on how to perform an Ajax Post and return an image. http://jsfiddle.net/6h8o16g0/
+See here for an example on how to perform an Ajax Post and return an image. https://jsfiddlefiddle.net/6h8o16g0/
 
 
