@@ -40,7 +40,7 @@ js/modules/**/*.js
 #!js/modules/variable-pie.src.js
 #!js/modules/variwide.src.js
 #!js/modules/vector.src.js
-!js/modules/venn.src.js
+#!js/modules/venn.src.js
 !js/modules/windbarb.src.js
 !js/modules/wordcloud.src.js
 js/mixins/**/*.js
