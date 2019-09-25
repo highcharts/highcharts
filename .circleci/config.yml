@@ -167,9 +167,9 @@ jobs:
       - run: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
       - run: mkdir ../visual-test-results
       - run:
-          name: Save test results
+          name: Save test results where both an reference.svg and candidate.svg exists
           command: |
-            find samples/ -type f -regex ".*\(reference\|candidate\).svg" -exec cp --parents {} ../visual-test-results/ \;
+            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} cp -r --parents {} ../visual-test-results
           when: always
       - store_test_results:
           path: ../visual-test-results
