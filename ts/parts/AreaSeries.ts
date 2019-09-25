@@ -257,7 +257,7 @@ seriesType<Highcharts.AreaSeries>(
 
                 for (i = 0; i < points.length; i++) {
                     // Reset after point update (#7326)
-                    points[i].leftNull = points[i].rightNull = null as any;
+                    points[i].leftNull = points[i].rightNull = undefined;
 
                     // Create a map where we can quickly look up the points by
                     // their X values.
@@ -482,6 +482,13 @@ seriesType<Highcharts.AreaSeries>(
             }
 
             for (i = 0; i < points.length; i++) {
+
+                // Reset after series.update of stacking property (#12033)
+                if (!stacking) {
+                    points[i].leftCliff = points[i].rightCliff =
+                        points[i].leftNull = points[i].rightNull = undefined;
+                }
+
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
                 yBottom = pick(points[i].yBottom, translatedThreshold);
