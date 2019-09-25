@@ -1,4 +1,4 @@
-QUnit.test('Pie radial gradient', function (assert) {
+QUnit.test('Pie radial gradient (#3801)', function (assert) {
 
 
     // Radialize the colors
