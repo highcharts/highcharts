@@ -1,16 +1,17 @@
 {
+    "disableOutputCheck": true,
     "excludeExternals": true,
     "excludeNotExported": false,
     "excludePrivate": true,
     "excludeProtected": true,
     "ignoreCompilerErrors": false,
     "includeDeclarations": false,
+    "listInvalidSymbolLinks": true,
     "entryPoint": "__global.Highcharts",
     "gitRevision": "master",
     "includes": ".",
     "mode": "file",
     "name": "Highcharts Internals",
     "plugin": "none",
-    "readme": "none",
-    "theme": "../node_modules/highcharts-documentation-generators/typedoc/theme-internals"
+    "readme": "none"
 }
