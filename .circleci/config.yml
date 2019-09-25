@@ -160,10 +160,10 @@ jobs:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: git checkout ${CIRCLE_BRANCH} && npm i
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 1 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
       - run: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
       - run: mkdir ../visual-test-results
       - run:
@@ -361,6 +361,7 @@ workflows:
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
+          browsercount: 2
           requires:
             - install_dependencies
       - test_browsers:
