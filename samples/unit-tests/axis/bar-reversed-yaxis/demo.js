@@ -1,4 +1,4 @@
-QUnit.test('Reversed yAxis for bar charts cause detached columns from axis.', function (assert) {
+QUnit.test('Reversed yAxis for bar charts cause detached columns from axis (#4504)', function (assert) {
     var options = {
             chart: {
                 type: "column"
