@@ -189,7 +189,8 @@ async function commentOnPR() {
 
     const commentTemplate = diffs.length === 0 ?
         `${DEFAULT_COMMENT_MATCH} - No difference found` :
-        `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff |\n| --- | --- |\n${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' |').join('\n')}`;
+        `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff |\n| --- | --- |\n${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' |').join('\n')}
+            ${process.env.CIRCLE_BUILD_URL ? `\n\nCompared SVGs can be found under the [CI job artifacts](${process.env.CIRCLE_BUILD_URL}#artifacts).` : ''}`;
 
     try {
         let result;
@@ -213,6 +214,7 @@ commentOnPR.description = 'Comments any diff from test/visual-test-results.json'
 commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--user': 'Github user',
+    '--token': 'Github token (can also be specified with GITHUB_TOKEN env var.',
     '--contains-text': 'Filter text used to find PR comment to overwrite',
     '--always-add': 'If present any old test results comment won\'t be deleted',
     '--fail-silently': 'Will always return exitCode 0 (success)'
