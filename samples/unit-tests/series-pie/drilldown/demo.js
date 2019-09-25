@@ -1,4 +1,4 @@
-QUnit.test('Slice color after drilldown and select.', function (assert) {
+QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
     var options = {
             chart: {
                 type: 'pie',
