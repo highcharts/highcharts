@@ -68,25 +68,27 @@ async function fetchPRComments(pr, user, filterText) {
 }
 
 /**
- * Deletes an existing Github comment
+ * Updates an existing Github comment
  *
- * @param {number} commentId to delete
+ * @param {number} commentId to update
+ * @param {string} newComment to overwrite existing one
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
-async function deleteExistingPRComment(commentId) {
-    logLib.message('Deleting existing comment with id ' + commentId);
+async function updatePRComment(commentId, newComment) {
+    logLib.message('Updating existing comment with id ' + commentId);
     return new Promise((resolve, reject) => {
         doRequest({
             ...DEFAULT_OPTIONS,
             url: `https://api.github.com/repos/highcharts/highcharts/issues/comments/${commentId}`,
-            method: 'DELETE'
+            method: 'PATCH',
+            body: { body: newComment }
         })
             .then(response => {
-                logLib.message('Successfully deleted comment with id ' + commentId);
+                logLib.message('Successfully updated comment with id ' + commentId);
                 resolve(response);
             })
             .catch(err => {
-                logLib.warn('Failed to delete existing PR comment: ' + err);
+                logLib.warn('Failed to update existing PR comment: ' + err);
                 reject(err);
             });
     });
@@ -179,10 +181,6 @@ async function commentOnPR() {
     const { containsText = DEFAULT_COMMENT_MATCH } = argv;
     const existingComments = await fetchPRComments(pr, user, containsText);
 
-    if (!alwaysAdd && existingComments.length > 0) {
-        logLib.message(`No matching PR comment(s) found for #${pr}. Skipping deletion of existing comment.`);
-        await deleteExistingPRComment(existingComments[0].id);
-    }
 
     const diffs = Object.entries(testResults).filter(entry => {
         const value = entry[1];
@@ -194,11 +192,20 @@ async function commentOnPR() {
         `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff |\n| --- | --- |\n${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' |').join('\n')}`;
 
     try {
-        const result = await createPRComment(pr, commentTemplate);
-        logLib.message(`Comment created at ${result.html_url}`);
+        let result;
+
+        if (!alwaysAdd && existingComments.length > 0) {
+            logLib.message(`Updating existing comment for #${pr}`);
+            result = await updatePRComment(existingComments[0].id, commentTemplate);
+            logLib.message(`Comment updated at ${result.html_url}`);
+        } else {
+            logLib.message(`Creating new comment for #${pr}`);
+            result = await createPRComment(pr, commentTemplate);
+            logLib.message(`Comment created at ${result.html_url}`);
+        }
         return Promise.resolve(result);
-    } catch (e) {
-        return Promise.reject(e);
+    } catch (err) {
+        return completeTask(err || err.message);
     }
 }
 
