@@ -132,27 +132,7 @@ QUnit.test('Check that deprecated keyboardNavigation options are moved over', as
 
 
 QUnit.test('Check that deprecated lang options are moved over', assert => {
-    const unmute = muteErrors(),
-        defaultOptions = Highcharts.getOptions();
-
-    Highcharts.setOptions({
-        lang: {
-            accessibility: {
-                legendItem: 'legenditem',
-                legendLabel: 'legendlabel',
-                mapZoomIn: 'mapzoomin',
-                mapZoomOut: 'mapzoomout',
-                resetZoomButton: 'resetzoom',
-                screenReaderRegionLabel: 'screenreaderregion',
-                rangeSelectorButton: 'rangebutton',
-                rangeSelectorMaxInput: 'rangemax',
-                rangeSelectorMinInput: 'rangemin',
-                svgContainerEnd: 'containerend',
-                viewAsDataTable: 'viewasdatatable',
-                tableSummary: 'tablesummary'
-            }
-        }
-    });
+    const unmute = muteErrors();
 
     const newOptionMap = {
             legendItem: ['legend', 'legendItem'],
@@ -160,15 +140,31 @@ QUnit.test('Check that deprecated lang options are moved over', assert => {
             mapZoomIn: ['zoom', 'mapZoomIn'],
             mapZoomOut: ['zoom', 'mapZoomOut'],
             resetZoomButton: ['zoom', 'resetZoomButton'],
-            screenReaderRegionLabel: ['screenReaderRegion', 'beforeRegionLabel'],
+            screenReaderRegionLabel: ['screenReaderSection', 'beforeRegionLabel'],
             rangeSelectorButton: ['rangeSelector', 'buttonText'],
             rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
             rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
-            svgContainerEnd: ['screenReaderRegion', 'endOfChartMarker'],
+            svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
             viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
             tableSummary: ['table', 'tableSummary']
         },
         chart = Highcharts.chart('container', {
+            lang: {
+                accessibility: {
+                    legendItem: 'legenditem',
+                    legendLabel: 'legendlabel',
+                    mapZoomIn: 'mapzoomin',
+                    mapZoomOut: 'mapzoomout',
+                    resetZoomButton: 'resetzoom',
+                    screenReaderRegionLabel: 'screenreaderregion',
+                    rangeSelectorButton: 'rangebutton',
+                    rangeSelectorMaxInput: 'rangemax',
+                    rangeSelectorMinInput: 'rangemin',
+                    svgContainerEnd: 'containerend',
+                    viewAsDataTable: 'viewasdatatable',
+                    tableSummary: 'tablesummary'
+                }
+            },
             series: [{ data: [1] }]
         }),
         getNewOptionValue = oldOptionKey => getChildProp(
@@ -183,6 +179,5 @@ QUnit.test('Check that deprecated lang options are moved over', assert => {
         );
     });
 
-    Highcharts.setOptions(defaultOptions);
     unmute();
 });

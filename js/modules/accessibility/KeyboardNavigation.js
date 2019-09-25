@@ -259,7 +259,7 @@ KeyboardNavigation.prototype = {
             exitAnchor = this.exitAnchor = doc.createElement('h6'),
             keyboardNavigation = this,
             exitAnchorLabel = chart.langFormat(
-                'accessibility.screenReaderRegion.endOfChartMarker',
+                'accessibility.screenReaderSection.endOfChartMarker',
                 { chart: chart }
             );
 

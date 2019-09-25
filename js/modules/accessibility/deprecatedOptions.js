@@ -46,11 +46,11 @@
  *  lang.accessibility.mapZoomIn -> lang.accessibility.zoom.mapZoomIn
  *  lang.accessibility.mapZoomOut -> lang.accessibility.zoom.mapZoomOut
  *  lang.accessibility.resetZoomButton -> lang.accessibility.zoom.resetZoomButton
- *  lang.accessibility.screenReaderRegionLabel -> lang.accessibility.screenReaderRegion.beforeRegionLabel
+ *  lang.accessibility.screenReaderRegionLabel -> lang.accessibility.screenReaderSection.beforeRegionLabel
  *  lang.accessibility.rangeSelectorButton -> lang.accessibility.rangeSelector.buttonText
  *  lang.accessibility.rangeSelectorMaxInput -> lang.accessibility.rangeSelector.maxInputLabel
  *  lang.accessibility.rangeSelectorMinInput -> lang.accessibility.rangeSelector.minInputLabel
- *  lang.accessibility.svgContainerEnd -> lang.accessibility.screenReaderRegion.endOfChartMarker
+ *  lang.accessibility.svgContainerEnd -> lang.accessibility.screenReaderSection.endOfChartMarker
  *  lang.accessibility.viewAsDataTable -> lang.accessibility.table.viewAsDataTableButtonText
  *  lang.accessibility.tableSummary -> lang.accessibility.table.tableSummary
  *
@@ -239,12 +239,12 @@ function copyDeprecatedLangOptions(chart) {
             mapZoomIn: ['zoom', 'mapZoomIn'],
             mapZoomOut: ['zoom', 'mapZoomOut'],
             resetZoomButton: ['zoom', 'resetZoomButton'],
-            screenReaderRegionLabel: ['screenReaderRegion',
+            screenReaderRegionLabel: ['screenReaderSection',
                 'beforeRegionLabel'],
             rangeSelectorButton: ['rangeSelector', 'buttonText'],
             rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
             rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
-            svgContainerEnd: ['screenReaderRegion', 'endOfChartMarker'],
+            svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
             viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
             tableSummary: ['table', 'tableSummary']
         }

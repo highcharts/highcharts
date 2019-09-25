@@ -63,7 +63,7 @@ var langOptions = {
          *
          * @since next
          */
-        screenReaderRegion: {
+        screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
 
             /**

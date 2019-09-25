@@ -795,7 +795,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             'aria-live', a11yOptions.announceNewData.interruptUser ?
                 'assertive' : 'polite'
         );
-        merge(true, this.announceRegion.style, this.hiddenStyle);
+        this.visuallyHideElement(this.announceRegion);
         chart.renderTo.insertBefore(
             this.announceRegion, chart.renderTo.firstChild
         );

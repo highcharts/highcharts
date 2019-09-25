@@ -70,7 +70,23 @@ var options = {
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              * @since next
              */
-            axisRangeDateFormat: '%Y-%m-%d %H:%M:%S'
+            axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
+
+            /**
+             * Format for the screen reader information region before the chart.
+             * Supported HTML tags are headings, <p>, <div>, <a>, and <button>.
+             * Attributes are not supported, except for id on <a> and <button>.
+             *
+             * @since next
+             */
+            beforeChartFormat:
+                '<h5>{chartTitle}</h5>' +
+                '<div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{xAxisDescription}</div>' +
+                '<div>{yAxisDescription}</div>' +
+                '<div>{viewTableButtonText}</div>'
         },
 
         /**

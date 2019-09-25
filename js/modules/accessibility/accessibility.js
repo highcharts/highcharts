@@ -48,7 +48,7 @@ import MenuComponent from './components/MenuComponent.js';
 import SeriesComponent from './components/SeriesComponent.js';
 import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
-import InfoRegionComponent from './components/InfoRegionComponent.js';
+import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
@@ -67,9 +67,7 @@ var addEvent = H.addEvent,
 merge(true, H.defaultOptions, defaultOptions, {
     accessibility: {
         highContrastTheme: highContrastTheme
-    }
-});
-merge(true, H.defaultOptions, {
+    },
     lang: defaultLangOptions
 });
 
@@ -269,7 +267,7 @@ Accessibility.prototype = {
 
         this.components = {
             container: new ContainerComponent(),
-            infoRegion: new InfoRegionComponent(),
+            infoRegions: new InfoRegionsComponent(),
             legend: new LegendComponent(),
             chartMenu: new MenuComponent(),
             rangeSelector: new RangeSelectorComponent(),

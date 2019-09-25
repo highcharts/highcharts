@@ -1,3 +1,10 @@
+function getScreenReaderSectionEl(chart) {
+    var a11y = chart.accessibility,
+        components = a11y && a11y.components,
+        infoRegions = components && components.infoRegions;
+    return infoRegions && infoRegions.screenReaderSections.before.element;
+}
+
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
@@ -8,8 +15,7 @@ QUnit.test('Accessibility disabled', function (assert) {
             }]
         }),
         point = chart.series[0].points[0],
-        infoRegion = chart.accessibility &&
-            chart.accessibility.components.infoRegion;
+        srSection = getScreenReaderSectionEl(chart);
 
     assert.notOk(
         point.graphic.element.getAttribute('aria-label'),
@@ -17,42 +23,32 @@ QUnit.test('Accessibility disabled', function (assert) {
     );
 
     assert.notOk(
-        infoRegion && infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        srSection && srSection.getAttribute('aria-label'),
         'There be no screen reader region'
     );
 });
 
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{}]
-        }),
-        infoRegion = chart.accessibility &&
-            chart.accessibility.components.infoRegion;
+        series: [{}]
+    });
 
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
-    infoRegion = chart.accessibility &&
-        chart.accessibility.components.infoRegion;
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, no series option'
     );
 
     chart = Highcharts.chart('container', {
         series: []
     });
-    infoRegion = chart.accessibility &&
-        chart.accessibility.components.infoRegion;
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, no series items'
     );
 });
@@ -196,8 +192,7 @@ QUnit.test('Chart description', function (assert) {
         }]
     });
     assert.ok(
-        chart.accessibility.components.infoRegion.screenReaderRegion.innerHTML
-            .indexOf('Description: Yo.') > -1,
+        getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') > -1,
         'Chart description included in screen reader region'
     );
 });
