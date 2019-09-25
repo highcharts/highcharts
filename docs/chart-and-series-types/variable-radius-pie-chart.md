@@ -7,7 +7,7 @@ _For more detailed samples and documentation check the [API.](https://api.highch
 
 <iframe style="width: 100%; height: 532px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/variable-radius-pie allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddlefiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variable-radius-pie/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variable-radius-pie/) to check the code.
 
 How to create a variable-radius-pie series
 ------------------------------------------
