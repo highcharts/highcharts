@@ -1,35 +1,4 @@
-QUnit.test('normal:lineWidth and hover:lineWidthPlus #4035', function (assert) {
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
-        series: [{
-            data: [1, 3, 2, 4],
-            lineWidth: 2,
-            states: {
-                hover: {
-                    lineWidthPlus: 2
-                }
-            }
-        }]
-    });
-
-    assert.equal(
-        chart.series[0].graph.element.getAttribute('stroke-width'),
-        '2',
-        'normal'
-    );
-
-    chart.series[0].points[0].onMouseOver();
-
-    assert.equal(
-        chart.series[0].graph.element.getAttribute('stroke-width'),
-        '4',
-        'hover'
-    );
-});
-
-QUnit.test('hover:lineWidth and hover:lineWidthPlus', function (assert) {
+QUnit.test('hover:lineWidth and hover:lineWidthPlus (#4035)', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container'
