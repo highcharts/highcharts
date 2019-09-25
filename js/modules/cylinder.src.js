@@ -42,13 +42,18 @@ seriesType('cylinder', 'column',
  * @extends      plotOptions.column
  * @since        7.0.0
  * @product      highcharts
- * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+ *               dragDrop
  * @optionparent plotOptions.cylinder
  */
 {}, {}, 
 /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
 {
-    shapeType: 'cylinder'
+    shapeType: 'cylinder',
+    hasNewShapeType: H
+        .seriesTypes.column.prototype
+        .pointClass.prototype
+        .hasNewShapeType
 });
 /**
  * A `cylinder` series. If the [type](#series.cylinder.type) option is not

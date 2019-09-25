@@ -190,6 +190,7 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     splat
@@ -208,7 +209,6 @@ var addEvent = H.addEvent,
     color = H.color,
     defaultOptions = H.defaultOptions,
     destroyObjectProperties = H.destroyObjectProperties,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
@@ -497,7 +497,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/series/
          *         A green navigator series
          *
-         * @type {*|Highcharts.SeriesOptionsType}
+         * @type {*|Array<*>|Highcharts.SeriesOptionsType|Array<Highcharts.SeriesOptionsType>}
          */
         series: {
 
@@ -1766,7 +1766,10 @@ Navigator.prototype = {
             }
         }
 
-        if ((e as any).DOMType !== 'mousemove') {
+        if (
+            (e as any).DOMType !== 'mousemove' &&
+            (e as any).DOMType !== 'touchmove'
+        ) {
             navigator.grabbedLeft = navigator.grabbedRight =
                 navigator.grabbedCenter = navigator.fixedWidth =
                 navigator.fixedExtreme = navigator.otherHandlePos =
@@ -2756,6 +2759,9 @@ if (!H.Navigator) {
                             legend.legendHeight +
                             pick(legendOptions.margin, 10) :
                             0
+                    ) -
+                    (
+                        this.titleOffset ? this.titleOffset[2] : 0
                     );
             }
 

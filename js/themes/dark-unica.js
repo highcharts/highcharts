@@ -6,21 +6,18 @@
  *
  *  Dark theme for Highcharts JS
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 /* global document */
-
 // Load the fonts
 import Highcharts from '../parts/Globals.js';
-
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',
     type: 'text/css'
 }, null, document.getElementsByTagName('head')[0]);
-
 Highcharts.theme = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -63,7 +60,6 @@ Highcharts.theme = {
         title: {
             style: {
                 color: '#A0A0A3'
-
             }
         }
     },
@@ -139,7 +135,6 @@ Highcharts.theme = {
             color: '#707073'
         }
     },
-
     drilldown: {
         activeAxisLabelStyle: {
             color: '#F0F0F3'
@@ -148,7 +143,6 @@ Highcharts.theme = {
             color: '#F0F0F3'
         }
     },
-
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
@@ -157,7 +151,6 @@ Highcharts.theme = {
             }
         }
     },
-
     // scroll charts
     rangeSelector: {
         buttonTheme: {
@@ -192,7 +185,6 @@ Highcharts.theme = {
             color: 'silver'
         }
     },
-
     navigator: {
         handles: {
             backgroundColor: '#666',
@@ -208,7 +200,6 @@ Highcharts.theme = {
             gridLineColor: '#505053'
         }
     },
-
     scrollbar: {
         barBackgroundColor: '#808083',
         barBorderColor: '#808083',
@@ -220,6 +211,5 @@ Highcharts.theme = {
         trackBorderColor: '#404043'
     }
 };
-
 // Apply the theme
 Highcharts.setOptions(Highcharts.theme);

@@ -13,13 +13,16 @@
 import H from '../../../parts/Globals.js';
 
 import U from '../../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import A11yUtilities from '../utilities.js';
 
 var merge = H.merge,
-    pick = H.pick;
+    pick = H.pick,
+    stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
 /*
@@ -557,15 +560,10 @@ H.Point.prototype.getA11yTimeDescription = function () {
  * @private
  * @class
  * @name Highcharts.SeriesComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var SeriesComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var SeriesComponent = function () {};
 SeriesComponent.prototype = new AccessibilityComponent();
-H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
+extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
     /**
      * Init the component.
@@ -993,7 +991,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce';
         return chart.langFormat(
             'accessibility.announceNewData.' + langKey, {
-                chartTitle: this.stripTags(
+                chartTitle: stripHTMLTags(
                     chart.options.title.text || chart.langFormat(
                         'accessibility.defaultChartTitle', { chart: chart }
                     )
@@ -1115,7 +1113,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                             // Set screen reader specific props
                             pointEl.setAttribute('role', 'img');
                             pointEl.setAttribute('aria-label',
-                                component.stripTags(
+                                stripHTMLTags(
                                     seriesA11yOptions
                                         .pointDescriptionFormatter &&
                                     seriesA11yOptions
@@ -1145,7 +1143,7 @@ H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 seriesEl.setAttribute('tabindex', '-1');
                 seriesEl.setAttribute(
                     'aria-label',
-                    component.stripTags(
+                    stripHTMLTags(
                         a11yOptions.seriesDescriptionFormatter &&
                         a11yOptions.seriesDescriptionFormatter(series) ||
                         component.defaultSeriesDescriptionFormatter(series)

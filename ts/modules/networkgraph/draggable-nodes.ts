@@ -49,6 +49,7 @@ declare global {
             chart: DragNodesChart;
             data: Array<DragNodesPoint>;
             hasDraggableNodes?: boolean;
+            layout: NetworkgraphLayout;
             onMouseDown: DragNodesMixin['onMouseDown'];
             onMouseMove: DragNodesMixin['onMouseMove'];
             onMouseUp: DragNodesMixin['onMouseUp'];

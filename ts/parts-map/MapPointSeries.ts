@@ -18,17 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface MapPointPointOptions extends ScatterPointOptions {
-            lat?: number;
-            lon?: number;
-            x?: number;
-            y?: (number|null);
-        }
-        interface MapPointSeriesOptions extends ScatterSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            mappoint: typeof MapPointSeries;
-        }
         class MapPointPoint extends ScatterPoint {
             public options: MapPointPointOptions;
             public series: MapPointSeries;
@@ -44,6 +33,18 @@ declare global {
                 options: (MapLatLonObject&MapPointPointOptions),
                 x?: number
             ): MapPointPoint
+        }
+        interface MapPointPointOptions extends ScatterPointOptions {
+            lat?: number;
+            lon?: number;
+            x?: number;
+            y?: (number|null);
+        }
+        interface MapPointSeriesOptions extends ScatterSeriesOptions {
+            states?: SeriesStatesOptionsObject<MapPointSeries>;
+        }
+        interface SeriesTypesDictionary {
+            mappoint: typeof MapPointSeries;
         }
     }
 }
@@ -64,7 +65,7 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapPointSeriesOptions>(
+seriesType<Highcharts.MapPointSeries>(
     'mappoint',
     'scatter',
     /**

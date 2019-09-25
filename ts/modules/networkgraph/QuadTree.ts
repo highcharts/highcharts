@@ -13,6 +13,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    extend
+} = U;
 
 /**
  * Internal types
@@ -123,7 +127,7 @@ var QuadTreeNode = H.QuadTreeNode = function (
     this.isEmpty = true;
 } as any;
 
-H.extend(
+extend(
     QuadTreeNode.prototype,
     /** @lends Highcharts.QuadTreeNode.prototype */
     {
@@ -360,7 +364,7 @@ var QuadTree = H.QuadTree = function (
 } as any;
 
 
-H.extend(
+extend(
     QuadTree.prototype,
     /** @lends Highcharts.QuadTree.prototype */
     {

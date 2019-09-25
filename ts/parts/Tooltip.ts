@@ -15,9 +15,11 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber,
     isString,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 /**
@@ -26,51 +28,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type TooltipShapeValue = ('callout'|'circle'|'square');
-        interface PlotSeriesOptions {
-            tooltip?: TooltipOptions;
-        }
-        interface Point {
-            tooltipPos?: Array<number>;
-        }
-        interface Series {
-            noSharedTooltip?: boolean;
-            tt?: SVGElement;
-        }
-        interface TooltipFormatterCallbackFunction {
-            (
-                this: TooltipFormatterContextObject,
-                tooltip: Tooltip
-            ): (false|string|Array<string>);
-        }
-        interface TooltipFormatterContextObject {
-            color: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            key: number;
-            percentage?: number;
-            point: Point;
-            points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: Series;
-            total?: number;
-            x: number;
-            y: number;
-        }
-        interface TooltipOptions {
-            distance?: number;
-        }
-        interface TooltipPositionerCallbackFunction {
-            (
-                labelWidth: number,
-                labelHeight: number,
-                point: TooltipPositionerPointObject
-            ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: boolean;
-            negative: boolean;
-            plotX: number;
-            plotY: number;
-        }
         class Tooltip {
             public constructor(chart: Chart, options: TooltipOptions);
             public chart: Chart;
@@ -143,6 +100,51 @@ declare global {
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
         }
+        interface Point {
+            tooltipPos?: Array<number>;
+        }
+        interface Series {
+            noSharedTooltip?: boolean;
+            tt?: SVGElement;
+        }
+        interface SeriesOptions {
+            tooltip?: TooltipOptions;
+        }
+        interface TooltipFormatterCallbackFunction {
+            (
+                this: TooltipFormatterContextObject,
+                tooltip: Tooltip
+            ): (false|string|Array<string>);
+        }
+        interface TooltipFormatterContextObject {
+            color: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            key: number;
+            percentage?: number;
+            point: Point;
+            points?: Array<Highcharts.TooltipFormatterContextObject>;
+            series: Series;
+            total?: number;
+            x: number;
+            y: number;
+        }
+        interface TooltipOptions {
+            distance?: number;
+        }
+        interface TooltipPositionerCallbackFunction {
+            (
+                labelWidth: number,
+                labelHeight: number,
+                point: TooltipPositionerPointObject
+            ): PositionObject;
+        }
+        interface TooltipPositionerPointObject {
+            isHeader: boolean;
+            negative: boolean;
+            plotX: number;
+            plotY: number;
+        }
+        type TooltipShapeValue = ('callout'|'circle'|'square');
     }
 }
 
@@ -250,11 +252,9 @@ declare global {
 ''; // separates doclets above from variables below
 
 var doc = H.doc,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     pick = H.pick,
-    syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -377,12 +377,9 @@ H.Tooltip.prototype = {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = (
-            pick(
-                options.outside,
-                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-            ) &&
-            !this.split
+        this.outside = pick(
+            options.outside,
+            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
     },
 
@@ -511,7 +508,15 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0);
+                this.renderer = renderer = new H.Renderer(
+                    container,
+                    0,
+                    0,
+                    {},
+                    undefined,
+                    undefined,
+                    renderer.styledMode
+                );
             }
 
 
@@ -554,7 +559,9 @@ H.Tooltip.prototype = {
                 this.label.addClass('highcharts-tooltip-' + this.chart.index);
             }
 
-            if (this.outside) {
+            // Split tooltip use updateTooltipContainer to position the tooltip
+            // container.
+            if (tooltip.outside && !tooltip.split) {
                 set = {
                     x: this.label.xSetter as any,
                     y: this.label.ySetter as any
@@ -833,7 +840,7 @@ H.Tooltip.prototype = {
                     doc.documentElement.clientHeight
                 ) :
                 chart.chartHeight,
-            chartPosition = chart.pointer.chartPosition,
+            chartPosition = chart.pointer.getChartPosition(),
             containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
                 containerScaling ? val * containerScaling.scaleX : val
@@ -1041,7 +1048,6 @@ H.Tooltip.prototype = {
     ): void {
         var tooltip = this,
             chart = this.chart,
-            label,
             options = tooltip.options,
             x,
             y,
@@ -1103,20 +1109,11 @@ H.Tooltip.prototype = {
         if (text === false) {
             this.hide();
         } else {
-
-            label = tooltip.getLabel();
-
-            // show it
-            if (tooltip.isHidden) {
-                label.attr({
-                    opacity: 1
-                }).show();
-            }
-
             // update text
             if (tooltip.split) {
                 this.renderSplit(text as any, splat(pointOrPoints));
             } else {
+                const label = tooltip.getLabel();
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
@@ -1161,7 +1158,13 @@ H.Tooltip.prototype = {
                 } as any);
             }
 
-            this.isHidden = false;
+            // show it
+            if (tooltip.isHidden && tooltip.label) {
+                tooltip.label.attr({
+                    opacity: 1
+                }).show();
+            }
+            tooltip.isHidden = false;
         }
 
         H.fireEvent(this, 'refresh');
@@ -1377,6 +1380,31 @@ H.Tooltip.prototype = {
                     yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
+
+        /* If we have a seperate tooltip container, then update the necessary
+         * container properties.
+         * Test that tooltip has its own container and renderer before executing
+         * the operation.
+         */
+        const {
+            container,
+            outside,
+            renderer
+        } = tooltip;
+        if (outside && container && renderer) {
+            // Position the tooltip container to the chart container
+            const chartPosition = chart.pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
+
+            // Set container size to fit the tooltip
+            const { width, height, x, y } = tooltipLabel.getBBox();
+            renderer.setSize(
+                width + x,
+                height + y,
+                false
+            );
+        }
     },
 
     /**
@@ -1392,16 +1420,22 @@ H.Tooltip.prototype = {
         point: Highcharts.Point
     ): void {
         var chart = this.chart,
+            pointer = chart.pointer,
             label = this.getLabel(),
-            pos = ((this.options.positioner as any) || this.getPosition).call(
-                this,
-                label.width,
-                label.height,
-                point
-            ),
+            pos,
             anchorX = (point.plotX as any) + chart.plotLeft,
             anchorY = (point.plotY as any) + chart.plotTop,
             pad;
+
+        // Needed for outside: true (#11688)
+        const chartPosition = pointer.getChartPosition();
+
+        pos = ((this.options.positioner as any) || this.getPosition).call(
+            this,
+            label.width,
+            label.height,
+            point
+        );
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
@@ -1427,8 +1461,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += chart.pointer.chartPosition.left - pos.x;
-            anchorY += chart.pointer.chartPosition.top - pos.y;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move

@@ -65,6 +65,7 @@ declare global {
             public box: Dictionary<number>;
             public currentStep?: number;
             public diffTemperature?: number;
+            public enableSimulation?: boolean;
             public forcedStop?: boolean;
             public forces?: Array<string>;
             public initialRendering: boolean;
@@ -83,9 +84,10 @@ declare global {
             public startTemperature?: number;
             public systemTemperature?: number;
             public temperature?: number;
-            public addLinks(links: Array<NetworkgraphPoint>): void;
-            public addNodes(nodes: Array<Point>): void;
-            public addSeries(series: Series): void;
+            public addElementsToCollection<T, C extends T>(
+                elements: Array<C>,
+                collection: Array<T>
+            ): void;
             public applyLimitBox(node: Point, box: Dictionary<number>): void;
             public applyLimits(): void;
             public attractiveForces(): void;
@@ -115,8 +117,9 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
-            public removeLink(link: Point): void;
-            public removeNode(node: Point): void;
+            public removeElementFromCollection<T>(
+                element: T, collection: Array<T>
+            ): void
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
@@ -137,11 +140,14 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    extend
+} = U;
 
 
-import 'integrations.js';
-import 'QuadTree.js';
+import './integrations.js';
+import './QuadTree.js';
 
 var pick = H.pick,
     addEvent = H.addEvent,
@@ -154,7 +160,7 @@ H.layouts = {
     }
 } as any;
 
-H.extend(
+extend(
     /**
      * Reingold-Fruchterman algorithm from
      * "Graph Drawing by Force-directed Placement" paper.
@@ -299,52 +305,26 @@ H.extend(
             // available space around the node:
             this.k = this.options.linkLength || this.integration.getK(this);
         },
-        addNodes: function (
+        addElementsToCollection: function<T, C extends T> (
             this: Highcharts.NetworkgraphLayout,
-            nodes: Array<Highcharts.Point>
+            elements: Array<C>,
+            collection: Array<T>
         ): void {
-            nodes.forEach(function (node: Highcharts.Point): void {
-                if (this.nodes.indexOf(node) === -1) {
-                    this.nodes.push(node);
+            elements.forEach(function (elem): void {
+                if (collection.indexOf(elem) === -1) {
+                    collection.push(elem);
                 }
-            }, this);
+            });
         },
-        removeNode: function (
+        removeElementFromCollection: function<T> (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.Point
+            element: T,
+            collection: Array<T>
         ): void {
-            var index = this.nodes.indexOf(node);
+            var index = collection.indexOf(element);
 
             if (index !== -1) {
-                this.nodes.splice(index, 1);
-            }
-        },
-        removeLink: function (
-            this: Highcharts.NetworkgraphLayout,
-            link: Highcharts.Point
-        ): void {
-            var index = this.links.indexOf(link);
-
-            if (index !== -1) {
-                this.links.splice(index, 1);
-            }
-        },
-        addLinks: function (
-            this: Highcharts.NetworkgraphLayout,
-            links: Array<Highcharts.NetworkgraphPoint>
-        ): void {
-            links.forEach(function (link: Highcharts.NetworkgraphPoint): void {
-                if (this.links.indexOf(link) === -1) {
-                    this.links.push(link);
-                }
-            }, this);
-        },
-        addSeries: function (
-            this: Highcharts.NetworkgraphLayout,
-            series: Highcharts.Series
-        ): void {
-            if (this.series.indexOf(series) === -1) {
-                this.series.push(series);
+                collection.splice(index, 1);
             }
         },
         clear: function (this: Highcharts.NetworkgraphLayout): void {

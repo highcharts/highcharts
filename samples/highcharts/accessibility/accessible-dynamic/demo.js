@@ -5,8 +5,10 @@ var chart = Highcharts.chart('container', {
     subtitle: {
         text: 'Click button to add point to chart'
     },
+    caption: {
+        text: 'A test case for dynamic data in charts.'
+    },
     accessibility: {
-        description: 'A test case for dynamic data in charts.',
         announceNewData: {
             enabled: true
         }

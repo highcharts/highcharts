@@ -54,7 +54,7 @@ declare global {
             _offsetMin?: number;
             _range?: number;
             count?: number;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
+            dataGrouping?: DataGroupingOptionsObject;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;
@@ -176,6 +176,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber,
     objectEach,
     pInt,
@@ -193,7 +194,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     merge = H.merge,
     pick = H.pick;
@@ -1698,7 +1698,7 @@ RangeSelector.prototype = {
             ((buttonPosition as any).y +
                 buttonGroup.getBBox().height - 12) <
             ((navButtonOptions.y || 0) +
-                navButtonOptions.height))
+                (navButtonOptions.height as any)))
         ) {
             exportingX = -40;
         }
@@ -1737,7 +1737,7 @@ RangeSelector.prototype = {
                 ((inputPosition as any).y -
                     inputGroup.getBBox().height - 12) <
                 ((navButtonOptions.y || 0) +
-                    navButtonOptions.height +
+                    (navButtonOptions.height as any) +
                     chart.spacing[0]))
             ) {
                 exportingX = -40;
@@ -1831,9 +1831,9 @@ RangeSelector.prototype = {
                 alignTranslateY -
                 groupHeight -
                 (floating ? 0 : (options.y as any)) -
+                (chart.titleOffset ? chart.titleOffset[2] : 0) -
                 10 // 10 spacing
             );
-
         }
 
         if (verticalAlign === 'top') {
@@ -1842,8 +1842,7 @@ RangeSelector.prototype = {
             }
 
             if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY =
-                    chart.titleOffset[0] + (chart.options.title as any).margin;
+                translateY = chart.titleOffset[0];
             }
 
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);

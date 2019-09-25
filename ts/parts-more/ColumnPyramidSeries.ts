@@ -18,13 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ColumnPyramidPointOptions extends ColumnPointOptions {
-        }
-        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            columnpyramid: typeof ColumnPyramidSeries;
-        }
         class ColumnPyramidPoint extends ColumnPoint {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;
@@ -35,6 +28,14 @@ declare global {
             public pointClass: typeof ColumnPyramidPoint;
             public points: Array<ColumnPyramidPoint>;
             public translate(): void;
+        }
+        interface ColumnPyramidPointOptions extends ColumnPointOptions {
+        }
+        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
+            states?: SeriesStatesOptionsObject<ColumnPyramidSeries>;
+        }
+        interface SeriesTypesDictionary {
+            columnpyramid: typeof ColumnPyramidSeries;
         }
     }
 }
@@ -56,7 +57,7 @@ var colProto = seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnPyramidSeriesOptions>(
+seriesType<Highcharts.ColumnPyramidSeries>(
     'columnpyramid',
     'column',
 

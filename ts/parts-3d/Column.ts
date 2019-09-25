@@ -39,6 +39,7 @@ declare global {
             edgeColor?: ColorString;
             edgeWidth?: number;
             groupZPadding?: number;
+            inactiveOtherPoints?: boolean;
         }
         interface Series {
             translate3dShapes(): void;
@@ -450,11 +451,39 @@ function setState(
     }
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * In 3D mode, simple checking for a new shape to animate is not enough.
+ * Additionally check if graphic is a group of elements
+ *
+ * @private
+ */
+function hasNewShapeType(
+    this: Highcharts.ColumnPoint,
+    proceed: Highcharts.ColumnPoint['hasNewShapeType'],
+    ...args: []
+): boolean|undefined {
+    return this.series.chart.is3d() ?
+        this.graphic && this.graphic.element.nodeName !== 'g' :
+        proceed.apply(this, args);
+}
+
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 wrap(seriesTypes.column.prototype, 'setState', setState);
+wrap(
+    seriesTypes.column.prototype.pointClass.prototype,
+    'hasNewShapeType',
+    hasNewShapeType
+);
+
 if (seriesTypes.columnrange) {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
     wrap(seriesTypes.columnrange.prototype, 'setState', setState);
+    wrap(
+        seriesTypes.columnrange.prototype.pointClass.prototype,
+        'hasNewShapeType',
+        hasNewShapeType
+    );
     seriesTypes.columnrange.prototype.plotGroup =
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =

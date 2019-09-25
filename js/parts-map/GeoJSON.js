@@ -35,10 +35,11 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var Chart = H.Chart, extend = H.extend, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
+var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
@@ -173,7 +174,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
         return;
     }
     for (transform in transforms) {
-        if (Object.prototype.hasOwnProperty.call(transforms, transform) &&
+        if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
             pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
             return this.transformToLatLon(point, transforms[transform]);
@@ -209,7 +210,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
         };
     }
     for (transform in transforms) {
-        if (Object.prototype.hasOwnProperty.call(transforms, transform) &&
+        if (Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);
             if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {

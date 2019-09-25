@@ -18,12 +18,49 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type PointOptionsType = (
-            number|string|Array<(number|string)>|PointOptionsObject|null
-        );
-        interface PlotSeriesOptions {
-            marker?: PointMarkerOptionsObject;
-            point?: PlotSeriesPointOptions;
+        class Point {
+            public constructor();
+            public color?: ColorType;
+            public colorIndex: number;
+            public formatPrefix: string;
+            public id: string;
+            public isNull: boolean;
+            public marker?: PointMarkerOptionsObject;
+            public nonZonedColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
+            public options: PointOptionsObject;
+            public percentage?: number;
+            public series: Series;
+            public shapeArgs?: SVGAttributes;
+            public shapeType?: string;
+            public state?: string;
+            public total?: number;
+            public visible: boolean;
+            public x: (number|null);
+            public y?: (number|null);
+            public applyOptions(options: PointOptionsType, x?: number): Point;
+            public destroy(): void;
+            public destroyElements(kinds?: Dictionary<number>): void;
+            public getClassName(): string;
+            public firePointEvent(
+                eventType: string,
+                eventArgs?: (Dictionary<any>|Event),
+                defaultFunction?: (EventCallbackFunction<Point>|Function)
+            ): void;
+            public getLabelConfig(): PointLabelObject;
+            public getZone(): SeriesZonesOptions;
+            public hasNewShapeType (this: Point): boolean|undefined;
+            public init(
+                series: Series,
+                options: PointOptionsType,
+                x?: number
+            ): Point;
+            public isValid?(): boolean;
+            public optionsToObject(options: PointOptionsType): Dictionary<any>;
+            public resolveColor(): void;
+            public setNestedProperty<T>(object: T, value: any, key: string): T;
+            public tooltipFormatter(pointFormat: string): string;
         }
         interface PlotSeriesPointOptions {
             events?: PointEventsOptionsObject;
@@ -133,53 +170,15 @@ declare global {
         }
         interface SeriesOptions {
             data?: Array<PointOptionsType>;
+            marker?: PointMarkerOptionsObject;
+            point?: PlotSeriesPointOptions;
         }
         interface SeriesPointOptions {
             events?: PointEventsOptionsObject;
         }
-        class Point {
-            public constructor();
-            public color?: ColorType;
-            public colorIndex: number;
-            public formatPrefix: string;
-            public id: string;
-            public isNull: boolean;
-            public marker?: PointMarkerOptionsObject;
-            public nonZonedColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            public options: PointOptionsObject;
-            public percentage?: number;
-            public series: Series;
-            public shapeArgs?: SVGAttributes;
-            public shapeType?: string;
-            public state?: string;
-            public total?: number;
-            public visible: boolean;
-            public x: (number|null);
-            public y?: (number|null);
-            public applyOptions(options: PointOptionsType, x?: number): Point;
-            public destroy(): void;
-            public destroyElements(kinds?: Dictionary<number>): void;
-            public getClassName(): string;
-            public firePointEvent(
-                eventType: string,
-                eventArgs?: (Dictionary<any>|Event),
-                defaultFunction?: (EventCallbackFunction<Point>|Function)
-            ): void;
-            public getLabelConfig(): PointLabelObject;
-            public getZone(): PlotSeriesZonesOptions;
-            public init(
-                series: Series,
-                options: PointOptionsType,
-                x?: number
-            ): Point;
-            public isValid?(): boolean;
-            public optionsToObject(options: PointOptionsType): Dictionary<any>;
-            public resolveColor(): void;
-            public setNestedProperty<T>(object: T, value: any, key: string): T;
-            public tooltipFormatter(pointFormat: string): string;
-        }
+        type PointOptionsType = (
+            number|string|Array<(number|string)>|PointOptionsObject|null
+        );
     }
 }
 
@@ -223,36 +222,24 @@ declare global {
  * Fires when the mouse leaves the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOut
- * @type {Highcharts.PointMouseOutCallbackFunction}
+ * @type {Highcharts.PointMouseOutCallbackFunction|undefined}
  *//**
  * Fires when the mouse enters the area close to the point. One parameter,
  * `event`, is passed to the function, containing common event information.
  * @name Highcharts.PointEventsOptionsObject#mouseOver
- * @type {Highcharts.PointMouseOverCallbackFunction}
+ * @type {Highcharts.PointMouseOverCallbackFunction|undefined}
  *//**
  * Fires when the point is removed using the `.remove()` method. One parameter,
  * `event`, is passed to the function. Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#remove
- * @type {Highcharts.PointRemoveCallbackFunction}
- *//**
- * Fires when the point is selected either programmatically or following a click
- * on the point. One parameter, `event`, is passed to the function. Returning
- * `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
- *//**
- * Fires when the point is unselected either programmatically or following a
- * click on the point. One parameter, `event`, is passed to the function.
- * Returning `false` cancels the operation.
- * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointRemoveCallbackFunction|undefined}
  *//**
  * Fires when the point is updated programmatically through the `.update()``
  * method. One parameter, `event`, is passed to the function. The new point
  * options can be accessed through event.options. Returning `false` cancels the
  * operation.
  * @name Highcharts.PointEventsOptionsObject#update
- * @type {Highcharts.PointUpdateCallbackFunction}
+ * @type {Highcharts.PointUpdateCallbackFunction|undefined}
  */
 
 /**
@@ -447,10 +434,9 @@ declare global {
  * @name Highcharts.PointOptionsObject#drilldown
  * @type {string|undefined}
  *//**
- * The id of a series in the drilldown.series array to use for a drilldown for
- * this point.
+ * The individual point events.
  * @name Highcharts.PointOptionsObject#events
- * @type {Highcharts.PointEventsOptionsObject}
+ * @type {Highcharts.PointEventsOptionsObject|undefined}
  *//**
  * An id for the point. This can be used after render time to get a pointer to
  * the point object through `chart.get()`.
@@ -459,7 +445,7 @@ declare global {
  *//**
  * Options for the point markers of line-like series.
  * @name Highcharts.PointOptionsObject#marker
- * @type {Highcharts.PointMarkerOptionsObject}
+ * @type {Highcharts.PointMarkerOptionsObject|undefined}
  *//**
  * The name of the point as shown in the legend, tooltip, dataLabels etc.
  * @name Highcharts.PointOptionsObject#name
@@ -636,6 +622,7 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject
@@ -643,7 +630,6 @@ const {
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     pick = H.pick,
@@ -1025,7 +1011,7 @@ Highcharts.Point.prototype = {
      */
     getZone: function (
         this: Highcharts.Point
-    ): Highcharts.PlotSeriesZonesOptions {
+    ): Highcharts.SeriesZonesOptions {
         var series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y',
@@ -1049,6 +1035,19 @@ Highcharts.Point.prototype = {
         }
 
         return zone;
+    },
+
+    /**
+     * Utility to check if point has new shape type. Used in column series and
+     * all others that are based on column series.
+     *
+     * @return boolean|undefined
+     */
+    hasNewShapeType: function (
+        this: Highcharts.Point
+    ): boolean|undefined {
+        return this.graphic &&
+            this.graphic.element.nodeName !== this.shapeType;
     },
 
     /**

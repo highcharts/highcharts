@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Range series only. The high or maximum value for each data point.
 * @name Highcharts.PointOptionsObject#high
@@ -77,10 +77,10 @@ import H from '../parts/Globals.js';
 * @product highcharts highstock
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber;
 import '../parts/Options.js';
 import '../parts/Series.js';
-var noop = H.noop, pick = H.pick, extend = H.extend, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
+var noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
@@ -105,6 +105,10 @@ seriesType('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
+     */
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
      */
     /**
      * Pixel width of the arearange graph line.
@@ -472,7 +476,7 @@ seriesType('arearange', 'area', {
             point = series.points[i];
             point.upperGraphic = point.graphic;
             point.graphic = point.lowerGraphic;
-            H.extend(point, point.origProps);
+            extend(point, point.origProps);
             delete point.origProps;
             i++;
         }

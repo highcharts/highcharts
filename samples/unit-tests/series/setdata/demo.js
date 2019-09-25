@@ -353,18 +353,11 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
         series: [{
             boostThreshold: 1,
             type: 'scatter',
-            data: [{
-                x: 0,
-                y: 0
-            },
-            {
-                x: 1,
-                y: 1
-            },
-            {
-                x: 2,
-                y: 2
-            }]
+            data: [
+                [0, 0],
+                [1, 1],
+                [2, 2]
+            ]
         }]
     });
 
@@ -376,18 +369,11 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
         'Initial data'
     );
 
-    chart.series[0].setData([{
-        x: 3,
-        y: 3
-    },
-    {
-        x: 4,
-        y: 4
-    },
-    {
-        x: 5,
-        y: 5
-    }]);
+    chart.series[0].setData([
+        [3, 3],
+        [4, 4],
+        [5, 5]
+    ]);
 
     assert.strictEqual(
         chart.series[0].points.map(function (p) {

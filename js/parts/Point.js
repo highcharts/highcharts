@@ -47,36 +47,24 @@ import Highcharts from './Globals.js';
 * Fires when the mouse leaves the area close to the point. One parameter,
 * `event`, is passed to the function, containing common event information.
 * @name Highcharts.PointEventsOptionsObject#mouseOut
-* @type {Highcharts.PointMouseOutCallbackFunction}
+* @type {Highcharts.PointMouseOutCallbackFunction|undefined}
 */ /**
 * Fires when the mouse enters the area close to the point. One parameter,
 * `event`, is passed to the function, containing common event information.
 * @name Highcharts.PointEventsOptionsObject#mouseOver
-* @type {Highcharts.PointMouseOverCallbackFunction}
+* @type {Highcharts.PointMouseOverCallbackFunction|undefined}
 */ /**
 * Fires when the point is removed using the `.remove()` method. One parameter,
 * `event`, is passed to the function. Returning `false` cancels the operation.
 * @name Highcharts.PointEventsOptionsObject#remove
-* @type {Highcharts.PointRemoveCallbackFunction}
-*/ /**
-* Fires when the point is selected either programmatically or following a click
-* on the point. One parameter, `event`, is passed to the function. Returning
-* `false` cancels the operation.
-* @name Highcharts.PointEventsOptionsObject#select
-* @type {Highcharts.PointSelectCallbackFunction}
-*/ /**
-* Fires when the point is unselected either programmatically or following a
-* click on the point. One parameter, `event`, is passed to the function.
-* Returning `false` cancels the operation.
-* @name Highcharts.PointEventsOptionsObject#unselect
-* @type {Highcharts.PointUnselectCallbackFunction}
+* @type {Highcharts.PointRemoveCallbackFunction|undefined}
 */ /**
 * Fires when the point is updated programmatically through the `.update()``
 * method. One parameter, `event`, is passed to the function. The new point
 * options can be accessed through event.options. Returning `false` cancels the
 * operation.
 * @name Highcharts.PointEventsOptionsObject#update
-* @type {Highcharts.PointUpdateCallbackFunction}
+* @type {Highcharts.PointUpdateCallbackFunction|undefined}
 */
 /**
  * Configuration hash for the data label and tooltip formatters.
@@ -265,10 +253,9 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointOptionsObject#drilldown
 * @type {string|undefined}
 */ /**
-* The id of a series in the drilldown.series array to use for a drilldown for
-* this point.
+* The individual point events.
 * @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PointEventsOptionsObject}
+* @type {Highcharts.PointEventsOptionsObject|undefined}
 */ /**
 * An id for the point. This can be used after render time to get a pointer to
 * the point object through `chart.get()`.
@@ -277,7 +264,7 @@ import Highcharts from './Globals.js';
 */ /**
 * Options for the point markers of line-like series.
 * @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PointMarkerOptionsObject}
+* @type {Highcharts.PointMarkerOptionsObject|undefined}
 */ /**
 * The name of the point as shown in the legend, tooltip, dataLabels etc.
 * @name Highcharts.PointOptionsObject#name
@@ -441,8 +428,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
-var Point, H = Highcharts, extend = H.extend, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
+var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -760,6 +747,16 @@ Highcharts.Point.prototype = {
             this.color = this.nonZonedColor;
         }
         return zone;
+    },
+    /**
+     * Utility to check if point has new shape type. Used in column series and
+     * all others that are based on column series.
+     *
+     * @return boolean|undefined
+     */
+    hasNewShapeType: function () {
+        return this.graphic &&
+            this.graphic.element.nodeName !== this.shapeType;
     },
     /**
      * Destroy a point to clear memory. Its reference still stays in

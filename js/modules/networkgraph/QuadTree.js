@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
@@ -71,7 +73,7 @@ var QuadTreeNode = H.QuadTreeNode = function (box) {
      */
     this.isEmpty = true;
 };
-H.extend(QuadTreeNode.prototype, 
+extend(QuadTreeNode.prototype, 
 /** @lends Highcharts.QuadTreeNode.prototype */
 {
     /**
@@ -273,7 +275,7 @@ var QuadTree = H.QuadTree = function (x, y, width, height) {
     this.root.isRoot = true;
     this.root.divideBox();
 };
-H.extend(QuadTree.prototype, 
+extend(QuadTree.prototype, 
 /** @lends Highcharts.QuadTree.prototype */
 {
     /**

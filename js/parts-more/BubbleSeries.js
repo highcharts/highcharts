@@ -13,7 +13,7 @@ import H from '../parts/Globals.js';
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var extend = U.extend, isNumber = U.isNumber, pInt = U.pInt;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -221,6 +221,10 @@ seriesType('bubble', 'scatter', {
      * @apioption plotOptions.bubble.zMax
      */
     /**
+     * @default   z
+     * @apioption plotOptions.bubble.colorKey
+     */
+    /**
      * The minimum for the Z value range. Defaults to the lowest Z value
      * in the data.
      *
@@ -375,7 +379,7 @@ seriesType('bubble', 'scatter', {
             radius = radii ? radii[i] : 0; // #1737
             if (isNumber(radius) && radius >= this.minPxSize / 2) {
                 // Shape arguments
-                point.marker = H.extend(point.marker, {
+                point.marker = extend(point.marker, {
                     radius: radius,
                     width: 2 * radius,
                     height: 2 * radius
@@ -456,7 +460,7 @@ Axis.prototype.beforePadding = function () {
                 if (isNumber(data[i]) &&
                     axis.dataMin <= data[i] &&
                     data[i] <= axis.dataMax) {
-                    radius = series.radii[i];
+                    radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
                     pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
                 }

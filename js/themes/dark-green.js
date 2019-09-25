@@ -6,18 +6,17 @@
  *
  *  Dark blue theme for Highcharts JS
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import Highcharts from '../parts/Globals.js';
-
 Highcharts.theme = {
     colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
     chart: {
         backgroundColor: {
-            linearGradient: [0, 0, 250, 500],
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
             stops: [
                 [0, 'rgb(48, 96, 48)'],
                 [1, 'rgb(0, 0, 0)']
@@ -58,7 +57,6 @@ Highcharts.theme = {
                 fontWeight: 'bold',
                 fontSize: '12px',
                 fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-
             }
         }
     },
@@ -144,12 +142,9 @@ Highcharts.theme = {
             color: '#CCC'
         }
     },
-
-
     navigation: {
         buttonOptions: {
             symbolStroke: '#DDDDDD',
-            hoverSymbolStroke: '#FFFFFF',
             theme: {
                 fill: {
                     linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -162,7 +157,6 @@ Highcharts.theme = {
             }
         }
     },
-
     // scroll charts
     rangeSelector: {
         buttonTheme: {
@@ -215,7 +209,6 @@ Highcharts.theme = {
             color: 'silver'
         }
     },
-
     navigator: {
         handles: {
             backgroundColor: '#666',
@@ -228,7 +221,6 @@ Highcharts.theme = {
             lineColor: '#A6C7ED'
         }
     },
-
     scrollbar: {
         barBackgroundColor: {
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -258,6 +250,5 @@ Highcharts.theme = {
         trackBorderColor: '#666'
     }
 };
-
 // Apply the theme
 Highcharts.setOptions(Highcharts.theme);

@@ -70,6 +70,7 @@
     background: url(https://www.highcharts.com/samples/graphics/search.png) 5px 8px no-repeat white;
     padding: 1px 5px 1px 30px;
     width: 100%;
+    box-sizing: border-box;
 }
 .selector .custom-combobox .ui-autocomplete-input:focus {
     color: black;

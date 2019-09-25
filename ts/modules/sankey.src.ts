@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -18,102 +20,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface SankeyColumnArray extends Array<SankeyPoint> {
-            offset(
-                node: SankeyPoint,
-                factor: number
-            ): (Dictionary<number>|undefined);
-            sum(): number;
-            top(factor: number): number;
-        }
-        interface SankeyDataLabelsFormatterCallbackFunction {
-            (
-                this: (
-                    SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
-                )
-            ): (string|undefined);
-        }
-        interface SankeyDataLabelsFormatterContextObject {
-            point: SankeyPoint;
-        }
-        interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
-            nodeFormat?: string;
-            nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
-        }
-        interface SankeyPointOptions
-            extends ColumnPointOptions, NodesPointOptions {
-            column?: number;
-            from?: string;
-            height?: number;
-            level?: number;
-            to?: string;
-            width?: number;
-        }
-        interface SankeySeriesLevelsOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: ColorType;
-            colorByPoint?: boolean;
-            dataLabels?: SankeyDataLabelsOptionsObject;
-            level?: number;
-            linkOpacity?: number;
-            states?: SankeySeriesStatesOptions;
-        }
-        interface SankeySeriesNodesOptions {
-            color?: ColorType;
-            colorIndex?: number;
-            column?: number;
-            id?: string;
-            level?: number;
-            name?: string;
-            offset?: (number|string);
-        }
-        interface SankeySeriesOptions
-            extends ColumnSeriesOptions, NodesSeriesOptions {
-            curveFactor?: number;
-            dataLabels?: SankeyDataLabelsOptionsObject;
-            height?: number;
-            levels?: Array<SankeySeriesLevelsOptions>;
-            linkOpacity?: number;
-            mass?: undefined;
-            minLinkWidth?: number;
-            nodePadding?: number;
-            nodes?: Array<SankeySeriesNodesOptions>;
-            nodeWidth?: number;
-            states?: SankeySeriesStatesOptions;
-            tooltip?: SankeySeriesTooltipOptions;
-            width?: number;
-        }
-        interface SankeySeriesStatesHoverOptions
-            extends ColumnSeriesStatesHoverOptions {
-            linkOpacity?: number;
-        }
-        interface SankeySeriesStatesInactiveOptions
-            extends ColumnSeriesStatesInactiveOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            linkOpacity?: number;
-        }
-        interface SankeySeriesStatesOptions extends ColumnSeriesStatesOptions {
-            hover?: SankeySeriesStatesHoverOptions;
-            inactive?: SankeySeriesStatesInactiveOptions;
-            select?: SankeySeriesStatesSelectOptions;
-        }
-        interface SankeySeriesStatesSelectOptions
-            extends ColumnSeriesStatesSelectOptions {
-            linkOpacity?: number;
-        }
-        interface SankeySeriesTooltipOptions extends TooltipOptions {
-            nodeFormat?: string;
-            nodeFormatter?: FormatterCallbackFunction<SankeyPoint>;
-        }
-        interface Series {
-            invertable?: boolean;
-        }
-        interface SeriesTypes {
-            sankey: typeof SankeySeries;
-        }
         class SankeyPoint extends ColumnPoint implements NodesPoint {
             public className: NodesPoint['className'];
             public column?: number;
@@ -158,7 +64,9 @@ declare global {
             public isCartesian: boolean;
             public options: SankeySeriesOptions;
             public orderNodes: boolean;
-            public mapOptionsToLevel: (Dictionary<any>|null);
+            public mapOptionsToLevel: (
+                Dictionary<SankeySeriesLevelsOptions>|null
+            );
             public nodeColumns: Array<SankeyColumnArray>;
             public nodeLookup: NodesSeries['nodeLookup'];
             public nodes: Array<SankeyPoint>;
@@ -183,6 +91,82 @@ declare global {
                 node: SankeyPoint,
                 column: SankeyColumnArray
             ): void;
+        }
+        interface SankeyColumnArray<T = SankeyPoint> extends Array<T> {
+            offset(node: T, factor: number): (Dictionary<number>|undefined);
+            sum(): number;
+            top(factor: number): number;
+        }
+        interface SankeyDataLabelsFormatterCallbackFunction {
+            (
+                this: (
+                    SankeyDataLabelsFormatterContextObject|
+                    DataLabelsFormatterContextObject
+                )
+            ): (string|undefined);
+        }
+        interface SankeyDataLabelsFormatterContextObject {
+            point: SankeyPoint;
+        }
+        interface SankeyDataLabelsOptionsObject
+            extends DataLabelsOptionsObject {
+            nodeFormat?: string;
+            nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
+        }
+        interface SankeyPointOptions
+            extends ColumnPointOptions, NodesPointOptions {
+            column?: number;
+            from?: string;
+            height?: number;
+            level?: number;
+            to?: string;
+            width?: number;
+        }
+        interface SankeySeriesLevelsOptions {
+            borderColor?: ColorString;
+            borderWidth?: number;
+            color?: ColorType;
+            colorByPoint?: boolean;
+            dataLabels?: SankeyDataLabelsOptionsObject;
+            level?: number;
+            linkOpacity?: number;
+            states?: Dictionary<SankeySeriesOptions>;
+        }
+        interface SankeySeriesNodesOptions {
+            color?: ColorType;
+            colorIndex?: number;
+            column?: number;
+            id?: string;
+            level?: number;
+            name?: string;
+            offset?: (number|string);
+        }
+        interface SankeySeriesOptions
+            extends ColumnSeriesOptions, NodesSeriesOptions {
+            curveFactor?: number;
+            dataLabels?: SankeyDataLabelsOptionsObject;
+            height?: number;
+            inactiveOtherPoints?: boolean;
+            levels?: Array<SankeySeriesLevelsOptions>;
+            linkOpacity?: number;
+            mass?: undefined;
+            minLinkWidth?: number;
+            nodePadding?: number;
+            nodes?: Array<SankeySeriesNodesOptions>;
+            nodeWidth?: number;
+            states?: SeriesStatesOptionsObject<SankeySeries>;
+            tooltip?: SankeySeriesTooltipOptions;
+            width?: number;
+        }
+        interface SankeySeriesTooltipOptions extends TooltipOptions {
+            nodeFormat?: string;
+            nodeFormatter?: FormatterCallbackFunction<SankeyPoint>;
+        }
+        interface Series {
+            invertable?: boolean;
+        }
+        interface SeriesTypesDictionary {
+            sankey: typeof SankeySeries;
         }
     }
 }
@@ -358,7 +342,7 @@ var getDLOptions = function getDLOptions(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SankeySeriesOptions>(
+seriesType<Highcharts.SankeySeries>(
     'sankey',
     'column',
     /**
@@ -376,12 +360,13 @@ seriesType<Highcharts.SankeySeriesOptions>(
      * @since        6.0.0
      * @product      highcharts
      * @excluding    animationLimit, boostThreshold, borderRadius,
-     *               crisp, cropThreshold, depth, edgeColor, edgeWidth,
-     *               findNearestPointBy, grouping, groupPadding, groupZPadding,
-     *               maxPointWidth, negativeColor, pointInterval,
-     *               pointIntervalUnit, pointPadding, pointPlacement,
-     *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones, minPointLength
+     *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, grouping,
+     *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPadding,
+     *               pointPlacement, pointRange, pointStart, pointWidth,
+     *               shadow, softThreshold, stacking, threshold, zoneAxis,
+     *               zones, minPointLength
      * @optionparent plotOptions.sankey
      */
     {
@@ -536,6 +521,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
          * @since     7.1.3
          * @default   0
          * @apioption plotOptions.sankey.minLinkWidth
+         *
+         * @private
          */
         minLinkWidth: 0,
 
@@ -741,11 +728,14 @@ seriesType<Highcharts.SankeySeriesOptions>(
                         node.column = fromColumn + 1;
 
                         // Hanging layout for organization chart
-                        if ((fromNode as any).options.layout === 'hanging') {
+                        if (
+                            fromNode &&
+                            (fromNode.options as any).layout === 'hanging'
+                        ) {
                             node.hangsFrom = fromNode;
                             i = -1; // Reuse existing variable i
                             find(
-                                (fromNode as any).linksFrom,
+                                fromNode.linksFrom,
                                 function (
                                     link: Highcharts.SankeyPoint,
                                     index: number
@@ -816,7 +806,8 @@ seriesType<Highcharts.SankeySeriesOptions>(
                     obj[key] = pick(
                         stateOptions[key],
                         (options as any)[key],
-                        levelOptions[key]
+                        levelOptions[key],
+                        (series.options as any)[key]
                     );
                     return obj;
                 }, {}),
@@ -1119,9 +1110,7 @@ seriesType<Highcharts.SankeySeriesOptions>(
 
             this.nodeColumns = this.createNodeColumns();
             this.nodeWidth = H.relativeLength(
-                (
-                    this.options as Highcharts.OrganizationSeriesOptions
-                ).nodeWidth,
+                this.options.nodeWidth as any,
                 this.chart.plotSizeX as any
             );
 
@@ -1151,7 +1140,7 @@ seriesType<Highcharts.SankeySeriesOptions>(
                 (
                     (chart.plotSizeX as any) - nodeWidth -
                     (options.borderWidth as any)
-                ) / (nodeColumns.length - 1);
+                ) / Math.max(1, nodeColumns.length - 1);
 
             // Calculate level options used in sankey and organization
             series.mapOptionsToLevel = getLevelOptions({

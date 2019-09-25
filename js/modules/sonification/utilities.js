@@ -10,7 +10,7 @@
 
 'use strict';
 
-import musicalFrequencies from 'musicalFrequencies.js';
+import musicalFrequencies from './musicalFrequencies.js';
 
 
 /**

@@ -84,7 +84,7 @@ import Highcharts from '../parts/Globals.js';
  *         continue async.
  */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, splat = U.splat;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 // Utilities
@@ -471,7 +471,7 @@ var Data = function (dataOptions, chartOptions, chart) {
     this.init(dataOptions, chartOptions, chart);
 };
 // Set the prototype properties
-Highcharts.extend(Data.prototype, {
+extend(Data.prototype, {
     /**
      * Initialize the Data object with the given options
      *
@@ -1842,11 +1842,11 @@ addEvent(Chart, 'init', function (e) {
          * @name Highcharts.Chart#data
          * @type {Highcharts.Data|undefined}
          */
-        chart.data = new Data(Highcharts.extend(userOptions.data, {
+        chart.data = new Data(extend(userOptions.data, {
             afterComplete: function (dataOptions) {
                 var i, series;
                 // Merge series configs
-                if (Object.prototype.hasOwnProperty.call(userOptions, 'series')) {
+                if (Object.hasOwnProperty.call(userOptions, 'series')) {
                     if (typeof userOptions.series === 'object') {
                         i = Math.max(userOptions.series.length, dataOptions && dataOptions.series ?
                             dataOptions.series.length :

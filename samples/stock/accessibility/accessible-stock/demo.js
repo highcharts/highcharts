@@ -1,4 +1,4 @@
-$.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
+Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data) {
     Highcharts.stockChart('container', {
         accessibility: {
             description: 'Chart shows Apple stock prices from mid 2008 to mid 2015. It shows steady growth with one significant peak lasting through most of 2012 before normalizing.'

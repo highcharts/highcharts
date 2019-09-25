@@ -20,6 +20,9 @@ QUnit.module('Styled mode for series types', function () {
             blacklist.forEach(function (attr) {
                 container.querySelectorAll('*[' + attr + ']').forEach(
                     function (elem) {
+                        if (elem.className === 'highcharts-a11y-proxy-button') {
+                            return;
+                        }
                         var key = [attr, elem.nodeName, elem.getAttribute('class')].join(',');
                         if (!notified[key]) {
                             console.log(
@@ -45,11 +48,14 @@ QUnit.module('Styled mode for series types', function () {
             // Don't test indicator series (yet), they have more complex setup
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
 
-            // In solid gauge, the fill conveys magnitued
+            // In solid gauge, the fill conveys magnitude
             type !== 'solidgauge' &&
 
             // Complains about a missing axis
-            type !== 'scatter3d'
+            type !== 'scatter3d' &&
+
+            // Uses CSS for HTML data label positioning
+            type !== 'organization'
         ) {
 
             QUnit.test('Styled mode for ' + type, function (assert) {

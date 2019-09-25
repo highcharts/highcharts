@@ -40,10 +40,10 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): SVGElement;
+            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
             importEvents(): void;
             onMouseOut(): void;
-            onMouseOver(e: PointerEventObject): void;
+            onMouseOver(e?: PointerEventObject): void;
             select(selected?: boolean, accumulate?: boolean): void;
             setState(
                 state?: string,
@@ -82,6 +82,9 @@ declare global {
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
         }
+        interface SeriesOptions {
+            inactiveOtherPoints?: boolean;
+        }
         interface TrackerMixin {
             drawTrackerGraph(this: Highcharts.Series): void;
             drawTrackerPoint(this: Series): void;
@@ -97,13 +100,13 @@ declare global {
  * on the point. One parameter, `event`, is passed to the function. Returning
  * `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#select
- * @type {Highcharts.PointSelectCallbackFunction}
+ * @type {Highcharts.PointSelectCallbackFunction|undefined}
  *//**
  * Fires when the point is unselected either programmatically or following a
  * click on the point. One parameter, `event`, is passed to the function.
  * Returning `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#unselect
- * @type {Highcharts.PointUnselectCallbackFunction}
+ * @type {Highcharts.PointUnselectCallbackFunction|undefined}
  */
 
 /**
@@ -145,6 +148,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isObject,
     objectEach
@@ -162,7 +166,6 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
@@ -963,14 +966,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#onMouseOver
      *
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
      *
      * @return {void}
      */
     onMouseOver: function (
         this: Highcharts.Point,
-        e: Highcharts.PointerEventObject
+        e?: Highcharts.PointerEventObject
     ): void {
         var point = this,
             series = point.series,
@@ -1205,27 +1208,29 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
 
                 // Add a new state marker graphic
-                if (!stateMarkerGraphic) {
-                    if (newSymbol) {
-                        series.stateMarkerGraphic = stateMarkerGraphic =
-                            chart.renderer
-                                .symbol(
-                                    newSymbol,
-                                    (markerAttribs as any).x,
-                                    (markerAttribs as any).y,
-                                    (markerAttribs as any).width,
-                                    (markerAttribs as any).height
-                                )
-                                .add(series.markerGroup);
-                        stateMarkerGraphic.currentSymbol = newSymbol;
-                    }
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(
+                                        newSymbol,
+                                        markerAttribs.x,
+                                        markerAttribs.y,
+                                        markerAttribs.width,
+                                        markerAttribs.height
+                                    )
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
 
-                // Move the existing graphic
-                } else {
-                    stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-                        x: (markerAttribs as any).x,
-                        y: (markerAttribs as any).y
-                    });
+                    // Move the existing graphic
+                    } else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
                 }
 
                 if (!chart.styledMode && stateMarkerGraphic) {
@@ -1248,11 +1253,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((markerGraphic as any).parentGroup);
+                    .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any
@@ -1508,18 +1516,18 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.markerGroup,
                         series.dataLabelsGroup,
                         series.labelBySeries
-                    ].forEach(
-                        function (group: Highcharts.SVGElement): void {
-                            if (group) {
-                                group.animate(
-                                    {
-                                        opacity: opacity
-                                    },
-                                    stateAnimation
-                                );
-                            }
+                    ].forEach(function (
+                        group: (Highcharts.SVGElement|undefined)
+                    ): void {
+                        if (group) {
+                            group.animate(
+                                {
+                                    opacity: opacity
+                                },
+                                stateAnimation
+                            );
                         }
-                    );
+                    });
                 }
             }
         }

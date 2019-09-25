@@ -49,10 +49,12 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    extend
+} = U;
 
 var charts = H.charts,
-    extend = H.extend,
     noop = H.noop,
     pick = H.pick,
     Pointer = H.Pointer;

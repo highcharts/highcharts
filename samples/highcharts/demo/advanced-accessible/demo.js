@@ -58,11 +58,13 @@ var chart = Highcharts.chart('container', {
         seriesDescriptionFormatter: function (series) {
             return series.name + ', series ' + (series.index + 1) + ' of ' + series.chart.series.length + ' with ' + series.points.length + ' data points.';
         },
-        typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.', // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
-        description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
+        typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
     title: {
         text: 'Daily company fruit consumption 2015'
+    },
+    caption: {
+        text: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
     },
     xAxis: [{
         crosshair: true,

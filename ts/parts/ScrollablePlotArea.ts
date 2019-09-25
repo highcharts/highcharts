@@ -379,6 +379,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         this.moveFixedElements();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {
 

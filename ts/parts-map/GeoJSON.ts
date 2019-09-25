@@ -93,12 +93,15 @@ declare global {
  * @type {number}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
     win = H.win,
@@ -293,7 +296,7 @@ Chart.prototype.fromPointToLatLon = function (
 
     for (transform in transforms) {
         if (
-            Object.prototype.hasOwnProperty.call(transforms, transform) &&
+            Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone &&
             pointInPolygon(
                 { x: point.x, y: -(point.y as any) },
@@ -345,7 +348,7 @@ Chart.prototype.fromLatLonToPoint = function (
 
     for (transform in transforms) {
         if (
-            Object.prototype.hasOwnProperty.call(transforms, transform) &&
+            Object.hasOwnProperty.call(transforms, transform) &&
             transforms[transform].hitZone
         ) {
             coords = this.transformFromLatLon(latLon, transforms[transform]);

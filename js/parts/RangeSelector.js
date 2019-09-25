@@ -38,10 +38,10 @@ import H from './Globals.js';
  *         Parsed JavaScript time value.
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick;
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
  * ************************************************************************** */
@@ -1273,6 +1273,7 @@ RangeSelector.prototype = {
             translateY = (alignTranslateY -
                 groupHeight -
                 (floating ? 0 : options.y) -
+                (chart.titleOffset ? chart.titleOffset[2] : 0) -
                 10 // 10 spacing
             );
         }
@@ -1281,8 +1282,7 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
             if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY =
-                    chart.titleOffset[0] + chart.options.title.margin;
+                translateY = chart.titleOffset[0];
             }
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
         }

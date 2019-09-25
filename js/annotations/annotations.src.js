@@ -13,6 +13,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined,
     erase = U.erase,
+    extend = U.extend,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -181,7 +182,7 @@ merge(
          *
          * @type {Array<string>}
          */
-        nonDOMEvents: ['add', 'afterUpdate', 'remove'],
+        nonDOMEvents: ['add', 'afterUpdate', 'drag', 'remove'],
 
         /**
          * A basic type of an annotation. It allows to add custom labels
@@ -1197,7 +1198,7 @@ H.extendAnnotation = function (
  *
  ******************************************************************** */
 
-H.extend(chartProto, /** @lends Highcharts.Chart# */ {
+extend(chartProto, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
         var Constructor =
             Annotation.types[userOptions.type] || Annotation,
@@ -1301,3 +1302,13 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
 });
+
+H.wrap(
+    H.Pointer.prototype,
+    'onContainerMouseDown',
+    function (proceed) {
+        if (!this.chart.hasDraggedAnnotation) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
+    }
+);

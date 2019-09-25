@@ -31,7 +31,7 @@ import Axis from './Axis.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, objectEach = U.objectEach;
+var defined = U.defined, erase = U.erase, extend = U.extend, objectEach = U.objectEach;
 var arrayMax = H.arrayMax, arrayMin = H.arrayMin, destroyObjectProperties = H.destroyObjectProperties, merge = H.merge, pick = H.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -256,7 +256,7 @@ H.PlotLineOrBand.prototype = {
 };
 /* eslint-enable no-invalid-this, valid-jsdoc */
 // Object with members for extending the Axis prototype
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * An array of colored bands stretching across the plot area marking an
      * interval on the axis.
@@ -829,6 +829,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * An array of objects representing plot lines on the X axis
      *
      * @type      {Array<*>}
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *      Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */
@@ -929,7 +933,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      * @function Highcharts.Axis#addPlotBandOrLine
      *
-     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
      *        The plotBand or plotLine configuration object.
      *
      * @param {"plotBands"|"plotLines"} [coll]
@@ -941,8 +945,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
-                userOptions[coll] = userOptions[coll] || [];
-                userOptions[coll].push(options);
+                // Workaround Microsoft/TypeScript issue #32693
+                var updatedOptions = (userOptions[coll] || []);
+                updatedOptions.push(options);
+                userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
         }

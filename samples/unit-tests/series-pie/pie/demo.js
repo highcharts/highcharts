@@ -66,7 +66,7 @@ QUnit.test('Undefined value (#6589)', function (assert) {
 
 });
 
-QUnit.test('Update to negative (#7113)', function (assert) {
+QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -86,10 +86,11 @@ QUnit.test('Update to negative (#7113)', function (assert) {
         undefined,
         'Graphic should be removed'
     );
-    assert.strictEqual(
-        chart.series[0].group.element.childNodes.length,
-        0,
-        'No remaining graphics'
+
+    // Issue #5526
+    assert.ok(
+        Highcharts.defined(chart.series[0].graph),
+        'Empty pie graphic is created.'
     );
 });
 

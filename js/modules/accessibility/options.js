@@ -72,7 +72,7 @@ var options = {
          * Set to `false` to disable.
          *
          * @type  {boolean|number}
-         * @since next
+         * @since 7.1.3
          */
         pointNavigationThreshold: false,
 
@@ -136,7 +136,7 @@ var options = {
          * Theme to apply to the chart when Windows High Contrast Mode is
          * detected.
          *
-         * @since next
+         * @since 7.1.3
          * @type {object}
          * @apioption accessibility.highContrastTheme
          */
@@ -144,14 +144,18 @@ var options = {
         /**
          * A text description of the chart.
          *
-         * If the Accessibility module is loaded, this is included by default
-         * as a long description of the chart in the hidden screen reader
-         * information region.
+         * **Note: Prefer using [caption](#caption.text) instead.**
          *
-         * Note: It is considered a best practice to make the description of the
-         * chart visible to all users, so consider if this can be placed in text
-         * around the chart instead.
+         * If the Accessibility module is loaded, this option is included by
+         * default as a long description of the chart in the hidden screen
+         * reader information region.
          *
+         * Note: Since Highcharts now supports captions, it is preferred to
+         * define the description there, as the caption benefits all users. The
+         * caption will be available to screen reader users. If this option is
+         * defined instead, the caption is hidden from screen reader users.
+         *
+         * @see [caption](#caption)
          * @see [typeDescription](#accessibility.typeDescription)
          *
          * @type      {string}
@@ -394,7 +398,7 @@ var options = {
              * @since 7.1.0
              * @type {Array<string>}
              */
-            order: ['series', 'zoom', 'rangeSelector', 'chartMenu', 'legend'],
+            order: ['series', 'zoom', 'rangeSelector', 'legend', 'chartMenu'],
 
             /**
              * Whether or not to wrap around when reaching the end of arrow-key

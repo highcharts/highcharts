@@ -72,9 +72,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString;
+const {
+    defined,
+    extend,
+    isNumber,
+    isString
+} = U;
 
 import './GridAxis.js';
 import Tree from './Tree.js';
@@ -85,7 +88,6 @@ var addEvent = H.addEvent,
     argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
@@ -110,7 +112,7 @@ var override = function<T> (
         func;
 
     for (method in methods) {
-        if (Object.prototype.hasOwnProperty.call(methods, method)) {
+        if (Object.hasOwnProperty.call(methods, method)) {
             func = methods[method];
             wrap(obj, method, func);
         }
@@ -314,12 +316,13 @@ var renderLabelIcon = function (
         shouldRender = params.show && isNumber(iconCenter.y);
 
     if (isNew) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](
-            options.x,
-            options.y,
-            width,
-            height
-        ))
+        tick.labelIcon = icon = renderer
+            .path(renderer.symbols[options.type](
+                options.x,
+                options.y,
+                width,
+                height
+            ) as any)
             .addClass('highcharts-label-icon')
             .add(params.group);
     }

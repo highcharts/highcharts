@@ -11,8 +11,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * The ending X value of the range point.
 * @name Highcharts.PointOptionsObject#x2

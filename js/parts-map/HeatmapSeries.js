@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Heatmap series only. Point padding for a single point.
 * @name Highcharts.PointOptionsObject#pointPadding
@@ -21,13 +21,14 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
-import './ColorSeriesMixin.js';
-var colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import './ColorMapSeriesMixin.js';
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -70,6 +71,10 @@ seriesType('heatmap', 'scatter',
      * @default   0
      * @since     6.0
      * @apioption plotOptions.heatmap.pointPadding
+     */
+    /**
+     * @default   value
+     * @apioption plotOptions.heatmap.colorKey
      */
     /**
      * The main color of the series. In heat maps this color is rarely used,
@@ -157,7 +162,7 @@ seriesType('heatmap', 'scatter',
             brightness: 0.2
         }
     }
-}, merge(colorSeriesMixin, {
+}, merge(colorMapSeriesMixin, {
     pointArrayMap: ['y', 'value'],
     hasPointSpecificOptions: true,
     getExtremesFromAll: true,
@@ -204,7 +209,7 @@ seriesType('heatmap', 'scatter',
                 height: Math.max(Math.abs(y2 - y1) - pointPadding * 2, 0)
             };
         });
-        series.translateColors();
+        fireEvent(series, 'afterTranslate');
     },
     /**
      * @private
@@ -266,7 +271,7 @@ seriesType('heatmap', 'scatter',
         Series.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
-}), H.extend({
+}), extend({
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding
@@ -305,7 +310,7 @@ seriesType('heatmap', 'scatter',
         ];
     }
     /* eslint-enable valid-jsdoc */
-}, colorPointMixin));
+}, colorMapPointMixin));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

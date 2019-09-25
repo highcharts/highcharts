@@ -11,9 +11,14 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
-import AccessibilityComponent from '../AccessibilityComponent.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
 
-var doc = H.win.document;
+import AccessibilityComponent from '../AccessibilityComponent.js';
+import A11yUtilities from '../utilities.js';
+
+var doc = H.win.document,
+    stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
 /**
@@ -22,14 +27,10 @@ var doc = H.win.document;
  * @private
  * @class
  * @name Highcharts.ContainerComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ContainerComponent = function (chart) {
-    this.initBase(chart);
-};
+var ContainerComponent = function () {};
 ContainerComponent.prototype = new AccessibilityComponent();
-H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
+extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -42,12 +43,12 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
             chartTitle = chart.options.title.text || chart.langFormat(
                 'accessibility.defaultChartTitle', { chart: chart }
             ),
-            svgContainerTitle = this.stripTags(chart.langFormat(
+            svgContainerTitle = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
                     chartTitle: chartTitle
                 }
             )),
-            svgContainerLabel = this.stripTags(chart.langFormat(
+            svgContainerLabel = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: chartTitle
                 }
@@ -83,7 +84,7 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
             chart.langFormat(
                 'accessibility.chartContainerLabel',
                 {
-                    title: this.stripTags(chartTitle),
+                    title: stripHTMLTags(chartTitle),
                     chart: chart
                 }
             )
@@ -94,7 +95,7 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
         if (creditsEl) {
             if (chart.credits.textStr) {
                 creditsEl.setAttribute(
-                    'aria-label', this.stripTags(
+                    'aria-label', stripHTMLTags(
                         chart.langFormat(
                             'accessibility.credits', {
                                 creditsStr: chart.credits.textStr
@@ -113,7 +114,6 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
      */
     destroy: function () {
         this.chart.renderTo.setAttribute('aria-hidden', true);
-        this.destroyBase();
     }
 
 });

@@ -11,8 +11,14 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import A11yUtilities from '../utilities.js';
+
+var stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
 /**
@@ -70,14 +76,10 @@ H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
  * @private
  * @class
  * @name Highcharts.LegendComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var LegendComponent = function (chart) {
-    this.initBase(chart);
-};
+var LegendComponent = function () {};
 LegendComponent.prototype = new AccessibilityComponent();
-H.extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
+extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * The legend needs updates on every render, in order to update positioning
@@ -131,7 +133,7 @@ H.extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                             'accessibility.legendItem',
                             {
                                 chart: chart,
-                                itemName: component.stripTags(item.name)
+                                itemName: stripHTMLTags(item.name)
                             }
                         )
                     },

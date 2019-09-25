@@ -61,12 +61,14 @@ Highcharts.setOptions({
         // has the same layout option: layoutAlgorithm.
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         },
         packedbubble: {
             layoutAlgorithm: {
-                enableSimulation: false
+                enableSimulation: false,
+                maxIterations: 10
             }
         }
 
@@ -83,11 +85,132 @@ Highcharts.setOptions({
         animation: false
     }
 });
+// Save default functions from the default options, as they are not stringified
+// to JSON
+/*
+function handleDefaultOptionsFunctions(save) {
+    var defaultOptionsFunctions = {};
+    function saveDefaultOptionsFunctions(original, path) {
+        Highcharts.objectEach(original, function (value, key) {
+            if (
+                Highcharts.isObject(value, true) &&
+                !Highcharts.isClass(value) &&
+                !Highcharts.isDOMElement(value)
+            ) {
+                // Recurse
+                saveDefaultOptionsFunctions(original[key], (path ? path + '.' : '') + key);
 
+            } else if (save && typeof value === 'function') {
+                defaultOptionsFunctions[path + '.' + key] = value;
+
+            } else if ( // restore
+                !save &&
+                typeof value === 'function'
+            ) {
+                console.log('restore', path + '.' + key)
+                original[key] = defaultOptionsFunctions[path + '.' + key];
+            }
+        });
+    }
+    saveDefaultOptionsFunctions(Highcharts.defaultOptions, '');
+}
+handleDefaultOptionsFunctions(true);
+*/
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+// Override Highcharts and jQuery ajax functions to load from local
+Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+    var success = attr.success;
+    attr.error = function (e) {
+        throw new Error('Failed to load: ' + attr.url);
+    };
+    if (attr.url && window.JSONSources[attr.url]) {
+        success.call(attr, window.JSONSources[attr.url]);
+    } else {
+        console.log('@ajax: Loading over network', attr.url);
+        attr.success = function (data) {
+            window.JSONSources[attr.url] = data;
+            success.call(this, data);
+        };
+        return proceed.call(this, attr);
+    }
+});
+if (window.$) {
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+}
+
+function resetDefaultOptions(testName) {
+
+    var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
+    
+    // Before running setOptions, delete properties that are undefined by
+    // default. For example, in `highcharts/members/setoptions`, properties like
+    // chart.borderWidth and chart.plotBorderWidth are set. The default options
+    // don't contain these props, so a simple merge won't remove them.
+    function deleteAddedProperties(copy, original) {
+        Highcharts.objectEach(copy, function (value, key) {
+            if (
+                Highcharts.isObject(value, true) &&
+                Highcharts.isObject(original[key], true) &&
+                !Highcharts.isClass(value) &&
+                !Highcharts.isDOMElement(value)
+            ) {
+                // Recurse
+                deleteAddedProperties(copy[key], original[key]);
+            } else if (
+                // functions are not saved in defaultOptionsRaw
+                typeof value !== 'function' &&    
+                !(key in original)
+            ) {
+                delete copy[key];
+            }
+        });
+    }
+
+    deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
+
+    // Delete functions (not automated as they are not serialized in JSON)
+    delete Highcharts.defaultOptions.global.getTimezoneOffset;
+    delete Highcharts.defaultOptions.time.getTimezoneOffset;
+
+    Highcharts.setOptions(defaultOptionsRaw);
+
+    // Create a new Time instance to avoid state leaks related to time and the
+    // legacy global options
+    Highcharts.time = new Highcharts.Time(Highcharts.merge(
+        Highcharts.defaultOptions.global,
+        Highcharts.defaultOptions.time
+    ));
+}
+
+
+// Handle wrapping, reset functions that are wrapped in the visual samples to
+// prevent the wraps from piling up downstream.
+var origWrap = Highcharts.wrap;
+var wrappedFunctions = [];
+var origAddEvent = Highcharts.addEvent;
+var addedEvents = [];
+
 if (window.QUnit) {
+    // Fix the number localization in IE
+    if (
+        /msie/.test(navigator.userAgent) &&
+        !Number.prototype._toString
+    ) {
+        Number.prototype._toString = Number.prototype.toString;
+        Number.prototype.toString = function(radix) {
+            if (radix) {
+                return Number.prototype._toString.apply(this, arguments);
+            } else {
+                return this.toLocaleString('en', { useGrouping: false, maximumFractionDigits: 20 });
+            }
+        }
+    }
+
+    //QUnit.config.seed = 'vaolebrok';
     /*
      * Compare numbers taking in account an error.
      * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
@@ -98,6 +221,15 @@ if (window.QUnit) {
      * @param  {String} message  Optional
      */
     QUnit.assert.close = function (number, expected, error, message) {
+        // Remove fix of number localization in IE
+        if (
+            /msie/.test(navigator.userAgent) &&
+            Number.prototype._toString
+        ) {
+            Number.prototype.toString = Number.prototype._toString;
+            delete Number.prototype._toString;
+        }
+
         if (error === void 0 || error === null) {
             error = 0.00001; // default error
         }
@@ -130,6 +262,23 @@ if (window.QUnit) {
 
             // Reset randomizer
             Math.randomCursor = 0;
+
+            // Wrap the wrap function
+            Highcharts.wrap = function (ob, prop, fn) {
+                // Push original function
+                wrappedFunctions.push([ob, prop, ob[prop]]);
+                origWrap(ob, prop, fn);
+            };
+
+            // Wrap the addEvent function
+            Highcharts.addEvent = function (el, type, fn, options) {
+                var unbinder = origAddEvent(el, type, fn, options);
+
+                if (typeof el === 'function' && el.prototype) {
+                    addedEvents.push(unbinder);
+                }
+                return unbinder;
+            }
         },
 
         afterEach: function (test) {
@@ -140,6 +289,14 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
+            if (defaultOptions !== Highcharts.defaultOptionsRaw) {
+                //var msg = 'Default options changed, make sure the test resets options';
+                //console.log(test.test.testName, msg);
+                //QUnit.config.queue.length = 0;
+                //throw new Error(msg);
+            }
 
             var containerStyle = document.getElementById('container').style;
             containerStyle.width = '';
@@ -161,6 +318,7 @@ if (window.QUnit) {
                 }
                 if (currentChart.template) {
                     templateCharts.push(currentChart);
+                    currentChart.renderer.box.isTemplate = true;
                 } else if (currentChart.destroy && currentChart.renderer) {
                     currentChart.destroy();
                 }
@@ -168,6 +326,51 @@ if (window.QUnit) {
 
             Highcharts.charts.length = 0;
             Array.prototype.push.apply(Highcharts.charts, templateCharts);
+
+            // Renderer samples, no chart instance existed
+            var svgs = document.getElementsByTagName('svg'),
+                i = svgs.length;
+            while (i--) {
+                if (!svgs[i].isTemplate) {
+                    svgs[i].parentNode.removeChild(svgs[i]);
+                }
+            }
+
+            // Unwrap/reset wrapped functions
+            while (wrappedFunctions.length) {
+                //const [ ob, prop, fn ] = wrappedFunctions.pop();
+                var args = wrappedFunctions.pop(),
+                    ob = args[0],
+                    prop = args[1],
+                    fn = args[2];
+                ob[prop] = fn;
+            }
+            Highcharts.wrap = origWrap;
+
+            // Unbind events and reset addEvent
+            while (addedEvents.length) {
+                addedEvents.pop()();
+            }
+            Highcharts.addEvent = origAddEvent;
+
+
+            // Reset defaultOptions and callbacks if those are mutated. In
+            // karma-konf, the scriptBody is inspected to see if these expensive
+            // operations are necessary. Visual tests only.
+            if (test.test.resets && test.test.resets.forEach) {
+                test.test.resets.forEach(function (key) {
+                    var fn = {
+                        callbacks: function () {
+                            Highcharts.Chart.prototype.callbacks =
+                                Highcharts.callbacksRaw.slice(0);
+                        },
+                        defaultOptions: function () {
+                            resetDefaultOptions(test.test.testName);
+                        }
+                    };
+                    fn[key]();
+                });
+            }
         }
     });
 }
@@ -179,12 +382,28 @@ Highcharts.prepareShot = function (chart) {
     if (
         chart &&
         chart.series &&
-        chart.series[0] &&
-        chart.series[0].points &&
-        chart.series[0].points[0] &&
-        typeof chart.series[0].points[0].onMouseOver === 'function'
+        chart.series[0]
     ) {
-        chart.series[0].points[0].onMouseOver();
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
+            chart.series[0].points;
+
+        if (points) {
+            for (var i = 0; i < points.length; i++) {
+                if (
+                    points[i] &&
+                    !points[i].isNull &&
+                    !( // Map point with no extent, like Aruba
+                        points[i].shapeArgs &&
+                        points[i].shapeArgs.d &&
+                        points[i].shapeArgs.d.length === 0
+                    ) &&
+                    typeof points[i].onMouseOver === 'function'
+                ) {
+                    points[i].onMouseOver();
+                    break;
+                }
+            }
+        }
     }
 };
 
@@ -198,7 +417,20 @@ function getSVG(chart) {
     if (chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
-        svg = container.querySelector('svg').outerHTML;
+        svg = container.querySelector('svg')
+            .outerHTML
+            .replace(
+                /<svg /,
+                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+            );
+
+        if (chart.styledMode) {
+            svg = svg.replace(
+                '</style>',
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
+                + 'text, tspan { fill: blue; stroke: none; } </style>'
+            );
+        }
 
     // Renderer samples
     } else {
@@ -234,6 +466,23 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 }
 
 /**
+ * Vanilla request for fetching an url using GET.
+ * @param {String} url to fetch
+ * @param {Function} callback to call when done.
+ */
+function xhrLoad(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+}
+
+/**
  * Get a PNG image or image data from the chart SVG.
  * @param  {Object} chart The chart instance
  * @param  {String} path  The sample path
@@ -251,6 +500,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             try {
                 var DOMURL = (window.URL || window.webkitURL || window);
 
+                // Invalidate images, loading external images will throw an
+                // error
+                svg = svg.replace(/xlink:href/g, 'data-href');
+
                 var img = new Image(),
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
@@ -262,7 +515,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        new Error('Error loading SVG on canvas')
+                        new Error('Error loading SVG on canvas.')
                     );
                 };
                 img.src = url;
@@ -303,23 +556,26 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             reject(new Error('No candidate SVG found'));
         }
 
-        // Handle reference, load SVG from file
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'base/samples/' + path + '/reference.svg', true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
+        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
+        // Handle reference, load SVG from bucket or file
+        var url = 'base/samples/' + path + '/reference.svg';
+        if (remotelocation) {
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
+        }
+        xhrLoad(url, function onXHRDone(xhr) {
+            if (xhr.status == 200) {
                 var svg = xhr.responseText;
-
                 svgToPixels(svg, function (data) {
                     referenceData = data;
                     doComparison();
-                });
+                })
+            } else {
+                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
+                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
+                resolve();
             }
-        };
-        xhr.send();
-
+        });
     });
-
 }
 
 // De-randomize Math.random in tests
@@ -367,19 +623,3 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         return ret;
     };
 }());
-
-// Override getJSON
-window.JSONSources = {};
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-/*
-window.onbeforeunload = function () {
-    console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
-    if (currentTests.length) {
-        return false;
-    }
-};
-*/

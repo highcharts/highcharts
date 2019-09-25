@@ -1,8 +1,8 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json', function (data) {
 
     // Make codes uppercase to match the map data
-    $.each(data, function () {
-        this.code = this.code.toUpperCase();
+    data.forEach(function (p) {
+        p.code = p.code.toUpperCase();
     });
 
     // Instantiate the map

@@ -18,8 +18,13 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OptionsOverflowValue = ('allow'|'justify');
-        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+        function dateFormat(
+            format: string,
+            timestamp: number,
+            capitalize?: boolean
+        ): string;
+        function getOptions(): Options;
+        function setOptions(options: Options): Options;
         interface Chart {
             marginRight: ChartOptions['marginRight'];
             polar: ChartOptions['polar'];
@@ -143,6 +148,18 @@ declare global {
             style?: CSSObject;
             text?: string;
         }
+        interface CaptionOptions {
+            align?: AlignValue;
+            floating?: boolean;
+            margin?: number;
+            style?: CSSObject;
+            text?: string;
+            useHTML?: boolean;
+            verticalAlign?: VerticalAlignValue;
+            widthAdjust?: number;
+            x?: number;
+            y?: number;
+        }
         interface GlobalOptions {
             /** @deprecated */
             canvasToolsURL?: string;
@@ -247,6 +264,7 @@ declare global {
             credits?: CreditsOptions;
             colors?: Array<ColorString>;
             defs?: any;
+            caption?: CaptionOptions;
             global?: GlobalOptions;
             /** @deprecated */
             labels?: LabelsOptions;
@@ -324,13 +342,19 @@ declare global {
         let defaultOptions: Options;
         let defaultPlotOptions: PlotOptions;
         let time: Time;
-        function dateFormat(
-            format: string,
-            timestamp: number,
-            capitalize?: boolean
-        ): string;
-        function getOptions(): Options;
-        function setOptions(options: Options): Options;
+        type DescriptionOptionsType =
+            (TitleOptions|SubtitleOptions|CaptionOptions);
+        type OptionsOverflowValue = ('allow'|'justify');
+        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+        type PlotOptions = {
+            [TSeriesType in keyof SeriesTypesDictionary]?: (
+                Omit<SeriesTypesDictionary[TSeriesType]['prototype']['options'],
+                (
+                    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|
+                    'treemap'|'type'|'xAxis'|'yAxis'|'zIndex'
+                )>
+            )
+        };
     }
 }
 
@@ -354,7 +378,7 @@ declare global {
  */
 
 /**
- * Conaints common event information. Through the `options` property you can
+ * Contains common event information. Through the `options` property you can
  * access the series options that were passed to the `addSeries` method.
  *
  * @interface Highcharts.ChartAddSeriesEventObject
@@ -2141,8 +2165,8 @@ H.defaultOptions = {
 
         /**
          * The vertical alignment of the title. Can be one of `"top"`,
-         * `"middle"` and `"bottom"`. When a value is given, the title behaves
-         * as floating.
+         * `"middle"` and `"bottom"`. When middle, the subtitle behaves as
+         * floating.
          *
          * @sample {highcharts} highcharts/subtitle/verticalalign/
          *         Footnote at the bottom right of plot area
@@ -2220,6 +2244,99 @@ H.defaultOptions = {
          * @since 4.2.5
          */
         widthAdjust: -44
+    },
+
+    /**
+     * The chart's caption, which will render below the chart and will be part
+     * of exported charts. The caption can be updated after chart initialization
+     * through the `Chart.update` or `Chart.caption.update` methods.
+     *
+     * @sample highcharts/caption/text/
+     *         A chart with a caption
+     * @since  7.2.0
+     */
+    caption: {
+
+        /**
+         * When the caption is floating, the plot area will not move to make
+         * space for it.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption caption.floating
+         */
+
+        /**
+         * The margin between the caption and the plot area.
+         */
+        margin: 15,
+
+        /**
+         * CSS styles for the caption.
+         *
+         * In styled mode, the caption style is given in the
+         * `.highcharts-caption` class.
+         *
+         * @sample {highcharts} highcharts/css/titles/
+         *         Styled mode
+         *
+         * @type      {Highcharts.CSSObject}
+         * @default   {"color": "#666666"}
+         * @apioption caption.style
+         */
+
+        /**
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption caption.useHTML
+         */
+
+        /**
+         * The x position of the caption relative to the alignment within
+         * `chart.spacingLeft` and `chart.spacingRight`.
+         *
+         * @type      {number}
+         * @default   0
+         * @apioption caption.x
+         */
+
+        /**
+         * The y position of the caption relative to the alignment within
+         * `chart.spacingTop` and `chart.spacingBottom`.
+         *
+         * @type      {number}
+         * @apioption caption.y
+         */
+
+        /**
+         * The caption text of the chart.
+         *
+         * @sample {highcharts} highcharts/caption/text/
+         *         Custom caption
+         */
+        text: '',
+
+        /**
+         * The horizontal alignment of the caption. Can be one of "left",
+         *  "center" and "right".
+         *
+         * @type  {Highcharts.AlignValue}
+         */
+        align: 'left',
+
+        /**
+         * The vertical alignment of the caption. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When middle, the caption behaves as
+         * floating.
+         *
+         * @type      {Highcharts.VerticalAlignValue}
+         */
+        verticalAlign: 'bottom'
+
     },
 
     /**
@@ -4013,13 +4130,14 @@ H.setOptions = function (
     H.defaultOptions = merge(true, H.defaultOptions, options);
 
     // Update the time object
-    (H.time.update as any)(
-        merge<Highcharts.TimeOptions>(
-            H.defaultOptions.global as any,
-            H.defaultOptions.time as any
-        ),
-        false
-    );
+    if (options.time || options.global) {
+        H.time.update(merge(
+            H.defaultOptions.global,
+            H.defaultOptions.time,
+            options.global,
+            options.time
+        ));
+    }
 
     return H.defaultOptions;
 };

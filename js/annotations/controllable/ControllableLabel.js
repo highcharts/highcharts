@@ -2,7 +2,8 @@
 import H from './../../parts/Globals.js';
 
 import U from './../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
@@ -415,7 +416,7 @@ H.merge(
                     };
 
                     itemPosition = ControllableLabel.alignedPosition(
-                        H.extend(itemOptions, {
+                        extend(itemOptions, {
                             width: item.width,
                             height: item.height
                         }),

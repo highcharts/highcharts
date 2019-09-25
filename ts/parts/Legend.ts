@@ -44,12 +44,12 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
-        interface PlotSeriesOptions {
-            legendType?: ('point'|'series');
-        }
         interface Point extends LegendItemObject {
         }
         interface Series extends LegendItemObject {
+        }
+        interface SeriesOptions {
+            legendType?: ('point'|'series');
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
@@ -107,7 +107,9 @@ declare global {
                 visible?: boolean
             ): void;
             public destroy(): void;
-            public destroyItem(item: (BubbleLegend|Point|Series)): void;
+            public destroyItem(
+                item: (BubbleLegend|ColorAxis|Point|Series)
+            ): void;
             public getAlignment(): string;
             public getAllItems(): Array<(BubbleLegend|Point|Series)>;
             public handleOverflow(legendHeight: number): number;
@@ -168,8 +170,8 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * The sequential index of the data point in the legend.
  * @name Highcharts.PointOptionsObject#legendIndex
@@ -524,7 +526,12 @@ Highcharts.Legend.prototype = {
      */
     destroyItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: (
+            Highcharts.BubbleLegend |
+            Highcharts.ColorAxis |
+            Highcharts.Point |
+            Highcharts.Series
+        )
     ): void {
         var checkbox = item.checkbox;
 
@@ -1025,14 +1032,7 @@ Highcharts.Legend.prototype = {
     ): void {
         var chart = this.chart,
             options = this.options,
-            alignment = this.getAlignment(),
-            titleMarginOption: number = (chart.options.title as any).margin,
-            titleMargin: number = titleMarginOption !== undefined ?
-                chart.titleOffset[0] + titleMarginOption :
-                0,
-            titleMarginBottom: number = titleMarginOption !== undefined ?
-                chart.titleOffset[2] + titleMarginOption :
-                0;
+            alignment = this.getAlignment();
 
         if (alignment) {
 
@@ -1057,16 +1057,7 @@ Highcharts.Legend.prototype = {
                             ] as any) +
                             pick(options.margin as any, 12) +
                             spacing[side] +
-                            (
-                                side === 0 &&
-                                (chart.titleOffset[0] === 0 ?
-                                    0 : titleMargin)
-                            ) + // #7428, #7894
-                            (
-                                side === 2 &&
-                                (chart.titleOffset[2] === 0 ?
-                                    0 : titleMarginBottom)
-                            )
+                            (chart.titleOffset[side] || 0)
                         )
                     );
                 }
@@ -1296,7 +1287,6 @@ Highcharts.Legend.prototype = {
         if (display) {
             // If aligning to the top and the layout is horizontal, adjust for
             // the title (#7428)
-            const margin: number = (chart.options.title as any).margin;
             let alignTo = chart.spacingBox;
             let y = alignTo.y;
 
@@ -1304,13 +1294,13 @@ Highcharts.Legend.prototype = {
                 /(lth|ct|rth)/.test(legend.getAlignment()) &&
                 chart.titleOffset[0] > 0
             ) {
-                y += chart.titleOffset[0] + margin;
+                y += chart.titleOffset[0];
 
             } else if (
                 /(lbh|cb|rbh)/.test(legend.getAlignment()) &&
                 chart.titleOffset[2] > 0
             ) {
-                y -= chart.titleOffset[2] + margin;
+                y -= chart.titleOffset[2];
             }
 
             if (y !== alignTo.y) {

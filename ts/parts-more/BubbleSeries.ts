@@ -18,38 +18,12 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type BubbleSizeByValue = ('area'|'width');
-        interface BubblePointMarkerOptions extends PointMarkerOptionsObject {
-            fillOpacity?: number;
-        }
-        interface BubblePointOptions extends ScatterPointOptions {
-            z?: (number|null);
-        }
-        interface BubbleSeriesOptions extends ScatterSeriesOptions {
-            displayNegative?: boolean;
-            marker?: BubblePointMarkerOptions;
-            maxSize?: (number|string);
-            sizeBy?: BubbleSizeByValue;
-            sizeByAbsoluteValue?: boolean;
-            zMax?: number;
-            zMin?: number;
-            zThreshold?: number;
-        }
-        interface Series {
-            bubblePadding?: BubbleSeries['bubblePadding'];
-            maxPxSize?: BubbleSeries['maxPxSize'];
-            minPxSize?: BubbleSeries['minPxSize'];
-            specialGroup?: BubbleSeries['specialGroup'];
-            zData?: BubbleSeries['zData'];
-            yData?: BubbleSeries['yData'];
-        }
-        interface SeriesTypesDictionary {
-            bubble: typeof BubbleSeries;
-        }
         class BubblePoint extends ScatterPoint {
             public options: BubblePointOptions;
             public series: BubbleSeries;
-            public haloPath(size: number): SVGElement;
+            public haloPath(
+                size: number
+            ): (SVGElement|SVGPathArray|Array<SVGElement>);
         }
         class BubbleSeries extends ScatterSeries {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
@@ -90,6 +64,34 @@ declare global {
             ): SVGAttributes;
             public translate(): void;
         }
+        interface BubblePointMarkerOptions extends PointMarkerOptionsObject {
+            fillOpacity?: number;
+        }
+        interface BubblePointOptions extends ScatterPointOptions {
+            z?: (number|null);
+        }
+        interface BubbleSeriesOptions extends ScatterSeriesOptions {
+            displayNegative?: boolean;
+            marker?: BubblePointMarkerOptions;
+            minSize?: (number|string);
+            maxSize?: (number|string);
+            sizeBy?: BubbleSizeByValue;
+            sizeByAbsoluteValue?: boolean;
+            zMax?: number;
+            zMin?: number;
+            zThreshold?: number;
+        }
+        interface Series {
+            bubblePadding?: BubbleSeries['bubblePadding'];
+            maxPxSize?: BubbleSeries['maxPxSize'];
+            minPxSize?: BubbleSeries['minPxSize'];
+            specialGroup?: BubbleSeries['specialGroup'];
+            zData?: BubbleSeries['zData'];
+        }
+        interface SeriesTypesDictionary {
+            bubble: typeof BubbleSeries;
+        }
+        type BubbleSizeByValue = ('area'|'width');
     }
 }
 
@@ -98,8 +100,11 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    extend,
+    isNumber,
+    pInt
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -133,7 +138,7 @@ var arrayMax = H.arrayMax,
  * @product      highcharts highstock
  * @optionparent plotOptions.bubble
  */
-seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
+seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         // eslint-disable-next-line valid-jsdoc
@@ -341,6 +346,11 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
      * @since     4.0.3
      * @product   highcharts
      * @apioption plotOptions.bubble.zMax
+     */
+
+    /**
+     * @default   z
+     * @apioption plotOptions.bubble.colorKey
      */
 
     /**
@@ -571,7 +581,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
 
             if (isNumber(radius) && radius >= this.minPxSize / 2) {
                 // Shape arguments
-                point.marker = H.extend(point.marker, {
+                point.marker = extend(point.marker, {
                     radius: radius,
                     width: 2 * radius,
                     height: 2 * radius
@@ -592,8 +602,8 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
     },
 
     alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-    buildKDTree: noop,
-    applyZones: noop
+    buildKDTree: noop as any,
+    applyZones: noop as any
 
 // Point class
 }, {
@@ -603,7 +613,9 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
     haloPath: function (
         this: Highcharts.BubblePoint,
         size: number
-    ): Highcharts.SVGElement {
+    ): (Highcharts.SVGElement|
+        Highcharts.SVGPathArray|
+        Array<Highcharts.SVGElement>) {
         return Point.prototype.haloPath.call(
             this,
             // #6067
@@ -703,7 +715,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                     (axis.dataMin as any) <= data[i] &&
                     data[i] <= (axis.dataMax as any)
                 ) {
-                    radius = series.radii[i];
+                    radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(
                         ((data[i] - (min as any)) * transA) - (radius as any),
                         pxMin

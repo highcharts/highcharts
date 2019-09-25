@@ -862,40 +862,24 @@ addEvent(
             gridOptions: Highcharts.XAxisGridOptions = ((
                 options && isObject(options.grid)) ? (options.grid as any) : {}
             ),
-            labelPadding,
-            distance,
-            lineWidth,
-            linePath,
             yStartIndex,
             yEndIndex,
             xStartIndex,
             xEndIndex,
-            renderer = axis.chart.renderer,
-            horiz = axis.horiz,
-            axisGroupBox;
+            renderer = axis.chart.renderer;
 
         if (gridOptions.enabled === true) {
 
             // @todo acutual label padding (top, bottom, left, right)
-
-            // Label padding is needed to figure out where to draw the outer
-            // line.
-            labelPadding = (
-                Math.abs((axis.defaultLeftAxisOptions.labels as any).x) * 2
-            );
             axis.maxLabelDimensions = axis.getMaxLabelDimensions(
                 axis.ticks,
                 axis.tickPositions
             );
-            distance = axis.maxLabelDimensions.width + labelPadding;
-            lineWidth = options.lineWidth;
 
             // Remove right wall before rendering if updating
             if (axis.rightWall) {
                 axis.rightWall.destroy();
             }
-
-            axisGroupBox = (axis.axisGroup as any).getBBox();
 
             /*
                Draw an extra axis line on outer axes
@@ -906,27 +890,24 @@ addEvent(
                Into this:    |______|______|______|__|
                                                        */
             if (axis.isOuterAxis() && axis.axisLine) {
-                if (horiz) {
-                    // -1 to avoid adding distance each time the chart updates
-                    distance = axisGroupBox.height - 1;
-                }
 
+                const lineWidth = options.lineWidth;
                 if (lineWidth) {
-                    linePath = axis.getLinePath(lineWidth);
+                    const linePath = axis.getLinePath(lineWidth);
                     xStartIndex = linePath.indexOf('M') + 1;
                     xEndIndex = linePath.indexOf('L') + 1;
                     yStartIndex = linePath.indexOf('M') + 2;
                     yEndIndex = linePath.indexOf('L') + 2;
 
                     // Negate distance if top or left axis
-                    if (axis.side === axisSide.top ||
+                    // Subtract 1px to draw the line at the end of the tick
+                    const distance = (axis.tickSize('tick')[0] - 1) * ((
+                        axis.side === axisSide.top ||
                         axis.side === axisSide.left
-                    ) {
-                        distance = -distance;
-                    }
+                    ) ? -1 : 1);
 
                     // If axis is horizontal, reposition line path vertically
-                    if (horiz) {
+                    if (axis.horiz) {
                         linePath[yStartIndex] =
                             (linePath[yStartIndex] as any) + distance;
                         linePath[yEndIndex] =

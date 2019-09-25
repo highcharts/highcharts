@@ -20,19 +20,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface BellcurvePointOptions extends AreaSplinePointOptions {
-        }
-        interface BellcurveSeriesOptions
-            extends AreaSplineSeriesOptions, DerivedSeriesOptions
-        {
-            baseSeries?: (number|string);
-            data?: undefined;
-            intervals?: number;
-            pointsInInterval?: number;
-        }
-        interface SeriesTypesDictionary {
-            bellcurve: typeof BellcurveSeries;
-        }
         class BellcurvePoint extends AreaSplinePoint {
             public option: BellcurvePointOptions;
             public series: BellcurveSeries;
@@ -62,6 +49,20 @@ declare global {
             ): Array<Array<number>>;
             public setMean(): void;
             public setStandardDeviation(): void;
+        }
+        interface BellcurvePointOptions extends AreaSplinePointOptions {
+        }
+        interface BellcurveSeriesOptions
+            extends AreaSplineSeriesOptions, DerivedSeriesOptions
+        {
+            baseSeries?: (number|string);
+            data?: undefined;
+            intervals?: number;
+            pointsInInterval?: number;
+            states?: SeriesStatesOptionsObject<BellcurveSeries>;
+        }
+        interface SeriesTypesDictionary {
+            bellcurve: typeof BellcurveSeries;
         }
     }
 }
@@ -141,7 +142,7 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
+seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
 
     /**
      * A bell curve is an areaspline series which represents the probability
@@ -155,8 +156,8 @@ seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
      * @extends      plotOptions.areaspline
      * @since        6.0.0
      * @product      highcharts
-     * @excluding    boostThreshold, connectNulls, stacking, pointInterval,
-     *               pointIntervalUnit
+     * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
+     *               pointInterval, pointIntervalUnit
      * @optionparent plotOptions.bellcurve
      */
     , {

@@ -958,10 +958,10 @@ function defined(obj) {
  * @param {number|string} [value]
  *        The value if a single property is set.
  *
- * @return {*}
+ * @return {string|null|undefined}
  *         When used as a getter, return the value.
  */
-H.attr = function (elem, prop, value) {
+function attr(elem, prop, value) {
     var ret;
     // if the prop is a string
     if (isString(prop)) {
@@ -979,13 +979,13 @@ H.attr = function (elem, prop, value) {
         }
         // else if prop is defined, it is a hash of key/value pairs
     }
-    else if (defined(prop) && isObject(prop)) {
+    else {
         objectEach(prop, function (val, key) {
             elem.setAttribute(key, val);
         });
     }
     return ret;
-};
+}
 /**
  * Check if an element is an array, and if not, make it into an array.
  *
@@ -1009,22 +1009,23 @@ function splat(obj) {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (fn, delay, context) {
-    if (delay) {
+function syncTimeout(fn, delay, context) {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
  * (e.g. by `chart.destroy()`). For the details see
@@ -1057,7 +1058,7 @@ H.clearTimeout = function (id) {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function (a, b) {
+function extend(a, b) {
     /* eslint-enable valid-jsdoc */
     var n;
     if (!a) {
@@ -1067,7 +1068,7 @@ H.extend = function (a, b) {
         a[n] = b[n];
     }
     return a;
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1110,7 +1111,7 @@ H.css = function (el, styles) {
                 'alpha(opacity=' + (styles.opacity * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 /**
  * Utility function to create an HTML element with attributes and styles.
@@ -1138,7 +1139,7 @@ H.css = function (el, styles) {
 H.createElement = function (tag, attribs, styles, parent, nopad) {
     var el = doc.createElement(tag), css = H.css;
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1170,7 +1171,7 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
 H.extendClass = function (parent, members) {
     var obj = (function () { });
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
 };
 /**
@@ -1960,7 +1961,7 @@ H.stop = function (el, prop) {
 function objectEach(obj, fn, ctx) {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
@@ -2190,8 +2191,9 @@ H.removeEvent = function (el, type, fn) {
             }
         });
     }
-    ['protoEvents', 'hcEvents'].forEach(function (coll) {
-        var eventCollection = el[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll, i) {
+        var eventElem = i ? el : el.prototype;
+        var eventCollection = eventElem && eventElem[coll];
         if (eventCollection) {
             if (type) {
                 events = (eventCollection[type] || []);
@@ -2208,7 +2210,7 @@ H.removeEvent = function (el, type, fn) {
             }
             else {
                 removeAllEvents(eventCollection);
-                el[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -2244,7 +2246,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
         (el.dispatchEvent || el.fireEvent)) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
         if (el.dispatchEvent) {
             el.dispatchEvent(e);
         }
@@ -2255,7 +2257,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
     else {
         if (!eventArguments.target) {
             // We're running a custom event
-            H.extend(eventArguments, {
+            extend(eventArguments, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -2375,15 +2377,15 @@ H.animate = function (el, params, opt) {
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -2476,14 +2478,16 @@ if (win.jQuery) {
             }
             // When called without parameters or with the return argument,
             // return an existing chart
-            return charts[H.attr(this[0], 'data-highcharts-chart')];
+            return charts[attr(this[0], 'data-highcharts-chart')];
         }
     };
 }
 // TODO use named exports when supported.
 var utils = {
+    attr: attr,
     defined: defined,
     erase: erase,
+    extend: extend,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
@@ -2492,6 +2496,7 @@ var utils = {
     isString: isString,
     objectEach: objectEach,
     pInt: pInt,
-    splat: splat
+    splat: splat,
+    syncTimeout: syncTimeout
 };
 export default utils;

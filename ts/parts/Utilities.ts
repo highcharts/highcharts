@@ -157,9 +157,18 @@ declare global {
         function arrayMin(data: Array<any>): number;
         function attr(
             elem: (HTMLDOMElement|SVGDOMElement),
-            prop?: (string|HTMLAttributes|SVGAttributes),
-            value?: (number|string)
-        ): any;
+            prop: (HTMLAttributes|SVGAttributes)
+        ): undefined;
+        function attr(
+            elem: (HTMLDOMElement|SVGDOMElement),
+            prop: string,
+            value?: undefined
+        ): (string|null);
+        function attr(
+            elem: (HTMLDOMElement|SVGDOMElement),
+            prop: string,
+            value: (number|string)
+        ): undefined;
         function clearTimeout(id: number): void;
         function correctFloat(num: number, prec?: number): number;
         function createElement(
@@ -286,12 +295,12 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TOptions extends SeriesOptions>(
+        function seriesType<TSeries extends Series>(
             type: string,
             parent: string,
-            options: TOptions,
-            props: Dictionary<any>,
-            pointProps?: Dictionary<any>
+            options: TSeries['options'],
+            props?: Partial<TSeries>,
+            pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
@@ -304,9 +313,9 @@ declare global {
         function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
-            delay?: number,
-            context?: any
-        ): (number|undefined);
+            delay: number,
+            context?: unknown
+        ): number;
         function uniqueKey(): string;
         function wrap(
             obj: any,
@@ -1427,6 +1436,20 @@ function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
 }
 
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: (Highcharts.HTMLAttributes|Highcharts.SVGAttributes)
+): undefined;
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: string,
+    value?: undefined
+): (string|null);
+function attr(
+    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
+    prop: string,
+    value: (number|string)
+): undefined;
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
  * a key and a value, or let the second argument be a collection of keys and
@@ -1443,25 +1466,25 @@ function defined<T>(obj: T): obj is NonNullable<T> {
  * @param {number|string} [value]
  *        The value if a single property is set.
  *
- * @return {*}
+ * @return {string|null|undefined}
  *         When used as a getter, return the value.
  */
-H.attr = function (
+function attr(
     elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
-    prop?: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
+    prop: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
     value?: (number|string)
-): any {
-    var ret;
+): (string|null|undefined) {
+    let ret;
 
     // if the prop is a string
     if (isString(prop)) {
         // set the value
         if (defined(value)) {
-            elem.setAttribute(prop as string, value as string);
+            elem.setAttribute(prop, value as string);
 
         // get the value
         } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop as string);
+            ret = elem.getAttribute(prop);
 
             // IE7 and below cannot get class through getAttribute (#7850)
             if (!ret && prop === 'class') {
@@ -1470,13 +1493,13 @@ H.attr = function (
         }
 
     // else if prop is defined, it is a hash of key/value pairs
-    } else if (defined(prop) && isObject(prop)) {
+    } else {
         objectEach(prop, function (val: any, key: string): void {
             elem.setAttribute(key, val);
         });
     }
     return ret;
-};
+}
 
 /**
  * Check if an element is an array, and if not, make it into an array.
@@ -1502,26 +1525,27 @@ function splat(obj: any): Array<any> {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (
+function syncTimeout(
     fn: Function,
-    delay?: number,
-    context?: any
-): (number|undefined) {
-    if (delay) {
+    delay: number,
+    context?: unknown
+): number {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -1556,7 +1580,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T extends object> (a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1567,7 +1591,7 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
-};
+}
 
 
 /* eslint-disable valid-jsdoc */
@@ -1620,7 +1644,7 @@ H.css = function (
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 
 /**
@@ -1657,7 +1681,7 @@ H.createElement = function (
         css = H.css;
 
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1694,7 +1718,7 @@ H.extendClass = function<T, TReturn = T> (
     var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
 };
 
@@ -2660,7 +2684,7 @@ function objectEach<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
@@ -2934,8 +2958,9 @@ H.removeEvent = function<T> (
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
-        var eventCollection = (el as any)[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
+        const eventElem = i ? el : (el as any).prototype;
+        const eventCollection = eventElem && eventElem[coll];
 
         if (eventCollection) {
             if (type) {
@@ -2957,7 +2982,7 @@ H.removeEvent = function<T> (
                 }
             } else {
                 removeAllEvents(eventCollection);
-                (el as any)[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -3004,7 +3029,7 @@ H.fireEvent = function<T> (
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
             (el as any).dispatchEvent(e);
@@ -3017,7 +3042,7 @@ H.fireEvent = function<T> (
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
-            H.extend(eventArguments as any, {
+            extend(eventArguments as any, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -3069,7 +3094,7 @@ H.fireEvent = function<T> (
 
     // Run the default if not prevented
     if (defaultFunction && !eventArguments.defaultPrevented) {
-        defaultFunction.call(el, eventArguments);
+        (defaultFunction as Function).call(el, eventArguments);
     }
 };
 
@@ -3165,15 +3190,15 @@ H.animate = function (
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -3182,12 +3207,12 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (
+H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
-    options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
-    pointProps?: Highcharts.Dictionary<any>
+    options: TSeries['options'],
+    props?: Partial<TSeries>,
+    pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;
@@ -3295,15 +3320,17 @@ if ((win as any).jQuery) {
 
             // When called without parameters or with the return argument,
             // return an existing chart
-            return charts[H.attr(this[0], 'data-highcharts-chart')];
+            return charts[(attr(this[0], 'data-highcharts-chart') as any)];
         }
     };
 }
 
 // TODO use named exports when supported.
 const utils = {
+    attr,
     defined,
     erase,
+    extend,
     isArray,
     isClass,
     isDOMElement,
@@ -3312,7 +3339,8 @@ const utils = {
     isString,
     objectEach,
     pInt,
-    splat
+    splat,
+    syncTimeout
 };
 
 export default utils;

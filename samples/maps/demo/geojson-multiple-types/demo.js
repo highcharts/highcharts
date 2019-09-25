@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/australia.geo.json', function (geojson) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/australia.geo.json', function (geojson) {
 
     // Prepare the geojson
     var states = Highcharts.geojson(geojson, 'map'),
@@ -21,32 +21,32 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
         };
 
     // Skip or move some labels to avoid collision
-    $.each(states, function () {
+    states.forEach(function (state) {
         // Disable data labels
-        if (this.properties.code_hasc === 'AU.CT' || this.properties.code_hasc === 'AU.JB') {
-            this.dataLabels = {
+        if (state.properties.code_hasc === 'AU.CT' || state.properties.code_hasc === 'AU.JB') {
+            state.dataLabels = {
                 enabled: false
             };
         }
-        if (this.properties.code_hasc === 'AU.TS') {
-            this.dataLabels = {
+        if (state.properties.code_hasc === 'AU.TS') {
+            state.dataLabels = {
                 style: {
                     color: '#333333'
                 }
             };
         }
         // Move center for data label
-        if (this.properties.code_hasc === 'AU.SA') {
-            this.middleY = 0.3;
+        if (state.properties.code_hasc === 'AU.SA') {
+            state.middleY = 0.3;
         }
-        if (this.properties.code_hasc === 'AU.QL') {
-            this.middleY = 0.7;
+        if (state.properties.code_hasc === 'AU.QL') {
+            state.middleY = 0.7;
         }
     });
 
-    $.each(cities, function () {
-        if (specialCityLabels[this.name]) {
-            this.dataLabels = specialCityLabels[this.name];
+    cities.forEach(function (city) {
+        if (specialCityLabels[city.name]) {
+            city.dataLabels = specialCityLabels[city.name];
         }
     });
 

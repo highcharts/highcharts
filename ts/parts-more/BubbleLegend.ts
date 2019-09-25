@@ -363,6 +363,7 @@ setOptions({ // Set default bubble legend options
             ranges: {
                 /**
                  * Range size value, similar to bubble Z data.
+                 * @type {number}
                  */
                 value: undefined,
                 /**
@@ -1343,7 +1344,9 @@ wrap(Chart.prototype, 'drawChartBox', function (
         chart.getMargins();
 
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            axis.render();
+            if (axis.visible) { // #11448
+                axis.render();
+            }
 
             if (!bubbleLegendOptions.placed) {
                 axis.setScale();

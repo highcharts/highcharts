@@ -77,22 +77,23 @@ declare global {
         {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
+            inactiveOtherPoints?: boolean;
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
             link?: SVGAttributes;
             marker?: NetworkgraphPointMarkerOptionsObject;
             nodes?: Array<NetworkgraphPointOptions>;
-            states?: NetworkgraphSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<NetworkgraphSeries>;
         }
-        interface NetworkgraphSeriesStatesInactiveOptions
-            extends LineSeriesStatesInactiveOptions
+        interface SeriesStatesInactiveOptionsObject
         {
             animation?: (boolean|AnimationOptionsObject);
             linkOpacity?: number;
         }
-        interface NetworkgraphSeriesStatesOptions
-            extends LineSeriesStatesOptions
-        {
-            inactive?: NetworkgraphSeriesStatesInactiveOptions;
+        interface Series {
+            layout?: NetworkgraphLayout;
+        }
+        interface SeriesTypesDictionary {
+            networkgraph: typeof NetworkgraphSeries;
         }
         class NetworkgraphPoint
             extends LinePoint
@@ -137,12 +138,13 @@ declare global {
             public chart: NetworkgraphChart;
             public createNode: NodesMixin['createNode'];
             public data: Array<NetworkgraphPoint>;
-            public destroy: NodesMixin['destroy'];
+            public destroy(): void;
             public directTouch: boolean;
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public forces: Array<string>;
             public hasDraggableNodes: boolean;
             public isCartesian: boolean;
+            public layout: NetworkgraphLayout;
             public nodeLookup: NodesSeries['nodeLookup'];
             public nodes: Array<NetworkgraphPoint>;
             public noSharedTooltip: boolean;
@@ -267,8 +269,8 @@ var defined = U.defined;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
-import '/layouts.js';
-import '/draggable-nodes.js';
+import './layouts.js';
+import './draggable-nodes.js';
 
 
 var addEvent = H.addEvent,
@@ -286,7 +288,7 @@ var addEvent = H.addEvent,
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.NetworkgraphSeriesOptions>(
+seriesType<Highcharts.NetworkgraphSeries>(
     'networkgraph',
     'line',
 
@@ -300,10 +302,11 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
      *               Networkgraph
      * @since        7.0.0
      * @excluding    boostThreshold, animation, animationLimit, connectEnds,
-     *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
-     *               negativeColor, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, softThreshold, stack, stacking,
-     *               step, threshold, xAxis, yAxis, zoneAxis
+     *               colorAxis, colorKey, connectNulls, dragDrop,
+     *               getExtremesFromAll, label, linecap, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointStart, softThreshold, stack, stacking, step,
+     *               threshold, xAxis, yAxis, zoneAxis
      * @optionparent plotOptions.networkgraph
      */
     {
@@ -639,7 +642,7 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
          */
         forces: ['barycenter', 'repulsive', 'attractive'],
         hasDraggableNodes: true,
-        drawGraph: null,
+        drawGraph: null as any,
         isCartesian: false,
         requireSorting: false,
         directTouch: true,
@@ -648,15 +651,21 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
-        animate: null,
-        buildKDTree: H.noop,
+        animate: null as any,
+        buildKDTree: H.noop as any,
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
          * @private
          */
         createNode: H.NodesMixin.createNode,
-        destroy: H.NodesMixin.destroy,
+        destroy: function (this: Highcharts.NetworkgraphSeries): void {
+            this.layout.removeElementFromCollection<Highcharts.Series>(
+                this,
+                this.layout.series
+            );
+            H.NodesMixin.destroy.call(this);
+        },
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -849,9 +858,9 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
             this.layout = layout;
 
             layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-            layout.addSeries(this);
-            layout.addNodes(this.nodes);
-            layout.addLinks(this.points);
+            layout.addElementsToCollection([this], layout.series);
+            layout.addElementsToCollection(this.nodes, layout.nodes);
+            layout.addElementsToCollection(this.points, layout.links);
         },
 
         /**
@@ -1327,10 +1336,12 @@ seriesType<Highcharts.NetworkgraphSeriesOptions>(
                         }
                     }
                 );
-                this.series.layout.removeNode(this);
-            } else {
-                this.series.layout.removeLink(this);
             }
+
+            this.series.layout.removeElementFromCollection(
+                this,
+                (this.series.layout as any)[this.isNode ? 'nodes' : 'links']
+            );
 
             return Point.prototype.destroy.apply(this, arguments as any);
         }

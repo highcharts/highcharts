@@ -10,15 +10,16 @@
 'use strict';
 import H from './Globals.js';
 /**
- * @interface Highcharts.PointOptionsObject
- */ /**
-* Individual point events
-* @name Highcharts.PointOptionsObject#events
-* @type {Highcharts.PlotSeriesPointEventsOptions}
-*/ /**
-* @name Highcharts.PointOptionsObject#marker
-* @type {Highcharts.PlotSeriesPointMarkerOptions}
-*/
+ * This is a placeholder type of the possible series options for
+ * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
+ *
+ * In TypeScript is this dynamically generated to reference all possible types
+ * of series options.
+ *
+ * @ignore-declaration
+ * @typedef {Highcharts.SeriesOptions|Highcharts.Dictionary<*>} Highcharts.SeriesOptionsType
+ */
 /**
  * Function callback when a series has been animated.
  *
@@ -202,14 +203,14 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
-removeEvent = H.removeEvent, SVGElement = H.SVGElement, syncTimeout = H.syncTimeout, win = H.win;
+removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -353,8 +354,6 @@ H.Series = H.seriesType('line',
  * series type is inherited from [chart.type](#chart.type), so unless the
  * chart is a combination of series types, there is no need to set it on the
  * series level.
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @sample {highcharts} highcharts/series/type/
  *         Line and column in the same chart
@@ -927,14 +926,14 @@ null,
      */
     /**
      * Whether to display this particular series or series type in the
-     * legend. The default value is `true` for standalone series, `false`
-     * for linked series.
+     * legend. Standalone series are shown in legend by default, and linked
+     * series are not. Since v7.2.0 it is possible to show series that use
+     * colorAxis by setting this option to `true`.
      *
      * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
      *         One series in the legend, one hidden
      *
      * @type      {boolean}
-     * @default   true
      * @apioption plotOptions.series.showInLegend
      */
     /**
@@ -1913,6 +1912,10 @@ null,
      * and the rest are assumed to be the same format. This saves expensive
      * data checking and indexing in long series. Set it to `0` disable.
      *
+     * Note:
+     * In boost mode turbo threshold is forced. Only array of numbers or
+     * two dimensional arrays are allowed.
+     *
      * @since   2.2
      * @product highcharts highstock gantt
      *
@@ -1965,7 +1968,7 @@ null,
     /**
      * A name for the dash style to use for the graph.
      *
-     * @see [series.dashStyle](#plotOptions.series.dashStyle)
+     * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
      *
      * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
      *         Dashed line indicates prognosis
@@ -1993,6 +1996,45 @@ null,
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.value
+     */
+    /**
+     * When using dual or multiple color axes, this number defines which
+     * colorAxis the particular series is connected to. It refers to
+     * either the
+     * {@link #colorAxis.id|axis id}
+     * or the index of the axis in the colorAxis array, with 0 being the
+     * first. Set this option to false to prevent a series from connecting
+     * to the default color axis.
+     *
+     * Since v7.2.0 the option can also be an axis id or an axis index
+     * instead of a boolean flag.
+     *
+     * @sample highcharts/coloraxis/coloraxis-with-pie/
+     *         Color axis with pie series
+     * @sample highcharts/coloraxis/multiple-coloraxis/
+     *         Multiple color axis
+     *
+     * @type      {number|string|boolean}
+     * @default   0
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.colorAxis
+     */
+    /**
+     * Determines what data value should be used to calculate point color
+     * if `colorAxis` is used. Requires to set `min` and `max` if some
+     * custom point property is used or if approximation for data grouping
+     * is set to `'sum'`.
+     *
+     * @sample highcharts/coloraxis/custom-color-key/
+     *         Custom color key
+     * @sample highcharts/coloraxis/changed-default-color-key/
+     *         Changed default color key
+     *
+     * @type      {string}
+     * @default   y
+     * @since     7.2.0
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.colorKey
      */
     /**
      * Determines whether the series should look for the nearest point
@@ -2699,12 +2741,7 @@ null,
             // loops are similar, they are repeated inside each if-else
             // conditional for max performance.
             if (turboThreshold && dataLength > turboThreshold) {
-                // find the first non-null point
-                i = 0;
-                while (firstPoint === null && i < dataLength) {
-                    firstPoint = data[i];
-                    i++;
-                }
+                firstPoint = series.getFirstValidPoint(data);
                 if (isNumber(firstPoint)) { // assume all points are numbers
                     for (i = 0; i < dataLength; i++) {
                         xData[i] = this.autoIncrement();
@@ -3050,24 +3087,30 @@ null,
      * @return {void}
      */
     getExtremes: function (yData) {
-        var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData, yDataLength, activeYData = [], activeCounter = 0, 
+        var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
         // #2117, need to compensate for log X axis
-        xExtremes = xAxis.getExtremes(), xMin = xExtremes.min, xMax = xExtremes.max, validValue, withinRange, 
+        xExtremes, xMin = 0, xMax = 0, validValue, withinRange, 
         // Handle X outside the viewed area. This does not work with
         // non-sorted data like scatter (#7639).
-        shoulder = this.requireSorting ? this.cropShoulder : 0, x, y, i, j;
+        shoulder = this.requireSorting ? this.cropShoulder : 0, positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false, x, y, i, j;
         yData = yData || this.stackedYData || this.processedYData || [];
         yDataLength = yData.length;
+        if (xAxis) {
+            xExtremes = xAxis.getExtremes();
+            xMin = xExtremes.min;
+            xMax = xExtremes.max;
+        }
         for (i = 0; i < yDataLength; i++) {
             x = xData[i];
             y = yData[i];
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
             validValue = ((isNumber(y) || isArray(y)) &&
-                (!yAxis.positiveValuesOnly || (y.length || y > 0)));
+                ((y.length || y > 0) || !positiveValuesOnly));
             withinRange = (this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
                 this.cropped ||
+                !xAxis || // for colorAxis support
                 ((xData[i + shoulder] || x) >= xMin &&
                     (xData[i - shoulder] || x) <= xMax));
             if (validValue && withinRange) {
@@ -3087,6 +3130,24 @@ null,
         this.dataMin = arrayMin(activeYData);
         this.dataMax = arrayMax(activeYData);
         fireEvent(this, 'afterGetExtremes');
+    },
+    /**
+     * Find and return the first non null point in the data
+     *
+     * @private
+     * @function Highcharts.Series.getFirstValidPoint
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        Array of options for points
+     *
+     * @return {Highcharts.PointOptionsType}
+     */
+    getFirstValidPoint: function (data) {
+        var firstPoint = null, dataLength = data.length, i = 0;
+        while (firstPoint === null && i < dataLength) {
+            firstPoint = data[i];
+            i++;
+        }
+        return firstPoint;
     },
     /**
      * Translate data points from raw data values to chart specific
@@ -3162,7 +3223,14 @@ null,
                         (point.y / pointStack.total * 100);
                 point.stackY = yValue;
                 // Place the stack label
-                pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                // in case of variwide series (where widths of points are
+                // different in most cases), stack labels are positioned
+                // wrongly, so the call of the setOffset is omited here and
+                // labels are correctly positioned later, at the end of the
+                // variwide's translate function (#10962)
+                if (!series.irregularWidths) {
+                    pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+                }
             }
             // Set translated yBottom or remove it
             point.yBottom = defined(yBottom) ?
@@ -4162,7 +4230,7 @@ null,
         if (!hasRendered) {
             series.animationTimeout = syncTimeout(function () {
                 series.afterAnimate();
-            }, animDuration);
+            }, animDuration || 0);
         }
         // Means data is in accordance with what you see
         series.isDirty = false;
@@ -4348,14 +4416,14 @@ null,
      * @return {number}
      */
     pointPlacementToXValue: function () {
-        var series = this, pointPlacement = series.options.pointPlacement;
+        var series = this, axis = series.xAxis, pointPlacement = series.options.pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
         if (pointPlacement === 'between') {
-            pointPlacement = 0.5;
+            pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
         }
         if (isNumber(pointPlacement)) {
             pointPlacement *=
-                pick(series.options.pointRange || series.xAxis.pointRange);
+                pick(series.options.pointRange || axis.pointRange);
         }
         return pointPlacement;
     }
@@ -4386,8 +4454,6 @@ null,
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL

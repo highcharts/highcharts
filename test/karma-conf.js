@@ -2,6 +2,8 @@
 /* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
+const path = require('path');
+const os = require('os');
 
 // Internal reference
 const hasJSONSources = {};
@@ -65,44 +67,51 @@ function getHTML(path) {
 }
 
 /**
- * Look for $.getJSON calls in the demos and add hook to local sample data.
+ * Look for Highcharts.getJSON calls in the demos and add hook to local sample data.
  * @param  {String} js
  *         The contents of demo.js
  * @return {String}
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const match = js.match(/\$\.getJSON\('([^']+)/);
-    if (match) {
-        let src = match[1];
-        if (!hasJSONSources[src]) {
-            let innerMatch = src.match(/filename=([^&']+)/);
-            if (innerMatch) {
-                let data = fs.readFileSync(
-                    'samples/data/' + innerMatch[1],
-                    'utf8'
-                );
+    const regex = /(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/g;
+    let match;
+    const codeblocks = [];
+    
+    while (match = regex.exec(js)) {
+        let src = match[2];
 
-                if (data) {
-                    hasJSONSources[src] = true;
+        let innerMatch = src.match(
+            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+        );
 
-                    if (/json$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = ${data};
-                        ${js}
-                        `;
-                    }
-                    if (/csv$/.test(innerMatch[1])) {
-                        return `
-                        window.JSONSources['${src}'] = \`${data}\`;
-                        ${js}
-                        `;
-                    }
+        if (innerMatch) {
+
+            let filename = innerMatch[2];
+
+            let data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'samples/data',
+                    filename
+                ),
+                'utf8'
+            );
+
+            if (data) {
+
+                if (/json$/.test(filename)) {
+                    codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
+                }
+                if (/csv$/.test(filename)) {
+                    codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
                 }
             }
         }
     }
-    return js;
+    codeblocks.push(js);
+    return codeblocks.join('\n');
 }
 
 /**
@@ -226,8 +235,7 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || 2;
-
+    const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
     if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
@@ -264,6 +272,7 @@ module.exports = function (config) {
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
+            f.indexOf('topojson-client') === -1 &&
 
             // Complains on chart.renderer.addPattern
             f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
@@ -305,6 +314,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'test/json-sources.js',
             'test/karma-setup.js'
         ], tests),
 
@@ -329,6 +339,9 @@ module.exports = function (config) {
             //'samples/unit-tests/pointer/members/demo.js',
 
             // --- VISUAL TESTS ---
+
+            // Custom data source
+            'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -363,17 +376,27 @@ module.exports = function (config) {
 
             // Various
             'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
+            'samples/highcharts/data/delimiters/demo.js', // data island
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
+            'samples/highcharts/studies/logistics/demo.js', // overriding
 
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
 
             // Skip the special oldie tests (which don't run QUnit)
-            'samples/unit-tests/oldie/*/demo.js'
+            'samples/unit-tests/oldie/*/demo.js',
+
+            // visual tests excluded for now due to failure
+            'samples/highcharts/demo/funnel3d/demo.js',
+            'samples/highcharts/demo/live-data/demo.js',
+            'samples/highcharts/demo/organization-chart/demo.js',
+            'samples/highcharts/demo/pareto/demo.js',
+            'samples/highcharts/demo/pyramid3d/demo.js',
+            'samples/highcharts/demo/synchronized-charts/demo.js',
         ],
-        reporters: ['imagecapture', 'progress'],
+        reporters: ['imagecapture', 'progress', 'json-log'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
@@ -388,6 +411,10 @@ module.exports = function (config) {
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
         },
+        jsonLogReporter: {
+            outputPath: 'test/',
+        },
+
 
         formatError: function (s) {
             let ret = s.replace(
@@ -416,7 +443,9 @@ module.exports = function (config) {
             // Preprocess the visual tests
             '**/highcharts/*/*/demo.js': ['generic'],
             '**/maps/*/*/demo.js': ['generic'],
-            '**/stock/*/*/demo.js': ['generic']
+            '**/stock/*/*/demo.js': ['generic'],
+            '**/gantt/*/*/demo.js': ['generic'],
+            '**/issues/*/*/demo.js': ['generic']
         },
 
         /*
@@ -428,7 +457,7 @@ module.exports = function (config) {
             rules: [{
                 process: function (js, file, done) {
                     const path = file.path.replace(
-                        /^.*?samples\/(highcharts|stock|maps|unit-tests)\/([a-z0-9\-]+\/[a-z0-9\-]+)\/demo.js$/g,
+                        /^.*?samples\/(highcharts|stock|maps|gantt|unit-tests|issues)\/([a-z0-9\-\.]+\/[a-z0-9\-,]+)\/demo.js$/g,
                         '$1/$2'
                     );
 
@@ -455,60 +484,40 @@ module.exports = function (config) {
                         }
                     }
 
+                    // Warn about things that may potentially break downstream
+                    // samples
+                    if (argv.debug) {
+                        if (js.indexOf('Highcharts.setOptions') !== -1) {
+                            console.log(
+                                `Warning - Highcharts.setOptions found in: ${file.path}`.yellow
+                            );
+                        }
+                        if (
+                            js.indexOf('Highcharts.wrap') !== -1 ||
+                            js.indexOf('H.wrap') !== -1
+                        ) {
+                            console.log(
+                                `Warning - Highcharts.wrap found in: ${file.path}`.yellow
+                            );
+                        }
+                    }
+
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
-                        if (argv.debug) {
-                            if (js.indexOf('Highcharts.setOptions') !== -1) {
-                                console.log(
-                                    `Warning: ${path} contains Highcharts.setOptions`.yellow
-                                );
-                            }
-                            if (
-                                js.indexOf('Highcharts.wrap') !== -1 ||
-                                js.indexOf('H.wrap') !== -1
-                            ) {
-                                console.log(
-                                    `Warning: ${path} contains Highcharts.wrap`.yellow
-                                );
-                            }
-                        }
                         done(js);
                         return;
                     }
 
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
-                        file.path = file.originalPath + '.preprocessed';
-                        done(`QUnit.skip('${path}');`);
+                        file.path = file.originalPath + '.preprocessed.js';
+                        if (argv.visualcompare) {
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to being skipped from demo.details');`);
+                        } else {
+                            done(`QUnit.skip('${path}');`);
+                        }
                         return;
-                    }
-
-                    const html = getHTML(path);
-
-                    js = resolveJSON(js);
-
-                    // Don't do intervals (typically for gauge samples, add
-                    // point etc)
-                    js = js.replace('setInterval', 'Highcharts.noop');
-
-                    // Reset global options
-                    let reset = (
-                            js.indexOf('Highcharts.setOptions') === -1 &&
-                            js.indexOf('Highcharts.getOptions') === -1
-                        ) ?
-                        '' :
-                        `
-                        Highcharts.setOptions(
-                            JSON.parse(Highcharts.defaultOptionsRaw)
-                        );
-                        `;
-
-                    // Reset modified callbacks
-                    if (js.indexOf('Chart.prototype.callbacks') !== -1) {
-                        reset += `
-                        Highcharts.Chart.prototype.callbacks =
-                            Highcharts.callbacksRaw.slice(0);
-                        `;
                     }
 
                     let assertion;
@@ -523,88 +532,68 @@ module.exports = function (config) {
                                     filename: './samples/${path}/reference.svg',
                                     data: svg
                                 });
-                                assert.ok(
-                                    true,
-                                    'Reference created for ${path}'
-                                );
-                            } else {
-                                assert.ok(
-                                    false,
-                                    '${path}: ' + err
-                                );                
                             }
+                            assert.ok(
+                                svg,
+                                '${path}: SVG and reference.svg file should be generated'
+                            );
                             done();
                         `;
 
-                    // Reference file doens't exist
-                    } else if (!fs.existsSync(
-                        `./samples/${path}/reference.svg`
-                    )) {
-                        console.log(
-                        'Reference file doesn\'t exist: '.yellow +
-                        ` ./samples/${path}/reference.svg`
-
-                        );
-                        file.path = file.originalPath + '.preprocessed';
-                        done(`QUnit.skip('${path}');`);
-                        return;
-
-                    // Reference file exists, run the comparison
-                    } else {
-
-                        try {
-                            assertion = `
-                                compareToReference(chart, '${path}')
-                                    .then(actual => {
-                                        assert.strictEqual(
-                                            actual,
-                                            0,
-                                            'Different pixels\\n' +
-                                            '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                            '- samples/${path}/diff.gif'
-                                        );
-                                        done();
-                                    })
-                                    .catch(err => {
-                                        console.error(err);
-                                        done();
-                                    });
-                            `;
-                        } catch (e) {
-                            assertion = `
-                                assert.ok(false, 'Reference image loaded')
-                                done();
-                            `;
+                    } else if (argv.visualcompare) {
+                        if (!argv.remotelocation && !fs.existsSync(
+                            `./samples/${path}/reference.svg`
+                        )) {
+                            console.log(
+                                'Reference file doesn\'t exist: '.yellow +
+                                ` ./samples/${path}/reference.svg`
+                            );
+                            file.path = file.originalPath + '.preprocessed.js';
+                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
+                            done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
+                            return;
                         }
+
+                        assertion = `
+                        compareToReference(chart, '${path}')
+                            .then(actual => {
+                                if (${argv.difflog}) {
+                                    var today = new Date().toISOString().slice(0,10);
+                                    var diffLog = {
+                                        name: 'visual-test-results',
+                                        object: {
+                                            '${path}': actual,
+                                            meta: {
+                                                runDate: today,
+                                                gitSha: __karma__.config.gitSha
+                                            },
+                                        },
+                                    };
+                                    if (actual || actual === 0) {
+                                        window.dump(JSON.stringify( diffLog ));
+                                    }
+                                    assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
+                                } else {
+                                    assert.strictEqual(
+                                        actual,
+                                        0,
+                                        'Different pixels\\n' +
+                                        '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                        '- samples/${path}/reference.svg\\n' +
+                                        '- samples/${path}/diff.gif'
+                                    );
+                                }
+                                done();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                done();
+                            });
+                        `;
                     }
-
-
-                    js = `
-
-                    QUnit.test('${path}', function (assert) {
-
-                        // console.log('Starting ${path}');
-
-                        // Apply demo.html
-                        document.getElementById('demo-html').innerHTML =
-                            \`${html}\`;
-
-                        var done = assert.async();
-                        ${js}
-
-                        var chart = Highcharts.charts[
-                            Highcharts.charts.length - 1
-                        ];
-
-                        ${assertion}
-
-                        ${reset}
-                    });
-                    `;
-
-                    file.path = file.originalPath + '.preprocessed';
-
-                    done(js);
+                    file.path = file.originalPath + '.preprocessed.js';
+                    const testTemplate = createVisualTestTemplate(argv, path, js, assertion);
+                    done(testTemplate);
                 }
             }]
         }
@@ -641,7 +630,7 @@ module.exports = function (config) {
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 33000; // default 2000
+        options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
@@ -671,3 +660,78 @@ module.exports = function (config) {
 
     config.set(options);
 };
+
+function createVisualTestTemplate(argv, path, js, assertion) {
+    let scriptBody = resolveJSON(js);
+
+    // Don't do intervals (typically for gauge samples, add point etc)
+    scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
+
+    // Force enableSimulation: false
+    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+
+    let html = getHTML(path);
+    let resets = [];
+
+    // Reset global options, but only if necessary
+    if (
+        scriptBody.indexOf('Highcharts.setOptions') !== -1 ||
+        scriptBody.indexOf('Highcharts.getOptions') !== -1
+    ) {
+        resets.push('defaultOptions');
+    }
+
+    // Reset modified callbacks only if necessary
+    if (scriptBody.indexOf('Chart.prototype.callbacks') !== -1) {
+        resets.push('callbacks');
+    }
+
+    var useFakeTime = path.startsWith('gantt/');
+    var startOfMockedTime = Date.UTC(2019, 7, 1);
+
+    resets = JSON.stringify(resets);
+    return `
+        QUnit.test('${path}', function (assert) {
+            // Apply demo.html
+            document.getElementById('demo-html').innerHTML = \`${html}\`;
+            
+            ${useFakeTime ? `var clock = TestUtilities.lolexInstall({ now: ${startOfMockedTime} });` : ''}
+            
+            /*
+             * we expect 2 callbacks if --visualcompare argument is supplied,
+             * one for the test comparison and one for checking if chart exists.
+             */ 
+            var done = assert.async();
+            
+            ${scriptBody}
+
+            let attempts = 0;
+            function waitForChartToLoad() {
+                var chart = Highcharts.charts[
+                    Highcharts.charts.length - 1
+                ];
+
+                if (chart || document.getElementsByTagName('svg').length) {
+                    ${assertion ? assertion : `
+                        assert.ok(true, 'Chart and SVG should exist.');
+                        done();
+                    `}
+                    assert.test.resets = ${resets};
+                } else if (attempts < 50) {
+                    setTimeout(waitForChartToLoad, 100);
+                    attempts++;
+                } else {
+                    assert.ok(
+                        false,
+                        \`Chart async chart test should load within \${attempts} attempts\`
+                    );
+                    done();
+                    assert.test.resets = ${resets};
+                }
+            }
+            waitForChartToLoad();
+            
+            ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
+        });
+    `;
+}

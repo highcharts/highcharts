@@ -22,11 +22,6 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
@@ -40,32 +35,7 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
-            startFromThreshold?: boolean;
-            states?: ColumnSeriesStatesOptions;
-        }
-        interface ColumnSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-        }
-        interface ColumnSeriesStatesInactiveOptions
-            extends LineSeriesStatesInactiveOptions {
-        }
-        interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: ColumnSeriesStatesHoverOptions;
-            inactive?: ColumnSeriesStatesInactiveOptions;
-            select?: ColumnSeriesStatesSelectOptions;
-        }
-        interface ColumnSeriesStatesSelectOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-        }
-        interface PlotSeriesOptions {
-            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
+            states?: SeriesStatesOptionsObject<ColumnSeries>;
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -74,8 +44,19 @@ declare global {
             barW?: number;
             pointXOffset?: number;
         }
+        interface SeriesStatesHoverOptionsObject {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            brightness?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+        }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
+        }
+        interface SeriesZonesOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -127,8 +108,8 @@ declare global {
  * @type {number}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * A name for the dash style to use for the column or bar. Overrides dashStyle
  * on the series. In styled mode, the stroke dash-array can be set with the same
@@ -146,6 +127,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isNumber
 } = U;
 
@@ -156,7 +138,6 @@ import './Options.js';
 
 var animObject = H.animObject,
     color = H.color,
-    extend = H.extend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -174,7 +155,7 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnSeriesOptions>(
+seriesType<Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -926,7 +907,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
         },
 
-        getSymbol: noop,
+        getSymbol: noop as any,
 
         /**
          * Use a solid rectangle like the area series types
@@ -973,7 +954,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
-                stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
+                stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
                 ret: Highcharts.SVGAttributes,
                 p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
@@ -1081,10 +1062,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
                     // When updating a series between 2d and 3d or cartesian and
                     // polar, the shape type changes.
-                    if (
-                        graphic &&
-                        graphic.element.nodeName !== point.shapeType
-                    ) {
+                    if (graphic && point.hasNewShapeType()) {
                         graphic = graphic.destroy();
                     }
 

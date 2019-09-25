@@ -9,5 +9,5 @@
  */
 'use strict';
 import '../../parts-map/ColorAxis.js';
-import '../../parts-map/ColorSeriesMixin.js';
+import '../../parts-map/ColorMapSeriesMixin.js';
 import '../../parts-map/HeatmapSeries.js';
