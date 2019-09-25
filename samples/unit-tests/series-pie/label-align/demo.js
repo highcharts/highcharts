@@ -1,4 +1,4 @@
-QUnit.test("Change of label alignment after add", function (assert) {
+QUnit.test("Change of label alignment after add (#4652)", function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
