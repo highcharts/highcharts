@@ -67,7 +67,7 @@ Highcharts.mapChart('container', {
 Map properties
 --------------
 
-The following table outlines the properties available in the Highmaps Map Collection maps, and their meaning. The properties are accessible from the **point.properties** object ([example](https://jsfiddlefiddle.net/oysteinmoseng/52rgg5zq/)).
+The following table outlines the properties available in the Highmaps Map Collection maps, and their meaning. The properties are accessible from the **point.properties** object ([example](https://jsfiddle.net/oysteinmoseng/52rgg5zq/)).
 
 | Property       | Example values                        | Description                                                                                                                                                                                                                                                                                                                                                                           | Availability                                                      |
 | -------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -107,7 +107,7 @@ Some maps may provide additional properties that are not mentioned in the above 
 Using parts of a map
 --------------------
 
-If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
+If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
 
 Modify our maps
 ---------------

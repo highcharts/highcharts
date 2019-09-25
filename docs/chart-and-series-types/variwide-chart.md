@@ -7,7 +7,7 @@ _For more detailed samples and documentation check the [API.](https://api.highch
 
 <iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/variwide allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddlefiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variwide/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/variwide/) to check the code.
 
 Data structure
 --------------

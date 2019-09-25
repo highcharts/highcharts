@@ -8,7 +8,7 @@ Solid colors
 
 Primarily, Highcharts supports solid colors given in hex format _#00FF00_ and rgb format _rgb(0,255,0)_.
 
-Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddlefiddle.net/highcharts/zy1epj3o/).
+Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddle.net/highcharts/zy1epj3o/).
 
 ### Semi-transparent colors - opacity
 
@@ -35,7 +35,7 @@ The color is given as an object literal containing two properties:
 
 In modern SVG enabled browsers the linear gradients can be applied to both fills (backgrounds) and strokes (lines). Internet Explorer 8 and less doesn't support gradients on lines, so in these browsers only the first stop color is used.
 
-See the online example of a [linear gradient chart background](https://jsfiddlefiddle.net/highcharts/4rTBY/).
+See the online example of a [linear gradient chart background](https://jsfiddle.net/highcharts/4rTBY/).
 
 Radial gradients
 ----------------

@@ -53,10 +53,10 @@ For a basic setup, the drilldown series are defined in a separate array under th
                 }]
             }
 
-See it [live on jsFiddle](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/drilldown/basic/).
+See it [live on jsFiddle](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/drilldown/basic/).
 
 ### Async setup
 
 In many cases you may want to load the drilldown series dynamically. In this case we set the `point.drilldown` option to true, and use the chart's drilldown event to load the drilldown series configuration based on the clicked point. When the series data arrives, we add it by calling the [Chart.addSeriesAsDrilldown](https://api.highcharts.com/highcharts/Chart.addSeriesAsDrilldown) method.
 
-See the [async drilldown](https://jsfiddlefiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/drilldown/async/) demo.
+See the [async drilldown](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/drilldown/async/) demo.
