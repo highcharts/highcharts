@@ -131,7 +131,7 @@ Upload/copy this to the application server. You're done with setting up the hig
 
 By default WebLogic registers its own `URLStreamHandler to handle http `URLs. This results in that the Connection silently returns and empty files being returned from the server.  The solution is to get in a reference to Java's default `URLStreamHandler` instead of the one from WebLogic. Follow these steps
 
-1. Alter this file: highcharts-export\\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java
+1. Alter this file: `highcharts-export\highcharts-export-convert/src/main/java/com/highcharts/export/server.Server.java`
 
 Change line 94,95 from 
 

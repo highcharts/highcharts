@@ -262,7 +262,7 @@ In this example we will take a look at Earcons and how to use them in a chart.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-earcon allow="fullscreen"></iframe>
 
-In the above example we use the same approach as with [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify) above, calling \`Series.sonify\` when a series is clicked. In addition, we define an [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon#Earcon).
+In the above example we use the same approach as with [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify) above, calling `Series.sonify` when a series is clicked. In addition, we define an [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon#Earcon).
 
 An Earcon is mainly defined by providing a list of instruments and specifying how they should be played. Since an Earcon is a predefined sound, there is no mapping from data properties here. In the example above, we use two instruments. Both of the instruments are predefined, and referenced by name. The parameters for playing them are fixed for duration and panning, but for frequency we utilize a callback function. This callback function receives the relative time as a parameter, with the start of the Earcon playback being `0` and the end of the playback being `1`. We use this parameter to create a frequency ramp.
 

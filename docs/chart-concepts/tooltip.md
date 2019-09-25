@@ -5,25 +5,19 @@ The tooltip appears when hovering over a point in a series. By default the toolt
 
 ![tooltip.png](tooltip.png)
 
-Some basic concepts:
-
-*   [Appearance](#app)
-*   [Tooltip formatter](#formatter)
-*   [Crosshairs](#cross)
-
 Appearance
 ----------
 
  The following code example shows the most common appearance options for tooltip:
 
-    
-    tooltip: {
-        backgroundColor: '#FCFFC5',
-        borderColor: 'black',
-        borderRadius: 10,
-        borderWidth: 3
-    }
-    
+```js
+tooltip: {
+    backgroundColor: '#FCFFC5',
+    borderColor: 'black',
+    borderRadius: 10,
+    borderWidth: 3
+}
+```
 
 The background color can also be set to a gradient, see [an example](http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/tooltip/backgroundcolor-gradient/). Text properties can be set using the style option.
 
@@ -39,12 +33,13 @@ The tooltip's content is rendered from a subset of HTML that can be altered in a
 
 By default the tooltip only allows a subset of HTML because the HTML is parsed and rendered using SVG. By setting the [useHTML](http://api.highcharts.com/highcharts/tooltip.useHTML) option to true, the renderer switches to full HTML, which allows for instance table layouts or images inside the tooltip.
 
-    
-    tooltip: {
-        formatter: function() {
-            return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name;
-        }
+```js
+tooltip: {
+    formatter: function() {
+        return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name;
     }
+}
+```
 
 Crosshairs
 ----------
@@ -55,18 +50,19 @@ Crosshairs display a line connecting the points with their corresponding axis. 
 
 Crosshairs can be enabled for the x-axis, y-axis or both:
 
-    
-    // Enable for x-axis only
-    tooltip: {
-        crosshairs: [true]
-    }
-    
-    // Enable for y-axis only
-    tooltip: {
-        crosshairs: [false, true]
-    }
-    
-    // Enable for both axes
-    tooltip: {
-        crosshairs: [true,true]
-    }
+```js
+// Enable for x-axis only
+tooltip: {
+    crosshairs: [true]
+}
+
+// Enable for y-axis only
+tooltip: {
+    crosshairs: [false, true]
+}
+
+// Enable for both axes
+tooltip: {
+    crosshairs: [true,true]
+}
+```

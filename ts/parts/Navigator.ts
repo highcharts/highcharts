@@ -1766,7 +1766,10 @@ Navigator.prototype = {
             }
         }
 
-        if ((e as any).DOMType !== 'mousemove') {
+        if (
+            (e as any).DOMType !== 'mousemove' &&
+            (e as any).DOMType !== 'touchmove'
+        ) {
             navigator.grabbedLeft = navigator.grabbedRight =
                 navigator.grabbedCenter = navigator.fixedWidth =
                 navigator.fixedExtreme = navigator.otherHandlePos =
