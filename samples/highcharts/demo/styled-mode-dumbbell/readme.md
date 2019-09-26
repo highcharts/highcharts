@@ -1,2 +1,0 @@
-# Styled mode dumbbell
-Thanks to the Highcharts styled mode, designers and developers can collaborate with great ease to create charts, as the functionality is set up in the API options, and the styling is set by CSS.
