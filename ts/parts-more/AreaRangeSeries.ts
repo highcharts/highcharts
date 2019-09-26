@@ -160,14 +160,14 @@ const {
     defined,
     extend,
     isArray,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
 
 var noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,

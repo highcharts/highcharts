@@ -405,9 +405,9 @@ declare global {
                 options?: SymbolOptionsObject
             ): SVGElement;
             public text(
-                str: string,
-                x: number,
-                y: number,
+                str?: string,
+                x?: number,
+                y?: number,
                 useHTML?: boolean
             ): SVGElement;
             public truncate(
@@ -817,6 +817,7 @@ const {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -841,7 +842,6 @@ var SVGElement: Highcharts.SVGElement,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
@@ -959,9 +959,7 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
-            pick<(boolean|Highcharts.AnimationOptionsObject)>(
-                options, this.renderer.globalAnimation, true
-            )
+            pick(options, this.renderer.globalAnimation, true)
         );
 
         // When the page is hidden save resources in the background by not
@@ -2242,8 +2240,6 @@ extend((
             renderer = wrapper.renderer,
             width,
             height,
-            rotation,
-            rad,
             element = wrapper.element,
             styles = wrapper.styles,
             fontSize,
@@ -2254,8 +2250,7 @@ extend((
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             cacheKey;
 
-        rotation = pick(rot, wrapper.rotation);
-        rad = rotation * deg2rad;
+        const rotation = pick(rot, wrapper.rotation, 0);
 
         fontSize = renderer.styledMode ? (
             element &&
@@ -2280,7 +2275,7 @@ extend((
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation || 0,
+                rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
                 styles && styles.textOverflow // #5968
@@ -2382,6 +2377,7 @@ extend((
 
                 // Adjust for rotated text
                 if (rotation) {
+                    const rad = rotation * deg2rad;
                     bBox.width = Math.abs(height * Math.sin(rad)) +
                         Math.abs(width * Math.cos(rad));
                     bBox.height = Math.abs(height * Math.cos(rad)) +
@@ -5701,13 +5697,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param {string} str
+     * @param {string} [str]
      *        The text of (subset) HTML to draw.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        The x position of the text's lower left corner.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the text's lower left corner.
      *
      * @param {boolean} [useHTML=false]
@@ -5718,9 +5714,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     text: function (
         this: Highcharts.SVGElement,
-        str: string,
-        x: number,
-        y: number,
+        str?: string,
+        x?: number,
+        y?: number,
         useHTML?: boolean
     ): Highcharts.SVGElement {
 

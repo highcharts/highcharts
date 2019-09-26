@@ -85,8 +85,8 @@ import H from '../parts/Globals.js';
 * @type {number|undefined}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach;
-var addEvent = H.addEvent, LegendSymbolMixin = H.LegendSymbolMixin, TrackerMixin = H.TrackerMixin, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+var addEvent = H.addEvent, LegendSymbolMixin = H.LegendSymbolMixin, TrackerMixin = H.TrackerMixin, merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
  *

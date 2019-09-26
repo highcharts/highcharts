@@ -14,6 +14,7 @@ import U from '../parts/Utilities.js';
 var defined = U.defined,
     erase = U.erase,
     extend = U.extend,
+    pick = U.pick,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -31,7 +32,6 @@ var merge = H.merge,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     find = H.find,
-    pick = H.pick,
     reduce = H.reduce,
     destroyObjectProperties = H.destroyObjectProperties,
     chartProto = H.Chart.prototype;
@@ -1094,7 +1094,7 @@ merge(
                 }
 
                 item.redraw(
-                    H.pick(animation, true) && item.graphic.placed
+                    pick(animation, true) && item.graphic.placed
                 );
 
                 if (item.points.length) {

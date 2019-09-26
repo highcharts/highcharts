@@ -16,7 +16,8 @@ import GLVertexBuffer from './wgl-vbuffer.js';
 import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    pick = U.pick;
 
 import '../../parts/Color.js';
 
@@ -25,8 +26,7 @@ var win = H.win,
     merge = H.merge,
     objEach = H.objEach,
     some = H.some,
-    Color = H.Color,
-    pick = H.pick;
+    Color = H.Color;
 
 /**
  * Main renderer. Used to render series.

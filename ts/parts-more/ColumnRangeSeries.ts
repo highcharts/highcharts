@@ -52,12 +52,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 

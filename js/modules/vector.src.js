@@ -11,7 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-var seriesType = H.seriesType, pick = H.pick;
+import U from '../parts/Utilities.js';
+var pick = U.pick;
+var seriesType = H.seriesType;
 /**
  * The vector series class.
  *

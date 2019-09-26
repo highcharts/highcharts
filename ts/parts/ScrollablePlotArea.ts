@@ -21,6 +21,10 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 
 import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -369,7 +373,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
                 fill: H.color(
                     (this.options.chart as any).backgroundColor || '#fff'
                 ).setOpacity(
-                    H.pick(scrollableOptions.opacity, 0.85)
+                    pick(scrollableOptions.opacity, 0.85)
                 ).get(),
                 zIndex: -1
             } as Highcharts.SVGAttributes)

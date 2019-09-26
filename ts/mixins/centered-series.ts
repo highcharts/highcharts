@@ -55,11 +55,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 var deg2rad = H.deg2rad,
-    pick = H.pick,
     relativeLength = H.relativeLength;
 
 /* eslint-disable valid-jsdoc */
@@ -89,8 +89,8 @@ H.CenteredSeriesMixin = {
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
             positions: Array<number> = [
-                pick<number>(centerOption[0] as any, '50%' as any),
-                pick<number>(centerOption[1] as any, '50%' as any),
+                pick(centerOption[0] as any, '50%' as any),
+                pick(centerOption[1] as any, '50%' as any),
                 options.size || '100%' as any,
                 options.innerSize || 0
             ],

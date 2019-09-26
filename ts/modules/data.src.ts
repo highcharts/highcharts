@@ -252,6 +252,7 @@ const {
     extend,
     isNumber,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -263,7 +264,6 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
-    pick = Highcharts.pick,
     merge = Highcharts.merge,
     fireEvent = Highcharts.fireEvent,
     SeriesBuilder: typeof Highcharts.SeriesBuilder;

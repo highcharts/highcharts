@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -48,8 +52,7 @@ declare global {
     }
 }
 
-var correctFloat = H.correctFloat,
-    pick = H.pick;
+var correctFloat = H.correctFloat;
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -63,7 +66,9 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    var price = pick<number>((yVal[i] as any)[index], (yVal[i] as any));
+    var price = pick<(number|undefined), number>(
+        (yVal[i] as any)[index], (yVal[i] as any)
+    );
 
     if (subtract) {
         return correctFloat(sum - price);
@@ -158,9 +163,8 @@ H.seriesType<Highcharts.DPOIndicator>(
 
                 // adding the last period point
                 sum = accumulatePoints(sum, yVal, periodIndex, index);
-                price = pick<number>(
-                    yVal[rangeIndex][index],
-                    (yVal[rangeIndex] as any)
+                price = pick<(number|undefined), number>(
+                    yVal[rangeIndex][index], (yVal[rangeIndex] as any)
                 );
 
                 oscillator = price - sum / period;

@@ -267,7 +267,8 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -285,7 +286,6 @@ var defaultOptions = H.defaultOptions,
     discardElement = H.discardElement,
     css = H.css,
     merge = H.merge,
-    pick = H.pick,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,

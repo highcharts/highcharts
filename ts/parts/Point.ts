@@ -625,14 +625,14 @@ const {
     extend,
     isArray,
     isNumber,
-    isObject
+    isObject,
+    pick
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     fireEvent = H.fireEvent,
     format = H.format,
-    pick = H.pick,
     uniqueKey = H.uniqueKey,
     removeEvent = H.removeEvent;
 
@@ -1184,9 +1184,7 @@ Highcharts.Point.prototype = {
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
         var series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick<(number|string)>(
-                seriesTooltipOptions.valueDecimals, ''
-            ),
+            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 

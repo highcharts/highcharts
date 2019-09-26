@@ -12,6 +12,10 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -58,8 +62,7 @@ declare global {
     }
 }
 
-var seriesType = H.seriesType,
-    pick = H.pick;
+var seriesType = H.seriesType;
 
 /**
  * The vector series class.

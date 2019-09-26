@@ -60,6 +60,7 @@ const {
     extend,
     isNumber,
     isString,
+    pick,
     splat
 } = U;
 
@@ -86,7 +87,6 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
@@ -520,7 +520,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old)
+            axis.translate(value as any, null, null, (e as any).old) as any
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {

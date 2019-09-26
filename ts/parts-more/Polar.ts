@@ -87,7 +87,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    pick,
+    splat
+} = U;
 
 import '../parts/Pointer.js';
 import '../parts/Series.js';
@@ -96,8 +99,7 @@ import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var pick = H.pick,
-    Pointer = H.Pointer,
+var Pointer = H.Pointer,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     wrap = H.wrap,

@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -193,12 +197,12 @@ H.seriesType<Highcharts.AroonIndicator>(
 
                 xLow = getExtremeIndexInArray(slicedY.map(
                     function (elem): number {
-                        return H.pick(elem[low], (elem as any));
+                        return pick(elem[low], (elem as any));
                     }), 'min');
 
                 xHigh = getExtremeIndexInArray(slicedY.map(
                     function (elem): number {
-                        return H.pick(elem[high], (elem as any));
+                        return pick(elem[high], (elem as any));
                     }), 'max');
 
                 aroonUp = (xHigh / period) * 100;

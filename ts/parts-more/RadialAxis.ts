@@ -135,6 +135,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    pick,
     pInt
 } = U;
 
@@ -146,7 +147,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Tick = H.Tick,
     wrap = H.wrap,
     correctFloat = H.correctFloat,

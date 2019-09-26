@@ -78,12 +78,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    pick
+} = U;
 
 import onSeriesMixin from '../mixins/on-series.js';
 
 var noop = H.noop,
-    pick = H.pick,
     seriesType = H.seriesType;
 
 // eslint-disable-next-line valid-jsdoc
