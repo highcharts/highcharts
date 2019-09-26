@@ -21,7 +21,7 @@ var pick = H.pick,
     setElAttrs = A11yUtilities.setElAttrs;
 
 
-function getMapTypeDescription(chart, formatContext) {
+function getTypeDescForMapChart(chart, formatContext) {
     return formatContext.mapTitle ?
         chart.langFormat('accessibility.chartTypes.mapTypeDescription',
             formatContext) :
@@ -29,12 +29,12 @@ function getMapTypeDescription(chart, formatContext) {
             formatContext);
 }
 
-function getCombinationChartTypeDescription(chart, formatContext) {
+function getTypeDescForCombinationChart(chart, formatContext) {
     return chart.langFormat('accessibility.chartTypes.combinationChart',
         formatContext);
 }
 
-function getEmptyChartTypeDescription(chart, formatContext) {
+function getTypeDescForEmptyChart(chart, formatContext) {
     return chart.langFormat('accessibility.chartTypes.emptyChart',
         formatContext);
 }
@@ -70,6 +70,7 @@ function filterHTMLTags(str) {
             /<\/?h[1-7]>/g,
             /<\/?p>/g,
             /<\/?div>/g,
+            /<div id="[a-zA-Z\-0-9#]*?">/g,
             /<button id="[a-zA-Z\-0-9#]*?">/g, /<\/button>/g,
             /<a id="[a-zA-Z\-0-9#]*?">/g, /<\/a>/g
         ],
@@ -89,9 +90,8 @@ function stripEmptyHTMLTags(str) {
 
 
 /**
- * Return simplified text description of chart type. Some types will not be
- * familiar to most users, but in those cases we try to add an explaination of
- * the type.
+ * Return simplified explaination of chart type. Some types will not be familiar
+ * to most users, but in those cases we try to add an explaination of the type.
  *
  * @private
  * @function Highcharts.Chart#getTypeDescription
@@ -109,15 +109,15 @@ H.Chart.prototype.getTypeDescription = function (types) {
         };
 
     if (!firstType) {
-        return getEmptyChartTypeDescription(this, formatContext);
+        return getTypeDescForEmptyChart(this, formatContext);
     }
 
     if (firstType === 'map') {
-        return getMapTypeDescription(this, formatContext);
+        return getTypeDescForMapChart(this, formatContext);
     }
 
     if (this.types.length > 1) {
-        return getCombinationChartTypeDescription(this, formatContext);
+        return getTypeDescForCombinationChart(this, formatContext);
     }
 
     return buildTypeDescriptionFromSeries(this, types, formatContext);
@@ -179,6 +179,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(
                         el, chart.renderTo.firstChild
                     );
+                },
+                afterInserted: function () {
+                    component.initDataTableButton(component.dataTableButtonId);
                 }
             },
 
@@ -191,7 +194,15 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                         component.defaultAfterChartFormatter(chart);
                 },
                 insertIntoDOM: function (el, chart) {
-                    chart.renderTo.appendChild(el);
+                    chart.renderTo.insertBefore(
+                        el, chart.container.nextSibling
+                    );
+                },
+                afterInserted: function () {
+                    if (component.endOfChartMarkerId) {
+                        component.chart.endOfChartMarker = component
+                            .getElement(component.endOfChartMarkerId);
+                    }
                 }
             }
         };
@@ -199,19 +210,207 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
 
     /**
+     * Called on first render/updates to the chart, including options changes.
+     */
+    onChartUpdate: function () {
+        var component = this;
+        Object.keys(this.screenReaderSections).forEach(function (regionKey) {
+            component.updateScreenReaderSection(regionKey);
+        });
+    },
+
+
+    /**
      * @private
+     * @param {string} regionKey The name/key of the region to update
+     */
+    updateScreenReaderSection: function (regionKey) {
+        var chart = this.chart,
+            region = this.screenReaderSections[regionKey],
+            content = region.buildContent(chart),
+            sectionDiv = region.element = region.element ||
+                this.createElement('div'),
+            hiddenDiv = sectionDiv.firstChild || this.createElement('div');
+
+        this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
+        hiddenDiv.innerHTML = content;
+        sectionDiv.appendChild(hiddenDiv);
+        region.insertIntoDOM(sectionDiv, chart);
+
+        this.visuallyHideElement(hiddenDiv);
+        this.unhideElementFromScreenReaders(hiddenDiv);
+        if (region.afterInserted) {
+            region.afterInserted();
+        }
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.HTMLDOMElement} sectionDiv The section element
+     * @param {string} regionKey Name/key of the region we are setting attrs for
+     */
+    setScreenReaderSectionAttribs: function (sectionDiv, regionKey) {
+        var labelLangKey = 'accessibility.screenReaderSection.' + regionKey +
+                'RegionLabel',
+            chart = this.chart,
+            labelText = chart.langFormat(labelLangKey, { chart: chart }),
+            sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
+                chart.index;
+
+        setElAttrs(sectionDiv, {
+            id: sectionId,
+            'aria-label': labelText
+        });
+
+        // Sections are wrapped to be positioned relatively to chart in case
+        // elements inside are tabbed to.
+        sectionDiv.style.position = 'relative';
+
+        if (chart.options.accessibility.landmarkVerbosity === 'all' &&
+            labelText) {
+            sectionDiv.setAttribute('role', 'region');
+        }
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    defaultBeforeChartFormatter: function () {
+        var chart = this.chart,
+            format = chart.options.accessibility.screenReaderSection
+                .beforeChartFormat,
+            axesDesc = this.getAxesDescription(),
+            dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
+                chart.index,
+            context = {
+                chartTitle: this.getChartTitleText(),
+                typeDescription: this.getTypeDescriptionText(),
+                chartSubtitle: this.getSubtitleText(),
+                chartLongdesc: this.getLongdescText(),
+                xAxisDescription: axesDesc.xAxis,
+                yAxisDescription: axesDesc.yAxis,
+                viewTableButton: chart.getCSV ?
+                    this.getDataTableButtonText(dataTableButtonId) : ''
+            },
+            formattedString = H.i18nFormat(format, context);
+
+        this.dataTableButtonId = dataTableButtonId;
+        return stripEmptyHTMLTags(filterHTMLTags(formattedString));
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    defaultAfterChartFormatter: function () {
+        var chart = this.chart,
+            format = chart.options.accessibility.screenReaderSection
+                .afterChartFormat,
+            context = {
+                endOfChartMarker: this.getEndOfChartMarkerText()
+            },
+            formattedString = H.i18nFormat(format, context);
+
+        return stripEmptyHTMLTags(filterHTMLTags(formattedString));
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    getLongdescText: function () {
+        var chartOptions = this.chart.options,
+            captionOptions = chartOptions.caption,
+            captionText = captionOptions && captionOptions.text;
+        return chartOptions.accessibility.description ||
+                captionText || '';
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    getTypeDescriptionText: function () {
+        var chart = this.chart;
+        return chart.types ? chart.options.accessibility.typeDescription ||
+            chart.getTypeDescription(chart.types) : '';
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    getChartTitleText: function () {
+        var chart = this.chart;
+        return chart.options.title.text || chart.langFormat(
+            'accessibility.defaultChartTitle', { chart: chart }
+        );
+    },
+
+
+    /**
+     * @private
+     * @param {string} buttonId
+     * @return {string}
+     */
+    getDataTableButtonText: function (buttonId) {
+        var chart = this.chart,
+            buttonText = chart.langFormat(
+                'accessibility.table.viewAsDataTableButtonText',
+                { chart: chart, chartTitle: this.getChartTitleText() }
+            );
+
+        return '<a id="' + buttonId + '">' + buttonText + '</a>';
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    getSubtitleText: function () {
+        var subtitle = this.chart.options.subtitle;
+        return subtitle && subtitle.text || '';
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
+    getEndOfChartMarkerText: function () {
+        var chart = this.chart,
+            markerText = chart.langFormat(
+                'accessibility.screenReaderSection.endOfChartMarker',
+                { chart: chart }
+            ),
+            id = 'highcharts-end-of-chart-marker-' + chart.index;
+
+        return '<div id="' + id + '">' + markerText + '</div>';
+    },
+
+
+    /**
+     * @private
+     * @param {global.Event} e
      */
     onDataTableCreated: function (e) {
-        var chart = this.chart,
-            summary = getTableSummary(chart);
+        var chart = this.chart;
 
         if (chart.options.accessibility.enabled) {
-            this.viewDataTableButton.setAttribute('aria-expanded', 'true');
-            e.html = e.html
-                .replace(
-                    '<table ',
-                    '<table tabindex="0" summary="' + summary + '"'
-                );
+            if (this.viewDataTableButton) {
+                this.viewDataTableButton.setAttribute('aria-expanded', 'true');
+            }
+
+            e.html = e.html.replace('<table ',
+                '<table tabindex="0" summary="' + getTableSummary(chart) + '"');
         }
     },
 
@@ -230,243 +429,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
-     */
-    onChartUpdate: function () {
-        var component = this;
-        Object.keys(this.screenReaderSections).forEach(function (regionKey) {
-            component.updateScreenReaderSection(regionKey);
-        });
-    },
-
-
-    /**
+     * Set attribs and handlers for default viewAsDataTable button if exists.
      * @private
-     */
-    updateScreenReaderSection: function (regionKey) {
-        var chart = this.chart,
-            regions = this.screenReaderSections,
-            content = regions[regionKey].buildContent(chart),
-            sectionDiv = regions[regionKey].element =
-                regions[regionKey].element || this.createElement('div');
-
-        this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        sectionDiv.innerHTML = content;
-        regions[regionKey].insertIntoDOM(sectionDiv, chart);
-
-        this.initDataTableButton(this.dataTableButtonId);
-        this.unhideElementFromScreenReaders(sectionDiv);
-        this.visuallyHideElement(sectionDiv);
-    },
-
-
-    /**
-     * @private
-     */
-    setScreenReaderSectionAttribs: function (sectionDiv, regionKey) {
-        var labelLangKey = 'accessibility.screenReaderSection.' + regionKey +
-                'RegionLabel',
-            chart = this.chart,
-            sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
-                chart.index;
-
-        setElAttrs(sectionDiv, {
-            id: sectionId,
-            'aria-label': chart.langFormat(labelLangKey, { chart: chart })
-        });
-
-        if (chart.options.accessibility.landmarkVerbosity === 'all') {
-            sectionDiv.setAttribute('role', 'region');
-        }
-    },
-
-
-    /**
-     * @private
-     */
-    defaultBeforeChartFormatter: function () {
-        var chart = this.chart,
-            options = chart.options,
-            format = options.accessibility.screenReaderSection
-                .beforeChartFormat,
-            axesDesc = this.getAxesDescription(),
-            dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
-                chart.index,
-            context = {
-                chartTitle: this.getChartTitleText(),
-                typeDescription: this.getTypeDescriptionText(),
-                chartSubtitle: this.getSubtitleText(),
-                chartLongdesc: this.getLongdescText(),
-                xAxisDescription: axesDesc.xAxis,
-                yAxisDescription: axesDesc.yAxis,
-                viewTableButtonText: chart.getCSV ?
-                    this.getDataTableButtonText(dataTableButtonId) : ''
-            },
-            formattedString = H.i18nFormat(format, context),
-            filteredString = filterHTMLTags(formattedString),
-            strippedString = stripEmptyHTMLTags(filteredString);
-
-        this.dataTableButtonId = dataTableButtonId;
-        return strippedString;
-    },
-
-
-    /**
-     * @private
-     */
-    defaultAfterChartFormatter: function () {
-        return 'After';
-    },
-
-
-    /**
-     * Return object with text description of each of the chart's axes.
-     * @private
-     * @return {object}
-     */
-    getAxesDescription: function () {
-        var chart = this.chart,
-            component = this,
-            xAxes = chart.xAxis,
-            // Figure out when to show axis info in the region
-            showXAxes = xAxes.length > 1 || xAxes[0] &&
-                pick(
-                    xAxes[0].options.accessibility &&
-                    xAxes[0].options.accessibility.enabled,
-                    !chart.angular && chart.hasCartesianSeries &&
-                    chart.types.indexOf('map') < 0
-                ),
-            yAxes = chart.yAxis,
-            showYAxes = yAxes.length > 1 || yAxes[0] &&
-                pick(
-                    yAxes[0].options.accessibility &&
-                    yAxes[0].options.accessibility.enabled,
-                    chart.hasCartesianSeries && chart.types.indexOf('map') < 0
-                ),
-            desc = {};
-
-        if (showXAxes) {
-            desc.xAxis = chart.langFormat(
-                'accessibility.axis.xAxisDescription' + (
-                    xAxes.length > 1 ? 'Plural' : 'Singular'
-                ),
-                {
-                    chart: chart,
-                    names: chart.xAxis.map(function (axis) {
-                        return axis.getDescription();
-                    }),
-                    ranges: chart.xAxis.map(function (axis) {
-                        return component.getAxisRangeDescription(axis);
-                    }),
-                    numAxes: xAxes.length
-                }
-            );
-        }
-
-        if (showYAxes) {
-            desc.yAxis = chart.langFormat(
-                'accessibility.axis.yAxisDescription' + (
-                    yAxes.length > 1 ? 'Plural' : 'Singular'
-                ),
-                {
-                    chart: chart,
-                    names: chart.yAxis.map(function (axis) {
-                        return axis.getDescription();
-                    }),
-                    ranges: chart.yAxis.map(function (axis) {
-                        return component.getAxisRangeDescription(axis);
-                    }),
-                    numAxes: yAxes.length
-                }
-            );
-        }
-
-        return desc;
-    },
-
-
-    /**
-     * Return string with text description of the axis range.
-     * @private
-     * @param {Highcharts.Axis} axis The axis to get range desc of.
-     * @return {string} A string with the range description for the axis.
-     */
-    getAxisRangeDescription: function (axis) {
-        var chart = this.chart,
-            axisOptions = axis.options || {};
-
-        // Handle overridden range description
-        if (
-            axisOptions.accessibility &&
-            axisOptions.accessibility.rangeDescription !== undefined
-        ) {
-            return axisOptions.accessibility.rangeDescription;
-        }
-
-        // Handle category axes
-        if (axis.categories) {
-            return chart.langFormat(
-                'accessibility.axis.rangeCategories',
-                {
-                    chart: chart,
-                    axis: axis,
-                    numCategories: axis.dataMax - axis.dataMin + 1
-                }
-            );
-        }
-
-        // Use range, not from-to?
-        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
-            var range = {},
-                rangeUnit = 'Seconds';
-            range.Seconds = (axis.max - axis.min) / 1000;
-            range.Minutes = range.Seconds / 60;
-            range.Hours = range.Minutes / 60;
-            range.Days = range.Hours / 24;
-            ['Minutes', 'Hours', 'Days'].forEach(function (unit) {
-                if (range[unit] > 2) {
-                    rangeUnit = unit;
-                }
-            });
-            range.value = range[rangeUnit].toFixed(
-                rangeUnit !== 'Seconds' &&
-                rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
-            );
-
-            // We have the range and the unit to use, find the desc format
-            return chart.langFormat(
-                'accessibility.axis.timeRange' + rangeUnit,
-                {
-                    chart: chart,
-                    axis: axis,
-                    range: range.value.replace('.0', '')
-                }
-            );
-        }
-
-        // Just use from and to.
-        // We have the range and the unit to use, find the desc format
-        var srSectionOpts = chart.options.accessibility.screenReaderSection;
-        return chart.langFormat(
-            'accessibility.axis.rangeFromTo',
-            {
-                chart: chart,
-                axis: axis,
-                rangeFrom: axis.isDatetimeAxis ?
-                    chart.time.dateFormat(
-                        srSectionOpts.axisRangeDateFormat, axis.min
-                    ) : axis.min,
-                rangeTo: axis.isDatetimeAxis ?
-                    chart.time.dateFormat(
-                        srSectionOpts.axisRangeDateFormat, axis.max
-                    ) : axis.max
-            }
-        );
-    },
-
-    /**
-     * Set attribs and handlers for default view as data table button.
-     * @private
+     * @param {string} tableButtonId
      */
     initDataTableButton: function (tableButtonId) {
         var el = this.viewDataTableButton = tableButtonId &&
@@ -492,58 +457,184 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
 
     /**
+     * Return object with text description of each of the chart's axes.
      * @private
+     * @return {object}
      */
-    getLongdescText: function () {
-        var chartOptions = this.chart.options,
-            captionOptions = chartOptions.caption,
-            captionText = captionOptions && captionOptions.text;
-        return chartOptions.accessibility.description ||
-                captionText || '';
+    getAxesDescription: function () {
+        var chart = this.chart,
+            shouldDescribeColl = function (collectionKey, defaultCondition) {
+                var axes = chart[collectionKey];
+                return axes.length > 1 || axes[0] &&
+                pick(
+                    axes[0].options.accessibility &&
+                    axes[0].options.accessibility.enabled,
+                    defaultCondition
+                );
+            },
+            hasNoMap = chart.types.indexOf('map') < 0,
+            hasCartesian = chart.hasCartesianSeries,
+            showXAxes = shouldDescribeColl(
+                'xAxis', !chart.angular && hasCartesian && hasNoMap
+            ),
+            showYAxes = shouldDescribeColl(
+                'yAxis', hasCartesian && hasNoMap
+            ),
+            desc = {};
+
+        if (showXAxes) {
+            desc.xAxis = this.getAxisDescriptionText('xAxis');
+        }
+
+        if (showYAxes) {
+            desc.yAxis = this.getAxisDescriptionText('yAxis');
+        }
+
+        return desc;
     },
 
 
     /**
      * @private
+     * @param {string} collectionKey
+     * @return {string}
      */
-    getTypeDescriptionText: function () {
-        var chart = this.chart;
-        return chart.types ? chart.options.accessibility.typeDescription ||
-            chart.getTypeDescription(chart.types) : '';
+    getAxisDescriptionText: function (collectionKey) {
+        var component = this,
+            chart = this.chart,
+            axes = chart[collectionKey];
+
+        return chart.langFormat(
+            'accessibility.axis.' + collectionKey + 'Description' + (
+                axes.length > 1 ? 'Plural' : 'Singular'
+            ),
+            {
+                chart: chart,
+                names: axes.map(function (axis) {
+                    return axis.getDescription();
+                }),
+                ranges: axes.map(function (axis) {
+                    return component.getAxisRangeDescription(axis);
+                }),
+                numAxes: axes.length
+            }
+        );
+    },
+
+
+    /**
+     * Return string with text description of the axis range.
+     * @private
+     * @param {Highcharts.Axis} axis The axis to get range desc of.
+     * @return {string} A string with the range description for the axis.
+     */
+    getAxisRangeDescription: function (axis) {
+        var axisOptions = axis.options || {};
+
+        // Handle overridden range description
+        if (
+            axisOptions.accessibility &&
+            axisOptions.accessibility.rangeDescription !== undefined
+        ) {
+            return axisOptions.accessibility.rangeDescription;
+        }
+
+        // Handle category axes
+        if (axis.categories) {
+            return this.getCategoryAxisRangeDesc(axis);
+        }
+
+        // Use time range, not from-to?
+        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
+            return this.getAxisTimeLengthDesc(axis);
+        }
+
+        // Just use from and to.
+        // We have the range and the unit to use, find the desc format
+        return this.getAxisFromToDescription(axis);
     },
 
 
     /**
      * @private
+     * @param {Highcharts.Axis} axis
+     * @return {string}
      */
-    getChartTitleText: function () {
+    getCategoryAxisRangeDesc: function (axis) {
         var chart = this.chart;
-        return chart.options.title.text || chart.langFormat(
-            'accessibility.defaultChartTitle', { chart: chart }
+        return chart.langFormat(
+            'accessibility.axis.rangeCategories',
+            {
+                chart: chart,
+                axis: axis,
+                numCategories: axis.dataMax - axis.dataMin + 1
+            }
         );
     },
 
 
     /**
      * @private
+     * @param {Highcharts.Axis} axis
+     * @return {string}
      */
-    getDataTableButtonText: function (buttonId) {
+    getAxisTimeLengthDesc: function (axis) {
         var chart = this.chart,
-            buttonText = chart.langFormat(
-                'accessibility.table.viewAsDataTableButtonText',
-                { chart: chart }
-            );
+            range = {},
+            rangeUnit = 'Seconds';
 
-        return '<a id="' + buttonId + '">' + buttonText + '</a>';
+        range.Seconds = (axis.max - axis.min) / 1000;
+        range.Minutes = range.Seconds / 60;
+        range.Hours = range.Minutes / 60;
+        range.Days = range.Hours / 24;
+
+        ['Minutes', 'Hours', 'Days'].forEach(function (unit) {
+            if (range[unit] > 2) {
+                rangeUnit = unit;
+            }
+        });
+
+        range.value = range[rangeUnit].toFixed(
+            rangeUnit !== 'Seconds' &&
+            rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
+        );
+
+        // We have the range and the unit to use, find the desc format
+        return chart.langFormat(
+            'accessibility.axis.timeRange' + rangeUnit,
+            {
+                chart: chart,
+                axis: axis,
+                range: range.value.replace('.0', '')
+            }
+        );
     },
 
 
     /**
      * @private
+     * @param {Highcharts.Axis} axis
+     * @return {string}
      */
-    getSubtitleText: function () {
-        var subtitle = this.chart.options.subtitle;
-        return subtitle && subtitle.text || '';
+    getAxisFromToDescription: function (axis) {
+        var chart = this.chart,
+            dateRangeFormat = chart.options.accessibility.screenReaderSection
+                .axisRangeDateFormat,
+            format = function (axisKey) {
+                return axis.isDatetimeAxis ? chart.time.dateFormat(
+                    dateRangeFormat, axis[axisKey]
+                ) : axis[axisKey];
+            };
+
+        return chart.langFormat(
+            'accessibility.axis.rangeFromTo',
+            {
+                chart: chart,
+                axis: axis,
+                rangeFrom: format('min'),
+                rangeTo: format('max')
+            }
+        );
     }
 });
 

@@ -1,5 +1,5 @@
 QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         chart: {
             type: 'column',
@@ -42,8 +42,7 @@ QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
     });
 
     assert.strictEqual(
-        document.getElementById('container')
-            .firstChild.innerHTML.indexOf('style='),
+        chart.container.firstChild.innerHTML.indexOf('style='),
         -1,
         'No inline styles found'
     );

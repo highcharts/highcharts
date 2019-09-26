@@ -62,20 +62,29 @@ var options = {
          */
         screenReaderSection: {
             /**
-             * Date format to use to describe range of datetime axes.
+             * A formatter function to create the HTML contents of the hidden
+             * screen reader information region before the chart. Receives one
+             * argument, `chart`, referring to the chart object. Should return a
+             * string with the HTML content of the region. By default this
+             * returns an automatic description of the chart based on
+             * [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
              *
-             * For an overview of the replacement codes, see
-             * [dateFormat](/class-reference/Highcharts#dateFormat).
-             *
-             * @see [point.dateFormat](#accessibility.point.dateFormat)
-             * @since next
+             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @default undefined
+             * @since   next
+             * @apioption accessibility.screenReaderSection.beforeChartFormatter
              */
-            axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
 
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are headings, <p>, <div>, <a>, and <button>.
-             * Attributes are not supported, except for id on <a> and <button>.
+             * Supported HTML tags are headings, `<p>`, `<div>`, `<a>`, and
+             * `<button>`. Attributes are not supported, except for id on
+             * `<div>`, `<a>`, and `<button>`. Id is required on `<a>` and
+             * `<button>`.
+             *
+             * If the resulting string contains HTML characters that are not
+             * allowed, the resulting string will be changed to
+             * "Content blocked" for security reasons.
              *
              * @since next
              */
@@ -86,7 +95,37 @@ var options = {
                 '<div>{chartLongdesc}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButtonText}</div>'
+                '<div>{viewTableButton}</div>',
+
+            /**
+             * A formatter function to create the HTML contents of the hidden
+             * screen reader information region after the chart. Analogous to
+             * [beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
+             *
+             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @default undefined
+             * @since   next
+             * @apioption accessibility.screenReaderSection.afterChartFormatter
+             */
+
+            /**
+             * Format for the screen reader information region after the chart.
+             * Analogous to [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
+             *
+             * @since next
+             */
+            afterChartFormat: '{endOfChartMarker}',
+
+            /**
+             * Date format to use to describe range of datetime axes.
+             *
+             * For an overview of the replacement codes, see
+             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             *
+             * @see [point.dateFormat](#accessibility.point.dateFormat)
+             * @since next
+             */
+            axisRangeDateFormat: '%Y-%m-%d %H:%M:%S'
         },
 
         /**
@@ -298,22 +337,6 @@ var options = {
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
          * @since     next
          * @apioption accessibility.series.descriptionFormatter
-         */
-
-        /**
-         * A formatter function to create the HTML contents of the hidden screen
-         * reader information region. Receives one argument, `chart`, referring
-         * to the chart object. Should return a string with the HTML content
-         * of the region. By default this returns an automatic description of
-         * the chart.
-         *
-         * The button to view the chart as a data table will be added
-         * automatically after the custom HTML content if enabled.
-         *
-         * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-         * @default undefined
-         * @since   next
-         * @apioption accessibility.screenReaderSection.beforeChartFormatter
          */
 
         /**

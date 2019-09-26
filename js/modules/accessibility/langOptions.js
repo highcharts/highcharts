@@ -58,6 +58,14 @@ var langOptions = {
         svgContainerTitle: '',
 
         /**
+         * Set a label on the container wrapping the SVG.
+         *
+         * @see [chartContainerLabel](#lang.accessibility.chartContainerLabel)
+         * @since next
+         */
+        graphicContainerLabel: '',
+
+        /**
          * Language options for the screen reader information sections added
          * before and after the charts.
          *
@@ -65,6 +73,7 @@ var langOptions = {
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
+            afterRegionLabel: '',
 
             /**
              * Label for the end of the chart. Announced by screen readers.
@@ -112,7 +121,7 @@ var langOptions = {
          * @since next
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table.',
+            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
 

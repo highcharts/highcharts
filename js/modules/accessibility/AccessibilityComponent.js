@@ -397,7 +397,10 @@ AccessibilityComponent.prototype = {
             position: 'absolute',
             width: '1px',
             height: '1px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
+            filter: 'alpha(opacity=1)',
+            opacity: '0.01'
         };
         merge(true, element.style, hiddenStyle);
     },

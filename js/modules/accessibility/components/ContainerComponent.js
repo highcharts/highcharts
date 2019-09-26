@@ -20,6 +20,12 @@ import A11yUtilities from '../utilities.js';
 var doc = H.win.document,
     stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
+function getChartTitle(chart) {
+    return stripHTMLTags(chart.options.title.text || chart.langFormat(
+        'accessibility.defaultChartTitle', { chart: chart }
+    ));
+}
+
 
 /**
  * The ContainerComponent class
@@ -36,62 +42,105 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
+        this.handleSVGTitleElement();
+        this.setSVGContainerLabel();
+        this.setGraphicContainerAttrs();
+        this.setRenderToAttrs();
+        this.makeCreditsAccessible();
+    },
+
+
+    /**
+     * @private
+     */
+    handleSVGTitleElement: function () {
         var chart = this.chart,
-            a11yOptions = chart.options.accessibility,
-            titleElement,
             titleId = 'highcharts-title-' + chart.index,
-            chartTitle = chart.options.title.text || chart.langFormat(
-                'accessibility.defaultChartTitle', { chart: chart }
-            ),
-            svgContainerTitle = stripHTMLTags(chart.langFormat(
+            titleContents = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
-                    chartTitle: chartTitle
-                }
-            )),
-            svgContainerLabel = stripHTMLTags(chart.langFormat(
-                'accessibility.svgContainerLabel', {
-                    chartTitle: chartTitle
+                    chartTitle: getChartTitle(chart)
                 }
             ));
 
-        // Add SVG title tag if it is set
-        if (svgContainerTitle.length) {
-            titleElement = this.svgTitleElement =
+        if (titleContents.length) {
+            var titleElement = this.svgTitleElement =
                 this.svgTitleElement || doc.createElementNS(
                     'http://www.w3.org/2000/svg',
                     'title'
                 );
-            titleElement.textContent = svgContainerTitle;
+            titleElement.textContent = titleContents;
             titleElement.id = titleId;
             chart.renderTo.insertBefore(
                 titleElement, chart.renderTo.firstChild
             );
         }
+    },
 
-        // Add label to SVG container
+
+    /**
+     * @private
+     */
+    setSVGContainerLabel: function () {
+        var chart = this.chart,
+            svgContainerLabel = stripHTMLTags(chart.langFormat(
+                'accessibility.svgContainerLabel', {
+                    chartTitle: getChartTitle(chart)
+                }
+            ));
+
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
+    },
 
-        // Add role and label to the div
-        if (a11yOptions.landmarkVerbosity !== 'disabled') {
+
+    /**
+     * @private
+     */
+    setGraphicContainerAttrs: function () {
+        var chart = this.chart,
+            label = chart.langFormat('accessibility.graphicContainerLabel', {
+                chartTitle: getChartTitle(chart)
+            });
+
+        if (label.length) {
+            chart.container.setAttribute('aria-label', label);
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    setRenderToAttrs: function () {
+        var chart = this.chart;
+
+        if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
         } else {
             chart.renderTo.removeAttribute('role');
         }
+
         chart.renderTo.setAttribute(
             'aria-label',
             chart.langFormat(
                 'accessibility.chartContainerLabel',
                 {
-                    title: stripHTMLTags(chartTitle),
+                    title: getChartTitle(chart),
                     chart: chart
                 }
             )
         );
+    },
 
-        // Make credits readable by screen reader
-        var creditsEl = chart.credits && chart.credits.element;
+
+    /**
+     * @private
+     */
+    makeCreditsAccessible: function () {
+        var chart = this.chart,
+            creditsEl = chart.credits && chart.credits.element;
+
         if (creditsEl) {
             if (chart.credits.textStr) {
                 creditsEl.setAttribute(
