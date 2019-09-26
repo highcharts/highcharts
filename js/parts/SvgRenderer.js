@@ -3904,13 +3904,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
-     * @param {number} x
+     * @param {number} [x]
      *
-     * @param {number} y
+     * @param {number} [y]
      *
-     * @param {number} width
+     * @param {number} [width]
      *
-     * @param {number} height
+     * @param {number} [height]
      *
      * @return {Highcharts.ClipRectElement}
      *         A clipping rectangle.

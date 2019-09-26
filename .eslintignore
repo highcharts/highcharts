@@ -32,9 +32,9 @@ js/indicators/**/*.js
 !js/indicators/zigzag.src.js
 js/modules/**/*.js
 !js/modules/accessibility/**/*.js
-!js/modules/boost/**/*.js
+#!js/modules/boost/**/*.js
 !js/modules/sonification/**/*.js
-!js/modules/boost-canvas.src.js
+#!js/modules/boost-canvas.src.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
 #!js/modules/variable-pie.src.js

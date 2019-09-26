@@ -323,10 +323,10 @@ declare global {
             public circle(attribs: SVGAttributes): SVGElement;
             public circle(x?: number, y?: number, r?: number): SVGElement;
             public clipRect(
-                x: number,
-                y: number,
-                width: number,
-                height: number
+                x?: number,
+                y?: number,
+                width?: number,
+                height?: number
             ): ClipRectElement;
             public createElement(nodeName: string): SVGElement;
             public crispLine(points: SVGPathArray, width: number): SVGPathArray;
@@ -5646,23 +5646,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
-     * @param {number} x
+     * @param {number} [x]
      *
-     * @param {number} y
+     * @param {number} [y]
      *
-     * @param {number} width
+     * @param {number} [width]
      *
-     * @param {number} height
+     * @param {number} [height]
      *
      * @return {Highcharts.ClipRectElement}
      *         A clipping rectangle.
      */
     clipRect: function (
         this: Highcharts.SVGRenderer,
-        x: number,
-        y: number,
-        width: number,
-        height: number
+        x?: number,
+        y?: number,
+        width?: number,
+        height?: number
     ): Highcharts.ClipRectElement {
         var wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
