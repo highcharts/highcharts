@@ -18,6 +18,7 @@ declare global {
     namespace Highcharts {
         class DPOIndicator extends SMAIndicator {
             public data: Array<DPOIndicatorPoint>;
+            public nameBase: string;
             public options: DPOIndicatorOptions;
             public pointClass: typeof DPOIndicatorPoint;
             public points: Array<DPOIndicatorPoint>;
@@ -33,7 +34,7 @@ declare global {
         }
 
         interface DPOIndicatorParamsOptions extends SMAIndicatorParamsOptions {
-            period: number;
+            // for inheritance
         }
 
         class DPOIndicatorPoint extends SMAIndicatorPoint {
@@ -120,7 +121,7 @@ H.seriesType<Highcharts.DPOIndicator>(
             series: Highcharts.DPOIndicator,
             params: Highcharts.DPOIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
-            var period: number = params.period,
+            var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
                 range: number = period + offset,
