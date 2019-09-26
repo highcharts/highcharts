@@ -346,8 +346,7 @@ workflows:
             - install_dependencies
           filters:
             branches:
-              only: tools/visual-test-compare
-              # later change to ignore: master
+              ignore: master
           context: highcharts-staging
       - generate_release_reference_images:
           requires:
