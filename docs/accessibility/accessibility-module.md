@@ -26,8 +26,8 @@ Highcharts.chart(‘container’, {
     // …
     
     accessibility: {
-        description: ‘Shows how apples have been more popular than oranges for the past 10 years. \\  
-Oranges are gaining in popularity over the past 3 years, but are still far from as popular as apples.’
+        description: 'Shows how apples have been more popular than oranges for the past 10 years \
+        Oranges are gaining in popularity over the past 3 years, but are still far from as popular as apples.'
     }
 
     // ....

@@ -31,7 +31,7 @@ Use the x and y options to customise position. The x and y options offset the se
 Floating
 --------
 
-The option allows to skip adding extra space for range selector. [See a live demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/rangeselector/floating/).
+The option allows to skip adding extra space for range selector. [See a live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/rangeselector/floating/).
 
     
     rangeSelector: {
@@ -108,4 +108,4 @@ Each range selector button can get a custom action as shown in this example:
     },
     
 
-See the [API reference](http://api.highcharts.com/highstock/rangeSelector) for the rangeSelector option for more information on how to set up the range selector tool.
+See the [API reference](https://api.highcharts.com/highstock/rangeSelector) for the rangeSelector option for more information on how to set up the range selector tool.

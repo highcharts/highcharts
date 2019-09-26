@@ -11,8 +11,8 @@ Add `modules/networkgraph.js` after you have included Highcharts.
 _Example of loading both files in a webpage_
 
 ```html
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/gantt/modules/networkgraph.js"></script> 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/networkgraph.js"></script> 
 ```
 
 Data format

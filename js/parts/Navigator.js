@@ -1195,7 +1195,8 @@ Navigator.prototype = {
                 });
             }
         }
-        if (e.DOMType !== 'mousemove') {
+        if (e.DOMType !== 'mousemove' &&
+            e.DOMType !== 'touchmove') {
             navigator.grabbedLeft = navigator.grabbedRight =
                 navigator.grabbedCenter = navigator.fixedWidth =
                     navigator.fixedExtreme = navigator.otherHandlePos =

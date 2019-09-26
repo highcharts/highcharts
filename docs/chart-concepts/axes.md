@@ -12,7 +12,7 @@ The axis labels, tickmarks and gridlines are closely linked and all scale togeth
 
 ### Ticks
 
-Tick marks are the lines placed along an axis to show the units of measurement. The spacing between ticks are mainly decided by the [tickInterval](http://api.highcharts.com/highcharts/xAxis.tickInterval) and [tickPixelInterval](http://api.highcharts.com/highcharts/xAxis.tickPixelInterval) options. Labels and grid lines are laid out on the same positions as the tick marks. 
+Tick marks are the lines placed along an axis to show the units of measurement. The spacing between ticks are mainly decided by the [tickInterval](https://api.highcharts.com/highcharts/xAxis.tickInterval) and [tickPixelInterval](https://api.highcharts.com/highcharts/xAxis.tickPixelInterval) options. Labels and grid lines are laid out on the same positions as the tick marks. 
 
 The tickInterval option decides the interval of the tick marks in axis units. The tick interval defaults to null, which means it is computed to approximately follow the tickPixelInterval on linear and datetime axes.
 
@@ -26,7 +26,7 @@ The "tickPixelInterval" sets an approximate pixel interval of the tick marks ba
 
 ### Minor ticks
 
-If the [minorTickInterval](http://api.highcharts.com/highcharts/xAxis.minorTickInterval) option is set, minor ticks are laid out between the major ones. This includes minor tick marks, and minor grid lines, which have their own options for look and feel, but excludes labels. 
+If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTickInterval) option is set, minor ticks are laid out between the major ones. This includes minor tick marks, and minor grid lines, which have their own options for look and feel, but excludes labels. 
 
 ### Labels
 
@@ -48,7 +48,7 @@ The above example takes the value of the y-axis label and adds a % symbol at the
 
 Grid lines are collections of horizontal (and/or vertical) lines that divide a chart into a grid, making it easier to read values of the chart. 
 
-To enable or disable gridlines for either the x or y-axis, set the [gridLineWidth](http://api.highcharts.com/highcharts/xAxis.gridLineWidth) of the respective axis:
+To enable or disable gridlines for either the x or y-axis, set the [gridLineWidth](https://api.highcharts.com/highcharts/xAxis.gridLineWidth) of the respective axis:
 
     
     xAxis: {
@@ -61,9 +61,9 @@ To enable or disable gridlines for either the x or y-axis, set the [gridLineWidt
 
 Grid lines for the y-axis are enabled by default (gridLineWidth: 1), and disabled by default for the x-axis  (gridLineWidth: 0).
 
-Other options for grid lines can be found in the [API reference](http://api.highcharts.com/highcharts/xAxis) for the x and y-axis.
+Other options for grid lines can be found in the [API reference](https://api.highcharts.com/highcharts/xAxis) for the x and y-axis.
 
-Minor grid lines are intermediary lines that can be enabled by setting the [minorTickInterval](http://api.highcharts.com/highcharts/xAxis.minorTickInterval) option.
+Minor grid lines are intermediary lines that can be enabled by setting the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTickInterval) option.
 
 Multiple axes
 -------------
@@ -96,7 +96,7 @@ Note that several axes are created using a list, so the first yAxis starts with 
 Axis title 
 -----------
 
-The axis title, showing next to the axis line. This title by default for the y-axis and hidden by default for the x-axis. See [xAxis.title](http://api.highcharts.com/highcharts/xAxis.title) for the full set of options.
+The axis title, showing next to the axis line. This title by default for the y-axis and hidden by default for the x-axis. See [xAxis.title](https://api.highcharts.com/highcharts/xAxis.title) for the full set of options.
 
 Axis types
 ----------
@@ -155,9 +155,9 @@ The numbers along the axis are of linear scale. This is the default axis type. I
 
 On a logarithmic axis the numbers along the axis increase logarithmically and the axis adjusts itself to the data series present in the chart.
 
-Note that on logarithmic axes, the [tickInterval](http://api.highcharts.com/highcharts/yAxis.tickInterval) option is based on powers, so a tickInterval of 1 means one tick on each of 0.1, 1, 10, 100 etc. A tickInterval of 2 means a tick of 0.1, 10, 1000 etc. A tickInterval of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
+Note that on logarithmic axes, the [tickInterval](https://api.highcharts.com/highcharts/yAxis.tickInterval) option is based on powers, so a tickInterval of 1 means one tick on each of 0.1, 1, 10, 100 etc. A tickInterval of 2 means a tick of 0.1, 10, 1000 etc. A tickInterval of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
-Another thing to note is that a logarithmic axis can never become negative, as each full axis unit is one tenth of the previous. As a consequence, Highcharts will remove 0 or negative points associated to the axis, and if you try to set the [axis.min](http://api.highcharts.com/highcharts/yAxis.min) option to 0 or negative, it will fail with an error.
+Another thing to note is that a logarithmic axis can never become negative, as each full axis unit is one tenth of the previous. As a consequence, Highcharts will remove 0 or negative points associated to the axis, and if you try to set the [axis.min](https://api.highcharts.com/highcharts/yAxis.min) option to 0 or negative, it will fail with an error.
 
 ### Datetime
 
@@ -172,7 +172,7 @@ Some useful functions are:
     // Get time in millis for your local time
     Date.parse("Month day, year");
     
-    // Built in Highcharts date formatter based on the [PHP strftime](http://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
+    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts#.dateFormat) for usage)
     Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
 
 Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.
@@ -181,17 +181,17 @@ In Highstock the x-axis is always a datetime axis.
 
 ### Categories
 
-If categories are present, the names of the categories are used instead of numbers or dates on the axis. See [xAxis.categories](http://api.highcharts.com/highcharts/xAxis.categories).
+If categories are present, the names of the categories are used instead of numbers or dates on the axis. See [xAxis.categories](https://api.highcharts.com/highcharts/xAxis.categories).
 
 ### What axis type should I use?
 
 Many of the examples in the [Highcharts demo](demo/) come with an xAxis with categories. However, it is important to understand when to use categories and when you are better off with a linear or datetime xAxis.
 
-Categories are groups of items, like for example "Apples", "Pears" and "Oranges", or "Red", "Green", "Blue", "Yellow". These categories have that in common that there are no intermediate values. There's no sliding transition between apples and pears. Also, if you leave one category out, the user isn't able to understand what is left out. Say if you print every second color of "Red", "Green", "Blue" or "Yellow", the user won't know what colors are missing. Therefore, Highcharts doesn't have automatic methods to hide categories if they become to dense on the axis. If you have problems with overlapping axis labels, try either the [xAxis.labels.staggerLines](http://api.highcharts.com/highcharts/xAxis.labels.staggerLines) option, or give the labels a rotation. If you find that you can skip category labels by the [xAxis.labels.step](http://api.highcharts.com/highcharts/xAxis.labels.step) option, chances are that you are better off using a linear or datetime axis.
+Categories are groups of items, like for example "Apples", "Pears" and "Oranges", or "Red", "Green", "Blue", "Yellow". These categories have that in common that there are no intermediate values. There's no sliding transition between apples and pears. Also, if you leave one category out, the user isn't able to understand what is left out. Say if you print every second color of "Red", "Green", "Blue" or "Yellow", the user won't know what colors are missing. Therefore, Highcharts doesn't have automatic methods to hide categories if they become to dense on the axis. If you have problems with overlapping axis labels, try either the [xAxis.labels.staggerLines](https://api.highcharts.com/highcharts/xAxis.labels.staggerLines) option, or give the labels a rotation. If you find that you can skip category labels by the [xAxis.labels.step](https://api.highcharts.com/highcharts/xAxis.labels.step) option, chances are that you are better off using a linear or datetime axis.
 
-An xAxis of the linear or datetime type has the advantage that Highcharts is able to determine how close the data labels should be because it knows how to interpolate. The labels will by default be placed with approximately 100px between them, which can be changed in the tickPixelInterval option. If you have predictable categories like "Item1", "Item2", "Item3" or "2012-01-01", "2012-01-02", "2012-01-03" etc., linear or datetime axis types combined with an [xAxis.labels.formatter](http://api.highcharts.com/highcharts/xAxis.labels.formatter) would probably be a better choice.
+An xAxis of the linear or datetime type has the advantage that Highcharts is able to determine how close the data labels should be because it knows how to interpolate. The labels will by default be placed with approximately 100px between them, which can be changed in the tickPixelInterval option. If you have predictable categories like "Item1", "Item2", "Item3" or "2012-01-01", "2012-01-02", "2012-01-03" etc., linear or datetime axis types combined with an [xAxis.labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter) would probably be a better choice.
 
 Dynamically updating axes
 -------------------------
 
-Axes can be updated with new information after render time. For more information about this look in the [API](http://api.highcharts.com/highcharts/Axis).
+Axes can be updated with new information after render time. For more information about this look in the [API](https://api.highcharts.com/highcharts/Axis).

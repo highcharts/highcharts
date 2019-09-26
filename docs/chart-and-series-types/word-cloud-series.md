@@ -5,7 +5,7 @@ A word cloud is a visualization of a set of words, where the size and placement 
 
 <iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/wordcloud allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/wordcloud/) to check the code
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/wordcloud/) to check the code
 
 Requirements
 ------------

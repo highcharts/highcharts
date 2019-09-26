@@ -8,7 +8,7 @@ In [styled mode](docs/chart-design-and-style/style-by-css) however, we have remo
 1. Define the SVG structure
 ----------------------------
 
-SVG allows graphical objects to be defined for later usage in the [defs tag](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs). So in Highcharts 5, we added a direct API for adding defs through the [SVGRenderer.definition](http://api.highcharts.com/highcharts/SVGRenderer.definition) function and the general [defs option structure](http://api.highcharts.com/highcharts/defs). For maximum flexibility, this structure accepts a JSON-serialized SVG structure that is directly inserted. Some key property names are reserved:
+SVG allows graphical objects to be defined for later usage in the [defs tag](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs). So in Highcharts 5, we added a direct API for adding defs through the [SVGRenderer.definition](https://api.highcharts.com/highcharts/SVGRenderer.definition) function and the general [defs option structure](https://api.highcharts.com/highcharts/defs). For maximum flexibility, this structure accepts a JSON-serialized SVG structure that is directly inserted. Some key property names are reserved:
 
 *   `tagName` corresponds to the SVG tag.
 *   `textContent` is inserted directly into the generated tag.
@@ -39,7 +39,7 @@ An example of using defs is to apply a gradient: 
 
 The _key_ (see code comment) doesn't have a general meaning, but can be used for later reference or when merging options. For instance the structure can be modified in depth through `Highcharts.setOptions`. 
 
-An alternative way to define the SVG structure is to add it to a second SVG in the same HTML document. This is the fastest way of reusing definitions by copy-pasting from online SVG examples. [View sample](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/).
+An alternative way to define the SVG structure is to add it to a second SVG in the same HTML document. This is the fastest way of reusing definitions by copy-pasting from online SVG examples. [View sample](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/).
 
 2. Apply it in the CSS
 -----------------------
@@ -51,7 +51,7 @@ As for shadow, there is a built-in definition in Highcharts. Set `filter: url(#d
 Samples
 -------
 
-1.  [Gradients](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient/). The sample shows two gradients. Stop colors are also defined from the CSS.
-2.  [Shadows and glows](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/shadow/). The sample shows how to apply an SVG filter. For a simple drop shadow, the built-in `#drop-shadow` filter can be used.
-3.  [Patterns](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/pattern/). The sample shows how to add pattern patterns in the defs, and add colors an apply them in CSS. 
-4.  [Borrow definitions](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/) from another SVG in the page.
+1.  [Gradients](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient/). The sample shows two gradients. Stop colors are also defined from the CSS.
+2.  [Shadows and glows](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/shadow/). The sample shows how to apply an SVG filter. For a simple drop shadow, the built-in `#drop-shadow` filter can be used.
+3.  [Patterns](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/pattern/). The sample shows how to add pattern patterns in the defs, and add colors an apply them in CSS. 
+4.  [Borrow definitions](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/gradient-island/) from another SVG in the page.

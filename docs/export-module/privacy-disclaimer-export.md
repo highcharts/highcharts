@@ -1,7 +1,7 @@
 Export server Terms of Use 
 =============
 
-These terms are about the export server running at [http://export.highcharts.com](http://export.highcharts.com). This server is used to export charts to images or PDF files.
+These terms are about the export server running at [https://export.highcharts.com](https://export.highcharts.com). This server is used to export charts to images or PDF files.
 
 This service is based on fair usage policy. To this extent, rate limiting is in place. The rate limiting operates within windows of one minute, in which up to 10 requests can be made. This ensures that the service works well for everyone, even in times with heavy traffic.
 

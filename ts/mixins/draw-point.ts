@@ -10,7 +10,9 @@
  */
 declare global {
     namespace Highcharts {
-        type DrawPoint = (Point & { shouldDraw(): boolean });
+        interface DrawPoint extends Point {
+            shouldDraw(): boolean;
+        }
         interface DrawPointParams {
             animatableAttribs: SVGAttributes;
             attribs: SVGAttributes;

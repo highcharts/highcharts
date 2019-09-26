@@ -1,13 +1,13 @@
 Bullet chart
 ===
 
-A bullet graph is a variation of a bar graph. The bullet series features a single measure, compares it to a target, and displays it in the context of qualitative ranges of performance, that could be set using [plotBands](http://api.highcharts.com/highcharts/yAxis.plotBands) on yAxis.
+A bullet graph is a variation of a bar graph. The bullet series features a single measure, compares it to a target, and displays it in the context of qualitative ranges of performance, that could be set using [plotBands](https://api.highcharts.com/highcharts/yAxis.plotBands) on yAxis.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bullet)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.bullet)_
 
 <iframe style="width: 100%; height: 349px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bullet-graph allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bullet-graph/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bullet-graph/) to check the code.
 
 How to create a bullet chart
 ----------------------------
@@ -33,4 +33,4 @@ To create a bullet series, add the following configuration in the series option:
     }
     
 
-The `targetOptions` could be set for each point to create individual target options. On point level and even on series level the `targetOptions` are optional - default options will be set. The default options values can be found in the [API reference](http://api.highcharts.com/highcharts/series.bullet).
+The `targetOptions` could be set for each point to create individual target options. On point level and even on series level the `targetOptions` are optional - default options will be set. The default options values can be found in the [API reference](https://api.highcharts.com/highcharts/series.bullet).

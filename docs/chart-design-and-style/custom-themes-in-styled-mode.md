@@ -10,11 +10,11 @@ Remark
 
 Highcharts offers by default three different themes. There are available as CSS files at code.highcharts.com/css/themes :
 
-*   [dark-unica.css](http://code.highcharts.com/css/themes/dark-unica.css)
+*   [dark-unica.css](https://code.highcharts.com/css/themes/dark-unica.css)
     
-*   [sand-signika.css](http://code.highcharts.com/css/themes/sand-signika.css)
+*   [sand-signika.css](https://code.highcharts.com/css/themes/sand-signika.css)
     
-*   [grid-light.css](http://code.highcharts.com/css/themes/grid-light.css)
+*   [grid-light.css](https://code.highcharts.com/css/themes/grid-light.css)
     
 
 All these CSS files are generated from SCSS.

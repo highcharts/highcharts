@@ -34,7 +34,7 @@ As with the javascript frameworks, other versions may still work even though the
 Rendering engines and Performance
 ---------------------------------
 
-Different browsers support different rendering technologies, modern browsers have support for [SVG](http://www.w3.org/TR/SVG/Overview.html) but older versions of Internet Explorer do not, here we use [VML](http://www.w3.org/TR/NOTE-VML) to draw the graphs. This table describes the technologies we use in various browsers:
+Different browsers support different rendering technologies, modern browsers have support for [SVG](https://www.w3.org/TR/SVG/Overview.html) but older versions of Internet Explorer do not, here we use [VML](https://www.w3.org/TR/NOTE-VML) to draw the graphs. This table describes the technologies we use in various browsers:
 
 |Browser version|Rendering technology|Rendering performance|
 |--- |--- |--- |

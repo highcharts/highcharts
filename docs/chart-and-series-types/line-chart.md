@@ -8,7 +8,7 @@ The line chart is represented by a series of datapoints connected with a straigh
 Line chart features
 ===================
 
-The line chart inherit the options a [series](docs/chart-concepts/series) has plus some more. See the [API reference](http://api.highcharts.com/highcharts/plotOptions.line) for a full list of the line chart plotOptions.
+The line chart inherit the options a [series](docs/chart-concepts/series) has plus some more. See the [API reference](https://api.highcharts.com/highcharts/plotOptions.line) for a full list of the line chart plotOptions.
 
 Most options set in plotOptions can also be set on a individual series.
 
@@ -19,7 +19,7 @@ Allows the use of steps instead of a straight line.
 
 ![step_demo.png](step_demo.png)
 
-[Try it here](http://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/line-step/)
+[Try it here](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/line-step/)
 
 Code to enable step:
 
