@@ -405,9 +405,9 @@ declare global {
                 options?: SymbolOptionsObject
             ): SVGElement;
             public text(
-                str: string,
-                x: number,
-                y: number,
+                str?: string,
+                x?: number,
+                y?: number,
                 useHTML?: boolean
             ): SVGElement;
             public truncate(
@@ -5697,13 +5697,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param {string} str
+     * @param {string} [str]
      *        The text of (subset) HTML to draw.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        The x position of the text's lower left corner.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the text's lower left corner.
      *
      * @param {boolean} [useHTML=false]
@@ -5714,9 +5714,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     text: function (
         this: Highcharts.SVGElement,
-        str: string,
-        x: number,
-        y: number,
+        str?: string,
+        x?: number,
+        y?: number,
         useHTML?: boolean
     ): Highcharts.SVGElement {
 

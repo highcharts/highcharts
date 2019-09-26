@@ -42,7 +42,7 @@ js/modules/**/*.js
 #!js/modules/vector.src.js
 #!js/modules/venn.src.js
 #!js/modules/windbarb.src.js
-!js/modules/wordcloud.src.js
+#!js/modules/wordcloud.src.js
 js/mixins/**/*.js
 js/parts/**/*.js
 js/parts-3d/**/*.js
