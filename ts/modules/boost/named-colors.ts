@@ -9,13 +9,29 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Color {
+            names: Dictionary<ColorString>;
+        }
+    }
+}
+
 import '../../parts/Color.js';
+
 var Color = H.Color;
+
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
-var defaultHTMLColorMap = {
+var defaultHTMLColorMap: Highcharts.Dictionary<Highcharts.ColorString> = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
     aqua: '#00ffff',
@@ -160,5 +176,7 @@ var defaultHTMLColorMap = {
     yellow: '#ffff00',
     yellowgreen: '#9acd32'
 };
+
 Color.prototype.names = defaultHTMLColorMap;
+
 export default defaultHTMLColorMap;

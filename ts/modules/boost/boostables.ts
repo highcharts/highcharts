@@ -9,10 +9,20 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import boostables from './boostables.js';
+
 // These are the series we allow boosting for.
-var boostableMap = {};
-boostables.forEach(function (item) {
-    boostableMap[item] = 1;
-});
-export default boostableMap;
+
+var boostables = [
+    'area',
+    'arearange',
+    'column',
+    'columnrange',
+    'bar',
+    'line',
+    'scatter',
+    'heatmap',
+    'bubble',
+    'treemap'
+];
+
+export default boostables;

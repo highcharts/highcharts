@@ -54,7 +54,6 @@ declare global {
                 input: (ColorString|GradientColorObject|PatternObject|undefined)
             );
             public input?: ColorType;
-            public names: Dictionary<ColorString>;
             public parsers: Array<ColorParser>;
             public rgba: (ColorNone|ColorRGBA);
             public stops: Array<Color>;

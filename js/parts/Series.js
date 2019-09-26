@@ -3597,7 +3597,7 @@ null,
      * @private
      * @function Highcharts.Series#pointAttribs
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.Point} [point]
      *        The point instance to inspect.
      *
      * @param {string} [state]
