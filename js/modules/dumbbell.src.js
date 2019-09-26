@@ -17,16 +17,14 @@ var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, serie
  *
  * @sample {highcharts} highcharts/demo/dumbbell/
  *         Dumbbell chart
- * @sample {highstock} stock/demo/dumbbell/
- *         Dumbbell chart
- * @sample {highcharts} highcharts/css/dumbbell/
+ * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
  *         Styled mode
  *
  * @extends      plotOptions.arearange
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        7.1.3
+ * @since        7.2.0
  * @optionparent plotOptions.dumbbell
  */
 seriesType('dumbbell', 'arearange', {
@@ -40,11 +38,8 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects dumbbell point's values.
      *
-     * @type      {number}
-     * @since     7.1.3
+     * @since     7.2.0
      * @product   highcharts highstock
-     * @apioption plotOptions.dumbbell.connectorWidth
-     * @default   1
      */
     connectorWidth: 1,
     /** @ignore-option */
@@ -54,20 +49,18 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Color of the start markers in dumbbell graph.
      *
-     * @type      {string}
-     * @since     7.1.3
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since     7.2.0
      * @product   highcharts highstock
-     * @apioption plotOptions.dumbbell.startColor
-     * @default   #90ed7d
      */
-    startColor: '#90ed7d',
+    startColor: '${palette.neutralColor80}',
     /**
      * Color of the line that connects dumbbell point's values.
      * By default it is a series' color.
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     7.1.3
+     * @since     7.2.0
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -77,10 +70,8 @@ seriesType('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @type  {number}
-             * @since 7.1.3
+             * @since 7.2.0
              * @product   highcharts highstock
-             * @apioption plotOptions.dumbbell.states.hover.connectorWidthPlus
              */
             connectorWidthPlus: 1,
             /** @ignore-option */
@@ -91,7 +82,6 @@ seriesType('dumbbell', 'arearange', {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: H.TrackerMixin.drawTrackerPoint,
     drawGraph: H.noop,
-    toYData: areaRangeProto.toYData,
     /**
      * Correct line position by Math.floor instead of round.
      * As a result the line is aligned in the same way as marker
@@ -133,8 +123,10 @@ seriesType('dumbbell', 'arearange', {
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
     getConnectorAttribs: function (point) {
-        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color), connectorWidthPlus = seriesOptions.states.hover.connectorWidthPlus, dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle), pointTop = pick(point.plotLow, point.plotY), pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ?
-            yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs;
+        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color), connectorWidthPlus = pick(seriesOptions.states &&
+            seriesOptions.states.hover &&
+            seriesOptions.states.hover.connectorWidthPlus, 1), dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle), pointTop = pick(point.plotLow, point.plotY), pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ?
+            yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs, origProps;
         if (point.state) {
             connectorWidth = connectorWidth + connectorWidthPlus;
         }
@@ -155,15 +147,14 @@ seriesType('dumbbell', 'arearange', {
         }
         // Connector should reflect upper marker's zone color
         if (point.upperGraphic) {
-            point.origProps = {
+            origProps = {
                 y: point.y,
                 zone: point.zone
             };
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : undefined;
             connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color);
-            H.extend(point, point.origProps);
-            delete point.origProps;
+            H.extend(point, origProps);
         }
         attribs = {
             d: series.crispConnector([
@@ -239,11 +230,11 @@ seriesType('dumbbell', 'arearange', {
      * @return {void}
      */
     translate: function () {
-        // calculate shapeargs
+        // Calculate shapeargs
         this.setShapeArgs.apply(this);
-        // calculate point low / high values
+        // Calculate point low / high values
         this.translatePoint.apply(this, arguments);
-        // correct x position
+        // Correct x position
         this.points.forEach(function (point) {
             var shapeArgs = point.shapeArgs, pointWidth = point.pointWidth;
             point.plotX = shapeArgs.x;
@@ -266,7 +257,7 @@ seriesType('dumbbell', 'arearange', {
     drawPoints: function () {
         var series = this, chart = series.chart, pointLength = series.points.length, seriesStartColor = series.startColor = series.options.startColor, i = 0, lowerGraphicColor, point, zoneColor;
         this.seriesDrawPoints.apply(series, arguments);
-        // draw connectors and color upper markers
+        // Draw connectors and color upper markers
         while (i < pointLength) {
             point = series.points[i];
             series.drawConnector(point);
@@ -345,7 +336,7 @@ seriesType('dumbbell', 'arearange', {
      * @return {void}
      */
     setState: function () {
-        var point = this, series = point.series, chart = series.chart, seriesStartColor = series.options.startColor, pointOptions = point.options, pointStartColor = pointOptions.startColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointStartColor, seriesStartColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor;
+        var point = this, series = point.series, chart = series.chart, seriesStartColor = series.options.startColor, pointOptions = point.options, pointStartColor = pointOptions.startColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointStartColor, seriesStartColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
         this.pointSetState.apply(this, arguments);
         if (!this.state) {
             verb = 'animate';
@@ -354,7 +345,7 @@ seriesType('dumbbell', 'arearange', {
                     fill: lowerGraphicColor
                 });
                 if (point.upperGraphic) {
-                    point.origProps = {
+                    origProps = {
                         y: point.y,
                         zone: point.zone
                     };
@@ -364,8 +355,7 @@ seriesType('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, point.origProps);
-                    delete point.origProps;
+                    H.extend(point, origProps);
                 }
             }
         }

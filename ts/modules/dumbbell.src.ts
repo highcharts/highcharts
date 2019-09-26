@@ -18,12 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface DumbbellStateOptionsObject extends SeriesStatesOptions {
-            hover: DumbbellStatesHoverOptions;
-        }
-        interface DumbbellStatesHoverOptions extends SeriesStatesHoverOptions {
-            connectorWidthPlus: number;
-        }
         interface DumbbellPointOptions extends AreaRangePointOptions {
             connectorColor?: ColorType;
             connectorWidth?: number;
@@ -31,12 +25,15 @@ declare global {
             startColor?: ColorType;
         }
         interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
-            states: DumbbellStateOptionsObject;
+            states?: SeriesStatesOptionsObject<DumbbellSeries>;
             connectorColor?: ColorString;
-            connectorWidth: number;
-            groupPadding: number;
-            pointPadding: number;
+            connectorWidth?: number;
+            groupPadding?: number;
+            pointPadding?: number;
             startColor?: ColorType;
+        }
+        interface SeriesStatesHoverOptionsObject {
+            connectorWidthPlus?: number;
         }
         interface SeriesTypesDictionary {
             dumbbell: typeof AreaRangeSeries;
@@ -46,12 +43,13 @@ declare global {
             public options: DumbbellPointOptions;
             public connector: SVGElement;
             public pointWidth: number;
-            public pointSetState: any;
+            public pointSetState: AreaRangePoint['setState'];
         }
         class DumbbellSeries extends AreaRangeSeries {
             public startColor?: ColorType;
             public data: Array<DumbbellPoint>;
             public options: DumbbellSeriesOptions;
+            public pointClass: typeof DumbbellPoint;
             public points: Array<DumbbellPoint>;
             public trackerGroups: Array<string>;
             public crispCol: ColumnSeries['crispCol'];
@@ -100,7 +98,7 @@ var pick = H.pick,
  * @since        7.2.0
  * @optionparent plotOptions.dumbbell
  */
-seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
+seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     /** @ignore-option */
     trackByArea: false,
     /** @ignore-option */
@@ -208,18 +206,29 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             seriesOptions = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            connectorWidth = pick(
+            connectorWidth = pick<number|undefined, number>(
                 pointOptions.connectorWidth,
-                seriesOptions.connectorWidth
+                seriesOptions.connectorWidth as any
             ),
-            connectorColor = pick(
+            connectorColor = pick<
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorString|undefined,
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorType
+            >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
                 pointOptions.color,
                 point.zone ? point.zone.color : undefined,
-                point.color
+                point.color as any
             ),
-            connectorWidthPlus = seriesOptions.states.hover.connectorWidthPlus,
+            connectorWidthPlus = pick(
+                seriesOptions.states &&
+                seriesOptions.states.hover &&
+                seriesOptions.states.hover.connectorWidthPlus,
+                1
+            ),
             dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle),
             pointTop = pick(point.plotLow, point.plotY),
             pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true),
@@ -257,12 +266,18 @@ seriesType<Highcharts.DumbbellSeriesOptions>('dumbbell', 'arearange', {
             };
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : undefined;
-            connectorColor = pick(
+            connectorColor = pick<
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorString|undefined,
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorType|undefined,
+            Highcharts.ColorType
+            >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
                 pointOptions.color,
                 point.zone ? point.zone.color : undefined,
-                point.color
+                point.color as any
             );
             H.extend(point, origProps);
         }

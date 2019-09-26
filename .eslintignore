@@ -37,12 +37,6 @@ js/modules/**/*.js
 !js/modules/boost-canvas.src.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
-#!js/modules/variable-pie.src.js
-#!js/modules/variwide.src.js
-#!js/modules/vector.src.js
-#!js/modules/venn.src.js
-#!js/modules/windbarb.src.js
-#!js/modules/wordcloud.src.js
 js/mixins/**/*.js
 js/parts/**/*.js
 js/parts-3d/**/*.js

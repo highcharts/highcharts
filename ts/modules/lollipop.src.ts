@@ -21,7 +21,8 @@ declare global {
         interface LollipopPointOptions extends DumbbellPointOptions {
         }
         interface LollipopSeriesOptions extends DumbbellSeriesOptions {
-            startColor: any;
+            startColor?: undefined;
+            states?: SeriesStatesOptionsObject<LollipopSeries>;
         }
         class LollipopPoint extends DumbbellPoint {
             public series: LollipopSeries;
@@ -30,6 +31,7 @@ declare global {
         class LollipopSeries extends DumbbellSeries {
             public data: Array<LollipopPoint>;
             public options: LollipopSeriesOptions;
+            public pointClass: typeof LollipopPoint;
             public points: Array<LollipopPoint>;
             public translatePoint: AreaSeries['translate'];
             public drawPoint: AreaSeries['drawPoints'];
@@ -61,7 +63,7 @@ var seriesType = H.seriesType,
  * @since        7.2.0
  * @optionparent plotOptions.lollipop
  */
-seriesType<Highcharts.LollipopSeriesOptions>('lollipop', 'dumbbell', {
+seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
     /** @ignore-option */
     startColor: undefined,
     /** @ignore-option */

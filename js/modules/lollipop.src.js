@@ -18,16 +18,14 @@ var seriesType = H.seriesType, areaProto = H.seriesTypes.area.prototype, colProt
  *
  * @sample {highcharts} highcharts/demo/lollipop/
  *         Lollipop chart
- * @sample {highstock} stock/demo/lollipop/
- *         Lollipop chart
- * @sample {highcharts} highcharts/css/lollipop/
+ * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
  *         Styled mode
  *
  * @extends      plotOptions.dumbbell
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, startColor,
  *               stickyTracking, trackByArea
- * @since        7.1.3
+ * @since        7.2.0
  * @optionparent plotOptions.lollipop
  */
 seriesType('lollipop', 'dumbbell', {
@@ -56,12 +54,9 @@ seriesType('lollipop', 'dumbbell', {
         pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
     }
 }, {
-    toYData: areaProto.toYData,
-    setStackedPoints: areaProto.setStackedPoints,
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
-    alignDataLabel: colProto.alignDataLabel,
     setShapeArgs: colProto.translate
 }, {
     pointSetState: areaProto.pointClass.prototype.setState,
