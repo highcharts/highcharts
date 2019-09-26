@@ -40,14 +40,14 @@ function task() {
     const argv = require('yargs').argv;
     const processLib = require('./lib/process');
 
-    const command = 'cd ts && npx typedoc' + (
-        argv.next ?
-            ` --json "${path.join('..', NEXT_TARGET, 'tree.json')}"` +
-            ` --out "${path.join('..', NEXT_TARGET)}"` +
-            ` --theme "${path.join('..', NEXT_THEME)}"` :
-            ` --json "${path.join('..', INTERNAL_TARGET, 'tree.json')}"` +
-            ` --out "${path.join('..', INTERNAL_TARGET)}"` +
-            ` --theme "${path.join('..', INTERNAL_THEME)}"`
+    const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
+    const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
+
+    const command = (
+        'cd ts && npx typedoc' +
+        ` --json "${path.join('..', target, 'tree.json')}"` +
+        ` --out "${path.join('..', target)}"` +
+        ` --theme "${path.join('..', theme)}"`
     );
 
     return processLib
