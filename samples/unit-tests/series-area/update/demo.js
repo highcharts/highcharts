@@ -2,7 +2,8 @@ QUnit.test('Updating series stacked property', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'area',
-            width: 600
+            width: 600,
+            height: 350
         },
         xAxis: {
             categories: ['Apples', 'Pears', 'Oranges', 'Bananas', 'Grapes', 'Plums', 'Strawberries', 'Raspberries']
