@@ -44,12 +44,12 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
-        interface PlotSeriesOptions {
-            legendType?: ('point'|'series');
-        }
         interface Point extends LegendItemObject {
         }
         interface Series extends LegendItemObject {
+        }
+        interface SeriesOptions {
+            legendType?: ('point'|'series');
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
@@ -217,7 +217,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 var H = Highcharts,
@@ -228,7 +229,6 @@ var H = Highcharts,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     merge = H.merge,
-    pick = H.pick,
     setAnimation = H.setAnimation,
     stableSort = H.stableSort,
     win = H.win,

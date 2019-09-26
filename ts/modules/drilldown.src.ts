@@ -293,7 +293,12 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+const {
+    extend,
+    objectEach,
+    pick,
+    syncTimeout
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -305,9 +310,7 @@ var animObject = H.animObject,
     noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
-    extend = H.extend,
     format = H.format,
-    pick = H.pick,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
@@ -737,7 +740,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         shapeArgs: point.shapeArgs,
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
-        color: point.isNull ? new H.Color(color).setOpacity(0).get() : color,
+        color: point.isNull ?
+            new H.Color(color as any).setOpacity(0).get() :
+            color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
         pointIndex: pointIndex,
@@ -1094,7 +1099,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
 
         // Do dummy animation on first point to get to complete
-        H.syncTimeout(function (): void {
+        syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 newSeries.points.forEach(function (
                     point: Highcharts.Point,
@@ -1155,9 +1160,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
             }
         });
 
-        (animateFrom as any).x += (
-            pick(xAxis.oldPos, xAxis.pos) - (xAxis.pos as any)
-        );
+        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
         this.points.forEach(function (point: Highcharts.Point): void {
             var animateTo = point.shapeArgs;
@@ -1483,10 +1486,10 @@ H.addEvent(H.Series, 'afterDrawDataLabels', function (): void {
 
     this.points.forEach(function (point: Highcharts.Point): void {
         var dataLabelsOptions = point.options.dataLabels,
-            pointCSS: Highcharts.CSSObject = pick<Highcharts.CSSObject>(
+            pointCSS: Highcharts.CSSObject = pick(
                 point.dlOptions as any,
                 dataLabelsOptions && (dataLabelsOptions as any).style,
-                {}
+                {} as Highcharts.CSSObject
             );
 
         if (point.drilldown && point.dataLabel) {

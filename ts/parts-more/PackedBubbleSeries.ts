@@ -18,14 +18,83 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type PackedBubbleData = [
-            (number|null),
-            (number|null),
-            (number|null),
-            number,
-            number,
-            PackedBubblePointOptions
-        ];
+        class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
+            public collisionNmb?: number;
+            public dataLabelOnNull?: boolean;
+            public degree: number;
+            public dispX?: number;
+            public dispY?: number;
+            public fixedPosition: DragNodesPoint['fixedPosition'];
+            public isParentNode?: boolean;
+            public mass: number;
+            public neighbours?: number;
+            public options: PackedBubblePointOptions;
+            public prevX?: number;
+            public prevY?: number;
+            public radius: number;
+            public removed?: any; // @todo
+            public series: PackedBubbleSeries;
+            public seriesIndex?: number;
+            public value: (number|null);
+        }
+        class PackedBubbleSeries extends BubbleSeries
+            implements DragNodesSeries {
+            public chart: PackedBubbleChart;
+            public data: Array<PackedBubblePoint>;
+            public forces: Array<string>;
+            public hasDraggableNodes: boolean;
+            public hoverPoint: PackedBubblePoint;
+            public index: number;
+            public isCartesian: boolean;
+            public layout: PackedBubbleLayout;
+            public noSharedTooltip: boolean;
+            public onMouseDown: DragNodesMixin['onMouseDown'];
+            public onMouseMove: DragNodesMixin['onMouseMove'];
+            public options: PackedBubbleSeriesOptions;
+            public parentNode?: PackedBubblePoint;
+            public parentNodesGroup?: SVGElement;
+            public parentNodeLayout: PackedBubbleLayout;
+            public parentNodeMass?: number;
+            public parentNodeRadius?: number;
+            public pointArrayMap: Array<string>;
+            public pointClass: typeof PackedBubblePoint;
+            public points: Array<PackedBubblePoint>;
+            public pointValKey: string;
+            public redrawHalo: DragNodesMixin['redrawHalo'];
+            public xData: Array<number>;
+            public checkOverlap(
+                bubble1: Array<number>,
+                bubble2: Array<number>
+            ): boolean;
+            public accumulateAllPoints(
+                series: PackedBubbleSeries
+            ): Array<PackedBubbleData>;
+            public addLayout(): void;
+            public addSeriesLayout(): void;
+            public calculateParentRadius(): void;
+            public calculateZExtremes(): Array<number>;
+            public createParentNodes(): void;
+            public deferLayout(): void;
+            public destroy(): void;
+            public drawDataLabels(): void;
+            public drawGraph(): void;
+            public getPointRadius(): void;
+            public init(): PackedBubbleSeries;
+            public onMouseUp(point: DragNodesPoint): void;
+            public placeBubbles(
+                allDataPoints: Array<PackedBubbleData>
+            ): Array<PackedBubbleData>;
+            public positionBubble(
+                lastBubble: Array<number>,
+                newOrigin: Array<number>,
+                nextBubble: Array<number>
+            ): Array<number>;
+            public render(): void;
+            public resizeRadius(): void;
+            public seriesBox(): (Array<number>|null);
+            public setVisible(): void;
+            public translate(): void;
+        }
         interface NetworkgraphLayout {
             beforeStep?(): void;
         }
@@ -113,6 +182,7 @@ declare global {
             dataLabels?: PackedBubbleDataLabelsOptionsObject;
             draggable?: boolean;
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
+            minSize?: (number|string);
             useSimulation?: boolean;
         }
         interface Point {
@@ -121,83 +191,14 @@ declare global {
         interface SeriesTypesDictionary {
             packedbubble: typeof PackedBubbleSeries;
         }
-        class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
-            public collisionNmb?: number;
-            public dataLabelOnNull?: boolean;
-            public degree: number;
-            public dispX?: number;
-            public dispY?: number;
-            public fixedPosition: DragNodesPoint['fixedPosition'];
-            public isParentNode?: boolean;
-            public mass: number;
-            public neighbours?: number;
-            public options: PackedBubblePointOptions;
-            public prevX?: number;
-            public prevY?: number;
-            public radius: number;
-            public removed?: any; // @todo
-            public series: PackedBubbleSeries;
-            public seriesIndex?: number;
-            public value: (number|null);
-        }
-        class PackedBubbleSeries extends BubbleSeries
-            implements DragNodesSeries {
-            public chart: PackedBubbleChart;
-            public data: Array<PackedBubblePoint>;
-            public forces: Array<string>;
-            public hasDraggableNodes: boolean;
-            public hoverPoint: PackedBubblePoint;
-            public index: number;
-            public isCartesian: boolean;
-            public layout: PackedBubbleLayout;
-            public noSharedTooltip: boolean;
-            public onMouseDown: DragNodesMixin['onMouseDown'];
-            public onMouseMove: DragNodesMixin['onMouseMove'];
-            public options: PackedBubbleSeriesOptions;
-            public parentNode?: PackedBubblePoint;
-            public parentNodesGroup?: SVGElement;
-            public parentNodeLayout: PackedBubbleLayout;
-            public parentNodeMass?: number;
-            public parentNodeRadius?: number;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof PackedBubblePoint;
-            public points: Array<PackedBubblePoint>;
-            public pointValKey: string;
-            public redrawHalo: DragNodesMixin['redrawHalo'];
-            public xData: Array<number>;
-            public checkOverlap(
-                bubble1: Array<number>,
-                bubble2: Array<number>
-            ): boolean;
-            public accumulateAllPoints(
-                series: PackedBubbleSeries
-            ): Array<PackedBubbleData>;
-            public addLayout(): void;
-            public addSeriesLayout(): void;
-            public calculateParentRadius(): void;
-            public calculateZExtremes(): Array<number>;
-            public createParentNodes(): void;
-            public deferLayout(): void;
-            public destroy(): void;
-            public drawDataLabels(): void;
-            public drawGraph(): void;
-            public getPointRadius(): void;
-            public init(): PackedBubbleSeries;
-            public onMouseUp(point: DragNodesPoint): void;
-            public placeBubbles(
-                allDataPoints: Array<PackedBubbleData>
-            ): Array<PackedBubbleData>;
-            public positionBubble(
-                lastBubble: Array<number>,
-                newOrigin: Array<number>,
-                nextBubble: Array<number>
-            ): Array<number>;
-            public render(): void;
-            public resizeRadius(): void;
-            public seriesBox(): (Array<number>|null);
-            public setVisible(): void;
-            public translate(): void;
-        }
+        type PackedBubbleData = [
+            (number|null),
+            (number|null),
+            (number|null),
+            number,
+            number,
+            PackedBubblePointOptions
+        ];
     }
 }
 
@@ -306,9 +307,13 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    defined,
+    extend,
+    isArray,
+    isNumber,
+    pick
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -321,7 +326,6 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    pick = H.pick,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     Chart = H.Chart,
@@ -579,7 +583,7 @@ H.layouts.packedbubble = H.extendClass(
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.PackedBubbleSeriesOptions>(
+seriesType<Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**
@@ -1348,7 +1352,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                             chart.diffY
                         );
                     }
-                    point.marker = H.extend(point.marker, {
+                    point.marker = extend(point.marker, {
                         radius: radius,
                         width: 2 * (radius as any),
                         height: 2 * (radius as any)
@@ -1461,7 +1465,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
         placeBubbles: function (
             this: Highcharts.PackedBubbleSeries,
             allDataPoints: Array<Highcharts.PackedBubbleData>
-        ): Array<Array<number>> {
+        ): Array<Highcharts.PackedBubbleData> {
 
             var series = this,
                 checkOverlap = series.checkOverlap,
@@ -1472,8 +1476,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 k = 0,
                 calculatedBubble,
                 sortedArr: Array<Highcharts.PackedBubbleData>,
-                arr = [] as Array<Array<number>>,
-                i;
+                arr = [] as Array<Highcharts.PackedBubbleData>,
+                i: number;
 
             // sort all points
             sortedArr = allDataPoints.sort(function (
@@ -1586,7 +1590,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 // bubble positions merged into one array
 
                 series.resizeRadius();
-                arr = series.chart.rawPositions;
+                arr = series.chart.rawPositions as any;
             }
             return arr;
         },

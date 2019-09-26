@@ -77,11 +77,11 @@ const {
     isArray,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
-var Chart = H.Chart,
-    pick = H.pick;
+var Chart = H.Chart;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -153,7 +153,7 @@ var Chart = H.Chart,
 /**
  * A callback function to gain complete control on when the responsive
  * rule applies. Return `true` if it applies. This opens for checking
- * against other metrics than the chart size, or example the document
+ * against other metrics than the chart size, for example the document
  * size or other elements.
  *
  * @type      {Highcharts.ResponsiveCallbackFunction}

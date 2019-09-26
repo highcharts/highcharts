@@ -26,7 +26,7 @@ declare global {
             (this: Chart, chart: Chart): void;
         }
         interface ChartLabelCollectorFunction {
-            (this: null): (Array<(SVGElement|undefined)>|undefined);
+            (): (Array<(SVGElement|undefined)>|undefined);
         }
         interface ChartOptions {
             renderer?: string;
@@ -267,13 +267,16 @@ const {
     attr,
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
-    splat
+    splat,
+    syncTimeout
 } = U;
 
 import './Axis.js';
@@ -291,17 +294,14 @@ var addEvent = H.addEvent,
     discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
     Pointer = H.Pointer, // @todo add as requirement
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -457,8 +457,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
                 if (isObject(typeOptions)) { // #8766
                     typeOptions.tooltip = (
-                        userPlotOptions[type] &&
-                        merge(userPlotOptions[type].tooltip) // override by copy
+                        userPlotOptions[type] && // override by copy:
+                        merge((userPlotOptions[type] as any).tooltip)
                     ) || undefined; // or clear
                 }
             });
@@ -1023,7 +1023,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             points = points.concat(
                 (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
                     function (point: Highcharts.Point): boolean {
-                        return pick(point.selectedStaging, point.selected);
+                        return pick(
+                            point.selectedStaging, point.selected as any
+                        );
                     }
                 )
             );
@@ -1205,6 +1207,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (
         this: Highcharts.Chart,
@@ -1287,6 +1291,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Used in getMargins
         this.titleOffset = titleOffset;
+
+        fireEvent(this, 'afterLayOutTitles');
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1884,7 +1890,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration);
+        }, animObject(globalAnimation).duration || 0);
     },
 
     /**

@@ -18,6 +18,8 @@ WIP on vertical scrollable plot area (#9378). To do:
  */
 'use strict';
 import H from './Globals.js';
+import U from './Utilities.js';
+var pick = U.pick;
 var addEvent = H.addEvent, Chart = H.Chart;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
@@ -202,10 +204,15 @@ Chart.prototype.moveFixedElements = function () {
         '.highcharts-contextbutton',
         '.highcharts-credits',
         '.highcharts-legend',
+        '.highcharts-legend-checkbox',
+        '.highcharts-navigator-series',
+        '.highcharts-navigator-xaxis',
+        '.highcharts-navigator-yaxis',
+        '.highcharts-navigator',
         '.highcharts-reset-zoom',
+        '.highcharts-scrollbar',
         '.highcharts-subtitle',
-        '.highcharts-title',
-        '.highcharts-legend-checkbox'
+        '.highcharts-title'
     ], axisClass;
     if (this.scrollablePixelsX && !this.inverted) {
         axisClass = '.highcharts-yaxis';
@@ -253,13 +260,14 @@ Chart.prototype.applyFixed = function () {
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-            fill: H.color(this.options.chart.backgroundColor || '#fff').setOpacity(H.pick(scrollableOptions.opacity, 0.85)).get(),
+            fill: H.color(this.options.chart.backgroundColor || '#fff').setOpacity(pick(scrollableOptions.opacity, 0.85)).get(),
             zIndex: -1
         })
             .addClass('highcharts-scrollable-mask')
             .add();
         this.moveFixedElements();
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
     }
     else {
         // Set the size of the fixed renderer to the visible width

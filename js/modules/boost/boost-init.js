@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var extend = U.extend;
+
 import '../../parts/Series.js';
 
 import butils from './boost-utils.js';
@@ -18,7 +21,6 @@ import createAndAttachRenderer from './boost-attach.js';
 
 var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    extend = H.extend,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     wrap = H.wrap,
@@ -36,7 +38,7 @@ var addEvent = H.addEvent,
  * @private
  */
 function init() {
-    H.extend(Series.prototype, {
+    extend(Series.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas

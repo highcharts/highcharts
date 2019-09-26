@@ -54,7 +54,7 @@ var draw = function draw(params) {
 /**
  * An extended version of draw customized for points.
  * It calls additional methods that is expected when rendering a point.
- *
+ * @private
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
 var drawPoint = function drawPoint(params) {

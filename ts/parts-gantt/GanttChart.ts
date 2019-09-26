@@ -35,7 +35,7 @@ import U from '../parts/Utilities.js';
 var isArray = U.isArray,
     splat = U.splat;
 
-import 'GanttSeries.js';
+import './GanttSeries.js';
 
 var merge = H.merge,
     Chart = H.Chart;

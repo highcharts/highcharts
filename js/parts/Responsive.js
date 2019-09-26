@@ -23,8 +23,8 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
-var Chart = H.Chart, pick = H.pick;
+var isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var Chart = H.Chart;
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.
@@ -91,7 +91,7 @@ var Chart = H.Chart, pick = H.pick;
 /**
  * A callback function to gain complete control on when the responsive
  * rule applies. Return `true` if it applies. This opens for checking
- * against other metrics than the chart size, or example the document
+ * against other metrics than the chart size, for example the document
  * size or other elements.
  *
  * @type      {Highcharts.ResponsiveCallbackFunction}

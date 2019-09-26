@@ -26,7 +26,7 @@ declare global {
             data: Array<ColorPoint>;
             points: Array<ColorPoint>;
             options: ColorSeriesOptions;
-            optionalAxis: string;
+            optionalAxis?: string;
             translateColors(): void;
         }
         interface ColorSeriesMixin {

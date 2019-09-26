@@ -24,9 +24,6 @@ declare global {
         interface ColumnSeries {
             polarArc: PolarSeries['polarArc'];
         }
-        interface PlotSeriesOptions {
-            connectEnds?: boolean;
-        }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
             ttBelow?: boolean;
@@ -80,6 +77,9 @@ declare global {
             translate(): void;
             toXY(point: Point): void;
         }
+        interface SeriesOptions {
+            connectEnds?: boolean;
+        }
         interface SVGRenderer {
             clipCircle(x: number, y: number, r: number): SVGElement;
         }
@@ -87,7 +87,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    pick,
+    splat
+} = U;
 
 import '../parts/Pointer.js';
 import '../parts/Series.js';
@@ -96,8 +99,7 @@ import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var pick = H.pick,
-    Pointer = H.Pointer,
+var Pointer = H.Pointer,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     wrap = H.wrap,
@@ -353,7 +355,7 @@ H.addEvent(Series as any, 'afterTranslate', function (
         points,
         i;
 
-    if (chart.polar) {
+    if (chart.polar && this.xAxis) {
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case

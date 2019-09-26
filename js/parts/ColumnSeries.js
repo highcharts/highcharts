@@ -39,12 +39,12 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, extend = H.extend, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
 /**
  * The column series type.
  *
@@ -761,8 +761,7 @@ seriesType('column', 'line',
                 shapeArgs = point.shapeArgs;
                 // When updating a series between 2d and 3d or cartesian and
                 // polar, the shape type changes.
-                if (graphic &&
-                    graphic.element.nodeName !== point.shapeType) {
+                if (graphic && point.hasNewShapeType()) {
                     graphic = graphic.destroy();
                 }
                 if (graphic) { // update

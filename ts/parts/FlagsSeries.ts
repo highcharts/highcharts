@@ -42,7 +42,7 @@ declare global {
             onSeries?: string;
             shape?: FlagsShapeValue;
             stackDistance?: number;
-            states?: FlagsSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<FlagsSeries>;
             style?: CSSObject;
             textAlign?: AlignValue;
             title?: string;
@@ -50,15 +50,10 @@ declare global {
             width?: number;
             y?: number;
         }
-        interface FlagsSeriesStatesHoverOptions
-            extends ColumnSeriesStatesHoverOptions
-        {
+        interface SeriesStatesHoverOptionsObject {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             shape?: FlagsShapeValue;
-        }
-        interface FlagsSeriesStatesOptions extends ColumnSeriesStatesOptions {
-            hover?: FlagsSeriesStatesHoverOptions;
         }
         interface Series {
             allowDG?: boolean;
@@ -133,7 +128,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.FlagsSeriesOptions>(
+seriesType<Highcharts.FlagsSeries>(
     'flags',
     'column'
 
@@ -719,7 +714,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
          * @private
          * @function Highcharts.seriesTypes.flags#buildKDTree
          */
-        buildKDTree: noop,
+        buildKDTree: noop as any,
 
         /**
          * Don't invert the flag marker group (#4960).
@@ -727,7 +722,7 @@ seriesType<Highcharts.FlagsSeriesOptions>(
          * @private
          * @function Highcharts.seriesTypes.flags#invertGroups
          */
-        invertGroups: noop
+        invertGroups: noop as any
 
         /* eslint-enable no-invalid-this, valid-jsdoc */
 

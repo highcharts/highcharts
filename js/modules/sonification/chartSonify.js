@@ -99,9 +99,10 @@ import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
 var isArray = U.isArray,
+    pick = U.pick,
     splat = U.splat;
 
-import utilities from 'utilities.js';
+import utilities from './utilities.js';
 
 
 /**
@@ -115,7 +116,7 @@ import utilities from 'utilities.js';
 function getPointTimeValue(point, timeProp) {
     return typeof timeProp === 'function' ?
         timeProp(point) :
-        H.pick(point[timeProp], point.options[timeProp]);
+        pick(point[timeProp], point.options[timeProp]);
 }
 
 
@@ -407,7 +408,7 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
         // Merge in the specific series options by ID
         isArray(seriesOptions) ? (
             H.find(seriesOptions, function (optEntry) {
-                return optEntry.id === H.pick(series.id, series.options.id);
+                return optEntry.id === pick(series.id, series.options.id);
             }) || {}
         ) : seriesOptions,
         {
@@ -925,7 +926,7 @@ function setCursor(points) {
  */
 function pause(fadeOut) {
     if (this.sonification.timeline) {
-        this.sonification.timeline.pause(H.pick(fadeOut, true));
+        this.sonification.timeline.pause(pick(fadeOut, true));
     } else if (this.sonification.currentlyPlayingPoint) {
         this.sonification.currentlyPlayingPoint.cancelSonify(fadeOut);
     }

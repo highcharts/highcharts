@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -24,7 +26,9 @@ declare global {
         interface DependencyWheelPointOptions extends SankeyPointOptions {
         }
         interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
+            center?: Array<(number|string|null)>;
             startAngle?: number;
+            states?: SeriesStatesOptionsObject<DependencyWheelSeries>;
         }
         interface SeriesTypesDictionary {
             dependencywheel: typeof DependencyWheelSeries;
@@ -77,7 +81,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.DependencyWheelSeriesOptions>(
+H.seriesType<Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**

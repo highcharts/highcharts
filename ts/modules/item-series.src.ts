@@ -20,36 +20,29 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ItemSeriesOptions extends PieSeriesOptions {
-            itemPadding?: number;
-            layout?: string;
-            marker?: ItemPointMarkerOptions;
-            rows?: number;
-            crisp?: number;
-        }
-        class ItemSeries extends PieSeries {
-            public options: ItemSeriesOptions;
-            public pointClass: typeof ItemPoint;
-            public data: Array<ItemPoint>;
-            public points: Array<ItemPoint>;
-            public translate(): void;
-            public slots?: Array<ItemGeometryObject>;
-            public getSlots(): (Array<ItemGeometryObject>|undefined);
-            public itemSize?: number;
-            public getRows(): number;
-            public borderWidth?: number;
-            public drawPoints(): void;
-            public drawDataLabels(): void;
-            public animate(init?: boolean): void;
-        }
         class ItemPoint extends PiePoint {
-            public series: ItemSeries;
-            public options: ItemPointOptions;
-            public graphics: Dictionary<SVGElement>;
             public connectorShapes: PiePoint['connectorShapes'];
             public getConnectorPath: PiePoint['getConnectorPath'];
-            public setVisible: PiePoint['setVisible'];
             public getTranslate: PiePoint['getTranslate'];
+            public graphics: Dictionary<SVGElement>;
+            public options: ItemPointOptions;
+            public series: ItemSeries;
+            public setVisible: PiePoint['setVisible'];
+        }
+        class ItemSeries extends PieSeries {
+            public borderWidth?: number;
+            public data: Array<ItemPoint>;
+            public itemSize?: number;
+            public options: ItemSeriesOptions;
+            public pointClass: typeof ItemPoint;
+            public points: Array<ItemPoint>;
+            public slots?: Array<ItemGeometryObject>;
+            public animate(init?: boolean): void;
+            public drawDataLabels(): void;
+            public drawPoints(): void;
+            public getRows(): number;
+            public getSlots(): (Array<ItemGeometryObject>|undefined);
+            public translate(): void;
         }
         interface ItemPointOptions extends PiePointOptions {
         }
@@ -57,9 +50,9 @@ declare global {
             radius: undefined;
         }
         interface ItemRowObject {
-            rowRadius: number;
-            rowLength: number;
             colCount: number;
+            rowLength: number;
+            rowRadius: number;
         }
         interface ItemGeometryObject extends GeometryObject {
             angle: number;
@@ -68,18 +61,29 @@ declare global {
             angle: number;
             row: ItemRowObject;
         }
+        interface ItemSeriesOptions extends PieSeriesOptions {
+            crisp?: number;
+            itemPadding?: number;
+            layout?: string;
+            marker?: ItemPointMarkerOptions;
+            rows?: number;
+            states?: SeriesStatesOptionsObject<ItemSeries>;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    defined,
+    extend,
+    isNumber,
+    objectEach,
+    pick
+} = U;
 
 import '../parts/Series.js';
 
-var extend = H.extend,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     merge = H.merge,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
@@ -94,7 +98,7 @@ var extend = H.extend,
  *
  * @augments Highcharts.seriesTypes.pie
  */
-H.seriesType<Highcharts.ItemSeriesOptions>(
+H.seriesType<Highcharts.ItemSeries>(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
     // point legend, tooltips etc. Only downside is we need to re-enable
@@ -432,7 +436,7 @@ H.seriesType<Highcharts.ItemSeriesOptions>(
                         pointMarkerOptions.symbol ||
                         (seriesMarkerOptions.symbol as any)
                     ),
-                    r = H.pick(
+                    r = pick(
                         pointMarkerOptions.radius,
                         seriesMarkerOptions.radius
                     ),
@@ -550,16 +554,16 @@ H.seriesType<Highcharts.ItemSeriesOptions>(
         },
 
         // Fade in the whole chart
-        animate: function (init?: boolean): void {
+        animate: function (this: Highcharts.ItemSeries, init?: boolean): void {
             if (init) {
-                this.group.attr({
+                (this.group as any).attr({
                     opacity: 0
                 });
             } else {
-                this.group.animate({
+                (this.group as any).animate({
                     opacity: 1
                 }, this.options.animation);
-                this.animate = null;
+                this.animate = null as any;
             }
         }
     },

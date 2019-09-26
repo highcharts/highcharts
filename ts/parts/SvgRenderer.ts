@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
-            'topbutton'|'triangle'|'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
+            'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
@@ -186,7 +186,7 @@ declare global {
             ): void;
             public fadeOut(duration?: number): void;
             public fillSetter(
-                value: (Color|ColorString),
+                value: ColorType,
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -405,9 +405,9 @@ declare global {
                 options?: SymbolOptionsObject
             ): SVGElement;
             public text(
-                str: string,
-                x: number,
-                y: number,
+                str?: string,
+                x?: number,
+                y?: number,
                 useHTML?: boolean
             ): SVGElement;
             public truncate(
@@ -811,11 +811,13 @@ const {
     attr,
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -834,14 +836,12 @@ var SVGElement: Highcharts.SVGElement,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
@@ -959,9 +959,7 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = H.animObject(
-            pick<(boolean|Highcharts.AnimationOptionsObject)>(
-                options, this.renderer.globalAnimation, true
-            )
+            pick(options, this.renderer.globalAnimation, true)
         );
 
         // When the page is hidden save resources in the background by not
@@ -1016,7 +1014,7 @@ extend((
     ): void {
         var renderer = this.renderer,
             colorObject,
-            gradName: string,
+            gradName: keyof Highcharts.GradientColorObject,
             gradAttr: Highcharts.SVGAttributes,
             radAttr: Highcharts.SVGAttributes,
             gradients: Highcharts.Dictionary<Highcharts.SVGElement>,
@@ -1040,7 +1038,7 @@ extend((
             }
 
             if (gradName) {
-                gradAttr = (color as any)[gradName];
+                gradAttr = color[gradName] as any;
                 gradients = renderer.gradients;
                 stops = color.stops;
                 radialReference = (elem as any).radialReference;
@@ -2242,8 +2240,6 @@ extend((
             renderer = wrapper.renderer,
             width,
             height,
-            rotation,
-            rad,
             element = wrapper.element,
             styles = wrapper.styles,
             fontSize,
@@ -2254,8 +2250,7 @@ extend((
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             cacheKey;
 
-        rotation = pick(rot, wrapper.rotation);
-        rad = rotation * deg2rad;
+        const rotation = pick(rot, wrapper.rotation, 0);
 
         fontSize = renderer.styledMode ? (
             element &&
@@ -2280,7 +2275,7 @@ extend((
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation || 0,
+                rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
                 styles && styles.textOverflow // #5968
@@ -2382,6 +2377,7 @@ extend((
 
                 // Adjust for rotated text
                 if (rotation) {
+                    const rad = rotation * deg2rad;
                     bBox.width = Math.abs(height * Math.sin(rad)) +
                         Math.abs(width * Math.cos(rad));
                     bBox.height = Math.abs(height * Math.cos(rad)) +
@@ -3180,7 +3176,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *
@@ -3190,7 +3186,7 @@ extend((
      */
     fillSetter: function (
         this: Highcharts.SVGElement,
-        value: (Highcharts.Color|Highcharts.ColorString),
+        value: Highcharts.ColorType,
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {
@@ -5701,13 +5697,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param {string} str
+     * @param {string} [str]
      *        The text of (subset) HTML to draw.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        The x position of the text's lower left corner.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the text's lower left corner.
      *
      * @param {boolean} [useHTML=false]
@@ -5718,9 +5714,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     text: function (
         this: Highcharts.SVGElement,
-        str: string,
-        x: number,
-        y: number,
+        str?: string,
+        x?: number,
+        y?: number,
         useHTML?: boolean
     ): Highcharts.SVGElement {
 

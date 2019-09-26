@@ -25,11 +25,6 @@ declare global {
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
         }
-        interface PlotSeriesOptions {
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
-        }
         interface Options {
             isStock?: boolean;
         }
@@ -41,6 +36,11 @@ declare global {
             compareValue?: number;
             modifyValue?(value?: number, point?: Point): (number|undefined);
             setCompare(compare?: string): void;
+        }
+        interface SeriesOptions {
+            compare?: string;
+            compareBase?: (0|100);
+            compareStart?: boolean;
         }
         interface SVGRenderer {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
@@ -55,10 +55,14 @@ declare global {
 }
 
 import U from './Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString,
-    splat = U.splat;
+const {
+    defined,
+    extend,
+    isNumber,
+    isString,
+    pick,
+    splat
+} = U;
 
 import './Chart.js';
 import './Axis.js';
@@ -81,10 +85,8 @@ var addEvent = H.addEvent,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
@@ -518,7 +520,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old)
+            axis.translate(value as any, null, null, (e as any).old) as any
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {

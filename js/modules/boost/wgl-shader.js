@@ -11,8 +11,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-
-var pick = H.pick;
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
 
 /**
  * A static shader mimicing axis translation functions found in parts/Axis

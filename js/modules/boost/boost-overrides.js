@@ -13,7 +13,8 @@
 import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var isNumber = U.isNumber,
+    pick = U.pick;
 
 import '../../parts/Color.js';
 import '../../parts/Series.js';
@@ -32,7 +33,6 @@ var boostEnabled = butils.boostEnabled,
     Point = H.Point,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
-    pick = H.pick,
     wrap = H.wrap,
     plotOptions = H.getOptions().plotOptions;
 
@@ -285,7 +285,8 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 wrap(Series.prototype, 'processData', function (proceed) {
 
     var series = this,
-        dataToMeasure = this.options.data;
+        dataToMeasure = this.options.data,
+        firstPoint;
 
     // Used twice in this function, first on this.options.data, the second
     // time it runs the check again after processedXData is built.
@@ -320,6 +321,11 @@ wrap(Series.prototype, 'processData', function (proceed) {
 
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
+            // Force turbo-mode:
+            firstPoint = this.getFirstValidPoint(this.options.data);
+            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+                H.error(12, false, this.chart);
+            }
             this.enterBoost();
         } else if (this.exitBoost) {
             this.exitBoost();
@@ -356,7 +362,7 @@ Series.prototype.enterBoost = function () {
         this.alteredByBoost.push({
             prop: prop,
             val: this[prop],
-            own: this.hasOwnProperty(prop)
+            own: Object.hasOwnProperty.call(this, prop)
         });
     }, this);
 

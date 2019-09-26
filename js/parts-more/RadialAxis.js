@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pInt = U.pInt;
+var extend = U.extend, pick = U.pick, pInt = U.pInt;
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
-var addEvent = H.addEvent, Axis = H.Axis, extend = H.extend, merge = H.merge, noop = H.noop, pick = H.pick, Tick = H.Tick, wrap = H.wrap, correctFloat = H.correctFloat, 
+var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, wrap = H.wrap, correctFloat = H.correctFloat, 
 // @todo Extract this to a new file:
 hiddenAxisMixin, 
 // @todo Extract this to a new file
@@ -320,16 +320,25 @@ radialAxisMixin = {
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (options) {
-        var axis = this, center = axis.center, chart = axis.chart, value = options.value, reverse = options.reverse, end = axis.getPosition(value), xAxis, xy, tickPositions, ret;
+        var axis = this, center = axis.center, chart = axis.chart, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
+            (axis.pane.options.background[0] ||
+                axis.pane.options.background) :
+            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, xAxis, xy, tickPositions, ret;
         // Spokes
         if (axis.isCircular) {
+            a = (typeof innerRadius === 'string') ?
+                H.relativeLength(innerRadius, 1) : (innerRadius /
+                Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
+            b = (typeof outerRadius === 'string') ?
+                H.relativeLength(outerRadius, 1) : (outerRadius /
+                Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
             ret = [
                 'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
+                x1 + a * (x2 - x1),
+                y1 - a * (y1 - y2),
                 'L',
-                end.x,
-                end.y
+                x2 - (1 - b) * (x2 - x1),
+                y2 + (1 - b) * (y1 - y2)
             ];
             // Concentric circles
         }

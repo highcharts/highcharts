@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, fireEvent = H.fireEvent, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -179,6 +179,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartOptions[type].push(userOptions);
         if (isColorAxis) {
             this.isDirtyLegend = true;
+            // Clear before 'bindAxes' (#11924)
+            this.axes.forEach(function (axis) {
+                axis.series = [];
+            });
+            this.series.forEach(function (series) {
+                series.bindAxes();
+                series.isDirtyData = true;
+            });
         }
         if (pick(redraw, true)) {
             this.redraw(animation);
@@ -338,8 +346,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'series',
         'colorAxis',
+        'series',
         'pane'
     ],
     /**

@@ -1772,7 +1772,7 @@ H.defaultOptions = {
      *
      * @sample highcharts/caption/text/
      *         A chart with a caption
-     * @since  next
+     * @since  7.2.0
      */
     caption: {
         /**
@@ -3523,7 +3523,9 @@ H.setOptions = function (options) {
     // Copy in the default options
     H.defaultOptions = merge(true, H.defaultOptions, options);
     // Update the time object
-    H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time), false);
+    if (options.time || options.global) {
+        H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time, options.global, options.time));
+    }
     return H.defaultOptions;
 };
 /**

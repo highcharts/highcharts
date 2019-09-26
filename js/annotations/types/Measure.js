@@ -2,7 +2,8 @@
 import H from '../../parts/Globals.js';
 
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber;
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
@@ -140,7 +141,7 @@ H.extendAnnotation(Measure, null,
                             this.calculations.defaultFormatter.call(this);
 
             } else {
-                this.initLabel(H.extend({
+                this.initLabel(extend({
                     shape: 'rect',
                     backgroundColor: 'none',
                     color: 'black',
@@ -189,7 +190,7 @@ H.extendAnnotation(Measure, null,
                 return;
             }
 
-            this.initShape(H.extend({
+            this.initShape(extend({
                 type: 'path',
                 points: this.shapePointsOptions()
             }, this.options.typeOptions.background), false);
@@ -264,11 +265,11 @@ H.extendAnnotation(Measure, null,
                 crosshairOptionsX = merge(defaultOptions, options.crosshairX);
                 crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-                this.initShape(H.extend({
+                this.initShape(extend({
                     d: pathH
                 }, crosshairOptionsX), false);
 
-                this.initShape(H.extend({
+                this.initShape(extend({
                     d: pathV
                 }, crosshairOptionsY), false);
 

@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 'use strict';
 import H from '../parts/Globals.js';
@@ -126,13 +128,12 @@ import H from '../parts/Globals.js';
 * @since 6.0.2
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject;
+var defined = U.defined, isObject = U.isObject, pick = U.pick;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-// Note: replace this with destructuring assignment in the future
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, merge = H.merge, seriesType = H.seriesType, pick = H.pick, Point = H.Point;
+var find = H.find, merge = H.merge, seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -475,7 +476,8 @@ seriesType('sankey', 'column',
                     }
                     node.column = fromColumn + 1;
                     // Hanging layout for organization chart
-                    if (fromNode.options.layout === 'hanging') {
+                    if (fromNode &&
+                        fromNode.options.layout === 'hanging') {
                         node.hangsFrom = fromNode;
                         i = -1; // Reuse existing variable i
                         find(fromNode.linksFrom, function (link, index) {
@@ -725,7 +727,7 @@ seriesType('sankey', 'column',
         }, Infinity);
         this.colDistance =
             (chart.plotSizeX - nodeWidth -
-                options.borderWidth) / (nodeColumns.length - 1);
+                options.borderWidth) / Math.max(1, nodeColumns.length - 1);
         // Calculate level options used in sankey and organization
         series.mapOptionsToLevel = getLevelOptions({
             // NOTE: if support for allowTraversingTree is added, then from

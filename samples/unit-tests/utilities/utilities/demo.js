@@ -19,7 +19,7 @@
     function countMembers(obj) {
         var count = 0;
         for (var member in obj) {
-            if (obj.hasOwnProperty(member)) {
+            if (Object.hasOwnProperty.call(obj, member)) {
                 count++;
             }
         }
@@ -352,6 +352,14 @@
             '',
             'Do not choke on undefined objects (node-export-server#31)'
         );
+
+        // Reset
+        setOptions({
+            lang: {
+                decimalPoint: '.',
+                thousandsSep: ' '
+            }
+        });
     });
 
 

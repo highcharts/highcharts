@@ -18,36 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface HeatmapPointOptions extends ScatterPointOptions {
-            pointPadding?: HeatmapPoint['pointPadding'];
-            value?: HeatmapPoint['value'];
-        }
-        interface HeatmapSeriesOptions
-            extends ScatterSeriesOptions
-        {
-            colsize?: number;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
-            pointPadding?: HeatmapPoint['pointPadding'];
-            rowsize?: number;
-            states?: HeatmapSeriesStatesOptions;
-        }
-        interface HeatmapSeriesStatesHoverOptions
-            extends ScatterSeriesStatesHoverOptions
-        {
-            brightness?: number;
-        }
-        interface HeatmapSeriesStatesOptions
-            extends ScatterSeriesStatesOptions
-        {
-            hover?: HeatmapSeriesStatesHoverOptions;
-        }
-        interface Series {
-            valueMax?: number;
-            valueMin?: number;
-        }
-        interface SeriesTypesDictionary {
-            heatmap: typeof HeatmapSeries;
-        }
         class HeatmapPoint extends ScatterPoint implements ColorMapPointMixin {
             public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
             public isValid: ColorMapPointMixin['isValid'];
@@ -84,6 +54,30 @@ declare global {
             public init(): void;
             public translate(): void;
         }
+        interface HeatmapPointOptions extends ScatterPointOptions {
+            pointPadding?: HeatmapPoint['pointPadding'];
+            value?: HeatmapPoint['value'];
+        }
+        interface HeatmapSeriesOptions
+            extends ScatterSeriesOptions
+        {
+            colsize?: number;
+            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            pointPadding?: HeatmapPoint['pointPadding'];
+            rowsize?: number;
+            states?: SeriesStatesOptionsObject<HeatmapSeries>;
+        }
+        interface SeriesStatesHoverOptions
+        {
+            brightness?: number;
+        }
+        interface Series {
+            valueMax?: number;
+            valueMin?: number;
+        }
+        interface SeriesTypesDictionary {
+            heatmap: typeof HeatmapSeries;
+        }
     }
 }
 
@@ -100,7 +94,12 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -112,7 +111,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     fireEvent = H.fireEvent,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -125,7 +123,7 @@ var colorMapPointMixin = H.colorMapPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.HeatmapSeriesOptions>(
+seriesType<Highcharts.HeatmapSeries>(
     'heatmap',
     'scatter',
 
@@ -434,14 +432,14 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
          * @deprecated
          * @function Highcharts.seriesTypes.heatmap#animate
          */
-        animate: noop,
+        animate: noop as any,
 
         /**
          * @ignore
          * @deprecated
          * @function Highcharts.seriesTypes.heatmap#getBox
          */
-        getBox: noop,
+        getBox: noop as any,
 
         /**
          * @private
@@ -472,7 +470,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
         /* eslint-enable valid-jsdoc */
 
-    }), H.extend({
+    }), extend({
 
         /**
          * Heatmap series only. Padding between the points in the heatmap.

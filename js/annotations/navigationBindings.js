@@ -10,19 +10,19 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var attr = U.attr,
+    extend = U.extend,
     isArray = U.isArray,
     isNumber = U.isNumber,
     isObject = U.isObject,
-    objectEach = U.objectEach;
+    objectEach = U.objectEach,
+    pick = U.pick;
 
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     win = H.win,
     addEvent = H.addEvent,
-    pick = H.pick,
     merge = H.merge,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';
 
@@ -1325,11 +1325,12 @@ H.setOptions({
             }
         },
         /**
-         * Path where Highcharts will look for icons. Change this to use
-         * icons from a different server.
+         * Path where Highcharts will look for icons. Change this to use icons
+         * from a different server.
          *
-         * @since     7.1.3
+         * @type      {string}
          * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @since     7.1.3
          * @apioption navigation.iconsURL
          */
 

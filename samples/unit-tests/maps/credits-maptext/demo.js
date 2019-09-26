@@ -21,7 +21,6 @@ QUnit.test('Credits', function (assert) {
 
 
     // Remove by default
-
     Highcharts.setOptions({
         credits: {
             mapText: '',
@@ -113,5 +112,7 @@ QUnit.test('Credits', function (assert) {
         'Setting map credits default options as well as inline, inline takes precedence'
     );
 
-
+    // Reset
+    delete Highcharts.defaultOptions.credits.mapText;
+    delete Highcharts.defaultOptions.credits.mapTextFull;
 });

@@ -40,7 +40,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): SVGElement;
+            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -81,6 +81,9 @@ declare global {
             setState(state?: string, inherit?: boolean): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
+        }
+        interface SeriesOptions {
+            inactiveOtherPoints?: boolean;
         }
         interface TrackerMixin {
             drawTrackerGraph(this: Highcharts.Series): void;
@@ -145,9 +148,11 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Chart.js';
@@ -162,12 +167,10 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -1513,18 +1516,18 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.markerGroup,
                         series.dataLabelsGroup,
                         series.labelBySeries
-                    ].forEach(
-                        function (group: Highcharts.SVGElement): void {
-                            if (group) {
-                                group.animate(
-                                    {
-                                        opacity: opacity
-                                    },
-                                    stateAnimation
-                                );
-                            }
+                    ].forEach(function (
+                        group: (Highcharts.SVGElement|undefined)
+                    ): void {
+                        if (group) {
+                            group.animate(
+                                {
+                                    opacity: opacity
+                                },
+                                stateAnimation
+                            );
                         }
-                    );
+                    });
                 }
             }
         }

@@ -182,7 +182,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import utilities from 'utilities.js';
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
+
+import utilities from './utilities.js';
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
@@ -245,7 +248,7 @@ function pointSonify(options) {
                     );
                 // Find the value
                 return utilities.virtualAxisTranslate(
-                    H.pick(point[value], point.options[value]),
+                    pick(point[value], point.options[value]),
                     dataExtremes[value],
                     allowedExtremes,
                     allowedValues

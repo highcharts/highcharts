@@ -4,9 +4,9 @@
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
- *
  *  Support for old IE browsers (6, 7 and 8) in Highcharts v6+.
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -319,9 +319,11 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
+    pick,
     pInt
 } = U;
 
@@ -336,11 +338,9 @@ var VMLRenderer,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,
-    extend = H.extend,
     extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
@@ -452,7 +452,7 @@ if (!svg) {
             this.chartPosition = chartPosition = H.offset(this.chart.container);
         }
 
-        return H.extend(e, {
+        return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
             chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),

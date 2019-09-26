@@ -247,10 +247,14 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    objectEach = U.objectEach,
-    splat = U.splat;
+const {
+    defined,
+    extend,
+    isNumber,
+    objectEach,
+    pick,
+    splat
+} = U;
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
@@ -260,7 +264,6 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
-    pick = Highcharts.pick,
     merge = Highcharts.merge,
     fireEvent = Highcharts.fireEvent,
     SeriesBuilder: typeof Highcharts.SeriesBuilder;
@@ -681,7 +684,7 @@ var Data = function (
 };
 
 // Set the prototype properties
-Highcharts.extend(Data.prototype, {
+extend(Data.prototype, {
 
     /**
      * Initialize the Data object with the given options
@@ -2559,7 +2562,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new (Data as any)(Highcharts.extend(userOptions.data, {
+            chart.data = new (Data as any)(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions: Highcharts.Options

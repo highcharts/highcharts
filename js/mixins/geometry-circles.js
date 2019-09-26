@@ -14,10 +14,10 @@ var getAngleBetweenPoints = geometry.getAngleBetweenPoints, getCenterOfPoints = 
  * @return {number}
  *         Rounded number
  */
-var round = function round(x, decimals) {
+function round(x, decimals) {
     var a = Math.pow(10, decimals);
     return Math.round(x * a) / a;
-};
+}
 /**
  * Calculates the area of a circle based on its radius.
  * @private
@@ -26,12 +26,12 @@ var round = function round(x, decimals) {
  * @return {number}
  *         Returns the area of the circle.
  */
-var getAreaOfCircle = function (r) {
+function getAreaOfCircle(r) {
     if (r <= 0) {
         throw new Error('radius of circle must be a positive number.');
     }
     return Math.PI * r * r;
-};
+}
 /**
  * Calculates the area of a circular segment based on the radius of the circle
  * and the height of the segment.
@@ -44,9 +44,9 @@ var getAreaOfCircle = function (r) {
  * @return {number}
  *         Returns the area of the circular segment.
  */
-var getCircularSegmentArea = function getCircularSegmentArea(r, h) {
+function getCircularSegmentArea(r, h) {
     return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
-};
+}
 /**
  * Calculates the area of overlap between two circles based on their radiuses
  * and the distance between them.
@@ -61,7 +61,7 @@ var getCircularSegmentArea = function getCircularSegmentArea(r, h) {
  * @return {number}
  *         Returns the area of overlap between the two circles.
  */
-var getOverlapBetweenCircles = function getOverlapBetweenCircles(r1, r2, d) {
+function getOverlapBetweenCircles(r1, r2, d) {
     var overlap = 0;
     // If the distance is larger than the sum of the radiuses then the circles
     // does not overlap.
@@ -83,7 +83,7 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(r1, r2, d) {
         overlap = round(overlap, 14);
     }
     return overlap;
-};
+}
 /**
  * Calculates the intersection points of two circles.
  *
@@ -96,8 +96,9 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(r1, r2, d) {
  * @return {Array<Highcharts.PositionObject>}
  *         Returns the resulting intersection points.
  */
-var getCircleCircleIntersection = function getCircleCircleIntersection(c1, c2) {
-    var d = getDistanceBetweenPoints(c1, c2), r1 = c1.r, r2 = c2.r, points = [];
+function getCircleCircleIntersection(c1, c2) {
+    var d = getDistanceBetweenPoints(c1, c2), r1 = c1.r, r2 = c2.r;
+    var points = [];
     if (d < r1 + r2 && d > Math.abs(r1 - r2)) {
         // If the circles are overlapping, but not completely overlapping, then
         // it exists intersecting points.
@@ -112,7 +113,7 @@ var getCircleCircleIntersection = function getCircleCircleIntersection(c1, c2) {
         ];
     }
     return points;
-};
+}
 /**
  * Calculates all the intersection points for between a list of circles.
  * @private
@@ -121,7 +122,7 @@ var getCircleCircleIntersection = function getCircleCircleIntersection(c1, c2) {
  * @return {Array<Highcharts.GeometryObject>}
  *         Returns a list of intersection points.
  */
-var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
+function getCirclesIntersectionPoints(circles) {
     return circles.reduce(function (points, c1, i, arr) {
         var additional = arr.slice(i + 1)
             .reduce(function (points, c2, j) {
@@ -134,7 +135,7 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
         }, []);
         return points.concat(additional);
     }, []);
-};
+}
 /**
  * Tests wether a point lies within a given circle.
  * @private
@@ -145,9 +146,9 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
  * @return {boolean}
  *         Returns true if the point is inside, false if outside.
  */
-var isPointInsideCircle = function isPointInsideCircle(point, circle) {
+function isPointInsideCircle(point, circle) {
     return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
-};
+}
 /**
  * Tests wether a point lies within a set of circles.
  * @private
@@ -158,11 +159,11 @@ var isPointInsideCircle = function isPointInsideCircle(point, circle) {
  * @return {boolean}
  *         Returns true if the point is inside all the circles, false if not.
  */
-var isPointInsideAllCircles = function isPointInsideAllCircles(point, circles) {
+function isPointInsideAllCircles(point, circles) {
     return !circles.some(function (circle) {
         return !isPointInsideCircle(point, circle);
     });
-};
+}
 /**
  * Tests wether a point lies outside a set of circles.
  *
@@ -175,11 +176,27 @@ var isPointInsideAllCircles = function isPointInsideAllCircles(point, circles) {
  * @return {boolean}
  *         Returns true if the point is outside all the circles, false if not.
  */
-var isPointOutsideAllCircles = function isPointOutsideAllCircles(point, circles) {
+function isPointOutsideAllCircles(point, circles) {
     return !circles.some(function (circle) {
         return isPointInsideCircle(point, circle);
     });
-};
+}
+/**
+ * Calculates the points for the polygon of the intersection area between a set
+ * of circles.
+ *
+ * @private
+ * @param {Array<Highcharts.CircleObject>} circles
+ *        List of circles to calculate polygon of.
+ * @return {Array<Highcharts.GeometryObject>} Return list of points in the
+ * intersection polygon.
+ */
+function getCirclesIntersectionPolygon(circles) {
+    return getCirclesIntersectionPoints(circles)
+        .filter(function (p) {
+        return isPointInsideAllCircles(p, circles);
+    });
+}
 /**
  * Calculate the path for the area of overlap between a set of circles.
  * @todo handle cases with only 1 or 0 arcs.
@@ -190,18 +207,15 @@ var isPointOutsideAllCircles = function isPointOutsideAllCircles(point, circles)
  *         Returns the path for the area of overlap. Returns an empty string if
  *         there are no intersection between all the circles.
  */
-var getAreaOfIntersectionBetweenCircles = function getAreaOfIntersectionBetweenCircles(circles) {
-    var intersectionPoints = (getCirclesIntersectionPoints(circles)
-        .filter(function (p) {
-        return isPointInsideAllCircles(p, circles);
-    })), result;
+function getAreaOfIntersectionBetweenCircles(circles) {
+    var intersectionPoints = getCirclesIntersectionPolygon(circles), result;
     if (intersectionPoints.length > 1) {
         // Calculate the center of the intersection points.
-        var center = getCenterOfPoints(intersectionPoints);
+        var center_1 = getCenterOfPoints(intersectionPoints);
         intersectionPoints = intersectionPoints
             // Calculate the angle between the center and the points.
             .map(function (p) {
-            p.angle = getAngleBetweenPoints(center, p);
+            p.angle = getAngleBetweenPoints(center_1, p);
             return p;
         })
             // Sort the points by the angle to the center.
@@ -224,10 +238,12 @@ var getAreaOfIntersectionBetweenCircles = function getAreaOfIntersectionBetweenC
                 // calculate arcs.
                 .reduce(function (arc, index) {
                 var circle = circles[index], angle1 = getAngleBetweenPoints(circle, p1), angle2 = getAngleBetweenPoints(circle, startPoint), angleDiff = angle2 - angle1 +
-                    (angle2 < angle1 ? 2 * Math.PI : 0), angle = angle2 - angleDiff / 2, width = getDistanceBetweenPoints(midPoint, {
+                    (angle2 < angle1 ? 2 * Math.PI : 0), angle = angle2 - angleDiff / 2;
+                var width = getDistanceBetweenPoints(midPoint, {
                     x: circle.x + circle.r * Math.sin(angle),
                     y: circle.y + circle.r * Math.cos(angle)
-                }), r = circle.r;
+                });
+                var r = circle.r;
                 // Width can sometimes become to large due to floating
                 // point errors
                 if (width > r * 2) {
@@ -266,18 +282,19 @@ var getAreaOfIntersectionBetweenCircles = function getAreaOfIntersectionBetweenC
         else {
             arcs.unshift(['M', startPoint.x, startPoint.y]);
             result = {
-                center: center,
+                center: center_1,
                 d: arcs
             };
         }
     }
     return result;
-};
+}
 var geometryCircles = {
     getAreaOfCircle: getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles: getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection: getCircleCircleIntersection,
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,
+    getCirclesIntersectionPolygon: getCirclesIntersectionPolygon,
     getCircularSegmentArea: getCircularSegmentArea,
     getOverlapBetweenCircles: getOverlapBetweenCircles,
     isPointInsideCircle: isPointInsideCircle,

@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -140,14 +142,17 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    extend,
+    pick
+} = U;
 
 
 import './integrations.js';
 import './QuadTree.js';
 
-var pick = H.pick,
-    addEvent = H.addEvent,
+var addEvent = H.addEvent,
     Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -157,7 +162,7 @@ H.layouts = {
     }
 } as any;
 
-H.extend(
+extend(
     /**
      * Reingold-Fruchterman algorithm from
      * "Graph Drawing by Force-directed Placement" paper.

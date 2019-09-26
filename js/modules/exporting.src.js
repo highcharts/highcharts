@@ -78,12 +78,12 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var isObject = U.isObject, objectEach = U.objectEach;
+var extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, discardElement = H.discardElement, css = H.css, merge = H.merge, pick = H.pick, extend = H.extend, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, discardElement = H.discardElement, css = H.css, merge = H.merge, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -1002,6 +1002,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         options = merge(chart.options, chartOptions);
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(chart.userOptions.plotOptions, chartOptions && chartOptions.plotOptions);
+        // ... and likewise with time, avoid that undefined time properties are
+        // merged over legacy global time options
+        options.time = merge(chart.userOptions.time, chartOptions && chartOptions.time);
         // create a sandbox where a new chart will be generated
         sandbox = createElement('div', null, {
             position: 'absolute',
@@ -1395,6 +1398,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(menu, menuStyle);
         css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
+        fireEvent(chart, 'exportMenuShown');
     },
     /**
      * Add the export button to the chart, with options.

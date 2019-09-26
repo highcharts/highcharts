@@ -6,28 +6,24 @@
  *
  *  Sand-Signika theme for Highcharts JS
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 /* global document */
-
 import Highcharts from '../parts/Globals.js';
-
 // Load the fonts
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
     rel: 'stylesheet',
     type: 'text/css'
 }, null, document.getElementsByTagName('head')[0]);
-
 // Add the background image to the container
 Highcharts.addEvent(Highcharts.Chart, 'afterGetContainer', function () {
+    // eslint-disable-next-line no-invalid-this
     this.container.style.background =
         'url(https://www.highcharts.com/samples/graphics/sand.png)';
 });
-
-
 Highcharts.theme = {
     colors: ['#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -89,7 +85,6 @@ Highcharts.theme = {
             shadow: false
         }
     },
-
     // Highstock specific
     navigator: {
         xAxis: {
@@ -111,8 +106,6 @@ Highcharts.theme = {
     scrollbar: {
         trackBorderColor: '#C0C0C8'
     }
-
 };
-
 // Apply the theme
 Highcharts.setOptions(Highcharts.theme);

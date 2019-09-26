@@ -27,15 +27,7 @@ declare global {
         }
         interface ScatterSeriesOptions extends LineSeriesOptions {
             jitter?: ScatterSeriesJitterOptions;
-            states?: ScatterSeriesStatesOptions;
-        }
-        interface ScatterSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
-            // placeholder for inheritance
-        }
-        interface ScatterSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: ScatterSeriesStatesHoverOptions;
+            states?: SeriesStatesOptionsObject<ScatterSeries>;
         }
         interface Series {
             takeOrdinalPosition?: boolean;
@@ -74,7 +66,7 @@ var Series = H.Series,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ScatterSeriesOptions>(
+seriesType<Highcharts.ScatterSeries>(
     'scatter',
     'line',
 

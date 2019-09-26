@@ -11,13 +11,16 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import Instrument from 'Instrument.js';
-import instruments from 'instrumentDefinitions.js';
-import Earcon from 'Earcon.js';
-import pointSonifyFunctions from 'pointSonify.js';
-import chartSonifyFunctions from 'chartSonify.js';
-import utilities from 'utilities.js';
-import TimelineClasses from 'Timeline.js';
+import U from '../../parts/Utilities.js';
+var extend = U.extend;
+
+import Instrument from './Instrument.js';
+import instruments from './instrumentDefinitions.js';
+import Earcon from './Earcon.js';
+import pointSonifyFunctions from './pointSonify.js';
+import chartSonifyFunctions from './chartSonify.js';
+import utilities from './utilities.js';
+import TimelineClasses from './Timeline.js';
 
 // Expose on the Highcharts object
 
@@ -93,7 +96,7 @@ H.sonification = {
 H.Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 H.Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-H.extend(H.Chart.prototype, {
+extend(H.Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,
     resumeSonify: chartSonifyFunctions.resume,

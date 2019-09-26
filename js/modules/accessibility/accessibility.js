@@ -37,6 +37,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var extend = U.extend,
+    pick = U.pick;
+
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
@@ -50,14 +54,12 @@ import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
 import defaultOptions from './options.js';
+import copyDeprecatedOptions from './deprecatedOptions.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
     doc = H.win.document,
-    pick = H.pick,
-    merge = H.merge,
-    extend = H.extend,
-    error = H.error;
+    merge = H.merge;
 
 
 // Add default options
@@ -76,7 +78,7 @@ H.AccessibilityComponent = AccessibilityComponent;
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
-H.extend(H.SVGElement.prototype, {
+extend(H.SVGElement.prototype, {
 
     /**
      * @private
@@ -233,7 +235,6 @@ Accessibility.prototype = {
      *        Chart object
      */
     init: function (chart) {
-        var a11yOptions = chart.options.accessibility;
         this.chart = chart;
 
         // Abort on old browsers
@@ -244,24 +245,42 @@ Accessibility.prototype = {
 
         // Copy over any deprecated options that are used. We could do this on
         // every update, but it is probably not needed.
-        this.copyDeprecatedOptions();
+        copyDeprecatedOptions(chart);
 
-        // Add the components
-        var components = this.components = {
-            container: new ContainerComponent(chart),
-            infoRegion: new InfoRegionComponent(chart),
-            legend: new LegendComponent(chart),
-            chartMenu: new MenuComponent(chart),
-            rangeSelector: new RangeSelectorComponent(chart),
-            series: new SeriesComponent(chart),
-            zoom: new ZoomComponent(chart)
+        this.initComponents();
+        this.keyboardNavigation = new KeyboardNavigation(
+            chart, this.components
+        );
+        this.update();
+    },
+
+
+    /**
+     * @private
+     */
+    initComponents: function () {
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility;
+
+        this.components = {
+            container: new ContainerComponent(),
+            infoRegion: new InfoRegionComponent(),
+            legend: new LegendComponent(),
+            chartMenu: new MenuComponent(),
+            rangeSelector: new RangeSelectorComponent(),
+            series: new SeriesComponent(),
+            zoom: new ZoomComponent()
         };
         if (a11yOptions.customComponents) {
             extend(this.components, a11yOptions.customComponents);
         }
 
-        this.keyboardNavigation = new KeyboardNavigation(chart, components);
-        this.update();
+        var components = this.components;
+        // Refactor to use Object.values if we polyfill
+        Object.keys(components).forEach(function (componentName) {
+            components[componentName].initBase(chart);
+            components[componentName].init();
+        });
     },
 
 
@@ -306,6 +325,7 @@ Accessibility.prototype = {
         var components = this.components;
         Object.keys(components).forEach(function (componentName) {
             components[componentName].destroy();
+            components[componentName].destroyBase();
         });
 
         // Kill keyboard nav
@@ -335,150 +355,43 @@ Accessibility.prototype = {
             types[series.type] = 1;
         });
         return Object.keys(types);
-    },
-
-
-    /**
-     * Copy options that are deprecated over to new options. Logs warnings to
-     * console for deprecated options used. The following options are
-     * deprecated:
-     *
-     *  chart.description -> accessibility.description
-     *  chart.typeDescription -> accessibility.typeDescription
-     *  series.description -> series.accessibility.description
-     *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
-     *  series.pointDescriptionFormatter ->
-     *      series.accessibility.pointDescriptionFormatter
-     *  series.skipKeyboardNavigation ->
-     *      series.accessibility.keyboardNavigation.enabled
-     *  point.description -> point.accessibility.description
-     *  axis.description -> axis.accessibility.description
-     *
-     * @private
-     */
-    copyDeprecatedOptions: function () {
-        var chart = this.chart,
-            // Warn user that a deprecated option was used
-            warn = function (oldOption, newOption) {
-                error(
-                    'Highcharts: Deprecated option ' + oldOption +
-                    ' used. Use ' + newOption + ' instead.', false, chart
-                );
-            },
-            // Set a new option on a root prop, where the option is defined as
-            // an array of suboptions.
-            traverseSetOption = function (val, optionAsArray, root) {
-                var opt = root,
-                    prop,
-                    i = 0;
-                for (;i < optionAsArray.length - 1; ++i) {
-                    prop = optionAsArray[i];
-                    opt = opt[prop] = pick(opt[prop], {});
-                }
-                opt[optionAsArray[optionAsArray.length - 1]] = val;
-            },
-            // Map of deprecated series options. New options are defined as
-            // arrays of paths under series.options.
-            oldToNewSeriesOptions = {
-                description: ['accessibility', 'description'],
-                exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
-                pointDescriptionFormatter: [
-                    'accessibility', 'pointDescriptionFormatter'
-                ],
-                skipKeyboardNavigation: [
-                    'accessibility', 'keyboardNavigation', 'enabled'
-                ]
-            };
-
-        // Deal with chart wide options (description, typeDescription)
-        var chartOptions = chart.options.chart || {},
-            a11yOptions = chart.options.accessibility || {};
-        ['description', 'typeDescription'].forEach(function (prop) {
-            if (chartOptions[prop]) {
-                a11yOptions[prop] = chartOptions[prop];
-                warn('chart.' + prop, 'accessibility.' + prop);
-            }
-        });
-
-        // Deal with axis description
-        chart.axes.forEach(function (axis) {
-            var opts = axis.options;
-            if (opts && opts.description) {
-                opts.accessibility = opts.accessibility || {};
-                opts.accessibility.description = opts.description;
-                warn('axis.description', 'axis.accessibility.description');
-            }
-        });
-
-        // Loop through all series and handle options
-        if (!chart.series) {
-            return;
-        }
-        chart.series.forEach(function (series) {
-            // Handle series wide options
-            Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
-                var optionVal = series.options[oldOption];
-                if (optionVal !== undefined) {
-                    // Set the new option
-                    traverseSetOption(
-                        // Note that skipKeyboardNavigation has inverted option
-                        // value, since we set enabled rather than disabled
-                        oldOption === 'skipKeyboardNavigation' ?
-                            !optionVal : optionVal,
-                        oldToNewSeriesOptions[oldOption],
-                        series.options
-                    );
-                    warn(
-                        'series.' + oldOption, 'series.' +
-                        oldToNewSeriesOptions[oldOption].join('.')
-                    );
-                }
-            });
-
-            // Loop through the points and handle point.description
-            if (series.points) {
-                series.points.forEach(function (point) {
-                    if (point.options && point.options.description) {
-                        point.options.accessibility =
-                            point.options.accessibility || {};
-                        point.options.accessibility.description =
-                            point.options.description;
-                        warn('point.description',
-                            'point.accessibility.description');
-                    }
-                });
-            }
-        });
     }
-
 };
 
 
+/**
+ * @private
+ */
+H.Chart.prototype.updateA11yEnabled = function () {
+    var a11y = this.accessibility,
+        accessibilityOptions = this.options.accessibility;
+    if (accessibilityOptions && accessibilityOptions.enabled) {
+        if (a11y) {
+            a11y.update();
+        } else {
+            this.accessibility = a11y = new Accessibility(this);
+        }
+    } else if (a11y) {
+        // Destroy if after update we have a11y and it is disabled
+        if (a11y.destroy) {
+            a11y.destroy();
+        }
+        delete this.accessibility;
+    } else {
+        // Just hide container
+        this.renderTo.setAttribute('aria-hidden', true);
+    }
+};
+
 // Handle updates to the module and send render updates to components
 addEvent(H.Chart, 'render', function (e) {
-    var a11y = this.accessibility;
     // Update/destroy
     if (this.a11yDirty && this.renderTo) {
         delete this.a11yDirty;
-        var accessibilityOptions = this.options.accessibility;
-        if (accessibilityOptions && accessibilityOptions.enabled) {
-            if (a11y) {
-                a11y.update();
-            } else {
-                this.accessibility = a11y = new Accessibility(this);
-            }
-        } else if (a11y) {
-            // Destroy if after update we have a11y and it is disabled
-            if (a11y.destroy) {
-                a11y.destroy();
-            }
-            delete this.accessibility;
-        } else {
-            // Just hide container
-            this.renderTo.setAttribute('aria-hidden', true);
-        }
+        this.updateA11yEnabled();
     }
-    // Update markup regardless
+
+    var a11y = this.accessibility;
     if (a11y) {
         Object.keys(a11y.components).forEach(function (componentName) {
             a11y.components[componentName].onChartRender(e);

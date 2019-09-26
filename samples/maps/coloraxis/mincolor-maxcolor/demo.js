@@ -19,7 +19,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             max: 1000,
             type: 'logarithmic',
             minColor: '#efecf3',
-            maxColor: '#990041'
+            maxColor: '#990041',
+            lineColor: 'green',
+            lineWidth: 10
         },
 
         legend: {

@@ -159,14 +159,15 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
-    objectEach
+    extend,
+    objectEach,
+    pick
 } = U;
 
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     destroyObjectProperties = H.destroyObjectProperties,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -483,7 +484,7 @@ H.PlotLineOrBand.prototype = {
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 // Object with members for extending the Axis prototype
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * An array of colored bands stretching across the plot area marking an
@@ -1111,6 +1112,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * An array of objects representing plot lines on the X axis
      *
      * @type      {Array<*>}
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *      Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */

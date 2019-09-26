@@ -60,6 +60,11 @@ declare global {
             yAxis: Array<SelectDataObject>;
         }
         class Pointer {
+            /**
+             * @private
+             */
+            public chartPosition?: OffsetObject;
+
             public constructor(chart: Chart, options: Options);
             [key: string]: any;
             public chart: Chart;
@@ -83,6 +88,7 @@ declare global {
                 point: Point,
                 inverted?: boolean
             ): (PointerCoordinatesObject|undefined)
+            public getChartPosition(): OffsetObject;
             public getCoordinates(
                 e: PointerEventObject
             ): PointerAxisCoordinatesObject;
@@ -221,9 +227,11 @@ import U from './Utilities.js';
 const {
     attr,
     defined,
+    extend,
     isNumber,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -235,11 +243,9 @@ var H = Highcharts,
     charts = H.charts,
     color = H.color,
     css = H.css,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     offset = H.offset,
-    pick = H.pick,
     Tooltip = H.Tooltip;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -353,6 +359,25 @@ Highcharts.Pointer.prototype = {
     },
 
     /**
+     * Return the cached chartPosition if it is available on the Pointer,
+     * otherwise find it. Running offset is quite expensive, so it should be
+     * avoided when we know the chart hasn't moved.
+     *
+     * @function Highcharts.Pointer#getChartPosition
+     *
+     * @return {Highcharts.OffsetObject}
+     *         The offset of the chart container within the page
+     */
+    getChartPosition: function (
+        this: Highcharts.Pointer
+    ): Highcharts.OffsetObject {
+        return (
+            this.chartPosition ||
+            (this.chartPosition = offset(this.chart.container))
+        );
+    },
+
+    /**
      * Takes a browser event object and extends it with custom Highcharts
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
@@ -384,7 +409,7 @@ Highcharts.Pointer.prototype = {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            chartPosition = this.getChartPosition();
         }
 
         let chartX = ePos.pageX - chartPosition.left,
@@ -551,16 +576,18 @@ Highcharts.Pointer.prototype = {
         var series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            plotX = pick(point.clientX, point.plotX),
+            plotX = pick<number|undefined, number>(
+                point.clientX, point.plotX as any
+            ),
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
             return inverted ? {
-                chartX: xAxis.len + (xAxis.pos as any) - plotX,
-                chartY: yAxis.len + (yAxis.pos as any) - (point.plotY as any)
+                chartX: xAxis.len + xAxis.pos - plotX,
+                chartY: yAxis.len + yAxis.pos - (point.plotY as any)
             } : {
-                chartX: plotX + (xAxis.pos as any),
-                chartY: (point.plotY as any) + (yAxis.pos as any)
+                chartX: plotX + xAxis.pos,
+                chartY: (point.plotY as any) + yAxis.pos
             };
         }
 
@@ -1426,7 +1453,7 @@ Highcharts.Pointer.prototype = {
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
-            chart.pointer.chartPosition = null;
+            chart.pointer.chartPosition = undefined;
         }
     },
 

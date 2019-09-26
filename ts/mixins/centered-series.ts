@@ -18,6 +18,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface CenteredSeries extends Series {
+            options: CenteredSeriesOptions;
+        }
         interface CenteredSeriesMixin {
             getCenter(this: Series): Array<number>;
             getStartAndEndRadians(
@@ -25,12 +28,15 @@ declare global {
                 end?: number
             ): RadianAngles;
         }
+        interface CenteredSeriesOptions extends SeriesOptions {
+            center?: Array<(number|string|null)>;
+            innerSize?: (number|string);
+            size?: (number|string);
+            slicedOffset?: number;
+        }
         interface RadianAngles {
             end: number;
             start: number;
-        }
-        interface SeriesOptions {
-            slicedOffset?: number;
         }
         let CenteredSeriesMixin: CenteredSeriesMixin;
     }
@@ -49,11 +55,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 var deg2rad = H.deg2rad,
-    pick = H.pick,
     relativeLength = H.relativeLength;
 
 /* eslint-disable valid-jsdoc */
@@ -73,7 +79,7 @@ H.CenteredSeriesMixin = {
      *
      * @return {Array<number>}
      */
-    getCenter: function (this: Highcharts.Series): Array<number> {
+    getCenter: function (this: Highcharts.CenteredSeries): Array<number> {
 
         var options = this.options,
             chart = this.chart,
@@ -81,20 +87,20 @@ H.CenteredSeriesMixin = {
             handleSlicingRoom,
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
-            centerOption = options.center,
-            positions = [
-                pick((centerOption as any)[0], '50%'),
-                pick((centerOption as any)[1], '50%'),
-                options.size || '100%',
+            centerOption: Array<(number|string|null)> = options.center as any,
+            positions: Array<number> = [
+                pick(centerOption[0] as any, '50%' as any),
+                pick(centerOption[1] as any, '50%' as any),
+                options.size || '100%' as any,
                 options.innerSize || 0
             ],
             smallestSize = Math.min(plotWidth, plotHeight),
-            i,
-            value;
+            i: number,
+            value: number;
 
         for (i = 0; i < 4; ++i) {
             value = positions[i];
-            handleSlicingRoom = i < 2 || (i === 2 && /%$/.test(value));
+            handleSlicingRoom = i < 2 || (i === 2 && /%$/.test(value as any));
 
             // i == 0: centerX, relative to width
             // i == 1: centerY, relative to height

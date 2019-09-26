@@ -22,28 +22,48 @@ import Highcharts from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class FunnelPoint extends PiePoint {
+            public dlBox: BFunnelObject;
+            public options: FunnelPointOptions;
+            public series: FunnelSeries;
+        }
+        class FunnelSeries extends PieSeries {
+            public centerX: number;
+            public data: Array<FunnelPoint>
+            public options: FunnelSeriesOptions;
+            public pointClass: typeof FunnelPoint;
+            public points: Array<FunnelPoint>;
+            public alignDataLabel(
+                point: Point,
+                dataLabel: SVGElement,
+                options: FunnelSeriesDataLabelsOptionsObject,
+                alignTo: BBoxObject,
+                isNew?: boolean
+            ): void;
+            public getWidthAt(y: number): number;
+            public getX(y: number, half: boolean, point: FunnelPoint): number;
+            public sortByAngle(points: Array<FunnelPoint>): void;
+        }
+        class PyramidPoint extends FunnelPoint {
+            public options: PyramidPointOptions;
+            public series: PyramidSeries;
+        }
+        class PyramidSeries extends FunnelSeries {
+            public data: Array<PyramidPoint>;
+            public options: PyramidSeriesOptions;
+            public pointClass: typeof PyramidPoint;
+            public points: Array<PyramidPoint>;
+        }
         interface BFunnelObject extends BBoxObject {
-            topWidth: number;
             bottomWidth: number;
+            topWidth: number;
         }
         interface FunnelPointOptions extends PiePointOptions {
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
         }
-        class FunnelPoint extends PiePoint {
-            public series: FunnelSeries;
-            public options: FunnelPointOptions;
-            public dlBox: BFunnelObject;
-        }
         interface FunnelSeriesDataLabelsOptionsObject
             extends PieSeriesDataLabelsOptionsObject {
             position?: string;
-        }
-        interface FunnelSeriesStatesSelectOptions {
-            borderColor?: ColorString;
-            color?: ColorType;
-        }
-        interface FunnelSeriesStatesOptions extends PieSeriesStatesOptions {
-            select?: FunnelSeriesStatesSelectOptions;
         }
         interface FunnelSeriesOptions extends PieSeriesOptions {
             width?: (number|string);
@@ -53,41 +73,19 @@ declare global {
             reversed?: boolean;
             size?: null;
             dataLabels?: FunnelSeriesDataLabelsOptionsObject;
-            states?: FunnelSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<FunnelSeries>;
         }
-        class FunnelSeries extends PieSeries {
-            public pointClass: typeof FunnelPoint;
-            public points: Array<FunnelPoint>;
-            public options: FunnelSeriesOptions;
-            public data: Array<FunnelPoint>
-            public centerX: number;
-            public getWidthAt(y: number): number;
-            public getX(y: number, half: boolean, point: FunnelPoint): number;
-            public sortByAngle(points: Array<FunnelPoint>): void;
-            public alignDataLabel(
-                point: Point,
-                dataLabel: SVGElement,
-                options: FunnelSeriesDataLabelsOptionsObject,
-                alignTo: BBoxObject,
-                isNew?: boolean
-            ): void;
+        interface SeriesStatesHoverOptionsObject {
+            borderColor?: ColorType;
+            color?: ColorType;
         }
         interface SeriesTypesDictionary {
             funnel: typeof FunnelSeries;
         }
         interface PyramidPointOptions extends FunnelPointOptions {
         }
-        class PyramidPoint extends FunnelPoint {
-            public series: PyramidSeries;
-            public options: PyramidPointOptions;
-        }
         interface PyramidSeriesOptions extends FunnelSeriesOptions {
-        }
-        class PyramidSeries extends FunnelSeries {
-            public pointClass: typeof PyramidPoint;
-            public points: Array<PyramidPoint>;
-            public options: PyramidSeriesOptions;
-            public data: Array<PyramidPoint>;
+            states?: SeriesStatesOptionsObject<PyramidSeries>;
         }
         interface SeriesTypesDictionary {
             pyramid: typeof PyramidSeries;
@@ -95,7 +93,11 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 
@@ -103,8 +105,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     fireEvent = Highcharts.fireEvent,
-    noop = Highcharts.noop,
-    pick = Highcharts.pick;
+    noop = Highcharts.noop;
 
 /**
  * @private
@@ -113,7 +114,7 @@ var seriesType = Highcharts.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.FunnelSeriesOptions>(
+seriesType<Highcharts.FunnelSeries>(
     'funnel',
     'pie',
     /**
@@ -242,7 +243,7 @@ seriesType<Highcharts.FunnelSeriesOptions>(
     },
     // Properties
     {
-        animate: noop,
+        animate: noop as any,
 
         // Overrides the pie translate method
         translate: function (this: Highcharts.FunnelSeries): void {
@@ -483,7 +484,7 @@ seriesType<Highcharts.FunnelSeriesOptions>(
                 leftSide = point.half;
                 sign = leftSide ? 1 : -1;
                 y = point.plotY;
-                point.labelDistance = pick<number>(
+                point.labelDistance = pick(
                     point.options.dataLabels &&
                     point.options.dataLabels.distance,
                     labelDistance
@@ -672,7 +673,7 @@ seriesType<Highcharts.FunnelSeriesOptions>(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.PyramidSeriesOptions>(
+seriesType<Highcharts.PyramidSeries>(
     'pyramid',
     'funnel',
     /**

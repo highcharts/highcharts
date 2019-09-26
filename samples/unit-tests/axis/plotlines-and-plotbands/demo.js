@@ -93,6 +93,82 @@ QUnit.test('General tests', function (assert) {
         'z',
         'Border should be rendered around the shape (#5909)'
     );
+
+    // Radial Axes plot lines
+    var plotLineValue = 27,
+        innerRadiusPx = 50,
+        axis, plotLine, bBox, center, end, start, plotLineLength;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        title: null,
+        pane: {
+            center: ['50%', '50%'],
+            size: '100%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                innerRadius: '43%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 200,
+            lineWidth: 0,
+            minorTickInterval: null,
+            plotLines: [{
+                color: '#268FDD',
+                width: 2,
+                value: plotLineValue,
+                zIndex: 5
+            }]
+        },
+        series: [{
+            innerRadius: '43%',
+            data: [80]
+        }]
+    });
+
+    axis = chart.yAxis[0];
+    plotLine = axis.plotLinesAndBands[0];
+    bBox = plotLine.svgElem.getBBox();
+    center = chart.pane[0].center;
+    end = axis.getPosition(plotLineValue);
+    start = {
+        x: center[0] + chart.plotLeft,
+        y: center[1] + chart.plotTop
+    };
+    plotLineLength =
+        Math.sqrt(Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2));
+
+    assert.equal(
+        (0.57 * Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2))).toFixed(3),
+        plotLineLength.toFixed(3),
+        'RadialAxis plotLine should be plotted from inner to outer radius (percentage radius).'
+    );
+
+    chart.update({
+        pane: {
+            background: {
+                innerRadius: innerRadiusPx
+            }
+        }
+    });
+
+    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    bBox = plotLine.svgElem.getBBox();
+    plotLineLength =
+            Math.sqrt(Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2));
+
+    assert.equal(
+        (Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)) - innerRadiusPx).toFixed(3),
+        plotLineLength.toFixed(3),
+        'RadialAxis plotLine should be plotted from inner to outer radius (pixel radius).'
+    );
 });
 
 QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (assert) {

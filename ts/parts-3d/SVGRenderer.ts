@@ -105,7 +105,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
-    objectEach
+    extend,
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Color.js';
@@ -119,10 +121,8 @@ var animObject = H.animObject,
     charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
-    extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
-    pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     // internal:
@@ -490,7 +490,7 @@ element3dMethods = {
         (elem3d.parts as any).forEach(function (part: string): void {
             // if different props for different parts
             if (partsProps) {
-                props = H.pick(partsProps[part], false);
+                props = pick(partsProps[part], false);
             }
 
             // only if something to set, but allow undefined
@@ -602,7 +602,7 @@ SVGRenderer.prototype.element3d = function (
     var ret = this.g();
 
     // extend
-    H.extend(ret, (this.elements3d as any)[type]);
+    extend(ret, (this.elements3d as any)[type]);
 
     // init
     ret.initArgs(shapeArgs);

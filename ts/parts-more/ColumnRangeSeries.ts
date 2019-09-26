@@ -18,14 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ColumnRangePointOptions extends AreaRangePointOptions {
-        }
-        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
-            minPointLength?: number;
-        }
-        interface SeriesTypesDictionary {
-            columnrange: typeof ColumnRangeSeries;
-        }
         class ColumnRangePoint extends AreaRangePoint {
             public barX: ColumnPoint['barX'];
             public options: ColumnRangePointOptions;
@@ -48,15 +40,26 @@ declare global {
             public polarArc: Function;
             public translate(): void;
         }
+        interface ColumnRangePointOptions extends AreaRangePointOptions {
+        }
+        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
+            minPointLength?: number;
+            states?: SeriesStatesOptionsObject<ColumnRangeSeries>;
+        }
+        interface SeriesTypesDictionary {
+            columnrange: typeof ColumnRangeSeries;
+        }
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -113,7 +116,7 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType('columnrange', 'arearange', merge(
+seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     defaultPlotOptions.column,
     defaultPlotOptions.arearange,
     columnRangeOptions
@@ -218,8 +221,8 @@ seriesType('columnrange', 'arearange', merge(
     },
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    drawGraph: noop,
-    getSymbol: noop,
+    drawGraph: noop as any,
+    getSymbol: noop as any,
 
     // Overrides from modules that may be loaded after this module
     crispCol: function (

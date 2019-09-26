@@ -15,13 +15,13 @@ import H from '../parts/Globals.js';
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 import U from '../parts/Utilities.js';
-var erase = U.erase, isNumber = U.isNumber, splat = U.splat;
+var erase = U.erase, extend = U.extend, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, extend = H.extend, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge, pick = H.pick;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -78,11 +78,21 @@ extend(ColorAxis.prototype, {
      * See [the Axis object](/class-reference/Highcharts.Axis) for
      * programmatic access to the axis.
      *
+     * @sample       {highcharts} highcharts/coloraxis/custom-color-key
+     *               Column chart with color axis
+     * @sample       {highcharts} highcharts/coloraxis/horizontal-layout
+     *               Horizontal layout
+     * @sample       {highmaps} maps/coloraxis/dataclasscolor
+     *               With data classes
+     * @sample       {highmaps} maps/coloraxis/mincolor-maxcolor
+     *               Min color and max color
+     *
      * @extends      xAxis
-     * @excluding    allowDecimals, alternateGridColor, breaks, categories,
-     *               crosshair, dateTimeLabelFormats, lineWidth, linkedTo,
-     *               maxZoom, minRange, minTickInterval, offset, opposite,
-     *               plotBands, plotLines, showEmpty, title
+     * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
+     *               categories, crosshair, dateTimeLabelFormats, lineWidth,
+     *               linkedTo, maxZoom, minRange, minTickInterval, offset,
+     *               opposite, pane, plotBands, plotLines, reversedStacks,
+     *               showEmpty, title, zoomEnabled
      * @product      highcharts highstock highmaps
      * @type         {*|Array<*>}
      * @optionparent colorAxis

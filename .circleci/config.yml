@@ -122,23 +122,61 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
-  generate_visual_test_images:
+  generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - run:
-          name: Generate visual references
-          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing assets in S3 location
+          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing latest references in S3 location
           overwrite: true
-      - run: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+      - run:
+          name: "Upload test results"
+          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          when: always
       - <<: *persist_workspace
 
-  test_visual_diff:
+  visual_comparison_with_master:
+    <<: *defaults
+    description: Visual diff and compare PR with master
+    steps:
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - run: git fetch origin master:master && git checkout master && npm i
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: git checkout ${CIRCLE_BRANCH} && npm i
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
+      - run: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
+      - run: mkdir ../visual-test-results
+      - run:
+          name: Save test results where both an reference.svg and candidate.svg exists
+          command: |
+            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} cp -r --parents {} ../visual-test-results
+          when: always
+      - store_test_results:
+          path: ../visual-test-results
+      - store_artifacts:
+          path: ../visual-test-results
+
+  nightly_visual_diff:
     <<: *defaults
     description: Uploads visual test results to S3
     parameters:
@@ -152,50 +190,42 @@ jobs:
       - run:
           name: "Set application version env var"
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-      - run:
-          name: Generate any new references images
-          command: npx karma start test/karma-conf.js --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite
-      - aws-s3/sync: # fetch remote reference images
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
           arguments: |
             --exclude "*" \
             --include "*/reference.svg"
-      - aws-s3/sync: # upload any missing or new reference images (won't overwrite existing references)
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
-      - aws-s3/sync: # upload any missing or new reference images to versioned location (won't overwrite existing references)
-          from: "samples/"
-          to: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/${HIGHCHARTS_VERSION}/"
-          arguments: |
-            --exclude "*" \
-            --include "*/reference.svg"
+      - run:
+          name: "Upload old and any new reference images"
+          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_S3_BUCKET}"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
           command: >
             npx karma start test/karma-conf.js --tests highcharts/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
       - run:
           name: "Highmaps visual tests"
           command: >
             npx karma start test/karma-conf.js --tests maps/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Highstock visual tests"
           command: >
             npx karma start test/karma-conf.js --tests stock/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run:
           name: "Gant visual tests"
           command: >
             npx karma start test/karma-conf.js --tests gantt/*/* --single-run
-            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --difflog --no-fail-on-empty-test-suite
+            --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite
           when: always
       - run: "sudo apt-get install -y librsvg2-bin"
       - run:
@@ -204,11 +234,6 @@ jobs:
             find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \; &&
             find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \; &&
             find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
-      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
-      - aws-s3/sync: # delete existing assets in S3 location
-          from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/diffs/latest/'
-          overwrite: true
       - run:
           name: "Upload visual test candidates and diff assets"
           command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
@@ -316,7 +341,14 @@ workflows:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
-      - generate_visual_test_images:
+      - visual_comparison_with_master:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              ignore: master
+          context: highcharts-staging
+      - generate_release_reference_images:
           requires:
             - install_dependencies
           filters:
@@ -328,6 +360,7 @@ workflows:
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
+          browsercount: 2
           requires:
             - install_dependencies
       - test_browsers:
@@ -342,11 +375,13 @@ workflows:
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
+          browsercount: 2
           requires:
             - "test-Mac.Safari"
           browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.Chrome"
+          browsercount: 2
           requires:
             - "test-Mac.Firefox"
           browsers: "Win.Chrome"
@@ -365,7 +400,7 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
-      - test_visual_diff:
+      - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
           requires:
             - install_dependencies
@@ -377,10 +412,12 @@ workflows:
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Win.Chrome"
+          browsercount: 2
           requires:
             - "test-Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
+          browsercount: 2
           requires:
             - "test-Win.Chrome"
           browsers: "Mac.Firefox"

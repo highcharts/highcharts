@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
@@ -24,14 +27,10 @@ var doc = H.win.document,
  * @private
  * @class
  * @name Highcharts.ContainerComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ContainerComponent = function (chart) {
-    this.initBase(chart);
-};
+var ContainerComponent = function () {};
 ContainerComponent.prototype = new AccessibilityComponent();
-H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
+extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -115,7 +114,6 @@ H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent 
      */
     destroy: function () {
         this.chart.renderTo.setAttribute('aria-hidden', true);
-        this.destroyBase();
     }
 
 });

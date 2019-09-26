@@ -11,11 +11,14 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
+var extend = U.extend,
+    pick = U.pick;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
 var merge = H.merge,
-    pick = H.pick,
     makeHTMLTagFromText = A11yUtilities.makeHTMLTagFromText;
 
 
@@ -90,15 +93,10 @@ H.Chart.prototype.getTypeDescription = function (types) {
  * @private
  * @class
  * @name Highcharts.InfoRegionComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var InfoRegionComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var InfoRegionComponent = function () {};
 InfoRegionComponent.prototype = new AccessibilityComponent();
-H.extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent */ { // eslint-disable-line
+extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent */ { // eslint-disable-line
 
     /**
      * Init the component

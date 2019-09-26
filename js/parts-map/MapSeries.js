@@ -17,8 +17,8 @@ import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, splat = U.splat;
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, extend = H.extend, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -548,8 +548,10 @@ seriesType('map', 'scatter',
         series.data.forEach(function (point) {
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
-            point.plotX = xAxis.toPixels(point._midX, true);
-            point.plotY = yAxis.toPixels(point._midY, true);
+            if (isNumber(point._midX) && isNumber(point._midY)) {
+                point.plotX = xAxis.toPixels(point._midX, true);
+                point.plotY = yAxis.toPixels(point._midY, true);
+            }
             if (doFullTranslate) {
                 point.shapeType = 'path';
                 point.shapeArgs = {

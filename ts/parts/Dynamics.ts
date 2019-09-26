@@ -123,11 +123,13 @@ import U from './Utilities.js';
 const {
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
     isString,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -142,10 +144,8 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -377,6 +377,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (isColorAxis) {
             this.isDirtyLegend = true;
+
+            // Clear before 'bindAxes' (#11924)
+            this.axes.forEach(function (axis: Highcharts.Axis): void {
+                axis.series = [];
+            });
+
+            this.series.forEach(function (series: Highcharts.Series): void {
+                series.bindAxes();
+                series.isDirtyData = true;
+            });
         }
 
         if (pick(redraw, true)) {
@@ -565,8 +575,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'series',
         'colorAxis',
+        'series',
         'pane'
     ],
 
