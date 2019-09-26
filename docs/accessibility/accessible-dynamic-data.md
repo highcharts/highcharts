@@ -11,7 +11,7 @@ It is important to note that these announcements will generally not be useful if
 
 To configure the announcements, see [`accessibility.announceNewData`](https://api.highcharts.com/highcharts/accessibility.announceNewData) and [`lang.accessibility.announceNewData`](https://api.highcharts.com/highcharts/lang.accessibility.announceNewData). The contents of the announcements can be configured, as well as a minimum time interval that has to pass between announcements. It is also possible to configure whether or not the announcement should interrupt the user. For most use cases this is something you want to avoid, but it can be used for critical alerts.
 
-By defining the [`accessibility.announceNewData.announcementFormatter`](http://api.highcharts.com/highcharts/accessibility.announceNewData.announcementFormatter) it is possible to add logic for which updates to make an announcement for. This enables you to for example only announce new data that is critical, or for a certain data series.
+By defining the [`accessibility.announceNewData.announcementFormatter`](https://api.highcharts.com/highcharts/accessibility.announceNewData.announcementFormatter) it is possible to add logic for which updates to make an announcement for. This enables you to for example only announce new data that is critical, or for a certain data series.
 
 Dynamic data demos:
 

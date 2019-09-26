@@ -23,7 +23,7 @@ The configuration above generates a resizer between the first and the second `yA
 
 <iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/candlestick-and-volume allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
 
 Requirements
 ------------
