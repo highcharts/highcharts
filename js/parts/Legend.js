@@ -169,6 +169,7 @@ Highcharts.Legend.prototype = {
             this.itemHiddenStyle = merge(this.itemStyle, options.itemHiddenStyle);
         }
         this.itemMarginTop = options.itemMarginTop || 0;
+        this.itemMarginBottom = options.itemMarginBottom || 0;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
         this.symbolWidth = pick(options.symbolWidth, 16);
@@ -535,7 +536,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     layoutItem: function (item) {
-        var options = this.options, padding = this.padding, horizontal = options.layout === 'horizontal', itemHeight = item.itemHeight, itemMarginBottom = options.itemMarginBottom || 0, itemMarginTop = this.itemMarginTop, itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, maxLegendWidth = this.maxLegendWidth, itemWidth = (options.alignColumns &&
+        var options = this.options, padding = this.padding, horizontal = options.layout === 'horizontal', itemHeight = item.itemHeight, itemMarginBottom = this.itemMarginBottom, itemMarginTop = this.itemMarginTop, itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, maxLegendWidth = this.maxLegendWidth, itemWidth = (options.alignColumns &&
             this.totalItemWidth > maxLegendWidth) ?
             this.maxItemWidth :
             item.itemWidth;
@@ -670,7 +671,9 @@ Highcharts.Legend.prototype = {
                     item.points.slice(0).reverse(), function (item) {
                     return isNumber(item.plotY);
                 });
-                height = item.legendItem.getBBox().height;
+                height = this.itemMarginTop +
+                    item.legendItem.getBBox().height +
+                    this.itemMarginBottom;
                 top = item.yAxis.top - chart.plotTop;
                 if (item.visible) {
                     target = lastPoint ?
