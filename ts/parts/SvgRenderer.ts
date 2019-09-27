@@ -1513,28 +1513,24 @@ extend((
         className: string,
         replace?: boolean
     ): Highcharts.SVGElement {
-        var currentClassName = this.attr('class') || '';
+        var currentClassName = replace ? '' : (this.attr('class') || '');
 
-        if (!replace) {
-
-            // Filter out existing
-            className = (className || '')
-                .split(/ /g)
-                .reduce(function (
-                    newClassName: Array<string>,
-                    name: string
-                ): Array<string> {
-                    if ((currentClassName as any).indexOf(name) === -1) {
-                        newClassName.push(name);
-                    }
-                    return newClassName;
-                }, (currentClassName ?
-                    [currentClassName] :
-                    []
-                ) as Array<string>)
-                .join(' ');
-
-        }
+        // Trim the string and remove duplicates
+        className = (className || '')
+            .split(/ /g)
+            .reduce(function (
+                newClassName: Array<string>,
+                name: string
+            ): Array<string> {
+                if ((currentClassName as any).indexOf(name) === -1) {
+                    newClassName.push(name);
+                }
+                return newClassName;
+            }, (currentClassName ?
+                [currentClassName] :
+                []
+            ) as Array<string>)
+            .join(' ');
 
         if (className !== currentClassName) {
             this.attr('class', className);
@@ -1579,7 +1575,12 @@ extend((
     ): Highcharts.SVGElement {
         return this.attr(
             'class',
-            (this.attr('class') as any || '').replace(className, '')
+            (this.attr('class') as any || '').replace(
+                isString(className) ?
+                    new RegExp(` ?${className} ?`) : // #12064
+                    className,
+                ''
+            )
         ) as any;
     },
 

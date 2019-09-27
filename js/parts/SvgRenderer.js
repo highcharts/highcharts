@@ -884,21 +884,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Return the SVG element for chainability.
      */
     addClass: function (className, replace) {
-        var currentClassName = this.attr('class') || '';
-        if (!replace) {
-            // Filter out existing
-            className = (className || '')
-                .split(/ /g)
-                .reduce(function (newClassName, name) {
-                if (currentClassName.indexOf(name) === -1) {
-                    newClassName.push(name);
-                }
-                return newClassName;
-            }, (currentClassName ?
-                [currentClassName] :
-                []))
-                .join(' ');
-        }
+        var currentClassName = replace ? '' : (this.attr('class') || '');
+        // Trim the string and remove duplicates
+        className = (className || '')
+            .split(/ /g)
+            .reduce(function (newClassName, name) {
+            if (currentClassName.indexOf(name) === -1) {
+                newClassName.push(name);
+            }
+            return newClassName;
+        }, (currentClassName ?
+            [currentClassName] :
+            []))
+            .join(' ');
         if (className !== currentClassName) {
             this.attr('class', className);
         }
@@ -931,7 +929,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @return {Highcharts.SVGElement} Returns the SVG element for chainability.
      */
     removeClass: function (className) {
-        return this.attr('class', (this.attr('class') || '').replace(className, ''));
+        return this.attr('class', (this.attr('class') || '').replace(isString(className) ?
+            new RegExp(" ?" + className + " ?") : // #12064
+            className, ''));
     },
     /**
      * If one of the symbol size affecting parameters are changed,
