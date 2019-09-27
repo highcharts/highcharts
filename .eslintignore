@@ -6,7 +6,7 @@ js/indicators/**/*.js
 #!js/indicators/cmf.src.js
 !js/indicators/dema.src.js
 #!js/indicators/dpo.src.js
-!js/indicators/ema.src.js
+#!js/indicators/ema.src.js
 !js/indicators/ichimoku-kinko-hyo.src.js
 !js/indicators/keltner-channels.src.js
 !js/indicators/macd.src.js
