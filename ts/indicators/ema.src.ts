@@ -22,7 +22,6 @@ declare global {
             public options: EMAIndicatorOptions;
             public pointClass: typeof EMAIndicatorPoint;
             public points: Array<EMAIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public accumulatePeriodPoints(
                 period: number,
                 index: number,
@@ -130,7 +129,7 @@ seriesType<Highcharts.EMAIndicator>(
             return sum;
         },
         calculateEma: function (
-            xVal: (Array<number>|undefined),
+            xVal: Array<number>,
             yVal: Array<Array<number>>,
             i: number,
             EMApercent: number,
@@ -138,7 +137,7 @@ seriesType<Highcharts.EMAIndicator>(
             index: number,
             SMA: number
         ): [number, number] {
-            var x: number = (xVal as any)[i - 1],
+            var x: number = xVal[i - 1],
                 yValue: (number|Array<number>) = index < 0 ?
                     yVal[i - 1] :
                     yVal[i - 1][index],
@@ -152,12 +151,12 @@ seriesType<Highcharts.EMAIndicator>(
         },
         getValues: function (
             this: Highcharts.EMAIndicator,
-            series: Highcharts.EMAIndicator,
+            series: Highcharts.Series,
             params: Highcharts.EMAIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
-                xVal: (Array<number>|undefined) = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 EMApercent = 2 / (period + 1),
                 sum = 0,
