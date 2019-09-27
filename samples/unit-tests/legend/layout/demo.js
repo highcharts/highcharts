@@ -40,5 +40,29 @@ QUnit.test(
                 'Label should be next to last point'
             );
         });
+
+        chart.series[1].setData(
+            [1, 1, 1]
+        );
+        assert.ok(
+            Math.abs(
+                chart.series[0].legendGroup.translateY -
+                chart.series[1].legendGroup.translateY
+            ) > 12,
+            'The overlapping items should have sufficient distance'
+        );
+
+
+        chart.legend.update({
+            useHTML: true
+        });
+
+        assert.ok(
+            Math.abs(
+                chart.series[0].legendGroup.translateY -
+                chart.series[1].legendGroup.translateY
+            ) > 12,
+            'The overlapping items should have sufficient distance with useHTML (#12055)'
+        );
     }
 );

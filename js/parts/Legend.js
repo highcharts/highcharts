@@ -670,7 +670,7 @@ Highcharts.Legend.prototype = {
                     item.points.slice(0).reverse(), function (item) {
                     return isNumber(item.plotY);
                 });
-                height = item.legendGroup.getBBox().height;
+                height = item.legendItem.getBBox().height;
                 top = item.yAxis.top - chart.plotTop;
                 if (item.visible) {
                     target = lastPoint ?

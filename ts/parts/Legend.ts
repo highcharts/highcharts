@@ -1097,7 +1097,7 @@ Highcharts.Legend.prototype = {
                         return isNumber(item.plotY);
                     }
                 );
-                height = (item.legendGroup as any).getBBox().height;
+                height = (item.legendItem as any).getBBox().height;
 
                 top = (item as any).yAxis.top - chart.plotTop;
                 if (item.visible) {
