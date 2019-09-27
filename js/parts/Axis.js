@@ -4752,6 +4752,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         // Get the longest label length
         tickPositions.forEach(function (tick) {
             tick = ticks[tick];
+            // Support for sorting animation
+            if (tick.movedLabel) {
+                tick.replaceMovedLabel();
+            }
             if (tick &&
                 tick.label &&
                 tick.label.textPxLength > maxLabelLength) {

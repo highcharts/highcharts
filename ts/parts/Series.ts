@@ -173,6 +173,7 @@ declare global {
             ): SVGElement;
             public pointAttribs(point: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
+            public animateNewPoints(): void;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
             public redrawPoints(): void;
@@ -196,13 +197,25 @@ declare global {
             public setOptions(
                 itemOptions: SeriesOptionsType
             ): this['options'];
+            public sortData(
+                data: Array<PointOptionsType>
+            ): Array<PointOptionsType>;
             public toYData(point: Point): Array<number>;
             public translate(): void;
-            public updateData(data: Array<PointOptionsType>): boolean;
+            public updateData(
+                data: Array<PointOptionsType>,
+                animation?: (boolean|AnimationOptionsObject)
+            ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
         interface Chart {
             runTrackerClick?: boolean;
+        }
+        interface DataSortingOptionsObject {
+            enabled?: boolean;
+            matchByName?: boolean;
+            sortKey?: string;
+            order?: string;
         }
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
@@ -231,6 +244,7 @@ declare global {
             low?: number;
             negative?: boolean;
             options: PointOptionsObject;
+            originalIndex: number;
             plotX?: number;
             plotY?: number;
             stackTotal?: number;
@@ -320,6 +334,7 @@ declare global {
             dataLabels?: (
                 DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
             );
+            dataSorting?: DataSortingOptionsObject;
             description?: string;
             enableMouseTracking?: boolean;
             events?: SeriesEventsOptions;
@@ -3327,11 +3342,31 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 oldData = this.points,
                 matchingPoint,
                 matchedById,
-                pointIndex;
+                pointIndex,
+                matchKey: string,
+                dataSorting = this.options.dataSorting;
 
             if (id) {
                 matchingPoint = this.chart.get(id);
-                pointIndex = matchingPoint && matchingPoint.index;
+
+            } else if (dataSorting && dataSorting.enabled) {
+                matchKey = dataSorting.matchByName ? 'name' : 'originalIndex';
+
+                matchingPoint = H.find(oldData, function (
+                    oldPoint: Highcharts.Point
+                ): boolean {
+                    return (oldPoint as any)[matchKey] ===
+                        (optionsObject as any)[matchKey];
+                });
+                // Add unmatched point as a new point
+                if (!matchingPoint) {
+                    return undefined;
+                }
+            }
+
+            if (matchingPoint) {
+                pointIndex = matchingPoint.index;
+
                 if (pointIndex !== undefined) {
                     matchedById = true;
                 }
@@ -3381,7 +3416,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
         updateData: function (
             this: Highcharts.Series,
-            data: Array<Highcharts.PointOptionsType>
+            data: Array<Highcharts.PointOptionsType>,
+            animation?: (boolean|Highcharts.AnimationOptionsObject)
         ): boolean {
             var options = this.options,
                 oldData = this.points,
@@ -3476,7 +3512,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 while (i--) {
                     point = oldData[i];
                     if (point && !point.touched) {
-                        point.remove(false);
+                        point.remove(false, animation);
                     }
                 }
 
@@ -3579,6 +3615,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 dataLength,
                 options = series.options,
                 chart = series.chart,
+                dataSorting = options.dataSorting,
                 firstPoint = null,
                 xAxis = series.xAxis,
                 i,
@@ -3597,6 +3634,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             dataLength = data.length;
             redraw = pick(redraw, true);
 
+            if (dataSorting && dataSorting.enabled) {
+                data = this.sortData(data);
+            }
+
             // First try to run Point.update which is cheaper, allows animation,
             // and keeps references to points.
             if (
@@ -3610,7 +3651,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // (#8355)
                 !series.isSeriesBoosting
             ) {
-                updatedData = this.updateData(data);
+                updatedData = this.updateData(data, animation);
             }
 
             if (!updatedData) {
@@ -3720,6 +3761,49 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (redraw) {
                 chart.redraw(animation);
             }
+        },
+
+        /**
+         * Internal function to sort the data by
+         *
+         * @private
+         * @function Highcharts.Series#sortData
+         * @param {Array<Highcharts.PointOptionsType>} data
+         *        Force data grouping.
+         * @return {Array<Highcharts.PointOptionsType>}
+         */
+        sortData: function (
+            this: Highcharts.Series,
+            data: Array<Highcharts.PointOptionsType>
+        ): Array<Highcharts.PointOptionsType> {
+            var options = this.options,
+                dataSorting = options.dataSorting as
+                    Highcharts.DataSortingOptionsObject,
+                sortKey = dataSorting.sortKey || 'y';
+
+            data.forEach(function (pointOptions, i): void {
+                data[i] = (defined(pointOptions) &&
+                    this.pointClass.prototype.optionsToObject.call({
+                        series: this
+                    }, pointOptions)) || {};
+
+                (data[i] as any).originalIndex = i;
+            }, this);
+
+            // Sorting
+            (data as any).sort(function (
+                a: Highcharts.Point, b: Highcharts.Point
+            ): number {
+                return (b as any)[sortKey] - (a as any)[sortKey];
+            });
+
+            data.forEach(function (point: any, i: number): void {
+                if (!point.x) {
+                    point.x = i;
+                }
+            });
+
+            return data;
         },
 
         /**
@@ -4223,6 +4307,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 stacking = options.stacking,
                 xAxis = series.xAxis,
                 categories = xAxis.categories,
+                dataSorting = options.dataSorting,
                 yAxis = series.yAxis,
                 points = series.points,
                 dataLength = points.length,
@@ -4419,6 +4504,15 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                 // Find point zone
                 point.zone = (this.zones.length && point.getZone() as any);
+
+                if (
+                    !point.graphic &&
+                    series.group &&
+                    dataSorting &&
+                    dataSorting.enabled
+                ) {
+                    point.isNew = true;
+                }
             }
             series.closestPointRangePx = closestPointRangePx;
 
@@ -5716,6 +5810,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 chart = series.chart,
                 group,
                 options = series.options,
+                dataSorting = options.dataSorting,
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
@@ -5767,6 +5862,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // Draw the points
             if (series.visible) {
                 series.drawPoints();
+
+                if (series.group && dataSorting && dataSorting.enabled) {
+                    series.animateNewPoints();
+                }
             }
 
             /* series.points.forEach(function (point) {
@@ -5829,6 +5928,54 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             series.hasRendered = true;
 
             fireEvent(series, 'afterRender');
+        },
+
+        /**
+         * Apply a sliding animation for new points with dataSorting.
+         *
+         * @private
+         * @function Highcharts.Series#animateNewPoints
+         * @return {void}
+         */
+        animateNewPoints: function (this: Highcharts.Series): void {
+            var series = this,
+                reversed = series.xAxis.reversed,
+                chart = series.chart,
+                inverted = chart.inverted,
+                startPos: number,
+                targetPos,
+                points = series.points;
+
+            startPos = inverted ? chart.plotHeight : chart.plotWidth;
+            startPos = reversed ? 0 : startPos;
+
+            points.forEach(function (point): void {
+                if (point.shapeArgs && reversed) {
+                    point.startXPos = -point.shapeArgs.width;
+
+                } else {
+                    point.startXPos = startPos;
+                }
+
+                if (point.isNew) {
+                    if (!point.shapeArgs) {
+                        targetPos = series.markerAttribs(point).x;
+
+                    } else {
+                        targetPos = point.shapeArgs.x;
+                    }
+
+                    if (point.graphic) {
+                        point.graphic.attr({
+                            x: point.startXPos
+                        });
+
+                        point.graphic.animate({
+                            x: targetPos
+                        });
+                    }
+                }
+            });
         },
 
         /**

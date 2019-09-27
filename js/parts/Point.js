@@ -428,8 +428,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject;
-var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout;
+var Point, H = Highcharts, animObject = H.animObject, fireEvent = H.fireEvent, format = H.format, pick = H.pick, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -767,29 +767,72 @@ Highcharts.Point.prototype = {
      * @return {void}
      */
     destroy: function () {
-        var point = this, series = point.series, chart = series.chart, hoverPoints = chart.hoverPoints, prop;
-        chart.pointCount--;
-        if (hoverPoints) {
-            point.setState();
-            erase(hoverPoints, point);
-            if (!hoverPoints.length) {
-                chart.hoverPoints = null;
+        var point = this, series = point.series, chart = series.chart, dataSorting = series.options.dataSorting, hoverPoints = chart.hoverPoints, globalAnimation = point.series.chart.renderer.globalAnimation, animation = animObject(globalAnimation), prop;
+        /**
+         * Allow to call after animation.
+         * @private
+         */
+        function destroyPoint() {
+            if (hoverPoints) {
+                point.setState();
+                erase(hoverPoints, point);
+                if (!hoverPoints.length) {
+                    chart.hoverPoints = null;
+                }
+            }
+            if (point === chart.hoverPoint) {
+                point.onMouseOut();
+            }
+            // Remove all events and elements
+            if (point.graphic || point.dataLabel || point.dataLabels) {
+                removeEvent(point);
+                point.destroyElements();
+            }
+            for (prop in point) { // eslint-disable-line guard-for-in
+                point[prop] = null;
             }
         }
-        if (point === chart.hoverPoint) {
-            point.onMouseOut();
+        // Remove properties after animation
+        if (!dataSorting || !dataSorting.enabled) {
+            destroyPoint();
         }
-        // Remove all events and elements
-        if (point.graphic || point.dataLabel || point.dataLabels) {
-            removeEvent(point);
-            point.destroyElements();
+        else {
+            this.animateBeforeDestroy();
+            syncTimeout(destroyPoint, animation.duration);
         }
+        chart.pointCount--;
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
         }
-        for (prop in point) { // eslint-disable-line guard-for-in
-            point[prop] = null;
-        }
+    },
+    /**
+     * Animate SVG elements associated with the point.
+     *
+     * @private
+     * @function Highcharts.Point#animateElements
+     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @return {void}
+     */
+    animateBeforeDestroy: function () {
+        var point = this, animateParams = { x: point.startXPos }, isDataLabel, graphicalProps = point.getGraphicalProps();
+        graphicalProps.singular.forEach(function (prop) {
+            isDataLabel = prop === 'dataLabel';
+            point[prop] = point[prop].animate(isDataLabel ? {
+                x: point[prop].startXPos,
+                y: point[prop].startYPos,
+                opacity: 0
+            } : animateParams);
+        });
+        graphicalProps.plural.forEach(function (plural) {
+            point[plural].forEach(function (item) {
+                if (item.element) {
+                    item.animate(extend({ x: point.startXPos }, (item.startYPos ? {
+                        x: item.startXPos,
+                        y: item.startYPos
+                    } : {})));
+                }
+            });
+        });
     },
     /**
      * Destroy SVG elements associated with the point.
@@ -800,7 +843,29 @@ Highcharts.Point.prototype = {
      * @return {void}
      */
     destroyElements: function (kinds) {
-        var point = this, props = [], prop, i;
+        var point = this, props = point.getGraphicalProps(kinds);
+        props.singular.forEach(function (prop) {
+            point[prop] = point[prop].destroy();
+        });
+        props.plural.forEach(function (plural) {
+            point[plural].forEach(function (item) {
+                if (item.element) {
+                    item.destroy();
+                }
+            });
+            delete point[plural];
+        });
+    },
+    /**
+     * Get props of all existing graphical point elements.
+     *
+     * @private
+     * @function Highcharts.Point#getGraphicalProps
+     * @param {Highcharts.Dictionary<number>} [kinds]
+     * @return {Highcharts.PointGraphicalProps}
+     */
+    getGraphicalProps: function (kinds) {
+        var point = this, props = [], prop, i, graphicalProps = { singular: [], plural: [] };
         kinds = kinds || { graphic: 1, dataLabel: 1 };
         if (kinds.graphic) {
             props.push('graphic', 'shadowGroup');
@@ -812,20 +877,16 @@ Highcharts.Point.prototype = {
         while (i--) {
             prop = props[i];
             if (point[prop]) {
-                point[prop] = point[prop].destroy();
+                graphicalProps.singular.push(prop);
             }
         }
         ['dataLabel', 'connector'].forEach(function (prop) {
             var plural = prop + 's';
             if (kinds[prop] && point[plural]) {
-                point[plural].forEach(function (item) {
-                    if (item.element) {
-                        item.destroy();
-                    }
-                });
-                delete point[plural];
+                graphicalProps.plural.push(plural);
             }
         });
+        return graphicalProps;
     },
     /**
      * Return the configuration hash needed for the data label and tooltip

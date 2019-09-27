@@ -868,7 +868,7 @@ Series.prototype.drawDataLabels = function () {
  * @return {void}
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
-    var chart = this.chart, inverted = this.isCartesian && chart.inverted, plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999), plotY = pick(point.plotY, -9999), bBox = dataLabel.getBBox(), baseline, rotation = options.rotation, normRotation, negRotation, align = options.align, rotCorr, // rotation correction
+    var chart = this.chart, inverted = this.isCartesian && chart.inverted, dataSorting = this.options.dataSorting, plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999), plotY = pick(point.plotY, -9999), bBox = dataLabel.getBBox(), baseline, rotation = options.rotation, normRotation, negRotation, align = options.align, rotCorr, // rotation correction
     // Math.round for rounding errors (#2683), alignTo to allow column
     // labels (#2700)
     visible = this.visible &&
@@ -959,6 +959,43 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     if (!visible) {
         dataLabel.hide(true);
         dataLabel.placed = false; // don't animate back in
+    }
+    if (dataSorting && dataSorting.enabled) {
+        this.animateNewDataLabel(point, dataLabel, isNew);
+    }
+};
+/**
+ * Apply a sorting animation for
+ *
+ * @private
+ * @function Highcharts.Series#animateNewDataLabel
+ * @param {Highcharts.SVGElement} dataLabel
+ * @param {Highcharts.ColumnPoint} point
+ * @param {boolean | undefined} [isNew]
+ * @return {void}
+ */
+Series.prototype.animateNewDataLabel = function (point, dataLabel, isNew) {
+    var chart = this.chart, inverted = chart.inverted, reversed = this.xAxis.reversed, labelCenter = inverted ? dataLabel.height / 2 : dataLabel.width / 2, pointWidth = point.pointWidth, halfWidth = pointWidth ? pointWidth / 2 : 0, startXPos, startYPos, xPos = dataLabel.x, yPos = dataLabel.y;
+    startXPos = inverted ?
+        xPos :
+        (reversed ?
+            -labelCenter - halfWidth :
+            chart.plotWidth - labelCenter + halfWidth);
+    startYPos = inverted ?
+        (reversed ?
+            chart.plotHeight - labelCenter + halfWidth :
+            -labelCenter - halfWidth) : yPos;
+    dataLabel.startXPos = startXPos;
+    dataLabel.startYPos = startYPos;
+    if (isNew) {
+        dataLabel.attr({
+            x: startXPos,
+            y: startYPos
+        });
+        dataLabel.animate({
+            x: xPos,
+            y: yPos
+        });
     }
 };
 /**

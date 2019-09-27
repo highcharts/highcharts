@@ -2531,10 +2531,23 @@ null,
      *           match is found.
      */
     findPointIndex: function (optionsObject, fromIndex) {
-        var id = optionsObject.id, x = optionsObject.x, oldData = this.points, matchingPoint, matchedById, pointIndex;
+        var id = optionsObject.id, x = optionsObject.x, oldData = this.points, matchingPoint, matchedById, pointIndex, matchKey, dataSorting = this.options.dataSorting;
         if (id) {
             matchingPoint = this.chart.get(id);
-            pointIndex = matchingPoint && matchingPoint.index;
+        }
+        else if (dataSorting && dataSorting.enabled) {
+            matchKey = dataSorting.matchByName ? 'name' : 'originalIndex';
+            matchingPoint = H.find(oldData, function (oldPoint) {
+                return oldPoint[matchKey] ===
+                    optionsObject[matchKey];
+            });
+            // Add unmatched point as a new point
+            if (!matchingPoint) {
+                return undefined;
+            }
+        }
+        if (matchingPoint) {
+            pointIndex = matchingPoint.index;
             if (pointIndex !== undefined) {
                 matchedById = true;
             }
@@ -2575,7 +2588,7 @@ null,
      *
      * @return {boolean}
      */
-    updateData: function (data) {
+    updateData: function (data, animation) {
         var options = this.options, oldData = this.points, pointsToAdd = [], hasUpdatedByKey, i, point, lastIndex, requireSorting = this.requireSorting, equalLength = data.length === oldData.length, succeeded = true;
         this.xIncrement = null;
         // Iterate the new data
@@ -2627,7 +2640,7 @@ null,
             while (i--) {
                 point = oldData[i];
                 if (point && !point.touched) {
-                    point.remove(false);
+                    point.remove(false, animation);
                 }
             }
             // If we did not find keys (ids or x-values), and the length is the
@@ -2710,10 +2723,13 @@ null,
      * @return {void}
      */
     setData: function (data, redraw, animation, updatePoints) {
-        var series = this, oldData = series.points, oldDataLength = (oldData && oldData.length) || 0, dataLength, options = series.options, chart = series.chart, firstPoint = null, xAxis = series.xAxis, i, turboThreshold = options.turboThreshold, pt, xData = this.xData, yData = this.yData, pointArrayMap = series.pointArrayMap, valueCount = pointArrayMap && pointArrayMap.length, keys = options.keys, indexOfX = 0, indexOfY = 1, updatedData;
+        var series = this, oldData = series.points, oldDataLength = (oldData && oldData.length) || 0, dataLength, options = series.options, chart = series.chart, dataSorting = options.dataSorting, firstPoint = null, xAxis = series.xAxis, i, turboThreshold = options.turboThreshold, pt, xData = this.xData, yData = this.yData, pointArrayMap = series.pointArrayMap, valueCount = pointArrayMap && pointArrayMap.length, keys = options.keys, indexOfX = 0, indexOfY = 1, updatedData;
         data = data || [];
         dataLength = data.length;
         redraw = pick(redraw, true);
+        if (dataSorting && dataSorting.enabled) {
+            data = this.sortData(data);
+        }
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (updatePoints !== false &&
@@ -2725,7 +2741,7 @@ null,
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
             !series.isSeriesBoosting) {
-            updatedData = this.updateData(data);
+            updatedData = this.updateData(data, animation);
         }
         if (!updatedData) {
             // Reset properties
@@ -2819,6 +2835,35 @@ null,
         if (redraw) {
             chart.redraw(animation);
         }
+    },
+    /**
+     * Internal function to sort the data by
+     *
+     * @private
+     * @function Highcharts.Series#sortData
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        Force data grouping.
+     * @return {Array<Highcharts.PointOptionsType>}
+     */
+    sortData: function (data) {
+        var options = this.options, dataSorting = options.dataSorting, sortKey = dataSorting.sortKey || 'y';
+        data.forEach(function (pointOptions, i) {
+            data[i] = (defined(pointOptions) &&
+                this.pointClass.prototype.optionsToObject.call({
+                    series: this
+                }, pointOptions)) || {};
+            data[i].originalIndex = i;
+        }, this);
+        // Sorting
+        data.sort(function (a, b) {
+            return b[sortKey] - a[sortKey];
+        });
+        data.forEach(function (point, i) {
+            if (!point.x) {
+                point.x = i;
+            }
+        });
+        return data;
     },
     /**
      * Internal function to process the data by cropping away unused data
@@ -3164,7 +3209,7 @@ null,
             this.processData();
         }
         this.generatePoints();
-        var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
+        var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, dataSorting = options.dataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
         dynamicallyPlaced = isNumber(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
@@ -3274,6 +3319,12 @@ null,
             }
             // Find point zone
             point.zone = (this.zones.length && point.getZone());
+            if (!point.graphic &&
+                series.group &&
+                dataSorting &&
+                dataSorting.enabled) {
+                point.isNew = true;
+            }
         }
         series.closestPointRangePx = closestPointRangePx;
         fireEvent(this, 'afterTranslate');
@@ -4164,7 +4215,7 @@ null,
      * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
-        var series = this, chart = series.chart, group, options = series.options, 
+        var series = this, chart = series.chart, group, options = series.options, dataSorting = options.dataSorting, 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
         animDuration = (!!series.animate &&
@@ -4191,6 +4242,9 @@ null,
         // Draw the points
         if (series.visible) {
             series.drawPoints();
+            if (series.group && dataSorting && dataSorting.enabled) {
+                series.animateNewPoints();
+            }
         }
         /* series.points.forEach(function (point) {
             if (point.redraw) {
@@ -4238,6 +4292,42 @@ null,
         // data is in accordance with what you see
         series.hasRendered = true;
         fireEvent(series, 'afterRender');
+    },
+    /**
+     * Apply a sliding animation for new points with dataSorting.
+     *
+     * @private
+     * @function Highcharts.Series#animateNewPoints
+     * @return {void}
+     */
+    animateNewPoints: function () {
+        var series = this, reversed = series.xAxis.reversed, chart = series.chart, inverted = chart.inverted, startPos, targetPos, points = series.points;
+        startPos = inverted ? chart.plotHeight : chart.plotWidth;
+        startPos = reversed ? 0 : startPos;
+        points.forEach(function (point) {
+            if (point.shapeArgs && reversed) {
+                point.startXPos = -point.shapeArgs.width;
+            }
+            else {
+                point.startXPos = startPos;
+            }
+            if (point.isNew) {
+                if (!point.shapeArgs) {
+                    targetPos = series.markerAttribs(point).x;
+                }
+                else {
+                    targetPos = point.shapeArgs.x;
+                }
+                if (point.graphic) {
+                    point.graphic.attr({
+                        x: point.startXPos
+                    });
+                    point.graphic.animate({
+                        x: targetPos
+                    });
+                }
+            }
+        });
     },
     /**
      * Redraw the series. This function is called internally from

@@ -145,6 +145,7 @@ declare global {
             enabled?: boolean;
         }
         interface XAxisLabelsOptions {
+            animate?: boolean;
             align?: AlignValue;
             autoRotation?: (false|Array<number>);
             autoRotationLimit?: number;
@@ -6251,6 +6252,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Get the longest label length
         tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
             tick = ticks[tick as any];
+
+            // Support for sorting animation
+            if (tick.movedLabel) {
+                tick.replaceMovedLabel();
+            }
+
             if (
                 tick &&
                 (tick as any).label &&
