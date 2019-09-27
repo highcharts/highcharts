@@ -64,5 +64,19 @@ QUnit.test(
             ) > 12,
             'The overlapping items should have sufficient distance with useHTML (#12055)'
         );
+
+        chart.legend.update({
+            itemMarginTop: 10,
+            itemMarginBottom: 10,
+            useHTML: false
+        });
+
+        assert.ok(
+            Math.abs(
+                chart.series[0].legendGroup.translateY -
+                chart.series[1].legendGroup.translateY
+            ) > 30,
+            'The overlapping items should have sufficient distance when an item margin is applied'
+        );
     }
 );
