@@ -52,6 +52,7 @@ declare global {
             public pointAttrToOptions: Dictionary<string>;
             public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
+            public yData: Array<Array<number>>;
             public init(): void;
             public toYData(point: OHLCPoint): OHLCYData;
         }
