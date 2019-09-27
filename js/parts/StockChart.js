@@ -603,6 +603,7 @@ seriesProto.setCompare = function (compare) {
                 }
                 return value;
             }
+            return 0;
         } :
         null;
     // Survive to export, #5485
