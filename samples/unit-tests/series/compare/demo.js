@@ -157,3 +157,24 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
         'First change value is correct'
     );
 });
+
+QUnit.test('Compare with one single value', assert => {
+    const chart = Highcharts.chart('container', {
+
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
+        },
+
+        series: [{
+            data: [1]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.yAxis[0].tickPositions,
+        [0],
+        'The Y axis should have one tick at 0 (#12058)'
+    );
+});

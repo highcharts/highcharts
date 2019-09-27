@@ -873,6 +873,7 @@ seriesProto.setCompare = function (
 
                 return value;
             }
+            return 0;
         } :
         null as any;
 
