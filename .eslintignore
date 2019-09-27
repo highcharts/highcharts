@@ -29,7 +29,7 @@ js/indicators/**/*.js
 !js/indicators/volume-by-price.src.js
 !js/indicators/vwap.src.js
 !js/indicators/williams-r.src.js
-!js/indicators/zigzag.src.js
+#!js/indicators/zigzag.src.js
 js/modules/**/*.js
 !js/modules/accessibility/**/*.js
 !js/modules/boost/**/*.js
