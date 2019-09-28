@@ -14,8 +14,8 @@ var reduce = H.reduce;
 var reduceArrayMixin = {
     /**
      * Get min value of array filled by OHLC data.
-     * @privagte
-     * @param {Array<Highcharts.OHLCPoint>} arr Array of OHLC points (arrays).
+     * @private
+     * @param {Array<*>} arr Array of OHLC points (arrays).
      * @param {string} index Index of "low" value in point array.
      * @return {number} Returns min value.
      */
@@ -27,7 +27,7 @@ var reduceArrayMixin = {
     /**
      * Get max value of array filled by OHLC data.
      * @private
-     * @param {Array<Highcharts.OHLCPoint>} arr Array of OHLC points (arrays).
+     * @param {Array<*>} arr Array of OHLC points (arrays).
      * @param {string} index Index of "high" value in point array.
      * @return {number} Returns max value.
      */
@@ -39,7 +39,7 @@ var reduceArrayMixin = {
     /**
      * Get extremes of array filled by OHLC data.
      * @private
-     * @param {Array<Highcharts.OHLCPoint>} arr Array of OHLC points (arrays).
+     * @param {Array<*>} arr Array of OHLC points (arrays).
      * @param {string} minIndex Index of "low" value in point array.
      * @param {string} maxIndex Index of "high" value in point array.
      * @return {Array<number,number>} Returns array with min and max value.
