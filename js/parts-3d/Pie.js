@@ -11,8 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var deg2rad = H.deg2rad, pick = H.pick, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
+import U from '../parts/Utilities.js';
+var pick = U.pick;
+var deg2rad = H.deg2rad, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
 /**
  * The thickness of a 3D pie. Requires `highcharts-3d.js`
  *

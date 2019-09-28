@@ -28,10 +28,12 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 var deg2rad = H.deg2rad,
-    pick = H.pick,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
     wrap = H.wrap;

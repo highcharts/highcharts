@@ -76,7 +76,8 @@ const {
     defined,
     extend,
     isNumber,
-    isString
+    isString,
+    pick
 } = U;
 
 import './GridAxis.js';
@@ -99,7 +100,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return U.isObject(x, true);
     },
-    pick = H.pick,
     wrap = H.wrap,
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
     GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
@@ -922,8 +922,8 @@ override(GridAxis.prototype, {
             isTreeGrid = options.type === 'treegrid';
 
         if (isTreeGrid) {
-            axis.min = pick(axis.userMin, options.min, axis.dataMin);
-            axis.max = pick(axis.userMax, options.max, axis.dataMax);
+            axis.min = pick(axis.userMin, options.min, axis.dataMin as any);
+            axis.max = pick(axis.userMax, options.max, axis.dataMax as any);
 
             fireEvent(axis, 'foundExtremes');
 

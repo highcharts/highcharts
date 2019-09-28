@@ -7,7 +7,7 @@ Error bars are a graphical representation of the variability of data and are use
 
 ### Setting up the error bar series
 
-In Highcharts, an error bar series is defined by setting the type to `errorbar`. An error bar series relates to a parent series through the option [linkedTo](http://api.highcharts.com/highcharts/plotOptions.errorbar.linkedTo). By default, the linkedTo option is ":previous", which means that the error bar series by default relates to the series defined before it in the source code. To use another series, the `linkedTo` option relates to the `id` option of the parent series.
+In Highcharts, an error bar series is defined by setting the type to `errorbar`. An error bar series relates to a parent series through the option [linkedTo](https://api.highcharts.com/highcharts/plotOptions.errorbar.linkedTo). By default, the linkedTo option is ":previous", which means that the error bar series by default relates to the series defined before it in the source code. To use another series, the `linkedTo` option relates to the `id` option of the parent series.
 
     
     series: [{
@@ -23,4 +23,4 @@ In Highcharts, an error bar series is defined by setting the type to `errorbar`.
 
 ### Styling the error bars
 
-The different parts of the error bar anatomy can be styled individually. In a non-inverted chart, the _stem_ is the vertical bar in the center, while the _whiskers_ are the top and bottom lines marking the values. The [lineWidth](http://api.highcharts.com/highcharts/plotOptions.errorbar.lineWidth) option sets the line thickness globally. The [whiskerWidth](http://api.highcharts.com/highcharts/plotOptions.errorbar.whiskerWidth) and [stemWidth](http://api.highcharts.com/highcharts/plotOptions.errorbar.stemWidth) options sets the width of the whiskers and the stem individually. For the full set of options, see [plotOptions.errorbar](http://api.highcharts.com/highcharts/plotOptions.errorbar).
+The different parts of the error bar anatomy can be styled individually. In a non-inverted chart, the _stem_ is the vertical bar in the center, while the _whiskers_ are the top and bottom lines marking the values. The [lineWidth](https://api.highcharts.com/highcharts/plotOptions.errorbar.lineWidth) option sets the line thickness globally. The [whiskerWidth](https://api.highcharts.com/highcharts/plotOptions.errorbar.whiskerWidth) and [stemWidth](https://api.highcharts.com/highcharts/plotOptions.errorbar.stemWidth) options sets the width of the whiskers and the stem individually. For the full set of options, see [plotOptions.errorbar](https://api.highcharts.com/highcharts/plotOptions.errorbar).

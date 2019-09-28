@@ -63,11 +63,14 @@ declare global {
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Options.js';
 
-var pick = H.pick,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,

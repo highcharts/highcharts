@@ -103,6 +103,7 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isNumber,
+    pick,
     pInt
 } = U;
 
@@ -118,7 +119,6 @@ var arrayMax = H.arrayMax,
     Axis = H.Axis,
     color = H.color,
     noop = H.noop,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

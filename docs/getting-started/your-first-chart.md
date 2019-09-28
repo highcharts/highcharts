@@ -59,9 +59,9 @@ We will start off by creating a simple bar chart.
     ```
 3.  You should now see this chart on your webpage:
     
-    ![bar-fruit-consumption.png](http://assets.highcharts.com/images/bar-fruit-consumption.png)
+    ![bar-fruit-consumption.png](https://assets.highcharts.com/images/bar-fruit-consumption.png)
     
-4.  Optionally, you can apply a global theme to your charts. A theme is just a set of options that are applied globally through the [Highcharts.setOptions](http://api.highcharts.com/highcharts#Highcharts.setOptions()) method. The download package comes with four predefined themes. To apply a theme from one of these files, add this directly after the highcharts.js file inclusion:
+4.  Optionally, you can apply a global theme to your charts. A theme is just a set of options that are applied globally through the [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions()) method. The download package comes with four predefined themes. To apply a theme from one of these files, add this directly after the highcharts.js file inclusion:
 
     ```html
         <script type="text/javascript" src="/js/themes/gray.js"></script>
@@ -71,5 +71,5 @@ For more details on how the options or settings in Highcharts work see [How to 
 
 Below is a list of online examples of the examples shown in this article:
 
-*   [Simple bar chart](http://jsfiddle.net/highcharts/kh5jY/)
-*   [Highstock Example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/)
+*   [Simple bar chart](https://jsfiddle.net/highcharts/kh5jY/)
+*   [Highstock Example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/)

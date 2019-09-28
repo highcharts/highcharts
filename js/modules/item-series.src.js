@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Series.js';
 var fireEvent = H.fireEvent, merge = H.merge, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 /**
@@ -279,7 +279,7 @@ H.seriesType('item',
         //*/
         this.points.forEach(function (point) {
             var attr, graphics, pointAttr, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
-                seriesMarkerOptions.symbol), r = H.pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), size = defined(r) ? 2 * r : itemSize, padding = size * options.itemPadding, x, y, width, height;
+                seriesMarkerOptions.symbol), r = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), size = defined(r) ? 2 * r : itemSize, padding = size * options.itemPadding, x, y, width, height;
             point.graphics = graphics = point.graphics || {};
             if (!series.chart.styledMode) {
                 pointAttr = series.pointAttribs(point, point.selected && 'select');

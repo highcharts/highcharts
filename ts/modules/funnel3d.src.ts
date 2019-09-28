@@ -93,7 +93,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 import '../parts/ColumnSeries.js';
@@ -103,7 +104,6 @@ var charts = H.charts,
     color = H.color,
     error = H.error,
     merge = H.merge,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     relativeLength = H.relativeLength,

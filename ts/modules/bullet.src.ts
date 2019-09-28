@@ -59,10 +59,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    pick
+} = U;
 
-var pick = H.pick,
-    relativeLength = H.relativeLength,
+var relativeLength = H.relativeLength,
     seriesType = H.seriesType,
     columnProto = H.seriesTypes.column.prototype;
 

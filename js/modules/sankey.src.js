@@ -128,13 +128,12 @@ import H from '../parts/Globals.js';
 * @since 6.0.2
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject;
+var defined = U.defined, isObject = U.isObject, pick = U.pick;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-// Note: replace this with destructuring assignment in the future
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, merge = H.merge, seriesType = H.seriesType, pick = H.pick, Point = H.Point;
+var find = H.find, merge = H.merge, seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private

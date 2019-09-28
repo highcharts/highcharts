@@ -40,10 +40,13 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    erase = U.erase,
-    isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    defined,
+    erase,
+    isArray,
+    isNumber,
+    pick
+} = U;
 
 var addEvent = H.addEvent,
     argsToArray = function (args: IArguments): Array<any> {
@@ -55,7 +58,6 @@ var addEvent = H.addEvent,
         return U.isObject(x, true);
     },
     merge = H.merge,
-    pick = H.pick,
     wrap = H.wrap,
     Chart = H.Chart,
     Axis = H.Axis,

@@ -300,12 +300,8 @@ Available arguments for 'gulp test':
 
 --visualcompare
     Performs a visual comparison of the output and creates a reference.svg and candidate.svg
-    when doing so.
-
---difflog 
-    Produces a JSON file containing the number of different pixels for visual tests.
-    Use --remotelocation to specify remote location of reference.svg files to compare with,
-    or local file will be expected to exist.
+    when doing so. A JSON file with the results is produced in the location
+    specified by config.imageCapture.resultsOutputPath. 
 
 --ts
     Compile TypeScript-based tests.
@@ -326,18 +322,11 @@ Available arguments for 'gulp test':
             const KarmaServer = require('karma').Server;
             const PluginError = require('plugin-error');
 
-            let gitSha;
-            if (argv.difflog) {
-                const { getLatestCommitShaSync } = require('./lib/git');
-                gitSha = getLatestCommitShaSync();
-            }
-
             new KarmaServer(
                 {
                     configFile: KARMA_CONFIG_FILE,
                     singleRun: true,
                     client: {
-                        gitSha,
                         cliArgs: argv
                     }
                 },

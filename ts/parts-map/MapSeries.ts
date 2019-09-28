@@ -150,6 +150,7 @@ const {
     isArray,
     isNumber,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -158,7 +159,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     fireEvent = H.fireEvent,
     Point = H.Point,
     Series = H.Series,

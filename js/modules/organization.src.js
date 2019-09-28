@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -40,7 +42,6 @@ import H from '../parts/Globals.js';
 * @default function () { return this.point.name; }
 * @since 6.0.2
 */
-var pick = H.pick;
 var base = H.seriesTypes.sankey.prototype;
 /**
  * @private

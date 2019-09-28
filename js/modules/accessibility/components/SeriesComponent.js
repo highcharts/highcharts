@@ -14,14 +14,14 @@ import H from '../../../parts/Globals.js';
 
 import U from '../../../parts/Utilities.js';
 var extend = U.extend,
-    isNumber = U.isNumber;
+    isNumber = U.isNumber,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import A11yUtilities from '../utilities.js';
 
 var merge = H.merge,
-    pick = H.pick,
     stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 

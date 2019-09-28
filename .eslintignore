@@ -3,9 +3,9 @@ js/indicators/**/*.js
 !js/indicators/apo.src.js
 !js/indicators/aroon-oscillator.src.js
 !js/indicators/chaikin.src.js
-!js/indicators/cmf.src.js
+#!js/indicators/cmf.src.js
 !js/indicators/dema.src.js
-!js/indicators/dpo.src.js
+#!js/indicators/dpo.src.js
 !js/indicators/ema.src.js
 !js/indicators/ichimoku-kinko-hyo.src.js
 !js/indicators/keltner-channels.src.js
@@ -41,8 +41,8 @@ js/modules/**/*.js
 #!js/modules/variwide.src.js
 #!js/modules/vector.src.js
 #!js/modules/venn.src.js
-!js/modules/windbarb.src.js
-!js/modules/wordcloud.src.js
+#!js/modules/windbarb.src.js
+#!js/modules/wordcloud.src.js
 js/mixins/**/*.js
 js/parts/**/*.js
 js/parts-3d/**/*.js

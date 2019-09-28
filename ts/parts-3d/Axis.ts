@@ -62,6 +62,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    pick,
     splat
 } = U;
 
@@ -77,7 +78,6 @@ var ZAxis: typeof Highcharts.Axis,
     merge = H.merge,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
-    pick = H.pick,
     shapeArea = H.shapeArea,
     Tick = H.Tick,
     wrap = H.wrap;
@@ -673,11 +673,11 @@ extend(ZAxis.prototype, {
                 zData = series.zData as any;
                 if (zData.length) {
                     axis.dataMin = Math.min(
-                        pick(axis.dataMin, zData[0]),
+                        pick(axis.dataMin, zData[0] as any),
                         Math.min.apply(null, zData as any)
                     );
                     axis.dataMax = Math.max(
-                        pick(axis.dataMax, zData[0]),
+                        pick(axis.dataMax, zData[0] as any),
                         Math.max.apply(null, zData as any)
                     );
                 }

@@ -12,13 +12,13 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
-var pick = H.pick,
-    setElAttrs = A11yUtilities.setElAttrs,
+var setElAttrs = A11yUtilities.setElAttrs,
     escapeStringForHTML = A11yUtilities.escapeStringForHTML;
 
 

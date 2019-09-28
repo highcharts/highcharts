@@ -10,11 +10,11 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var extend = U.extend,
-    isArray = U.isArray;
+    isArray = U.isArray,
+    pick = U.pick;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    pick = H.pick,
     fireEvent = H.fireEvent,
     getStyle = H.getStyle,
     merge = H.merge,

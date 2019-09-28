@@ -11,6 +11,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
 
 /**
  * Define an Instrument and the options for playing it.
@@ -104,7 +106,7 @@ Earcon.prototype.sonify = function (options) {
     var playOptions = H.merge(this.options, options);
 
     // Find master volume/pan settings
-    var masterVolume = H.pick(playOptions.volume, 1),
+    var masterVolume = pick(playOptions.volume, 1),
         masterPan = playOptions.pan,
         earcon = this,
         playOnEnd = options && options.onEnd,
@@ -123,10 +125,10 @@ Earcon.prototype.sonify = function (options) {
             if (opts.playOptions) {
                 // Handle master pan/volume
                 if (typeof opts.playOptions.volume !== 'function') {
-                    instrumentOpts.volume = H.pick(masterVolume, 1) *
-                        H.pick(opts.playOptions.volume, 1);
+                    instrumentOpts.volume = pick(masterVolume, 1) *
+                        pick(opts.playOptions.volume, 1);
                 }
-                instrumentOpts.pan = H.pick(masterPan, instrumentOpts.pan);
+                instrumentOpts.pan = pick(masterPan, instrumentOpts.pan);
 
                 // Handle onEnd
                 instrOnEnd = instrumentOpts.onEnd;

@@ -695,6 +695,7 @@ const {
     isNumber,
     isString,
     objectEach,
+    pick,
     splat,
     syncTimeout
 } = U;
@@ -717,7 +718,6 @@ var addEvent = H.addEvent,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     Tick = H.Tick;
@@ -5050,8 +5050,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 }
             }
 
-            axis.min = pick(hardMin, thresholdMin, axis.dataMin);
-            axis.max = pick(hardMax, thresholdMax, axis.dataMax);
+            axis.min = pick(hardMin, thresholdMin, axis.dataMin as any);
+            axis.max = pick(hardMax, thresholdMax, axis.dataMax as any);
 
         }
 
@@ -5059,7 +5059,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
-                Math.min(axis.min as any, pick(axis.dataMin, axis.min)) <= 0
+                Math.min(
+                    axis.min as any, pick(axis.dataMin, axis.min as any)
+                ) <= 0
             ) { // #978
                 // Can't plot negative values on log axis
                 H.error(10, 1 as any, chart);
@@ -5811,8 +5813,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         var dataMin = this.dataMin,
             dataMax = this.dataMax,
             options = this.options,
-            min = Math.min(dataMin as any, pick(options.min, dataMin)),
-            max = Math.max(dataMax as any, pick(options.max, dataMax)),
+            min = Math.min(dataMin as any, pick(options.min, dataMin as any)),
+            max = Math.max(dataMax as any, pick(options.max, dataMax as any)),
             evt = {
                 newMin: newMin,
                 newMax: newMax

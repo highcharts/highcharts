@@ -38,7 +38,10 @@ declare global {
             public getValues(
                 series: Series,
                 params: SMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject|IndicatorMultipleValuesObject);
+            ): (
+                boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
+                IndicatorNullableValuesObject
+            );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
 
@@ -50,6 +53,12 @@ declare global {
             values: Array<Array<number>>;
             xData: Array<number>;
             yData: Array<number>;
+        }
+
+        interface IndicatorNullableValuesObject {
+            values: Array<Array<(number|null)>>;
+            xData: Array<(number|null)>;
+            yData: Array<(number|null)>;
         }
 
         interface IndicatorMultipleValuesObject {
@@ -98,13 +107,13 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
+    pick,
     splat
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var pick = H.pick,
-    error = H.error,
+var error = H.error,
     Series = H.Series,
     addEvent = H.addEvent,
     seriesType = H.seriesType,

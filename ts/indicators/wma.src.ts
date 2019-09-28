@@ -37,8 +37,7 @@ declare global {
 
         interface WMAIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
-            // for inheitance
-            index: number;
+            // for inheritance
         }
 
         class WMAIndicatorPoint extends SMAIndicatorPoint {
@@ -176,7 +175,7 @@ seriesType<Highcharts.WMAIndicator>(
 
             // Switch index for OHLC / Candlestick
             if (isArray(yVal[0])) {
-                index = params.index;
+                index = (params.index as any);
                 yValue = yVal[0][index];
             }
             // Starting point

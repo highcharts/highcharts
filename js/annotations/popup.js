@@ -15,11 +15,11 @@ var defined = U.defined,
     isArray = U.isArray,
     isObject = U.isObject,
     isString = U.isString,
-    objectEach = U.objectEach;
+    objectEach = U.objectEach,
+    pick = U.pick;
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    pick = H.pick,
     wrap = H.wrap,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',

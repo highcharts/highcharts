@@ -12,11 +12,12 @@
 import Highcharts from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var extend = U.extend,
-    win = Highcharts.win,
+    pick = U.pick;
+
+var win = Highcharts.win,
     doc = win.document,
     merge = Highcharts.merge,
-    addEvent = Highcharts.addEvent,
-    pick = Highcharts.pick;
+    addEvent = Highcharts.addEvent;
 
 
 /** @lends Highcharts.AccessibilityComponent */

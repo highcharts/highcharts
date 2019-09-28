@@ -21,10 +21,10 @@ import H from '../parts/Globals.js';
 * @type {boolean|undefined}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pInt = U.pInt;
+var extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
-var pick = H.pick, wrap = H.wrap, Renderer = H.Renderer, colorAxisMethods;
+var wrap = H.wrap, Renderer = H.Renderer, colorAxisMethods;
 /**
  * Symbol definition of an arc with round edges.
  *

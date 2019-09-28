@@ -13,12 +13,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, pick = U.pick;
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 import '../parts-map/HeatmapSeries.js';
-var seriesType = H.seriesType, pick = H.pick, 
+var seriesType = H.seriesType, 
 // Utility func to get the middle number of 3
 between = function (x, a, b) {
     return Math.min(Math.max(a, x), b);

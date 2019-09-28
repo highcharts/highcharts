@@ -50,6 +50,7 @@ extend(Highcharts, {
     isObject: U.isObject,
     isString: U.isString,
     objectEach: U.objectEach,
+    pick: U.pick,
     pInt: U.pInt,
     splat: U.splat,
     syncTimeout: U.syncTimeout

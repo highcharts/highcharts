@@ -179,6 +179,7 @@ const {
     extend,
     isNumber,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -195,8 +196,7 @@ var addEvent = H.addEvent,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
     fireEvent = H.fireEvent,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -760,7 +760,9 @@ RangeSelector.prototype = {
             dataMax = unionExtremes.dataMax,
             newMin,
             newMax = baseAxis && Math.round(
-                Math.min(baseAxis.max as any, pick(dataMax, baseAxis.max))
+                Math.min(
+                    baseAxis.max as any, pick(dataMax, baseAxis.max as any)
+                )
             ), // #1568
             type = rangeOptions.type,
             baseXAxisOptions: Highcharts.AxisOptions,

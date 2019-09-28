@@ -18,6 +18,6 @@ To combine several chart types in one chart you only need to create series of di
     name: 'Average',
     data: [3, 2.67, 3, 6.33, 3.33] }]
 
-A live example can be found in the [Highcharts demo](http://www.highcharts.com/demo/combo).
+A live example can be found in the [Highcharts demo](https://www.highcharts.com/demo/combo).
 
 ![combined_demo.png](combined_demo.png)
