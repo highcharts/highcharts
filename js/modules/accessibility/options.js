@@ -77,14 +77,11 @@ var options = {
 
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are headings, `<p>`, `<div>`, `<a>`, and
+             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, and
              * `<button>`. Attributes are not supported, except for id on
              * `<div>`, `<a>`, and `<button>`. Id is required on `<a>` and
-             * `<button>`.
-             *
-             * If the resulting string contains HTML characters that are not
-             * allowed, the resulting string will be changed to
-             * "Content blocked" for security reasons.
+             * `<button>` in the format `<tag id="abcd">`. Numbers, lower- and
+             * uppercase letters, "-" and "#" are valid characters in IDs.
              *
              * @since next
              */

@@ -18,7 +18,8 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import A11yUtilities from '../utilities.js';
 
 var pick = H.pick,
-    setElAttrs = A11yUtilities.setElAttrs;
+    setElAttrs = A11yUtilities.setElAttrs,
+    escapeStringForHTML = A11yUtilities.escapeStringForHTML;
 
 
 function getTypeDescForMapChart(chart, formatContext) {
@@ -65,27 +66,22 @@ function getTableSummary(chart) {
     );
 }
 
-function filterHTMLTags(str) {
-    var whitelist = [
-            /<\/?h[1-7]>/g,
-            /<\/?p>/g,
-            /<\/?div>/g,
-            /<div id="[a-zA-Z\-0-9#]*?">/g,
-            /<button id="[a-zA-Z\-0-9#]*?">/g, /<\/button>/g,
-            /<a id="[a-zA-Z\-0-9#]*?">/g, /<\/a>/g
-        ],
-        filteredString = str;
-
-    whitelist.forEach(function (exp) {
-        filteredString = filteredString.replace(exp, '');
-    });
-
-    var hasHTMLCharsLeft = /[&<>"'\\\/]/.test(filteredString);
-    return hasHTMLCharsLeft ? 'Content blocked' : str;
-}
-
 function stripEmptyHTMLTags(str) {
     return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+}
+
+function enableSimpleHTML(str) {
+    return str
+        .replace(/&lt;(h[1-7]|p|div)&gt;/g, '<$1>')
+        .replace(/&lt;&#x2F;(h[1-7]|p|div|a|button)&gt;/g, '</$1>')
+        .replace(
+            /&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g,
+            '<$1 id="$2">'
+        );
+}
+
+function stringToSimpleHTML(str) {
+    return stripEmptyHTMLTags(enableSimpleHTML(escapeStringForHTML(str)));
 }
 
 
@@ -298,7 +294,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             formattedString = H.i18nFormat(format, context);
 
         this.dataTableButtonId = dataTableButtonId;
-        return stripEmptyHTMLTags(filterHTMLTags(formattedString));
+        return stringToSimpleHTML(formattedString);
     },
 
 
@@ -315,7 +311,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             },
             formattedString = H.i18nFormat(format, context);
 
-        return stripEmptyHTMLTags(filterHTMLTags(formattedString));
+        return stringToSimpleHTML(formattedString);
     },
 
 
