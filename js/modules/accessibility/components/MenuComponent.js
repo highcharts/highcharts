@@ -292,17 +292,17 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             keyCodeMap: [
                 // Arrow prev handler
                 [[keys.left, keys.up], function () {
-                    component.onKbdPrevious(this);
+                    return component.onKbdPrevious(this);
                 }],
 
                 // Arrow next handler
                 [[keys.right, keys.down], function () {
-                    component.onKbdNext(this);
+                    return component.onKbdNext(this);
                 }],
 
                 // Click handler
                 [[keys.enter, keys.space], function () {
-                    component.onKbdClick(this);
+                    return component.onKbdClick(this);
                 }],
 
                 // ESC handler
