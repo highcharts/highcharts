@@ -93,7 +93,9 @@ function deprecateFromOptionsMap(
     chart, rootOldAsArray, rootNewAsArray, mapToNewOptions
 ) {
     function getChildProp(root, propAsArray) {
-        return propAsArray.reduce((acc, cur) => acc[cur], root);
+        return propAsArray.reduce(function (acc, cur) {
+            return acc[cur];
+        }, root);
     }
 
     var rootOld = getChildProp(chart.options, rootOldAsArray),
