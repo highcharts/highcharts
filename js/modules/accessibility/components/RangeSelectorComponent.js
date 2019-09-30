@@ -16,6 +16,25 @@ var extend = U.extend;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import A11yUtilities from '../utilities.js';
+var setElAttrs = A11yUtilities.setElAttrs;
+
+
+function shouldRunInputNavigation(chart) {
+    var inputVisible = (
+        chart.rangeSelector &&
+        chart.rangeSelector.inputGroup &&
+        chart.rangeSelector.inputGroup.element
+            .getAttribute('visibility') !== 'hidden'
+    );
+
+    return (
+        inputVisible &&
+        chart.options.rangeSelector.inputEnabled !== false &&
+        chart.rangeSelector.minInput &&
+        chart.rangeSelector.maxInput
+    );
+}
 
 
 /**
@@ -72,45 +91,63 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             return;
         }
 
-        // Make sure buttons are accessible and focusable
         if (rangeSelector.buttons && rangeSelector.buttons.length) {
             rangeSelector.buttons.forEach(function (button) {
                 component.unhideElementFromScreenReaders(button.element);
-                button.element.setAttribute('tabindex', '-1');
-                button.element.setAttribute('role', 'button');
-                button.element.setAttribute(
-                    'aria-label',
-                    chart.langFormat(
-                        'accessibility.rangeSelector.buttonText',
-                        {
-                            chart: chart,
-                            buttonText: button.text && button.text.textStr
-                        }
-                    )
-                );
+                component.setRangeButtonAttrs(button);
             });
         }
 
         // Make sure input boxes are accessible and focusable
         if (rangeSelector.maxInput && rangeSelector.minInput) {
             ['minInput', 'maxInput'].forEach(function (key, i) {
-                if (rangeSelector[key]) {
-                    component.unhideElementFromScreenReaders(
-                        rangeSelector[key]
-                    );
-                    rangeSelector[key].setAttribute('tabindex', '-1');
-                    rangeSelector[key].setAttribute('role', 'textbox');
-                    rangeSelector[key].setAttribute(
-                        'aria-label',
-                        chart.langFormat(
-                            'accessibility.rangeSelector.' +
-                                (i ? 'max' : 'min') + 'InputLabel',
-                            { chart: chart }
-                        )
+                var input = rangeSelector[key];
+                if (input) {
+                    component.unhideElementFromScreenReaders(input);
+                    component.setRangeInputAttrs(
+                        input,
+                        'accessibility.rangeSelector.' + (i ? 'max' : 'min') +
+                            'InputLabel'
                     );
                 }
             });
         }
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.SVGElement} button
+     */
+    setRangeButtonAttrs: function (button) {
+        var chart = this.chart,
+            label = chart.langFormat(
+                'accessibility.rangeSelector.buttonText',
+                {
+                    chart: chart,
+                    buttonText: button.text && button.text.textStr
+                }
+            );
+
+        setElAttrs(button.element, {
+            tabindex: -1,
+            role: 'button',
+            'aria-label': label
+        });
+    },
+
+
+    /**
+     * @private
+     */
+    setRangeInputAttrs: function (input, langKey) {
+        var chart = this.chart;
+
+        setElAttrs(input, {
+            tabindex: -1,
+            role: 'textbox',
+            'aria-label': chart.langFormat(langKey, { chart: chart })
+        });
     },
 
 
@@ -122,62 +159,85 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     getRangeSelectorButtonNavigation: function () {
         var chart = this.chart,
             keys = this.keyCodes,
-            a11yOptions = chart.options.accessibility,
             component = this;
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                // Left/Right/Up/Down
-                [[
-                    keys.left, keys.right, keys.up, keys.down
-                ], function (keyCode) {
-                    var direction = (
-                        keyCode === keys.left || keyCode === keys.up
-                    ) ? -1 : 1;
+                [[keys.left, keys.right, keys.up, keys.down],
+                    function (keyCode) {
+                        return component.onButtonNavKbdArrowKey(this, keyCode);
+                    }],
 
-                    // Try to highlight next/prev button
-                    if (
-                        !chart.highlightRangeSelectorButton(
-                            chart.highlightedRangeSelectorItemIx + direction
-                        )
-                    ) {
-                        // If we failed, handle wrap around/move
-                        if (a11yOptions.keyboardNavigation.wrapAround) {
-                            this.init(direction);
-                            return this.response.success;
-                        }
-                        return this.response[direction > 0 ? 'next' : 'prev'];
-                    }
-                }],
-
-                // Enter/Spacebar
-                [[
-                    keys.enter, keys.space
-                ], function () {
-                    // Don't allow click if button used to be disabled
-                    if (chart.oldRangeSelectorItemState !== 3) {
-                        component.fakeClickEvent(
-                            chart.rangeSelector.buttons[
-                                chart.highlightedRangeSelectorItemIx
-                            ].element
-                        );
-                    }
-                }]
+                [[keys.enter, keys.space],
+                    function () {
+                        return component.onButtonNavKbdClick(this);
+                    }]
             ],
 
-            // Only run this module if we have range selector
             validate: function () {
-                return chart.rangeSelector && chart.rangeSelector.buttons &&
+                var hasRangeSelector = chart.rangeSelector &&
+                    chart.rangeSelector.buttons &&
                     chart.rangeSelector.buttons.length;
+                return hasRangeSelector;
             },
 
-            // Focus first/last button
             init: function (direction) {
+                var lastButtonIx = chart.rangeSelector.buttons.length - 1;
                 chart.highlightRangeSelectorButton(
-                    direction > 0 ? 0 : chart.rangeSelector.buttons.length - 1
+                    direction > 0 ? 0 : lastButtonIx
                 );
             }
         });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @param {number} keyCode
+     * @return {number} Response code
+     */
+    onButtonNavKbdArrowKey: function (keyboardNavigationHandler, keyCode) {
+        var response = keyboardNavigationHandler.response,
+            keys = this.keyCodes,
+            chart = this.chart,
+            wrapAround = chart.options.accessibility.keyboardNavigation
+                .wrapAround,
+            direction = (
+                keyCode === keys.left || keyCode === keys.up
+            ) ? -1 : 1,
+            didHighlight = chart.highlightRangeSelectorButton(
+                chart.highlightedRangeSelectorItemIx + direction
+            );
+
+        if (!didHighlight) {
+            if (wrapAround) {
+                keyboardNavigationHandler.init(direction);
+                return response.success;
+            }
+            return response[direction > 0 ? 'next' : 'prev'];
+        }
+
+        return response.success;
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @param {number} keyCode
+     */
+    onButtonNavKbdClick: function () {
+        var chart = this.chart,
+            wasDisabled = chart.oldRangeSelectorItemState === 3;
+
+        if (!wasDisabled) {
+            this.fakeClickEvent(
+                chart.rangeSelector.buttons[
+                    chart.highlightedRangeSelectorItemIx
+                ].element
+            );
+        }
     },
 
 
@@ -189,67 +249,87 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     getRangeSelectorInputNavigation: function () {
         var chart = this.chart,
-            keys = this.keyCodes;
+            keys = this.keyCodes,
+            component = this;
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                // Tab/Up/Down
                 [[
                     keys.tab, keys.up, keys.down
                 ], function (keyCode, e) {
                     var direction = (
-                            keyCode === keys.tab && e.shiftKey ||
-                            keyCode === keys.up
-                        ) ? -1 : 1,
+                        keyCode === keys.tab && e.shiftKey ||
+                        keyCode === keys.up
+                    ) ? -1 : 1;
 
-                        newIx = chart.highlightedInputRangeIx =
-                            chart.highlightedInputRangeIx + direction;
-
-                    // Try to highlight next/prev item in list.
-                    if (newIx > 1 || newIx < 0) { // Out of range
-                        return this.response[direction > 0 ? 'next' : 'prev'];
-                    }
-                    chart.rangeSelector[
-                        newIx ? 'maxInput' : 'minInput'
-                    ].focus();
-                    return this.response.success;
+                    return component.onInputKbdMove(this, direction);
                 }]
             ],
 
-            // Only run if we have range selector with input boxes
             validate: function () {
-                var inputVisible = (
-                    chart.rangeSelector &&
-                    chart.rangeSelector.inputGroup &&
-                    chart.rangeSelector.inputGroup.element
-                        .getAttribute('visibility') !== 'hidden'
-                );
-
-                return (
-                    inputVisible &&
-                    chart.options.rangeSelector.inputEnabled !== false &&
-                    chart.rangeSelector.minInput &&
-                    chart.rangeSelector.maxInput
-                );
+                return shouldRunInputNavigation(chart);
             },
 
-            // Highlight first/last input box
             init: function (direction) {
-                chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
-                chart.rangeSelector[
-                    chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'
-                ].focus();
+                component.onInputNavInit(direction);
             },
 
-            // Hide HTML element when leaving boxes
             terminate: function () {
-                var rangeSel = chart.rangeSelector;
-                if (rangeSel && rangeSel.maxInput && rangeSel.minInput) {
-                    rangeSel.hideInput('max');
-                    rangeSel.hideInput('min');
-                }
+                component.onInputNavTerminate();
             }
         });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @param {number} direction
+     * @return {number} Response code
+     */
+    onInputKbdMove: function (keyboardNavigationHandler, direction) {
+        var chart = this.chart,
+            response = keyboardNavigationHandler.response,
+            newIx = chart.highlightedInputRangeIx =
+                chart.highlightedInputRangeIx + direction,
+            newIxOutOfRange = newIx > 1 || newIx < 0;
+
+        if (newIxOutOfRange) {
+            return response[direction > 0 ? 'next' : 'prev'];
+        }
+
+        chart.rangeSelector[newIx ? 'maxInput' : 'minInput'].focus();
+        return response.success;
+    },
+
+
+    /**
+     * @private
+     * @param {number} direction
+     */
+    onInputNavInit: function (direction) {
+        var chart = this.chart,
+            buttonIxToHighlight = direction > 0 ? 0 : 1;
+
+        chart.highlightedInputRangeIx = buttonIxToHighlight;
+        chart.rangeSelector[
+            buttonIxToHighlight ? 'maxInput' : 'minInput'
+        ].focus();
+    },
+
+
+    /**
+     * @private
+     */
+    onInputNavTerminate: function () {
+        var rangeSel = this.chart.rangeSelector || {};
+
+        if (rangeSel.maxInput) {
+            rangeSel.hideInput('max');
+        }
+        if (rangeSel.minInput) {
+            rangeSel.hideInput('min');
+        }
     },
 
 
