@@ -1,4 +1,4 @@
-QUnit.test('Map with allAreas disabled centers on visible areas.', assert => {
+QUnit.test('Map with allAreas disabled centers on visible areas (#4784)', assert => {
     let chart;
 
     chart = Highcharts.mapChart('container', {
