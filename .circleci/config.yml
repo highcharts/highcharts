@@ -169,6 +169,7 @@ jobs:
       - run:
           name: Save test results where both an reference.svg and candidate.svg exists
           command: |
+            mkdir ../visual-test-results &&
             find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} cp -r --parents {} ../visual-test-results
           when: always
       - store_test_results:

@@ -572,6 +572,7 @@ module.exports = function (config) {
         options.imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json',
         };
+        options.browserDisconnectTolerance = 1; // default 0
     }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
