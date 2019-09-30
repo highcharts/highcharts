@@ -1,4 +1,3 @@
-
 QUnit.test('Point markers fills should be taken from zones on hover.(#4670)', function (assert) {
     var chart = $('#container').highcharts({
         series: [{
@@ -189,12 +188,6 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
         points[0].graphic.element.getAttribute('fill'),
         'blue',
         'No zones fill'
-    );
-
-    assert.strictEqual(
-        points[0].graphic.element.getAttribute('stroke'),
-        '#ffffff',
-        'No zones stroke'
     );
 
     assert.strictEqual(

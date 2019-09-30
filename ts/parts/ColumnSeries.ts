@@ -564,7 +564,7 @@ seriesType<Highcharts.ColumnSeries>(
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}'
+        borderColor: 'beige'
 
     },
     /**

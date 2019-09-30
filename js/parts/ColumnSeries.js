@@ -429,7 +429,7 @@ seriesType('column', 'line',
      *
      * @private
      */
-    borderColor: '${palette.backgroundColor}'
+    borderColor: 'beige'
 }, 
 /**
  * @lends seriesTypes.column.prototype
