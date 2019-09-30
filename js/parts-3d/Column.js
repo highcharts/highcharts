@@ -9,10 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var pick = U.pick;
+import '../parts/Utilities.js';
 import '../parts/Series.js';
-var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
+var addEvent = H.addEvent, perspective = H.perspective, pick = H.pick, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
 /**
  * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
  *
@@ -197,21 +196,23 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 // series group - if series is added to a group all columns will have the same
 // zIndex in comparison with different series.
 wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
-    if (this.chart.is3d()) {
-        if (this[prop]) {
-            delete this[prop];
-        }
-        if (parent) {
-            if (!this.chart.columnGroup) {
-                this.chart.columnGroup =
-                    this.chart.renderer.g('columnGroup').add(parent);
+    if (prop !== 'dataLabelsGroup') {
+        if (this.chart.is3d()) {
+            if (this[prop]) {
+                delete this[prop];
             }
-            this[prop] = this.chart.columnGroup;
-            this.chart.columnGroup.attr(this.getPlotBox());
-            this[prop].survive = true;
-            if (prop === 'group' || prop === 'markerGroup') {
-                arguments[3] = 'visible';
-                // For 3D column group and markerGroup should be visible
+            if (parent) {
+                if (!this.chart.columnGroup) {
+                    this.chart.columnGroup =
+                        this.chart.renderer.g('columnGroup').add(parent);
+                }
+                this[prop] = this.chart.columnGroup;
+                this.chart.columnGroup.attr(this.getPlotBox());
+                this[prop].survive = true;
+                if (prop === 'group' || prop === 'markerGroup') {
+                    arguments[3] = 'visible';
+                    // For 3D column group and markerGroup should be visible
+                }
             }
         }
     }
