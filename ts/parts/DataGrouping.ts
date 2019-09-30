@@ -125,7 +125,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'
+            'windbarb'|'ichimoku-averages'
         );
     }
 }
