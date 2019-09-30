@@ -1881,7 +1881,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '${palette.backgroundColor}',
+        backgroundColor: 'pink',
 
         /**
          * The background color or gradient for the plot area.
