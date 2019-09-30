@@ -38,11 +38,19 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
                 }]
             }
         },
-        chart, chart3d;
+        chart, chart3d, container, container2;
+
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    container.id = "cointainer";
+
+    container2 = document.createElement("div");
+    document.body.appendChild(container2);
+    container2.id = "container2";
 
     chart = $('#container').highcharts(options).highcharts();
     options.chart.options3d.enabled = true;
-    chart3d = $('#container_2').highcharts(options).highcharts();
+    chart3d = $('#container2').highcharts(options).highcharts();
 
     chart.series[0].points[1].doDrilldown();
     chart.series[0].points[0].select();
