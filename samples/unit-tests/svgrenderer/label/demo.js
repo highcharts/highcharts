@@ -456,3 +456,40 @@ QUnit.test('Labels with useHTML', assert => {
         'The span width should adapt to shorter text (#10009)'
     );
 });
+
+QUnit.test("Change of label alignment after add (#4652)", function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        500,
+        300
+    );
+
+    var lbl = ren.label('Hello World', 100, 100)
+        .attr({
+            //align: 'right',
+            fill: 'silver'
+        })
+        .add();
+
+
+    var g = ren.box.querySelector('g');
+
+
+    assert.close(
+        g.getBoundingClientRect().left,
+        100 + document.getElementById('container').offsetLeft,
+        1, // +/- 0.5px in Edge
+        "Box is left aligned"
+    );
+
+
+    lbl.attr({ align: 'right' });
+
+    assert.close(
+        g.getBoundingClientRect().right,
+        100 + document.getElementById('container').offsetLeft,
+        1, // +/- 0.5px in Edge
+        "Box is right aligned"
+    );
+
+});
