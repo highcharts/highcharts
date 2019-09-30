@@ -1,6 +1,6 @@
 QUnit.test('Pie radial gradient (#3801)', function (assert) {
 
-
+    const colors = Highcharts.defaultOptions.colors;
     // Radialize the colors
     Highcharts.setOptions({
         colors: Highcharts.map(Highcharts.getOptions().colors, function () {
@@ -68,5 +68,7 @@ QUnit.test('Pie radial gradient (#3801)', function (assert) {
         series.center[1],
         'After redraw, gradient is centered'
     );
-
+    Highcharts.setOptions({
+        colors
+    });
 });
