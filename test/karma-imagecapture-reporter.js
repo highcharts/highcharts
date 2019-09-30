@@ -131,16 +131,21 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     emitter.on('browser_info', (browser, info) => {
         let data = info.data;
         const filename = info.filename;
-        if (/\.svg$/.test(filename)) {
-            fs.writeFileSync(filename, prettyXML(data));
+        try {
+            if (/\.svg$/.test(filename)) {
+                fs.writeFileSync(filename, prettyXML(data));
 
-        } else if (/\.png$/.test(filename)) {
-            data = data.replace(/^data:image\/\w+;base64,/, '');
-            fs.writeFileSync(filename, Buffer.from(data, 'base64'));
+            } else if (/\.png$/.test(filename)) {
+                data = data.replace(/^data:image\/\w+;base64,/, '');
+                fs.writeFileSync(filename, Buffer.from(data, 'base64'));
 
-        } else if (/\.gif$/.test(filename)) {
-            createAnimatedGif(filename, info.frames);
+            } else if (/\.gif$/.test(filename)) {
+                createAnimatedGif(filename, info.frames);
+            }
+        } catch (err) {
+            LOG.error(`Failed to write file ${filename}\n\n${err}`);
         }
+
     });
 
 }
