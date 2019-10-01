@@ -161,6 +161,7 @@ jobs:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: git checkout ${CIRCLE_BRANCH} && npm i && npx gulp scripts
+      # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
@@ -173,7 +174,7 @@ jobs:
           name: Save test results where both an reference.svg and candidate.svg exists
           command: |
             mkdir ../visual-test-results &&
-            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rrv --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
+            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
           when: always
       - store_test_results:
           path: ../visual-test-results
