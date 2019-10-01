@@ -3,7 +3,7 @@ Installation
 
 ### npm and Bower
 
-Highcharts is also available as packages through npm and Bower. Read more on installation with [npm](docs/getting-started/install-from-npm) or [Bower](/docs/getting-started/install-from-bower) respectively. If you're not using these, continue reading.
+Highcharts is also available as packages through npm and Bower. Read more on installation with [npm](/docs/getting-started/install-from-npm) or [Bower](/docs/getting-started/install-from-bower) respectively. If you're not using these, continue reading.
 
 ### A. Include Highcharts
 
