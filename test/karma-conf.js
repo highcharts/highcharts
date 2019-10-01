@@ -580,6 +580,7 @@ module.exports = function (config) {
             resultsOutputPath: 'test/visual-test-results.json',
         };
         options.browserDisconnectTolerance = 1; // default 0
+        options.browserDisconnectTimeout = 30000; // default 2000
     }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
