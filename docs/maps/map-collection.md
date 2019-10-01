@@ -92,7 +92,7 @@ The following table outlines the properties available in the Highmaps Map Collec
 
 
 
-The **hc-key** property reflects the naming convention of the maps, and can be used for dynamic drilldown purposes. This is illustrated in the [Map drilldown demo](maps/demo/map-drilldown). The property follows the following format:
+The **hc-key** property reflects the naming convention of the maps, and can be used for dynamic drilldown purposes. This is illustrated in the [Map drilldown demo](https://highcharts.com/maps/demo/map-drilldown). The property follows the following format:
 
 ```
 <unique admin0 id>-<unique admin1 id>-<unique admin2 id>-...
