@@ -169,12 +169,12 @@ H.seriesType<Highcharts.AroonIndicator>(
         pointValKey: 'y',
         linesApiNames: ['aroonDown'],
         getValues: function (
-            series: Highcharts.AroonIndicator,
+            series: Highcharts.Series,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorMultipleValuesObject {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 // 0- date, 1- Aroon Up, 2- Aroon Down
                 AR: Array<Array<number>> = [],
