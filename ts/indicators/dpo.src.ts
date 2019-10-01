@@ -123,7 +123,7 @@ H.seriesType<Highcharts.DPOIndicator>(
     {
         nameBase: 'DPO',
         getValues: function (
-            series: Highcharts.DPOIndicator,
+            series: Highcharts.Series,
             params: Highcharts.DPOIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
@@ -131,7 +131,8 @@ H.seriesType<Highcharts.DPOIndicator>(
                 offset: number = Math.floor(period / 2 + 1),
                 range: number = period + offset,
                 xVal: Array<number> = series.xData || [],
-                yVal: (Array<number>|Array<Array<number>>) = series.yData || [],
+                yVal: (Array<number>|Array<Array<number>>) =
+                    (series.yData as any) || [],
                 yValLen: number = yVal.length,
                 // 0- date, 1- Detrended Price Oscillator
                 DPO: Array<[number, number]> = [],
@@ -164,7 +165,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 // adding the last period point
                 sum = accumulatePoints(sum, yVal, periodIndex, index);
                 price = pick<(number|undefined), number>(
-                    yVal[rangeIndex][index], (yVal[rangeIndex] as any)
+                    (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
                 );
 
                 oscillator = price - sum / period;

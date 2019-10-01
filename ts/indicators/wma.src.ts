@@ -151,12 +151,12 @@ seriesType<Highcharts.WMAIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.WMAIndicator,
+            series: Highcharts.Series,
             params: Highcharts.WMAIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 range = 1,
                 xValue: number = xVal[0],

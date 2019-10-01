@@ -111,12 +111,12 @@ seriesType<Highcharts.CCIIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.CCIIndicator,
+            series: Highcharts.Series,
             params: Highcharts.CCIIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 TP: Array<number> = [],
                 periodTP: Array<number> = [],
