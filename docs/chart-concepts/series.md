@@ -14,7 +14,7 @@ series: [{
 
 Note: The series object is an array, meaning it can contain several series.
 
-The name attribute gives the series a name, which show up when hovering over the series in a chart and in the [legend](docs/chart-concepts/legend).
+The name attribute gives the series a name, which show up when hovering over the series in a chart and in the [legend](/docs/chart-concepts/legend).
 
 The data in a series
 --------------------
@@ -142,7 +142,7 @@ series: [{
 
 ### Stacking
 
-Stacking allows series to be placed on top of each other without overlapping. See [Stacking charts](docs/advanced-chart-features/stacking-charts) for more information.
+Stacking allows series to be placed on top of each other without overlapping. See [Stacking charts](/docs/advanced-chart-features/stacking-charts) for more information.
 
 ### Cursor
 

@@ -112,7 +112,7 @@ If you can't find the exact map that you want in the collection, it is easy to u
 Modify our maps
 ---------------
 
-Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](docs/maps/custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
+Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](docs/maps/custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](/docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
 
 Disclaimer
 ----------

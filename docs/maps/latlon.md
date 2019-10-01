@@ -44,7 +44,7 @@ For custom maps to support latitude/longitude they must have a `hc-transform` ob
     	}
     }
 
-This object contains information necessary to transform the coordinates used in the map to latitude/longitude, and vice versa. Adding this information to your map is easily done with a text editor, assuming your map is stored in [GeoJSON](docs/maps/custom-geojson-maps) format.
+This object contains information necessary to transform the coordinates used in the map to latitude/longitude, and vice versa. Adding this information to your map is easily done with a text editor, assuming your map is stored in [GeoJSON](/docs/maps/custom-geojson-maps) format.
 
 It is possible to expand on the definition above for more complex maps. The following is an example where the map is split into multiple zones, where each zone has its own transform object. This is useful if you have combined multiple maps together, as is often seen with overseas areas:
 

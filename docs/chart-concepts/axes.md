@@ -1,7 +1,7 @@
 Axes
 ====
 
-The x-axis and y-axis are shown by default in all charts but the [pie chart](docs/chart-and-series-types/pie-chart). Here is a quick overview of the axis elements:
+The x-axis and y-axis are shown by default in all charts but the [pie chart](/docs/chart-and-series-types/pie-chart). Here is a quick overview of the axis elements:
 
 ![axis_description.png](axis_description.png)
 

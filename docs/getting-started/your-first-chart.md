@@ -67,7 +67,7 @@ We will start off by creating a simple bar chart.
         <script type="text/javascript" src="/js/themes/gray.js"></script>
     ```
 
-For more details on how the options or settings in Highcharts work see [How to set options](docs/getting-started/how-to-set-options).
+For more details on how the options or settings in Highcharts work see [How to set options](/docs/getting-started/how-to-set-options).
 
 Below is a list of online examples of the examples shown in this article:
 
