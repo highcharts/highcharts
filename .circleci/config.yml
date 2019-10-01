@@ -165,12 +165,12 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare --no-fail-on-failing-test-suite
       - run: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
-      - run: mkdir ../visual-test-results
+      - run: sudo apt-get install -y rsync
       - run:
           name: Save test results where both an reference.svg and candidate.svg exists
           command: |
             mkdir ../visual-test-results &&
-            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} cp -r --parents {} ../visual-test-results
+            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rrv --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
           when: always
       - store_test_results:
           path: ../visual-test-results
