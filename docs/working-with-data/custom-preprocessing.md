@@ -1,7 +1,7 @@
 Custom Preprocessing
 ====================
 
-When implementing your own data sources, there may be cases where our built-in [Data module](docs/working-with-data/data-module) doesn't work. This may be if a CSV file is formatted in a certain way that the data module isn't able to read, if you have data passed in a certain XML format, or your data source is something completely different. Below are some examples trying to shed light on the process of parsing custom data.
+When implementing your own data sources, there may be cases where our built-in [Data module](/docs/working-with-data/data-module) doesn't work. This may be if a CSV file is formatted in a certain way that the data module isn't able to read, if you have data passed in a certain XML format, or your data source is something completely different. Below are some examples trying to shed light on the process of parsing custom data.
 
 *   [Preprocess data using CSV](#1)
 *   [Preprocess data using XML](#2)
@@ -10,7 +10,7 @@ When implementing your own data sources, there may be cases where our built-in [
 Preprocess data using CSV
 -------------------------
 
-Warning: As of Highcharts 4.0, this particular sample is much more easily implemented using the [Data module](docs/working-with-data/data-module). The following description is however still valid as a proof of concept of authoring your own parser function for data with non-standard syntax that the data module can't read.
+Warning: As of Highcharts 4.0, this particular sample is much more easily implemented using the [Data module](/docs/working-with-data/data-module). The following description is however still valid as a proof of concept of authoring your own parser function for data with non-standard syntax that the data module can't read.
 
 This example shows how to set up the basic chart options first, then do an ajax call for the data, parse the data and add them in the proper format to the options. The example can be seen live at [data-from-csv.htm](https://highcharts.com/studies/data-from-csv.htm).
 

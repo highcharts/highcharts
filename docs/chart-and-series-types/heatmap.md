@@ -13,7 +13,7 @@ The heat map series is defined by setting the type to `heatmap`. A heat map has 
 
 ### The color axis
 
-Heat maps borrow a central concept from Highmaps, the color axis. See the docs article on [color axis](docs/maps/color-axis/) for details
+Heat maps borrow a central concept from Highmaps, the color axis. See the docs article on [color axis](/docs/maps/color-axis/) for details
 
 ### Resources
 

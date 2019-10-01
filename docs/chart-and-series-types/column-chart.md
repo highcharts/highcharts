@@ -5,7 +5,7 @@ A column chart displays data as vertical bars.
 
 ![column.png](column.png)
 
-The column chart has the same options as a [series](docs/chart-concepts/series). For an overview of the area chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.column).
+The column chart has the same options as a [series](/docs/chart-concepts/series). For an overview of the area chart options see the [API reference](https://api.highcharts.com/highcharts/plotOptions.column).
 
 Histogram
 ---------

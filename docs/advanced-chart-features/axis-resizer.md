@@ -28,7 +28,7 @@ Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree
 Requirements
 ------------
 
-To use the axis resizer it is required to include the module `modules/drag-panes.js`, or `js/modules/drag-panes.js` if you are using [**styled** mode](docs/chart-design-and-style/style-by-css).
+To use the axis resizer it is required to include the module `modules/drag-panes.js`, or `js/modules/drag-panes.js` if you are using [**styled** mode](/docs/chart-design-and-style/style-by-css).
 
 New options available with this module
 --------------------------------------

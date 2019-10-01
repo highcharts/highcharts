@@ -157,6 +157,6 @@ $(function() {
 ```
     
 
-Note: The themes supplied with Highcharts download use this function. See [Themes](docs/chart-design-and-style/themes) for more information.
+Note: The themes supplied with Highcharts download use this function. See [Themes](/docs/chart-design-and-style/themes) for more information.
 
 For a full reference of the options available, see the [Highcharts options reference](https://api.highcharts.com/highcharts) or the [Highstock options reference](https://api.highcharts.com/highstock).
