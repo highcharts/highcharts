@@ -510,7 +510,14 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
-    var fixedRange = this.chart && this.chart.fixedRange, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+    var fixedRange = this.chart && this.chart.fixedRange, halfPointRange = (this.pointRange || 0) / 2, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+    // Add/remove half point range to/from the extremes (#1172)
+    if (!defined(fixedMin)) {
+        newMin = H.correctFloat(newMin + halfPointRange);
+    }
+    if (!defined(fixedMax)) {
+        newMax = H.correctFloat(newMax - halfPointRange);
+    }
     // If the difference between the fixed range and the actual requested range
     // is too great, the user is dragging across an ordinal gap, and we need to
     // release the range selector button.
@@ -832,11 +839,13 @@ Navigator.prototype = {
      * @return {void}
      */
     render: function (min, max, pxMin, pxMax) {
-        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
+        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
         // Don't redraw while moving the handles (#4703).
         if (this.hasDragged && !defined(pxMin)) {
             return;
         }
+        min = H.correctFloat(min - pointRange / 2);
+        max = H.correctFloat(max + pointRange / 2);
         // Don't render the navigator until we have data (#486, #4202, #5172).
         if (!isNumber(min) || !isNumber(max)) {
             // However, if navigator was already rendered, we may need to resize
@@ -873,20 +882,21 @@ Navigator.prototype = {
         newMin = xAxis.toValue(pxMin, true);
         newMax = xAxis.toValue(pxMax, true);
         currentRange = Math.abs(H.correctFloat(newMax - newMin));
-        if (currentRange < minRange) {
+        if (H.correctFloat(currentRange - pointRange) < minRange) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - minRange, true);
+                pxMin = xAxis.toPixels(newMax - minRange - pointRange, true);
             }
             else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + minRange, true);
+                pxMax = xAxis.toPixels(newMin + minRange + pointRange, true);
             }
         }
-        else if (defined(maxRange) && currentRange > maxRange) {
+        else if (defined(maxRange) &&
+            H.correctFloat(currentRange - pointRange) > maxRange) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - maxRange, true);
+                pxMin = xAxis.toPixels(newMax - maxRange - pointRange, true);
             }
             else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + maxRange, true);
+                pxMax = xAxis.toPixels(newMin + maxRange + pointRange, true);
             }
         }
         // Handles are allowed to cross, but never exceed the plot area
