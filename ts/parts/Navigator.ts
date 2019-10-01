@@ -797,6 +797,7 @@ Axis.prototype.toFixedRange = function (
     fixedMax?: number
 ): Highcharts.RangeObject {
     var fixedRange = this.chart && this.chart.fixedRange,
+        halfPointRange = (this.pointRange || 0) / 2,
         newMin = pick<number|undefined, number>(
             fixedMin, this.translate(pxMin as any, true, !this.horiz) as any
         ),
@@ -804,6 +805,14 @@ Axis.prototype.toFixedRange = function (
             fixedMax, this.translate(pxMax as any, true, !this.horiz) as any
         ),
         changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+
+    // Add/remove half point range to/from the extremes (#1172)
+    if (!defined(fixedMin)) {
+        newMin = H.correctFloat(newMin + halfPointRange);
+    }
+    if (!defined(fixedMax)) {
+        newMax = H.correctFloat(newMax - halfPointRange);
+    }
 
     // If the difference between the fixed range and the actual requested range
     // is too great, the user is dragging across an ordinal gap, and we need to
@@ -1223,6 +1232,7 @@ Navigator.prototype = {
             scrollbarHeight = navigator.scrollbarHeight,
             navigatorSize,
             xAxis = navigator.xAxis,
+            pointRange = xAxis.pointRange || 0,
             scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
             navigatorEnabled = navigator.navigatorEnabled,
             zoomedMin,
@@ -1240,6 +1250,9 @@ Navigator.prototype = {
         if (this.hasDragged && !defined(pxMin)) {
             return;
         }
+
+        min = H.correctFloat(min - pointRange / 2);
+        max = H.correctFloat(max + pointRange / 2);
 
         // Don't render the navigator until we have data (#486, #4202, #5172).
         if (!isNumber(min) || !isNumber(max)) {
@@ -1285,18 +1298,37 @@ Navigator.prototype = {
         // Are we below the minRange? (#2618, #6191)
         newMin = xAxis.toValue(pxMin as any, true);
         newMax = xAxis.toValue(pxMax as any, true);
+
         currentRange = Math.abs(H.correctFloat(newMax - newMin));
-        if (currentRange < (minRange as any)) {
+
+        if (
+            H.correctFloat(currentRange - pointRange) < (minRange as any)
+        ) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - (minRange as any), true);
+                pxMin = xAxis.toPixels(
+                    newMax - (minRange as any) - pointRange,
+                    true
+                );
             } else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + (minRange as any), true);
+                pxMax = xAxis.toPixels(
+                    newMin + (minRange as any) + pointRange,
+                    true
+                );
             }
-        } else if (defined(maxRange) && currentRange > (maxRange as any)) {
+        } else if (
+            defined(maxRange) &&
+            H.correctFloat(currentRange - pointRange) > (maxRange as any)
+        ) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - (maxRange as any), true);
+                pxMin = xAxis.toPixels(
+                    newMax - (maxRange as any) - pointRange,
+                    true
+                );
             } else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + (maxRange as any), true);
+                pxMax = xAxis.toPixels(
+                    newMin + (maxRange as any) + pointRange,
+                    true
+                );
             }
         }
 
