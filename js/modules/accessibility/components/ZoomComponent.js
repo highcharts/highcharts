@@ -321,8 +321,8 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
             keyCodeMap: [
                 [[keys.tab, keys.up, keys.down, keys.left, keys.right],
                     function (keyCode, e) {
-                        var isBackwards = keyCode === this.tab && e.shiftKey ||
-                        keyCode === keys.left || keyCode === keys.up;
+                        var isBackwards = keyCode === keys.tab && e.shiftKey ||
+                            keyCode === keys.left || keyCode === keys.up;
 
                         // Arrow/tab => just move
                         return this.response[isBackwards ? 'prev' : 'next'];
