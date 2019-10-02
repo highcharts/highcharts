@@ -59,15 +59,17 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    arrayMin,
+    isNumber,
+    objectEach
+} = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     merge = H.merge;
 
 /* ************************************************************************** *
