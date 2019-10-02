@@ -13,7 +13,7 @@ LOADING CSV
 
 CSV can be loaded in two ways. Either [data.csv](https://api.highcharts.com/highcharts/data.csv), that holds a CSV string to be read into the chart, or, since v6.1, [data.csvURL](https://api.highcharts.com/highcharts/data.csvURL) that points to a file location. By default, the first row of the CSV data is interpreted as series names, the first column signifies category names or X values/dates, and subsequent columns hold data values.
 
-Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](studies/data-module-csv.htm).
+Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](https://highcharts.com/studies/data-module-csv.htm).
 
 1. **Contents of the CSV file**
 

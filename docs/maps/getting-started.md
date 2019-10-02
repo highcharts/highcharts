@@ -24,7 +24,7 @@ Highmaps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), 
 There are three basic sources for your map:
 
 1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](https://highcharts.com/docs/maps/map-collection) on the map collection to get started.
-2.  Find an SVG map online and convert it using our (experimental) [online converter](studies/map-from-svg.htm). 
+2.  Find an SVG map online and convert it using our (experimental) [online converter](https://highcharts.com/studies/map-from-svg.htm). 
 3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highmaps](https://highcharts.com/docs/maps/custom-maps).
 
 Initialize the map
