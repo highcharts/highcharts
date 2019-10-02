@@ -30,7 +30,6 @@ declare global {
             public options: BBIndicatorOptions;
             public pointClass: typeof BbIndicatorPoint;
             public points: Array<BbIndicatorPoint>;
-            public yData: Array<Array<number>>;
         }
 
         interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {

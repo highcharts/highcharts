@@ -23,7 +23,6 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: WMAIndicatorParamsOptions

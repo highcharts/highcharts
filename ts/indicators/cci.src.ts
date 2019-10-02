@@ -24,7 +24,6 @@ declare global {
             public pointClass: typeof CCIIndicatorPoint;
             public points: Array<CCIIndicatorPoint>;
             public options: CCIIndicatorOptions;
-            public yData: Array<Array<number>>;
         }
 
         interface CCIIndicatorOptions extends SMAIndicatorOptions {

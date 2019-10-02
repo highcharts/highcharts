@@ -26,7 +26,6 @@ declare global {
             public options: DPOIndicatorOptions;
             public pointClass: typeof DPOIndicatorPoint;
             public points: Array<DPOIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: DPOIndicatorParamsOptions

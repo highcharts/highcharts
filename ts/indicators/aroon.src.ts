@@ -30,7 +30,6 @@ declare global {
             public pointClass: typeof AroonIndicatorPoint;
             public points: Array<AroonIndicatorPoint>;
             public pointValKey: MultipleLinesMixin['pointValKey'];
-            public yData: Array<Array<number>>;
             public drawGraph: MultipleLinesMixin['drawGraph'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'

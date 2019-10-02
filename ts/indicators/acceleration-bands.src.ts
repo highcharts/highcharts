@@ -26,7 +26,6 @@ declare global {
             public options: ABandsIndicatorOptions;
             public pointClass: typeof ABandsIndicatorPoint;
             public points: Array<ABandsIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: ABandsIndicatorParamsOptions
