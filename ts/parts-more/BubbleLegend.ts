@@ -145,6 +145,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMin,
     isNumber,
     objectEach,
     pick
@@ -162,7 +163,6 @@ var Series = H.Series,
     noop = H.noop,
     stableSort = H.stableSort,
     setOptions = H.setOptions,
-    arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 
 setOptions({ // Set default bubble legend options

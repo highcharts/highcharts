@@ -65,13 +65,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMin,
     pick
 } = U;
 
 import '../parts/Options.js';
 
 var fireEvent = H.fireEvent,
-    arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
     pieProto = H.seriesTypes.pie.prototype;

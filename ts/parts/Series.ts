@@ -647,6 +647,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMin,
     defined,
     erase,
     extend,
@@ -667,7 +668,6 @@ import './SvgRenderer.js';
 var addEvent = H.addEvent,
     animObject = H.animObject,
     arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,

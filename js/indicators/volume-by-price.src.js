@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var extend = U.extend,
+var arrayMin = U.arrayMin,
+    extend = U.extend,
     isArray = U.isArray;
 
 // Utils
@@ -482,7 +483,7 @@ seriesType(
                 rangeExtremes = isOHLC ? arrayExtremesOHLC(yValues) : false,
                 lowRange = rangeExtremes ?
                     rangeExtremes.min :
-                    H.arrayMin(yValues),
+                    arrayMin(yValues),
                 highRange = rangeExtremes ?
                     rangeExtremes.max :
                     H.arrayMax(yValues),

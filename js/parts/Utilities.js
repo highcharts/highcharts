@@ -1503,7 +1503,7 @@ H.stableSort = function (arr, sortFunction) {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data) {
+function arrayMin(data) {
     var i = data.length, min = data[0];
     while (i--) {
         if (data[i] < min) {
@@ -1511,7 +1511,7 @@ H.arrayMin = function (data) {
         }
     }
     return min;
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -2484,6 +2484,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    arrayMin: arrayMin,
     attr: attr,
     defined: defined,
     erase: erase,

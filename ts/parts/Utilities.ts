@@ -2173,7 +2173,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data: Array<any>): number {
+function arrayMin(data: Array<any>): number {
     var i = data.length,
         min = data[0];
 
@@ -2183,7 +2183,7 @@ H.arrayMin = function (data: Array<any>): number {
         }
     }
     return min;
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
@@ -3362,6 +3362,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    arrayMin,
     attr,
     defined,
     erase,

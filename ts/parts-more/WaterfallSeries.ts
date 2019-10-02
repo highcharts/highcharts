@@ -103,6 +103,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMin,
     isNumber,
     objectEach,
     pick
@@ -113,7 +114,6 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 
 var correctFloat = H.correctFloat,
-    arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     addEvent = H.addEvent,
     Axis = H.Axis,

@@ -56,6 +56,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMin,
     defined,
     extend,
     isNumber,
@@ -82,7 +83,6 @@ import './RangeSelector.js';
 
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
     format = H.format,
