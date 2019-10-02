@@ -17,6 +17,6 @@ Heat maps borrow a central concept from Highmaps, the color axis. See the docs a
 
 ### Resources
 
-See the featured demos at [Heat map](demo/heatmap/) and [Large heatmap](demo/heatmap-canvas/). The latter demonstrates how a HTML5 canvas can be plugged in to optimize rendering times.
+See the featured demos at [Heat map](https://highcharts.com/demo/heatmap/) and [Large heatmap](https://highcharts.com/demo/heatmap-canvas/). The latter demonstrates how a HTML5 canvas can be plugged in to optimize rendering times.
 
 See [heatmap](https://api.highcharts.com/highmaps/plotOptions.heatmap) in the Highmaps docs.
