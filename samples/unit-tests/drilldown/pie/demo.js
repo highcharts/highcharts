@@ -275,17 +275,17 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
                 }]
             }
         },
-        chart, chart3d, container, container2;
+        chart, chart3d, container1, container2;
 
-    container = document.createElement("div");
-    document.body.appendChild(container);
-    container.id = "cointainer";
+    container1 = document.createElement("div");
+    document.body.appendChild(container1);
+    container1.id = "container1";
 
     container2 = document.createElement("div");
     document.body.appendChild(container2);
     container2.id = "container2";
 
-    chart = $('#container').highcharts(options).highcharts();
+    chart = $('#container1').highcharts(options).highcharts();
     options.chart.options3d.enabled = true;
     chart3d = $('#container2').highcharts(options).highcharts();
 
@@ -306,4 +306,10 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
         chart3d.series[0].options.colors[0],
         'Proper select-state color'
     );
+
+    chart.destroy();
+    chart3d.destroy();
+
+    document.body.removeChild(container1);
+    document.body.removeChild(container2);
 });

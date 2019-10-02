@@ -7,7 +7,19 @@ QUnit.test('Do not change hoverChartIndex during a drag (#4906)', function (asse
         start,
         end;
 
-    chart1 = Highcharts.chart('container1', {
+    document.getElementById('container').style.maxWidth = '1210px';
+    document.getElementById('container').style.width = '1210px';
+    const container1 = document.createElement('div');
+    document.getElementById('container').appendChild(container1);
+    container1.style.width = '600px';
+    container1.style.cssFloat = 'left';
+    const container2 = document.createElement('div');
+    document.getElementById('container').appendChild(container2);
+    container2.style.width = '600px';
+    container2.style.cssFloat = 'left';
+
+
+    chart1 = Highcharts.chart(container1, {
         chart: {
             zoomType: 'x'
         },
@@ -18,7 +30,7 @@ QUnit.test('Do not change hoverChartIndex during a drag (#4906)', function (asse
             text: 'Chart1'
         }
     });
-    chart2 = Highcharts.chart('container2', {
+    chart2 = Highcharts.chart(container2, {
         chart: {
             zoomType: 'x'
         },
@@ -90,6 +102,11 @@ QUnit.test('Do not change hoverChartIndex during a drag (#4906)', function (asse
             );
         }
     });
+
+    chart1.destroy();
+    chart2.destroy();
+    container1.parentNode.removeChild(container1);
+    container2.parentNode.removeChild(container2);
 });
 QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
 

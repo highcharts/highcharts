@@ -13,7 +13,7 @@
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
 	"code/modules/gantt.src.js",
-	
+
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
 	"code/modules/parallel-coordinates.src.js",
@@ -64,6 +64,7 @@
 	"code/indicators/indicators-all.src.js",
 
 	"node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
+	"node_modules/@highcharts/map-collection/custom/british-isles-all.js",
 	"samples/data/maps/bn-all.js",
 	"samples/data/maps/ad-all.js",
 	"samples/data/maps/europe.js",
