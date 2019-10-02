@@ -23,13 +23,9 @@ declare global {
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<KeltnerChannelsIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
-            public nameBase: string;
-            public nameComponents: Array<string>;
             public options: KeltnerChannelsIndicatorOptions;
-            public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
             public pointClass: typeof KeltnerChannelsIndicatorPoint;
             public points: Array<KeltnerChannelsIndicatorPoint>;
-            public pointValKey: MultipleLinesMixin['pointValKey'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
@@ -204,7 +200,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 BL: number,
                 date: number,
                 seriesEMA: (boolean|Highcharts.IndicatorValuesObject) =
-                    (EMA as any).prototype.getValues(series,
+                    EMA.prototype.getValues(series,
                         {
                             period: period,
                             index: index
@@ -259,4 +255,4 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
  * @apioption    series.keltnerchannels
  */
 
-''; // to avoid removal of the above jsdoc
+''; // to include the above in the js output

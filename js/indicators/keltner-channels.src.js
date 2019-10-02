@@ -164,4 +164,4 @@ merge(multipleLinesMixin, {
  *               stacking, showInNavigator
  * @apioption    series.keltnerchannels
  */
-''; // to avoid removal of the above jsdoc
+''; // to include the above in the js output
