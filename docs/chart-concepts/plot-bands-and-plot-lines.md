@@ -95,7 +95,7 @@ With a plot band in a polar chart or a gauge, the band will form as a concentric
 Plot bands and plot lines examples
 ----------------------------------
 
-*   [Spline with plot bands](demo/spline-plot-bands)
+*   [Spline with plot bands](https://highcharts.com/demo/spline-plot-bands)
 *   [Spline with dashed and dotted plot lines](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/xaxis/plotlines-dashstyle/)
 *   [Removing a plot band](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/xaxis/plotbands-id/)
 *   [Toggle plot band](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/members/axis-addplotband/)
