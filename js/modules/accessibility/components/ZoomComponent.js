@@ -208,7 +208,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                     }],
 
                 [[keys.space, keys.enter], function () {
-                    return component.onMapKbdClick();
+                    return component.onMapKbdClick(this);
                 }]
             ],
 
