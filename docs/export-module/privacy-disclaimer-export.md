@@ -10,7 +10,7 @@ Privacy Disclaimer
 
 We do not gather any personally identifiable information from incoming requests. Server logs are limited to displaying error messages and timing information, to help us improve the service. All chart data and headers are stripped out of the logs.
 
-The HTTP protocol is used for communication between client and the export server and is unsecured. When security and privacy is an issue to you, we recommend [setting up your own export server](/docs/export-module/setting-up-the-server) which holds the level of security you need. 
+The HTTP protocol is used for communication between client and the export server and is unsecured. When security and privacy is an issue to you, we recommend [setting up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server) which holds the level of security you need. 
 
 Description of data saved on the export server
 ----------------------------------------------
