@@ -1630,7 +1630,7 @@ Navigator.prototype = {
      */
     modifyNavigatorAxisExtremes: function () {
         var xAxis = this.xAxis, unionExtremes;
-        if (xAxis.getExtremes) {
+        if (typeof xAxis.getExtremes !== 'undefined') {
             unionExtremes = this.getUnionExtremes(true);
             if (unionExtremes &&
                 (unionExtremes.dataMin !== xAxis.min ||
