@@ -5,9 +5,9 @@ In this folder of the Highcharts repository we will gradually add Highcharts doc
 Topics
 ------
 
-*   [Installation](getting-started/installation)
-*   [Your first chart](getting-started/your-first-chart)
-*   [FAQs](getting-started/frequently-asked-questions)
+*   [Installation](getting-started/installation.md)
+*   [Your first chart](getting-started/your-first-chart.md)
+*   [FAQs](getting-started/frequently-asked-questions.md)
 
 Demo
 ----
