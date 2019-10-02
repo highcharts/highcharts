@@ -20,7 +20,6 @@ declare global {
             public data: Array<ATRIndicatorPoint>
             public pointClass: typeof ATRIndicatorPoint;
             public points: Array<ATRIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: ATRIndicatorParamsOptions
