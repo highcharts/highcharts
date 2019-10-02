@@ -60,7 +60,8 @@ import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
     doc = H.win.document,
-    merge = H.merge;
+    merge = H.merge,
+    fireEvent = H.fireEvent;
 
 
 // Add default options
@@ -295,12 +296,19 @@ Accessibility.prototype = {
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
+        fireEvent(chart, 'beforeA11yUpdate');
+
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
 
         // Update markup
         Object.keys(components).forEach(function (componentName) {
             components[componentName].onChartUpdate();
+
+            fireEvent(chart, 'afterA11yComponentUpdate', {
+                name: componentName,
+                component: components[componentName]
+            });
         });
 
         // Update keyboard navigation
@@ -315,6 +323,8 @@ Accessibility.prototype = {
         ) {
             whcm.setHighContrastTheme(chart);
         }
+
+        fireEvent(chart, 'afterA11yUpdate');
     },
 
 
