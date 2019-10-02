@@ -12,9 +12,9 @@ Demo
 
 For live examples see our demo pages:
 
-*   [Highcharts demo](/demo/)
-*   [Highstock demo](/stock/demo/)
-*   [Highmaps demo](/maps/demo/)
+*   [Highcharts demo](https://highcharts.com/demo/)
+*   [Highstock demo](https://highcharts.com/stock/demo/)
+*   [Highmaps demo](https://highcharts.com/maps/demo/)
 
 API
 ---
