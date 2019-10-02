@@ -3,7 +3,7 @@ Setting up the export server
 
 There may be cases where you don't want to use Highcharts' featured export server, for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
 
-Before setting up your own server, consider using the [client side export module](/docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
+Before setting up your own server, consider using the [client side export module](https://highcharts.com/docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
 
 If you still need to set up your own server, we have two flavors of servers to choose from;
 
@@ -66,7 +66,7 @@ You can for example change the location of the PhantomJS executable, the name of
 
 ### 2.3. Copy Highcharts Javascript to the maven project
 
-Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](/docs/export-module/render-charts-serverside)
+Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](https://highcharts.com/docs/export-module/render-charts-serverside)
 
 To make this work we need to run a headless browser, PhantomJS and PhantomJS needs in it's turn the Highcharts JS files on the server. For licensing reasons the Highcharts export server doesn't ship with Highcharts javascript files. We need to copy the Highcharts files manually to the project.
 

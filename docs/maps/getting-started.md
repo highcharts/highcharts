@@ -6,7 +6,7 @@ Highmaps is Highcharts for geo maps. Mainly [choropleth maps](https://en.wikiped
 Load the required files
 -----------------------
 
-For basics, see [Highcharts installation](/docs/getting-started/installation). The framework requirements and installation is the same for Highmaps as for Highcharts. To load Highmaps as a standalone product (if you don't have a license for Highcharts), include this script tag:
+For basics, see [Highcharts installation](https://highcharts.com/docs/getting-started/installation). The framework requirements and installation is the same for Highmaps as for Highcharts. To load Highmaps as a standalone product (if you don't have a license for Highcharts), include this script tag:
 
     
     <script src="https://code.highcharts.com/maps/highmaps.js"></script>
@@ -23,14 +23,14 @@ Highmaps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), 
 
 There are three basic sources for your map:
 
-1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](/docs/maps/map-collection) on the map collection to get started.
+1.  Use our [Map collection](https://code.highcharts.com/mapdata/). Read the [tutorial article](https://highcharts.com/docs/maps/map-collection) on the map collection to get started.
 2.  Find an SVG map online and convert it using our (experimental) [online converter](studies/map-from-svg.htm). 
-3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highmaps](/docs/maps/custom-maps).
+3.  Create your own map from scratch using an SVG editor, then convert them online. Read our tutorial on [Custom maps for Highmaps](https://highcharts.com/docs/maps/custom-maps).
 
 Initialize the map
 ------------------
 
-Read more on initializing a chart in [Your first chart](/docs/getting-started/your-first-chart). If you're running Highmaps as a jQuery plugin, the map is constructed with "Map" as the first argument:
+Read more on initializing a chart in [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart). If you're running Highmaps as a jQuery plugin, the map is constructed with "Map" as the first argument:
 
     
     $('#container').highcharts('Map', {  

@@ -21,8 +21,8 @@ Does Highcharts refer to files outside our domain?
 
 For basic usage, Highcharts doesn't refer to any files other than highcharts.js/highstock.js, though there are some cases that you should be aware of.
 
-*   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](/docs/export-module/setting-up-the-server). 
-*   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](/docs/getting-started/optional-dependencies) documentation article.
+*   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](https://highcharts.com/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). 
+*   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](https://highcharts.com/docs/getting-started/optional-dependencies) documentation article.
 
 * * *
 
@@ -134,7 +134,7 @@ If you're using German umlauts, Scandinavian vowels or non-European alphabets, y
 Can I generate charts on the server without using a browser?
 ------------------------------------------------------------
 
-Yes. See our article, [Render charts on the server](/docs/export-module/render-charts-serverside).
+Yes. See our article, [Render charts on the server](https://highcharts.com/docs/export-module/render-charts-serverside).
 
 * * *
 
@@ -150,7 +150,7 @@ If you want the line to be broken for missing dates, insert null values instead.
 How do I add data from a MySQL database?
 ----------------------------------------
 
-See [Preprocessing data from a database](/docs/working-with-data/data-from-a-database).
+See [Preprocessing data from a database](https://highcharts.com/docs/working-with-data/data-from-a-database).
 
 * * *
 

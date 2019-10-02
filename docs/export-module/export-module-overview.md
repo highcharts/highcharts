@@ -1,7 +1,7 @@
 Export module
 =============
 
-The exporting module allows your users to download the chart as PDF, PNG, JPG or SVG vector images. It also allows printing the chart directly without distracting elements from the web page. The downloads can be created on the client side if you use the [offline-exporting.js](/docs/export-module/client-side-export) module, otherwise they are generated on Highcharts' featured server or optionally [your own server](/docs/export-module/setting-up-the-server).
+The exporting module allows your users to download the chart as PDF, PNG, JPG or SVG vector images. It also allows printing the chart directly without distracting elements from the web page. The downloads can be created on the client side if you use the [offline-exporting.js](https://highcharts.com/docs/export-module/client-side-export) module, otherwise they are generated on Highcharts' featured server or optionally [your own server](https://highcharts.com/docs/export-module/setting-up-the-server).
 
 Additionally there's the [export data module](https://api.highcharts.com/highcharts/exporting.csv) that enables exporting the chart data to CSV, XLS or HTML table formats.
 
@@ -31,7 +31,7 @@ Since Highcharts 3.0 and Highstock 1.3, the size of the exported image is comput
 *   If a size still hasn't been found, it defaults to 600 by 400 pixels.
 *   After rendering the chart width the above size, and all text sizes in relation to that, the actual image _resolution_ is determined by [exporting.scale](https://api.highcharts.com/highcharts/exporting.scale) which defaults to 2. In practice this means that a 600x400 chart will return an image of 1200x800 pixels by default. The rationale behind this is quite simple - if we used a scale of 1 and just set the sourceWidth to 1200 and sourceHeight to 800, all the text would become too small. And if we didn't scale it up, the resolution would be too small for print. 
 
-See also [Setting up the export server](/docs/export-module/setting-up-the-server).
+See also [Setting up the export server](https://highcharts.com/docs/export-module/setting-up-the-server).
 
 ### Description of POST parameters for the Highcharts Export Server
 
