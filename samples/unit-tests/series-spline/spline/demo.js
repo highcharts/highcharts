@@ -11,17 +11,23 @@ QUnit.test('SplineSeries.getPointSpline (#4918)', function (assert) {
             plotY: 0
         }];
 
+    const mockSeries = {
+        chart: {
+            polar: false
+        }
+    };
+
     function pathToString(arr) {
         return arr.join(' ');
     }
 
     assert.strictEqual(
-        pathToString(getPointSpline(segment, segment[1], 1)),
+        pathToString(getPointSpline.call(mockSeries, segment, segment[1], 1)),
         pathToString(['C', -5, 10, 142, 250, 240, 250]),
         'Path to point.1 is correct'
     );
     assert.strictEqual(
-        pathToString(getPointSpline(segment, segment[2], 2)),
+        pathToString(getPointSpline.call(mockSeries, segment, segment[2], 2)),
         pathToString(['C', 348, 250, 510, 0, 510, 0]),
         'Path to point.2 is correct'
     );
