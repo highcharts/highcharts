@@ -385,13 +385,19 @@ seriesType('waterfall', 'column', {
     // Return y value or string if point is sum
     toYData: function (pt) {
         if (pt.isSum) {
-            // #3245 Error when first element is Sum or Intermediate Sum
-            return (pt.x === 0 ? null : 'sum');
+            return 'sum';
         }
         if (pt.isIntermediateSum) {
-            return (pt.x === 0 ? null : 'intermediateSum'); // #3245
+            return 'intermediateSum';
         }
         return pt.y;
+    },
+    updateParallelArrays: function (point, i) {
+        Series.prototype.updateParallelArrays.call(this, point, i);
+        // Prevent initial sums from triggering an error (#3245, #7559)
+        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
+            this.yData[0] = null;
+        }
     },
     // Postprocess mapping between options and SVG attributes
     pointAttribs: function (point, state) {
