@@ -157,6 +157,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMin,
     defined,
     erase,
     extend,
@@ -165,7 +166,6 @@ const {
 } = U;
 
 var arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     destroyObjectProperties = H.destroyObjectProperties,
     merge = H.merge;
 

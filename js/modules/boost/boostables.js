@@ -6,10 +6,10 @@
  *
  *  License: highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 // These are the series we allow boosting for.
-
 var boostables = [
     'area',
     'arearange',
@@ -22,5 +22,4 @@ var boostables = [
     'bubble',
     'treemap'
 ];
-
 export default boostables;
