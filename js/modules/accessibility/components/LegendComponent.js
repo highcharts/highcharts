@@ -95,6 +95,41 @@ LegendComponent.prototype = new AccessibilityComponent();
 extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
+     * Init the component
+     * @private
+     */
+    init: function () {
+        var component = this;
+
+        this.addEvent(H.Legend, 'afterScroll', function () {
+            if (this.chart === component.chart) {
+                component.updateProxies();
+            }
+        });
+    },
+
+
+    /**
+     * @private
+     */
+    updateLegendItemProxyVisibility: function () {
+        var legend = this.chart.legend,
+            items = legend.allItems || [],
+            curPage = legend.currentPage || 1;
+
+        items.forEach(function (item) {
+            var itemPage = item.pageIx || 0,
+                hide = itemPage !== curPage - 1;
+
+            if (item.a11yProxyElement) {
+                item.a11yProxyElement.style.visibility = hide ?
+                    'hidden' : 'visible';
+            }
+        });
+    },
+
+
+    /**
      * The legend needs updates on every render, in order to update positioning
      * of the proxy overlays.
      */
@@ -108,12 +143,20 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             return;
         }
 
-        // Always Remove group if exists
+        this.updateProxies();
+    },
+
+
+    /**
+     * @private
+     */
+    updateProxies: function () {
         this.removeElement(this.legendProxyGroup);
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();
             this.proxyLegendItems();
+            this.updateLegendItemProxyVisibility();
         }
     },
 

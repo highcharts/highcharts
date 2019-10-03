@@ -990,14 +990,15 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     scroll: function (scrollBy, animation) {
-        var pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
+        var _this = this;
+        var chart = this.chart, pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
         // When resizing while looking at the last page
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
         if (currentPage > 0) {
             if (animation !== undefined) {
-                setAnimation(animation, this.chart);
+                setAnimation(animation, chart);
             }
             this.nav.attr({
                 translateX: padding,
@@ -1023,7 +1024,7 @@ Highcharts.Legend.prototype = {
                         'highcharts-legend-nav-active'
                 });
             }, this);
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 this.up
                     .attr({
                     fill: currentPage === 1 ?
@@ -1053,6 +1054,11 @@ Highcharts.Legend.prototype = {
             });
             this.currentPage = currentPage;
             this.positionCheckboxes();
+            // Fire event after scroll animation is complete
+            var animOptions = H.animObject(pick(animation, chart.renderer.globalAnimation, true));
+            setTimeout(function () {
+                fireEvent(_this, 'afterScroll', { currentPage: currentPage });
+            }, animOptions.duration);
         }
     }
 };
