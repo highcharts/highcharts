@@ -1,4 +1,4 @@
-These methods are deprecated, please use our new ones, which can be found [here](docs/export-module/setting-up-the-server).
+These methods are deprecated, please use our new ones, which can be found [here](https://highcharts.com/docs/export-module/setting-up-the-server).
 
 Deprecated export servers
 -------------------------
@@ -35,7 +35,7 @@ You can for example change the location of the PhantomJS executable, the name of
 
 #### 1.3. Copy Highcharts Javascript to the maven project
 
-Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](docs/export-module/render-charts-serverside)
+Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](https://highcharts.com/docs/export-module/render-charts-serverside)
 
 To make this work we need to run a headless browser, PhantomJS and PhantomJS needs in it's turn the Highcharts JS files on the server. For licensing reasons the Highcharts export server doesn't ship with Highcharts javascript files. We need to copy the Highcharts files manually to the project.
 

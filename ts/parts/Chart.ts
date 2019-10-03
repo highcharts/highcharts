@@ -1244,8 +1244,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481)
-                height = title.getBBox(titleOptions.useHTML).height;
+                // Skip the cache for HTML (#3481, #11666)
+                height = Math.round(title.getBBox(titleOptions.useHTML).height);
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?

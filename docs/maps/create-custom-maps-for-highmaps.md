@@ -39,7 +39,7 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 12. After you're finished drawing, save the file. Inkscape saves as SVG by default. Open the file in a text editor so that you see the SVG/XML markup. Select all and copy. 
 
-13. Using a modern browser (tested with Chrome), go to [www.highcharts.com/studies/map-from-svg.htm](studies/map-from-svg.htm). In the textarea labeled "Online SVG URL or SVG markup", paste your SVG markup. Hit the Load button. Now an interactive map should display on the right.
+13. Using a modern browser (tested with Chrome), go to [www.highcharts.com/studies/map-from-svg.htm](https://highcharts.com/studies/map-from-svg.htm). In the textarea labeled "Online SVG URL or SVG markup", paste your SVG markup. Hit the Load button. Now an interactive map should display on the right.
 
 ![map-from-svg-9.png](map-from-svg-9.png)
 

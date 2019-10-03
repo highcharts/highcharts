@@ -6,15 +6,13 @@
  *
  *  License: highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import H from '../../parts/Globals.js';
 import '../../parts/Color.js';
-
 var Color = H.Color;
-
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
 var defaultHTMLColorMap = {
@@ -162,7 +160,5 @@ var defaultHTMLColorMap = {
     yellow: '#ffff00',
     yellowgreen: '#9acd32'
 };
-
 Color.prototype.names = defaultHTMLColorMap;
-
 export default defaultHTMLColorMap;

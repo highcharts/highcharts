@@ -20,7 +20,6 @@ declare global {
             public data: Array<ATRIndicatorPoint>
             public pointClass: typeof ATRIndicatorPoint;
             public points: Array<ATRIndicatorPoint>;
-            public yData: Array<Array<number>>;
             public getValues(
                 series: Series,
                 params: ATRIndicatorParamsOptions
@@ -138,15 +137,15 @@ seriesType<Highcharts.ATRIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.ATRIndicator,
+            series: Highcharts.Series,
             params: Highcharts.ATRIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
-            var period = (params.period as any),
-                xVal = (series.xData as any),
-                yVal = series.yData,
-                yValLen = yVal ? yVal.length : 0,
-                xValue = (xVal as any)[0],
-                yValue = yVal[0],
+            var period: number = (params.period as any),
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
+                yValLen: number = yVal ? yVal.length : 0,
+                xValue: number = (xVal as any)[0],
+                yValue: Array<number> = yVal[0],
                 range = 1,
                 prevATR = 0,
                 TR = 0,
@@ -169,7 +168,7 @@ seriesType<Highcharts.ATRIndicator>(
 
             for (i = 1; i <= yValLen; i++) {
 
-                accumulateAverage(points, (xVal as any), yVal, i);
+                accumulateAverage(points, xVal, yVal, i);
 
                 if (period < range) {
                     point = populateAverage(

@@ -171,7 +171,7 @@ declare global {
                 zIndex?: number,
                 parent?: SVGElement
             ): SVGElement;
-            public pointAttribs(point: Point, state?: string): SVGAttributes;
+            public pointAttribs(point?: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
@@ -299,7 +299,6 @@ declare global {
             allowPointSelect?: boolean;
             animation?: (boolean|AnimationOptionsObject);
             animationLimit?: number;
-            boostBlending?: SeriesBlendingValue;
             boostThreshold?: number;
             borderColor?: ColorType;
             borderWidth?: number;
@@ -425,7 +424,6 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
         }
-        type SeriesBlendingValue = ('add'|'darken'|'multiply');
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
         type SeriesOptionsType = SeriesOptions;
@@ -647,6 +645,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMin,
     defined,
     erase,
     extend,
@@ -667,7 +666,6 @@ import './SvgRenderer.js';
 var addEvent = H.addEvent,
     animObject = H.animObject,
     arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -4893,7 +4891,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @private
          * @function Highcharts.Series#pointAttribs
          *
-         * @param {Highcharts.Point} point
+         * @param {Highcharts.Point} [point]
          *        The point instance to inspect.
          *
          * @param {string} [state]
@@ -4905,7 +4903,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
         pointAttribs: function (
             this: Highcharts.Series,
-            point: Highcharts.Point,
+            point?: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
             var seriesMarkerOptions = this.options.marker,

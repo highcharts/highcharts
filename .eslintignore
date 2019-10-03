@@ -6,7 +6,7 @@ js/indicators/**/*.js
 #!js/indicators/cmf.src.js
 !js/indicators/dema.src.js
 #!js/indicators/dpo.src.js
-!js/indicators/ema.src.js
+#!js/indicators/ema.src.js
 !js/indicators/ichimoku-kinko-hyo.src.js
 !js/indicators/keltner-channels.src.js
 !js/indicators/macd.src.js
@@ -29,12 +29,12 @@ js/indicators/**/*.js
 !js/indicators/volume-by-price.src.js
 !js/indicators/vwap.src.js
 #!js/indicators/williams-r.src.js
-!js/indicators/zigzag.src.js
+#!js/indicators/zigzag.src.js
 js/modules/**/*.js
 !js/modules/accessibility/**/*.js
-!js/modules/boost/**/*.js
+#!js/modules/boost/**/*.js
 !js/modules/sonification/**/*.js
-!js/modules/boost-canvas.src.js
+#!js/modules/boost-canvas.src.js
 !js/modules/stock-tools-bindings.js
 !js/modules/stock-tools-gui.js
 #!js/modules/variable-pie.src.js

@@ -80,7 +80,7 @@ addEvent(H.Chart, 'displayError', function (
         });
     }
 
-    if (options && options.displayErrors) {
+    if (options && options.displayErrors && renderer) {
         chart.errorElements = [];
         msg = isNumber(code) ?
             (

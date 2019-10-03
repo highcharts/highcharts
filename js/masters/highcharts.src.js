@@ -39,6 +39,7 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    arrayMin: U.arrayMin,
     attr: U.attr,
     defined: U.defined,
     erase: U.erase,

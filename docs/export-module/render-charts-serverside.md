@@ -20,7 +20,7 @@ See documentation on [GitHub](https://github.com/highcharts/node-export-server/b
 Deprecated Export Server
 ------------------------
 
-Our older, [legacy export server](docs/export-module/setting-up-the-server) includes a PhantomJS script package, which makes it possible to run Highcharts on the server without a client internet browser involved. **Note that there are no features in the legacy export server which are not included in the new node export server**.
+Our older, [legacy export server](https://highcharts.com/docs/export-module/setting-up-the-server) includes a PhantomJS script package, which makes it possible to run Highcharts on the server without a client internet browser involved. **Note that there are no features in the legacy export server which are not included in the new node export server**.
 
 Typical use cases are:
 

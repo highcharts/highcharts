@@ -18,61 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
-        interface Chart {
-            colorAxis?: Array<ColorAxis>;
-        }
-        interface Series {
-            axisTypes: Array<string>;
-            colorKey: string;
-            minColorValue?: number;
-            maxColorValue?: number;
-        }
-        interface SeriesOptions {
-            colorKey?: string;
-        }
-        interface ColorAxisDataClassesOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            from?: number;
-            name?: string;
-            to?: number;
-        }
-        interface ColorAxisLegendItemObject
-            extends ColorAxisDataClassesOptions
-        {
-            chart: Chart;
-            name: string;
-            options: object;
-            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
-            visible: boolean;
-            setState: Function;
-            isDataClass: true;
-            setVisible: () => void;
-        }
-        interface ColorAxisMarkerOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface ColorAxisOptions extends XAxisOptions {
-            dataClassColor?: string;
-            dataClasses?: Array<ColorAxisDataClassesOptions>;
-            layout?: string;
-            marker?: ColorAxisMarkerOptions;
-            maxColor?: (ColorString|GradientColorObject|PatternObject);
-            minColor?: (ColorString|GradientColorObject|PatternObject);
-            showInLegend?: boolean;
-            stops?: GradientColorObject['stops'];
-        }
-        interface Options {
-            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
-        }
-        interface Point {
-            dataClass?: number;
-        }
         class ColorAxis extends Axis { // eslint-disable-line no-undef
             public constructor(chart: Chart, userOptions: ColorAxisOptions);
             public added?: boolean;
@@ -124,6 +69,62 @@ declare global {
                 value: number,
                 point: Point
             ): (ColorString|GradientColorObject|PatternObject|undefined);
+        }
+        interface Axis {
+            labelLeft?: number;
+            labelRight?: number;
+        }
+        interface Chart {
+            colorAxis?: Array<ColorAxis>;
+        }
+        interface Series {
+            axisTypes: Array<string>;
+            colorAxis?: ColorAxis;
+            colorKey: string;
+            minColorValue?: number;
+            maxColorValue?: number;
+        }
+        interface SeriesOptions {
+            colorKey?: string;
+        }
+        interface ColorAxisDataClassesOptions {
+            color?: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            from?: number;
+            name?: string;
+            to?: number;
+        }
+        interface ColorAxisLegendItemObject
+            extends ColorAxisDataClassesOptions
+        {
+            chart: Chart;
+            name: string;
+            options: object;
+            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+            visible: boolean;
+            setState: Function;
+            isDataClass: true;
+            setVisible: () => void;
+        }
+        interface ColorAxisMarkerOptions {
+            animation?: (boolean|AnimationOptionsObject);
+            color?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface ColorAxisOptions extends XAxisOptions {
+            dataClassColor?: string;
+            dataClasses?: Array<ColorAxisDataClassesOptions>;
+            layout?: string;
+            marker?: ColorAxisMarkerOptions;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
+            minColor?: (ColorString|GradientColorObject|PatternObject);
+            showInLegend?: boolean;
+            stops?: GradientColorObject['stops'];
+        }
+        interface Options {
+            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
+        }
+        interface Point {
+            dataClass?: number;
         }
     }
 }
