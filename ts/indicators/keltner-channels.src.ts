@@ -52,7 +52,7 @@ declare global {
         interface KeltnerChannelsIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
             periodATR?: number;
-            multiplierATR: number;
+            multiplierATR?: number;
         }
 
         interface KeltnerChannelsLinkedParentSeries extends Series {
@@ -192,7 +192,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period = (params.period as any),
                 periodATR: number = (params.periodATR as any),
-                multiplierATR: number = params.multiplierATR,
+                multiplierATR: number = (params.multiplierATR as any),
                 index: number = (params.index as any),
                 yVal: Array<Array<number>> = series.yData,
                 yValLen: number = yVal ? yVal.length : 0,
