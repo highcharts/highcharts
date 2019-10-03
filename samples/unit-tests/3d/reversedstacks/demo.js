@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test('Test different reversedStacks options for 3D.', function (assert) {
+    QUnit.test('Test different reversedStacks options for 3D (#4369)', function (assert) {
         var options = {
                 chart: {
                     type: 'column',
