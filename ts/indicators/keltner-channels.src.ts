@@ -23,9 +23,14 @@ declare global {
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<KeltnerChannelsIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
+            public nameBase: string;
+            public nameComponents: Array<string>;
             public options: KeltnerChannelsIndicatorOptions;
+            public pointArrayMap: MultipleLinesMixin['pointArrayMap'];
             public pointClass: typeof KeltnerChannelsIndicatorPoint;
             public points: Array<KeltnerChannelsIndicatorPoint>;
+            public pointValKey: MultipleLinesMixin['pointValKey'];
+            public requiredIndicators: Array<string>;
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
@@ -214,7 +219,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 pointATR: Array<number>,
                 xData: Array<number> = [],
                 yData: Array<Array<number>> = [],
-                i;
+                i: number;
 
             if (yValLen < period) {
                 return false;
@@ -238,7 +243,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 yData: yData
             };
         }
-    })
+    } as Partial<Highcharts.KeltnerChannelsIndicator>)
 );
 
 /**
