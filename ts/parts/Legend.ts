@@ -1542,7 +1542,8 @@ Highcharts.Legend.prototype = {
         scrollBy: number,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
-        var pages = this.pages,
+        var chart = this.chart,
+            pages = this.pages,
             pageCount = pages.length,
             currentPage = (this.currentPage as any) + scrollBy,
             clipHeight = this.clipHeight,
@@ -1558,7 +1559,7 @@ Highcharts.Legend.prototype = {
         if (currentPage > 0) {
 
             if (animation !== undefined) {
-                setAnimation(animation, this.chart);
+                setAnimation(animation, chart);
             }
 
             (this.nav as any).attr({
@@ -1589,7 +1590,7 @@ Highcharts.Legend.prototype = {
                 });
             }, this);
 
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 (this.up as any)
                     .attr({
                         fill: currentPage === 1 ?
@@ -1622,8 +1623,15 @@ Highcharts.Legend.prototype = {
 
             this.currentPage = currentPage;
             this.positionCheckboxes();
-        }
 
+            // Fire event after scroll animation is complete
+            const animOptions = H.animObject(
+                pick(animation, chart.renderer.globalAnimation, true)
+            );
+            setTimeout((): void => {
+                fireEvent(this, 'afterScroll', { currentPage });
+            }, animOptions.duration);
+        }
     }
 
 } as any;
