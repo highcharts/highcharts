@@ -40,7 +40,8 @@ declare global {
                 params: SMAIndicatorParamsOptions
             ): (
                 boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
-                IndicatorNullableValuesObject|IndicatorUndefinableValuesObject
+                IndicatorNullableValuesObject|
+                IndicatorMultipleUndefinableValuesObject
             );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
@@ -67,7 +68,7 @@ declare global {
             yData: Array<Array<number>>;
         }
 
-        interface IndicatorUndefinableValuesObject {
+        interface IndicatorMultipleUndefinableValuesObject {
             values: Array<Array<(number|undefined)>>;
             xData: Array<(number|undefined)>;
             yData: Array<Array<(number|undefined)>>;

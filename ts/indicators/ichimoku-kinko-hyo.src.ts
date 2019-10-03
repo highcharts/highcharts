@@ -2,6 +2,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -42,17 +44,17 @@ declare global {
             nextPoints: Array<IKHIndicatorPoint>;
             color?: ColorType;
             options: IKHIndicatorOptions;
-            gap: IKHIndicatorGapExtension;
+            gap: IKHIndicatorGapExtensionObject;
             graph: (SVGElement|undefined);
         }
 
-        interface IKHIndicatorSenkouSpanOptions {
+        interface IKHIndicatorSenkouSpanObject {
             color?: ColorType;
             negativeColor?: ColorType;
             styles?: CSSObject & { fill: ColorType };
         }
 
-        interface IKHIndicatorGapExtension {
+        interface IKHIndicatorGapExtensionObject {
             options?: IKHIndicatorGapSizeOptions;
         }
 
@@ -67,7 +69,7 @@ declare global {
             kijunLine?: Dictionary<CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: IKHIndicatorParamsOptions;
-            senkouSpan?: IKHIndicatorSenkouSpanOptions;
+            senkouSpan?: IKHIndicatorSenkouSpanObject;
             senkouSpanA?: Dictionary<CSSObject>;
             senkouSpanB?: Dictionary<CSSObject>;
             tenkanLine?: Dictionary<CSSObject>;
@@ -143,7 +145,7 @@ function getClosestPointRange(axis: Highcharts.Axis): (number|undefined) {
         xData: Array<number>,
         i: number;
 
-    axis.series.forEach(function (series): void {
+    axis.series.forEach(function (series: Highcharts.Series): void {
 
         if (series.xData) {
             xData = series.xData;
@@ -524,15 +526,18 @@ seriesType<Highcharts.IKHIndicator>(
         ): void {
 
             var indicator = this,
-                mainLinePoints: Array<Highcharts.IKHIndicatorPoint> =
-                    indicator.points,
+                mainLinePoints: Array<Highcharts.IKHIndicatorPoint> = (
+                    indicator.points
+                ),
                 pointsLength: number = mainLinePoints.length,
-                mainLineOptions: Highcharts.IKHIndicatorOptions =
-                    indicator.options,
-                mainLinePath: (Highcharts.SVGElement|undefined) =
-                    indicator.graph,
+                mainLineOptions: Highcharts.IKHIndicatorOptions = (
+                    indicator.options
+                ),
+                mainLinePath: (Highcharts.SVGElement|undefined) = (
+                    indicator.graph
+                ),
                 mainColor = indicator.color,
-                gappedExtend: Highcharts.IKHIndicatorGapExtension = {
+                gappedExtend: Highcharts.IKHIndicatorGapExtensionObject = {
                     options: {
                         gapSize: mainLineOptions.gapSize
                     }
@@ -541,9 +546,9 @@ seriesType<Highcharts.IKHIndicator>(
                 allIchimokuPoints:
                 Array<Array<Highcharts.IKHIndicatorPoint>> =
                 [[], [], [], [], [], []],
-                ikhMap: Highcharts.Dictionary<
-                Array<Highcharts.IKHIndicatorPoint>
-                > = {
+                ikhMap: Highcharts.Dictionary<(
+                    Array<Highcharts.IKHIndicatorPoint>
+                )> = {
                     tenkanLine: allIchimokuPoints[0],
                     kijunLine: allIchimokuPoints[1],
                     chikouLine: allIchimokuPoints[2],
@@ -552,15 +557,16 @@ seriesType<Highcharts.IKHIndicator>(
                     senkouSpan: allIchimokuPoints[5]
                 },
                 intersectIndexColl: Array<number> = [],
-                senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanOptions = (
+                senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanObject = (
                     indicator.options.senkouSpan as any
                 ),
                 color: Highcharts.ColorType = (
                     senkouSpanOptions.color ||
                     (senkouSpanOptions.styles as any).fill
                 ),
-                negativeColor: (Highcharts.ColorType|undefined) =
-                    senkouSpanOptions.negativeColor,
+                negativeColor: (Highcharts.ColorType|undefined) = (
+                    senkouSpanOptions.negativeColor
+                ),
 
                 // Points to create color and negativeColor senkouSpan
                 points: Array<Array<Highcharts.IKHIndicatorPoint>> = [
@@ -725,46 +731,55 @@ seriesType<Highcharts.IKHIndicator>(
                                 sectionNextPoints[k].plotY;
                             }
 
-                            concatArrIndex =
-                                pointsPlotYSum > nextPointsPlotYSum ? 0 : 1;
+                            concatArrIndex = (
+                                pointsPlotYSum > nextPointsPlotYSum ? 0 : 1
+                            );
 
-                            points[concatArrIndex] =
-                                points[concatArrIndex].concat(sectionPoints);
+                            points[concatArrIndex] = (
+                                points[concatArrIndex].concat(sectionPoints)
+                            );
 
-                            nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex] = (
                                 nextPoints[concatArrIndex].concat(
                                     sectionNextPoints
-                                );
+                                )
+                            );
 
                         } else {
                             // Compare middle point of the section
-                            concatArrIndex =
+                            concatArrIndex = (
                                 sectionPoints[x].plotY >
                                 sectionNextPoints[x].plotY ?
-                                    0 : 1;
+                                    0 : 1
+                            );
 
-                            points[concatArrIndex] =
-                                points[concatArrIndex].concat(sectionPoints);
+                            points[concatArrIndex] = (
+                                points[concatArrIndex].concat(sectionPoints)
+                            );
 
-                            nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex] = (
                                 nextPoints[concatArrIndex].concat(
                                     sectionNextPoints
-                                );
+                                )
+                            );
                         }
                     } else {
                         // Compare first point of the section
-                        concatArrIndex =
-                                sectionPoints[0].plotY >
-                                sectionNextPoints[0].plotY ?
-                                    0 : 1;
+                        concatArrIndex = (
+                            sectionPoints[0].plotY >
+                            sectionNextPoints[0].plotY ?
+                                0 : 1
+                        );
 
-                        points[concatArrIndex] =
-                            points[concatArrIndex].concat(sectionPoints);
+                        points[concatArrIndex] = (
+                            points[concatArrIndex].concat(sectionPoints)
+                        );
 
-                        nextPoints[concatArrIndex] =
+                        nextPoints[concatArrIndex] = (
                             nextPoints[concatArrIndex].concat(
                                 sectionNextPoints
-                            );
+                            )
+                        );
                     }
                 }
 
@@ -869,7 +884,7 @@ seriesType<Highcharts.IKHIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.IKHIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorUndefinableValuesObject) {
+        ): (boolean|Highcharts.IndicatorMultipleUndefinableValuesObject) {
 
             var period: number = (params.period as any),
                 periodTenkan: number = (params.periodTenkan as any),
