@@ -221,7 +221,8 @@ H.seriesType<Highcharts.BBIndicator>(
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject|
                     Highcharts.IndicatorNullableValuesObject|
-                    Highcharts.IndicatorMultipleUndefinableValuesObject
+                    Highcharts.IndicatorMultipleUndefinableValuesObject|
+                    Highcharts.IndicatorMultipleNullableValuesObject
                 ),
                 i: number;
 
