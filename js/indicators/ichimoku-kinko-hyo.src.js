@@ -2,6 +2,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 'use strict';
 import H from '../parts/Globals.js';
@@ -356,7 +358,7 @@ seriesType('ikh', 'sma',
     // And an arearange
     // In just one series..
     drawGraph: function () {
-        var indicator = this, mainLinePoints = indicator.points, pointsLength = mainLinePoints.length, mainLineOptions = indicator.options, mainLinePath = indicator.graph, mainColor = indicator.color, gappedExtend = {
+        var indicator = this, mainLinePoints = (indicator.points), pointsLength = mainLinePoints.length, mainLineOptions = (indicator.options), mainLinePath = (indicator.graph), mainColor = indicator.color, gappedExtend = {
             options: {
                 gapSize: mainLineOptions.gapSize
             }
@@ -368,7 +370,7 @@ seriesType('ikh', 'sma',
             senkouSpanB: allIchimokuPoints[4],
             senkouSpan: allIchimokuPoints[5]
         }, intersectIndexColl = [], senkouSpanOptions = indicator.options.senkouSpan, color = (senkouSpanOptions.color ||
-            senkouSpanOptions.styles.fill), negativeColor = senkouSpanOptions.negativeColor, 
+            senkouSpanOptions.styles.fill), negativeColor = (senkouSpanOptions.negativeColor), 
         // Points to create color and negativeColor senkouSpan
         points = [
             [],
@@ -468,35 +470,26 @@ seriesType('ikh', 'sma',
                             nextPointsPlotYSum +=
                                 sectionNextPoints[k].plotY;
                         }
-                        concatArrIndex =
-                            pointsPlotYSum > nextPointsPlotYSum ? 0 : 1;
-                        points[concatArrIndex] =
-                            points[concatArrIndex].concat(sectionPoints);
-                        nextPoints[concatArrIndex] =
-                            nextPoints[concatArrIndex].concat(sectionNextPoints);
+                        concatArrIndex = (pointsPlotYSum > nextPointsPlotYSum ? 0 : 1);
+                        points[concatArrIndex] = (points[concatArrIndex].concat(sectionPoints));
+                        nextPoints[concatArrIndex] = (nextPoints[concatArrIndex].concat(sectionNextPoints));
                     }
                     else {
                         // Compare middle point of the section
-                        concatArrIndex =
-                            sectionPoints[x].plotY >
-                                sectionNextPoints[x].plotY ?
-                                0 : 1;
-                        points[concatArrIndex] =
-                            points[concatArrIndex].concat(sectionPoints);
-                        nextPoints[concatArrIndex] =
-                            nextPoints[concatArrIndex].concat(sectionNextPoints);
+                        concatArrIndex = (sectionPoints[x].plotY >
+                            sectionNextPoints[x].plotY ?
+                            0 : 1);
+                        points[concatArrIndex] = (points[concatArrIndex].concat(sectionPoints));
+                        nextPoints[concatArrIndex] = (nextPoints[concatArrIndex].concat(sectionNextPoints));
                     }
                 }
                 else {
                     // Compare first point of the section
-                    concatArrIndex =
-                        sectionPoints[0].plotY >
-                            sectionNextPoints[0].plotY ?
-                            0 : 1;
-                    points[concatArrIndex] =
-                        points[concatArrIndex].concat(sectionPoints);
-                    nextPoints[concatArrIndex] =
-                        nextPoints[concatArrIndex].concat(sectionNextPoints);
+                    concatArrIndex = (sectionPoints[0].plotY >
+                        sectionNextPoints[0].plotY ?
+                        0 : 1);
+                    points[concatArrIndex] = (points[concatArrIndex].concat(sectionPoints));
+                    nextPoints[concatArrIndex] = (nextPoints[concatArrIndex].concat(sectionNextPoints));
                 }
             }
             // Render color and negativeColor paths
