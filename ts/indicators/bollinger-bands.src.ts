@@ -220,7 +220,8 @@ H.seriesType<Highcharts.BBIndicator>(
                     boolean|
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorUndefinableValuesObject
                 ),
                 i: number;
 
