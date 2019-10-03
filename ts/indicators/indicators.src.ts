@@ -32,7 +32,6 @@ declare global {
             public processData: Series['processData'];
             public requiredIndicators: Array<string>;
             public useCommonDataGrouping: boolean;
-            public destroy(): void;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
             public getValues(
@@ -41,7 +40,8 @@ declare global {
             ): (
                 boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
                 IndicatorNullableValuesObject|
-                IndicatorMultipleUndefinableValuesObject
+                IndicatorMultipleUndefinableValuesObject|
+                IndicatorMultipleNullableValuesObject
             );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
@@ -60,6 +60,12 @@ declare global {
             values: Array<Array<(number|null)>>;
             xData: Array<(number|null)>;
             yData: Array<(number|null)>;
+        }
+
+        interface IndicatorMultipleNullableValuesObject {
+            values: IndicatorNullableValuesObject['values'];
+            xData: IndicatorNullableValuesObject['xData'];
+            yData: Array<Array<(number|null)>>;
         }
 
         interface IndicatorMultipleValuesObject {
