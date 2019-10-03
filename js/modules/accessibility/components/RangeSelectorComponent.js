@@ -81,7 +81,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 button.element.setAttribute(
                     'aria-label',
                     chart.langFormat(
-                        'accessibility.rangeSelectorButton',
+                        'accessibility.rangeSelector.buttonText',
                         {
                             chart: chart,
                             buttonText: button.text && button.text.textStr
@@ -103,8 +103,9 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                     rangeSelector[key].setAttribute(
                         'aria-label',
                         chart.langFormat(
-                            'accessibility.rangeSelector' +
-                                (i ? 'MaxInput' : 'MinInput'), { chart: chart }
+                            'accessibility.rangeSelector.' +
+                                (i ? 'max' : 'min') + 'InputLabel',
+                            { chart: chart }
                         )
                     );
                 }

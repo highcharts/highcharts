@@ -55,52 +55,103 @@ var options = {
         enabled: true,
 
         /**
-         * When a series contains more points than this, we no longer expose
-         * information about individual points to screen readers.
+         * Accessibility options for the screen reader information sections
+         * added before and after the chart.
          *
-         * Set to `false` to disable.
-         *
-         * @type  {boolean|number}
-         * @since 5.0.0
+         * @since next
          */
-        pointDescriptionThreshold: 200,
+        screenReaderSection: {
+            /**
+             * A formatter function to create the HTML contents of the hidden
+             * screen reader information region before the chart. Receives one
+             * argument, `chart`, referring to the chart object. Should return a
+             * string with the HTML content of the region. By default this
+             * returns an automatic description of the chart based on
+             * [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
+             *
+             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @default undefined
+             * @since   next
+             * @apioption accessibility.screenReaderSection.beforeChartFormatter
+             */
+
+            /**
+             * Format for the screen reader information region before the chart.
+             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, and
+             * `<button>`. Attributes are not supported, except for id on
+             * `<div>`, `<a>`, and `<button>`. Id is required on `<a>` and
+             * `<button>` in the format `<tag id="abcd">`. Numbers, lower- and
+             * uppercase letters, "-" and "#" are valid characters in IDs.
+             *
+             * @since next
+             */
+            beforeChartFormat:
+                '<h5>{chartTitle}</h5>' +
+                '<div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{xAxisDescription}</div>' +
+                '<div>{yAxisDescription}</div>' +
+                '<div>{viewTableButton}</div>',
+
+            /**
+             * A formatter function to create the HTML contents of the hidden
+             * screen reader information region after the chart. Analogous to
+             * [beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
+             *
+             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @default undefined
+             * @since   next
+             * @apioption accessibility.screenReaderSection.afterChartFormatter
+             */
+
+            /**
+             * Format for the screen reader information region after the chart.
+             * Analogous to [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
+             *
+             * @since next
+             */
+            afterChartFormat: '{endOfChartMarker}',
+
+            /**
+             * Date format to use to describe range of datetime axes.
+             *
+             * For an overview of the replacement codes, see
+             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             *
+             * @see [point.dateFormat](#accessibility.point.dateFormat)
+             * @since next
+             */
+            axisRangeDateFormat: '%Y-%m-%d %H:%M:%S'
+        },
 
         /**
-         * When a series contains more points than this, we no longer allow
-         * keyboard navigation for it.
+         * Accessibility options global to all data series. Individual series
+         * can also have specific [accessibility options](#plotOptions.series.accessibility)
+         * set.
          *
-         * Set to `false` to disable.
-         *
-         * @type  {boolean|number}
-         * @since 7.1.3
+         * @since next
          */
-        pointNavigationThreshold: false,
+        series: {
+            /**
+             * Whether or not to add series descriptions to charts with a single
+             * series.
+             *
+             * @since     next
+             */
+            describeSingleSeries: false,
 
-        /**
-         * Whether or not to add a shortcut button in the screen reader
-         * information region to show the data table.
-         * @since 7.1.0
-         */
-        addTableShortcut: true,
-
-        /**
-         * Date format to use to describe range of datetime axes.
-         *
-         * For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
-         *
-         * @see [pointDateFormat](#accessibility.pointDateFormat)
-         * @since 7.1.0
-         */
-        axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
-
-        /**
-         * Whether or not to add series descriptions to charts with a single
-         * series.
-         *
-         * @since     5.0.0
-         */
-        describeSingleSeries: false,
+            /**
+             * When a series contains more points than this, we no longer expose
+             * information about individual points to screen readers.
+             *
+             * Set to `false` to disable.
+             *
+             * @type  {boolean|number}
+             * @since next
+             */
+            pointDescriptionEnabledThreshold: 200
+        },
 
         /**
          * Amount of landmarks/regions to create for screen reader users. More
@@ -134,7 +185,8 @@ var options = {
 
         /**
          * Theme to apply to the chart when Windows High Contrast Mode is
-         * detected.
+         * detected. By default, a high contrast theme matching the high
+         * contrast system system colors is used.
          *
          * @since 7.1.3
          * @type {object}
@@ -186,8 +238,16 @@ var options = {
          * representation of the chart.
          *
          * @type      {Highcharts.ScreenReaderClickCallbackFunction}
-         * @since     5.0.0
-         * @apioption accessibility.onTableAnchorClick
+         * @since     next
+         * @apioption accessibility.screenReaderSection.onViewDataTableClick
+         */
+
+        /**
+         * Options for descriptions of individual data points.
+         *
+         * @since next
+         * @type {object}
+         * @apioption accessibility.point
          */
 
         /**
@@ -199,11 +259,11 @@ var options = {
          * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @see [pointDateFormatter](#accessibility.pointDateFormatter)
+         * @see [dateFormatter](#accessibility.point.dateFormatter)
          *
          * @type      {string}
-         * @since     5.0.0
-         * @apioption accessibility.pointDateFormat
+         * @since     next
+         * @apioption accessibility.point.dateFormat
          */
 
         /**
@@ -213,38 +273,38 @@ var options = {
          * Should return a date format string compatible with
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @see [pointDateFormat](#accessibility.pointDateFormat)
+         * @see [dateFormat](#accessibility.point.dateFormat)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since     5.0.0
-         * @apioption accessibility.pointDateFormatter
+         * @since     next
+         * @apioption accessibility.point.dateFormatter
          */
 
         /**
          * Prefix to add to the values in the point descriptions. Uses
          * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
          *
-         * @type      {string}
-         * @since 7.1.0
-         * @apioption accessibility.pointValuePrefix
+         * @type        {string}
+         * @since       next
+         * @apioption   accessibility.point.valuePrefix
          */
 
         /**
          * Suffix to add to the values in the point descriptions. Uses
          * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
          *
-         * @type      {string}
-         * @since 7.1.0
-         * @apioption accessibility.pointValueSuffix
+         * @type        {string}
+         * @since       next
+         * @apioption   accessibility.point.valueSuffix
          */
 
         /**
          * Decimals to use for the values in the point descriptions. Uses
          * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
          *
-         * @type      {string}
-         * @since 7.1.0
-         * @apioption accessibility.pointValueDecimals
+         * @type        {string}
+         * @since       next
+         * @apioption   accessibility.point.valueDecimals
          */
 
         /**
@@ -258,8 +318,8 @@ var options = {
          * @see [point.description](#series.line.data.description)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since     5.0.0
-         * @apioption accessibility.pointDescriptionFormatter
+         * @since     next
+         * @apioption accessibility.point.descriptionFormatter
          */
 
         /**
@@ -272,24 +332,8 @@ var options = {
          * @see [series.description](#plotOptions.series.description)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
-         * @since     5.0.0
-         * @apioption accessibility.seriesDescriptionFormatter
-         */
-
-        /**
-         * A formatter function to create the HTML contents of the hidden screen
-         * reader information region. Receives one argument, `chart`, referring
-         * to the chart object. Should return a string with the HTML content
-         * of the region. By default this returns an automatic description of
-         * the chart.
-         *
-         * The button to view the chart as a data table will be added
-         * automatically after the custom HTML content if enabled.
-         *
-         * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-         * @default undefined
-         * @since   5.0.0
-         * @apioption accessibility.screenReaderSectionFormatter
+         * @since     next
+         * @apioption accessibility.series.descriptionFormatter
          */
 
         /**
@@ -305,33 +349,6 @@ var options = {
              * @since 5.0.0
              */
             enabled: true,
-
-            /**
-             * Set the keyboard navigation mode for the chart. Can be "normal"
-             * or "serialize". In normal mode, left/right arrow keys move
-             * between points in a series, while up/down arrow keys move between
-             * series. Up/down navigation acts intelligently to figure out which
-             * series makes sense to move to from any given point.
-             *
-             * In "serialize" mode, points are instead navigated as a single
-             * list. Left/right behaves as in "normal" mode. Up/down arrow keys
-             * will behave like left/right. This can be useful for unifying
-             * navigation behavior with/without screen readers enabled.
-             *
-             * @type       {string}
-             * @default    normal
-             * @since      6.0.4
-             * @validvalue ["normal", "serialize"]
-             * @apioption  accessibility.keyboardNavigation.mode
-             */
-
-            /**
-             * Skip null points when navigating through points with the
-             * keyboard.
-             *
-             * @since 5.0.0
-             */
-            skipNullPoints: true,
 
             /**
              * Options for the focus border drawn around elements while
@@ -405,7 +422,54 @@ var options = {
              * navigation for an element in the chart.
              * @since 7.1.0
              */
-            wrapAround: true
+            wrapAround: true,
+
+            /**
+             * Options for the keyboard navigation of data points and series.
+             *
+             * @since next
+             */
+            seriesNavigation: {
+                /**
+                 * Set the keyboard navigation mode for the chart. Can be
+                 * "normal" or "serialize". In normal mode, left/right arrow
+                 * keys move between points in a series, while up/down arrow
+                 * keys move between series. Up/down navigation acts
+                 * intelligently to figure out which series makes sense to move
+                 * to from any given point.
+                 *
+                 * In "serialize" mode, points are instead navigated as a single
+                 * list. Left/right behaves as in "normal" mode. Up/down arrow
+                 * keys will behave like left/right. This can be useful for
+                 * unifying navigation behavior with/without screen readers
+                 * enabled.
+                 *
+                 * @type       {string}
+                 * @default    normal
+                 * @since      next
+                 * @validvalue ["normal", "serialize"]
+                 * @apioption  accessibility.keyboardNavigation.seriesNavigation.mode
+                 */
+
+                /**
+                 * Skip null points when navigating through points with the
+                 * keyboard.
+                 *
+                 * @since next
+                 */
+                skipNullPoints: true,
+
+                /**
+                 * When a series contains more points than this, we no longer
+                 * allow keyboard navigation for it.
+                 *
+                 * Set to `false` to disable.
+                 *
+                 * @type  {boolean|number}
+                 * @since next
+                 */
+                pointNavigationEnabledThreshold: false
+            }
         },
 
         /**

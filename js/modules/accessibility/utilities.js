@@ -25,34 +25,41 @@ function escapeStringForHTML(str) {
         .replace(/\//g, '&#x2F;');
 }
 
+/**
+ * Set attributes on element. Set to null to remove attribute.
+ * @private
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
+ * @param {object} attrs
+ */
+function setElAttrs(el, attrs) {
+    Object.keys(attrs).forEach(function (attr) {
+        var val = attrs[attr];
+        if (val === null) {
+            el.removeAttribute(attr);
+        } else {
+            var cleanedVal = escapeStringForHTML('' + val);
+            el.setAttribute(attr, cleanedVal);
+        }
+    });
+}
+
+/**
+ * Used for aria-label attributes, painting on a canvas will fail if the
+ * text contains tags.
+ * @private
+ * @param {string} str
+ * @return {string}
+ */
+function stripHTMLTagsFromString(str) {
+    return typeof str === 'string' ?
+        str.replace(/<\/?[^>]+(>|$)/g, '') : str;
+}
+
+
 var Utilities = {
-
-    /**
-     * Used for aria-label attributes, painting on a canvas will fail if the
-     * text contains tags.
-     * @private
-     * @param {string} str
-     * @return {string}
-     */
-    stripHTMLTagsFromString: function (str) {
-        return typeof str === 'string' ?
-            str.replace(/<\/?[^>]+(>|$)/g, '') : str;
-    },
-
-
-    /**
-     * @private
-     * @param {string} tag
-     * @param {string} text
-     * @return {string}
-     */
-    makeHTMLTagFromText: function (tag, text) {
-        return '<' + tag + '>' + escapeStringForHTML(text) + '</' + tag + '>';
-    },
-
-
-    escapeStringForHTML: escapeStringForHTML
-
+    stripHTMLTagsFromString: stripHTMLTagsFromString,
+    escapeStringForHTML: escapeStringForHTML,
+    setElAttrs: setElAttrs
 };
 
 export default Utilities;

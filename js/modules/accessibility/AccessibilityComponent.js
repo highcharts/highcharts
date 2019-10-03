@@ -93,14 +93,6 @@ AccessibilityComponent.prototype = {
             esc: 27,
             tab: 9
         };
-        // CSS Styles for hiding elements visually but keeping them visible to
-        // AT.
-        this.hiddenStyle = {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            overflow: 'hidden'
-        };
     },
 
 
@@ -122,11 +114,20 @@ AccessibilityComponent.prototype = {
      * @private
      */
     createElement: function () {
-        var el = Highcharts.win.document.createElement.apply(
-            Highcharts.win.document, arguments
-        );
+        var el = doc.createElement.apply(doc, arguments);
         this.domElements.push(el);
         return el;
+    },
+
+
+    /**
+     * Get an element by ID
+     * @param {string} id
+     * @private
+     * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
+     */
+    getElement: function (id) {
+        return doc.getElementById(id);
     },
 
 
@@ -383,6 +384,26 @@ AccessibilityComponent.prototype = {
         if (element && element.parentNode) {
             element.parentNode.removeChild(element);
         }
+    },
+
+
+    /**
+     * Utility function for hiding an element visually, but still keeping it
+     * available to screen reader users.
+     * @private
+     * @param {Highcharts.HTMLDOMElement} element
+     */
+    visuallyHideElement: function (element) {
+        var hiddenStyle = {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden',
+            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
+            filter: 'alpha(opacity=1)',
+            opacity: '0.01'
+        };
+        merge(true, element.style, hiddenStyle);
     },
 
 
