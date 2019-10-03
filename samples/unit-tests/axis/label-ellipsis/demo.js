@@ -69,7 +69,7 @@ QUnit.test('#5034: No ellipsis for multiline labels where there is room', functi
 
         chart: {
             type: "bar",
-            width: 500
+            width: 450
         },
         xAxis: {
             categories: ["Cat1", "Cat2 bla bla bla bla bla bla bla bla bla bla", "Cat3 bla bla bla bla bla bla bla"]
