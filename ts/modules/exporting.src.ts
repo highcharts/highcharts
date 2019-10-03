@@ -1677,7 +1677,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     i: number
                 ): void {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
 

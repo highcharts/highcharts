@@ -1247,7 +1247,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // restore all body content
                 [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
                 chart.isPrinting = false;
