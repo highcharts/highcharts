@@ -13,7 +13,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
+var isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, isNumber = U.isNumber;
 import '../parts/Chart.js';
 var Chart = H.Chart, addEvent = H.addEvent, fireEvent = H.fireEvent;
 /* eslint-disable no-invalid-this */
@@ -83,10 +83,15 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
         padding = label.box ? 0 : (label.padding || 0), lineHeightCorrection = 0;
         if (label &&
             (!label.alignAttr || label.placed)) {
-            pos = label.alignAttr || {
-                x: label.attr('x'),
-                y: label.attr('y')
-            };
+            if (isNumber(+label.attr('x')) && isNumber(+label.attr('y'))) {
+                pos = {
+                    x: +label.attr('x'),
+                    y: +label.attr('y')
+                };
+            }
+            else {
+                pos = label.alignAttr;
+            }
             parent = label.parentGroup;
             // Get width and height if pure text nodes (stack labels)
             if (!label.width) {
