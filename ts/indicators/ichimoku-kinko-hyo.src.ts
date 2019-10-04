@@ -48,7 +48,7 @@ declare global {
             graph: (SVGElement|undefined);
         }
 
-        interface IKHIndicatorSenkouSpanObject {
+        interface IKHIndicatorSenkouSpanOptions {
             color?: ColorType;
             negativeColor?: ColorType;
             styles?: CSSObject & { fill: ColorType };
@@ -69,7 +69,7 @@ declare global {
             kijunLine?: Dictionary<CSSObject>;
             marker?: PointMarkerOptionsObject;
             params?: IKHIndicatorParamsOptions;
-            senkouSpan?: IKHIndicatorSenkouSpanObject;
+            senkouSpan?: IKHIndicatorSenkouSpanOptions;
             senkouSpanA?: Dictionary<CSSObject>;
             senkouSpanB?: Dictionary<CSSObject>;
             tenkanLine?: Dictionary<CSSObject>;
@@ -557,7 +557,7 @@ seriesType<Highcharts.IKHIndicator>(
                     senkouSpan: allIchimokuPoints[5]
                 },
                 intersectIndexColl: Array<number> = [],
-                senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanObject = (
+                senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanOptions = (
                     indicator.options.senkouSpan as any
                 ),
                 color: Highcharts.ColorType = (
