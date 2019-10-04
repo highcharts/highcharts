@@ -13,7 +13,7 @@ js/indicators/**/*.js
 #!js/indicators/mfi.src.js
 !js/indicators/momentum.src.js
 #!js/indicators/natr.src.js
-!js/indicators/pivot-points.src.js
+#!js/indicators/pivot-points.src.js
 !js/indicators/ppo.src.js
 !js/indicators/price-channel.src.js
 !js/indicators/price-envelopes.src.js
