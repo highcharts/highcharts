@@ -38,7 +38,7 @@ declare global {
 
         }
 
-        interface IKHIndicatorDrawSenkouSpanOptions {
+        interface IKHIndicatorDrawSenkouSpanObject {
             indicator: IKHIndicator;
             points: Array<IKHIndicatorPoint>;
             nextPoints: Array<IKHIndicatorPoint>;
@@ -204,7 +204,7 @@ function checkLineIntersection(
 // Parameter opt (indicator options object) include indicator, points,
 // nextPoints, color, options, gappedExtend and graph properties
 function drawSenkouSpan(
-    opt: Highcharts.IKHIndicatorDrawSenkouSpanOptions
+    opt: Highcharts.IKHIndicatorDrawSenkouSpanObject
 ): void {
     var indicator = opt.indicator;
 
