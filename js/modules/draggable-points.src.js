@@ -2186,6 +2186,10 @@ function mouseDown(e, chart) {
         mouseUp(e, chart);
         return;
     }
+    // Ignore if dragging an annotation
+    if (chart.hasDraggedAnnotation) {
+        return;
+    }
     // If this point is movable, start dragging it
     if (dragPoint && isPointMovable(dragPoint)) {
         chart.mouseIsDown = false; // Prevent zooming
