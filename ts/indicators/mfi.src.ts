@@ -33,7 +33,7 @@ declare global {
         }
 
         interface MFIIndicatorParamsOptions extends SMAIndicatorParamsOptions {
-            volumeSeriesID: string;
+            volumeSeriesID?: string;
             decimals?: number;
         }
 
@@ -139,7 +139,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 // Cause we need to calculate change between two points
                 range = 1,
                 volumeSeries: (Highcharts.Series|undefined) = (
-                    series.chart.get(params.volumeSeriesID) as any
+                    series.chart.get((params.volumeSeriesID as any)) as any
                 ),
                 yValVolume: Array<number> = (
                     volumeSeries && (volumeSeries.yData as any)
