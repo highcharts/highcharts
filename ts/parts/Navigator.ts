@@ -505,6 +505,15 @@ extend(defaultOptions, {
              * The type of the navigator series. Defaults to `areaspline` if
              * defined, otherwise `line`.
              *
+             * Heads up:
+             * When using `column` type navigator, don't forget to change
+             * [pointRange](#navigator.series.pointRange) to `null`.
+             * In column-type navigator, zooming is limited to at least one
+             * point with it's `pointRange`.
+             *
+             * @sample {highstock} stock/navigator/column/
+             *         Column type navigator
+             *
              * @type    {string}
              * @default areaspline
              */
