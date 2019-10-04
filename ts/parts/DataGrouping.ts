@@ -785,7 +785,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     ) ||
                     xAxis.min === xAxis.dataMin
                 ) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
                 }
                 xAxis.dataMin = groupedXData[0];
             }
