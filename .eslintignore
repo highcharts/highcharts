@@ -10,7 +10,7 @@ js/indicators/**/*.js
 #!js/indicators/keltner-channels.src.js
 #!js/indicators/ichimoku-kinko-hyo.src.js
 !js/indicators/macd.src.js
-!js/indicators/mfi.src.js
+#!js/indicators/mfi.src.js
 !js/indicators/momentum.src.js
 #!js/indicators/natr.src.js
 !js/indicators/pivot-points.src.js
