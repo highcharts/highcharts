@@ -52,6 +52,8 @@ declare global {
         }
 
         class PivotPointsIndicatorPoint extends SMAIndicatorPoint {
+            public destroy(): void;
+            public destroyElements(): void;
             public P: number;
             public pivotLine: string;
             public series: PivotPointsIndicator;
