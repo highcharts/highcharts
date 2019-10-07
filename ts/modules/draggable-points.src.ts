@@ -29,6 +29,8 @@ declare global {
             dragGuideBox?: SVGElement;
             /** @requires modules/draggable-points */
             hasAddedDragDropEvents?: boolean;
+            /** @requires modules/annotations */
+            hasDraggedAnnotation?: boolean;
             /** @requires modules/draggable-points */
             isDragDropAnimating?: boolean;
             /** @requires modules/draggable-points */
@@ -2946,24 +2948,21 @@ function mouseDown(
     // Reset cancel click
     chart.cancelClick = false;
 
-    // Ignore if option is disable for the point
-    if (!(draggableX || draggableY)) {
-        return;
-    }
-
-    // Ignore if zoom/pan key is pressed
-    if (chart.zoomOrPanKeyPressed(e)) {
+    // Ignore if:
+    if (
+        // Option is disabled for the point
+        !(draggableX || draggableY) ||
+        // Zoom/pan key is pressed
+        chart.zoomOrPanKeyPressed(e) ||
+        // Dragging an annotation
+        chart.hasDraggedAnnotation
+    ) {
         return;
     }
 
     // If we somehow get a mousedown event while we are dragging, cancel
     if (chart.dragDropData && chart.dragDropData.isDragging) {
         mouseUp(e, chart);
-        return;
-    }
-
-    // Ignore if dragging an annotation
-    if ((chart as any).hasDraggedAnnotation) {
         return;
     }
 
