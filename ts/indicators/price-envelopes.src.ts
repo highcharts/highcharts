@@ -40,8 +40,8 @@ declare global {
 
         interface PriceEnvelopesIndicatorOptionsParams
             extends SMAIndicatorParamsOptions {
-            topBand: number;
-            bottomBand: number;
+            topBand?: number;
+            bottomBand?: number;
         }
 
         class PriceEnvelopesIndicatorPoint extends SMAIndicatorPoint {
@@ -265,8 +265,8 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
             params: Highcharts.PriceEnvelopesIndicatorOptionsParams
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
-                topPercent: number = params.topBand,
-                botPercent: number = params.bottomBand,
+                topPercent: number = (params.topBand as any),
+                botPercent: number = (params.bottomBand as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
