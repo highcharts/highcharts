@@ -190,8 +190,9 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 K: number,
                 D: number|null = null,
                 points: (boolean|Highcharts.IndicatorValuesObject|
-                Highcharts.IndicatorMultipleValuesObject|
                 Highcharts.IndicatorNullableValuesObject|
+                Highcharts.IndicatorUndefinableValuesObject|
+                Highcharts.IndicatorMultipleValuesObject|
                 Highcharts.IndicatorMultipleNullableValuesObject|
                 Highcharts.IndicatorMultipleUndefinableValuesObject
                 ),
