@@ -20,7 +20,7 @@ js/indicators/**/*.js
 #!js/indicators/price-envelopes.src.js
 !js/indicators/regressions.src.js
 #!js/indicators/roc.src.js
-!js/indicators/rsi.src.js
+#!js/indicators/rsi.src.js
 !js/indicators/stochastic.src.js
 !js/indicators/supertrend.src.js
 !js/indicators/tema.src.js
