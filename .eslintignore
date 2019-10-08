@@ -22,7 +22,7 @@ js/indicators/**/*.js
 #!js/indicators/roc.src.js
 #!js/indicators/rsi.src.js
 #!js/indicators/stochastic.src.js
-!js/indicators/supertrend.src.js
+#!js/indicators/supertrend.src.js
 !js/indicators/tema.src.js
 #!js/indicators/trendline.src.js
 !js/indicators/trix.src.js
