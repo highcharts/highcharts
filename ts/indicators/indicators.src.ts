@@ -40,8 +40,8 @@ declare global {
             ): (
                 boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
                 IndicatorNullableValuesObject|
-                IndicatorMultipleUndefinableValuesObject|
-                IndicatorMultipleNullableValuesObject
+                IndicatorMultipleNullableValuesObject|
+                IndicatorMultipleUndefinableValuesObject
             );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
