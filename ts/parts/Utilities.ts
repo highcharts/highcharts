@@ -2249,7 +2249,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *
  * @return {void}
  */
-H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
+function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2262,7 +2262,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 
 /**
  * Fix JS round off float errors.
@@ -3367,6 +3367,7 @@ const utils = {
     attr,
     defined,
     destroyObjectProperties,
+    discardElement,
     erase,
     extend,
     isArray,

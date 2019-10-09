@@ -1570,7 +1570,7 @@ function destroyObjectProperties(obj, except) {
  *
  * @return {void}
  */
-H.discardElement = function (element) {
+function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
@@ -1581,7 +1581,7 @@ H.discardElement = function (element) {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 /**
  * Fix JS round off float errors.
  *
@@ -2489,6 +2489,7 @@ var utils = {
     attr: attr,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
+    discardElement: discardElement,
     erase: erase,
     extend: extend,
     isArray: isArray,
