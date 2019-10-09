@@ -266,6 +266,7 @@ import U from './Utilities.js';
 const {
     attr,
     defined,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -291,7 +292,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
     find = H.find,

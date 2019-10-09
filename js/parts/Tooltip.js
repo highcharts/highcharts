@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -411,7 +411,7 @@ H.Tooltip.prototype = {
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy();
-            H.discardElement(this.container);
+            discardElement(this.container);
         }
         H.clearTimeout(this.hideTimer);
         H.clearTimeout(this.tooltipTimeout);

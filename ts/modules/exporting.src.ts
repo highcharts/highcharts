@@ -265,6 +265,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    discardElement,
     extend,
     isObject,
     objectEach,
@@ -283,7 +284,6 @@ var defaultOptions = H.defaultOptions,
     removeEvent = H.removeEvent,
     fireEvent = H.fireEvent,
     createElement = H.createElement,
-    discardElement = H.discardElement,
     css = H.css,
     merge = H.merge,
     isTouchDevice = H.isTouchDevice,
