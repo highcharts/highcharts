@@ -46,10 +46,12 @@ declare global {
             public isNew: boolean;
             public isNewLabel: boolean;
             public label?: SVGElement;
+            public labelPos?: PositionObject;
             public mark?: SVGElement;
-            public movedLabel? : SVGElement;
+            public movedLabel?: SVGElement;
             public options: (Dictionary<any>|undefined);
             public parameters: TickParametersObject;
+            public prevLabel?: SVGElement;
             public pos: number;
             public rotation?: number;
             public shortenLabel?: Function;
@@ -92,7 +94,7 @@ declare global {
             public moveLabel(
                 str: string,
                 labelOptions: XAxisLabelsOptions
-            ): boolean;
+            ): void;
             public replaceMovedLabel(): void;
             public render(index: number, old?: boolean, opacity?: number): void;
             public renderGridLine(
@@ -137,7 +139,8 @@ import U from './Utilities.js';
 const {
     defined,
     extend,
-    isNumber
+    isNumber,
+    objectEach
 } = U;
 
 var correctFloat = H.correctFloat,
@@ -246,7 +249,6 @@ H.Tick.prototype = {
             ),
             label = tick.label,
             animateLabels = labelOptions.animate,
-            changedPos,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
             dateTimeLabelFormats,
@@ -324,10 +326,10 @@ H.Tick.prototype = {
 
         // Call only after first render
         if (animateLabels && axis._addedPlotLB && axis.isXAxis) {
-            changedPos = tick.moveLabel(str, labelOptions);
+            tick.moveLabel(str, labelOptions);
         }
-        // first call
-        if (!defined(label) && !changedPos) {
+        // First call
+        if (!defined(label) && !tick.movedLabel) {
             tick.label = label = tick.createLabel(
                 { x: 0, y: 0 },
                 str,
@@ -363,42 +365,55 @@ H.Tick.prototype = {
      * @param {string} str
      * @param {Highcharts.XAxisLabelsOptions} labelOptions
      *
-     * @return {number}
+     * @return {void}
      */
     moveLabel: function (
         this: Highcharts.Tick,
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
-    ): boolean {
+    ): void {
         var tick = this,
             label = tick.label,
             moved = false,
             xAxis = tick.axis,
             chart = xAxis.chart,
+            labelPos,
             reversed = xAxis.reversed,
             inverted = chart.inverted,
             xPos,
             yPos;
 
-        H.objectEach(xAxis.ticks, function (
-            currentTick: Highcharts.Tick
-        ): void {
-            if (
-                !moved &&
-                currentTick !== tick &&
-                currentTick.label &&
-                currentTick.label.textStr === str
-            ) {
-                tick.movedLabel = currentTick.label;
-                currentTick.label.moved = true;
-                tick.isNewLabel = false;
-                moved = true;
-            }
-        });
+        if (label && label.textStr === str) {
+            tick.movedLabel = label;
+            moved = true;
+            delete tick.label;
 
-        if (!moved && label && label.textStr !== str) {
-            xPos = inverted ? label.xy.x : (reversed ? 0 : chart.chartWidth);
-            yPos = inverted ? (reversed ? chart.chartWidth : 0) : label.xy.y;
+        } else { // Find a label with the same string
+            objectEach(xAxis.ticks, function (
+                currentTick: Highcharts.Tick
+            ): void {
+                if (
+                    !moved &&
+                    !currentTick.isNew &&
+                    currentTick !== tick &&
+                    currentTick.label &&
+                    currentTick.label.textStr === str
+                ) {
+                    tick.movedLabel = currentTick.label;
+                    moved = true;
+                    currentTick.labelPos = tick.movedLabel.xy;
+                    delete currentTick.label;
+                }
+            });
+        }
+
+        // Create new label if the actual one is moved
+        if (!moved && (tick.labelPos || label)) {
+            labelPos = tick.labelPos || (label as any).xy;
+            xPos = inverted ?
+                labelPos.x : (reversed ? 0 : xAxis.width + xAxis.left);
+            yPos = inverted ?
+                (reversed ? (xAxis.width + xAxis.left) : 0) : labelPos.y;
 
             tick.movedLabel = tick.createLabel(
                 { x: xPos, y: yPos },
@@ -409,11 +424,7 @@ H.Tick.prototype = {
             if (tick.movedLabel) {
                 tick.movedLabel.attr({ opacity: 0 });
             }
-
-            moved = true;
         }
-
-        return moved;
     },
 
     /**
@@ -459,7 +470,8 @@ H.Tick.prototype = {
     },
 
     /**
-     * Get the offset height or width of the label
+     * Replace labels with the moved ones to perform animation. Additionally
+     * destroy unused labels.
      *
      * @private
      * @function Highcharts.Tick#replaceMovedLabel
@@ -468,26 +480,33 @@ H.Tick.prototype = {
     replaceMovedLabel: function (this: Highcharts.Tick): void {
         var tick = this,
             label = tick.label,
-            reversed = tick.axis.reversed,
+            axis = tick.axis,
+            reversed = axis.reversed,
             chart = tick.axis.chart,
             inverted = chart.inverted,
             x,
             y;
 
         // Animate and destroy
-        if (label && !label.moved) {
-            x = inverted ? label.xy.x : (reversed ? 0 : chart.chartHeight);
-            y = inverted ? (reversed ? chart.chartHeight : 0) : label.xy.y;
+        if (label && !tick.isNew) {
+            x = inverted ? label.xy.x : (
+                reversed ? axis.left : axis.width + axis.left
+            );
+            y = inverted ?
+                (reversed ? axis.width + axis.top : axis.top) :
+                label.xy.y;
 
             label.animate(
                 { x: x, y: y, opacity: 0 },
-                true,
+                undefined,
                 label.destroy
             );
+
+            delete tick.label;
         }
 
+        axis.isDirty = true;
         tick.label = tick.movedLabel;
-
         delete tick.movedLabel;
     },
 

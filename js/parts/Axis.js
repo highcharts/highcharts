@@ -4749,10 +4749,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // #4443:
             attr.rotation = labelOptions.rotation || 0;
         }
+        // We need to set step to correctly perform sorting animation
+        if (labelOptions && labelOptions.animate) {
+            labelOptions.step = 1;
+        }
         // Get the longest label length
         tickPositions.forEach(function (tick) {
             tick = ticks[tick];
-            // Support for sorting animation
+            // Replace label - sorting animation
             if (tick.movedLabel) {
                 tick.replaceMovedLabel();
             }

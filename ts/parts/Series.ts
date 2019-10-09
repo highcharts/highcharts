@@ -54,6 +54,7 @@ declare global {
                 LegendSymbolMixin['drawLineMarker']|
                 LegendSymbolMixin['drawRectangle']
             );
+            public enabledDataSorting?: boolean;
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
             public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public finishedAnimating?: boolean;
@@ -194,6 +195,7 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject),
                 updatePoints?: boolean
             ): void;
+            public setDataSortingOptions(): void;
             public setOptions(
                 itemOptions: SeriesOptionsType
             ): this['options'];
@@ -2816,9 +2818,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     (series as any)[key + 'Data'] = [];
                 }
             });
-            if (!series.points && !series.data) {
-                series.setData(options.data as any, false);
-            }
 
             // Mark cartesian
             if (series.isCartesian) {
@@ -2835,6 +2834,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // Insert the series and re-order all series above the insertion
             // point.
             chart.orderSeries(this.insert(chartSeries));
+
+            if (options.dataSorting && options.dataSorting.enabled) {
+                series.setDataSortingOptions();
+
+            } else if (!series.points && !series.data) {
+                series.setData(options.data as any, false);
+            }
 
             fireEvent(this, 'afterInit');
         },
@@ -3079,6 +3085,31 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             this.xIncrement = xIncrement + pointInterval;
             return xIncrement;
+        },
+
+        /**
+         * Internal function to set properties for series if data sorting is
+         * enabled.
+         *
+         * @private
+         * @function Highcharts.Series#setDataSortingOptions
+         * @return {void}
+         */
+        setDataSortingOptions: function (this: Highcharts.Series): void {
+            var options = this.options;
+
+            extend(this, {
+                requireSorting: false,
+                sorted: false,
+                forceDL: true,
+                enabledDataSorting: true,
+                allowDG: false
+            });
+
+            // To allow unsorted data for column series.
+            if (!options.pointRange) {
+                options.pointRange = 1;
+            }
         },
 
         /**
@@ -3349,18 +3380,20 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (id) {
                 matchingPoint = this.chart.get(id);
 
-            } else if (dataSorting && dataSorting.enabled) {
-                matchKey = dataSorting.matchByName ? 'name' : 'originalIndex';
+            } else if (this.linkedParent || (this.enabledDataSorting)) {
+                matchKey = (dataSorting && dataSorting.matchByName) ?
+                    'name' : 'index';
 
                 matchingPoint = H.find(oldData, function (
                     oldPoint: Highcharts.Point
                 ): boolean {
-                    return (oldPoint as any)[matchKey] ===
+                    return !oldPoint.touched && (oldPoint as any)[matchKey] ===
                         (optionsObject as any)[matchKey];
                 });
                 // Add unmatched point as a new point
                 if (!matchingPoint) {
                     return undefined;
+
                 }
             }
 
@@ -3764,7 +3797,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         },
 
         /**
-         * Internal function to sort the data by
+         * Internal function to sort series data
          *
          * @private
          * @function Highcharts.Series#sortData
@@ -3776,32 +3809,78 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>
         ): Array<Highcharts.PointOptionsType> {
-            var options = this.options,
+            var series = this,
+                options = series.options,
                 dataSorting = options.dataSorting as
                     Highcharts.DataSortingOptionsObject,
-                sortKey = dataSorting.sortKey || 'y';
+                sortKey = dataSorting.sortKey || 'y',
+                sortedData,
+                getPointOptionsObject = function (
+                    series: Highcharts.Series,
+                    pointOptions: Highcharts.PointOptionsType
+                ): Highcharts.PointOptionsObject {
+                    return (defined(pointOptions) &&
+                        series.pointClass.prototype.optionsToObject.call({
+                            series: series
+                        }, pointOptions)) || {};
+                };
 
-            data.forEach(function (pointOptions, i): void {
-                data[i] = (defined(pointOptions) &&
-                    this.pointClass.prototype.optionsToObject.call({
-                        series: this
-                    }, pointOptions)) || {};
-
-                (data[i] as any).originalIndex = i;
+            data.forEach(function (
+                pointOptions: Highcharts.PointOptionsType,
+                i: number
+            ): void {
+                data[i] = getPointOptionsObject(series, pointOptions);
+                (data[i] as any).index = i;
             }, this);
 
             // Sorting
-            (data as any).sort(function (
-                a: Highcharts.Point, b: Highcharts.Point
+            sortedData = (data as any).concat().sort(function (
+                a: Highcharts.PointOptionsObject,
+                b: Highcharts.PointOptionsObject
             ): number {
-                return (b as any)[sortKey] - (a as any)[sortKey];
+                return (b as any)[sortKey] ?
+                    (b as any)[sortKey] - (a as any)[sortKey] :
+                    -1;
             });
-
-            data.forEach(function (point: any, i: number): void {
+            // Set x value depending on the position in the array
+            sortedData.forEach(function (
+                point: Highcharts.PointOptionsObject,
+                i: number
+            ): void {
                 if (!point.x) {
                     point.x = i;
                 }
-            });
+            }, this);
+
+            // Set the same x for linked series points if they don't have their
+            // own sorting
+            if (series.linkedSeries) {
+                series.linkedSeries.forEach(function (
+                    linkedSeries: Highcharts.Series
+                ): void {
+                    var options = linkedSeries.options,
+                        seriesData = (options.data as any);
+
+                    if (!options.dataSorting && seriesData) {
+                        seriesData.forEach(function (
+                            pointOptions: Highcharts.PointOptionsType,
+                            i: number
+                        ): void {
+                            seriesData[i] = getPointOptionsObject(
+                                linkedSeries,
+                                pointOptions
+                            );
+
+                            if (data[i]) {
+                                seriesData[i].x = (data[i] as any).x;
+                                seriesData[i].index = i;
+                            }
+                        });
+
+                        linkedSeries.setData(seriesData, false);
+                    }
+                });
+            }
 
             return data;
         },
@@ -4307,7 +4386,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 stacking = options.stacking,
                 xAxis = series.xAxis,
                 categories = xAxis.categories,
-                dataSorting = options.dataSorting,
+                enabledDataSorting = series.enabledDataSorting,
                 yAxis = series.yAxis,
                 points = series.points,
                 dataLength = points.length,
@@ -4505,12 +4584,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // Find point zone
                 point.zone = (this.zones.length && point.getZone() as any);
 
-                if (
-                    !point.graphic &&
-                    series.group &&
-                    dataSorting &&
-                    dataSorting.enabled
-                ) {
+                // Animate new points with data sorting
+                if (!point.graphic && series.group && enabledDataSorting) {
                     point.isNew = true;
                 }
             }
@@ -5810,7 +5885,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 chart = series.chart,
                 group,
                 options = series.options,
-                dataSorting = options.dataSorting,
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
@@ -5863,7 +5937,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (series.visible) {
                 series.drawPoints();
 
-                if (series.group && dataSorting && dataSorting.enabled) {
+                if (
+                    series.group &&
+                    series.enabledDataSorting &&
+                    series.xAxis
+                ) {
                     series.animateNewPoints();
                 }
             }
@@ -5946,12 +6024,14 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 targetPos,
                 points = series.points;
 
-            startPos = inverted ? chart.plotHeight : chart.plotWidth;
+            startPos = inverted ? series.yAxis.width : series.xAxis.width;
             startPos = reversed ? 0 : startPos;
 
-            points.forEach(function (point): void {
-                if (point.shapeArgs && reversed) {
-                    point.startXPos = -point.shapeArgs.width;
+            points.forEach(function (point: Highcharts.Point): void {
+                if ((point.shapeArgs || point.marker) && reversed) {
+                    point.startXPos = -(point as any)[point.shapeArgs ?
+                        'shapeArgs' : 'marker'
+                    ].width;
 
                 } else {
                     point.startXPos = startPos;
@@ -5968,12 +6048,12 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     if (point.graphic) {
                         point.graphic.attr({
                             x: point.startXPos
-                        });
-
-                        point.graphic.animate({
+                        }).animate({
                             x: targetPos
                         });
                     }
+
+                    point.isNew = false;
                 }
             });
         },

@@ -570,9 +570,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.series.forEach(function (series) {
-                series.update({}, false);
-            });
+            chart.updateAllSeries();
         }
         // For loading, just update the options, do not redraw
         if (options.loading) {

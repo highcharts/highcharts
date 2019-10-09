@@ -2166,9 +2166,6 @@ null,
                 series[key + 'Data'] = [];
             }
         });
-        if (!series.points && !series.data) {
-            series.setData(options.data, false);
-        }
         // Mark cartesian
         if (series.isCartesian) {
             chart.hasCartesianSeries = true;
@@ -2182,6 +2179,12 @@ null,
         // Insert the series and re-order all series above the insertion
         // point.
         chart.orderSeries(this.insert(chartSeries));
+        if (options.dataSorting && options.dataSorting.enabled) {
+            series.setDataSortingOptions();
+        }
+        else if (!series.points && !series.data) {
+            series.setData(options.data, false);
+        }
         fireEvent(this, 'afterInit');
     },
     /**
@@ -2351,6 +2354,28 @@ null,
         }
         this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
+    },
+    /**
+     * Internal function to set properties for series if data sorting is
+     * enabled.
+     *
+     * @private
+     * @function Highcharts.Series#setDataSortingOptions
+     * @return {void}
+     */
+    setDataSortingOptions: function () {
+        var options = this.options;
+        extend(this, {
+            requireSorting: false,
+            sorted: false,
+            forceDL: true,
+            enabledDataSorting: true,
+            allowDG: false
+        });
+        // To allow unsorted data for column series.
+        if (!options.pointRange) {
+            options.pointRange = 1;
+        }
     },
     /**
      * Set the series options by merging from the options tree. Called
@@ -2535,10 +2560,11 @@ null,
         if (id) {
             matchingPoint = this.chart.get(id);
         }
-        else if (dataSorting && dataSorting.enabled) {
-            matchKey = dataSorting.matchByName ? 'name' : 'originalIndex';
+        else if (this.linkedParent || (this.enabledDataSorting)) {
+            matchKey = (dataSorting && dataSorting.matchByName) ?
+                'name' : 'index';
             matchingPoint = H.find(oldData, function (oldPoint) {
-                return oldPoint[matchKey] ===
+                return !oldPoint.touched && oldPoint[matchKey] ===
                     optionsObject[matchKey];
             });
             // Add unmatched point as a new point
@@ -2837,7 +2863,7 @@ null,
         }
     },
     /**
-     * Internal function to sort the data by
+     * Internal function to sort series data
      *
      * @private
      * @function Highcharts.Series#sortData
@@ -2846,23 +2872,45 @@ null,
      * @return {Array<Highcharts.PointOptionsType>}
      */
     sortData: function (data) {
-        var options = this.options, dataSorting = options.dataSorting, sortKey = dataSorting.sortKey || 'y';
-        data.forEach(function (pointOptions, i) {
-            data[i] = (defined(pointOptions) &&
-                this.pointClass.prototype.optionsToObject.call({
-                    series: this
+        var series = this, options = series.options, dataSorting = options.dataSorting, sortKey = dataSorting.sortKey || 'y', sortedData, getPointOptionsObject = function (series, pointOptions) {
+            return (defined(pointOptions) &&
+                series.pointClass.prototype.optionsToObject.call({
+                    series: series
                 }, pointOptions)) || {};
-            data[i].originalIndex = i;
+        };
+        data.forEach(function (pointOptions, i) {
+            data[i] = getPointOptionsObject(series, pointOptions);
+            data[i].index = i;
         }, this);
         // Sorting
-        data.sort(function (a, b) {
-            return b[sortKey] - a[sortKey];
+        sortedData = data.concat().sort(function (a, b) {
+            return b[sortKey] ?
+                b[sortKey] - a[sortKey] :
+                -1;
         });
-        data.forEach(function (point, i) {
+        // Set x value depending on the position in the array
+        sortedData.forEach(function (point, i) {
             if (!point.x) {
                 point.x = i;
             }
-        });
+        }, this);
+        // Set the same x for linked series points if they don't have their
+        // own sorting
+        if (series.linkedSeries) {
+            series.linkedSeries.forEach(function (linkedSeries) {
+                var options = linkedSeries.options, seriesData = options.data;
+                if (!options.dataSorting && seriesData) {
+                    seriesData.forEach(function (pointOptions, i) {
+                        seriesData[i] = getPointOptionsObject(linkedSeries, pointOptions);
+                        if (data[i]) {
+                            seriesData[i].x = data[i].x;
+                            seriesData[i].index = i;
+                        }
+                    });
+                    linkedSeries.setData(seriesData, false);
+                }
+            });
+        }
         return data;
     },
     /**
@@ -3209,7 +3257,7 @@ null,
             this.processData();
         }
         this.generatePoints();
-        var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, dataSorting = options.dataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
+        var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, enabledDataSorting = series.enabledDataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
         dynamicallyPlaced = isNumber(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
@@ -3319,10 +3367,8 @@ null,
             }
             // Find point zone
             point.zone = (this.zones.length && point.getZone());
-            if (!point.graphic &&
-                series.group &&
-                dataSorting &&
-                dataSorting.enabled) {
+            // Animate new points with data sorting
+            if (!point.graphic && series.group && enabledDataSorting) {
                 point.isNew = true;
             }
         }
@@ -4215,7 +4261,7 @@ null,
      * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
-        var series = this, chart = series.chart, group, options = series.options, dataSorting = options.dataSorting, 
+        var series = this, chart = series.chart, group, options = series.options, 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
         animDuration = (!!series.animate &&
@@ -4242,7 +4288,9 @@ null,
         // Draw the points
         if (series.visible) {
             series.drawPoints();
-            if (series.group && dataSorting && dataSorting.enabled) {
+            if (series.group &&
+                series.enabledDataSorting &&
+                series.xAxis) {
                 series.animateNewPoints();
             }
         }
@@ -4302,11 +4350,12 @@ null,
      */
     animateNewPoints: function () {
         var series = this, reversed = series.xAxis.reversed, chart = series.chart, inverted = chart.inverted, startPos, targetPos, points = series.points;
-        startPos = inverted ? chart.plotHeight : chart.plotWidth;
+        startPos = inverted ? series.yAxis.width : series.xAxis.width;
         startPos = reversed ? 0 : startPos;
         points.forEach(function (point) {
-            if (point.shapeArgs && reversed) {
-                point.startXPos = -point.shapeArgs.width;
+            if ((point.shapeArgs || point.marker) && reversed) {
+                point.startXPos = -point[point.shapeArgs ?
+                    'shapeArgs' : 'marker'].width;
             }
             else {
                 point.startXPos = startPos;
@@ -4321,11 +4370,11 @@ null,
                 if (point.graphic) {
                     point.graphic.attr({
                         x: point.startXPos
-                    });
-                    point.graphic.animate({
+                    }).animate({
                         x: targetPos
                     });
                 }
+                point.isNew = false;
             }
         });
     },

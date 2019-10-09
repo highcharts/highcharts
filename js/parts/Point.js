@@ -809,8 +809,7 @@ Highcharts.Point.prototype = {
      * Animate SVG elements associated with the point.
      *
      * @private
-     * @function Highcharts.Point#animateElements
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @function Highcharts.Point#animateBeforeDestroy
      * @return {void}
      */
     animateBeforeDestroy: function () {
