@@ -16,8 +16,14 @@ var extend = U.extend;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import A11yUtilities from '../utilities.js';
-var setElAttrs = A11yUtilities.setElAttrs;
+
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var setElAttrs = HTMLUtilities.setElAttrs,
+    removeElement = HTMLUtilities.removeElement;
+
 
 function chartHasMapZoom(chart) {
     return chart.mapZoom &&
@@ -92,7 +98,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         // Make map zoom buttons accessible
         if (chart.mapNavButtons) {
             chart.mapNavButtons.forEach(function (button, i) {
-                component.unhideElementFromScreenReaders(button.element);
+                unhideChartElementFromAT(chart, button.element);
                 component.setMapNavButtonAttrs(
                     button.element,
                     'accessibility.zoom.mapZoom' + (i ? 'Out' : 'In')
@@ -138,8 +144,8 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         var chart = this.chart;
 
         // Always start with a clean slate
-        this.removeElement(this.drillUpProxyGroup);
-        this.removeElement(this.resetZoomProxyGroup);
+        removeElement(this.drillUpProxyGroup);
+        removeElement(this.resetZoomProxyGroup);
 
         if (chart.resetZoomButton) {
             this.recreateProxyButtonAndGroup(
@@ -176,7 +182,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
     recreateProxyButtonAndGroup: function (
         buttonEl, buttonProp, groupProp, label
     ) {
-        this.removeElement(this[groupProp]);
+        removeElement(this[groupProp]);
         this[groupProp] = this.addProxyGroup();
         this[buttonProp] = this.createProxyButton(
             buttonEl,

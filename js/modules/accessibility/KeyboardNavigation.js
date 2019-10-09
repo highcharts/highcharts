@@ -10,12 +10,15 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-
 var merge = H.merge,
     addEvent = H.addEvent,
     win = H.win,
     doc = win.document;
+
+import HTMLUtilities from './utils/htmlUtilities.js';
+var getElement = HTMLUtilities.getElement;
+
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 
 
 /**
@@ -249,7 +252,7 @@ KeyboardNavigation.prototype = {
      */
     updateExitAnchor: function () {
         var endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
-            endMarker = doc.getElementById(endMarkerId);
+            endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
 

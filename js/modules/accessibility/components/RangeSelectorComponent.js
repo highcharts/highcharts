@@ -16,8 +16,12 @@ var extend = U.extend;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import A11yUtilities from '../utilities.js';
-var setElAttrs = A11yUtilities.setElAttrs;
+
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var setElAttrs = HTMLUtilities.setElAttrs;
 
 
 function shouldRunInputNavigation(chart) {
@@ -93,7 +97,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
 
         if (rangeSelector.buttons && rangeSelector.buttons.length) {
             rangeSelector.buttons.forEach(function (button) {
-                component.unhideElementFromScreenReaders(button.element);
+                unhideChartElementFromAT(chart, button.element);
                 component.setRangeButtonAttrs(button);
             });
         }
@@ -103,7 +107,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             ['minInput', 'maxInput'].forEach(function (key, i) {
                 var input = rangeSelector[key];
                 if (input) {
-                    component.unhideElementFromScreenReaders(input);
+                    unhideChartElementFromAT(chart, input);
                     component.setRangeInputAttrs(
                         input,
                         'accessibility.rangeSelector.' + (i ? 'max' : 'min') +
