@@ -23,7 +23,7 @@ declare global {
             public init(): void;
             public getValues(
                 series: Series,
-                params: PriceEnvelopesIndicatorOptionsParams
+                params: PriceEnvelopesIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
             public nameBase: string;
             public options: PriceEnvelopesIndicatorOptions;
@@ -38,7 +38,15 @@ declare global {
             public translate(): void;
         }
 
-        interface PriceEnvelopesIndicatorOptionsParams
+        interface PriceEnvelopesIndicatorGappedExtensionObject {
+            options?: PriceEnvelopesIndicatorGappedExtensionOptions;
+        }
+
+        interface PriceEnvelopesIndicatorGappedExtensionOptions {
+            gapSize?: number;
+        }
+
+        interface PriceEnvelopesIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
             topBand?: number;
             bottomBand?: number;
@@ -54,7 +62,7 @@ declare global {
         }
 
         interface PriceEnvelopesIndicatorOptions extends SMAIndicatorOptions {
-            params?: PriceEnvelopesIndicatorOptionsParams;
+            params?: PriceEnvelopesIndicatorParamsOptions;
             bottomLine?: Dictionary<CSSObject>;
             topLine?: Dictionary<CSSObject>;
         }
@@ -208,19 +216,21 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 Highcharts.PriceEnvelopesIndicatorPoint
                 > = indicator.points,
                 pointsLength: number = middleLinePoints.length,
-                middleLineOptions: Highcharts.PriceEnvelopesIndicatorOptions =
-                    indicator.options,
+                middleLineOptions: Highcharts.PriceEnvelopesIndicatorOptions = (
+                    indicator.options
+                ),
                 middleLinePath: (
                     Highcharts.SVGElement|undefined
                 ) = indicator.graph,
-                gappedExtend = {
+                gappedExtend:
+                Highcharts.PriceEnvelopesIndicatorGappedExtensionObject = {
                     options: {
                         gapSize: middleLineOptions.gapSize
                     }
                 },
-                deviations: Array<Array<
-                Partial<Highcharts.PriceEnvelopesIndicatorPoint>
-                >> = [[], []], // top and bottom point place holders
+                deviations: Array<Array<(
+                    Partial<Highcharts.PriceEnvelopesIndicatorPoint>
+                )>> = [[], []], // top and bottom point place holders
                 point: Highcharts.PriceEnvelopesIndicatorPoint;
 
             // Generate points for top and bottom lines:
@@ -262,7 +272,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
         },
         getValues: function (
             series: Highcharts.Series,
-            params: Highcharts.PriceEnvelopesIndicatorOptionsParams
+            params: Highcharts.PriceEnvelopesIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
                 topPercent: number = (params.topBand as any),
@@ -281,11 +291,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 yData: Array<Array<number>> = [],
                 slicedX: Array<number>,
                 slicedY: Array<Array<number>>,
-                point: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorMultipleValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
-                ),
+                point: Highcharts.IndicatorValuesObject,
                 i: number;
 
             // Price envelopes requires close value
@@ -301,10 +307,10 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 slicedX = xVal.slice(i - period, i);
                 slicedY = yVal.slice(i - period, i);
 
-                point = SMA.prototype.getValues.call(this, ({
+                point = (SMA.prototype.getValues.call(this, ({
                     xData: slicedX,
                     yData: slicedY
-                } as any), params);
+                } as any), params) as any);
 
                 date = (point as any).xData[0];
                 ML = (point as any).yData[0];

@@ -127,7 +127,7 @@ H.seriesType('priceenvelopes', 'sma',
         });
     },
     drawGraph: function () {
-        var indicator = this, middleLinePoints = indicator.points, pointsLength = middleLinePoints.length, middleLineOptions = indicator.options, middleLinePath = indicator.graph, gappedExtend = {
+        var indicator = this, middleLinePoints = indicator.points, pointsLength = middleLinePoints.length, middleLineOptions = (indicator.options), middleLinePath = indicator.graph, gappedExtend = {
             options: {
                 gapSize: middleLineOptions.gapSize
             }
