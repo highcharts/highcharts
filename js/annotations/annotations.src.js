@@ -12,6 +12,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
+    destroyObjectProperties = U.destroyObjectProperties,
     erase = U.erase,
     extend = U.extend,
     pick = U.pick,
@@ -33,7 +34,6 @@ var merge = H.merge,
     fireEvent = H.fireEvent,
     find = H.find,
     reduce = H.reduce,
-    destroyObjectProperties = H.destroyObjectProperties,
     chartProto = H.Chart.prototype;
 
 /* *********************************************************************
