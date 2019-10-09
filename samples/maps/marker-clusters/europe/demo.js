@@ -6,12 +6,12 @@ $.get(
             .filter(elem =>
                 elem[13] === 't' &&
                 elem[12] === 't' &&
-            elem[5] &&
-            elem[6] &&
-            elem[1] !== 'Funchal Madeira Airport'
+                elem[5] &&
+                elem[6] &&
+                elem[1] !== 'Funchal Madeira Airport'
             )
             .map(elem => ({
-                name: elem[1],
+                name: elem[1].replace(' Airport', '').replace(' Aeroporto', ''),
                 lat: +elem[5],
                 lon: +elem[6],
                 country: elem[8]
@@ -32,8 +32,16 @@ $.get(
                 enabled: true
             },
             tooltip: {
-                headerFormat: '',
-                pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
+                formatter: function () {
+                    const point = this.point;
+
+                    if (point.isCluster) {
+                        return `Stations nearby: ${point.clusterPointsAmount}`;
+                    }
+
+                    return `<b>${point.name}</b><br>Lat: ${point.lat.toFixed(2)},
+                        Lon: ${point.lon.toFixed(2)}`;
+                }
             },
             colorAxis: {
                 min: 0,

@@ -70,7 +70,7 @@ seriesType('bubble', 'scatter', {
      */
     /**
      * @extends   plotOptions.series.marker
-     * @excluding enabled, enabledThreshold, height, radius, width
+     * @excluding enabled, enabledThreshold, height, radius, width, cluster
      */
     marker: {
         lineColor: null,

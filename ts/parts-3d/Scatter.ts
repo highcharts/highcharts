@@ -74,7 +74,12 @@ seriesType(
     {
         tooltip: {
             pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-        }
+        },
+        /**
+         * @extends   plotOptions.series.marker
+         * @excluding cluster
+         */
+        marker: {}
 
     // Series class
     }, {

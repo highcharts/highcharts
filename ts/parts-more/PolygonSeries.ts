@@ -72,6 +72,9 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @optionparent plotOptions.polygon
  */
 seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
+    /**
+     * @excluding cluster
+     */
     marker: {
         enabled: false,
         states: {

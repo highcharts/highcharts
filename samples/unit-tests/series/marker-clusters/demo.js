@@ -113,8 +113,7 @@ QUnit.test('General marker-clusters', function (assert) {
                 minimumClusterSize: 3,
                 layoutAlgorithm: {
                     type: 'grid',
-                    gridSize: 50,
-                    drawGridLines: true
+                    gridSize: 50
                 }
             }
         }
@@ -122,7 +121,7 @@ QUnit.test('General marker-clusters', function (assert) {
 
     result = true;
 
-    series.clusters.clusters.forEach(function (cluster) {
+    series.clusters.clusterElements.forEach(function (cluster) {
         if (cluster.data.length < clusterOptions.minimumClusterSize) {
             result = false;
         }
@@ -141,7 +140,7 @@ QUnit.test('General marker-clusters', function (assert) {
         }
     });
 
-    cluster = series.clusters.clusters[0];
+    cluster = series.clusters.clusterElements[0];
     cluster.data.forEach(function (p) {
         posX += p.x;
         posY += p.y;
@@ -197,7 +196,7 @@ QUnit.test('General marker-clusters', function (assert) {
     });
 
 
-    clusters = series.clusters.clusters;
+    clusters = series.clusters.clusterElements;
     assert.deepEqual(
         [
             clusters[0].point.graphic.fillColor,
@@ -219,11 +218,11 @@ QUnit.test('General marker-clusters', function (assert) {
         'Clusters tooltip format should be consistent with tooltip.clusterFormat.'
     );
 
-    series.clusters.noise[0].point.onMouseOver();
+    series.clusters.noiseElements[0].point.onMouseOver();
 
     assert.strictEqual(
         chart.tooltip.label.text.element.textContent,
-        'value: ' + series.clusters.noise[0].point.y,
+        'value: ' + series.clusters.noiseElements[0].point.y,
         'Noise tooltip format should be consistent with tooltip.pointFormat.'
     );
 
@@ -233,7 +232,7 @@ QUnit.test('General marker-clusters', function (assert) {
     });
 
     assert.strictEqual(
-        series.clusters.clusters[3].data.length,
+        series.clusters.clusterElements[3].data.length,
         5,
         'After addPoint() cluster size should be updated.'
     );
@@ -245,8 +244,8 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.deepEqual(
         [
-            series.clusters.clusters[3].clusterZone,
-            series.clusters.clusters[3].point.graphic.fillColor
+            series.clusters.clusterElements[3].clusterZone,
+            series.clusters.clusterElements[3].point.graphic.fillColor
         ],
         [
             series.options.marker.cluster.zones[3],
@@ -256,12 +255,12 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     assert.strictEqual(
-        series.clusters.clusters[3].point.graphic.className,
+        series.clusters.clusterElements[3].point.graphic.className,
         'test-class-name',
         'Cluster class name should be consistent with zone.className.'
     );
 
-    series.clusters.clusters[3].point.firePointEvent('click');
+    series.clusters.clusterElements[3].point.firePointEvent('click');
 
     assert.deepEqual(
         [
@@ -307,17 +306,17 @@ QUnit.test('Grid algorithm tests.', function (assert) {
         }
     });
 
-    clusteredPointsLen = series.clusters.noise.length;
+    clusteredPointsLen = series.clusters.noiseElements.length;
     clusterOptions = series.options.marker.cluster;
 
-    for (i = 0; i < series.clusters.clusters.length; i++) {
-        clusteredPointsLen += series.clusters.clusters[i].data.length;
+    for (i = 0; i < series.clusters.clusterElements.length; i++) {
+        clusteredPointsLen += series.clusters.clusterElements[i].data.length;
     }
 
     assert.deepEqual(
         [
-            series.clusters.clusters.length,
-            series.clusters.noise.length,
+            series.clusters.clusterElements.length,
+            series.clusters.noiseElements.length,
             clusteredPointsLen
         ],
         [
@@ -328,7 +327,7 @@ QUnit.test('Grid algorithm tests.', function (assert) {
         'Cluster and noise amount should be correct.'
     );
 
-    cluster = series.clusters.clusters[0];
+    cluster = series.clusters.clusterElements[0];
     gridOffset = series.getGridOffset();
 
     assert.deepEqual(
@@ -360,9 +359,9 @@ QUnit.test('Grid algorithm tests.', function (assert) {
 
     result = true;
 
-    series.clusters.clusters.forEach(function (cluster, i) {
+    series.clusters.clusterElements.forEach(function (cluster, i) {
         if (result) {
-            series.clusters.clusters.forEach(function (nextCluster, j) {
+            series.clusters.clusterElements.forEach(function (nextCluster, j) {
                 if (i !== j && result) {
                     distance = Math.sqrt(
                         Math.pow(cluster.point.plotX - nextCluster.point.plotX, 2) +
@@ -405,14 +404,13 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
             cluster: {
                 layoutAlgorithm: {
                     type: 'kmeans',
-                    distance: maxDistance,
-                    drawGridLines: false
+                    distance: maxDistance
                 }
             }
         }
     });
 
-    clusters = series.clusters.clusters;
+    clusters = series.clusters.clusterElements;
 
     for (i = 0; i < series.xData.length; i++) {
         pointClusterDistance = [];
@@ -475,7 +473,7 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
 
     assert.strictEqual(
         noiseTest.length,
-        series.clusters.noise.length,
+        series.clusters.noiseElements.length,
         'Noise points amount should be correct.'
     );
 });

@@ -175,7 +175,7 @@ seriesType<Highcharts.BubbleSeriesOptions>('bubble', 'scatter', {
 
     /**
      * @extends   plotOptions.series.marker
-     * @excluding enabled, enabledThreshold, height, radius, width
+     * @excluding enabled, enabledThreshold, height, radius, width, cluster
      */
     marker: {
 

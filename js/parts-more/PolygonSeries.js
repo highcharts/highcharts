@@ -33,6 +33,9 @@ var LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Series = H.Series, s
  * @optionparent plotOptions.polygon
  */
 seriesType('polygon', 'scatter', {
+    /**
+     * @excluding cluster
+     */
     marker: {
         enabled: false,
         states: {
