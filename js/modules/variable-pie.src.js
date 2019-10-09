@@ -15,9 +15,9 @@ import H from '../parts/Globals.js';
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 import U from '../parts/Utilities.js';
-var arrayMin = U.arrayMin, pick = U.pick;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, pick = U.pick;
 import '../parts/Options.js';
-var fireEvent = H.fireEvent, arrayMax = H.arrayMax, seriesType = H.seriesType, pieProto = H.seriesTypes.pie.prototype;
+var fireEvent = H.fireEvent, seriesType = H.seriesType, pieProto = H.seriesTypes.pie.prototype;
 /**
  * The variablepie series type.
  *

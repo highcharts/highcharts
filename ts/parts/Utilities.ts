@@ -2198,7 +2198,7 @@ function arrayMin(data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data: Array<any>): number {
+function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2208,7 +2208,7 @@ H.arrayMax = function (data: Array<any>): number {
         }
     }
     return max;
-};
+}
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -3362,6 +3362,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    arrayMax,
     arrayMin,
     attr,
     defined,

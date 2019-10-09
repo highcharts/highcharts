@@ -1525,7 +1525,7 @@ function arrayMin(data) {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data) {
+function arrayMax(data) {
     var i = data.length, max = data[0];
     while (i--) {
         if (data[i] > max) {
@@ -1533,7 +1533,7 @@ H.arrayMax = function (data) {
         }
     }
     return max;
-};
+}
 /**
  * Utility method that destroys any SVGElement instances that are properties on
  * the given object. It loops all properties and invokes destroy if there is a
@@ -2484,6 +2484,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
     defined: defined,
