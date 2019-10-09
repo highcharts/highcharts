@@ -149,6 +149,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
     arrayMin,
     defined,
     extend,
@@ -161,7 +162,6 @@ import './Series.js';
 import './Tooltip.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,

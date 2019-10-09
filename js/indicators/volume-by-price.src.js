@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var arrayMin = U.arrayMin,
+var arrayMax = U.arrayMax,
+    arrayMin = U.arrayMin,
     extend = U.extend,
     isArray = U.isArray;
 
@@ -350,7 +351,7 @@ seriesType(
                     options.pointPadding :
                     0.1;
                 volumeDataArray = indicator.volumeDataArray;
-                maxVolume = H.arrayMax(volumeDataArray);
+                maxVolume = arrayMax(volumeDataArray);
                 primalBarWidth = chart.plotWidth / 2;
                 chartPlotTop = chart.plotTop;
                 barHeight = abs(yAxis.toPixels(yAxisMin) -
@@ -486,7 +487,7 @@ seriesType(
                     arrayMin(yValues),
                 highRange = rangeExtremes ?
                     rangeExtremes.max :
-                    H.arrayMax(yValues),
+                    arrayMax(yValues),
                 zoneStarts = indicator.zoneStarts = [],
                 priceZones = [],
                 i = 0,
