@@ -2225,7 +2225,7 @@ function arrayMax(data: Array<any>): number {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj: any, except?: any): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -2236,7 +2236,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 
 
 /**
@@ -3366,6 +3366,7 @@ const utils = {
     arrayMin,
     attr,
     defined,
+    destroyObjectProperties,
     erase,
     extend,
     isArray,

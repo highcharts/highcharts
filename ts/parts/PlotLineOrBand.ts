@@ -160,14 +160,14 @@ const {
     arrayMax,
     arrayMin,
     defined,
+    destroyObjectProperties,
     erase,
     extend,
     objectEach,
     pick
 } = U;
 
-var destroyObjectProperties = H.destroyObjectProperties,
-    merge = H.merge;
+var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

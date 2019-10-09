@@ -1549,7 +1549,7 @@ function arrayMax(data) {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj, except) {
+function destroyObjectProperties(obj, except) {
     objectEach(obj, function (val, n) {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -1559,7 +1559,7 @@ H.destroyObjectProperties = function (obj, except) {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -2488,6 +2488,7 @@ var utils = {
     arrayMin: arrayMin,
     attr: attr,
     defined: defined,
+    destroyObjectProperties: destroyObjectProperties,
     erase: erase,
     extend: extend,
     isArray: isArray,
