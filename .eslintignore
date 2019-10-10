@@ -1,6 +1,6 @@
 docs/sidebars.js
 js/indicators/**/*.js
-!js/indicators/apo.src.js
+#!js/indicators/apo.src.js
 !js/indicators/aroon-oscillator.src.js
 !js/indicators/chaikin.src.js
 #!js/indicators/cmf.src.js

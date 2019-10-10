@@ -40,7 +40,6 @@ declare global {
                 series: Series,
                 params: EMAIndicatorParamsOptions
             ): (boolean|IndicatorValuesObject);
-
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {
