@@ -13,14 +13,15 @@
 import H from '../../../parts/Globals.js';
 
 import U from '../../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import A11yUtilities from '../utilities.js';
 
 var merge = H.merge,
-    pick = H.pick,
     stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
 
 
@@ -559,15 +560,10 @@ H.Point.prototype.getA11yTimeDescription = function () {
  * @private
  * @class
  * @name Highcharts.SeriesComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var SeriesComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var SeriesComponent = function () {};
 SeriesComponent.prototype = new AccessibilityComponent();
-H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
+extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
     /**
      * Init the component.

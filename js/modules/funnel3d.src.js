@@ -13,10 +13,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend, pick = U.pick;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, error = H.error, extend = H.extend, merge = H.merge, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, relativeLength = H.relativeLength, 
+var charts = H.charts, color = H.color, error = H.error, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, relativeLength = H.relativeLength, 
 // Use H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 
 //
@@ -303,7 +304,11 @@ seriesType('funnel3d', 'column',
         seriesTypes.column.prototype.alignDataLabel.apply(series, arguments);
     }
 }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
-    shapeType: 'funnel3d'
+    shapeType: 'funnel3d',
+    hasNewShapeType: H
+        .seriesTypes.column.prototype
+        .pointClass.prototype
+        .hasNewShapeType
 });
 /**
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is

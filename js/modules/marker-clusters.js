@@ -12,13 +12,29 @@
  *
  * */
 'use strict';
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import H from './../parts/Globals.js';
 import U from './../parts/Utilities.js';
 /* eslint-disable no-invalid-this */
 import './../parts/Series.js';
 import './../parts/Axis.js';
 import './../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, pick = H.pick, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, baseGeneratePoints = Series.prototype.generatePoints, clusterDefaultOptions;
+var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = H.isNumber, pick = H.pick, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, baseGeneratePoints = Series.prototype.generatePoints, clusterDefaultOptions;
 /**
  * Options for marker clusters, the concept of sampling the data
  * values into larger blocks in order to ease readability and
@@ -567,10 +583,10 @@ Scatter.prototype.getRealExtremes = function () {
         xAxis.toValue(chart.plotLeft + chart.plotWidth) : 0, realMinY = yAxis ? yAxis.toValue(chart.plotTop) : 0, realMaxY = yAxis ?
         yAxis.toValue(chart.plotTop + chart.plotHeight) : 0;
     if (realMinX > realMaxX) {
-        _a = [realMinX, realMaxX], realMaxX = _a[0], realMinX = _a[1];
+        _a = __read([realMinX, realMaxX], 2), realMaxX = _a[0], realMinX = _a[1];
     }
     if (realMinY > realMaxY) {
-        _b = [realMinY, realMaxY], realMaxY = _b[0], realMinY = _b[1];
+        _b = __read([realMinY, realMaxY], 2), realMaxY = _b[0], realMinY = _b[1];
     }
     return {
         minX: realMinX,
@@ -597,10 +613,10 @@ Scatter.prototype.onDrillToCluster = function (event) {
             chart.pointer.zoomY = true;
             // Swap when minus values.
             if (minX > maxX) {
-                _a = [maxX, minX], minX = _a[0], maxX = _a[1];
+                _a = __read([maxX, minX], 2), minX = _a[0], maxX = _a[1];
             }
             if (minY > maxY) {
-                _b = [maxY, minY], minY = _b[0], maxY = _b[1];
+                _b = __read([maxY, minY], 2), minY = _b[0], maxY = _b[1];
             }
             chart.zoom({
                 originalEvent: e,
@@ -817,7 +833,7 @@ Scatter.prototype.clusterAlgorithms = {
     }
 };
 Scatter.prototype.preventClusterCollisions = function (props) {
-    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, _a = props.key.split('-').map(parseFloat), gridY = _a[0], gridX = _a[1], gridSize = props.gridSize, groupedData = props.groupedData, defaultRadius = props.defaultRadius, clusterRadius = props.clusterRadius, gridXPx = gridX * gridSize, gridYPx = gridY * gridSize, xPixel = xAxis.toPixels(props.x), yPixel = yAxis.toPixels(props.y), gridsToCheckCollision = [], pointsLen = 0, radius = 0, clusterStyleOptions = ((series.options.marker || {}).cluster || {}).style, zoneOptions, gridOffset = series.getGridOffset(), nextXPixel, nextYPixel, signX, signY, cornerGridX, cornerGridY, i, itemX, itemY, nextClusterPos, maxDist, x, y;
+    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, _a = __read(props.key.split('-').map(parseFloat), 2), gridY = _a[0], gridX = _a[1], gridSize = props.gridSize, groupedData = props.groupedData, defaultRadius = props.defaultRadius, clusterRadius = props.clusterRadius, gridXPx = gridX * gridSize, gridYPx = gridY * gridSize, xPixel = xAxis.toPixels(props.x), yPixel = yAxis.toPixels(props.y), gridsToCheckCollision = [], pointsLen = 0, radius = 0, clusterStyleOptions = ((series.options.marker || {}).cluster || {}).style, zoneOptions, gridOffset = series.getGridOffset(), nextXPixel, nextYPixel, signX, signY, cornerGridX, cornerGridY, i, itemX, itemY, nextClusterPos, maxDist, x, y;
     if (series.options.marker && series.options.marker.cluster) {
         zoneOptions = series.options.marker.cluster.zones;
     }
@@ -850,7 +866,7 @@ Scatter.prototype.preventClusterCollisions = function (props) {
                     gridOffset.plotLeft;
                 nextYPixel = yAxis.toPixels(groupedData[item].posY || 0) -
                     gridOffset.plotTop;
-                _a = item.split('-').map(parseFloat), itemY = _a[0], itemX = _a[1];
+                _a = __read(item.split('-').map(parseFloat), 2), itemY = _a[0], itemX = _a[1];
                 if (zoneOptions) {
                     pointsLen = groupedData[item].length;
                     for (i = 0; i < zoneOptions.length; i++) {
@@ -1076,13 +1092,13 @@ Scatter.prototype.generatePoints = function () {
                     seriesMaxX = seriesMinX = series.xData[i];
                     seriesMaxY = seriesMinY = series.yData[i];
                 }
-                else {
+                else if (isNumber(series.yData[i]) &&
+                    isNumber(seriesMaxY) &&
+                    isNumber(seriesMinY)) {
                     seriesMaxX = Math.max(series.xData[i], seriesMaxX);
                     seriesMinX = Math.min(series.xData[i], seriesMinX);
-                    seriesMaxY =
-                        Math.max(series.yData[i] || seriesMaxY, seriesMaxY);
-                    seriesMinY =
-                        Math.min(series.yData[i] || seriesMinY, seriesMinY);
+                    seriesMaxY = Math.max(series.yData[i] || seriesMaxY, seriesMaxY);
+                    seriesMinY = Math.min(series.yData[i] || seriesMinY, seriesMinY);
                 }
             }
             if (series.xData[i] >= realExtremes.minX &&
@@ -1096,7 +1112,7 @@ Scatter.prototype.generatePoints = function () {
         }
         // Save data max values.
         if (defined(seriesMaxX) && defined(seriesMinX) &&
-            defined(seriesMaxY) && defined(seriesMinY)) {
+            isNumber(seriesMaxY) && isNumber(seriesMinY)) {
             series.dataMaxX = seriesMaxX;
             series.dataMinX = seriesMinX;
             series.dataMaxY = seriesMaxY;

@@ -42,3 +42,46 @@ QUnit.test('Correct float for isSum and isIntermediateSum (#4954)', function (as
         'isSum is correct'
     );
 });
+
+QUnit.test('First point as sum', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'waterfall'
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+
+        series: [{
+            data: [{
+                name: 'Positive Balance',
+                isIntermediateSum: true
+            }, {
+                name: 'Fixed Costs',
+                y: -342000
+            }, {
+                name: 'Balance',
+                isSum: true
+            }]
+        }]
+    });
+    assert.ok(
+        chart.series[0].points[1].graphic.attr('height') > 10,
+        'The series should initially be rendered without errors (#3245)'
+    );
+
+    chart.series[0].setData([{
+        name: 'Positive Balance',
+        isIntermediateSum: true
+    }, {
+        name: 'Balance',
+        isSum: true
+    }]);
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphic.attr('stroke-width'),
+        1,
+        'The series should be updated without errors (#7559)'
+    );
+});

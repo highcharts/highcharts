@@ -38,11 +38,11 @@ import Highcharts from '../parts/Globals.js';
 * @type {Array<Array<string>>}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, pick = U.pick;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
-var pick = Highcharts.pick, win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
+var win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -295,7 +295,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
+    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
         if (csvOptions.columnHeaderFormatter) {
@@ -320,21 +320,31 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             };
         }
         return item.name + (keyLength > 1 ? ' (' + key + ')' : '');
+    }, 
+    // Map the categories for value axes
+    getCategoryAndDateTimeMap = function (series, pointArrayMap, pIdx) {
+        var categoryMap = {}, dateTimeValueAxisMap = {};
+        pointArrayMap.forEach(function (prop) {
+            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
+                prop) + 'Axis', 
+            // Points in parallel coordinates refers to all yAxis
+            // not only `series.yAxis`
+            axis = Highcharts.isNumber(pIdx) ?
+                series.chart[axisName][pIdx] :
+                series[axisName];
+            categoryMap[prop] = (axis && axis.categories) || [];
+            dateTimeValueAxisMap[prop] = (axis && axis.isDatetimeAxis);
+        });
+        return {
+            categoryMap: categoryMap,
+            dateTimeValueAxisMap: dateTimeValueAxisMap
+        };
     }, xAxisIndices = [];
     // Loop the series and index values
     i = 0;
     this.setUpKeyToAxis();
     this.series.forEach(function (series) {
-        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, categoryMap = {}, datetimeValueAxisMap = {}, xAxisIndex = xAxes.indexOf(series.xAxis), mockSeries, j;
-        // Map the categories for value axes
-        pointArrayMap.forEach(function (prop) {
-            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
-                prop) + 'Axis';
-            categoryMap[prop] = (series[axisName] &&
-                series[axisName].categories) || [];
-            datetimeValueAxisMap[prop] = (series[axisName] &&
-                series[axisName].isDatetimeAxis);
-        });
+        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(series.xAxis), categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
         if (series.options.includeInDataExport !== false &&
             !series.options.isInternal &&
             series.visible !== false // #55
@@ -369,6 +379,11 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             // data (#7913), and we need to support Boost (#7026).
             series.options.data.forEach(function eachData(options, pIdx) {
                 var key, prop, val, name, point;
+                // In parallel coordinates chart, each data point is connected
+                // to a separate yAxis, conform this
+                if (hasParallelCoords) {
+                    categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap, pIdx);
+                }
                 point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(point, [options]);
                 key = point.x;
@@ -396,10 +411,15 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = point[prop];
-                    rows[key][i + j] = pick(categoryMap[prop][val], // Y axis category if present
-                    datetimeValueAxisMap[prop] ?
+                    rows[key][i + j] = pick(
+                    // Y axis category if present
+                    categoryAndDatetimeMap.categoryMap[prop][val], 
+                    // datetime yAxis
+                    categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                         time.dateFormat(csvOptions.dateFormat, val) :
-                        null, val);
+                        null, 
+                    // linear/log yAxis
+                    val);
                     j++;
                 }
             });
@@ -816,7 +836,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;
 if (exportingOptions) {
-    Highcharts.extend(exportingOptions.menuItemDefinitions, {
+    extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {
             textKey: 'downloadCSV',
             onclick: function () {

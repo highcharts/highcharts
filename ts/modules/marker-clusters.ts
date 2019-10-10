@@ -250,6 +250,7 @@ var Series = H.Series,
     isArray = U.isArray,
     isObject = U.isObject,
     isFunction = H.isFunction,
+    isNumber = H.isNumber,
     pick = H.pick,
     relativeLength = H.relativeLength,
     error = H.error,
@@ -919,7 +920,7 @@ Scatter.prototype.onDrillToCluster = function (
     point.firePointEvent('onDrillToCluster', event, function (
         this: Highcharts.Point,
         e: Highcharts.PointClickEventObject
-    ) {
+    ): void {
         var point = e.point || e.target,
             series = point.series,
             xAxis = point.series.xAxis,
@@ -932,12 +933,12 @@ Scatter.prototype.onDrillToCluster = function (
 
         if (drillToCluster && point.clusteredData) {
             sortedDataX = point.clusteredData.map(
-                (data: Highcharts.SplittedDataObject) => data.x
-            ).sort((a: number, b: number) => a - b);
+                (data: Highcharts.SplittedDataObject): number => data.x
+            ).sort((a: number, b: number): number => a - b);
 
             sortedDataY = point.clusteredData.map(
-                (data: Highcharts.SplittedDataObject) => data.y
-            ).sort((a: number, b: number) => a - b);
+                (data: Highcharts.SplittedDataObject): number => data.y
+            ).sort((a: number, b: number): number => a - b);
 
             minX = sortedDataX[0];
             maxX = sortedDataX[sortedDataX.length - 1];
@@ -1009,7 +1010,7 @@ Scatter.prototype.getClusterDistancesFromPoint = function (
     }
 
     return pointClusterDistance.sort(
-        (a, b) => a.distance - b.distance
+        (a, b): number => a.distance - b.distance
     );
 };
 
@@ -1103,7 +1104,7 @@ Scatter.prototype.clusterAlgorithms = {
 
         // Start kmeans iteration process.
         while (repeat) {
-            clusters.map(c => {
+            clusters.map((c): Highcharts.KmeansClusterObject => {
                 c.points.length = 0;
                 return c;
             });
@@ -1193,11 +1194,11 @@ Scatter.prototype.clusterAlgorithms = {
             currentIteration++;
         }
 
-        clusters.forEach(function (cluster, i) {
+        clusters.forEach(function (cluster, i): void {
             group['cluster' + i] = cluster.points;
         });
 
-        noise.forEach(function (noise, i) {
+        noise.forEach(function (noise, i): void {
             group['noise' + i] = [noise];
         });
 
@@ -1249,11 +1250,11 @@ Scatter.prototype.clusterAlgorithms = {
                 };
             }
 
-            series.baseClusters.clusters.forEach(function (cluster) {
+            series.baseClusters.clusters.forEach(function (cluster): void {
                 cluster.pointsOutside = [];
                 cluster.pointsInside = [];
 
-                cluster.data.forEach(function (dataPoint) {
+                cluster.data.forEach(function (dataPoint): void {
 
                     distance = Math.sqrt(
                         Math.pow(
@@ -1297,12 +1298,12 @@ Scatter.prototype.clusterAlgorithms = {
                     group[cluster.id] = cluster.pointsInside;
                 }
 
-                cluster.pointsOutside.forEach(function (p, i) {
+                cluster.pointsOutside.forEach(function (p, i): void {
                     group[cluster.id + '_noise' + i] = [p];
                 });
             });
 
-            series.baseClusters.noise.forEach(function (noise) {
+            series.baseClusters.noise.forEach(function (noise): void {
                 group[noise.id] = noise.data;
             });
         }
@@ -1736,13 +1737,19 @@ Scatter.prototype.generatePoints = function (
                 ) {
                     seriesMaxX = seriesMinX = series.xData[i];
                     seriesMaxY = seriesMinY = series.yData[i];
-                } else {
+                } else if (
+                    isNumber(series.yData[i]) &&
+                    isNumber(seriesMaxY) &&
+                    isNumber(seriesMinY)
+                ) {
                     seriesMaxX = Math.max(series.xData[i], seriesMaxX);
                     seriesMinX = Math.min(series.xData[i], seriesMinX);
-                    seriesMaxY =
-                        Math.max(series.yData[i] || seriesMaxY, seriesMaxY);
-                    seriesMinY =
-                        Math.min(series.yData[i] || seriesMinY, seriesMinY);
+                    seriesMaxY = Math.max(
+                        (series.yData[i] as any) || seriesMaxY, seriesMaxY
+                    );
+                    seriesMinY = Math.min(
+                        (series.yData[i] as any) || seriesMinY, seriesMinY
+                    );
                 }
             }
 
@@ -1761,7 +1768,7 @@ Scatter.prototype.generatePoints = function (
         // Save data max values.
         if (
             defined(seriesMaxX) && defined(seriesMinX) &&
-            defined(seriesMaxY) && defined(seriesMinY)
+            isNumber(seriesMaxY) && isNumber(seriesMinY)
         ) {
             series.dataMaxX = seriesMaxX;
             series.dataMinX = seriesMinX;
@@ -1882,7 +1889,9 @@ addEvent(Series, 'afterRender', function (
             .cluster || {}).drillToCluster;
 
     if (series.clusters && series.clusters.clusterElements) {
-        series.clusters.clusterElements.forEach(function (cluster) {
+        series.clusters.clusterElements.forEach(function (
+            cluster: Highcharts.ClusterAndNoiseObject
+        ): void {
             if (cluster.point && cluster.point.graphic) {
                 cluster.point.graphic.addClass('highcharts-cluster-point');
 
@@ -1914,7 +1923,7 @@ addEvent(Series, 'afterRender', function (
 addEvent(H.Point, 'onDrillToCluster', function (
     this: Highcharts.Point,
     event: Highcharts.PointClickEventObject
-) {
+): void {
     var point = event.point || event.target,
         series = point.series,
         clusterOptions =
@@ -1930,7 +1939,7 @@ addEvent(H.Point, 'onDrillToCluster', function (
 // Destroy the old tooltip after zoom.
 addEvent(H.Axis, 'setExtremes', function (
     this: Highcharts.Axis,
-) {
+): void {
     var chart = this.chart;
 
     if (chart.tooltip) {

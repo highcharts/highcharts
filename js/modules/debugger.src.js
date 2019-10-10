@@ -41,28 +41,31 @@ addEvent(H.Chart, 'displayError', function (e) {
             }
         });
     }
-    if (options && options.displayErrors) {
+    if (options && options.displayErrors && renderer) {
         chart.errorElements = [];
         msg = isNumber(code) ?
             ('Highcharts error #' + code + ': ' +
-                H.errorMessages[code].title +
                 H.errorMessages[code].text) :
             code;
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
+        // Format msg so SVGRenderer can handle it
+        msg = msg
+            .replace(/<h1>(.*)<\/h1>/g, '<br><span style="font-size: 24px">$1</span><br>')
+            .replace(/<\/p>/g, '</p><br>');
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(2, 2, chartWidth - 4, chartHeight - 4).attr({
             'stroke-width': 4,
             stroke: '#ff0000',
             zIndex: 3
         }).add();
-        // Render error message.
-        chart.errorElements[1] = renderer.label(msg, 0, 0, 'rect', null, null, true).css({
+        // Render error message
+        chart.errorElements[1] = renderer.label(msg, 0, 0, 'rect', undefined, undefined, undefined, undefined, 'debugger').css({
             color: '#ffffff',
             width: chartWidth - 16,
             padding: 0
         }).attr({
-            fill: '#ff0000',
+            fill: 'rgba(255, 0, 0, 0.9)',
             width: chartWidth,
             padding: 8,
             zIndex: 10

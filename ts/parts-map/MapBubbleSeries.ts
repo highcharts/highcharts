@@ -18,14 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface MapBubblePointOptions extends BubblePointOptions {
-            z?: (number|null);
-        }
-        interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            mapbubble: typeof MapBubbleSeries;
-        }
         class MapBubblePoint extends BubblePoint {
             public options: MapBubblePointOptions;
             public series: MapBubbleSeries;
@@ -38,6 +30,7 @@ declare global {
         class MapBubbleSeries extends BubbleSeries {
             public data: Array<MapBubblePoint>;
             public getBox: MapSeries['getBox'];
+            public getMapData: unknown; // @todo
             public options: MapBubbleSeriesOptions;
             public pointArrayMap: Array<string>;
             public pointClass: typeof MapBubblePoint;
@@ -46,6 +39,15 @@ declare global {
             public setOptions: MapSeries['setOptions'];
             public type: string;
             public xyFromShape: boolean;
+        }
+        interface MapBubblePointOptions extends BubblePointOptions {
+            z?: (number|null);
+        }
+        interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
+            states?: SeriesStatesOptionsObject<MapBubbleSeries>;
+        }
+        interface SeriesTypesDictionary {
+            mapbubble: typeof MapBubbleSeries;
         }
     }
 }
@@ -70,7 +72,7 @@ if (seriesTypes.bubble) {
      *
      * @augments Highcharts.Series
      */
-    seriesType<Highcharts.MapBubbleSeriesOptions>('mapbubble', 'bubble'
+    seriesType<Highcharts.MapBubbleSeries>('mapbubble', 'bubble'
 
         /**
          * A map bubble series is a bubble series laid out on top of a map
@@ -216,7 +218,7 @@ if (seriesTypes.bubble) {
             // If one single value is passed, it is interpreted as z
             pointArrayMap: ['z'],
             // Return the map area identified by the dataJoinBy option
-            getMapData: (seriesTypes.map.prototype as any).getMapData,
+            getMapData: (seriesTypes.map.prototype as any).getMapData, // @todo
             getBox: seriesTypes.map.prototype.getBox,
             setData: seriesTypes.map.prototype.setData,
             setOptions: seriesTypes.map.prototype.setOptions

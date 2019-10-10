@@ -18,6 +18,34 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class GaugePoint extends LinePoint {
+            public dial?: SVGElement;
+            public option: GaugePointOptions;
+            public series: GaugeSeries;
+            public shapeArgs: SVGAttributes;
+            public setState(state?: string): void;
+        }
+        class GaugeSeries extends LineSeries {
+            public angular: boolean;
+            public data: Array<GaugePoint>;
+            public drawTracker: TrackerMixin['drawTrackerPoint'];
+            public fixedBox: boolean;
+            public forceDL: boolean;
+            public options: GaugeSeriesOptions;
+            public pivot?: SVGElement;
+            public pointClass: typeof GaugePoint;
+            public points: Array<GaugePoint>;
+            public yAxis: RadialAxis;
+            public animate(init?: boolean): void;
+            public drawPoints(): void;
+            public hasData(): boolean;
+            public render(): void;
+            public setData(
+                data: Array<PointOptionsType>,
+                redraw?: boolean
+            ): void;
+            public translate(): void;
+        }
         interface Chart {
             angular?: boolean;
         }
@@ -38,7 +66,7 @@ declare global {
             dial?: GaugeSeriesDialOptions;
             overshoot?: number;
             pivot?: GaugeSeriesPivotOptions;
-            states?: GaugeSeriesStatesOptions;
+            states?: SeriesStatesOptionsObject<GaugeSeries>;
             wrap?: boolean;
         }
         interface GaugeSeriesPivotOptions {
@@ -47,15 +75,6 @@ declare global {
             borderWidth?: number;
             radius?: number;
         }
-        interface GaugeSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
-            dial?: GaugeSeriesDialOptions;
-            pivot?: GaugeSeriesPivotOptions;
-        }
-        interface GaugeSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: GaugeSeriesStatesHoverOptions;
-        }
         interface Series {
             fixedBox?: boolean;
             forceDL?: boolean;
@@ -63,39 +82,15 @@ declare global {
         interface SeriesTypesDictionary {
             gauge: typeof GaugeSeries;
         }
-        class GaugePoint extends LinePoint {
-            public dial?: SVGElement;
-            public option: GaugePointOptions;
-            public series: GaugeSeries;
-            public shapeArgs: SVGAttributes;
-            public setState(state?: string): void;
-        }
-        class GaugeSeries extends LineSeries {
-            public data: Array<GaugePoint>;
-            public drawTracker: TrackerMixin['drawTrackerPoint'];
-            public fixedBox: boolean;
-            public forceDL: boolean;
-            public options: GaugeSeriesOptions;
-            public pivot?: SVGElement;
-            public pointClass: typeof GaugePoint;
-            public points: Array<GaugePoint>;
-            public yAxis: RadialAxis;
-            public animate(init?: boolean): void;
-            public drawPoints(): void;
-            public hasData(): boolean;
-            public render(): void;
-            public setData(
-                data: Array<PointOptionsType>,
-                redraw?: boolean
-            ): void;
-            public translate(): void;
-        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    isNumber,
+    pick,
+    pInt
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Point.js';
@@ -104,7 +99,6 @@ import '../parts/Interaction.js';
 
 var merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;
@@ -125,7 +119,7 @@ var merge = H.merge,
  * @product      highcharts
  * @optionparent plotOptions.gauge
  */
-seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
+seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
 
     /**
      * When this option is `true`, the dial will wrap around the axes. For
@@ -401,7 +395,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
     // and this will be used on the axes
     angular: true,
     directTouch: true, // #5063
-    drawGraph: noop,
+    drawGraph: noop as any,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,

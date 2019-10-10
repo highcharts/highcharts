@@ -10,9 +10,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
-
-var pick = H.pick;
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
 
 
 /**
@@ -480,9 +479,9 @@ H.setOptions({
              * @since 6.0.6
              */
             exporting: {
-                chartMenuLabel: 'Chart export',
-                menuButtonLabel: 'View export menu',
-                exportRegionLabel: 'Chart export menu'
+                chartMenuLabel: 'Chart menu',
+                menuButtonLabel: 'View chart menu',
+                exportRegionLabel: 'Chart menu'
             },
 
             /**

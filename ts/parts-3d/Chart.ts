@@ -84,7 +84,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    pick
+} = U;
 
 import '../parts/Chart.js';
 
@@ -92,7 +95,6 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     merge = H.merge,
     perspective = H.perspective,
-    pick = H.pick,
     wrap = H.wrap;
 
 /**
@@ -1406,7 +1408,7 @@ Chart.prototype.retrieveStacks = function (
         i = 1;
 
     this.series.forEach(function (s: Highcharts.Series): void {
-        stackNumber = pick<number>(
+        stackNumber = pick(
             s.options.stack as any,
             (stacking ? 0 : series.length - 1 - (s.index as any))
         ); // #3841, #4532

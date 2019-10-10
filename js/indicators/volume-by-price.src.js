@@ -13,7 +13,10 @@
 import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var arrayMax = U.arrayMax,
+    arrayMin = U.arrayMin,
+    extend = U.extend,
+    isArray = U.isArray;
 
 // Utils
 function arrayExtremesOHLC(data) {
@@ -235,7 +238,7 @@ seriesType(
                 attr.translateX = series.yAxis.pos;
                 series.group.animate(
                     attr,
-                    H.extend(H.animObject(series.options.animation), {
+                    extend(H.animObject(series.options.animation), {
                         step: function (val, fx) {
                             series.group.attr({
                                 scaleX: Math.max(0.001, fx.pos)
@@ -348,7 +351,7 @@ seriesType(
                     options.pointPadding :
                     0.1;
                 volumeDataArray = indicator.volumeDataArray;
-                maxVolume = H.arrayMax(volumeDataArray);
+                maxVolume = arrayMax(volumeDataArray);
                 primalBarWidth = chart.plotWidth / 2;
                 chartPlotTop = chart.plotTop;
                 barHeight = abs(yAxis.toPixels(yAxisMin) -
@@ -481,10 +484,10 @@ seriesType(
                 rangeExtremes = isOHLC ? arrayExtremesOHLC(yValues) : false,
                 lowRange = rangeExtremes ?
                     rangeExtremes.min :
-                    H.arrayMin(yValues),
+                    arrayMin(yValues),
                 highRange = rangeExtremes ?
                     rangeExtremes.max :
-                    H.arrayMax(yValues),
+                    arrayMax(yValues),
                 zoneStarts = indicator.zoneStarts = [],
                 priceZones = [],
                 i = 0,

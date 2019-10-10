@@ -92,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: Array<XAxisOptions>;
-            yAxis?: Array<YAxisOptions>;
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -274,10 +274,7 @@ declare global {
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
-            stops?: Array<[
-                number,
-                (ColorString|GradientColorObject|PatternObject)
-            ]>;
+            stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
         interface ZAxisOptions extends XAxisOptions {
@@ -370,7 +367,7 @@ declare global {
             public plotLinesAndBandsGroups: Dictionary<SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
-            public pos?: number;
+            public pos: number;
             public positiveValuesOnly: boolean;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
@@ -692,12 +689,18 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
+    destroyObjectProperties,
+    extend,
     isArray,
     isNumber,
     isString,
     objectEach,
-    splat
+    pick,
+    splat,
+    syncTimeout
 } = U;
 
 import './Color.js';
@@ -706,23 +709,17 @@ import './Tick.js';
 
 var addEvent = H.addEvent,
     animObject = H.animObject,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
-    destroyObjectProperties = H.destroyObjectProperties,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     Tick = H.Tick;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -764,7 +761,7 @@ var Axis = function (this: Highcharts.Axis): any {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 } as any;
 
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
@@ -996,7 +993,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash style for the crosshair. See
-         * [series.dashStyle](#plotOptions.series.dashStyle)
+         * [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          * for possible values.
          *
          * @sample {highcharts|highmaps} highcharts/xaxis/crosshair-dotted/
@@ -3035,7 +3032,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Array<number,Highcharts.ColorString>>}
+         * @type      {Array<Highcharts.GradientColorStopObject>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -3855,7 +3852,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3866,7 +3862,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -4007,9 +4002,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * The default label formatter. The context is a special config object for
      * the label. In apps, use the
      * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
-     * instead except when a modification is needed.
-     * @private
+     * instead, except when a modification is needed.
+     *
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @this Highcharts.AxisLabelsFormatterContextObject
+     *
      * @return {string}
+     * The formatted label content.
      */
     defaultLabelFormatter: function (
         this: Highcharts.AxisLabelsFormatterContextObject
@@ -4024,7 +4024,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
             i = numericSymbols && numericSymbols.length,
             multi,
-            ret,
+            ret: (string|undefined),
             formatOption = (axis.options.labels as any).format,
 
             // make sure the same symbol is added for all labels on a linear
@@ -4037,7 +4037,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ret = format(formatOption, this, time);
 
         } else if (categories) {
-            ret = value;
+            ret = value as any;
 
         } else if (dateTimeLabelFormat) { // datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
@@ -4073,7 +4073,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         }
 
-        return ret as any;
+        return ret;
     },
 
     /**
@@ -4940,7 +4940,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // pointRange means the width reserved for each point, like in a
             // column chart
-            axis.pointRange = Math.min(pointRange, range);
+            axis.pointRange = Math.min(
+                pointRange,
+                axis.single && hasCategories ? 1 : range
+            );
 
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
@@ -5047,8 +5050,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 }
             }
 
-            axis.min = pick(hardMin, thresholdMin, axis.dataMin);
-            axis.max = pick(hardMax, thresholdMax, axis.dataMax);
+            axis.min = pick(hardMin, thresholdMin, axis.dataMin as any);
+            axis.max = pick(hardMax, thresholdMax, axis.dataMax as any);
 
         }
 
@@ -5056,7 +5059,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
-                Math.min(axis.min as any, pick(axis.dataMin, axis.min)) <= 0
+                Math.min(
+                    axis.min as any, pick(axis.dataMin, axis.min as any)
+                ) <= 0
             ) { // #978
                 // Can't plot negative values on log axis
                 H.error(10, 1 as any, chart);
@@ -5064,8 +5069,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range
@@ -5808,8 +5813,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         var dataMin = this.dataMin,
             dataMax = this.dataMax,
             options = this.options,
-            min = Math.min(dataMin as any, pick(options.min, dataMin)),
-            max = Math.max(dataMax as any, pick(options.max, dataMax)),
+            min = Math.min(dataMin as any, pick(options.min, dataMin as any)),
+            max = Math.max(dataMax as any, pick(options.max, dataMax as any)),
             evt = {
                 newMin: newMin,
                 newMax: newMax

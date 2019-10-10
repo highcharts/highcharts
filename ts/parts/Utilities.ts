@@ -27,6 +27,7 @@ type IsObjectConditionalType<TObject, TStrict> = (
         ) :
         false
 );
+type Nullable = null|undefined;
 
 /**
  * Internal types
@@ -281,7 +282,26 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick<T>(...args: Array<T|null|undefined>): T;
+        function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ?
+                        T5 extends Nullable ?
+                            undefined : T5 : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ? undefined : T3 : T2 : T1;
+        function pick<T1, T2>(...args: [T1, T2]):
+        T1 extends Nullable ? T2 extends Nullable ? undefined : T2 : T1;
+        function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
+        function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
@@ -295,12 +315,12 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TOptions extends SeriesOptions>(
+        function seriesType<TSeries extends Series>(
             type: string,
             parent: string,
-            options: TOptions,
-            props?: Dictionary<any>,
-            pointProps?: Dictionary<any>
+            options: TSeries['options'],
+            props?: Partial<TSeries>,
+            pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
@@ -313,9 +333,9 @@ declare global {
         function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
-            delay?: number,
-            context?: any
-        ): (number|undefined);
+            delay: number,
+            context?: unknown
+        ): number;
         function uniqueKey(): string;
         function wrap(
             obj: any,
@@ -1525,26 +1545,27 @@ function splat(obj: any): Array<any> {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (
+function syncTimeout(
     fn: Function,
-    delay?: number,
-    context?: any
-): (number|undefined) {
-    if (delay) {
+    delay: number,
+    context?: unknown
+): number {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -1579,7 +1600,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T extends object> (a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1590,9 +1611,28 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
-};
+}
 
-
+function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ?
+                T5 extends Nullable ? undefined : T5 : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ? undefined : T3 : T2 : T1;
+function pick<T1, T2>(...args: [T1, T2]):
+T1 extends Nullable ?
+    T2 extends Nullable ? undefined : T2 : T1;
+function pick<T1>(...args: [T1]):
+T1 extends Nullable ? undefined : T1;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1605,20 +1645,16 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-H.pick = function (): any {
-    /* eslint-enable valid-jsdoc */
-    var args = arguments,
-        i,
-        arg,
-        length = args.length;
-
-    for (i = 0; i < length; i++) {
-        arg = args[i];
+function pick<T>(): T|undefined {
+    const args = arguments;
+    const length = args.length;
+    for (let i = 0; i < length; i++) {
+        const arg = args[i];
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
-};
+}
 
 /**
  * Set CSS on a given element.
@@ -1643,7 +1679,7 @@ H.css = function (
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 
 /**
@@ -1680,7 +1716,7 @@ H.createElement = function (
         css = H.css;
 
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1717,7 +1753,7 @@ H.extendClass = function<T, TReturn = T> (
     var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
 };
 
@@ -2024,7 +2060,7 @@ H.normalizeTickInterval = function (
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = H.pick(magnitude, 1);
+    magnitude = pick(magnitude, 1);
     normalized = interval / (magnitude as any);
 
     // multiples for a linear scale
@@ -2137,7 +2173,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data: Array<any>): number {
+function arrayMin(data: Array<any>): number {
     var i = data.length,
         min = data[0];
 
@@ -2147,7 +2183,7 @@ H.arrayMin = function (data: Array<any>): number {
         }
     }
     return min;
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
@@ -2162,7 +2198,7 @@ H.arrayMin = function (data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data: Array<any>): number {
+function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2172,7 +2208,7 @@ H.arrayMax = function (data: Array<any>): number {
         }
     }
     return max;
-};
+}
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -2189,7 +2225,7 @@ H.arrayMax = function (data: Array<any>): number {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj: any, except?: any): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -2200,7 +2236,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 
 
 /**
@@ -2270,7 +2306,7 @@ H.setAnimation = function (
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
-    chart.renderer.globalAnimation = H.pick(
+    chart.renderer.globalAnimation = pick(
         animation,
         (chart.options.chart as any).animation,
         true
@@ -2401,8 +2437,8 @@ H.numberFormat = function (
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = H.pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = H.pick(thousandsSep, (lang as any).thousandsSep);
+    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
+    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';
@@ -2519,7 +2555,7 @@ H.getStyle = function (
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
     if (style) {
         style = style.getPropertyValue(prop);
-        if (H.pick(toInt, prop !== 'opacity')) {
+        if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
@@ -2957,8 +2993,9 @@ H.removeEvent = function<T> (
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
-        var eventCollection = (el as any)[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
+        const eventElem = i ? el : (el as any).prototype;
+        const eventCollection = eventElem && eventElem[coll];
 
         if (eventCollection) {
             if (type) {
@@ -2980,7 +3017,7 @@ H.removeEvent = function<T> (
                 }
             } else {
                 removeAllEvents(eventCollection);
-                (el as any)[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -3027,7 +3064,7 @@ H.fireEvent = function<T> (
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
             (el as any).dispatchEvent(e);
@@ -3040,7 +3077,7 @@ H.fireEvent = function<T> (
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
-            H.extend(eventArguments as any, {
+            extend(eventArguments as any, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -3205,12 +3242,12 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (
+H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
-    options: Highcharts.SeriesOptionsType,
-    props?: Highcharts.Dictionary<any>,
-    pointProps?: Highcharts.Dictionary<any>
+    options: TSeries['options'],
+    props?: Partial<TSeries>,
+    pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;
@@ -3325,9 +3362,13 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    arrayMax,
+    arrayMin,
     attr,
     defined,
+    destroyObjectProperties,
     erase,
+    extend,
     isArray,
     isClass,
     isDOMElement,
@@ -3335,8 +3376,10 @@ const utils = {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
-    splat
+    splat,
+    syncTimeout
 };
 
 export default utils;

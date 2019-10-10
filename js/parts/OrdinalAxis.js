@@ -11,12 +11,12 @@
 import H from './Globals.js';
 import './Axis.js';
 import U from './Utilities.js';
-var defined = U.defined;
+var defined = U.defined, extend = U.extend, pick = U.pick;
 import './Chart.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import './Navigator.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, extend = H.extend, noop = H.noop, pick = H.pick, Series = H.Series, timeUnits = H.timeUnits;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, noop = H.noop, Series = H.Series, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *

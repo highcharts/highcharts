@@ -77,11 +77,11 @@ const {
     isArray,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
-var Chart = H.Chart,
-    pick = H.pick;
+var Chart = H.Chart;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart

@@ -27,7 +27,13 @@ Highcharts.chart('container', {
             style: {
                 fontSize: "20px"
             }
-        }
+        },
+        plotLines: [{
+            value: 35,
+            zIndex: 5,
+            width: 2,
+            color: '#ff0000'
+        }]
     },
     series: [{
         innerRadius: '50%',

@@ -12,7 +12,8 @@
 /* global document, jQuery, $ */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend;
 import './data.src.js';
 /* eslint-disable no-invalid-this */
 H.wrap(H.Data.prototype, 'init', function (proceed, options) {
@@ -22,7 +23,7 @@ H.wrap(H.Data.prototype, 'init', function (proceed, options) {
     }
 });
 /* eslint-enable no-invalid-this */
-H.extend(H.Data.prototype, {
+extend(H.Data.prototype, {
     // Parse an SVG path into a simplified array that Highcharts can read
     pathToArray: function (path, matrix) {
         var i = 0, position = 0, point, positions, fixedPoint = [0, 0], startPoint = [0, 0], isRelative, isString, operator, matrixTransform = function (p, m) {

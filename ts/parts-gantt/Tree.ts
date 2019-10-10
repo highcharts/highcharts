@@ -14,8 +14,6 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -68,13 +66,15 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    extend,
+    isNumber,
+    pick
+} = U;
 
-var extend = H.extend,
-    pick = H.pick,
-    isFunction = function (x: unknown): x is Function {
-        return typeof x === 'function';
-    };
+var isFunction = function (x: unknown): x is Function {
+    return typeof x === 'function';
+};
 
 /**
  * Creates an object map from parent id to childrens index.

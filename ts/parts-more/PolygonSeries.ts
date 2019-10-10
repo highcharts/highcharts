@@ -18,15 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PolygonPointOptions extends ScatterPointOptions {
-        }
-        interface PolygonSeriesOptions extends ScatterSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            trackByArea?: boolean;
-        }
-        interface SeriesTypesDictionary {
-            polygon: typeof PolygonSeries;
-        }
         class PolygonPoint extends ScatterPoint {
             public options: PolygonPointOptions;
             public series: PolygonSeries;
@@ -38,6 +29,16 @@ declare global {
             public pointClass: typeof PolygonPoint;
             public points: Array<PolygonPoint>;
             public type: string;
+        }
+        interface PolygonPointOptions extends ScatterPointOptions {
+        }
+        interface PolygonSeriesOptions extends ScatterSeriesOptions {
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<PolygonSeries>;
+            trackByArea?: boolean;
+        }
+        interface SeriesTypesDictionary {
+            polygon: typeof PolygonSeries;
         }
     }
 }
@@ -71,7 +72,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @product      highcharts highstock
  * @optionparent plotOptions.polygon
  */
-seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
+seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
     /**
      * @excluding cluster
      */
@@ -116,7 +117,7 @@ seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
-    setStackedPoints: noop // No stacking points on polygons (#5310)
+    setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
 
 

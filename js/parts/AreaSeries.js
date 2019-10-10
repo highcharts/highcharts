@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var objectEach = U.objectEach;
+var objectEach = U.objectEach, pick = U.pick;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, pick = H.pick, Series = H.Series, seriesType = H.seriesType;
+var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series, seriesType = H.seriesType;
 /**
  * Area series type.
  *
@@ -172,7 +172,7 @@ seriesType('area', 'line',
         if (this.options.stacking) {
             for (i = 0; i < points.length; i++) {
                 // Reset after point update (#7326)
-                points[i].leftNull = points[i].rightNull = null;
+                points[i].leftNull = points[i].rightNull = undefined;
                 // Create a map where we can quickly look up the points by
                 // their X values.
                 pointMap[points[i].x] = points[i];
@@ -281,7 +281,7 @@ seriesType('area', 'line',
      */
     getGraphPath: function (points) {
         var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
-        yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = H.pick(// #10574
+        yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
         options.connectNulls, stacking === 'percent'), 
         // To display null points in underlying stacked series, this
         // series graph must be broken, and the area also fall down to
@@ -327,6 +327,11 @@ seriesType('area', 'line',
             points = this.getStackPoints(points);
         }
         for (i = 0; i < points.length; i++) {
+            // Reset after series.update of stacking property (#12033)
+            if (!stacking) {
+                points[i].leftCliff = points[i].rightCliff =
+                    points[i].leftNull = points[i].rightNull = undefined;
+            }
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
             yBottom = pick(points[i].yBottom, translatedThreshold);

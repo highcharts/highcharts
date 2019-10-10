@@ -18,24 +18,19 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Indicator extends Series {
-            linesApiNames?: MultipleLinesMixin['linesApiNames'];
-            pointArrayMap?: MultipleLinesMixin['pointArrayMap'];
-            pointValKey?: MultipleLinesMixin['pointValKey'];
-        }
-        interface MultipleLinesIndicator extends Indicator {
+        interface MultipleLinesIndicator extends Series {
             drawGraph: MultipleLinesMixin['drawGraph'];
             getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
             linesApiNames: MultipleLinesMixin['linesApiNames'];
             options: MultipleLinesIndicatorOptions;
-            pointArrayMap: MultipleLinesMixin['pointArrayMap'];
-            pointValKey: MultipleLinesMixin['pointValKey'];
+            pointArrayMap?: MultipleLinesMixin['pointArrayMap'];
+            pointValKey?: MultipleLinesMixin['pointValKey'];
             translate: MultipleLinesMixin['translate'];
             toYData: MultipleLinesMixin['toYData'];
         }
-        interface MultipleLinesIndicatorOptions extends IndicatorOptions {
+        interface MultipleLinesIndicatorOptions {
             gapSize?: number;
         }
         interface MultipleLinesMixin {
@@ -125,15 +120,18 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
     ): Array<string> {
         var translatedLines: Array<string> = [];
 
-        each(this.pointArrayMap, function (propertyName: string): void {
-            if (propertyName !== excludedValue) {
-                translatedLines.push(
-                    'plot' +
-                    propertyName.charAt(0).toUpperCase() +
-                    propertyName.slice(1)
-                );
+        each(
+            (this.pointArrayMap as any),
+            function (propertyName: string): void {
+                if (propertyName !== excludedValue) {
+                    translatedLines.push(
+                        'plot' +
+                        propertyName.charAt(0).toUpperCase() +
+                        propertyName.slice(1)
+                    );
+                }
             }
-        });
+        );
 
         return translatedLines;
     },
@@ -151,9 +149,12 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
     ): Array<number> {
         var pointColl: Array<number> = [];
 
-        each(this.pointArrayMap, function (propertyName: string): void {
-            pointColl.push((point as any)[propertyName]);
-        });
+        each(
+            (this.pointArrayMap as any),
+            function (propertyName: string): void {
+                pointColl.push((point as any)[propertyName]);
+            }
+        );
         return pointColl;
     },
     /**
@@ -165,7 +166,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
      */
     translate: function (this: Highcharts.MultipleLinesIndicator): void {
         var indicator = this,
-            pointArrayMap = indicator.pointArrayMap,
+            pointArrayMap: Array<string> = (indicator.pointArrayMap as any),
             LinesNames = [] as Array<string>,
             value;
 

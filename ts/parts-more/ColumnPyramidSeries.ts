@@ -18,13 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ColumnPyramidPointOptions extends ColumnPointOptions {
-        }
-        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            columnpyramid: typeof ColumnPyramidSeries;
-        }
         class ColumnPyramidPoint extends ColumnPoint {
             public options: ColumnPyramidPointOptions;
             public series: ColumnPyramidSeries;
@@ -36,13 +29,23 @@ declare global {
             public points: Array<ColumnPyramidPoint>;
             public translate(): void;
         }
+        interface ColumnPyramidPointOptions extends ColumnPointOptions {
+        }
+        interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
+            states?: SeriesStatesOptionsObject<ColumnPyramidSeries>;
+        }
+        interface SeriesTypesDictionary {
+            columnpyramid: typeof ColumnPyramidSeries;
+        }
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
-var pick = H.pick,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
@@ -56,7 +59,7 @@ var colProto = seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnPyramidSeriesOptions>(
+seriesType<Highcharts.ColumnPyramidSeries>(
     'columnpyramid',
     'column',
 
@@ -131,7 +134,9 @@ seriesType<Highcharts.ColumnPyramidSeriesOptions>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPyramidPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold),
+                var yBottom = pick<number|undefined, number>(
+                        point.yBottom, translatedThreshold as any
+                    ),
                     safeDistance = 999 + Math.abs(yBottom),
                     plotY = Math.min(
                         Math.max(-safeDistance, point.plotY as any),

@@ -8,6 +8,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -44,13 +46,16 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend
+} = U;
+
 import '../parts/Series.js';
 import '../parts/Options.js';
 
 var chartPrototype = H.Chart.prototype,
-    defaultOptions = H.getOptions(),
-    extend = H.extend;
+    defaultOptions = H.getOptions();
 
 // Add language option
 extend(

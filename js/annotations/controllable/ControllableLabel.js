@@ -2,7 +2,9 @@
 import H from './../../parts/Globals.js';
 
 import U from './../../parts/Utilities.js';
-var isNumber = U.isNumber;
+var extend = U.extend,
+    isNumber = U.isNumber,
+    pick = U.pick;
 
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
@@ -391,7 +393,7 @@ H.merge(
                     itemPosition = H.Tooltip.prototype.getPosition.call(
                         {
                             chart: chart,
-                            distance: H.pick(itemOptions.distance, 16)
+                            distance: pick(itemOptions.distance, 16)
                         },
                         item.width,
                         item.height,
@@ -415,7 +417,7 @@ H.merge(
                     };
 
                     itemPosition = ControllableLabel.alignedPosition(
-                        H.extend(itemOptions, {
+                        extend(itemOptions, {
                             width: item.width,
                             height: item.height
                         }),

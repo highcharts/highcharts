@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -57,7 +57,7 @@ var defined = U.defined, isObject = U.isObject, objectEach = U.objectEach, splat
 * @name Highcharts.AxisTickPositionsArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
-var H = Highcharts, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
+var H = Highcharts, merge = H.merge, timeUnits = H.timeUnits, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using
@@ -153,88 +153,83 @@ Highcharts.Time.prototype = {
      *         Set the timezone per chart instance
      *
      * @since     6.0.5
-     * @apioption time
+     * @optionparent time
      */
-    /**
-     * Whether to use UTC time for axis scaling, tickmark placement and
-     * time display in `Highcharts.dateFormat`. Advantages of using UTC
-     * is that the time displays equally regardless of the user agent's
-     * time zone settings. Local time can be used when the data is loaded
-     * in real time or when correct Daylight Saving Time transitions are
-     * required.
-     *
-     * @sample {highcharts} highcharts/time/useutc-true/
-     *         True by default
-     * @sample {highcharts} highcharts/time/useutc-false/
-     *         False
-     *
-     * @type      {boolean}
-     * @default   true
-     * @apioption time.useUTC
-     */
-    /**
-     * A custom `Date` class for advanced date handling. For example,
-     * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
-     * handle Jalali dates.
-     *
-     * @type      {*}
-     * @since     4.0.4
-     * @product   highcharts highstock gantt
-     * @apioption time.Date
-     */
-    /**
-     * A callback to return the time zone offset for a given datetime. It
-     * takes the timestamp in terms of milliseconds since January 1 1970,
-     * and returns the timezone offset in minutes. This provides a hook
-     * for drawing time based charts in specific time zones using their
-     * local DST crossover dates, with the help of external libraries.
-     *
-     * @see [global.timezoneOffset](#global.timezoneOffset)
-     *
-     * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
-     *         Use moment.js to draw Oslo time regardless of browser locale
-     *
-     * @type      {Function}
-     * @since     4.1.0
-     * @product   highcharts highstock gantt
-     * @apioption time.getTimezoneOffset
-     */
-    /**
-     * Requires [moment.js](http://momentjs.com/). If the timezone option
-     * is specified, it creates a default
-     * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
-     * up the specified timezone in moment.js. If moment.js is not included,
-     * this throws a Highcharts error in the console, but does not crash the
-     * chart.
-     *
-     * @see [getTimezoneOffset](#time.getTimezoneOffset)
-     *
-     * @sample {highcharts|highstock} highcharts/time/timezone/
-     *         Europe/Oslo
-     *
-     * @type      {string}
-     * @since     5.0.7
-     * @product   highcharts highstock gantt
-     * @apioption time.timezone
-     */
-    /**
-     * The timezone offset in minutes. Positive values are west, negative
-     * values are east of UTC, as in the ECMAScript
-     * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
-     * method. Use this to display UTC based data in a predefined time zone.
-     *
-     * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
-     *
-     * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
-     *         Timezone offset
-     *
-     * @type      {number}
-     * @default   0
-     * @since     3.0.8
-     * @product   highcharts highstock gantt
-     * @apioption time.timezoneOffset
-     */
-    defaultOptions: {},
+    defaultOptions: {
+        /**
+         * A custom `Date` class for advanced date handling. For example,
+         * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
+         * handle Jalali dates.
+         *
+         * @type      {*}
+         * @since     4.0.4
+         * @product   highcharts highstock gantt
+         */
+        Date: undefined,
+        /**
+         * A callback to return the time zone offset for a given datetime. It
+         * takes the timestamp in terms of milliseconds since January 1 1970,
+         * and returns the timezone offset in minutes. This provides a hook
+         * for drawing time based charts in specific time zones using their
+         * local DST crossover dates, with the help of external libraries.
+         *
+         * @see [global.timezoneOffset](#global.timezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
+         *         Use moment.js to draw Oslo time regardless of browser locale
+         *
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
+        getTimezoneOffset: undefined,
+        /**
+         * Requires [moment.js](http://momentjs.com/). If the timezone option
+         * is specified, it creates a default
+         * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
+         * up the specified timezone in moment.js. If moment.js is not included,
+         * this throws a Highcharts error in the console, but does not crash the
+         * chart.
+         *
+         * @see [getTimezoneOffset](#time.getTimezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/timezone/
+         *         Europe/Oslo
+         *
+         * @type      {string}
+         * @since     5.0.7
+         * @product   highcharts highstock gantt
+         */
+        timezone: undefined,
+        /**
+         * The timezone offset in minutes. Positive values are west, negative
+         * values are east of UTC, as in the ECMAScript
+         * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+         * method. Use this to display UTC based data in a predefined time zone.
+         *
+         * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
+         *         Timezone offset
+         *
+         * @since     3.0.8
+         * @product   highcharts highstock gantt
+         */
+        timezoneOffset: 0,
+        /**
+         * Whether to use UTC time for axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`. Advantages of using UTC
+         * is that the time displays equally regardless of the user agent's
+         * time zone settings. Local time can be used when the data is loaded
+         * in real time or when correct Daylight Saving Time transitions are
+         * required.
+         *
+         * @sample {highcharts} highcharts/time/useutc-true/
+         *         True by default
+         * @sample {highcharts} highcharts/time/useutc-false/
+         *         False
+         */
+        useUTC: true
+    },
     /**
      * Update the Time object with current options. It is called internally on
      * initializing Highcharts, after running `Highcharts.setOptions` and on
@@ -450,13 +445,13 @@ Highcharts.Time.prototype = {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang.invalidDate || '';
         }
-        format = H.pick(format, '%Y-%m-%d %H:%M:%S');
+        format = pick(format, '%Y-%m-%d %H:%M:%S');
         var time = this, date = new this.Date(timestamp), 
         // get the basic time values
         hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang.weekdays, shortWeekdays = lang.shortWeekdays, pad = H.pad, 
         // List all format keys. Custom formats can be added from the
         // outside.
-        replacements = H.extend({
+        replacements = extend({
             // Day
             // Short weekday, like 'Mon'
             a: shortWeekdays ?

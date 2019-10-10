@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, splat = U.splat;
+var extend = U.extend, isArray = U.isArray, pick = U.pick, splat = U.splat;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var pick = H.pick, error = H.error, Series = H.Series, addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, ohlcProto = H.seriesTypes.ohlc.prototype, generateMessage = requiredIndicatorMixin.generateMessage;
+var error = H.error, Series = H.Series, addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, ohlcProto = H.seriesTypes.ohlc.prototype, generateMessage = requiredIndicatorMixin.generateMessage;
 /**
  * The parameter allows setting line series type and use OHLC indicators. Data
  * in OHLC format is required.
@@ -27,7 +27,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
     var series = this, options = eventOptions.options;
     if (options.useOhlcData &&
         options.id !== 'highcharts-navigator-series') {
-        H.extend(series, {
+        extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: ohlcProto.keys,
             pointArrayMap: ohlcProto.pointArrayMap,
@@ -131,6 +131,7 @@ seriesType('sma', 'line',
         if (linkedParent && linkedParent.compareValue && compareToMain) {
             series.compareValue = linkedParent.compareValue;
         }
+        return;
     },
     bindTo: {
         series: true,

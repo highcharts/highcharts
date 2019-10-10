@@ -18,46 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            renderWaterfallStackTotals: (
-                WaterfallAxis['renderWaterfallStackTotals']
-            );
-        }
-        interface Series {
-            showLine?: WaterfallSeries['showLine'];
-        }
-        interface WaterfallAxis extends Axis {
-            dummyStackItem?: StackItem;
-            options: YAxisOptions;
-            waterfallStacks: WaterfallStacksObject;
-            renderWaterfallStackTotals(): void;
-        }
-        interface WaterfallChart extends ColumnChart {
-            axes: Array<WaterfallAxis>;
-        }
-        interface WaterfallPointOptions extends ColumnPointOptions {
-            isSum?: boolean;
-            y?: any;
-        }
-        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
-            upColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface WaterfallStacksObject {
-            changed: boolean;
-            waterfall?: Dictionary<WaterfallStacksItemObject>;
-        }
-        interface WaterfallStacksItemObject {
-            negTotal: number;
-            posTotal: number;
-            stackTotal: number;
-            threshold: number;
-            stateIndex: number;
-            stackState: Array<string>;
-            label?: SVGElement;
-        }
-        interface SeriesTypesDictionary {
-            waterfall: typeof WaterfallSeries;
-        }
         class WaterfallPoint extends ColumnPoint {
             public below?: boolean;
             public isIntermediateSum?: boolean;
@@ -97,13 +57,57 @@ declare global {
             public toYData(pt: WaterfallPoint): any;
             public translate(): void;
         }
+        interface Axis {
+            renderWaterfallStackTotals: (
+                WaterfallAxis['renderWaterfallStackTotals']
+            );
+        }
+        interface Series {
+            showLine?: WaterfallSeries['showLine'];
+        }
+        interface WaterfallAxis extends Axis {
+            dummyStackItem?: StackItem;
+            options: YAxisOptions;
+            waterfallStacks: WaterfallStacksObject;
+            renderWaterfallStackTotals(): void;
+        }
+        interface WaterfallChart extends ColumnChart {
+            axes: Array<WaterfallAxis>;
+        }
+        interface WaterfallPointOptions extends ColumnPointOptions {
+            isSum?: boolean;
+            y?: any;
+        }
+        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
+            upColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<WaterfallSeries>;
+        }
+        interface WaterfallStacksObject {
+            changed: boolean;
+            waterfall?: Dictionary<WaterfallStacksItemObject>;
+        }
+        interface WaterfallStacksItemObject {
+            label?: SVGElement;
+            negTotal: number;
+            posTotal: number;
+            stackState: Array<string>;
+            stackTotal: number;
+            stateIndex: number;
+            threshold: number;
+        }
+        interface SeriesTypesDictionary {
+            waterfall: typeof WaterfallSeries;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     isNumber,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -111,9 +115,6 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 
 var correctFloat = H.correctFloat,
-    pick = H.pick,
-    arrayMin = H.arrayMin,
-    arrayMax = H.arrayMax,
     addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
@@ -239,7 +240,7 @@ Axis.prototype.renderWaterfallStackTotals = function (
  * @product      highcharts
  * @optionparent plotOptions.waterfall
  */
-seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
+seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     /**
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
@@ -331,14 +332,14 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
         var point,
             len,
             i,
-            y;
+            y: number;
 
         // Parent call:
         seriesTypes.column.prototype.generatePoints.apply(this);
 
         for (i = 0, len = this.points.length; i < len; i++) {
             point = this.points[i];
-            y = this.processedYData[i];
+            y = (this.processedYData[i] as any);
             // override point value for sums
             // #3710 Update point does not propagate to sum
             if (point.isIntermediateSum || point.isSum) {
@@ -358,10 +359,10 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
             point,
             shapeArgs,
             y,
-            yValue,
+            yValue: number,
             previousY,
             previousIntermediate,
-            range,
+            range: Array<number>,
             minPointLength = pick(options.minPointLength, 5),
             halfMinPointLength = minPointLength / 2,
             threshold = options.threshold,
@@ -371,7 +372,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
             actualStackX,
             dummyStackItem,
             total,
-            pointY,
+            pointY: number,
             yPos,
             hPos;
 
@@ -384,7 +385,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
         for (i = 0, len = points.length; i < len; i++) {
             // cache current point object
             point = points[i];
-            yValue = series.processedYData[i];
+            yValue = (series.processedYData[i] as any);
             shapeArgs = point.shapeArgs;
 
             range = [0, yValue];
@@ -633,7 +634,7 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
     processData: function (
         this: Highcharts.WaterfallSeries,
         force?: boolean
-    ): void {
+    ): undefined {
         var series = this,
             options = series.options,
             yData = series.yData,
@@ -678,6 +679,8 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
+
+        return;
     },
 
     // Return y value or string if point is sum
@@ -686,13 +689,28 @@ seriesType<Highcharts.WaterfallSeriesOptions>('waterfall', 'column', {
         pt: Highcharts.WaterfallPoint
     ): any {
         if (pt.isSum) {
-            // #3245 Error when first element is Sum or Intermediate Sum
-            return (pt.x === 0 ? null : 'sum');
+            return 'sum';
         }
         if (pt.isIntermediateSum) {
-            return (pt.x === 0 ? null : 'intermediateSum'); // #3245
+            return 'intermediateSum';
         }
         return pt.y;
+    },
+
+    updateParallelArrays: function (
+        this: Highcharts.WaterfallSeries,
+        point: Highcharts.Point,
+        i: (number|string)
+    ): void {
+        Series.prototype.updateParallelArrays.call(
+            this,
+            point,
+            i
+        );
+        // Prevent initial sums from triggering an error (#3245, #7559)
+        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
+            this.yData[0] = null;
+        }
     },
 
     // Postprocess mapping between options and SVG attributes

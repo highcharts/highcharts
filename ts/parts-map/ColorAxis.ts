@@ -18,61 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
-        interface Chart {
-            colorAxis?: Array<ColorAxis>;
-        }
-        interface Series {
-            axisTypes: Array<string>;
-            colorKey: string;
-            minColorValue?: number;
-            maxColorValue?: number;
-        }
-        interface SeriesOptions {
-            colorKey?: string;
-        }
-        interface ColorAxisDataClassesOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            from?: number;
-            name?: string;
-            to?: number;
-        }
-        interface ColorAxisLegendItemObject
-            extends ColorAxisDataClassesOptions
-        {
-            chart: Chart;
-            name: string;
-            options: object;
-            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
-            visible: boolean;
-            setState: Function;
-            isDataClass: true;
-            setVisible: () => void;
-        }
-        interface ColorAxisMarkerOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface ColorAxisOptions extends XAxisOptions {
-            dataClassColor?: string;
-            dataClasses?: Array<ColorAxisDataClassesOptions>;
-            layout?: string;
-            marker?: ColorAxisMarkerOptions;
-            maxColor?: (ColorString|GradientColorObject|PatternObject);
-            minColor?: (ColorString|GradientColorObject|PatternObject);
-            showInLegend?: boolean;
-            stops?: GradientColorObject['stops'];
-        }
-        interface Options {
-            colorAxis?: Array<ColorAxisOptions>;
-        }
-        interface Point {
-            dataClass?: number;
-        }
         class ColorAxis extends Axis { // eslint-disable-line no-undef
             public constructor(chart: Chart, userOptions: ColorAxisOptions);
             public added?: boolean;
@@ -125,6 +70,62 @@ declare global {
                 point: Point
             ): (ColorString|GradientColorObject|PatternObject|undefined);
         }
+        interface Axis {
+            labelLeft?: number;
+            labelRight?: number;
+        }
+        interface Chart {
+            colorAxis?: Array<ColorAxis>;
+        }
+        interface Series {
+            axisTypes: Array<string>;
+            colorAxis?: ColorAxis;
+            colorKey: string;
+            minColorValue?: number;
+            maxColorValue?: number;
+        }
+        interface SeriesOptions {
+            colorKey?: string;
+        }
+        interface ColorAxisDataClassesOptions {
+            color?: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            from?: number;
+            name?: string;
+            to?: number;
+        }
+        interface ColorAxisLegendItemObject
+            extends ColorAxisDataClassesOptions
+        {
+            chart: Chart;
+            name: string;
+            options: object;
+            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+            visible: boolean;
+            setState: Function;
+            isDataClass: true;
+            setVisible: () => void;
+        }
+        interface ColorAxisMarkerOptions {
+            animation?: (boolean|AnimationOptionsObject);
+            color?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface ColorAxisOptions extends XAxisOptions {
+            dataClassColor?: string;
+            dataClasses?: Array<ColorAxisDataClassesOptions>;
+            layout?: string;
+            marker?: ColorAxisMarkerOptions;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
+            minColor?: (ColorString|GradientColorObject|PatternObject);
+            showInLegend?: boolean;
+            stops?: GradientColorObject['stops'];
+        }
+        interface Options {
+            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
+        }
+        interface Point {
+            dataClass?: number;
+        }
     }
 }
 
@@ -137,7 +138,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     erase,
+    extend,
     isNumber,
+    pick,
     splat
 } = U;
 
@@ -154,14 +157,12 @@ var addEvent = H.addEvent,
     Point = H.Point,
     color = H.color,
     ColorAxis: Highcharts.ColorAxis,
-    extend = H.extend,
     Legend = H.Legend,
     LegendSymbolMixin = H.LegendSymbolMixin,
     colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
     noop = H.noop,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

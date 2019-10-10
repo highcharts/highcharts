@@ -18,27 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface BoxPlotPointOptions extends ColumnPointOptions {
-            high?: BoxPlotPoint['high'];
-            low?: BoxPlotPoint['low'];
-            median?: BoxPlotPoint['median'];
-            q1?: BoxPlotPoint['q1'];
-            q3?: BoxPlotPoint['q3'];
-        }
-        interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
-            fillColor?: BoxPlotPoint['fillColor'];
-            medianColor?: BoxPlotPoint['medianColor'];
-            medianWidth?: BoxPlotPoint['medianWidth'];
-            stemColor?: BoxPlotPoint['stemColor'];
-            stemDashStyle?: BoxPlotPoint['stemDashStyle'];
-            stemWidth?: BoxPlotPoint['stemWidth'];
-            whiskerColor?: BoxPlotPoint['whiskerColor'];
-            whiskerLength?: BoxPlotPoint['whiskerLength'];
-            whiskerWidth?: BoxPlotPoint['whiskerWidth'];
-        }
-        interface SeriesTypesDictionary {
-            boxplot: typeof BoxPlotSeries;
-        }
         class BoxPlotPoint extends ColumnPoint {
             public box: SVGElement;
             public fillColor: (ColorString|GradientColorObject|PatternObject);
@@ -81,14 +60,39 @@ declare global {
             public toYData(point: BoxPlotPoint): Array<number>;
             public translate(): void;
         }
+        interface BoxPlotPointOptions extends ColumnPointOptions {
+            high?: BoxPlotPoint['high'];
+            low?: BoxPlotPoint['low'];
+            median?: BoxPlotPoint['median'];
+            q1?: BoxPlotPoint['q1'];
+            q3?: BoxPlotPoint['q3'];
+        }
+        interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
+            fillColor?: BoxPlotPoint['fillColor'];
+            medianColor?: BoxPlotPoint['medianColor'];
+            medianWidth?: BoxPlotPoint['medianWidth'];
+            states?: SeriesStatesOptionsObject<BoxPlotSeries>;
+            stemColor?: BoxPlotPoint['stemColor'];
+            stemDashStyle?: BoxPlotPoint['stemDashStyle'];
+            stemWidth?: BoxPlotPoint['stemWidth'];
+            whiskerColor?: BoxPlotPoint['whiskerColor'];
+            whiskerLength?: BoxPlotPoint['whiskerLength'];
+            whiskerWidth?: BoxPlotPoint['whiskerWidth'];
+        }
+        interface SeriesTypesDictionary {
+            boxplot: typeof BoxPlotSeries;
+        }
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Options.js';
 
 var noop = H.noop,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -116,7 +120,7 @@ var noop = H.noop,
  * @product      highcharts
  * @optionparent plotOptions.boxplot
  */
-seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
+seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
 
     threshold: null as any,
 
@@ -345,7 +349,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
     },
 
     // Disable data labels for box plot
-    drawDataLabels: noop,
+    drawDataLabels: noop as any,
 
     // Translate data points from raw values x and y to plotX and plotY
     translate: function (this: Highcharts.BoxPlotSeries): void {
@@ -595,7 +599,7 @@ seriesType<Highcharts.BoxPlotSeriesOptions>('boxplot', 'column', {
         });
 
     },
-    setStackedPoints: noop // #3890
+    setStackedPoints: noop as any // #3890
 
 });
 

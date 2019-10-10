@@ -18,248 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type SeriesBlendingValue = ('add'|'darken'|'multiply');
-        type SeriesLinecapValue = ('butt'|'round'|'square'|string);
-        type SeriesFindNearestPointByValue = ('x'|'xy');
-        type SeriesOptionsType = SeriesOptions;
-        type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
-        type SeriesStepValue = ('center'|'left'|'right');
-        interface Chart {
-            runTrackerClick?: boolean;
-        }
-        interface KDNode {
-            [side: string]: (KDNode|Point|undefined);
-            left?: KDNode;
-            point: Point;
-            right?: KDNode;
-        }
-        interface KDPointSearchObject {
-            clientX: number;
-            plotY?: number;
-        }
-        interface LinePointOptions extends PointOptionsObject {
-        }
-        interface LineSeriesOptions extends SeriesOptions {
-            states?: LineSeriesStatesOptions;
-        }
-        interface LineSeriesStatesHoverOptions
-            extends SeriesStatesHoverOptions
-        {
-            // only for inheritance
-        }
-        interface LineSeriesStatesInactiveOptions
-            extends SeriesStatesInactiveOptions
-        {
-            // only for inheritance
-        }
-        interface LineSeriesStatesOptions extends SeriesStatesOptions {
-            hover?: LineSeriesStatesHoverOptions;
-        }
-        interface PlotOptions {
-            [key: string]: PlotSeriesOptions;
-        }
-        interface PlotSeriesOptions {
-            allAreas?: boolean;
-            allowPointSelect?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
-            animationLimit?: number;
-            boostBlending?: SeriesBlendingValue;
-            boostThreshold?: number;
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            className?: string;
-            clip?: boolean;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorAxis?: boolean;
-            colorIndex?: number;
-            colors?: Array<(ColorString|GradientColorObject|PatternObject)>;
-            connectEnds?: boolean;
-            connectNulls?: boolean;
-            cropThreshold?: number;
-            cursor?: (string|CursorValue);
-            dashStyle?: DashStyleValue;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
-            dataLabels?: (
-                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
-            );
-            description?: string;
-            enableMouseTracking?: boolean;
-            events?: SeriesEventsOptions;
-            findNearestPointBy?: SeriesFindNearestPointByValue;
-            getExtremesFromAll?: boolean;
-            includeInDataExport?: boolean;
-            isInternal?: boolean;
-            joinBy?: (string|Array<string>);
-            keys?: Array<string>;
-            linecap?: SeriesLinecapValue;
-            lineWidth?: number;
-            linkedTo?: string;
-            marker?: PointMarkerOptionsObject;
-            navigatorOptions?: SeriesOptions;
-            negativeColor?: (ColorString|GradientColorObject|PatternObject);
-            opacity?: number;
-            point?: PlotSeriesPointOptions;
-            pointDescriptionFormatter?: Function;
-            pointInterval?: number;
-            pointIntervalUnit?: SeriesPointIntervalUnitValue;
-            pointPlacement?: (number|string);
-            pointRange?: (number|null);
-            pointStart?: number;
-            pointValKey?: string;
-            selected?: boolean;
-            shadow?: (boolean|ShadowOptionsObject);
-            showCheckbox?: boolean;
-            showInLegend?: boolean;
-            showInNavigator?: boolean;
-            skipKeyboardNavigation?: boolean;
-            softThreshold?: boolean;
-            stacking?: OptionsStackingValue;
-            states?: SeriesStatesOptions;
-            step?: SeriesStepValue;
-            stickyTracking?: boolean;
-            supportingColor?: (ColorString|GradientColorObject|PatternObject);
-            threshold?: number;
-            turboThreshold?: number;
-            visible?: boolean;
-            zIndex?: number;
-            zoneAxis?: string;
-            zones?: Array<PlotSeriesZonesOptions>;
-        }
-        interface PlotSeriesZonesOptions {
-            className?: string;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            value?: number;
-        }
-        interface Point {
-            category?: string;
-            clientX?: number;
-            dataGroup?: DataGroupingInfoObject;
-            dist?: number;
-            distX?: number;
-            hasImage?: boolean;
-            index?: number;
-            isInside?: boolean;
-            low?: number;
-            negative?: boolean;
-            options: PointOptionsObject;
-            plotX?: number;
-            plotY?: number;
-            stackTotal?: number;
-            stackY?: (number|null);
-            yBottom?: number;
-            zone?: PlotSeriesZonesOptions;
-        }
-        interface SeriesAfterAnimateCallbackFunction {
-            (this: Series, event: SeriesAfterAnimateEventObject): void;
-        }
-        interface SeriesAfterAnimateEventObject {
-            target: Series;
-            type: 'afterAnimate';
-        }
-        interface SeriesCheckboxClickCallbackFunction {
-            (this: Series, event: SeriesCheckboxClickEventObject): void;
-        }
-        interface SeriesCheckboxClickEventObject {
-            checked: boolean;
-            item: Series;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesClickCallbackFunction {
-            (this: Series, event: SeriesClickEventObject): void;
-        }
-        interface SeriesClickEventObject extends Event {
-            point: Point;
-        }
-        interface SeriesCropDataObject {
-            end: number;
-            start: number;
-            xData: Array<number>;
-            yData: Array<number>;
-        }
-        interface SeriesEventsOptions {
-            afterAnimate?: SeriesAfterAnimateCallbackFunction;
-            checkboxClick?: SeriesCheckboxClickCallbackFunction;
-            click?: SeriesClickCallbackFunction;
-            hide?: SeriesHideCallbackFunction;
-            legendItemClick?: SeriesLegendItemClickCallbackFunction;
-            mouseOut?: SeriesMouseOutCallbackFunction;
-            mouseOver?: SeriesMouseOverCallbackFunction;
-            show?: SeriesShowCallbackFunction;
-        }
-        interface SeriesHideCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesLegendItemClickCallbackFunction {
-            (this: Series, event: SeriesLegendItemClickEventObject): void;
-        }
-        interface SeriesLegendItemClickEventObject {
-            browserEvent: PointerEvent;
-            preventDefault: Function;
-            target: Series;
-            type: 'checkboxClick';
-        }
-        interface SeriesMouseOutCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesMouseOverCallbackFunction {
-            (this: Series, event: PointerEvent): void;
-        }
-        interface SeriesOptions extends PlotSeriesOptions {
-            data?: Array<PointOptionsType>;
-            grouping?: boolean;
-            id?: string;
-            index?: number;
-            kdNow?: boolean;
-            legendIndex?: number;
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            name?: string;
-            selected?: boolean;
-            stack?: (number|string);
-            type?: string;
-            visible?: boolean;
-            xAxis?: (number|string);
-            yAxis?: (number|string);
-            zIndex?: number;
-        }
-        interface SeriesPlotBoxObject {
-            scaleX?: number;
-            scaleY?: number;
-            translateX?: number;
-            translateY?: number;
-        }
-        interface SeriesShowCallbackFunction {
-            (this: Series, event: Event): void;
-        }
-        interface SeriesStatesHoverHaloOptions {
-            attributes?: SVGAttributes;
-            opacity?: number;
-            size?: number;
-        }
-        interface SeriesStatesHoverOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            enabled?: boolean;
-            halo?: (boolean|SeriesStatesHoverHaloOptions);
-            lineWidth?: SeriesOptions['lineWidth'];
-            lineWidthPlus?: number;
-            opacity?: SeriesOptions['opacity'];
-        }
-        interface SeriesStatesInactiveOptions {
-            opacity?: number;
-        }
-        interface SeriesStatesNormalOptions {
-            animation?: (boolean|AnimationOptionsObject);
-        }
-        interface SeriesStatesOptions {
-            hover?: SeriesStatesHoverOptions;
-            inactive?: SeriesStatesInactiveOptions;
-            normal?: SeriesStatesNormalOptions;
-        }
-        interface SeriesTypesDictionary {
-            line: typeof LineSeries;
-        }
         class LinePoint extends Point {
             public options: LinePointOptions;
             public series: LineSeries;
@@ -323,7 +81,7 @@ declare global {
             public points: Array<Point>;
             public pointValKey?: string;
             public processedXData: Array<number>;
-            public processedYData: Array<number>;
+            public processedYData: (Array<number>|Array<Array<number>>);
             public requireSorting: boolean;
             public selected: boolean;
             public sharedClipKey?: string;
@@ -336,10 +94,15 @@ declare global {
             public userOptions: SeriesOptionsType;
             public visible: boolean;
             public xAxis: Axis;
+            public xData?: Array<number>;
             public xIncrement?: (number|null);
             public yAxis: Axis;
+            public yData?: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
             public zoneAxis?: string;
-            public zones: Array<PlotSeriesZonesOptions>;
+            public zones: Array<SeriesZonesOptions>;
             public afterAnimate(): void;
             public animate(init?: boolean): void;
             public applyZones(): void;
@@ -348,7 +111,10 @@ declare global {
             public buildKDTree(e?: PointerEventObject): void;
             public cropData(
                 xData: Array<number>,
-                yData: Array<(number|null|undefined)>,
+                yData: (
+                    Array<(number|null|undefined)>|
+                    Array<Array<(number|null|undefined)>>
+                ),
                 min: number,
                 max: number,
                 cropShoulder?: number
@@ -386,6 +152,10 @@ declare global {
                 allowNull?: boolean
             ): Array<Point>;
             public getXExtremes(xData: Array<number>): RangeObject;
+            public getFirstValidPoint (
+                this: Highcharts.Series,
+                data: Array<PointOptionsType>
+            ): PointOptionsType;
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -401,7 +171,7 @@ declare global {
                 zIndex?: number,
                 parent?: SVGElement
             ): SVGElement;
-            public pointAttribs(point: Point, state?: string): SVGAttributes;
+            public pointAttribs(point?: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
@@ -425,12 +195,243 @@ declare global {
             ): void;
             public setOptions(
                 itemOptions: SeriesOptionsType
-            ): SeriesOptionsType;
+            ): this['options'];
             public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(data: Array<PointOptionsType>): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
+        interface Chart {
+            runTrackerClick?: boolean;
+        }
+        interface KDNode {
+            [side: string]: (KDNode|Point|undefined);
+            left?: KDNode;
+            point: Point;
+            right?: KDNode;
+        }
+        interface KDPointSearchObject {
+            clientX: number;
+            plotY?: number;
+        }
+        interface LinePointOptions extends PointOptionsObject {
+        }
+        interface LineSeriesOptions extends SeriesOptions {
+            states?: SeriesStatesOptionsObject<LineSeries>;
+        }
+        interface Point {
+            category?: string;
+            clientX?: number;
+            dataGroup?: DataGroupingInfoObject;
+            dist?: number;
+            distX?: number;
+            hasImage?: boolean;
+            index?: number;
+            isInside?: boolean;
+            low?: number;
+            negative?: boolean;
+            options: PointOptionsObject;
+            plotX?: number;
+            plotY?: number;
+            stackTotal?: number;
+            stackY?: (number|null);
+            yBottom?: number;
+            zone?: SeriesZonesOptions;
+        }
+        interface SeriesAfterAnimateCallbackFunction {
+            (this: Series, event: SeriesAfterAnimateEventObject): void;
+        }
+        interface SeriesAfterAnimateEventObject {
+            target: Series;
+            type: 'afterAnimate';
+        }
+        interface SeriesCheckboxClickCallbackFunction {
+            (this: Series, event: SeriesCheckboxClickEventObject): void;
+        }
+        interface SeriesCheckboxClickEventObject {
+            checked: boolean;
+            item: Series;
+            target: Series;
+            type: 'checkboxClick';
+        }
+        interface SeriesClickCallbackFunction {
+            (this: Series, event: SeriesClickEventObject): void;
+        }
+        interface SeriesClickEventObject extends Event {
+            point: Point;
+        }
+        interface SeriesCropDataObject {
+            end: number;
+            start: number;
+            xData: Array<number>;
+            yData: (Array<number>|Array<Array<number>>);
+        }
+        interface SeriesEventsOptions {
+            afterAnimate?: SeriesAfterAnimateCallbackFunction;
+            checkboxClick?: SeriesCheckboxClickCallbackFunction;
+            click?: SeriesClickCallbackFunction;
+            hide?: SeriesHideCallbackFunction;
+            legendItemClick?: SeriesLegendItemClickCallbackFunction;
+            mouseOut?: SeriesMouseOutCallbackFunction;
+            mouseOver?: SeriesMouseOverCallbackFunction;
+            show?: SeriesShowCallbackFunction;
+        }
+        interface SeriesHideCallbackFunction {
+            (this: Series, event: Event): void;
+        }
+        interface SeriesLegendItemClickCallbackFunction {
+            (this: Series, event: SeriesLegendItemClickEventObject): void;
+        }
+        interface SeriesLegendItemClickEventObject {
+            browserEvent: PointerEvent;
+            preventDefault: Function;
+            target: Series;
+            type: 'checkboxClick';
+        }
+        interface SeriesMouseOutCallbackFunction {
+            (this: Series, event: PointerEvent): void;
+        }
+        interface SeriesMouseOverCallbackFunction {
+            (this: Series, event: PointerEvent): void;
+        }
+        interface SeriesOptions {
+            allAreas?: boolean;
+            allowPointSelect?: boolean;
+            animation?: (boolean|AnimationOptionsObject);
+            animationLimit?: number;
+            boostThreshold?: number;
+            borderColor?: ColorType;
+            borderWidth?: number;
+            className?: string;
+            clip?: boolean;
+            color?: ColorType;
+            colorAxis?: boolean;
+            colorByPoint?: boolean;
+            colorIndex?: number;
+            colors?: Array<ColorType>;
+            connectEnds?: boolean;
+            connectNulls?: boolean;
+            cropThreshold?: number;
+            cursor?: (string|CursorValue);
+            dashStyle?: DashStyleValue;
+            data?: Array<PointOptionsType>;
+            dataGrouping?: DataGroupingOptionsObject;
+            dataLabels?: (
+                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
+            );
+            description?: string;
+            enableMouseTracking?: boolean;
+            events?: SeriesEventsOptions;
+            findNearestPointBy?: SeriesFindNearestPointByValue;
+            getExtremesFromAll?: boolean;
+            grouping?: boolean;
+            id?: string;
+            index?: number;
+            includeInDataExport?: boolean;
+            isInternal?: boolean;
+            joinBy?: (string|Array<string>);
+            kdNow?: boolean;
+            keys?: Array<string>;
+            legendIndex?: number;
+            linecap?: SeriesLinecapValue;
+            lineColor?: ColorType;
+            lineWidth?: number;
+            linkedTo?: string;
+            marker?: PointMarkerOptionsObject;
+            name?: string;
+            navigatorOptions?: SeriesOptions;
+            negativeColor?: ColorType;
+            negativeFillColor?: ColorType;
+            opacity?: number;
+            point?: PlotSeriesPointOptions;
+            pointDescriptionFormatter?: Function;
+            pointInterval?: number;
+            pointIntervalUnit?: SeriesPointIntervalUnitValue;
+            pointPlacement?: (number|string);
+            pointRange?: (number|null);
+            pointStart?: number;
+            pointValKey?: string;
+            selected?: boolean;
+            shadow?: (boolean|ShadowOptionsObject);
+            showCheckbox?: boolean;
+            showInLegend?: boolean;
+            showInNavigator?: boolean;
+            skipKeyboardNavigation?: boolean;
+            softThreshold?: boolean;
+            stack?: (number|string);
+            stacking?: OptionsStackingValue;
+            startFromThreshold?: boolean;
+            states?: SeriesStatesOptionsObject<Series>;
+            step?: SeriesStepValue;
+            stickyTracking?: boolean;
+            supportingColor?: ColorType;
+            threshold?: number;
+            turboThreshold?: number;
+            type?: string;
+            visible?: boolean;
+            xAxis?: (number|string);
+            yAxis?: (number|string);
+            zIndex?: number;
+            zoneAxis?: string;
+            zones?: Array<SeriesZonesOptions>;
+        }
+        interface SeriesPlotBoxObject {
+            scaleX?: number;
+            scaleY?: number;
+            translateX?: number;
+            translateY?: number;
+        }
+        interface SeriesShowCallbackFunction {
+            (this: Series, event: Event): void;
+        }
+        interface SeriesStatesHoverHaloOptions {
+            attributes?: SVGAttributes;
+            opacity?: number;
+            size?: number;
+        }
+        interface SeriesStatesHoverOptionsObject {
+            animation?: (boolean|AnimationOptionsObject);
+            enabled?: boolean;
+            halo?: (boolean|SeriesStatesHoverHaloOptions);
+            lineWidth?: SeriesOptions['lineWidth'];
+            lineWidthPlus?: number;
+            opacity?: SeriesOptions['opacity'];
+        }
+        interface SeriesStatesInactiveOptionsObject {
+        }
+        interface SeriesStatesOptionsObject<TSeries extends Series> {
+            hover?: (
+                SeriesStatesHoverOptionsObject&
+                SeriesStateOptionsObject<TSeries>
+            );
+            inactive?: (
+                SeriesStatesInactiveOptionsObject&
+                SeriesStateOptionsObject<TSeries>
+            );
+            normal?: SeriesStateOptionsObject<TSeries>;
+            select?: (
+                SeriesStatesHoverOptionsObject&
+                SeriesStateOptionsObject<TSeries>
+            );
+        }
+        interface SeriesTypesDictionary {
+            line: typeof LineSeries;
+        }
+        interface SeriesZonesOptions {
+            className?: string;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            value?: number;
+        }
+        type SeriesLinecapValue = ('butt'|'round'|'square'|string);
+        type SeriesFindNearestPointByValue = ('x'|'xy');
+        type SeriesOptionsType = SeriesOptions;
+        type SeriesPointIntervalUnitValue = ('day'|'month'|'year');
+        type SeriesStepValue = ('center'|'left'|'right');
+        type SeriesStateOptionsObject<TSeries extends Series> = (
+            Omit<TSeries['options'], ('states'|'data')>
+        );
     }
 }
 
@@ -644,13 +645,18 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
     erase,
+    extend,
     isArray,
     isNumber,
     isString,
     objectEach,
-    splat
+    pick,
+    splat,
+    syncTimeout
 } = U;
 
 import './Options.js';
@@ -660,20 +666,15 @@ import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
     animObject = H.animObject,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /**
@@ -740,7 +741,7 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType<Highcharts.SeriesOptions>(
+H.Series = H.seriesType<Highcharts.LineSeries>(
     'line',
 
     /**
@@ -2503,6 +2504,10 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * and the rest are assumed to be the same format. This saves expensive
          * data checking and indexing in long series. Set it to `0` disable.
          *
+         * Note:
+         * In boost mode turbo threshold is forced. Only array of numbers or
+         * two dimensional arrays are allowed.
+         *
          * @since   2.2
          * @product highcharts highstock gantt
          *
@@ -2559,7 +2564,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         /**
          * A name for the dash style to use for the graph.
          *
-         * @see [series.dashStyle](#plotOptions.series.dashStyle)
+         * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          *
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis
@@ -3070,10 +3075,10 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * @return {Highcharts.SeriesOptionsType}
          * @fires Highcharts.Series#event:afterSetOptions
          */
-        setOptions: function (
-            this: Highcharts.Series,
+        setOptions: function <TSeries extends Highcharts.Series> (
+            this: TSeries,
             itemOptions: Highcharts.SeriesOptionsType
-        ): Highcharts.SeriesOptionsType {
+        ): TSeries['options'] {
             var chart = this.chart,
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
@@ -3159,7 +3164,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                         options.threshold ||
                         0,
                     className: 'highcharts-negative'
-                } as Highcharts.PlotSeriesZonesOptions;
+                } as Highcharts.SeriesZonesOptions;
                 if (!styledMode) {
                     zone.color = options.negativeColor;
                     zone.fillColor = options.negativeFillColor;
@@ -3625,13 +3630,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 // conditional for max performance.
                 if (turboThreshold && dataLength > turboThreshold) {
 
-                    // find the first non-null point
-                    i = 0;
-                    while (firstPoint === null && i < dataLength) {
-                        firstPoint = data[i];
-                        i++;
-                    }
-
+                    firstPoint = series.getFirstValidPoint(data);
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
                         for (i = 0; i < dataLength; i++) {
@@ -3740,7 +3739,9 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             var series = this,
                 // copied during slice operation:
                 processedXData: Array<number> = series.xData as any,
-                processedYData: Array<number> = series.yData as any,
+                processedYData: (
+                    Array<number>|Array<Array<number>>
+                ) = (series.yData as any),
                 dataLength = (processedXData as any).length,
                 croppedData: Highcharts.SeriesCropDataObject,
                 cropStart = 0,
@@ -4099,7 +4100,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          */
         getExtremes: function (
             this: Highcharts.Series,
-            yData?: Array<number>
+            yData?: (Array<number>|Array<Array<number>>)
         ): void {
             var xAxis = this.xAxis,
                 yAxis = this.yAxis,
@@ -4118,7 +4119,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 shoulder = this.requireSorting ? this.cropShoulder : 0,
                 positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
                 x,
-                y,
+                y: (number|Array<number>),
                 i,
                 j;
 
@@ -4172,6 +4173,32 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             this.dataMax = arrayMax(activeYData);
 
             fireEvent(this, 'afterGetExtremes');
+        },
+
+        /**
+         * Find and return the first non null point in the data
+         *
+         * @private
+         * @function Highcharts.Series.getFirstValidPoint
+         * @param {Array<Highcharts.PointOptionsType>} data
+         *        Array of options for points
+         *
+         * @return {Highcharts.PointOptionsType}
+         */
+        getFirstValidPoint: function (
+            this: Highcharts.Series,
+            data: Array<Highcharts.PointOptionsType>
+        ): Highcharts.PointOptionsType {
+            var firstPoint = null,
+                dataLength = data.length,
+                i = 0;
+
+            while (firstPoint === null && i < dataLength) {
+                firstPoint = data[i];
+                i++;
+            }
+
+            return firstPoint;
         },
 
         /**
@@ -4277,23 +4304,21 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 }
 
                 if (isArray(stackValues)) {
-                    yBottom = (stackValues as any)[0];
-                    yValue = (stackValues as any)[1];
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
 
                     if (yBottom === stackThreshold &&
                         (stackIndicator as any).key ===
                             (stack as any)[xValue as any].base
                     ) {
-                        yBottom = (
-                            pick<number>(
-                                (isNumber(threshold) && threshold) as any,
-                                yAxis.min
-                            )
+                        yBottom = pick<number|undefined, number>(
+                            (isNumber(threshold) && threshold) as any,
+                            yAxis.min as any
                         );
                     }
 
                     // #1200, #1232
-                    if (yAxis.positiveValuesOnly && (yBottom as any) <= 0) {
+                    if (yAxis.positiveValuesOnly && yBottom <= 0) {
                         yBottom = null as any;
                     }
 
@@ -4670,7 +4695,6 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 chart = series.chart,
                 i,
                 point,
-                symbol,
                 graphic,
                 verb,
                 options = series.options,
@@ -4715,7 +4739,9 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                     if (enabled && !point.isNull) {
 
                         // Shortcuts
-                        symbol = pick(pointMarkerOptions.symbol, series.symbol);
+                        const symbol = pick<string|undefined, string>(
+                            pointMarkerOptions.symbol, series.symbol as any
+                        );
 
                         markerAttribs = series.markerAttribs(
                             point,
@@ -4865,7 +4891,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          * @private
          * @function Highcharts.Series#pointAttribs
          *
-         * @param {Highcharts.Point} point
+         * @param {Highcharts.Point} [point]
          *        The point instance to inspect.
          *
          * @param {string} [state]
@@ -4877,7 +4903,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
          */
         pointAttribs: function (
             this: Highcharts.Series,
-            point: Highcharts.Point,
+            point?: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
             var seriesMarkerOptions = this.options.marker,
@@ -5329,7 +5355,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         ): Array<Array<string>> {
             // Add the zone properties if any
             this.zones.forEach(function (
-                zone: Highcharts.PlotSeriesZonesOptions,
+                zone: Highcharts.SeriesZonesOptions,
                 i: number
             ): void {
                 var propset = [
@@ -5402,7 +5428,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
                 // Create the clips
                 extremes = axis.getExtremes();
                 zones.forEach(function (
-                    threshold: Highcharts.PlotSeriesZonesOptions,
+                    threshold: Highcharts.SeriesZonesOptions,
                     i: number
                 ): void {
 
@@ -5789,7 +5815,7 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
             if (!hasRendered) {
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();
-                }, animDuration as any);
+                }, animDuration || 0);
             }
 
             // Means data is in accordance with what you see
@@ -6085,15 +6111,16 @@ H.Series = H.seriesType<Highcharts.SeriesOptions>(
         pointPlacementToXValue: function (this: Highcharts.Series): number {
 
             var series = this,
+                axis = series.xAxis,
                 pointPlacement = series.options.pointPlacement;
 
             // Point placement is relative to each series pointRange (#5889)
             if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
+                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
             }
             if (isNumber(pointPlacement)) {
                 (pointPlacement as any) *=
-                    pick(series.options.pointRange || series.xAxis.pointRange);
+                    pick(series.options.pointRange || axis.pointRange);
             }
 
             return pointPlacement as any;

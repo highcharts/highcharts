@@ -145,8 +145,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     isNumber,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 var Series = H.Series,
@@ -159,11 +162,8 @@ var Series = H.Series,
     numberFormat = H.numberFormat,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     stableSort = H.stableSort,
-    setOptions = H.setOptions,
-    arrayMin = H.arrayMin,
-    arrayMax = H.arrayMax;
+    setOptions = H.setOptions;
 
 setOptions({ // Set default bubble legend options
     legend: {
@@ -363,6 +363,7 @@ setOptions({ // Set default bubble legend options
             ranges: {
                 /**
                  * Range size value, similar to bubble Z data.
+                 * @type {number}
                  */
                 value: undefined,
                 /**

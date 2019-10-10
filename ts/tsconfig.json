@@ -1,21 +1,29 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "checkJs": false,
-    "declaration": false,
-    "esModuleInterop": true,
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "strict": true,
-    "module": "es6",
-    "outDir": "../js",
-    "rootDir": ".",
-    "target": "es5"
-  },
-  "include": [
-      "**/*.ts"
-  ]
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "checkJs": false,
+        "declaration": false,
+        "downlevelIteration": true,
+        "esModuleInterop": true,
+        "noEmitOnError": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "strict": true,
+        "module": "es6",
+        "outDir": "../js",
+        "rootDir": ".",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "types": [
+            "jquery"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ]
 }

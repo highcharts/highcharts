@@ -2135,9 +2135,9 @@ H.defaultOptions = {
         },
         /**
          * Line height for the legend items. Deprecated as of 2.1\. Instead,
-         * the line height for each item can be set using itemStyle.lineHeight,
-         * and the padding between items using `itemMarginTop` and
-         * `itemMarginBottom`.
+         * the line height for each item can be set using
+         * `itemStyle.lineHeight`, and the padding between items using
+         * `itemMarginTop` and `itemMarginBottom`.
          *
          * @sample {highcharts} highcharts/legend/lineheight/
          *         Setting padding
@@ -3523,7 +3523,9 @@ H.setOptions = function (options) {
     // Copy in the default options
     H.defaultOptions = merge(true, H.defaultOptions, options);
     // Update the time object
-    H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time), false);
+    if (options.time || options.global) {
+        H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time, options.global, options.time));
+    }
     return H.defaultOptions;
 };
 /**

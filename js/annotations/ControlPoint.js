@@ -1,5 +1,8 @@
 import H from './../parts/Globals.js';
-import './../parts/Utilities.js';
+import U from './../parts/Utilities.js';
+var extend = U.extend,
+    pick = U.pick;
+
 import eventEmitterMixin from './eventEmitterMixin.js';
 
 /**
@@ -20,7 +23,7 @@ function ControlPoint(chart, target, options, index) {
     this.chart = chart;
     this.target = target;
     this.options = options;
-    this.index = H.pick(options.index, index);
+    this.index = pick(options.index, index);
 }
 
 /**
@@ -47,7 +50,7 @@ function ControlPoint(chart, target, options, index) {
  * @property {Object} events
  */
 
-H.extend(
+extend(
     ControlPoint.prototype,
     eventEmitterMixin
 );

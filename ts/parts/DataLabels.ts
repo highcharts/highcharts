@@ -658,20 +658,20 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
     defined,
+    extend,
     isArray,
     objectEach,
+    pick,
     splat
 } = U;
 
 import './Series.js';
 
-var arrayMax = H.arrayMax,
-    extend = H.extend,
-    format = H.format,
+var format = H.format,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

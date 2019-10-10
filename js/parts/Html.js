@@ -10,9 +10,9 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, pInt = U.pInt;
+var attr = U.attr, defined = U.defined, extend = U.extend, pick = U.pick, pInt = U.pInt;
 import './SvgRenderer.js';
-var createElement = H.createElement, css = H.css, extend = H.extend, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, pick = H.pick, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var createElement = H.createElement, css = H.css, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /* eslint-disable valid-jsdoc */
 // Extend SvgElement for useHTML option.
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {

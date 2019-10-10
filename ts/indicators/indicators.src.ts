@@ -16,77 +16,104 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        class SMAIndicator extends LineSeries {
+            public bindTo: SMAIndicatorBindToObject;
+            public calculateOn: string;
+            public data: Array<SMAIndicatorPoint>;
+            public dataEventsToUnbind: Array<Function>;
+            public hasDerivedData: boolean;
+            public linkedParent: Series;
+            public nameBase?: string;
+            public nameComponents: Array<string>;
+            public nameSuffixes: Array<string>;
+            public options: SMAIndicatorOptions;
+            public pointClass: typeof SMAIndicatorPoint;
+            public points: Array<SMAIndicatorPoint>;
+            public processData: Series['processData'];
+            public requiredIndicators: Array<string>;
+            public useCommonDataGrouping: boolean;
+            public destroy(): void;
+            public init(chart: Chart, options: SMAIndicatorOptions): void;
+            public getName(): string;
+            public getValues(
+                series: Series,
+                params: SMAIndicatorParamsOptions
+            ): (
+                boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
+                IndicatorNullableValuesObject
+            );
+            public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
+        }
+
+        class SMAIndicatorPoint extends LinePoint {
+            public series: SMAIndicator;
+        }
+
         interface IndicatorValuesObject {
             values: Array<Array<number>>;
             xData: Array<number>;
             yData: Array<number>;
         }
+
+        interface IndicatorNullableValuesObject {
+            values: Array<Array<(number|null)>>;
+            xData: Array<(number|null)>;
+            yData: Array<(number|null)>;
+        }
+
+        interface IndicatorMultipleValuesObject {
+            values: IndicatorValuesObject['values'];
+            xData: IndicatorValuesObject['xData'];
+            yData: Array<Array<number>>;
+        }
+
         interface LineSeriesOptions {
             useOhlcData?: boolean;
         }
-        class SmaIndicator extends LineSeries {
-            public pointClass: typeof SmaIndicatorPoint;
-            public data: Array<SmaIndicatorPoint>;
-            public points: Array<SmaIndicatorPoint>;
-            public options: SmaIndicatorOptions;
-            public bindTo: SmaIndicatorBindToObject;
-            public hasDerivedData: boolean;
-            public useCommonDataGrouping: boolean;
-            public nameComponents: Array<string>;
-            public nameSuffixes: Array<string>;
-            public calculateOn: string;
-            public requiredIndicators: Array<string>;
-            public processData: Series['processData'];
-            public requireIndicators(): SmaIndicatorRequireIndicatorsObject;
-            public init(chart: Chart, options: SmaIndicatorOptions): void;
-            public getName(): string;
-            public getValues(
-                series: Series,
-                params: SmaIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
-            public destroy(): void;
-            public dataEventsToUnbind: Array<Function>;
-            public nameBase?: string;
-            public linkedParent: Series;
-        }
-        interface SmaIndicatorOptions extends LineSeriesOptions {
+
+        interface SMAIndicatorOptions extends LineSeriesOptions {
             compareToMain?: boolean;
             data?: Array<Array<number>>;
-            params?: SmaIndicatorParamsOptions;
+            params?: SMAIndicatorParamsOptions;
         }
-        interface SmaIndicatorParamsOptions {
+
+        interface SMAIndicatorParamsOptions {
             index?: number;
             period?: number;
         }
+
         interface SeriesTypesDictionary {
-            sma: typeof SmaIndicator;
+            sma: typeof SMAIndicator;
         }
-        class SmaIndicatorPoint extends LinePoint {
-            public series: SmaIndicator;
-        }
-        interface SmaIndicatorBindToObject {
-            series: boolean;
+
+        interface SMAIndicatorBindToObject {
             eventName: string;
+            series: boolean;
         }
-        interface SmaIndicatorRequireIndicatorsObject {
+
+        interface SMAIndicatorRequireIndicatorsObject {
             allLoaded: boolean;
             needed?: string;
         }
+
         interface Series {
             /** @requires indicators/indicators */
-            requireIndicators(): SmaIndicatorRequireIndicatorsObject;
+            requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
     }
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    splat = U.splat;
+const {
+    extend,
+    isArray,
+    pick,
+    splat
+} = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var pick = H.pick,
-    error = H.error,
+var error = H.error,
     Series = H.Series,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
@@ -109,7 +136,7 @@ var pick = H.pick,
 /* eslint-disable no-invalid-this */
 
 addEvent(H.Series, 'init', function (
-    eventOptions: { options: Highcharts.SmaIndicatorOptions }
+    eventOptions: { options: Highcharts.SMAIndicatorOptions }
 ): void {
     var series = this,
         options = eventOptions.options;
@@ -118,7 +145,7 @@ addEvent(H.Series, 'init', function (
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
     ) {
-        H.extend(series, {
+        extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: (ohlcProto as any).keys, // @todo potentially nonsense
             pointArrayMap: ohlcProto.pointArrayMap,
@@ -153,7 +180,7 @@ addEvent(Series, 'afterSetOptions', function (
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.SmaIndicatorOptions>(
+seriesType<Highcharts.SMAIndicator>(
     'sma',
     'line',
     /**
@@ -227,7 +254,9 @@ seriesType<Highcharts.SmaIndicatorOptions>(
      * @lends Highcharts.Series.prototype
      */
     {
-        processData: function (this: Highcharts.SmaIndicator): void {
+        processData: function (
+            this: Highcharts.SMAIndicator
+        ): (boolean|undefined) {
             var series = this,
                 compareToMain = series.options.compareToMain,
                 linkedParent = series.linkedParent;
@@ -237,6 +266,8 @@ seriesType<Highcharts.SmaIndicatorOptions>(
             if (linkedParent && linkedParent.compareValue && compareToMain) {
                 series.compareValue = linkedParent.compareValue;
             }
+
+            return;
         },
         bindTo: {
             series: true,
@@ -250,9 +281,9 @@ seriesType<Highcharts.SmaIndicatorOptions>(
         // Defines on which other indicators is this indicator based on.
         requiredIndicators: [],
         requireIndicators: function (
-            this: Highcharts.SmaIndicator
-        ): Highcharts.SmaIndicatorRequireIndicatorsObject {
-            var obj: Highcharts.SmaIndicatorRequireIndicatorsObject = {
+            this: Highcharts.SMAIndicator
+        ): Highcharts.SMAIndicatorRequireIndicatorsObject {
+            var obj: Highcharts.SMAIndicatorRequireIndicatorsObject = {
                 allLoaded: true
             };
 
@@ -269,10 +300,10 @@ seriesType<Highcharts.SmaIndicatorOptions>(
             return obj;
         },
         init: function (
-            this: Highcharts.SmaIndicator,
+            this: Highcharts.SMAIndicator,
             chart: Highcharts.Chart,
-            options: Highcharts.SmaIndicatorOptions
-        ): (Highcharts.SmaIndicator|undefined) {
+            options: Highcharts.SMAIndicatorOptions
+        ): (Highcharts.SMAIndicator|undefined) {
             var indicator = this,
                 requiredIndicators = indicator.requireIndicators();
 
@@ -338,7 +369,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
 
                         croppedData = indicator.cropData(
                             processedData.xData,
-                            processedData.yData,
+                            (processedData.yData as any),
                             min as any,
                             max as any
                         );
@@ -385,7 +416,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
 
                 if (overwriteData) {
                     indicator.xData = processedData.xData;
-                    indicator.yData = processedData.yData;
+                    indicator.yData = (processedData.yData as any);
                     indicator.options.data = processedData.values;
                 }
 
@@ -425,7 +456,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
                 var unbinder = addEvent(
                     indicator.chart,
                     indicator.calculateOn,
-                    function () {
+                    function (): void {
                         recalculateValues();
                         // Call this just once, on init
                         unbinder();
@@ -435,7 +466,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
 
             return indicator;
         },
-        getName: function (this: Highcharts.SmaIndicator): string {
+        getName: function (this: Highcharts.SMAIndicator): string {
             var name = this.name,
                 params: Array<string> = [];
 
@@ -459,7 +490,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
         },
         getValues: function (
             series: Highcharts.Series,
-            params: Highcharts.SmaIndicatorParamsOptions
+            params: Highcharts.SMAIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
@@ -513,7 +544,7 @@ seriesType<Highcharts.SmaIndicatorOptions>(
                 yData: yData
             };
         },
-        destroy: function (this: Highcharts.SmaIndicator): void {
+        destroy: function (this: Highcharts.SMAIndicator): void {
             this.dataEventsToUnbind.forEach(function (
                 unbinder: Function
             ): void {

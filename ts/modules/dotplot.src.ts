@@ -24,14 +24,6 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
-        interface DotplotPointOptions extends ColumnPointOptions {
-        }
-        interface DotplotSeriesOptions extends ColumnSeriesOptions {
-            itemPadding?: number;
-        }
-        interface SeriesTypesDictionary {
-            dotplot: typeof DotplotSeries;
-        }
         class DotplotPoint extends ColumnPoint {
             public graphics?: Dictionary<SVGElement>;
             public options: DotplotPointOptions;
@@ -46,17 +38,28 @@ declare global {
             public points: Array<DotplotPoint>;
             public drawPoints(): void;
         }
+        interface DotplotPointOptions extends ColumnPointOptions {
+        }
+        interface DotplotSeriesOptions extends ColumnSeriesOptions {
+            itemPadding?: number;
+            states?: SeriesStatesOptionsObject<DotplotSeries>;
+        }
+        interface SeriesTypesDictionary {
+            dotplot: typeof DotplotSeries;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+const {
+    extend,
+    objectEach,
+    pick
+} = U;
 
 import '../parts/Series.js';
 
-var extend = H.extend,
-    pick = H.pick,
-    seriesType = H.seriesType;
+var seriesType = H.seriesType;
 
 /**
  * @private
@@ -65,7 +68,7 @@ var extend = H.extend,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.DotplotSeriesOptions>('dotplot', 'column', {
+seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',
@@ -126,7 +129,7 @@ seriesType<Highcharts.DotplotSeriesOptions>('dotplot', 'column', {
                 }
 
                 itemY = point.y;
-                yTop = pick(point.stackY, point.y);
+                yTop = pick(point.stackY, point.y as any);
                 size = Math.min(
                     point.pointWidth,
                     series.yAxis.transA - itemPaddingTranslated
