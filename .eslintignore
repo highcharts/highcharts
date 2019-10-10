@@ -27,7 +27,7 @@ js/indicators/**/*.js
 #!js/indicators/trendline.src.js
 !js/indicators/trix.src.js
 #!js/indicators/volume-by-price.src.js
-!js/indicators/vwap.src.js
+#!js/indicators/vwap.src.js
 #!js/indicators/williams-r.src.js
 #!js/indicators/zigzag.src.js
 js/modules/**/*.js
