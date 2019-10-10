@@ -34,7 +34,7 @@ import U from './../parts/Utilities.js';
 import './../parts/Series.js';
 import './../parts/Axis.js';
 import './../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = H.isNumber, pick = H.pick, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, baseGeneratePoints = Series.prototype.generatePoints, clusterDefaultOptions;
+var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = U.isNumber, pick = H.pick, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, baseGeneratePoints = Series.prototype.generatePoints, clusterDefaultOptions;
 /**
  * Options for marker clusters, the concept of sampling the data
  * values into larger blocks in order to ease readability and
