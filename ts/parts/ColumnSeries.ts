@@ -36,6 +36,7 @@ declare global {
             pointPadding?: number;
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
+            ignoreNullPoints?: boolean;
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -87,7 +88,7 @@ declare global {
                 w: number,
                 h: number
             ): BBoxObject;
-            public getColumnMetrics(): ColumnMetricsObject;
+            public getColumnMetrics(pointX?: number): ColumnMetricsObject;
             public remove(): void;
         }
     }
@@ -618,7 +619,8 @@ seriesType<Highcharts.ColumnSeries>(
          * @return {Highcharts.ColumnMetricsObject}
          */
         getColumnMetrics: function (
-            this: Highcharts.ColumnSeries
+            this: Highcharts.ColumnSeries,
+            pointX: number
         ): Highcharts.ColumnMetricsObject {
 
             var series = this,
@@ -632,7 +634,8 @@ seriesType<Highcharts.ColumnSeries>(
                 (!xAxis.reversed && reversedStacks),
                 stackKey,
                 stackGroups = {} as Highcharts.Dictionary<number>,
-                columnCount = 0;
+                columnCount = 0,
+                ignoreNullPoints = options.ignoreNullPoints;
 
             // Get the total number of column type series. This is called on
             // every series. Consider moving this logic to a chart.orderStacks()
@@ -645,7 +648,8 @@ seriesType<Highcharts.ColumnSeries>(
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
                         otherOptions = otherSeries.options,
-                        columnIndex;
+                        columnIndex,
+                        hasPointInX;
 
                     if (otherSeries.type === series.type &&
                         (otherSeries.visible ||
@@ -656,16 +660,29 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
                     ) { // #642, #2086
-                        if (otherOptions.stacking) {
-                            stackKey = otherSeries.stackKey;
-                            if (stackGroups[stackKey as any] === undefined) {
-                                stackGroups[stackKey as any] = columnCount++;
-                            }
-                            columnIndex = stackGroups[stackKey as any];
-                        } else if (otherOptions.grouping !== false) { // #1162
-                            columnIndex = columnCount++;
+                        if (ignoreNullPoints) {
+                            otherSeries.processedXData.forEach(function (x) {
+                                if (x === pointX) {
+                                    let index = otherSeries.processedXData.indexOf(x),
+                                        pointY = otherSeries.processedYData[index];
+                                    if (H.isArray(pointY) ? pointY[0] !== null : pointY !== null) {
+                                        hasPointInX = true;
+                                    }
+                                }
+                            });
                         }
-                        (otherSeries as any).columnIndex = columnIndex;
+                        if (hasPointInX || !ignoreNullPoints) {
+                            if (otherOptions.stacking) {
+                                stackKey = otherSeries.stackKey;
+                                if (stackGroups[stackKey as any] === undefined) {
+                                    stackGroups[stackKey as any] = columnCount++;
+                                }
+                                columnIndex = stackGroups[stackKey as any];
+                            } else if (otherOptions.grouping !== false) { // #1162
+                                columnIndex = columnCount++;
+                            }
+                            (otherSeries as any).columnIndex = columnIndex;
+                        }
                     }
                 });
             }
@@ -798,7 +815,6 @@ seriesType<Highcharts.ColumnSeries>(
                 // postprocessed for border width
                 seriesBarW = series.barW =
                     Math.max(seriesPointWidth, 1 + 2 * borderWidth),
-                seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
                 dataMax = series.dataMax;
 
@@ -813,14 +829,18 @@ seriesType<Highcharts.ColumnSeries>(
             if (options.pointPadding) {
                 seriesBarW = Math.ceil(seriesBarW);
             }
-
+            series.pointXOffset = metrics.offset;
             Series.prototype.translate.apply(series);
-
             // Record the new values
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold as any),
+                var metrics = defined(point.x) ?
+                        series.getColumnMetrics(point.x) :
+                        series.getColumnMetrics(),
+                    seriesPointWidth = metrics.width,
+                    seriesXOffset = series.pointXOffset = metrics.offset,
+                    yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,
@@ -830,7 +850,9 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len + safeDistance
                     ),
                     barX = (point.plotX as any) + seriesXOffset,
-                    barW = seriesBarW,
+                    barW = seriesBarW = Math.max(
+                        seriesPointWidth, 1 + 2 * borderWidth
+                    ),
                     barY = Math.min(plotY, yBottom),
                     up,
                     barH = Math.max(plotY, yBottom) - barY;

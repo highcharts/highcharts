@@ -473,12 +473,12 @@ seriesType('column', 'line',
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      * @return {Highcharts.ColumnMetricsObject}
      */
-    getColumnMetrics: function () {
+    getColumnMetrics: function (pointX) {
         var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, reversedStacks = xAxis.options.reversedStacks, 
         // Keep backward compatibility: reversed xAxis had reversed
         // stacks
         reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks), stackKey, stackGroups = {}, columnCount = 0;
+            (!xAxis.reversed && reversedStacks), stackKey, stackGroups = {}, columnCount = 0, ignoreNullPoints = options.ignoreNullPoints;
         // Get the total number of column type series. This is called on
         // every series. Consider moving this logic to a chart.orderStacks()
         // function and call it on init, addSeries and removeSeries
@@ -487,24 +487,36 @@ seriesType('column', 'line',
         }
         else {
             series.chart.series.forEach(function (otherSeries) {
-                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex;
+                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex, hasPointInX;
                 if (otherSeries.type === series.type &&
                     (otherSeries.visible ||
                         !series.chart.options.chart
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
-                    if (otherOptions.stacking) {
-                        stackKey = otherSeries.stackKey;
-                        if (stackGroups[stackKey] === undefined) {
-                            stackGroups[stackKey] = columnCount++;
+                    if (ignoreNullPoints) {
+                        otherSeries.processedXData.forEach(function (x) {
+                            if (x === pointX) {
+                                var index = otherSeries.processedXData.indexOf(x), pointY = otherSeries.processedYData[index];
+                                if (H.isArray(pointY) ? pointY[0] !== null : pointY !== null) {
+                                    hasPointInX = true;
+                                }
+                            }
+                        });
+                    }
+                    if (hasPointInX || !ignoreNullPoints) {
+                        if (otherOptions.stacking) {
+                            stackKey = otherSeries.stackKey;
+                            if (stackGroups[stackKey] === undefined) {
+                                stackGroups[stackKey] = columnCount++;
+                            }
+                            columnIndex = stackGroups[stackKey];
                         }
-                        columnIndex = stackGroups[stackKey];
+                        else if (otherOptions.grouping !== false) { // #1162
+                            columnIndex = columnCount++;
+                        }
+                        otherSeries.columnIndex = columnIndex;
                     }
-                    else if (otherOptions.grouping !== false) { // #1162
-                        columnIndex = columnCount++;
-                    }
-                    otherSeries.columnIndex = columnIndex;
                 }
             });
         }
@@ -582,7 +594,7 @@ seriesType('column', 'line',
             yAxis.getThreshold(threshold), minPointLength = pick(options.minPointLength, 5), metrics = series.getColumnMetrics(), seriesPointWidth = metrics.width, 
         // postprocessed for border width
         seriesBarW = series.barW =
-            Math.max(seriesPointWidth, 1 + 2 * borderWidth), seriesXOffset = series.pointXOffset = metrics.offset, dataMin = series.dataMin, dataMax = series.dataMax;
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth), dataMin = series.dataMin, dataMax = series.dataMax;
         if (chart.inverted) {
             translatedThreshold -= 0.5; // #3355
         }
@@ -593,13 +605,16 @@ seriesType('column', 'line',
         if (options.pointPadding) {
             seriesBarW = Math.ceil(seriesBarW);
         }
+        series.pointXOffset = metrics.offset;
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
+            var metrics = defined(point.x) ?
+                series.getColumnMetrics(point.x) :
+                series.getColumnMetrics(), seriesPointWidth = metrics.width, seriesXOffset = series.pointXOffset = metrics.offset, yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW = Math.max(seriesPointWidth, 1 + 2 * borderWidth), barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
