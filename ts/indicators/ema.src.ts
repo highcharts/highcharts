@@ -39,7 +39,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: EMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (boolean|IndicatorValuesObject|IndicatorNullableValuesObject);
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {

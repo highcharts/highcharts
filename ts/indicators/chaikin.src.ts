@@ -145,9 +145,15 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 yData: Array<number> = [],
                 periodsOffset: number,
                 // Shorter Period EMA
-                SPE: (boolean|Highcharts.IndicatorValuesObject),
+                SPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 // Longer Period EMA
-                LPE: (boolean|Highcharts.IndicatorValuesObject),
+                LPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 oscillator: number,
                 i: number;
 
