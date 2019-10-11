@@ -18,10 +18,17 @@ declare global {
     namespace Highcharts {
 
         interface EMAIndicatorLevelsObject {
+<<<<<<< HEAD
             level1: number;
             level2: number;
             level3: number;
             prevLevel3: number;
+=======
+            level1?: number;
+            level2?: number;
+            level3?: number;
+            prevLevel3?: number;
+>>>>>>> Tools: Migrated TEMAIndicator to TS.
         }
 
         class TEMAIndicator extends EMAIndicator {
