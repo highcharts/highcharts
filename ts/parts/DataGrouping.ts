@@ -554,6 +554,7 @@ var seriesProto = Series.prototype,
         spline: {},
         area: {},
         areaspline: {},
+        arearange: {},
         column: {
             groupPixelWidth: 10
         },
