@@ -42,3 +42,37 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
     );
 
 });
+
+QUnit.test('Tooltip dateTime formats and timezone', function (assert) {
+    var chart = Highcharts.chart('container', {
+            time: {
+                timezone: 'Europe/Oslo'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            tooltip: {
+                dateTimeLabelFormats: {
+                    day: '<span class="test">%e %b \'%y</span>'
+                }
+            },
+            series: [{
+                data: [
+                    [Date.UTC(2016, 9, 22), 10],
+                    [Date.UTC(2016, 9, 23), 20]
+                ]
+            }]
+        }),
+        controller = new TestController(chart);
+
+    controller.mouseMove(
+        chart.series[0].points[0].plotX + chart.plotLeft,
+        chart.series[0].points[0].plotY + chart.plotTop
+    );
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.test')[0].innerHTML,
+        '22 Oct \'16',
+        'DateTimeLabelFormat in tooltip should be `%e %b \'%y` (#12182)'
+    );
+});

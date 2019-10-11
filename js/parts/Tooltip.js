@@ -1028,7 +1028,7 @@ H.Tooltip.prototype = {
      *         The optimal date format for a point.
      */
     getDateFormat: function (range, date, startOfWeek, dateTimeLabelFormats) {
-        var time = this.chart.time, dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date), format, n, blank = '01-01 00:00:00.000', strpos = {
+        var time = this.chart.time, dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date + time.getTimezoneOffset(date)), format, n, blank = '01-01 00:00:00.000', strpos = {
             millisecond: 15,
             second: 12,
             minute: 9,

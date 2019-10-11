@@ -1505,7 +1505,10 @@ H.Tooltip.prototype = {
         dateTimeLabelFormats: Highcharts.Dictionary<string>
     ): string {
         var time = this.chart.time,
-            dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
+            dateStr = time.dateFormat(
+                '%m-%d %H:%M:%S.%L',
+                date + time.getTimezoneOffset(date)
+            ),
             format,
             n,
             blank = '01-01 00:00:00.000',
