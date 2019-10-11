@@ -268,7 +268,7 @@ H.tileShapeTypes = {
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
 H.addEvent(H.Axis, 'afterSetAxisTranslation', function () {
-    if (this.recomputingForTilemap) {
+    if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }
     var axis = this, 

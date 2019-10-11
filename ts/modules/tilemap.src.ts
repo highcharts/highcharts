@@ -645,7 +645,7 @@ H.tileShapeTypes = {
 // defined, we add nothing.
 H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
 
-    if (this.recomputingForTilemap) {
+    if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }
 
