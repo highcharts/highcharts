@@ -115,10 +115,53 @@ function hideSeriesFromAT(series) {
 }
 
 
+/**
+ * Get series objects by series name.
+ * @private
+ * @param {Highcharts.Chart} chart
+ * @param {string} name
+ * @return {Array<Highcharts.Series>}
+ */
+function getSeriesFromName(chart, name) {
+    if (!name) {
+        return chart.series;
+    }
+
+    return (chart.series || []).filter(function (s) {
+        return s.name === name;
+    });
+}
+
+
+/**
+ * Get point in a series from x/y values.
+ * @private
+ * @param {Highcharts.Series} series
+ * @param {number} x
+ * @param {number} y
+ * @return {Highcharts.Point}
+ */
+function getPointFromXY(series, x, y) {
+    var i = series.length,
+        res;
+
+    while (i--) {
+        res = (series[i].points || []).find(function (p) {
+            return p.x === x && p.y === y;
+        });
+        if (res) {
+            return res;
+        }
+    }
+}
+
+
 var ChartUtilities = {
     getChartTitle: getChartTitle,
     getAxisDescription: getAxisDescription,
+    getPointFromXY: getPointFromXY,
     getSeriesFirstPointElement: getSeriesFirstPointElement,
+    getSeriesFromName: getSeriesFromName,
     getSeriesA11yElement: getSeriesA11yElement,
     unhideChartElementFromAT: unhideChartElementFromAT,
     hideSeriesFromAT: hideSeriesFromAT

@@ -15,6 +15,11 @@ import U from '../../../../parts/Utilities.js';
 var extend = U.extend;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
+import EventProvider from '../../utils/EventProvider.js';
+
+import ChartUtilities from '../../utils/chartUtilities.js';
+var getPointFromXY = ChartUtilities.getPointFromXY,
+    getSeriesFromName = ChartUtilities.getSeriesFromName;
 
 
 /*
@@ -425,19 +430,13 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
  * @return {Highcharts.Point|boolean}
  */
 function highlightFirstValidPointInChart(chart) {
-    var numSeries = chart.series.length,
-        i = numSeries,
-        res = false;
+    var res = false;
 
     delete chart.highlightedPoint;
 
-    while (i < numSeries) {
-        res = chart.series[i].highlightFirstValidPoint();
-        if (res) {
-            break;
-        }
-        ++i;
-    }
+    res = chart.series.reduce(function (acc, cur) {
+        return acc || cur.highlightFirstValidPoint();
+    }, null);
 
     return res;
 }
@@ -472,6 +471,19 @@ function highlightLastValidPointInChart(chart) {
 
 /**
  * @private
+ * @param {Highcharts.Chart} chart
+ */
+function updateChartFocusAfterDrilling(chart) {
+    highlightFirstValidPointInChart(chart);
+
+    if (chart.focusElement) {
+        chart.focusElement.removeFocusBorder();
+    }
+}
+
+
+/**
+ * @private
  * @class
  * @name Highcharts.SeriesKeyboardNavigation
  */
@@ -485,11 +497,57 @@ extend(SeriesKeyboardNavigation.prototype, {
      * Init the keyboard navigation
      */
     init: function () {
-        var keyboardNavigation = this;
+        var keyboardNavigation = this,
+            chart = this.chart,
+            e = this.eventProvider = new EventProvider();
 
-        H.addEvent(H.Series, 'destroy', function () {
+        e.addEvent(H.Series, 'destroy', function () {
             return keyboardNavigation.onSeriesDestroy();
         });
+
+        e.addEvent(chart, 'afterDrilldown', function () {
+            updateChartFocusAfterDrilling(this);
+        });
+
+        e.addEvent(chart, 'drilldown', function (e) {
+            var point = e.point,
+                series = point.series;
+
+            keyboardNavigation.lastDrilledDownPoint = {
+                x: point.x,
+                y: point.y,
+                seriesName: series ? series.name : null
+            };
+        });
+
+        e.addEvent(chart, 'drillupall', function () {
+            setTimeout(function () {
+                keyboardNavigation.onDrillupAll();
+            }, 10);
+        });
+    },
+
+
+    onDrillupAll: function () {
+        // After drillup we want to find the point that was drilled down to and
+        // highlight it.
+        var last = this.lastDrilledDownPoint,
+            chart = this.chart,
+            series = getSeriesFromName(chart, last.seriesName),
+            point = series && getPointFromXY(series, last.x, last.y);
+
+        // Container focus can be lost on drillup due to deleted elements.
+        if (chart.container) {
+            chart.container.focus();
+        }
+
+        if (point && point.highlight) {
+            point.highlight();
+        }
+
+        if (chart.focusElement) {
+            chart.focusElement.removeFocusBorder();
+        }
     },
 
 
@@ -523,7 +581,7 @@ extend(SeriesKeyboardNavigation.prototype, {
             ],
 
             init: function (dir) {
-                return keyboardNavigation.onHandlerInit(dir);
+                return keyboardNavigation.onHandlerInit(this, dir);
             },
 
             terminate: function () {
@@ -557,8 +615,8 @@ extend(SeriesKeyboardNavigation.prototype, {
         var chart = this.chart,
             keys = this.keyCodes,
             isNext = keyCode === keys.down || keyCode === keys.right,
-            navOptions = chart.options.accessibility.a11yOptions
-                .keyboardNavigation.seriesNavigation;
+            navOptions = chart.options.accessibility.keyboardNavigation
+                .seriesNavigation;
 
         // Handle serialized mode, act like left/right
         if (navOptions.mode && navOptions.mode === 'serialize') {
@@ -579,10 +637,11 @@ extend(SeriesKeyboardNavigation.prototype, {
 
     /**
      * @private
+     * @param {Highcharts.KeyboardNavigationHandler} handler
      * @param {number} initDirection
      * @return {number} response
      */
-    onHandlerInit: function (initDirection) {
+    onHandlerInit: function (handler, initDirection) {
         var chart = this.chart;
 
         if (initDirection > 0) {
@@ -591,7 +650,7 @@ extend(SeriesKeyboardNavigation.prototype, {
             highlightLastValidPointInChart(chart);
         }
 
-        return this.response.success;
+        return handler.response.success;
     },
 
 
@@ -647,6 +706,14 @@ extend(SeriesKeyboardNavigation.prototype, {
                 chart.focusElement.removeFocusBorder();
             }
         }
+    },
+
+
+    /**
+     * @private
+     */
+    destroy: function () {
+        this.eventProvider.removeAddedEvents();
     }
 
 });

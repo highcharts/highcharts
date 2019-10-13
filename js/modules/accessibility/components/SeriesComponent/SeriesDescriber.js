@@ -242,7 +242,7 @@ function defaultPointDescriptionFormatter(point) {
         valText = valueDesc + '.',
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
-            ' ' + series.name : '';
+            ' ' + series.name + '.' : '';
 
     return indexText + xDescText + valText + userDescText + seriesNameText;
 }

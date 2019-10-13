@@ -18,8 +18,7 @@ import HTMLUtilities from '../../utils/htmlUtilities.js';
 var visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
 import ChartUtilities from '../../utils/chartUtilities.js';
-var getSeriesA11yElement = ChartUtilities.getSeriesA11yElement,
-    getChartTitle = ChartUtilities.getChartTitle;
+var getChartTitle = ChartUtilities.getChartTitle;
 
 import SeriesDescriber from './SeriesDescriber.js';
 var defaultPointDescriptionFormatter = SeriesDescriber
@@ -110,6 +109,8 @@ extend(NewDataAnnouncer.prototype, {
 
         visuallyHideElement(div);
         chart.renderTo.insertBefore(div, chart.renderTo.firstChild);
+
+        return div;
     },
 
 
@@ -123,7 +124,7 @@ extend(NewDataAnnouncer.prototype, {
             e = this.eventProvider;
 
         e.addEvent(chart, 'afterDrilldown', function () {
-            announcer.onAfterDrilldown();
+            announcer.lastAnnouncementTime = 0;
         });
 
         e.addEvent(H.Series, 'updatedData', function () {
@@ -141,37 +142,6 @@ extend(NewDataAnnouncer.prototype, {
         e.addEvent(chart, 'redraw', function () {
             announcer.announceDirtyData();
         });
-    },
-
-
-    /**
-     * After drilldown, make sure we reset time counter, and also that we
-     * highlight the first series.
-     * @private
-     */
-    onAfterDrilldown: function () {
-        var chart = this.chart;
-
-        chart.highlightedPoint = null;
-
-        if (chartHasAnnounceEnabled(chart)) {
-            if (this.series && this.series.length) {
-                var firstSeries = this.series[0],
-                    el = getSeriesA11yElement(firstSeries);
-
-                if (el.focus && el.getAttribute('aria-label')) {
-                    el.focus();
-                } else {
-                    firstSeries.highlightFirstValidPoint();
-                }
-            }
-
-            this.lastAnnouncementTime = 0;
-
-            if (chart.focusElement) {
-                chart.focusElement.removeFocusBorder();
-            }
-        }
     },
 
 

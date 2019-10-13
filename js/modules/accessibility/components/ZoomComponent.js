@@ -12,7 +12,8 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -336,8 +337,8 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
                 [[keys.space, keys.enter],
                     function () {
-                        onClick(chart);
-                        return this.response.success;
+                        var res = onClick(this, chart);
+                        return pick(res, this.response.success);
                     }]
             ],
 
@@ -366,15 +367,16 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
             this.simpleButtonNavigation(
                 'resetZoomButton',
                 'resetZoomProxyButton',
-                function (chart) {
+                function (handler, chart) {
                     chart.zoomOut();
                 }
             ),
             this.simpleButtonNavigation(
                 'drillUpButton',
                 'drillUpProxyButton',
-                function (chart) {
+                function (handler, chart) {
                     chart.drillUp();
+                    return handler.response.prev;
                 }
             ),
             this.getMapZoomNavigation()

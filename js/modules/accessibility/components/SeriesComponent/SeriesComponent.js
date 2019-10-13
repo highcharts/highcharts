@@ -127,6 +127,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
      */
     destroy: function () {
         this.newDataAnnouncer.destroy();
+        this.keyboardNavigation.destroy();
     }
 });
 

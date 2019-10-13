@@ -112,6 +112,7 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
         }
 
         browserFocusElement.focus();
+
         // Hide default focus ring
         if (focusBorderOptions.hideBrowserFocusOutline) {
             browserFocusElement.style.outline = 'none';
