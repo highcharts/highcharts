@@ -224,7 +224,9 @@ QUnit.test('Landmark verbosity', function (assert) {
 QUnit.test('exposeAsGroupOnly', function (assert) {
     const chart = Highcharts.chart('container', {
             accessibility: {
-                describeSingleSeries: false
+                series: {
+                    describeSingleSeries: false
+                }
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
