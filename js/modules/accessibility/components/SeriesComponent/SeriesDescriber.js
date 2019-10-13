@@ -378,8 +378,10 @@ function describeSeries(series) {
         seriesEl = getSeriesA11yElement(series),
         describeSingleSeriesOption = chart.options.accessibility.series
             .describeSingleSeries,
+        exposeAsGroupOnlyOption = (series.options.accessibility || {})
+            .exposeAsGroupOnly,
         shouldDescribeSeriesElement = chart.series.length > 1 ||
-            describeSingleSeriesOption;
+            describeSingleSeriesOption || exposeAsGroupOnlyOption;
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
