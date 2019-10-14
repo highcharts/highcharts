@@ -276,6 +276,7 @@ const {
     objectEach,
     pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 } = U;
@@ -749,7 +750,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        H.setAnimation(animation as any, chart);
+        setAnimation(animation as any, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -1835,7 +1836,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isResizing += 1;
 
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
 
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;

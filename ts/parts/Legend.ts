@@ -220,7 +220,8 @@ const {
     defined,
     discardElement,
     isNumber,
-    pick
+    pick,
+    setAnimation
 } = U;
 
 var H = Highcharts,
@@ -230,7 +231,6 @@ var H = Highcharts,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     merge = H.merge,
-    setAnimation = H.setAnimation,
     stableSort = H.stableSort,
     win = H.win,
     wrap = H.wrap;

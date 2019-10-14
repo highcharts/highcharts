@@ -293,7 +293,8 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
-    pick
+    pick,
+    setAnimation
 } = U;
 
 import './ColumnSeries.js';
@@ -313,8 +314,7 @@ var addEvent = H.addEvent,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    fireEvent = H.fireEvent,
-    setAnimation = H.setAnimation;
+    fireEvent = H.fireEvent;
 
 /**
  * Pie series type.
