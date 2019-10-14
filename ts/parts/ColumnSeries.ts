@@ -36,7 +36,7 @@ declare global {
             pointPadding?: number;
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
-            ignoreNullPoints?: boolean;
+            ignoreNulls?: boolean;
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -145,7 +145,8 @@ var animObject = H.animObject,
     noop = H.noop,
     Series = H.Series,
     seriesType = H.seriesType,
-    svg = H.svg;
+    svg = H.svg,
+    pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
 
 /**
  * The column series type.
@@ -635,7 +636,7 @@ seriesType<Highcharts.ColumnSeries>(
                 stackKey,
                 stackGroups = {} as Highcharts.Dictionary<number>,
                 columnCount = 0,
-                ignoreNullPoints = options.ignoreNullPoints;
+                ignoreNulls = options.ignoreNulls;
 
             // Get the total number of column type series. This is called on
             // every series. Consider moving this logic to a chart.orderStacks()
@@ -648,6 +649,8 @@ seriesType<Highcharts.ColumnSeries>(
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
                         otherOptions = otherSeries.options,
+                        xData = otherSeries.processedXData,
+                        yData = otherSeries.processedYData,
                         columnIndex,
                         hasPointInX;
 
@@ -660,26 +663,28 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
                     ) { // #642, #2086
-                        if (ignoreNullPoints) {
-                            otherSeries.processedXData.forEach(function (x) {
+                        if (ignoreNulls) {
+                            xData.forEach(function (x): void {
                                 if (x === pointX) {
-                                    let index = otherSeries.processedXData.indexOf(x),
-                                        pointY = otherSeries.processedYData[index];
-                                    if (H.isArray(pointY) ? pointY[0] !== null : pointY !== null) {
+                                    const index = xData.indexOf(x),
+                                        pointY = yData[index];
+                                    if (H.isArray(pointY) ?
+                                        pointY[0] !== null : pointY !== null) {
                                         hasPointInX = true;
                                     }
                                 }
                             });
                         }
-                        if (hasPointInX || !ignoreNullPoints) {
+                        if (hasPointInX || !ignoreNulls) {
                             if (otherOptions.stacking) {
                                 stackKey = otherSeries.stackKey;
-                                if (stackGroups[stackKey as any] === undefined) {
-                                    stackGroups[stackKey as any] = columnCount++;
+                                if (stackKey &&
+                                    stackGroups[stackKey] === undefined) {
+                                    stackGroups[stackKey] = columnCount++;
                                 }
                                 columnIndex = stackGroups[stackKey as any];
-                            } else if (otherOptions.grouping !== false) { // #1162
-                                columnIndex = columnCount++;
+                            } else if (otherOptions.grouping !== false) {
+                                columnIndex = columnCount++; // #1162
                             }
                             (otherSeries as any).columnIndex = columnIndex;
                         }
@@ -1217,6 +1222,25 @@ seriesType<Highcharts.ColumnSeries>(
             }
 
             Series.prototype.remove.apply(series, arguments as any);
+        }
+    }, {
+        remove: function (this: Highcharts.Point): void {
+            this.series.chart.series.forEach(function (
+                otherSeries: Highcharts.Series
+            ): void {
+                otherSeries.isDirty = true;
+            });
+
+            pointProto.remove.apply(this, arguments as any);
+        },
+        update: function (this: Highcharts.Point): void {
+            this.series.chart.series.forEach(function (
+                otherSeries: Highcharts.Series
+            ): void {
+                otherSeries.isDirty = true;
+            });
+
+            pointProto.update.apply(this, arguments as any);
         }
     }
 );

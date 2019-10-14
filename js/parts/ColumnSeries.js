@@ -44,7 +44,7 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg, pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
 /**
  * The column series type.
  *
@@ -478,7 +478,7 @@ seriesType('column', 'line',
         // Keep backward compatibility: reversed xAxis had reversed
         // stacks
         reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks), stackKey, stackGroups = {}, columnCount = 0, ignoreNullPoints = options.ignoreNullPoints;
+            (!xAxis.reversed && reversedStacks), stackKey, stackGroups = {}, columnCount = 0, ignoreNulls = options.ignoreNulls;
         // Get the total number of column type series. This is called on
         // every series. Consider moving this logic to a chart.orderStacks()
         // function and call it on init, addSeries and removeSeries
@@ -487,33 +487,35 @@ seriesType('column', 'line',
         }
         else {
             series.chart.series.forEach(function (otherSeries) {
-                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex, hasPointInX;
+                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, xData = otherSeries.processedXData, yData = otherSeries.processedYData, columnIndex, hasPointInX;
                 if (otherSeries.type === series.type &&
                     (otherSeries.visible ||
                         !series.chart.options.chart
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
-                    if (ignoreNullPoints) {
-                        otherSeries.processedXData.forEach(function (x) {
+                    if (ignoreNulls) {
+                        xData.forEach(function (x) {
                             if (x === pointX) {
-                                var index = otherSeries.processedXData.indexOf(x), pointY = otherSeries.processedYData[index];
-                                if (H.isArray(pointY) ? pointY[0] !== null : pointY !== null) {
+                                var index = xData.indexOf(x), pointY = yData[index];
+                                if (H.isArray(pointY) ?
+                                    pointY[0] !== null : pointY !== null) {
                                     hasPointInX = true;
                                 }
                             }
                         });
                     }
-                    if (hasPointInX || !ignoreNullPoints) {
+                    if (hasPointInX || !ignoreNulls) {
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
-                            if (stackGroups[stackKey] === undefined) {
+                            if (stackKey &&
+                                stackGroups[stackKey] === undefined) {
                                 stackGroups[stackKey] = columnCount++;
                             }
                             columnIndex = stackGroups[stackKey];
                         }
-                        else if (otherOptions.grouping !== false) { // #1162
-                            columnIndex = columnCount++;
+                        else if (otherOptions.grouping !== false) {
+                            columnIndex = columnCount++; // #1162
                         }
                         otherSeries.columnIndex = columnIndex;
                     }
@@ -868,6 +870,19 @@ seriesType('column', 'line',
             });
         }
         Series.prototype.remove.apply(series, arguments);
+    }
+}, {
+    remove: function () {
+        this.series.chart.series.forEach(function (otherSeries) {
+            otherSeries.isDirty = true;
+        });
+        pointProto.remove.apply(this, arguments);
+    },
+    update: function () {
+        this.series.chart.series.forEach(function (otherSeries) {
+            otherSeries.isDirty = true;
+        });
+        pointProto.update.apply(this, arguments);
     }
 });
 /* eslint-enable valid-jsdoc */
