@@ -491,7 +491,7 @@ function SeriesKeyboardNavigation(chart, keyCodes) {
     this.keyCodes = keyCodes;
     this.chart = chart;
 }
-extend(SeriesKeyboardNavigation.prototype, {
+extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardNavigation */ { // eslint-disable-line
 
     /**
      * Init the keyboard navigation
