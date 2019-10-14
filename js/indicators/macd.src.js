@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, defined = U.defined;
+var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**
  * The MACD series type.
  *

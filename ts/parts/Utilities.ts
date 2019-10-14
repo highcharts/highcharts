@@ -2137,7 +2137,7 @@ H.normalizeTickInterval = function (
 
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(
+    retInterval = correctFloat(
         retInterval * (magnitude as any),
         -Math.round(Math.log(0.001) / Math.LN10)
     );
@@ -2303,11 +2303,11 @@ function discardElement(element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec?: number): number {
+function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -3391,6 +3391,7 @@ const utils = {
     arrayMax,
     arrayMin,
     attr,
+    correctFloat,
     defined,
     destroyObjectProperties,
     discardElement,

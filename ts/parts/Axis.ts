@@ -693,6 +693,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     destroyObjectProperties,
     extend,
@@ -711,7 +712,6 @@ import './Tick.js';
 
 var addEvent = H.addEvent,
     color = H.color,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
     fireEvent = H.fireEvent,

@@ -88,13 +88,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 var isArray = U.isArray,
     objectEach = U.objectEach;
 
 var ATR = H.seriesTypes.atr,
     SMA = H.seriesTypes.sma,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /* eslint-disable require-jsdoc */
 // Utils:

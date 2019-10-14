@@ -8,9 +8,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import './accumulation-distribution.src.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, error = H.error, correctFloat = H.correctFloat, requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, error = H.error, requiredIndicator = requiredIndicatorMixin;
 /**
  * The Chaikin series type.
  *

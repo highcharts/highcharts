@@ -62,10 +62,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var seriesType = H.seriesType,
-    correctFloat = H.correctFloat;
+var seriesType = H.seriesType;
 
 /**
  * The EMA series type.

@@ -76,13 +76,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
+
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMAindicator = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin,
-    correctFloat = H.correctFloat;
+    requiredIndicator = requiredIndicatorMixin;
 
 /**
  * The TEMA series type.

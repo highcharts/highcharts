@@ -126,6 +126,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     extend,
     isArray
 } = U;
@@ -164,7 +165,6 @@ function arrayExtremesOHLC(
 var abs = Math.abs,
     noop = H.noop,
     addEvent = H.addEvent,
-    correctFloat = H.correctFloat,
     seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 

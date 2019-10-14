@@ -289,6 +289,7 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     defined,
     extend,
     isArray,
@@ -1421,7 +1422,7 @@ seriesType<Highcharts.TreemapSeries>(
                         x: pX,
                         y: pY,
                         width: pW,
-                        height: H.correctFloat(pH)
+                        height: correctFloat(pH)
                     });
                     if (group.direction === 0) {
                         plot.y = plot.y + pH;

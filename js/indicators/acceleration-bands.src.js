@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, merge = H.merge, correctFloat = H.correctFloat;
+var SMA = H.seriesTypes.sma, merge = H.merge;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

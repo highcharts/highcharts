@@ -51,13 +51,16 @@ declare global {
 }
 
 import './accumulation-distribution.src.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U
+
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMA = H.seriesTypes.ema,
     AD = H.seriesTypes.ad,
     error = H.error,
-    correctFloat = H.correctFloat,
     requiredIndicator = requiredIndicatorMixin;
 
 /**

@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
@@ -847,7 +847,7 @@ seriesType('treemap', 'scatter'
                     x: pX,
                     y: pY,
                     width: pW,
-                    height: H.correctFloat(pH)
+                    height: correctFloat(pH)
                 });
                 if (group.direction === 0) {
                     plot.y = plot.y + pH;

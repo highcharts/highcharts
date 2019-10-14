@@ -106,14 +106,16 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    extend = U.extend,
-    isNumber = U.isNumber,
-    pick = U.pick;
+const {
+    correctFloat,
+    defined,
+    extend,
+    isNumber,
+    pick
+} = U;
 
 var fireEvent = H.fireEvent,
     merge = H.merge,
-    correctFloat = H.correctFloat,
     bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 

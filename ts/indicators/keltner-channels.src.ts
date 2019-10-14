@@ -10,7 +10,11 @@
 
 import H from '../parts/Globals.js';
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 /**
@@ -73,8 +77,7 @@ declare global {
 var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema,
     ATR = H.seriesTypes.atr,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /**
  * The Keltner Channels series type.

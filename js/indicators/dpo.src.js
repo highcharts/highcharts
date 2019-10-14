@@ -8,8 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
-var correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils
 /**
