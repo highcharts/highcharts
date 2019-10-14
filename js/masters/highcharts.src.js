@@ -45,6 +45,8 @@ extend(Highcharts, {
     attr: U.attr,
     correctFloat: U.correctFloat,
     defined: U.defined,
+    destroyObjectProperties: U.destroyObjectProperties,
+    discardElement: U.discardElement,
     erase: U.erase,
     extend: U.extend,
     isArray: U.isArray,

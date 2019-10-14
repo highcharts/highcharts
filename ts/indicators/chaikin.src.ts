@@ -54,7 +54,7 @@ import './accumulation-distribution.src.js';
 import U from '../parts/Utilities.js';
 const {
     correctFloat
-} = U
+} = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
