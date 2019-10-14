@@ -11,6 +11,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     pick
 } = U;
 
@@ -50,8 +51,6 @@ declare global {
 
     }
 }
-
-var correctFloat = H.correctFloat;
 
 /* eslint-disable valid-jsdoc */
 // Utils

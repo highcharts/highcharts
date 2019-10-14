@@ -134,6 +134,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     extend,
     pick,
     pInt
@@ -149,7 +150,6 @@ var addEvent = H.addEvent,
     noop = H.noop,
     Tick = H.Tick,
     wrap = H.wrap,
-    correctFloat = H.correctFloat,
 
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,

@@ -62,6 +62,7 @@ import U from '../parts/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    correctFloat,
     isNumber,
     objectEach
 } = U;
@@ -69,7 +70,6 @@ const {
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
     merge = H.merge;
 
 /* ************************************************************************** *

@@ -55,10 +55,12 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var correctFloat = H.correctFloat,
-    noop = H.noop;
+var noop = H.noop;
 
 /**
  * The AO series type

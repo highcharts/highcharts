@@ -1475,7 +1475,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
     }
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
+    retInterval = correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
     return retInterval;
 };
 /**
@@ -1616,9 +1616,9 @@ function discardElement(element) {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num, prec) {
+function correctFloat(num, prec) {
     return parseFloat(num.toPrecision(prec || 14));
-};
+}
 /**
  * Set the global animation to either a given value, or fall back to the given
  * chart's animation option.
@@ -2508,6 +2508,7 @@ var utils = {
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
+    correctFloat: correctFloat,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,

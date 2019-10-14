@@ -648,6 +648,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     erase,
     extend,
@@ -666,7 +667,6 @@ import './Point.js';
 import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     fireEvent = H.fireEvent,

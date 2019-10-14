@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var correctFloat = H.correctFloat, noop = H.noop;
+var correctFloat = U.correctFloat, isArray = U.isArray;
+var noop = H.noop;
 /**
  * The AO series type
  *

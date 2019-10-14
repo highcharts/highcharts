@@ -38,8 +38,8 @@ import H from '../parts/Globals.js';
 * @type {Array<Function>|undefined}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
-var fireEvent = H.fireEvent, merge = H.merge, correctFloat = H.correctFloat, bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var fireEvent = H.fireEvent, merge = H.merge, bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this */
 /**
  * Generates function which will add a flag series using modal in GUI.

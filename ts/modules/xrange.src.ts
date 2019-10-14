@@ -104,6 +104,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     defined,
     isNumber,
     isObject,
@@ -113,7 +114,6 @@ const {
 var addEvent = H.addEvent,
     color = H.color,
     columnType = H.seriesTypes.column,
-    correctFloat = H.correctFloat,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,

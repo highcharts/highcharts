@@ -102,15 +102,17 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    correctFloat,
+    defined
+} = U;
 
 
 var seriesType = H.seriesType,
     noop = H.noop,
     merge = H.merge,
     SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema,
-    correctFloat = H.correctFloat;
+    EMA = H.seriesTypes.ema;
 
 /**
  * The MACD series type.

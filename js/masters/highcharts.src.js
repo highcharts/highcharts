@@ -43,6 +43,7 @@ extend(Highcharts, {
     arrayMax: U.arrayMax,
     arrayMin: U.arrayMin,
     attr: U.attr,
+    correctFloat: U.correctFloat,
     defined: U.defined,
     erase: U.erase,
     extend: U.extend,
