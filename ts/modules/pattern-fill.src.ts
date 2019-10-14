@@ -162,6 +162,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     erase,
     pick
 } = U;
@@ -331,7 +332,7 @@ H.SVGRenderer.prototype.addPattern = function (
 ): (Highcharts.SVGElement|undefined) {
     var pattern: (Highcharts.SVGElement|undefined),
         animate = pick(animation, true),
-        animationOptions = H.animObject(animate),
+        animationOptions = animObject(animate),
         path: Highcharts.SVGAttributes,
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,

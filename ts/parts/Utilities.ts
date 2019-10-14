@@ -2351,13 +2351,13 @@ function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (
+function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-};
+}
 
 /**
  * The time unit lookup
@@ -3387,6 +3387,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    animObject,
     arrayMax,
     arrayMin,
     attr,

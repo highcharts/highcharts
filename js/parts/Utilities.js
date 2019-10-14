@@ -1653,11 +1653,11 @@ function setAnimation(animation, chart) {
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (animation) {
+function animObject(animation) {
     return isObject(animation) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
-};
+}
 /**
  * The time unit lookup
  *
@@ -2504,6 +2504,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,

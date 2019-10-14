@@ -294,6 +294,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     extend,
     objectEach,
     pick,
@@ -306,8 +307,7 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-var animObject = H.animObject,
-    noop = H.noop,
+var noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
     format = H.format,

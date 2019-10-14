@@ -808,6 +808,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
     destroyObjectProperties,
@@ -958,7 +959,7 @@ extend((
         options?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var animOptions = H.animObject(
+        var animOptions = animObject(
             pick(options, this.renderer.globalAnimation, true)
         );
 

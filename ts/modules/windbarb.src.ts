@@ -79,6 +79,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     isNumber,
     pick
 } = U;
@@ -482,7 +483,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             } else {
                 (this.markerGroup as any).animate({
                     opacity: 1
-                }, H.animObject(this.options.animation));
+                }, animObject(this.options.animation));
 
                 this.animate = null as any;
             }

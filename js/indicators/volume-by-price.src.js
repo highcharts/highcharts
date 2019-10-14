@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isArray = U.isArray;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -202,7 +202,7 @@ seriesType('vbp', 'sma',
         var series = this, attr = {};
         if (H.svg && !init) {
             attr.translateX = series.yAxis.pos;
-            series.group.animate(attr, extend(H.animObject(series.options.animation), {
+            series.group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
                         scaleX: Math.max(0.001, fx.pos)
