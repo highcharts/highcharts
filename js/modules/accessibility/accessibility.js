@@ -58,10 +58,10 @@ import ContainerComponent from './components/ContainerComponent.js';
 import ChartUtilities from './utils/chartUtilities.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options.js';
-import defaultLangOptions from './langOptions.js';
-import copyDeprecatedOptions from './deprecatedOptions.js';
-import '../../modules/accessibility/a11y-i18n.js';
+import defaultOptions from './options/options.js';
+import defaultLangOptions from './options/langOptions.js';
+import copyDeprecatedOptions from './options/deprecatedOptions.js';
+import './a11y-i18n.js';
 import './focusBorder.js';
 
 
