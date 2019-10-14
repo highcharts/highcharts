@@ -219,7 +219,8 @@ import U from './Utilities.js';
 const {
     defined,
     isNumber,
-    pick
+    pick,
+    syncTimeout
 } = U;
 
 var H = Highcharts,
@@ -1628,9 +1629,9 @@ Highcharts.Legend.prototype = {
             const animOptions = H.animObject(
                 pick(animation, chart.renderer.globalAnimation, true)
             );
-            setTimeout((): void => {
+            syncTimeout((): void => {
                 fireEvent(this, 'afterScroll', { currentPage });
-            }, animOptions.duration);
+            }, animOptions.duration || 0);
         }
     }
 
