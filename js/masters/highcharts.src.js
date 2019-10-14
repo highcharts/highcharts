@@ -54,6 +54,7 @@ extend(Highcharts, {
     objectEach: U.objectEach,
     pick: U.pick,
     pInt: U.pInt,
+    setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout
 });

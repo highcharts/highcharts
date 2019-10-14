@@ -1617,9 +1617,9 @@ H.correctFloat = function (num, prec) {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (animation, chart) {
+function setAnimation(animation, chart) {
     chart.renderer.globalAnimation = pick(animation, chart.options.chart.animation, true);
-};
+}
 /**
  * Get the animation in object form, where a disabled animation is always
  * returned as `{ duration: 0 }`.
@@ -2501,6 +2501,7 @@ var utils = {
     objectEach: objectEach,
     pick: pick,
     pInt: pInt,
+    setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout
 };

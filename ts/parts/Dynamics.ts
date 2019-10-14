@@ -130,6 +130,7 @@ const {
     isString,
     objectEach,
     pick,
+    setAnimation,
     splat
 } = U;
 
@@ -148,8 +149,7 @@ var addEvent = H.addEvent,
     merge = H.merge,
     Point = H.Point,
     Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    setAnimation = H.setAnimation;
+    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 

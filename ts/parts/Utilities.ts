@@ -2302,7 +2302,7 @@ H.correctFloat = function (num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (
+function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
@@ -2311,7 +2311,7 @@ H.setAnimation = function (
         (chart.options.chart as any).animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -3379,6 +3379,7 @@ const utils = {
     objectEach,
     pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 };

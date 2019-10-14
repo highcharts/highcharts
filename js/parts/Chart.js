@@ -77,7 +77,7 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat, syncTimeout = U.syncTimeout;
+var attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -427,7 +427,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive(false);
         }
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
@@ -1246,7 +1246,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Handle the isResizing counter
         chart.isResizing += 1;
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
         if (width !== undefined) {
