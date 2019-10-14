@@ -18,8 +18,7 @@ import U from '../parts/Utilities.js';
 const {
     isArray,
     objectEach,
-    pick,
-    isNumber
+    pick
 } = U;
 
 import '../parts/Chart.js';
@@ -152,11 +151,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 label &&
                 (!label.alignAttr || label.placed)
             ) {
-                if (isNumber(+label.attr('x')) && isNumber(+label.attr('y'))) {
-                    pos = {
-                        x: +label.attr('x'),
-                        y: +label.attr('y')
-                    };
+                const x = label.attr('x');
+                const y = label.attr('y');
+                if (typeof x === 'number' && typeof y === 'number') {
+                    pos = { x, y };
                 } else {
                     pos = label.alignAttr;
                 }
