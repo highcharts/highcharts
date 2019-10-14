@@ -85,7 +85,7 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, pick = U.pick;
+var defined = U.defined, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
 var H = Highcharts, addEvent = H.addEvent, css = H.css, discardElement = H.discardElement, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, setAnimation = H.setAnimation, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -1056,9 +1056,9 @@ Highcharts.Legend.prototype = {
             this.positionCheckboxes();
             // Fire event after scroll animation is complete
             var animOptions = H.animObject(pick(animation, chart.renderer.globalAnimation, true));
-            setTimeout(function () {
+            syncTimeout(function () {
                 fireEvent(_this, 'afterScroll', { currentPage: currentPage });
-            }, animOptions.duration);
+            }, animOptions.duration || 0);
         }
     }
 };
