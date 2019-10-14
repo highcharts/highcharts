@@ -23,7 +23,7 @@ import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = NelderMeadModule.nelderMead;
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var animObject = U.animObject, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
 import '../parts/Series.js';
 var addEvent = H.addEvent, color = H.Color, extend = H.extend, getAreaOfCircle = geometryCircles.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCircles.getAreaOfIntersectionBetweenCircles, getCirclesIntersectionPolygon = geometryCircles.getCirclesIntersectionPolygon, getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, getOverlapBetweenCirclesByDistance = geometryCircles.getOverlapBetweenCircles, isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles, isPointInsideCircle = geometryCircles.isPointInsideCircle, isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
@@ -865,7 +865,7 @@ var vennSeries = {
     /* eslint-enable valid-jsdoc */
     animate: function (init) {
         if (!init) {
-            var series = this, animOptions = H.animObject(series.options.animation);
+            var series = this, animOptions = animObject(series.options.animation);
             series.points.forEach(function (point) {
                 var args = point.shapeArgs;
                 if (point.graphic && args) {

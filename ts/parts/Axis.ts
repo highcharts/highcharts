@@ -690,6 +690,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     arrayMin,
     defined,
@@ -709,7 +710,6 @@ import './Options.js';
 import './Tick.js';
 
 var addEvent = H.addEvent,
-    animObject = H.animObject,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,

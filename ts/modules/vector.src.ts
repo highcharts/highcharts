@@ -14,6 +14,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     arrayMax,
     pick
 } = U;
@@ -353,7 +354,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
             } else {
                 (this.markerGroup as any).animate({
                     opacity: 1
-                }, H.animObject(this.options.animation));
+                }, animObject(this.options.animation));
 
                 this.animate = null as any;
             }
