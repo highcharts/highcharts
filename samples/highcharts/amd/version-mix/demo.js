@@ -15,7 +15,7 @@ require.config({
         highcharts7: 'https://code.highcharts.com/7.0.3',
         highcharts: (
             location.host === 'utils.highcharts.local' ?
-                'http://code.highcharts.local' :
+                'https://code.highcharts.com' :
                 'https://code.highcharts.com'
         )
     }
