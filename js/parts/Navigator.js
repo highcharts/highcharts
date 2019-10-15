@@ -281,10 +281,8 @@ extend(defaultOptions, {
              * defined, otherwise `line`.
              *
              * Heads up:
-             * When using `column` type navigator, don't forget to change
-             * [pointRange](#navigator.series.pointRange) to `null`.
              * In column-type navigator, zooming is limited to at least one
-             * point with it's `pointRange`.
+             * point with its `pointRange`.
              *
              * @sample {highstock} stock/navigator/column/
              *         Column type navigator
@@ -365,7 +363,17 @@ extend(defaultOptions, {
             marker: {
                 enabled: false
             },
-            pointRange: 0,
+            /**
+             * Since Highstock v8, default value is the same as default
+             * `pointRange` defined for a specific type (e.g. `null` for
+             * column type).
+             *
+             * In Highstock version < 8, defaults to 0.
+             *
+             * @extends plotOptions.series.pointRange
+             * @type {number|null}
+             * @apioption navigator.series.pointRange
+             */
             /**
              * The threshold option. Setting it to 0 will make the default
              * navigator area series draw its area from the 0 value and up.
@@ -1522,6 +1530,12 @@ Navigator.prototype = {
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
                 mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, userNavOptions, baseNavigatorOptions);
+                // Once nav series type is resolved, pick correct pointRange
+                mergedNavSeriesOptions.pointRange = pick(
+                // Stricte set pointRange in options
+                userNavOptions.pointRange, baseNavigatorOptions.pointRange, 
+                // Fallback to default values, e.g. `null` for column
+                defaultOptions.plotOptions[mergedNavSeriesOptions.type || 'line'].pointRange);
                 // Merge data separately. Do a slice to avoid mutating the
                 // navigator options from base series (#4923).
                 var navigatorSeriesData = baseNavigatorOptions.data || userNavOptions.data;
