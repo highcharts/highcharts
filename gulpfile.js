@@ -40,6 +40,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-dts',
     'jsdoc-namespace',
     'jsdoc-options',
+    'jsdoc-search',
     'jsdoc-server',
     'jsdoc-watch',
     'lint',
