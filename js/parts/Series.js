@@ -4081,6 +4081,10 @@ null,
         if (!series.xAxis) {
             return;
         }
+        // Don't invert series on inverted polar
+        if (series.isRadialSeries) {
+            inverted = false;
+        }
         // A fixed size is needed for inversion to work
         remover = addEvent(chart, 'resize', setInvert);
         addEvent(series, 'destroy', remover);
@@ -4192,6 +4196,7 @@ null,
         if (series.visible) {
             series.drawPoints();
         }
+        fireEvent(series, 'afterDrawPoints');
         /* series.points.forEach(function (point) {
             if (point.redraw) {
                 point.redraw();

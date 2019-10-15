@@ -284,12 +284,20 @@ Chart.prototype.getStacks = function () {
  * @return {void}
  */
 Axis.prototype.buildStacks = function () {
-    var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, i;
+    var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, actualSeries, options, i;
     if (!this.isXAxis) {
         this.usePercentage = false;
         i = len;
         while (i--) {
-            axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+            options = actualSeries.options;
+            // Threshold should always be set to 0 in case of percent
+            // stacking in inverted polar bars
+            if (actualSeries.isRadialBar &&
+                options.stacking === 'percent') {
+                options.threshold = 0;
+            }
+            actualSeries.setStackedPoints();
         }
         // Loop up again to compute percent and stream stack
         for (i = 0; i < len; i++) {

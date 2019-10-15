@@ -24,7 +24,6 @@ declare global {
             'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
             'scrollbar'|'traverseUpButton'|'zoom'
         );
-        type AxisGridLineInterpolationValue = ('circle'|'polygon');
         type AxisMinorTickPositionValue = ('inside'|'outside');
         type AxisOptions = (XAxisOptions|YAxisOptions|ZAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
@@ -270,7 +269,6 @@ declare global {
         }
         interface YAxisOptions extends XAxisOptions {
             angle?: number;
-            gridLineInterpolation?: AxisGridLineInterpolationValue;
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
@@ -2918,22 +2916,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default   {gantt} treegrid
          * @product   highcharts gantt
          * @apioption yAxis.type
-         */
-
-        /**
-         * Polar charts only. Whether the grid lines should draw as a polygon
-         * with straight lines between categories, or as circles. Can be either
-         * `circle` or `polygon`.
-         *
-         * @sample {highcharts} highcharts/demo/polar-spider/
-         *         Polygon grid lines
-         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
-         *         Circle and polygon
-         *
-         * @type       {string}
-         * @product    highcharts
-         * @validvalue ["circle", "polygon"]
-         * @apioption  yAxis.gridLineInterpolation
          */
 
         /**

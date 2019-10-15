@@ -597,15 +597,22 @@ seriesType('pie', 'line',
                     // start values
                     graphic.attr({
                         // animate from inner radius (#779)
-                        r: point.startR || (series.center[3] / 2),
+                        // If chart is inverted polar and series is column,
+                        // allow 0 as radius
+                        r: series.isRadialBar ?
+                            (args).start === (args).end ?
+                                0 : point.startR :
+                            point.startR || (series.center[3] / 2),
                         start: startAngleRad,
                         end: startAngleRad
                     });
                     // animate
                     graphic.animate({
-                        r: args.r,
-                        start: args.start,
-                        end: args.end
+                        r: series.isRadialBar &&
+                            (args).start === (args).end ?
+                            0 : (args).r,
+                        start: (args).start,
+                        end: (args).end
                     }, series.options.animation);
                 }
             });

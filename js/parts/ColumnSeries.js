@@ -765,7 +765,9 @@ seriesType('column', 'line',
                     graphic = graphic.destroy();
                 }
                 if (graphic) { // update
-                    graphic[verb](merge(shapeArgs));
+                    graphic[verb](merge(shapeArgs), null, function () {
+                        H.fireEvent(point, 'afterPointAnimate');
+                    });
                 }
                 else {
                     point.graphic = graphic =

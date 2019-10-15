@@ -37,6 +37,7 @@ declare global {
             rightCliff?: number;
         }
         interface Series {
+            isRadialBar?: boolean;
             negStacks?: any; // @todo
             singleStacks?: any; // @todo
             stack?: OptionsStackingValue;
@@ -535,13 +536,24 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
     var axisSeries = this.series,
         reversedStacks = pick(this.options.reversedStacks, true),
         len = axisSeries.length,
+        actualSeries,
+        options,
         i;
 
     if (!this.isXAxis) {
         this.usePercentage = false;
         i = len;
         while (i--) {
-            axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+            options = actualSeries.options;
+
+            // Threshold should always be set to 0 in case of percent
+            // stacking in inverted polar bars
+            if (actualSeries.isRadialBar &&
+                options.stacking === 'percent') {
+                options.threshold = 0;
+            }
+            actualSeries.setStackedPoints();
         }
 
         // Loop up again to compute percent and stream stack

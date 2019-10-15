@@ -68,6 +68,7 @@ declare global {
             public isCartesian: boolean;
             public isDirty: boolean;
             public isDirtyData: boolean;
+            public isRadialSeries?: boolean;
             public kdAxisArray: Array<string>;
             public kdTree?: KDNode;
             public linkedSeries: Array<Series>;
@@ -5592,6 +5593,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 return;
             }
 
+            // Don't invert series on inverted polar
+            if (series.isRadialSeries) {
+                inverted = false;
+            }
+
             // A fixed size is needed for inversion to work
             remover = addEvent(chart, 'resize', setInvert);
             addEvent(series, 'destroy', remover);
@@ -5765,6 +5771,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (series.visible) {
                 series.drawPoints();
             }
+
+            fireEvent(series, 'afterDrawPoints');
 
             /* series.points.forEach(function (point) {
                 if (point.redraw) {

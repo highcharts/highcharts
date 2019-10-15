@@ -1068,9 +1068,12 @@ seriesType<Highcharts.ColumnSeries>(
 
                     if (graphic) { // update
                         graphic[verb](
-                            merge(shapeArgs)
+                            merge(shapeArgs),
+                            null,
+                            function (): void {
+                                H.fireEvent(point, 'afterPointAnimate');
+                            }
                         );
-
                     } else {
                         point.graphic = graphic =
                             (renderer as any)[point.shapeType as any](shapeArgs)

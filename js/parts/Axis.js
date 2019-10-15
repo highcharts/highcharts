@@ -2270,21 +2270,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @apioption yAxis.type
          */
         /**
-         * Polar charts only. Whether the grid lines should draw as a polygon
-         * with straight lines between categories, or as circles. Can be either
-         * `circle` or `polygon`.
-         *
-         * @sample {highcharts} highcharts/demo/polar-spider/
-         *         Polygon grid lines
-         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
-         *         Circle and polygon
-         *
-         * @type       {string}
-         * @product    highcharts
-         * @validvalue ["circle", "polygon"]
-         * @apioption  yAxis.gridLineInterpolation
-         */
-        /**
          * The height of the Y axis. If it's a number, it is interpreted as
          * pixels.
          *
