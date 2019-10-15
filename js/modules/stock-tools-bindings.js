@@ -183,7 +183,6 @@ bindingsUtils.manageIndicators = function (data) {
             'mfi',
             'roc',
             'rsi',
-            'vwap',
             'ao',
             'aroon',
             'aroonoscillator',
