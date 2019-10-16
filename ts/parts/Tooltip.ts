@@ -15,9 +15,11 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     defined,
+    discardElement,
     extend,
     isNumber,
     isString,
+    pick,
     splat,
     syncTimeout
 } = U;
@@ -254,7 +256,6 @@ declare global {
 var doc = H.doc,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     timeUnits = H.timeUnits;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -628,7 +629,7 @@ H.Tooltip.prototype = {
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            H.discardElement(this.container as any);
+            discardElement(this.container as any);
         }
         H.clearTimeout(this.hideTimer as any);
         H.clearTimeout(this.tooltipTimeout as any);
@@ -1219,7 +1220,7 @@ H.Tooltip.prototype = {
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick<(number|string)>(
+                    colorClass = 'highcharts-color-' + pick(
                         point.colorIndex, series.colorIndex, 'none'
                     ),
                     target,
@@ -1255,7 +1256,12 @@ H.Tooltip.prototype = {
                             null as any,
                             options.useHTML
                         )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(
+                            (point as any).isHeader ?
+                                'highcharts-tooltip-header ' : '' +
+                            'highcharts-tooltip-box ' +
+                            colorClass
+                        )
                         .attr(attribs)
                         .add(tooltipLabel);
                 }

@@ -10,14 +10,14 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, splat = U.splat;
+var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, pick = H.pick, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, color = H.color, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, merge = H.merge, removeEvent = H.removeEvent, Scrollbar = H.Scrollbar, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -960,10 +960,10 @@ Navigator.prototype = {
         // Add mouse move and mouseup events. These are bind to doc/container,
         // because Navigator.grabbedSomething flags are stored in mousedown
         // events
-        eventsToUnbind.push(addEvent(container, 'mousemove', mouseMoveHandler), addEvent(container.ownerDocument, 'mouseup', mouseUpHandler));
+        eventsToUnbind.push(addEvent(chart.renderTo, 'mousemove', mouseMoveHandler), addEvent(container.ownerDocument, 'mouseup', mouseUpHandler));
         // Touch events
         if (hasTouch) {
-            eventsToUnbind.push(addEvent(container, 'touchmove', mouseMoveHandler), addEvent(container.ownerDocument, 'touchend', mouseUpHandler));
+            eventsToUnbind.push(addEvent(chart.renderTo, 'touchmove', mouseMoveHandler), addEvent(container.ownerDocument, 'touchend', mouseUpHandler));
             eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
         }
         navigator.eventsToUnbind = eventsToUnbind;
@@ -1263,7 +1263,7 @@ Navigator.prototype = {
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
         this.outlineHeight = height + scrollbarHeight;
-        this.opposite = pick(navigatorOptions.opposite, !navigatorEnabled && chart.inverted); // #6262
+        this.opposite = pick(navigatorOptions.opposite, Boolean(!navigatorEnabled && chart.inverted)); // #6262
         var navigator = this, baseSeries = navigator.baseSeries, xAxisIndex = chart.xAxis.length, yAxisIndex = chart.yAxis.length, baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
             chart.xAxis[0] || { options: {} };
         chart.isDirtyBox = true;
@@ -1630,7 +1630,7 @@ Navigator.prototype = {
      */
     modifyNavigatorAxisExtremes: function () {
         var xAxis = this.xAxis, unionExtremes;
-        if (xAxis.getExtremes) {
+        if (typeof xAxis.getExtremes !== 'undefined') {
             unionExtremes = this.getUnionExtremes(true);
             if (unionExtremes &&
                 (unionExtremes.dataMin !== xAxis.min ||

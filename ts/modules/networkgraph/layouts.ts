@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -142,15 +144,16 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     defined,
-    extend
+    extend,
+    pick,
+    setAnimation
 } = U;
 
 
 import './integrations.js';
 import './QuadTree.js';
 
-var pick = H.pick,
-    addEvent = H.addEvent,
+var addEvent = H.addEvent,
     Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -894,7 +897,7 @@ addEvent(Chart as any, 'render', function (
     }
 
     if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
+        setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {

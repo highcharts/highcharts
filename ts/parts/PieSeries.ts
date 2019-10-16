@@ -292,7 +292,9 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isNumber
+    isNumber,
+    pick,
+    setAnimation
 } = U;
 
 import './ColumnSeries.js';
@@ -308,13 +310,11 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    fireEvent = H.fireEvent,
-    setAnimation = H.setAnimation;
+    fireEvent = H.fireEvent;
 
 /**
  * Pie series type.

@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
-var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var correctFloat = H.correctFloat, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -385,13 +385,19 @@ seriesType('waterfall', 'column', {
     // Return y value or string if point is sum
     toYData: function (pt) {
         if (pt.isSum) {
-            // #3245 Error when first element is Sum or Intermediate Sum
-            return (pt.x === 0 ? null : 'sum');
+            return 'sum';
         }
         if (pt.isIntermediateSum) {
-            return (pt.x === 0 ? null : 'intermediateSum'); // #3245
+            return 'intermediateSum';
         }
         return pt.y;
+    },
+    updateParallelArrays: function (point, i) {
+        Series.prototype.updateParallelArrays.call(this, point, i);
+        // Prevent initial sums from triggering an error (#3245, #7559)
+        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
+            this.yData[0] = null;
+        }
     },
     // Postprocess mapping between options and SVG attributes
     pointAttribs: function (point, state) {

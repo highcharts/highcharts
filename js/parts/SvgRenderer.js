@@ -373,9 +373,9 @@ import H from './Globals.js';
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
+var attr = U.attr, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
 import './Color.js';
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, destroyObjectProperties = H.destroyObjectProperties, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, pick = H.pick, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -884,21 +884,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Return the SVG element for chainability.
      */
     addClass: function (className, replace) {
-        var currentClassName = this.attr('class') || '';
-        if (!replace) {
-            // Filter out existing
-            className = (className || '')
-                .split(/ /g)
-                .reduce(function (newClassName, name) {
-                if (currentClassName.indexOf(name) === -1) {
-                    newClassName.push(name);
-                }
-                return newClassName;
-            }, (currentClassName ?
-                [currentClassName] :
-                []))
-                .join(' ');
-        }
+        var currentClassName = replace ? '' : (this.attr('class') || '');
+        // Trim the string and remove duplicates
+        className = (className || '')
+            .split(/ /g)
+            .reduce(function (newClassName, name) {
+            if (currentClassName.indexOf(name) === -1) {
+                newClassName.push(name);
+            }
+            return newClassName;
+        }, (currentClassName ?
+            [currentClassName] :
+            []))
+            .join(' ');
         if (className !== currentClassName) {
             this.attr('class', className);
         }
@@ -931,7 +929,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @return {Highcharts.SVGElement} Returns the SVG element for chainability.
      */
     removeClass: function (className) {
-        return this.attr('class', (this.attr('class') || '').replace(className, ''));
+        return this.attr('class', (this.attr('class') || '').replace(isString(className) ?
+            new RegExp(" ?" + className + " ?") : // #12064
+            className, ''));
     },
     /**
      * If one of the symbol size affecting parameters are changed,
@@ -1441,9 +1441,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     getBBox: function (reload, rot) {
         var wrapper = this, bBox, // = wrapper.bBox,
-        renderer = wrapper.renderer, width, height, rotation, rad, element = wrapper.element, styles = wrapper.styles, fontSize, textStr = wrapper.textStr, toggleTextShadowShim, cache = renderer.cache, cacheKeys = renderer.cacheKeys, isSVG = element.namespaceURI === wrapper.SVG_NS, cacheKey;
-        rotation = pick(rot, wrapper.rotation);
-        rad = rotation * deg2rad;
+        renderer = wrapper.renderer, width, height, element = wrapper.element, styles = wrapper.styles, fontSize, textStr = wrapper.textStr, toggleTextShadowShim, cache = renderer.cache, cacheKeys = renderer.cacheKeys, isSVG = element.namespaceURI === wrapper.SVG_NS, cacheKey;
+        var rotation = pick(rot, wrapper.rotation, 0);
         fontSize = renderer.styledMode ? (element &&
             SVGElement.prototype.getStyle.call(element, 'font-size')) : (styles && styles.fontSize);
         // Avoid undefined and null (#7316)
@@ -1459,7 +1458,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation || 0,
+                rotation,
                 fontSize,
                 wrapper.textWidth,
                 styles && styles.textOverflow // #5968
@@ -1535,6 +1534,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 // Adjust for rotated text
                 if (rotation) {
+                    var rad = rotation * deg2rad;
                     bBox.width = Math.abs(height * Math.sin(rad)) +
                         Math.abs(width * Math.cos(rad));
                     bBox.height = Math.abs(height * Math.cos(rad)) +
@@ -3904,13 +3904,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
-     * @param {number} x
+     * @param {number} [x]
      *
-     * @param {number} y
+     * @param {number} [y]
      *
-     * @param {number} width
+     * @param {number} [width]
      *
-     * @param {number} height
+     * @param {number} [height]
      *
      * @return {Highcharts.ClipRectElement}
      *         A clipping rectangle.
@@ -3943,13 +3943,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param {string} str
+     * @param {string} [str]
      *        The text of (subset) HTML to draw.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        The x position of the text's lower left corner.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the text's lower left corner.
      *
      * @param {boolean} [useHTML=false]

@@ -265,9 +265,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    discardElement,
     extend,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -282,10 +284,8 @@ var defaultOptions = H.defaultOptions,
     removeEvent = H.removeEvent,
     fireEvent = H.fireEvent,
     createElement = H.createElement,
-    discardElement = H.discardElement,
     css = H.css,
     merge = H.merge,
-    pick = H.pick,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
@@ -1677,7 +1677,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     i: number
                 ): void {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
 

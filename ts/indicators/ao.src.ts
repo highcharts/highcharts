@@ -23,7 +23,6 @@ declare global {
             public options: AOIndicatorOptions;
             public pointClass: typeof AOIndicatorPoint;
             public points: Array<AOIndicatorPoint>;
-            public yData: Array<number>;
             public crispCol: ColumnSeries['crispCol'];
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];

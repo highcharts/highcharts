@@ -38,11 +38,11 @@ import Highcharts from '../parts/Globals.js';
 * @type {Array<Array<string>>}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isObject = U.isObject;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, pick = U.pick;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
-var pick = Highcharts.pick, win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
+var win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.

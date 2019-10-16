@@ -23,12 +23,12 @@ The configuration above generates a resizer between the first and the second `yA
 
 <iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/candlestick-and-volume allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/candlestick-and-volume/) to check the code.
 
 Requirements
 ------------
 
-To use the axis resizer it is required to include the module `modules/drag-panes.js`, or `js/modules/drag-panes.js` if you are using [**styled** mode](docs/chart-design-and-style/style-by-css).
+To use the axis resizer it is required to include the module `modules/drag-panes.js`, or `js/modules/drag-panes.js` if you are using [**styled** mode](https://highcharts.com/docs/chart-design-and-style/style-by-css).
 
 New options available with this module
 --------------------------------------

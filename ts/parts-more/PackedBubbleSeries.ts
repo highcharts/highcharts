@@ -311,7 +311,8 @@ const {
     defined,
     extend,
     isArray,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import '../parts/Axis.js';
@@ -325,7 +326,6 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    pick = H.pick,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     Chart = H.Chart,

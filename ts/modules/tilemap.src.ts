@@ -16,7 +16,8 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 /**
@@ -96,7 +97,6 @@ declare global {
 import '../parts-map/HeatmapSeries.js';
 
 var seriesType = H.seriesType,
-    pick = H.pick,
     // Utility func to get the middle number of 3
     between = function (x: number, a: number, b: number): number {
         return Math.min(Math.max(a, x), b);
@@ -645,7 +645,7 @@ H.tileShapeTypes = {
 // defined, we add nothing.
 H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
 
-    if (this.recomputingForTilemap) {
+    if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }
 

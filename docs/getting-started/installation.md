@@ -3,7 +3,7 @@ Installation
 
 ### npm and Bower
 
-Highcharts is also available as packages through npm and Bower. Read more on installation with [npm](docs/getting-started/install-from-npm) or [Bower](docs/getting-started/install-from-bower) respectively. If you're not using these, continue reading.
+Highcharts is also available as packages through npm and Bower. Read more on installation with [npm](https://highcharts.com/docs/getting-started/install-from-npm) or [Bower](https://highcharts.com/docs/getting-started/install-from-bower) respectively. If you're not using these, continue reading.
 
 ### A. Include Highcharts
 
@@ -17,7 +17,7 @@ If you need support for IE6, 7 or 8, you need to include some polyfills. See det
 
 ### B. Alternatively, load files from your own domain
 
-In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](http://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](download) and put on your webpage. Here is an example with Highcharts served from your own server:
+In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](download) and put on your webpage. Here is an example with Highcharts served from your own server:
 
 ```html
 <script src="/js/highcharts.js"></script>
@@ -42,6 +42,6 @@ But the separate files can't run in the same page along with each other or with 
 
 ### D. Get started
 
-You are now ready to use Highcharts, see [Your first chart](docs/getting-started/your-first-chart) to get started.
+You are now ready to use Highcharts, see [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart) to get started.
 
 *) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highstock versions) IE VML rendering is built into the library.

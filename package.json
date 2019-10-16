@@ -82,7 +82,6 @@
     "karma-firefox-launcher": "^1.2.0",
     "karma-generic-preprocessor": "^1.1.1",
     "karma-ie-launcher": "^1.0.0",
-    "karma-json-log-reporter": "^0.1.0",
     "karma-qunit": "^4.0.0",
     "karma-safari-launcher": "^1.0.0",
     "karma-sharding": "^4.4.0",

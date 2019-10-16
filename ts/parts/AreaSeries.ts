@@ -52,7 +52,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Color.js';
@@ -62,7 +63,6 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
 
@@ -257,7 +257,7 @@ seriesType<Highcharts.AreaSeries>(
 
                 for (i = 0; i < points.length; i++) {
                     // Reset after point update (#7326)
-                    points[i].leftNull = points[i].rightNull = null as any;
+                    points[i].leftNull = points[i].rightNull = undefined;
 
                     // Create a map where we can quickly look up the points by
                     // their X values.
@@ -406,7 +406,7 @@ seriesType<Highcharts.AreaSeries>(
                 seriesIndex = this.index,
                 i,
                 areaPath: Highcharts.AreaPathObject,
-                plotX: number,
+                plotX: number|undefined,
                 stacks = yAxis.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
@@ -414,7 +414,7 @@ seriesType<Highcharts.AreaSeries>(
                 ),
                 isNull,
                 yBottom,
-                connectNulls = H.pick( // #10574
+                connectNulls = pick( // #10574
                     options.connectNulls,
                     stacking === 'percent'
                 ),
@@ -482,6 +482,13 @@ seriesType<Highcharts.AreaSeries>(
             }
 
             for (i = 0; i < points.length; i++) {
+
+                // Reset after series.update of stacking property (#12033)
+                if (!stacking) {
+                    points[i].leftCliff = points[i].rightCliff =
+                        points[i].leftNull = points[i].rightNull = undefined;
+                }
+
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
                 yBottom = pick(points[i].yBottom, translatedThreshold);

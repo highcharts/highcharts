@@ -32,13 +32,17 @@ declare global {
             public processData: Series['processData'];
             public requiredIndicators: Array<string>;
             public useCommonDataGrouping: boolean;
-            public destroy(): void;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
             public getValues(
                 series: Series,
                 params: SMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject|IndicatorMultipleValuesObject);
+            ): (
+                boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
+                IndicatorNullableValuesObject|
+                IndicatorMultipleNullableValuesObject|
+                IndicatorMultipleUndefinableValuesObject
+            );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
 
@@ -52,10 +56,28 @@ declare global {
             yData: Array<number>;
         }
 
+        interface IndicatorNullableValuesObject {
+            values: Array<Array<(number|null)>>;
+            xData: Array<(number|null)>;
+            yData: Array<(number|null)>;
+        }
+
+        interface IndicatorMultipleNullableValuesObject {
+            values: IndicatorNullableValuesObject['values'];
+            xData: IndicatorNullableValuesObject['xData'];
+            yData: Array<Array<(number|null)>>;
+        }
+
         interface IndicatorMultipleValuesObject {
             values: IndicatorValuesObject['values'];
             xData: IndicatorValuesObject['xData'];
             yData: Array<Array<number>>;
+        }
+
+        interface IndicatorMultipleUndefinableValuesObject {
+            values: Array<Array<(number|undefined)>>;
+            xData: Array<(number|undefined)>;
+            yData: Array<Array<(number|undefined)>>;
         }
 
         interface LineSeriesOptions {
@@ -98,13 +120,13 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
+    pick,
     splat
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var pick = H.pick,
-    error = H.error,
+var error = H.error,
     Series = H.Series,
     addEvent = H.addEvent,
     seriesType = H.seriesType,

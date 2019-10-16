@@ -101,8 +101,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     extend,
     isNumber,
+    pick,
     pInt
 } = U;
 
@@ -113,12 +116,9 @@ import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
 
-var arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
-    Axis = H.Axis,
+var Axis = H.Axis,
     color = H.color,
     noop = H.noop,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

@@ -295,7 +295,8 @@ const {
     isNumber,
     isObject,
     isString,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -317,7 +318,6 @@ var seriesType = H.seriesType,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    pick = H.pick,
     Series = H.Series,
     stableSort = H.stableSort,
     color = H.Color,
@@ -1136,14 +1136,17 @@ seriesType<Highcharts.TreemapSeries>(
                 options = series.options,
                 mapOptionsToLevel = series.mapOptionsToLevel,
                 level = mapOptionsToLevel[parent.level + 1],
-                algorithm = pick<string>(
+                algorithm = pick<
+                Highcharts.TreemapSeriesLayoutAlgorithmValue|undefined,
+                Highcharts.TreemapSeriesLayoutAlgorithmValue
+                >(
                     (
                         (series as any)[
                             (level && level.layoutAlgorithm) as any
                         ] &&
                         level.layoutAlgorithm
                     ),
-                    options.layoutAlgorithm
+                    options.layoutAlgorithm as any
                 ),
                 alternate = options.alternateStartingDirection,
                 childrenValues: Array<Highcharts.TreemapNodeValuesObject> = [],
@@ -1161,7 +1164,7 @@ seriesType<Highcharts.TreemapSeries>(
                     0 :
                     1;
             }
-            childrenValues = (series as any)[algorithm](area, children);
+            childrenValues = series[algorithm](area as any, children) as any;
             children.forEach(function (
                 child: Highcharts.TreemapNodeObject,
                 index: number
@@ -1822,7 +1825,7 @@ seriesType<Highcharts.TreemapSeries>(
             } else if (
                 className.indexOf('highcharts-internal-node-interactive') !== -1
             ) {
-                opacity = pick(stateOptions.opacity, options.opacity);
+                opacity = pick(stateOptions.opacity, options.opacity as any);
                 attr.fill = (color as any)(attr.fill).setOpacity(opacity).get();
                 attr.cursor = 'pointer';
                 // Hide nodes that have children
@@ -1898,6 +1901,7 @@ seriesType<Highcharts.TreemapSeries>(
                                 zIndex: 1000 - (levelDynamic as any)
                             })
                             .add(series.group);
+                        (series as any)[groupKey].survive = true;
                     }
                 }
 

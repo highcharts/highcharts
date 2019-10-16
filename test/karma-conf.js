@@ -77,7 +77,7 @@ function resolveJSON(js) {
     const regex = /(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/g;
     let match;
     const codeblocks = [];
-    
+
     while (match = regex.exec(js)) {
         let src = match[2];
 
@@ -328,16 +328,6 @@ module.exports = function (config) {
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js',
 
-            // Trying to get Edge to pass:
-            //'samples/unit-tests/interaction/*/demo.js',
-            //'samples/unit-tests/stock-tools/*/demo.js',
-            //'samples/unit-tests/drag-panes/pointer-interactions/demo.js',
-            //'samples/unit-tests/chart/zoomtype/demo.js',
-            //'samples/unit-tests/drilldown/drillup/demo.js',
-            //'samples/unit-tests/rangeselector/selected/demo.js',
-            //'samples/unit-tests/point/point/demo.js',
-            //'samples/unit-tests/pointer/members/demo.js',
-
             // --- VISUAL TESTS ---
 
             // Custom data source
@@ -396,7 +386,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
         ],
-        reporters: ['imagecapture', 'progress', 'json-log'],
+        reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
@@ -411,10 +401,6 @@ module.exports = function (config) {
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
         },
-        jsonLogReporter: {
-            outputPath: 'test/',
-        },
-
 
         formatError: function (s) {
             let ret = s.replace(
@@ -425,12 +411,19 @@ module.exports = function (config) {
                 }
             );
 
-            ret = s.replace(
-                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
-                }
-            );
+            // Insert link to utils
+            let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
+            let match = s.match(regex);
+
+            if (match) {
+                // Insert the utils link before the first line with mixed indent
+                ret = s.replace(
+                    '\t    ',
+                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                );
+
+                ret = ret.replace(regex, a => a.cyan);
+            }
 
             // Skip the call stack, it's internal QUnit stuff
             ret = ret.split('<<<splitter>>>')[0];
@@ -553,40 +546,22 @@ module.exports = function (config) {
                             done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
                             return;
                         }
-
                         assertion = `
                         compareToReference(chart, '${path}')
                             .then(actual => {
-                                if (${argv.difflog}) {
-                                    var today = new Date().toISOString().slice(0,10);
-                                    var diffLog = {
-                                        name: 'visual-test-results',
-                                        object: {
-                                            '${path}': actual,
-                                            meta: {
-                                                runDate: today,
-                                                gitSha: __karma__.config.gitSha
-                                            },
-                                        },
-                                    };
-                                    if (actual || actual === 0) {
-                                        window.dump(JSON.stringify( diffLog ));
-                                    }
-                                    assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
-                                } else {
-                                    assert.strictEqual(
-                                        actual,
-                                        0,
-                                        'Different pixels\\n' +
-                                        '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                        '- samples/${path}/reference.svg\\n' +
-                                        '- samples/${path}/diff.gif'
-                                    );
-                                }
-                                done();
+                                assert.strictEqual(
+                                    actual,
+                                    0,
+                                    'Different pixels\\n' +
+                                    '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                    '- samples/${path}/reference.svg\\n' +
+                                    '- samples/${path}/diff.gif'
+                                );
                             })
                             .catch(err => {
                                 console.error(err);
+                            })
+                            .finally(() => {
                                 done();
                             });
                         `;
@@ -599,6 +574,14 @@ module.exports = function (config) {
         }
     };
 
+    if (argv.visualcompare || argv.reference) {
+        options.reporters.push('imagecapture');
+        options.imageCapture = {
+            resultsOutputPath: 'test/visual-test-results.json',
+        };
+        options.browserDisconnectTolerance = 1; // default 0
+        options.browserDisconnectTimeout = 30000; // default 2000
+    }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();

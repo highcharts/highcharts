@@ -47,12 +47,15 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     perspective = H.perspective,
-    pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
@@ -316,21 +319,23 @@ wrap(
         zIndex?: number,
         parent?: Highcharts.SVGElement
     ): void {
-        if (this.chart.is3d()) {
-            if ((this as any)[prop]) {
-                delete (this as any)[prop];
-            }
-            if (parent) {
-                if (!this.chart.columnGroup) {
-                    this.chart.columnGroup =
-                        this.chart.renderer.g('columnGroup').add(parent);
+        if (prop !== 'dataLabelsGroup') {
+            if (this.chart.is3d()) {
+                if ((this as any)[prop]) {
+                    delete (this as any)[prop];
                 }
-                (this as any)[prop] = this.chart.columnGroup;
-                this.chart.columnGroup.attr(this.getPlotBox());
-                (this as any)[prop].survive = true;
-                if (prop === 'group' || prop === 'markerGroup') {
-                    arguments[3] = 'visible';
-                    // For 3D column group and markerGroup should be visible
+                if (parent) {
+                    if (!this.chart.columnGroup) {
+                        this.chart.columnGroup =
+                            this.chart.renderer.g('columnGroup').add(parent);
+                    }
+                    (this as any)[prop] = this.chart.columnGroup;
+                    this.chart.columnGroup.attr(this.getPlotBox());
+                    (this as any)[prop].survive = true;
+                    if (prop === 'group' || prop === 'markerGroup') {
+                        arguments[3] = 'visible';
+                        // For 3D column group and markerGroup should be visible
+                    }
                 }
             }
         }

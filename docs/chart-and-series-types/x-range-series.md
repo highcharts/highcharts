@@ -7,11 +7,11 @@ An X-range is similar to a column range, but displays ranges in the X data where
 
 The X-range series requires the following module [modules/xrange.js](https://code.highcharts.com/modules/xrange.js).
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.xrange)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.xrange)_
 
 <iframe style="width: 100%; height: 332px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/x-range allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/x-range/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/x-range/) to check the code.
 
 Data structure
 --------------
@@ -20,6 +20,6 @@ Each data point in an x-range is a range from an x value (typically start date) 
 
 The `y` value of an x-range data point sets where to draw the range vertically. On a categorized y axis, this will reflect the category index.
 
-Each data point may have a [`partialFill`](http://api.highcharts.com/highcharts/series.xrange.data.partialFill) option that sets how much of the task is fulfilled.
+Each data point may have a [`partialFill`](https://api.highcharts.com/highcharts/series.xrange.data.partialFill) option that sets how much of the task is fulfilled.
 
-See the full set of options in the [API](http://api.highcharts.com/highcharts/plotOptions.xrange).
+See the full set of options in the [API](https://api.highcharts.com/highcharts/plotOptions.xrange).

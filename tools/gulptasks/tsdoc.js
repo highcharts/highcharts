@@ -11,11 +11,19 @@ const path = require('path');
  *
  * */
 
-// const SOURCE_CONFIG = path.join('ts', 'tsconfig.json');
+const INTERNAL_TARGET = path.join('build', 'api-internals');
 
-const TARGET_DIRECTORY = path.join('build', 'api-internals');
+const INTERNAL_THEME = path.join(
+    'node_modules', 'highcharts-documentation-generators', 'typedoc',
+    'theme-internals'
+);
 
-// const TARGET_JSON = path.join(TARGET_DIRECTORY, 'tree-typescript.json');
+const NEXT_TARGET = path.join('build', 'api-next');
+
+const NEXT_THEME = path.join(
+    'node_modules', 'highcharts-documentation-generators', 'typedoc',
+    'theme-next'
+);
 
 /* *
  *
@@ -29,11 +37,25 @@ const TARGET_DIRECTORY = path.join('build', 'api-internals');
  */
 function task() {
 
+    const argv = require('yargs').argv;
     const processLib = require('./lib/process');
 
+    const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
+    const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
+
+    const command = (
+        'cd ts && npx typedoc' +
+        ` --json "${path.join('..', target, 'tree.json')}"` +
+        ` --out "${path.join('..', target)}"` +
+        ` --theme "${path.join('..', theme)}"`
+    );
+
     return processLib
-        .exec('cd ts && npx typedoc --out ../' + TARGET_DIRECTORY)
-        .then(() => processLib.openAppFor('build/api-internals/index.html'));
+        .exec(command)
+        .then(() => processLib.openAppFor(
+            path.join((argv.next ? NEXT_TARGET : INTERNAL_TARGET), 'index.html')
+        ));
+
     /*
     const generators = require('highcharts-documentation-generators');
     const log = require('./lib/log');

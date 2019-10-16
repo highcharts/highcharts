@@ -13,6 +13,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -148,8 +152,6 @@ declare global {
  * @default function () { return this.point.name; }
  * @since 6.0.2
  */
-
-var pick = H.pick;
 
 var base = H.seriesTypes.sankey.prototype;
 

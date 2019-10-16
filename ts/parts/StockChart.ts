@@ -56,10 +56,13 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
     extend,
     isNumber,
     isString,
+    pick,
     splat
 } = U;
 
@@ -80,13 +83,10 @@ import './Scrollbar.js';
 import './RangeSelector.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
@@ -520,7 +520,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old)
+            axis.translate(value as any, null, null, (e as any).old) as any
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
@@ -873,6 +873,7 @@ seriesProto.setCompare = function (
 
                 return value;
             }
+            return 0;
         } :
         null as any;
 

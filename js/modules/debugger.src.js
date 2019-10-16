@@ -41,7 +41,7 @@ addEvent(H.Chart, 'displayError', function (e) {
             }
         });
     }
-    if (options && options.displayErrors) {
+    if (options && options.displayErrors && renderer) {
         chart.errorElements = [];
         msg = isNumber(code) ?
             ('Highcharts error #' + code + ': ' +

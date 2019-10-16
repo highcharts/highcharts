@@ -11,8 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var addEvent = H.addEvent, perspective = H.perspective, pick = H.pick;
+import U from '../parts/Utilities.js';
+var pick = U.pick;
+var addEvent = H.addEvent, perspective = H.perspective;
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
 addEvent(H.Series, 'afterTranslate', function () {

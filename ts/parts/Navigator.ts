@@ -189,10 +189,12 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    destroyObjectProperties,
     erase,
     extend,
     isArray,
     isNumber,
+    pick,
     splat
 } = U;
 
@@ -208,11 +210,9 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     color = H.color,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
@@ -797,10 +797,12 @@ Axis.prototype.toFixedRange = function (
     fixedMax?: number
 ): Highcharts.RangeObject {
     var fixedRange = this.chart && this.chart.fixedRange,
-        newMin =
-            pick(fixedMin, this.translate(pxMin as any, true, !this.horiz)),
-        newMax =
-            pick(fixedMax, this.translate(pxMax as any, true, !this.horiz)),
+        newMin = pick<number|undefined, number>(
+            fixedMin, this.translate(pxMin as any, true, !this.horiz) as any
+        ),
+        newMax = pick<number|undefined, number>(
+            fixedMax, this.translate(pxMax as any, true, !this.horiz) as any
+        ),
         changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
     // If the difference between the fixed range and the actual requested range
@@ -1404,14 +1406,14 @@ Navigator.prototype = {
         // because Navigator.grabbedSomething flags are stored in mousedown
         // events
         eventsToUnbind.push(
-            addEvent(container, 'mousemove', mouseMoveHandler),
+            addEvent(chart.renderTo, 'mousemove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
         );
 
         // Touch events
         if (hasTouch) {
             eventsToUnbind.push(
-                addEvent(container, 'touchmove', mouseMoveHandler),
+                addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
                 addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
             );
             eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
@@ -1858,7 +1860,7 @@ Navigator.prototype = {
 
         this.opposite = pick(
             navigatorOptions.opposite,
-            !navigatorEnabled && chart.inverted
+            Boolean(!navigatorEnabled && chart.inverted)
         ); // #6262
 
         var navigator = this,
@@ -2396,7 +2398,7 @@ Navigator.prototype = {
         var xAxis = this.xAxis,
             unionExtremes;
 
-        if (xAxis.getExtremes) {
+        if (typeof xAxis.getExtremes !== 'undefined') {
             unionExtremes = this.getUnionExtremes(true);
             if (
                 unionExtremes &&

@@ -138,16 +138,16 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    destroyObjectProperties,
     extend,
     isNumber,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 var correctFloat = H.correctFloat,
-    destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
     deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

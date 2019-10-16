@@ -15,11 +15,11 @@ This feature was introduced in v6.1. The [data module](https://www.highcharts.co
 
 ## 2. API methods
 
-If the declarative live charts don't cut it, you can set up your own data connection. After a chart has been defined by the configuration object, optionally preprocessed and finally initialized and rendered using Highcharts.chart(), we have the opportunity to alter the chart using a toolbox of API methods. The chart, axis, series and point objects have a range of methods like update, remove, [addSeries](http://api.highcharts.com/highcharts/Chart.addSeries), [addPoint](http://api.highcharts.com/highcharts/Series.addPoint) and so on. The complete list can be seen in [class reference](https://api.highcharts.com/class-reference)
+If the declarative live charts don't cut it, you can set up your own data connection. After a chart has been defined by the configuration object, optionally preprocessed and finally initialized and rendered using Highcharts.chart(), we have the opportunity to alter the chart using a toolbox of API methods. The chart, axis, series and point objects have a range of methods like update, remove, [addSeries](https://api.highcharts.com/highcharts/Chart.addSeries), [addPoint](https://api.highcharts.com/highcharts/Series.addPoint) and so on. The complete list can be seen in [class reference](https://api.highcharts.com/class-reference)
 
-The following example uses jQuery for convenience to run the ajax feature. It shows how to run a live chart with data retrieved from the server each second, or more precisely, one second after the server's last reply. It is done by setting up a custom function, requestData, that initially is called from the chart's load event, and subsequently from its own Ajax success callback function. You can see the results live at [live-server.htm](studies/live-server.htm).
+The following example uses jQuery for convenience to run the ajax feature. It shows how to run a live chart with data retrieved from the server each second, or more precisely, one second after the server's last reply. It is done by setting up a custom function, requestData, that initially is called from the chart's load event, and subsequently from its own Ajax success callback function. You can see the results live at [live-server.htm](https://highcharts.com/studies/live-server.htm).
 
-1.  **Set up the server.** In this case, we have a simple PHP script returning a JavaScript array with the JavaScript time and a random y value. This is the contents of the [live-server-data.php](studies/live-server-data.php) file:
+1.  **Set up the server.** In this case, we have a simple PHP script returning a JavaScript array with the JavaScript time and a random y value. This is the contents of the [live-server-data.php](https://highcharts.com/studies/live-server-data.php) file:
 
     ```php
     <?php

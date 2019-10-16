@@ -45,4 +45,4 @@ Say you have a datetime x axis and irregular intervals between the points. Then 
           }]
     });
 
-As an alternative to this low-level approach, also consider [json_encode](http://php.net/manual/en/function.json-encode.php) for writing the entire options structure in PHP.
+As an alternative to this low-level approach, also consider [json_encode](https://php.net/manual/en/function.json-encode.php) for writing the entire options structure in PHP.

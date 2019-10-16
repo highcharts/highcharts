@@ -71,7 +71,8 @@ const {
     extend,
     isArray,
     isNumber,
-    isObject
+    isObject,
+    pick
 } = U;
 
 var isBoolean = function (x: unknown): x is boolean {
@@ -80,8 +81,7 @@ var isBoolean = function (x: unknown): x is boolean {
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
     },
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* eslint-disable valid-jsdoc */
 

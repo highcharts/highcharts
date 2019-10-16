@@ -143,6 +143,9 @@ of them:
 * For-of-loops:
   `const data = [1, 2, 3]; let sum = 0; for (const p of data) { sum += p; }`
 
+* Read-only parameters:
+  `function process(readonly array: Array<string>): void;`
+
 * Rest parameter arrays (have to be last):
   `function rest(name: string, ...optionals: Array<number>): void;`
 

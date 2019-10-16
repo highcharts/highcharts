@@ -12,6 +12,11 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    arrayMax,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -58,8 +63,7 @@ declare global {
     }
 }
 
-var seriesType = H.seriesType,
-    pick = H.pick;
+var seriesType = H.seriesType;
 
 /**
  * The vector series class.
@@ -240,7 +244,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
         translate: function (this: Highcharts.VectorSeries): void {
             H.Series.prototype.translate.call(this);
 
-            this.lengthMax = H.arrayMax(this.lengthData as any);
+            this.lengthMax = arrayMax(this.lengthData as any);
         },
 
         /**

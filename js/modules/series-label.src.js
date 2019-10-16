@@ -40,10 +40,10 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/y5A37/
  */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, syncTimeout = U.syncTimeout;
+var extend = U.extend, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, addEvent = H.addEvent, pick = H.pick, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
+var labelDistance = 3, addEvent = H.addEvent, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
 H.setOptions({
     /**
      * @optionparent plotOptions
@@ -466,8 +466,7 @@ Chart.prototype.drawSeriesLabels = function () {
         if (!series.xAxis && !series.yAxis) {
             return;
         }
-        var bBox, x, y, results = [], clearPoint, i, best, labelOptions = series.options.label, inverted = chart.inverted, paneLeft = (inverted ? series.yAxis.pos : series.xAxis.pos), paneTop = (inverted ? series.xAxis.pos : series.yAxis.pos), paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len, paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len, points = series.interpolatedPoints, onArea = pick(labelOptions.onArea, !!series.area), label = series.labelBySeries, isNew = !label, minFontSize = labelOptions.minFontSize, maxFontSize = labelOptions.maxFontSize, dataExtremes, areaMin, areaMax, colorClass = 'highcharts-color-' +
-            pick(series.colorIndex, 'none');
+        var bBox, x, y, results = [], clearPoint, i, best, labelOptions = series.options.label, inverted = chart.inverted, paneLeft = (inverted ? series.yAxis.pos : series.xAxis.pos), paneTop = (inverted ? series.xAxis.pos : series.yAxis.pos), paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len, paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len, points = series.interpolatedPoints, onArea = pick(labelOptions.onArea, !!series.area), label = series.labelBySeries, isNew = !label, minFontSize = labelOptions.minFontSize, maxFontSize = labelOptions.maxFontSize, dataExtremes, areaMin, areaMax, colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none');
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {
             dataExtremes = [

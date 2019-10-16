@@ -30,11 +30,13 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber;
+const {
+    defined,
+    isNumber,
+    pick
+} = U;
 
-var Chart = H.Chart,
-    pick = H.pick;
+var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this */
 

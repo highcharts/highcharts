@@ -11,9 +11,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
 
-var error = H.error,
-    pick = H.pick;
+var error = H.error;
 
 // Warn user that a deprecated option was used
 function warn(chart, oldOption, newOption) {

@@ -9,8 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import U from '../parts/Utilities.js';
+var pick = U.pick;
+var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The column range is a cartesian series type with higher and lower

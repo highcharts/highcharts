@@ -3,7 +3,7 @@ Bell curve
 
 A bell curve series is a graphical representation of a normal (Gaussian) probability distribution. Bell curve is used to visualize the probability of occurring outcomes. The curve is bell-shaped, and its center top point is the mean of the base data.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bellcurve)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.bellcurve)_
 
 <iframe style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve allow="fullscreen"></iframe>
 
@@ -14,7 +14,7 @@ How to create a Bell Curve
 
 The bell curve requires the following module [modules/histogram-bellcurve.js](https://code.highcharts.com/maps/modules/histogram-bellcurve.js).
 
-The bell curve series is an areaspline series with self-setting data. Unlike most other Highcharts series, the [data](http://api.highcharts.com/highcharts/series.bellcurve) property is not available - it is set internally based on the base series data (more precisely y values of the data).
+The bell curve series is an areaspline series with self-setting data. Unlike most other Highcharts series, the [data](https://api.highcharts.com/highcharts/series.bellcurve) property is not available - it is set internally based on the base series data (more precisely y values of the data).
 
 **Two steps are required to create a bell curve:**
 
@@ -54,7 +54,7 @@ The following demo visualizes four intervals for each side of the bell curve, an
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
 
 The black markers indicate the borders of the intervals - four intervals for each side of the curve. Within one interval there are four markers plus the border black marker. On the left side intervals are left-closed, on the right side right-closed. The interval length is the bell curve’s standard deviation.
 

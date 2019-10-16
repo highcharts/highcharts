@@ -27,6 +27,7 @@ type IsObjectConditionalType<TObject, TStrict> = (
         ) :
         false
 );
+type Nullable = null|undefined;
 
 /**
  * Internal types
@@ -281,7 +282,26 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick<T>(...args: Array<T|null|undefined>): T;
+        function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ?
+                        T5 extends Nullable ?
+                            undefined : T5 : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ? undefined : T3 : T2 : T1;
+        function pick<T1, T2>(...args: [T1, T2]):
+        T1 extends Nullable ? T2 extends Nullable ? undefined : T2 : T1;
+        function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
+        function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
@@ -1593,7 +1613,26 @@ function extend<T extends object>(a: (T|undefined), b: object): T {
     return a;
 }
 
-
+function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ?
+                T5 extends Nullable ? undefined : T5 : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ? undefined : T3 : T2 : T1;
+function pick<T1, T2>(...args: [T1, T2]):
+T1 extends Nullable ?
+    T2 extends Nullable ? undefined : T2 : T1;
+function pick<T1>(...args: [T1]):
+T1 extends Nullable ? undefined : T1;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1606,20 +1645,16 @@ function extend<T extends object>(a: (T|undefined), b: object): T {
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-H.pick = function (): any {
-    /* eslint-enable valid-jsdoc */
-    var args = arguments,
-        i,
-        arg,
-        length = args.length;
-
-    for (i = 0; i < length; i++) {
-        arg = args[i];
+function pick<T>(): T|undefined {
+    const args = arguments;
+    const length = args.length;
+    for (let i = 0; i < length; i++) {
+        const arg = args[i];
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
-};
+}
 
 /**
  * Set CSS on a given element.
@@ -2025,7 +2060,7 @@ H.normalizeTickInterval = function (
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = H.pick(magnitude, 1);
+    magnitude = pick(magnitude, 1);
     normalized = interval / (magnitude as any);
 
     // multiples for a linear scale
@@ -2138,7 +2173,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data: Array<any>): number {
+function arrayMin(data: Array<any>): number {
     var i = data.length,
         min = data[0];
 
@@ -2148,7 +2183,7 @@ H.arrayMin = function (data: Array<any>): number {
         }
     }
     return min;
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
@@ -2163,7 +2198,7 @@ H.arrayMin = function (data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data: Array<any>): number {
+function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2173,7 +2208,7 @@ H.arrayMax = function (data: Array<any>): number {
         }
     }
     return max;
-};
+}
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -2190,7 +2225,7 @@ H.arrayMax = function (data: Array<any>): number {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj: any, except?: any): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -2201,7 +2236,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 
 
 /**
@@ -2214,7 +2249,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
  *
  * @return {void}
  */
-H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
+function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2227,7 +2262,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 
 /**
  * Fix JS round off float errors.
@@ -2267,16 +2302,16 @@ H.correctFloat = function (num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (
+function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
-    chart.renderer.globalAnimation = H.pick(
+    chart.renderer.globalAnimation = pick(
         animation,
         (chart.options.chart as any).animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -2402,8 +2437,8 @@ H.numberFormat = function (
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = H.pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = H.pick(thousandsSep, (lang as any).thousandsSep);
+    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
+    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';
@@ -2520,7 +2555,7 @@ H.getStyle = function (
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
     if (style) {
         style = style.getPropertyValue(prop);
-        if (H.pick(toInt, prop !== 'opacity')) {
+        if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
@@ -3327,8 +3362,12 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    arrayMax,
+    arrayMin,
     attr,
     defined,
+    destroyObjectProperties,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -3338,7 +3377,9 @@ const utils = {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 };

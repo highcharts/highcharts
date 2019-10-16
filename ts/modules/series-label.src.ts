@@ -105,6 +105,7 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isNumber,
+    pick,
     syncTimeout
 } = U;
 
@@ -113,7 +114,6 @@ import '../parts/Series.js';
 
 var labelDistance = 3,
     addEvent = H.addEvent,
-    pick = H.pick,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
     Chart = H.Chart;
@@ -795,8 +795,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             dataExtremes,
             areaMin: (number|undefined),
             areaMax: (number|undefined),
-            colorClass = 'highcharts-color-' +
-                pick<(number|string)>(series.colorIndex, 'none');
+            colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none');
 
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {

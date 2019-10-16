@@ -77,7 +77,10 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
@@ -85,7 +88,6 @@ var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
-    pick = H.pick,
     seriesType = H.seriesType,
 
     // Work on H.Renderer instead of H.SVGRenderer for VML support.

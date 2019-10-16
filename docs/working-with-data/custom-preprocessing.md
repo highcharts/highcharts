@@ -1,7 +1,7 @@
 Custom Preprocessing
 ====================
 
-When implementing your own data sources, there may be cases where our built-in [Data module](docs/working-with-data/data-module) doesn't work. This may be if a CSV file is formatted in a certain way that the data module isn't able to read, if you have data passed in a certain XML format, or your data source is something completely different. Below are some examples trying to shed light on the process of parsing custom data.
+When implementing your own data sources, there may be cases where our built-in [Data module](https://highcharts.com/docs/working-with-data/data-module) doesn't work. This may be if a CSV file is formatted in a certain way that the data module isn't able to read, if you have data passed in a certain XML format, or your data source is something completely different. Below are some examples trying to shed light on the process of parsing custom data.
 
 *   [Preprocess data using CSV](#1)
 *   [Preprocess data using XML](#2)
@@ -10,9 +10,9 @@ When implementing your own data sources, there may be cases where our built-in [
 Preprocess data using CSV
 -------------------------
 
-Warning: As of Highcharts 4.0, this particular sample is much more easily implemented using the [Data module](docs/working-with-data/data-module). The following description is however still valid as a proof of concept of authoring your own parser function for data with non-standard syntax that the data module can't read.
+Warning: As of Highcharts 4.0, this particular sample is much more easily implemented using the [Data module](https://highcharts.com/docs/working-with-data/data-module). The following description is however still valid as a proof of concept of authoring your own parser function for data with non-standard syntax that the data module can't read.
 
-This example shows how to set up the basic chart options first, then do an ajax call for the data, parse the data and add them in the proper format to the options. The example can be seen live at [data-from-csv.htm](http://highcharts.com/studies/data-from-csv.htm).
+This example shows how to set up the basic chart options first, then do an ajax call for the data, parse the data and add them in the proper format to the options. The example can be seen live at [data-from-csv.htm](https://highcharts.com/studies/data-from-csv.htm).
 
 1.  **Create an external CSV file** containing only the data. In this example, the file looks like below. The first line lists the categories with a dummy name in the first position. The subsequent lines list the data series name in the first position and values in the subsequent positions. In real life, you will often create the contents of this file using PHP or other server side programming languages. Or you may choose to use other markup formats like XML or JSON. In those cases, jQuery can also parse the data for you natively.
 
@@ -152,7 +152,7 @@ There are two things to note here:
 Preprocess data using XML
 -------------------------
 
-Loading data from an XML file is similar to the CSV approach. Since Highcharts does not come with a predefined XML data syntax, it is entirely up to you to write the XML and to define a parsing function for it. The downside of using XML over CSV is that it adds some markup to the data, leaving a larger footprint. How large the extra footprint is depends on how you mark up your data. For example, if you wrap each point with a `<point>` tag and load 1000 points, it will add some weight. If however you add a comma separated list of point values, it doesn't. The upside to using XML, at least for small data sets, is that you don't have to manually parse the incoming data. You can utilize jQuery's existing DOM parsing abilities to access the XML tree. We set up a live example for this at [data-from-xml.htm](http://highcharts.com/studies/data-from-xml.htm). The data can be viewed at [data.xml](http://highcharts.com/studies/data.xml). Below is the function used to parse the XML data and adding it to the options object.
+Loading data from an XML file is similar to the CSV approach. Since Highcharts does not come with a predefined XML data syntax, it is entirely up to you to write the XML and to define a parsing function for it. The downside of using XML over CSV is that it adds some markup to the data, leaving a larger footprint. How large the extra footprint is depends on how you mark up your data. For example, if you wrap each point with a `<point>` tag and load 1000 points, it will add some weight. If however you add a comma separated list of point values, it doesn't. The upside to using XML, at least for small data sets, is that you don't have to manually parse the incoming data. You can utilize jQuery's existing DOM parsing abilities to access the XML tree. We set up a live example for this at [data-from-xml.htm](https://highcharts.com/studies/data-from-xml.htm). The data can be viewed at [data.xml](https://highcharts.com/studies/data.xml). Below is the function used to parse the XML data and adding it to the options object.
 
 ```js
 // Load the data from the XML file 

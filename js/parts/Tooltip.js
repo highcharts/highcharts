@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, splat = U.splat, syncTimeout = U.syncTimeout;
+var defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -108,7 +108,7 @@ var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 ''; // separates doclets above from variables below
-var doc = H.doc, format = H.format, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits;
+var doc = H.doc, format = H.format, merge = H.merge, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -411,7 +411,7 @@ H.Tooltip.prototype = {
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy();
-            H.discardElement(this.container);
+            discardElement(this.container);
         }
         H.clearTimeout(this.hideTimer);
         H.clearTimeout(this.tooltipTimeout);
@@ -855,7 +855,10 @@ H.Tooltip.prototype = {
                         .label(null, null, null, (point.isHeader ?
                         options.headerShape :
                         options.shape) || 'callout', null, null, options.useHTML)
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(point.isHeader ?
+                        'highcharts-tooltip-header ' : '' +
+                        'highcharts-tooltip-box ' +
+                        colorClass)
                         .attr(attribs)
                         .add(tooltipLabel);
                 }

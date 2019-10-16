@@ -6,10 +6,11 @@
  *
  *  License: highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
+/* eslint-disable valid-jsdoc */
 /**
  * Vertex Buffer abstraction.
  * A vertex buffer is a set of vertices which are passed to the GPU
@@ -26,29 +27,26 @@
  *
  * @return {*}
  */
-function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
-    var buffer = false,
-        vertAttribute = false,
-        components = dataComponents || 2,
-        preAllocated = false,
-        iterator = 0,
-        // farray = false,
-        data;
-
+function GLVertexBuffer(gl, shader, dataComponents
+/* , type */
+) {
+    var buffer = false, vertAttribute = false, components = dataComponents || 2, preAllocated = false, iterator = 0, 
+    // farray = false,
+    data;
     // type = type || 'float';
-
+    /**
+     * @private
+     */
     function destroy() {
         if (buffer) {
             gl.deleteBuffer(buffer);
             buffer = false;
             vertAttribute = false;
         }
-
         iterator = 0;
         components = dataComponents || 2;
         data = [];
     }
-
     /**
      * Build the buffer
      * @private
@@ -58,43 +56,29 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
      */
     function build(dataIn, attrib, dataComponents) {
         var farray;
-
         data = dataIn || [];
-
         if ((!data || data.length === 0) && !preAllocated) {
             // console.error('trying to render empty vbuffer');
             destroy();
             return false;
         }
-
         components = dataComponents || components;
-
         if (buffer) {
             gl.deleteBuffer(buffer);
         }
-
         if (!preAllocated) {
             farray = new Float32Array(data);
         }
-
         buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            preAllocated || farray,
-            gl.STATIC_DRAW
-        );
-
+        gl.bufferData(gl.ARRAY_BUFFER, preAllocated || farray, gl.STATIC_DRAW);
         // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         vertAttribute = gl.getAttribLocation(shader.program(), attrib);
         gl.enableVertexAttribArray(vertAttribute);
-
         // Trigger cleanup
         farray = false;
-
         return true;
     }
-
     /**
      * Bind the buffer
      * @private
@@ -103,16 +87,12 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         if (!buffer) {
             return false;
         }
-
         // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         // gl.enableVertexAttribArray(vertAttribute);
         // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.vertexAttribPointer(
-            vertAttribute, components, gl.FLOAT, false, 0, 0
-        );
+        gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
         // gl.enableVertexAttribArray(vertAttribute);
     }
-
     /**
      * Render the buffer
      * @private
@@ -122,34 +102,25 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
      */
     function render(from, to, drawMode) {
         var length = preAllocated ? preAllocated.length : data.length;
-
         if (!buffer) {
             return false;
         }
-
         if (!length) {
             return false;
         }
-
         if (!from || from > length || from < 0) {
             from = 0;
         }
-
         if (!to || to > length) {
             to = length;
         }
-
         drawMode = drawMode || 'points';
-
-        gl.drawArrays(
-            gl[drawMode.toUpperCase()],
-            from / components,
-            (to - from) / components
-        );
-
+        gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components);
         return true;
     }
-
+    /**
+     * @private
+     */
     function push(x, y, a, b) {
         if (preAllocated) { // && iterator <= preAllocated.length - 4) {
             preAllocated[++iterator] = x;
@@ -158,7 +129,6 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
             preAllocated[++iterator] = b;
         }
     }
-
     /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
@@ -167,10 +137,8 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
     function allocate(size) {
         size *= 4;
         iterator = -1;
-
         preAllocated = new Float32Array(size);
     }
-
     // /////////////////////////////////////////////////////////////////////////
     return {
         destroy: destroy,
@@ -182,5 +150,4 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         push: push
     };
 }
-
 export default GLVertexBuffer;

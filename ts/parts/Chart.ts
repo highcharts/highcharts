@@ -268,6 +268,7 @@ import U from './Utilities.js';
 const {
     attr,
     defined,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -275,7 +276,9 @@ const {
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 } = U;
@@ -292,7 +295,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
     find = H.find,
@@ -301,7 +303,6 @@ var addEvent = H.addEvent,
     marginNames = H.marginNames,
     merge = H.merge,
     Pointer = H.Pointer, // @todo add as requirement
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     win = H.win;
@@ -797,7 +798,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        H.setAnimation(animation as any, chart);
+        setAnimation(animation as any, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -1071,7 +1072,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             points = points.concat(
                 (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
                     function (point: Highcharts.Point): boolean {
-                        return pick(point.selectedStaging, point.selected);
+                        return pick(
+                            point.selectedStaging, point.selected as any
+                        );
                     }
                 )
             );
@@ -1290,8 +1293,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481)
-                height = title.getBBox(titleOptions.useHTML).height;
+                // Skip the cache for HTML (#3481, #11666)
+                height = Math.round(title.getBBox(titleOptions.useHTML).height);
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
@@ -1881,7 +1884,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isResizing += 1;
 
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
 
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;

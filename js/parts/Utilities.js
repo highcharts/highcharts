@@ -1081,16 +1081,16 @@ function extend(a, b) {
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-H.pick = function () {
-    /* eslint-enable valid-jsdoc */
-    var args = arguments, i, arg, length = args.length;
-    for (i = 0; i < length; i++) {
-        arg = args[i];
+function pick() {
+    var args = arguments;
+    var length = args.length;
+    for (var i = 0; i < length; i++) {
+        var arg = args[i];
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
-};
+}
 /**
  * Set CSS on a given element.
  *
@@ -1418,7 +1418,7 @@ H.getMagnitude = function (num) {
 H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = H.pick(magnitude, 1);
+    magnitude = pick(magnitude, 1);
     normalized = interval / magnitude;
     // multiples for a linear scale
     if (!multiples) {
@@ -1503,7 +1503,7 @@ H.stableSort = function (arr, sortFunction) {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data) {
+function arrayMin(data) {
     var i = data.length, min = data[0];
     while (i--) {
         if (data[i] < min) {
@@ -1511,7 +1511,7 @@ H.arrayMin = function (data) {
         }
     }
     return min;
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1525,7 +1525,7 @@ H.arrayMin = function (data) {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data) {
+function arrayMax(data) {
     var i = data.length, max = data[0];
     while (i--) {
         if (data[i] > max) {
@@ -1533,7 +1533,7 @@ H.arrayMax = function (data) {
         }
     }
     return max;
-};
+}
 /**
  * Utility method that destroys any SVGElement instances that are properties on
  * the given object. It loops all properties and invokes destroy if there is a
@@ -1549,7 +1549,7 @@ H.arrayMax = function (data) {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj, except) {
+function destroyObjectProperties(obj, except) {
     objectEach(obj, function (val, n) {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -1559,7 +1559,7 @@ H.destroyObjectProperties = function (obj, except) {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -1570,7 +1570,7 @@ H.destroyObjectProperties = function (obj, except) {
  *
  * @return {void}
  */
-H.discardElement = function (element) {
+function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
@@ -1581,7 +1581,7 @@ H.discardElement = function (element) {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 /**
  * Fix JS round off float errors.
  *
@@ -1617,9 +1617,9 @@ H.correctFloat = function (num, prec) {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (animation, chart) {
-    chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
-};
+function setAnimation(animation, chart) {
+    chart.renderer.globalAnimation = pick(animation, chart.options.chart.animation, true);
+}
 /**
  * Get the animation in object form, where a disabled animation is always
  * returned as `{ duration: 0 }`.
@@ -1723,8 +1723,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
     // Leftover after grouping into thousands. Can be 0, 1 or 2.
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
     // Language
-    decimalPoint = H.pick(decimalPoint, lang.decimalPoint);
-    thousandsSep = H.pick(thousandsSep, lang.thousandsSep);
+    decimalPoint = pick(decimalPoint, lang.decimalPoint);
+    thousandsSep = pick(thousandsSep, lang.thousandsSep);
     // Start building the return
     ret = number < 0 ? '-' : '';
     // Add the leftover after grouping into thousands. For example, in the
@@ -1813,7 +1813,7 @@ H.getStyle = function (el, prop, toInt) {
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
     if (style) {
         style = style.getPropertyValue(prop);
-        if (H.pick(toInt, prop !== 'opacity')) {
+        if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
@@ -2484,8 +2484,12 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    arrayMax: arrayMax,
+    arrayMin: arrayMin,
     attr: attr,
     defined: defined,
+    destroyObjectProperties: destroyObjectProperties,
+    discardElement: discardElement,
     erase: erase,
     extend: extend,
     isArray: isArray,
@@ -2495,7 +2499,9 @@ var utils = {
     isObject: isObject,
     isString: isString,
     objectEach: objectEach,
+    pick: pick,
     pInt: pInt,
+    setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout
 };

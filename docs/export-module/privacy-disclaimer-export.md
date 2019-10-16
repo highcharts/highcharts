@@ -1,7 +1,7 @@
 Export server Terms of Use 
 =============
 
-These terms are about the export server running at [http://export.highcharts.com](http://export.highcharts.com). This server is used to export charts to images or PDF files.
+These terms are about the export server running at [https://export.highcharts.com](https://export.highcharts.com). This server is used to export charts to images or PDF files.
 
 This service is based on fair usage policy. To this extent, rate limiting is in place. The rate limiting operates within windows of one minute, in which up to 10 requests can be made. This ensures that the service works well for everyone, even in times with heavy traffic.
 
@@ -10,7 +10,7 @@ Privacy Disclaimer
 
 We do not gather any personally identifiable information from incoming requests. Server logs are limited to displaying error messages and timing information, to help us improve the service. All chart data and headers are stripped out of the logs.
 
-The HTTP protocol is used for communication between client and the export server and is unsecured. When security and privacy is an issue to you, we recommend [setting up your own export server](docs/export-module/setting-up-the-server) which holds the level of security you need. 
+The HTTP protocol is used for communication between client and the export server and is unsecured. When security and privacy is an issue to you, we recommend [setting up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server) which holds the level of security you need. 
 
 Description of data saved on the export server
 ----------------------------------------------

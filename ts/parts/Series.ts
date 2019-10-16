@@ -172,7 +172,7 @@ declare global {
                 zIndex?: number,
                 parent?: SVGElement
             ): SVGElement;
-            public pointAttribs(point: Point, state?: string): SVGAttributes;
+            public pointAttribs(point?: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
             public animateNewPoints(): void;
             public processData(force?: boolean): (boolean|undefined);
@@ -314,7 +314,6 @@ declare global {
             allowPointSelect?: boolean;
             animation?: (boolean|AnimationOptionsObject);
             animationLimit?: number;
-            boostBlending?: SeriesBlendingValue;
             boostThreshold?: number;
             borderColor?: ColorType;
             borderWidth?: number;
@@ -441,7 +440,6 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
         }
-        type SeriesBlendingValue = ('add'|'darken'|'multiply');
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
         type SeriesOptionsType = SeriesOptions;
@@ -663,6 +661,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
     erase,
     extend,
@@ -670,6 +670,7 @@ const {
     isNumber,
     isString,
     objectEach,
+    pick,
     splat,
     syncTimeout
 } = U;
@@ -681,15 +682,12 @@ import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
     animObject = H.animObject,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point, // @todo  add as a requirement
     removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
@@ -4527,23 +4525,21 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 }
 
                 if (isArray(stackValues)) {
-                    yBottom = (stackValues as any)[0];
-                    yValue = (stackValues as any)[1];
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
 
                     if (yBottom === stackThreshold &&
                         (stackIndicator as any).key ===
                             (stack as any)[xValue as any].base
                     ) {
-                        yBottom = (
-                            pick<number>(
-                                (isNumber(threshold) && threshold) as any,
-                                yAxis.min
-                            )
+                        yBottom = pick<number|undefined, number>(
+                            (isNumber(threshold) && threshold) as any,
+                            yAxis.min as any
                         );
                     }
 
                     // #1200, #1232
-                    if (yAxis.positiveValuesOnly && (yBottom as any) <= 0) {
+                    if (yAxis.positiveValuesOnly && yBottom <= 0) {
                         yBottom = null as any;
                     }
 
@@ -4925,7 +4921,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 chart = series.chart,
                 i,
                 point,
-                symbol,
                 graphic,
                 verb,
                 options = series.options,
@@ -4970,7 +4965,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     if (enabled && !point.isNull) {
 
                         // Shortcuts
-                        symbol = pick(pointMarkerOptions.symbol, series.symbol);
+                        const symbol = pick<string|undefined, string>(
+                            pointMarkerOptions.symbol, series.symbol as any
+                        );
 
                         markerAttribs = series.markerAttribs(
                             point,
@@ -5120,7 +5117,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @private
          * @function Highcharts.Series#pointAttribs
          *
-         * @param {Highcharts.Point} point
+         * @param {Highcharts.Point} [point]
          *        The point instance to inspect.
          *
          * @param {string} [state]
@@ -5132,7 +5129,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
         pointAttribs: function (
             this: Highcharts.Series,
-            point: Highcharts.Point,
+            point?: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
             var seriesMarkerOptions = this.options.marker,

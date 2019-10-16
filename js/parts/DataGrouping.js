@@ -25,11 +25,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-var addEvent = H.addEvent, arrayMax = H.arrayMax, arrayMin = H.arrayMin, Axis = H.Axis, correctFloat = H.correctFloat, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var addEvent = H.addEvent, Axis = H.Axis, correctFloat = H.correctFloat, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -312,6 +312,7 @@ commonOptions = {
     spline: {},
     area: {},
     areaspline: {},
+    arearange: {},
     column: {
         groupPixelWidth: 10
     },
@@ -466,7 +467,7 @@ seriesProto.processData = function () {
                 if ((!defined(xAxis.options.min) &&
                     xAxis.min <= xAxis.dataMin) ||
                     xAxis.min === xAxis.dataMin) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], xAxis.min);
                 }
                 xAxis.dataMin = groupedXData[0];
             }

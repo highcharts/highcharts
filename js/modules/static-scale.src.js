@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber;
-var Chart = H.Chart, pick = H.pick;
+var defined = U.defined, isNumber = U.isNumber, pick = U.pick;
+var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
 /**
  * For vertical axes only. Setting the static scale ensures that each tick unit
