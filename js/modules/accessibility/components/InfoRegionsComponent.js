@@ -16,10 +16,17 @@ var extend = U.extend,
     pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import A11yUtilities from '../utilities.js';
 
-var setElAttrs = A11yUtilities.setElAttrs,
-    escapeStringForHTML = A11yUtilities.escapeStringForHTML;
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
+    getChartTitle = ChartUtilities.getChartTitle,
+    getAxisDescription = ChartUtilities.getAxisDescription;
+
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var setElAttrs = HTMLUtilities.setElAttrs,
+    escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
+    getElement = HTMLUtilities.getElement,
+    visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
 
 function getTypeDescForMapChart(chart, formatContext) {
@@ -196,8 +203,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 },
                 afterInserted: function () {
                     if (component.endOfChartMarkerId) {
-                        component.chart.endOfChartMarker = component
-                            .getElement(component.endOfChartMarkerId);
+                        component.chart.endOfChartMarker =
+                            getElement(component.endOfChartMarkerId);
                     }
                 }
             }
@@ -233,8 +240,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
 
-        this.visuallyHideElement(hiddenDiv);
-        this.unhideElementFromScreenReaders(hiddenDiv);
+        visuallyHideElement(hiddenDiv);
+        unhideChartElementFromAT(chart, hiddenDiv);
         if (region.afterInserted) {
             region.afterInserted();
         }
@@ -282,7 +289,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             context = {
-                chartTitle: this.getChartTitleText(),
+                chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
                 chartSubtitle: this.getSubtitleText(),
                 chartLongdesc: this.getLongdescText(),
@@ -341,18 +348,6 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
     /**
      * @private
-     * @return {string}
-     */
-    getChartTitleText: function () {
-        var chart = this.chart;
-        return chart.options.title.text || chart.langFormat(
-            'accessibility.defaultChartTitle', { chart: chart }
-        );
-    },
-
-
-    /**
-     * @private
      * @param {string} buttonId
      * @return {string}
      */
@@ -360,7 +355,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var chart = this.chart,
             buttonText = chart.langFormat(
                 'accessibility.table.viewAsDataTableButtonText',
-                { chart: chart, chartTitle: this.getChartTitleText() }
+                { chart: chart, chartTitle: getChartTitle(chart) }
             );
 
         return '<a id="' + buttonId + '">' + buttonText + '</a>';
@@ -431,7 +426,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     initDataTableButton: function (tableButtonId) {
         var el = this.viewDataTableButton = tableButtonId &&
-                this.getElement(tableButtonId),
+                getElement(tableButtonId),
             chart = this.chart,
             tableId = tableButtonId && tableButtonId.replace('hc-linkto-', '');
 
@@ -439,7 +434,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setElAttrs(el, {
                 role: 'button',
                 tabindex: '-1',
-                'aria-expanded': !!this.getElement(tableId),
+                'aria-expanded': !!getElement(tableId),
                 href: '#' + tableId
             });
 
@@ -507,7 +502,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             {
                 chart: chart,
                 names: axes.map(function (axis) {
-                    return axis.getDescription();
+                    return getAxisDescription(axis);
                 }),
                 ranges: axes.map(function (axis) {
                     return component.getAxisRangeDescription(axis);

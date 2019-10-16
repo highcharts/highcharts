@@ -10,12 +10,15 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-
 var merge = H.merge,
-    addEvent = H.addEvent,
     win = H.win,
     doc = win.document;
+
+import HTMLUtilities from './utils/htmlUtilities.js';
+var getElement = HTMLUtilities.getElement;
+
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import EventProvider from './utils/EventProvider.js';
 
 
 /**
@@ -46,7 +49,9 @@ KeyboardNavigation.prototype = {
      *        Map of component names to AccessibilityComponent objects.
      */
     init: function (chart, components) {
-        var keyboardNavigation = this;
+        var keyboardNavigation = this,
+            e = this.eventProvider = new EventProvider();
+
         this.chart = chart;
         this.components = components;
         this.modules = [];
@@ -58,14 +63,14 @@ KeyboardNavigation.prototype = {
         }
 
         // Add keydown event
-        this.unbindKeydownHandler = addEvent(
+        e.addEvent(
             chart.renderTo, 'keydown', function (e) {
                 keyboardNavigation.onKeydown(e);
             }
         );
 
         // Add mouseup event on doc
-        this.unbindMouseUpHandler = addEvent(doc, 'mouseup', function () {
+        e.addEvent(doc, 'mouseup', function () {
             keyboardNavigation.onMouseUp();
         });
 
@@ -249,7 +254,7 @@ KeyboardNavigation.prototype = {
      */
     updateExitAnchor: function () {
         var endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
-            endMarker = doc.getElementById(endMarkerId);
+            endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
 
@@ -271,7 +276,7 @@ KeyboardNavigation.prototype = {
         el.setAttribute('aria-hidden', false);
 
         // Handle focus
-        this.unbindExitAnchorFocus = this.addExitAnchorEventsToEl(el);
+        this.addExitAnchorEventsToEl(el);
     },
 
 
@@ -303,14 +308,6 @@ KeyboardNavigation.prototype = {
      * @private
      */
     removeExitAnchor: function () {
-        if (this.unbindExitAnchorFocus) {
-            this.unbindExitAnchorFocus();
-            delete this.unbindExitAnchorFocus;
-        }
-        if (this.unbindExitAnchorUpdate) {
-            this.unbindExitAnchorUpdate();
-            delete this.unbindExitAnchorUpdate;
-        }
         if (this.exitAnchor && this.exitAnchor.parentNode) {
             this.exitAnchor.parentNode
                 .removeChild(this.exitAnchor);
@@ -326,7 +323,7 @@ KeyboardNavigation.prototype = {
         var chart = this.chart,
             keyboardNavigation = this;
 
-        return addEvent(
+        this.eventProvider.addEvent(
             element,
             'focus',
             function (ev) {
@@ -379,16 +376,7 @@ KeyboardNavigation.prototype = {
      */
     destroy: function () {
         this.removeExitAnchor();
-
-        // Remove keydown handler
-        if (this.unbindKeydownHandler) {
-            this.unbindKeydownHandler();
-        }
-
-        // Remove mouseup handler
-        if (this.unbindMouseUpHandler) {
-            this.unbindMouseUpHandler();
-        }
+        this.eventProvider.removeAddedEvents();
     }
 };
 

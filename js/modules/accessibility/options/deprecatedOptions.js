@@ -59,8 +59,8 @@
 
 'use strict';
 
-import H from '../../parts/Globals.js';
-import U from '../../parts/Utilities.js';
+import H from '../../../parts/Globals.js';
+import U from '../../../parts/Utilities.js';
 var pick = U.pick;
 
 var error = H.error;

@@ -21,14 +21,17 @@ var minute = 1000 * 60,
             text: 'Displays balance of your bank accounts over time.'
         },
         accessibility: {
-            pointValuePrefix: '$',
             announceNewData: {
                 enabled: true,
                 announcementFormatter: function (allSeries, newSeries, newPoint) {
+                    var describer = Highcharts.SeriesAccessibilityDescriber,
+                        getPointXDescription = describer.getPointXDescription,
+                        getPointValueDescription = describer.getPointValueDescription;
+
                     if (newPoint) {
                         return 'Account balance updated. New data point: Time ' +
-                            newPoint.getA11yTimeDescription() + ', $' +
-                            Highcharts.numberFormat(newPoint.y, 0, '', ',') + '.';
+                            getPointXDescription(newPoint) + ', ' +
+                            getPointValueDescription(newPoint) + '.';
                     }
                     return false;
                 }
@@ -36,7 +39,8 @@ var minute = 1000 * 60,
         },
         tooltip: {
             dateTimeLabelFormats: dateTimeLabelFormats,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>${point.y}</b><br/>- Checking: ${point.checking}<br/>- Savings: ${point.savings}'
+            valuePrefix: '$',
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>- Checking: ${point.checking}<br/>- Savings: ${point.savings}'
         },
         xAxis: {
             type: 'datetime',

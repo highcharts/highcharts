@@ -11,20 +11,19 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+var doc = H.win.document;
+
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
 
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
+    getChartTitle = ChartUtilities.getChartTitle;
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import A11yUtilities from '../utilities.js';
-
-var doc = H.win.document,
-    stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
-
-function getChartTitle(chart) {
-    return stripHTMLTags(chart.options.title.text || chart.langFormat(
-        'accessibility.defaultChartTitle', { chart: chart }
-    ));
-}
 
 
 /**
@@ -68,6 +67,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                     'http://www.w3.org/2000/svg',
                     'title'
                 );
+
             titleElement.textContent = titleContents;
             titleElement.id = titleId;
             chart.renderTo.insertBefore(
@@ -153,7 +153,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                     )
                 );
             }
-            this.unhideElementFromScreenReaders(creditsEl);
+            unhideChartElementFromAT(chart, creditsEl);
         }
     },
 

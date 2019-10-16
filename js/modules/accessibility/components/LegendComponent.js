@@ -16,9 +16,11 @@ var extend = U.extend;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import A11yUtilities from '../utilities.js';
 
-var stripHTMLTags = A11yUtilities.stripHTMLTagsFromString;
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
+    removeElement = HTMLUtilities.removeElement;
+
 
 function scrollLegendToItem(legend, itemIx) {
     var itemPage = legend.allItems[itemIx].pageIx,
@@ -151,7 +153,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     updateProxies: function () {
-        this.removeElement(this.legendProxyGroup);
+        removeElement(this.legendProxyGroup);
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();

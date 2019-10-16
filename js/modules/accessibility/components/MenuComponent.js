@@ -17,6 +17,12 @@ var extend = U.extend;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var removeElement = HTMLUtilities.removeElement;
+
 
 /**
  * Show the export menu and focus the first item (if exists).
@@ -182,12 +188,15 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuShown: function () {
-        var menu = this.chart.exportContextMenu;
+        var chart = this.chart,
+            menu = chart.exportContextMenu;
+
         if (menu) {
             this.addAccessibleContextMenuAttribs();
-            this.unhideElementFromScreenReaders(menu);
-            this.chart.highlightExportItem(0);
+            unhideChartElementFromAT(chart, menu);
+            chart.highlightExportItem(0);
         }
+
         this.setExportButtonExpandedState('true');
     },
 
@@ -213,7 +222,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             a11yOptions = chart.options.accessibility;
 
         // Always start with a clean slate
-        this.removeElement(this.exportProxyGroup);
+        removeElement(this.exportProxyGroup);
 
         // Set screen reader properties on export menu
         if (exportingShouldHaveA11y(chart)) {
