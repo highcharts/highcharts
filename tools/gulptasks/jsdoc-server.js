@@ -116,7 +116,7 @@ function jsDocServer() {
         http
             .createServer((request, response) => {
 
-                let p = (new URL(request.url)).pathname;
+                let p = request.url;
 
                 if (p === '/highcharts' || p === '/' || p === '') {
                     response302(response, '/highcharts/');
