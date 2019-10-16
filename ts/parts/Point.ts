@@ -127,11 +127,11 @@ declare global {
             drilldown?: string;
             events?: PointEventsOptionsObject;
             id?: string;
+            index?: number;
             labelrank?: number;
             legendIndex?: number;
             marker?: PointMarkerOptionsObject;
             name?: string;
-            originalIndex?: number;
             selected?: boolean;
             states?: PointStatesOptionsObject;
             x?: number;

@@ -180,7 +180,6 @@ declare global {
             ): void;
             public temporaryDisplay(revert?: boolean): void;
             public updateContainerScaling(): void;
-            public updateAllSeries(): void;
         }
         function chart(
             options: Options,
@@ -646,7 +645,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     },
 
     /**
-     * Internal function to set data for all series.
+     * Internal function to set data for all series with enabled sorting.
      *
      * @private
      * @function Highcharts.Chart#setSeriesData
@@ -661,26 +660,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.getSeriesOrderByLinks().forEach(function (
             series: Highcharts.Series
         ): void {
-            // We need to set data for series with sorting after init
+            // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
                 series.setData(series.options.data as any, false);
             }
-        });
-    },
-
-    /**
-     * Update every chart series without redraw.
-     *
-     * @private
-     * @function Highcharts.Series#updateAllSeries
-     *
-     * @return {void}
-     */
-    updateAllSeries: function (this: Highcharts.Chart): void {
-        this.getSeriesOrderByLinks().forEach(function (
-            series: Highcharts.Series
-        ): void {
-            series.update({}, false);
         });
     },
 

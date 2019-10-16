@@ -1300,8 +1300,10 @@ Series.prototype.alignDataLabel = function (
                 )
             ),
         alignAttr, // the final position;
-        justify = pick(options.overflow, (enabledDataSorting ?
-            'none' : 'justify')) === 'justify';
+        justify = pick(
+            options.overflow,
+            (enabledDataSorting ? 'none' : 'justify')
+        ) === 'justify';
 
     if (visible) {
 
@@ -1425,7 +1427,7 @@ Series.prototype.alignDataLabel = function (
 };
 
 /**
- * Apply a sorting animation for
+ * Apply a sorting animation for a data label.
  *
  * @private
  * @function Highcharts.Series#animateDataLabel
@@ -1472,18 +1474,29 @@ Series.prototype.animateDataLabel = function (
     dataLabel.startYPos = startYPos;
     dataLabel.placed = true;
 
+    if (!chart.hasRendered) {
+        return;
+    }
+
     if (!isInside) {
-        dataLabel.attr({ opacity: 1 })
-            .animate({ opacity: 0 }, undefined, dataLabel.hide);
+        dataLabel
+            .attr({ opacity: 1 })
+            .animate(
+                { opacity: 0 },
+                undefined,
+                dataLabel.hide
+            );
 
     } else if (dataLabel.visibility === 'hidden') {
         dataLabel.show();
-        dataLabel.attr({ opacity: 0 })
+        dataLabel
+            .attr({ opacity: 0 })
             .animate({ opacity: 1 });
     }
 
     if (isNew) {
-        dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos })
+        dataLabel
+            .attr({ x: dataLabel.startXPos, y: dataLabel.startYPos })
             .animate({ x: xPos, y: yPos });
     }
 };

@@ -201,7 +201,7 @@ declare global {
             ): this['options'];
             public sortData(
                 data: Array<PointOptionsType>
-            ): Array<PointOptionsType>;
+            ): Array<PointOptionsObject>;
             public toYData(point: Point): Array<number>;
             public translate(): void;
             public updateData(
@@ -217,7 +217,6 @@ declare global {
             enabled?: boolean;
             matchByName?: boolean;
             sortKey?: string;
-            order?: string;
         }
         interface KDNode {
             [side: string]: (KDNode|Point|undefined);
@@ -1197,6 +1196,54 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
 
         /**
+         * Options for the series data sorting.
+         *
+         * @type      {Highcharts.DataSortingOptionsObject}
+         * @since     8.0.0
+         * @product   highcharts highstock
+         * @apioption plotOptions.series.dataSorting
+         */
+
+        /**
+         * Enable or disable data sorting for the series.
+         *
+         * @sample {highcharts} highcharts/datasorting/animation/
+         *         Data sorting in scatter-3d
+         * @sample {highcharts} highcharts/datasorting/dependent-sorting/
+         *         Dependent series sorting
+         * @sample {highcharts} highcharts/datasorting/independent-sorting/
+         *         Independent series sorting
+         *
+         * @type      {boolean}
+         * @since     8.0.0
+         * @apioption plotOptions.series.dataSorting.enabled
+         */
+
+        /**
+         * Whether to allow matching points by name in a update. If this option
+         * is disabled, points will be matched by order.
+         *
+         * @sample {highcharts} highcharts/datasorting/match-by-name/
+         *         Enabled match by name
+         *
+         * @type      {boolean}
+         * @since     8.0.0
+         * @apioption plotOptions.series.dataSorting.matchByName
+         */
+
+        /**
+         * Determines what data value should be used to sort by.
+         *
+         * @sample {highcharts} highcharts/datasorting/sort-key/
+         *         Sort key as `z` value
+         *
+         * @type      {string}
+         * @since     8.0.0
+         * @default   y
+         * @apioption plotOptions.series.dataSorting.sortKey
+         */
+
+        /**
          * Enable or disable the mouse tracking for a specific series. This
          * includes point tooltips and click events on graphs and points. For
          * large datasets it improves performance.
@@ -1255,6 +1302,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * the value can be ":previous" to link to the previous series. When
          * two series are linked, only the first one appears in the legend.
          * Toggling the visibility of this also toggles the linked series.
+         *
+         * If master series uses data sorting and linked series does not have
+         * its own sorting definition, the linked series will be sorted in the
+         * same order as the master one.
          *
          * @sample {highcharts|highstock} highcharts/demo/arearange-line/
          *         Linked series
@@ -2835,6 +2886,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // point.
             chart.orderSeries(this.insert(chartSeries));
 
+            // Set options for series with sorting and set data later.
             if (options.dataSorting && options.dataSorting.enabled) {
                 series.setDataSortingOptions();
 
@@ -3107,7 +3159,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             });
 
             // To allow unsorted data for column series.
-            if (!options.pointRange) {
+            if (!defined(options.pointRange)) {
                 options.pointRange = 1;
             }
         },
@@ -3380,7 +3432,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (id) {
                 matchingPoint = this.chart.get(id);
 
-            } else if (this.linkedParent || (this.enabledDataSorting)) {
+            } else if (this.linkedParent || this.enabledDataSorting) {
                 matchKey = (dataSorting && dataSorting.matchByName) ?
                     'name' : 'index';
 
@@ -3453,6 +3505,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             animation?: (boolean|Highcharts.AnimationOptionsObject)
         ): boolean {
             var options = this.options,
+                dataSorting = options.dataSorting,
                 oldData = this.points,
                 pointsToAdd = [] as Array<Highcharts.PointOptionsType>,
                 hasUpdatedByKey,
@@ -3532,6 +3585,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     if (
                         !equalLength ||
                         i !== pointIndex ||
+                        (dataSorting && dataSorting.enabled) ||
                         this.hasDerivedData
                     ) {
                         hasUpdatedByKey = true;
@@ -3544,14 +3598,14 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 i = oldData.length;
                 while (i--) {
                     point = oldData[i];
-                    if (point && !point.touched) {
+                    if (point && !point.touched && point.remove) {
                         point.remove(false, animation);
                     }
                 }
 
             // If we did not find keys (ids or x-values), and the length is the
             // same, update one-to-one
-            } else if (equalLength) {
+            } else if (equalLength && !options.dataSorting) {
                 data.forEach(function (
                     point: Highcharts.PointOptionsType,
                     i: number
@@ -3803,12 +3857,12 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @function Highcharts.Series#sortData
          * @param {Array<Highcharts.PointOptionsType>} data
          *        Force data grouping.
-         * @return {Array<Highcharts.PointOptionsType>}
+         * @return {Array<Highcharts.PointOptionsObject>}
          */
         sortData: function (
             this: Highcharts.Series,
-            data: Array<Highcharts.PointOptionsType>
-        ): Array<Highcharts.PointOptionsType> {
+            data: Array<Highcharts.PointOptionsObject>
+        ): Array<Highcharts.PointOptionsObject> {
             var series = this,
                 options = series.options,
                 dataSorting = options.dataSorting as
@@ -3826,19 +3880,19 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 };
 
             data.forEach(function (
-                pointOptions: Highcharts.PointOptionsType,
+                pointOptions,
                 i: number
             ): void {
                 data[i] = getPointOptionsObject(series, pointOptions);
-                (data[i] as any).index = i;
+                data[i].index = i;
             }, this);
 
             // Sorting
-            sortedData = (data as any).concat().sort(function (
+            sortedData = data.concat().sort(function (
                 a: Highcharts.PointOptionsObject,
                 b: Highcharts.PointOptionsObject
             ): number {
-                return (b as any)[sortKey] ?
+                return isNumber((b as any)[sortKey]) ?
                     (b as any)[sortKey] - (a as any)[sortKey] :
                     -1;
             });
@@ -3847,9 +3901,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 point: Highcharts.PointOptionsObject,
                 i: number
             ): void {
-                if (!point.x) {
-                    point.x = i;
-                }
+                point.x = i;
             }, this);
 
             // Set the same x for linked series points if they don't have their
@@ -3859,9 +3911,14 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     linkedSeries: Highcharts.Series
                 ): void {
                     var options = linkedSeries.options,
-                        seriesData = (options.data as any);
+                        seriesData = options.data as
+                            Array<Highcharts.PointOptionsObject>;
 
-                    if (!options.dataSorting && seriesData) {
+                    if (
+                        (!options.dataSorting ||
+                        !options.dataSorting.enabled) &&
+                        seriesData
+                    ) {
                         seriesData.forEach(function (
                             pointOptions: Highcharts.PointOptionsType,
                             i: number

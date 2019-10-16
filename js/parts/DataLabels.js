@@ -878,8 +878,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             (alignTo && chart.isInsidePlot(plotX, inverted ?
                 alignTo.x + 1 :
                 alignTo.y + alignTo.height - 1, inverted))), alignAttr, // the final position;
-    justify = pick(options.overflow, (enabledDataSorting ?
-        'none' : 'justify')) === 'justify';
+    justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify';
     if (visible) {
         baseline = chart.renderer.fontMetrics(chart.styledMode ? undefined : options.style.fontSize, dataLabel).b;
         // The alignment box is a singular point
@@ -967,7 +966,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     }
 };
 /**
- * Apply a sorting animation for
+ * Apply a sorting animation for a data label.
  *
  * @private
  * @function Highcharts.Series#animateDataLabel
@@ -992,17 +991,23 @@ Series.prototype.animateDataLabel = function (point, dataLabel, isNew, isInside)
     dataLabel.startXPos = startXPos;
     dataLabel.startYPos = startYPos;
     dataLabel.placed = true;
+    if (!chart.hasRendered) {
+        return;
+    }
     if (!isInside) {
-        dataLabel.attr({ opacity: 1 })
+        dataLabel
+            .attr({ opacity: 1 })
             .animate({ opacity: 0 }, undefined, dataLabel.hide);
     }
     else if (dataLabel.visibility === 'hidden') {
         dataLabel.show();
-        dataLabel.attr({ opacity: 0 })
+        dataLabel
+            .attr({ opacity: 0 })
             .animate({ opacity: 1 });
     }
     if (isNew) {
-        dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos })
+        dataLabel
+            .attr({ x: dataLabel.startXPos, y: dataLabel.startYPos })
             .animate({ x: xPos, y: yPos });
     }
 };

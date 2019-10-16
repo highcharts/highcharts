@@ -1435,6 +1435,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         labels: {
 
             /**
+             * Enable or disable data sorting animation for the axis labels.
+             *
+             * @sample {highcharts} highcharts/datasorting/labels-animation/
+             *         Enabled labels sorting animation
+             *
+             * @type       {boolean}
+             * @apioption  xAxis.labels.animate
+             */
+
+            /**
              * What part of the string the given position is anchored to.
              * If `left`, the left side of the string is at the axis position.
              * Can be one of `"left"`, `"center"` or `"right"`. Defaults to
@@ -1659,6 +1669,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * overlap. To prevent this, set it to 1\. This usually only
              * happens on a category axis, and is often a sign that you have
              * chosen the wrong axis type.
+             *
+             * This option is set by default to 1 if data sorting is enabled
+             * and category axis is used.
              *
              * Read more at
              * [Axis docs](https://www.highcharts.com/docs/chart-concepts/axes)
@@ -6250,7 +6263,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // We need to set step to correctly perform sorting animation
-        if (labelOptions && labelOptions.animate) {
+        if (
+            labelOptions &&
+            labelOptions.animate &&
+            this.categories &&
+            !defined(labelOptions.step)
+        ) {
             labelOptions.step = 1;
         }
 
