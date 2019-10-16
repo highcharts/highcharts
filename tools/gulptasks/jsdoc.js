@@ -38,7 +38,7 @@ require('./jsdoc-clean');
 require('./jsdoc-classes');
 require('./jsdoc-namespace');
 require('./jsdoc-options');
-require('./jsdoc-search');
+require('./jsdoc-websearch');
 
 gulp.task(
     'jsdoc',
@@ -47,7 +47,7 @@ gulp.task(
         'jsdoc-classes',
         'jsdoc-namespace',
         'jsdoc-options',
-        'jsdoc-search',
+        'jsdoc-websearch',
         jsDoc
     )
 );
