@@ -700,6 +700,7 @@ const {
     isArray,
     isNumber,
     isString,
+    numberFormat,
     objectEach,
     pick,
     splat,
@@ -3619,7 +3620,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
             formatter: function (this: Highcharts.StackItemObject): string {
                 /* eslint-enable valid-jsdoc */
-                return H.numberFormat(this.total, -1);
+                return numberFormat(this.total, -1);
             },
 
             /**
@@ -4074,16 +4075,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormat(value / multi, -1) + numericSymbols[i];
                 }
             }
         }
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // add thousands separators
-                ret = H.numberFormat(value, -1);
+                ret = numberFormat(value, -1);
             } else { // small numbers
-                ret = H.numberFormat(value, -1, void 0, ''); // #2466
+                ret = numberFormat(value, -1, void 0, ''); // #2466
             }
         }
 

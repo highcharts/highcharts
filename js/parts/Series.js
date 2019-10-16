@@ -208,7 +208,7 @@ import H from './Globals.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -1830,7 +1830,7 @@ null,
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
         formatter: function () {
-            return this.y === null ? '' : H.numberFormat(this.y, -1);
+            return this.y === null ? '' : numberFormat(this.y, -1);
         },
         /**
          * For points with an extent, like columns or map areas, whether to

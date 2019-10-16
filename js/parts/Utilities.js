@@ -1332,7 +1332,7 @@ H.formatSingle = function (format, val, time) {
         decimals = format.match(decRegex);
         decimals = decimals ? decimals[1] : -1;
         if (val !== null) {
-            val = H.numberFormat(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
+            val = numberFormat(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
         }
     }
     else {
@@ -1711,7 +1711,7 @@ H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
+function numberFormat(number, decimals, decimalPoint, thousandsSep) {
     number = +number || 0;
     decimals = +decimals;
     var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length, strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits;
@@ -1775,7 +1775,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
         ret += 'e' + exponent[1];
     }
     return ret;
-};
+}
 /**
  * Easing definition
  *
@@ -2533,6 +2533,7 @@ var utils = {
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    numberFormat: numberFormat,
     objectEach: objectEach,
     pick: pick,
     pInt: pInt,

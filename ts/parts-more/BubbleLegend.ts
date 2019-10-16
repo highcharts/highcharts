@@ -148,6 +148,7 @@ const {
     arrayMax,
     arrayMin,
     isNumber,
+    numberFormat,
     objectEach,
     pick
 } = U;
@@ -155,11 +156,9 @@ const {
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
-
     addEvent = H.addEvent,
     wrap = H.wrap,
     color = H.color,
-    numberFormat = H.numberFormat,
     merge = H.merge,
     noop = H.noop,
     stableSort = H.stableSort,

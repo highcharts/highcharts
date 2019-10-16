@@ -62,6 +62,7 @@ const {
     extend,
     isNumber,
     isString,
+    numberFormat,
     pick,
     splat
 } = U;
@@ -1009,7 +1010,7 @@ Point.prototype.tooltipFormatter = function (
 
     pointFormat = pointFormat.replace(
         '{point.change}',
-        ((point.change as any) > 0 ? '+' : '') + H.numberFormat(
+        ((point.change as any) > 0 ? '+' : '') + numberFormat(
             point.change as any,
             pick(point.series.tooltipOptions.changeDecimals, 2)
         )

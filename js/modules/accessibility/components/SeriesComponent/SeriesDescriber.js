@@ -11,10 +11,10 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat;
 
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber,
+    numberFormat = U.numberFormat,
     pick = U.pick,
     defined = U.defined;
 
