@@ -513,6 +513,14 @@ module.exports = function (config) {
                         return;
                     }
 
+                    if (argv.reference && argv.skipExisting) {
+                        if (fs.existsSync(`./samples/${path}/reference.svg`)) {
+                            console.log(`Skipping reference creation of ${path} as the reference already exists.`);
+                            done(`QUnit.test('${path}', (assert) => assert.ok(true, 'Reference already exists.'));`);
+                            return;
+                        }
+                    }
+
                     let assertion;
 
                     // Set reference image

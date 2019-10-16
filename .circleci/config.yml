@@ -15,6 +15,12 @@ load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
 
+save_references_to_cache: &save_references_to_cache
+  - save_cache:
+      key: visual-test-reference-v2-master-{{ .Revision }}
+      paths:
+        - /home/circleci/repo/cached-test-results
+
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
       fingerprints:
@@ -122,15 +128,11 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
-  generate_release_reference_images:
+  upload_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
@@ -140,6 +142,24 @@ jobs:
           name: "Upload test results"
           command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
           when: always
+
+  generate_and_cache_reference_images:
+    <<: *defaults
+    description: Generate references and store them to Circle cache
+    steps:
+      - <<: *load_workspace
+      - run: sudo apt-get install -y rsync
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run:
+          name: Copy reference.svg files
+          command: |
+            mkdir -p ../cached-test-results &&
+            find samples -type d  -exec test -f '{}'/reference.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="reference.svg" --exclude="*" {} ../cached-test-results
+          when: always
+      - <<: *save_references_to_cache
       - <<: *persist_workspace
 
   visual_comparison_with_master:
@@ -155,11 +175,18 @@ jobs:
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
       - run: sudo apt-get install -y rsync
+      - run: mkdir -p ../cached-test-results
+      - restore_cache: # fetch reference images that are cached from master builds
+          keys:
+          - visual-test-reference-v2-master-
       - run: git fetch origin master:master && git checkout master && npm i && npx gulp scripts
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: rsync -Rri --include="*/" --include="reference.svg" --exclude="*" ../cached-test-results/./ ./
+      - run: find samples/ -name reference.svg
+      # we still need to generate references on master given that the cache restore has no hit
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --skip-existing --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --skip-existing --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --skip-existing --browsercount 2 --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --skip-existing --browsercount 2 --no-fail-on-empty-test-suite"
       - run: git checkout ${CIRCLE_BRANCH} && npm i && npx gulp scripts
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
@@ -173,7 +200,7 @@ jobs:
       - run:
           name: Save test results where both an reference.svg and candidate.svg exists
           command: |
-            mkdir ../visual-test-results &&
+            mkdir -p ../visual-test-results &&
             find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
           when: always
       - store_test_results:
@@ -195,10 +222,6 @@ jobs:
       - run:
           name: "Set application version env var"
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
           to: "samples/"
@@ -346,6 +369,16 @@ workflows:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
+      - generate_and_cache_reference_images:
+          requires:
+            - install_dependencies
+          filters:
+            branches:
+              only:
+              - master
+              - tools/ci-cache-references
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
       - visual_comparison_with_master:
           requires:
             - install_dependencies
@@ -353,9 +386,9 @@ workflows:
             branches:
               ignore: master
           context: highcharts-staging
-      - generate_release_reference_images:
+      - upload_release_reference_images:
           requires:
-            - install_dependencies
+            - generate_and_cache_reference_images
           filters:
             branches:
               ignore: /.*/
@@ -398,17 +431,19 @@ workflows:
           filters:
             branches:
               only:
-                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
       - checkout_code
       - install_dependencies:
           requires:
             - checkout_code
+      - generate_and_cache_reference_images:
+          requires:
+            - install_dependencies
       - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
           requires:
-            - install_dependencies
+            - generate_and_cache_reference_images
           context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
