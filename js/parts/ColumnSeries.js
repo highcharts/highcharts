@@ -44,7 +44,8 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg, pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
+var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+// pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
 /**
  * The column series type.
  *
@@ -473,12 +474,56 @@ seriesType('column', 'line',
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      * @return {Highcharts.ColumnMetricsObject}
      */
-    getColumnMetrics: function (pointX) {
-        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, reversedStacks = xAxis.options.reversedStacks, 
-        // Keep backward compatibility: reversed xAxis had reversed
-        // stacks
-        reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks), stackKey, stackGroups = {}, columnCount = 0, ignoreNulls = options.ignoreNulls;
+    // addPoint: function (this: Highcharts.ColumnSeries): void {
+    //     let series = this,
+    //         allSeries = series.chart.series,
+    //         point = {
+    //             x: 1
+    //         };
+    //     allSeries.forEach(function (
+    //         otherSeries: Highcharts.Series
+    //     ): void {
+    //         if (
+    //             (
+    //                 otherSeries.type === 'column' ||
+    //                 otherSeries.type === 'columnrange'
+    //             ) &&
+    //             otherSeries.type === series.type &&
+    //             otherSeries.xAxis === series.xAxis &&
+    //             (otherSeries as any).hasPointInX(point, otherSeries)
+    //         ) {
+    //             otherSeries.isDirty = true;
+    //         }
+    //     });
+    //     Series.prototype.addPoint.apply(this, arguments as any);
+    // },
+    hasPointInX: function (point, otherSeries) {
+        var xData = otherSeries.processedXData, yData = otherSeries.processedYData;
+        var hasPointInX = false;
+        xData.forEach(function (x) {
+            if (point && x === point.x &&
+                point.series.xAxis === otherSeries.xAxis) {
+                var index = void 0, pointY_1;
+                var indices = [];
+                index = xData.indexOf(x);
+                while (index !== -1) {
+                    indices.push(index);
+                    index = xData.indexOf(x, index + 1);
+                }
+                indices.forEach(function (index) {
+                    pointY_1 = yData[index];
+                    if (H.isArray(pointY_1) ?
+                        pointY_1[0] !== null : pointY_1 !== null) {
+                        hasPointInX = true;
+                        otherSeries.isDirty = true;
+                    }
+                });
+            }
+        });
+        return hasPointInX;
+    },
+    getColumnCount: function (point) {
+        var series = this, options = series.options, yAxis = series.yAxis, stackKey, stackGroups = {}, columnCount = 0, ignoreNulls = options.ignoreNulls;
         // Get the total number of column type series. This is called on
         // every series. Consider moving this logic to a chart.orderStacks()
         // function and call it on init, addSeries and removeSeries
@@ -487,24 +532,19 @@ seriesType('column', 'line',
         }
         else {
             series.chart.series.forEach(function (otherSeries) {
-                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, xData = otherSeries.processedXData, yData = otherSeries.processedYData, columnIndex, hasPointInX;
+                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex, hasPointInX;
                 if (otherSeries.type === series.type &&
                     (otherSeries.visible ||
                         !series.chart.options.chart
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
-                    yAxis.pos === otherYAxis.pos) { // #642, #2086
+                    yAxis.pos === otherYAxis.pos) {
                     if (ignoreNulls) {
-                        xData.forEach(function (x) {
-                            if (x === pointX) {
-                                var index = xData.indexOf(x), pointY = yData[index];
-                                if (H.isArray(pointY) ?
-                                    pointY[0] !== null : pointY !== null) {
-                                    hasPointInX = true;
-                                }
-                            }
-                        });
+                        hasPointInX =
+                            H.seriesTypes.column.prototype
+                                .hasPointInX.call(series, point, otherSeries);
                     }
+                    // #642, #2086
                     if (hasPointInX || !ignoreNulls) {
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
@@ -522,7 +562,14 @@ seriesType('column', 'line',
                 }
             });
         }
-        var categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
+        return columnCount;
+    },
+    getColumnMetrics: function (point) {
+        var series = this, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, 
+        // Keep backward compatibility: reversed xAxis had reversed
+        // stacks
+        reverseStacks = (xAxis.reversed && !reversedStacks) ||
+            (!xAxis.reversed && reversedStacks), columnCount = H.seriesTypes.column.prototype.getColumnCount.call(series, point), categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
             options.pointRange ||
             xAxis.closestPointRange ||
             xAxis.tickInterval ||
@@ -612,7 +659,7 @@ seriesType('column', 'line',
         // Record the new values
         series.points.forEach(function (point) {
             var metrics = defined(point.x) ?
-                series.getColumnMetrics(point.x) :
+                series.getColumnMetrics(point) :
                 series.getColumnMetrics(), seriesPointWidth = metrics.width, seriesXOffset = series.pointXOffset = metrics.offset, yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
@@ -665,9 +712,9 @@ seriesType('column', 'line',
             point.shapeType =
                 series.pointClass.prototype.shapeType || 'rect';
             point.shapeArgs = series.crispCol.apply(series, point.isNull ?
-                // #3169, drilldown from null must have a position to work
-                // from #6585, dataLabel should be placed on xAxis, not
-                // floating in the middle of the chart
+                // #3169, drilldown from null must have a position to
+                // work from #6585, dataLabel should be placed
+                // on xAxis, not floating in the middle of the chart
                 [barX, translatedThreshold, barW, 0] :
                 [barX, barY, barW, barH]);
         });
@@ -842,8 +889,8 @@ seriesType('column', 'line',
                     // updating (#5030, #7228)
                     step: function (val, fx) {
                         attr[translateProp] =
-                            translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
+                            translateStart + fx.pos *
+                                (yAxis.pos - translateStart);
                         series.group.attr(attr);
                     }
                 }));
@@ -872,18 +919,50 @@ seriesType('column', 'line',
         Series.prototype.remove.apply(series, arguments);
     }
 }, {
-    remove: function () {
-        this.series.chart.series.forEach(function (otherSeries) {
-            otherSeries.isDirty = true;
-        });
-        pointProto.remove.apply(this, arguments);
-    },
-    update: function () {
-        this.series.chart.series.forEach(function (otherSeries) {
-            otherSeries.isDirty = true;
-        });
-        pointProto.update.apply(this, arguments);
-    }
+// remove: function (this: Highcharts.Point): void {
+//     var point = this,
+//         pointSeries = point.series,
+//         allSeries = pointSeries.chart.series;
+//     allSeries.forEach(function (
+//         otherSeries: Highcharts.Series
+//     ): void {
+//         // consider mixed type series (column/columnrange)
+//         // what about pointSeries === otherSeries?
+//         if (
+//             (
+//                 otherSeries.type === 'column' ||
+//                 otherSeries.type === 'columnrange'
+//             ) &&
+//             otherSeries.type === pointSeries.type &&
+//             otherSeries.xAxis === pointSeries.xAxis &&
+//             (otherSeries as any).hasPointInX(point, otherSeries)
+//         ) {
+//             otherSeries.isDirty = true;
+//         }
+//     });
+//     pointProto.remove.apply(this, arguments as any);
+// },
+// update: function (this: Highcharts.Point): void {
+//     var point = this,
+//         pointSeries = point.series,
+//         allSeries = pointSeries.chart.series;
+//     allSeries.forEach(function (
+//         otherSeries: Highcharts.Series
+//     ): void {
+//         if (
+//             (
+//                 otherSeries.type === 'column' ||
+//                 otherSeries.type === 'columnrange'
+//             ) &&
+//             otherSeries.type === pointSeries.type &&
+//             otherSeries.xAxis === pointSeries.xAxis &&
+//             (otherSeries as any).hasPointInX(point, otherSeries)
+//         ) {
+//             otherSeries.isDirty = true;
+//         }
+//     });
+//     pointProto.update.apply(this, arguments as any);
+// }
 });
 /* eslint-enable valid-jsdoc */
 /**

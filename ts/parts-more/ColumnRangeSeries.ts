@@ -32,6 +32,8 @@ declare global {
             public data: Array<ColumnRangePoint>;
             public drawPoints: ColumnSeries['drawPoints'];
             public drawTracker: ColumnSeries['drawTracker'];
+            public hasPointInX: ColumnSeries['hasPointInX'];
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public options: ColumnRangeSeriesOptions;
             public pointAttribs: ColumnSeries['pointAttribs'];
@@ -180,7 +182,7 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
                 height += heightDifference;
                 y -= heightDifference / 2;
 
-            // Adjust for negative ranges or reversed Y axis (#1457)
+                // Adjust for negative ranges or reversed Y axis (#1457)
             } else if (height < 0) {
                 height *= -1;
                 y -= height;
@@ -236,6 +238,19 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.drawTracker.apply(this, arguments as any);
     },
+    hasPointInX: function (
+        this: Highcharts.ColumnRangeSeries,
+        point: Highcharts.Point,
+        otherSeries: Highcharts.Series
+    ): boolean {
+        return colProto.hasPointInX.apply(this, arguments as any);
+    },
+    getColumnCount: function (
+        this: Highcharts.ColumnRangeSeries,
+        point: Highcharts.Point
+    ): number {
+        return colProto.getColumnCount.apply(this, arguments as any);
+    },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.ColumnMetricsObject {
@@ -259,7 +274,9 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
         return colProto.translate3dShapes.apply(this, arguments as any);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: colProto.pointClass.prototype.setState,
+    remove: colProto.pointClass.prototype.remove,
+    update: colProto.pointClass.prototype.update
 });
 
 

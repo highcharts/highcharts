@@ -46,18 +46,18 @@ declare global {
             pointXOffset?: number;
         }
         interface SeriesStatesHoverOptionsObject {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: (ColorString | GradientColorObject | PatternObject);
             brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: (ColorString | GradientColorObject | PatternObject);
             dashStyle?: DashStyleValue;
         }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
         }
         interface SeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: (ColorString | GradientColorObject | PatternObject);
             borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
+            color?: (ColorString | GradientColorObject | PatternObject);
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -88,7 +88,12 @@ declare global {
                 w: number,
                 h: number
             ): BBoxObject;
-            public getColumnMetrics(pointX?: number): ColumnMetricsObject;
+            public hasPointInX(
+                point: Point,
+                otherSeries: Highcharts.Series
+            ): boolean;
+            public getColumnCount(point?: Point): number;
+            public getColumnMetrics(point?: Point): ColumnMetricsObject;
             public remove(): void;
         }
     }
@@ -100,30 +105,30 @@ declare global {
  * @private
  * @interface Highcharts.ColumnMetricsObject
  *//**
- * Width of the columns.
- * @name Highcharts.ColumnMetricsObject#width
- * @type {number}
- *//**
- * Offset of the columns.
- * @name Highcharts.ColumnMetricsObject#offset
- * @type {number}
- */
+* Width of the columns.
+* @name Highcharts.ColumnMetricsObject#width
+* @type {number}
+*//**
+* Offset of the columns.
+* @name Highcharts.ColumnMetricsObject#offset
+* @type {number}
+*/
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
- * A name for the dash style to use for the column or bar. Overrides dashStyle
- * on the series. In styled mode, the stroke dash-array can be set with the same
- * classes as listed under {@link Highcharts.PointOptionsObject#color}.
- * @name Highcharts.PointOptionsObject#dashStyle
- * @type {Highcharts.DashStyleValue|undefined}
- *//**
+* A name for the dash style to use for the column or bar. Overrides dashStyle
+* on the series. In styled mode, the stroke dash-array can be set with the same
+* classes as listed under {@link Highcharts.PointOptionsObject#color}.
+* @name Highcharts.PointOptionsObject#dashStyle
+* @type {Highcharts.DashStyleValue|undefined}
+*//**
 
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
- * @name Highcharts.PointOptionsObject#pointWidth
- * @type {number|undefined}
- */
+* A pixel value specifying a fixed width for the column or bar. Overrides
+* pointWidth on the series.
+* @name Highcharts.PointOptionsObject#pointWidth
+* @type {number|undefined}
+*/
 
 import U from './Utilities.js';
 const {
@@ -145,8 +150,8 @@ var animObject = H.animObject,
     noop = H.noop,
     Series = H.Series,
     seriesType = H.seriesType,
-    svg = H.svg,
-    pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
+    svg = H.svg;
+// pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
 
 /**
  * The column series type.
@@ -619,20 +624,73 @@ seriesType<Highcharts.ColumnSeries>(
          * @function Highcharts.seriesTypes.column#getColumnMetrics
          * @return {Highcharts.ColumnMetricsObject}
          */
-        getColumnMetrics: function (
-            this: Highcharts.ColumnSeries,
-            pointX: number
-        ): Highcharts.ColumnMetricsObject {
+        // addPoint: function (this: Highcharts.ColumnSeries): void {
+        //     let series = this,
+        //         allSeries = series.chart.series,
+        //         point = {
+        //             x: 1
+        //         };
 
+        //     allSeries.forEach(function (
+        //         otherSeries: Highcharts.Series
+        //     ): void {
+        //         if (
+        //             (
+        //                 otherSeries.type === 'column' ||
+        //                 otherSeries.type === 'columnrange'
+        //             ) &&
+        //             otherSeries.type === series.type &&
+        //             otherSeries.xAxis === series.xAxis &&
+        //             (otherSeries as any).hasPointInX(point, otherSeries)
+        //         ) {
+        //             otherSeries.isDirty = true;
+        //         }
+        //     });
+
+        //     Series.prototype.addPoint.apply(this, arguments as any);
+        // },
+        hasPointInX: function (
+            this: Highcharts.ColumnSeries,
+            point,
+            otherSeries
+        ): boolean {
+            const xData = otherSeries.processedXData,
+                yData = otherSeries.processedYData;
+            let hasPointInX = false;
+
+            xData.forEach(function (x): void {
+                if (
+                    point && x === point.x &&
+                    point.series.xAxis === otherSeries.xAxis
+                ) {
+                    let index,
+                        pointY;
+                    const indices = [];
+
+                    index = xData.indexOf(x);
+                    while (index !== -1) {
+                        indices.push(index);
+                        index = xData.indexOf(x, index + 1);
+                    }
+                    indices.forEach(function (index): void {
+                        pointY = yData[index];
+                        if (H.isArray(pointY) ?
+                            pointY[0] !== null : pointY !== null) {
+                            hasPointInX = true;
+                            otherSeries.isDirty = true;
+                        }
+                    });
+                }
+            });
+            return hasPointInX;
+        },
+        getColumnCount: function (
+            this: Highcharts.ColumnSeries,
+            point: Highcharts.Point
+        ): number {
             var series = this,
                 options = series.options,
-                xAxis = series.xAxis,
                 yAxis = series.yAxis,
-                reversedStacks = xAxis.options.reversedStacks,
-                // Keep backward compatibility: reversed xAxis had reversed
-                // stacks
-                reverseStacks = (xAxis.reversed && !reversedStacks) ||
-                (!xAxis.reversed && reversedStacks),
                 stackKey,
                 stackGroups = {} as Highcharts.Dictionary<number>,
                 columnCount = 0,
@@ -649,32 +707,26 @@ seriesType<Highcharts.ColumnSeries>(
                 ): void {
                     var otherYAxis = otherSeries.yAxis,
                         otherOptions = otherSeries.options,
-                        xData = otherSeries.processedXData,
-                        yData = otherSeries.processedYData,
                         columnIndex,
                         hasPointInX;
 
                     if (otherSeries.type === series.type &&
                         (otherSeries.visible ||
-                        !(
-                            series.chart.options.chart as any)
-                            .ignoreHiddenSeries
+                            !(
+                                series.chart.options.chart as any)
+                                .ignoreHiddenSeries
                         ) &&
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
-                    ) { // #642, #2086
+                    ) {
                         if (ignoreNulls) {
-                            xData.forEach(function (x): void {
-                                if (x === pointX) {
-                                    const index = xData.indexOf(x),
-                                        pointY = yData[index];
-                                    if (H.isArray(pointY) ?
-                                        pointY[0] !== null : pointY !== null) {
-                                        hasPointInX = true;
-                                    }
-                                }
-                            });
+                            hasPointInX =
+                                H.seriesTypes.column.prototype
+                                    .hasPointInX.call(
+                                        series, point, otherSeries
+                                    );
                         }
+                        // #642, #2086
                         if (hasPointInX || !ignoreNulls) {
                             if (otherOptions.stacking) {
                                 stackKey = otherSeries.stackKey;
@@ -692,13 +744,31 @@ seriesType<Highcharts.ColumnSeries>(
                 });
             }
 
-            var categoryWidth = Math.min(
+            return columnCount;
+        },
+        getColumnMetrics: function (
+            this: Highcharts.ColumnSeries,
+            point
+        ): Highcharts.ColumnMetricsObject {
+            var series = this,
+                options = series.options,
+                xAxis = series.xAxis,
+                reversedStacks = xAxis.options.reversedStacks,
+                // Keep backward compatibility: reversed xAxis had reversed
+                // stacks
+                reverseStacks = (xAxis.reversed && !reversedStacks) ||
+                    (!xAxis.reversed && reversedStacks),
+                columnCount =
+                    H.seriesTypes.column.prototype.getColumnCount.call(
+                        series, point
+                    ),
+                categoryWidth = Math.min(
                     Math.abs(xAxis.transA) * (
                         xAxis.ordinalSlope ||
-                    options.pointRange ||
-                    xAxis.closestPointRange ||
-                    xAxis.tickInterval ||
-                    1
+                        options.pointRange ||
+                        xAxis.closestPointRange ||
+                        xAxis.tickInterval ||
+                        1
                     ), // #2610
                     xAxis.len // #1535
                 ),
@@ -718,12 +788,12 @@ seriesType<Highcharts.ColumnSeries>(
                 // #1251, #3737
                 colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
                 pointXOffset =
-                pointPadding +
-                (
-                    groupPadding +
-                    colIndex * pointOffsetWidth -
-                    (categoryWidth / 2)
-                ) * (reverseStacks ? -1 : 1);
+                    pointPadding +
+                    (
+                        groupPadding +
+                        colIndex * pointOffsetWidth -
+                        (categoryWidth / 2)
+                    ) * (reverseStacks ? -1 : 1);
 
             // Save it for reading in linked series (Error bars particularly)
             series.columnMetrics = {
@@ -841,7 +911,7 @@ seriesType<Highcharts.ColumnSeries>(
                 point: Highcharts.ColumnPoint
             ): void {
                 var metrics = defined(point.x) ?
-                        series.getColumnMetrics(point.x) :
+                        series.getColumnMetrics(point) :
                         series.getColumnMetrics(),
                     seriesPointWidth = metrics.width,
                     seriesXOffset = series.pointXOffset = metrics.offset,
@@ -866,7 +936,7 @@ seriesType<Highcharts.ColumnSeries>(
                 if (minPointLength && Math.abs(barH) < minPointLength) {
                     barH = minPointLength;
                     up = (!yAxis.reversed && !point.negative) ||
-                    (yAxis.reversed && point.negative);
+                        (yAxis.reversed && point.negative);
 
                     // Reverse zeros if there's no positive value in the series
                     // in visible range (#7046)
@@ -915,7 +985,7 @@ seriesType<Highcharts.ColumnSeries>(
                         series.xAxis.len - barX - barW / 2, barH
                     ] :
                     [barX + barW / 2, plotY + (yAxis.pos as any) -
-                    chart.plotTop, barH];
+                        chart.plotTop, barH];
 
                 // Register shape type and arguments to be used in drawPoints
                 // Allow shapeType defined on pointClass level
@@ -924,9 +994,9 @@ seriesType<Highcharts.ColumnSeries>(
                 point.shapeArgs = series.crispCol.apply(
                     series,
                     point.isNull ?
-                    // #3169, drilldown from null must have a position to work
-                    // from #6585, dataLabel should be placed on xAxis, not
-                    // floating in the middle of the chart
+                        // #3169, drilldown from null must have a position to
+                        // work from #6585, dataLabel should be placed
+                        // on xAxis, not floating in the middle of the chart
                         [barX, translatedThreshold as any, barW, 0] :
                         [barX, barY, barW, barH]
                 );
@@ -1186,8 +1256,8 @@ seriesType<Highcharts.ColumnSeries>(
                             step: function (val: any, fx: any): void {
 
                                 attr[translateProp] =
-                            translateStart +
-                            fx.pos * ((yAxis.pos as any) - translateStart);
+                                    translateStart + fx.pos *
+                                    ((yAxis.pos as any) - translateStart);
                                 series.group.attr(attr);
                             }
                         })
@@ -1224,24 +1294,54 @@ seriesType<Highcharts.ColumnSeries>(
             Series.prototype.remove.apply(series, arguments as any);
         }
     }, {
-        remove: function (this: Highcharts.Point): void {
-            this.series.chart.series.forEach(function (
-                otherSeries: Highcharts.Series
-            ): void {
-                otherSeries.isDirty = true;
-            });
+        // remove: function (this: Highcharts.Point): void {
+        //     var point = this,
+        //         pointSeries = point.series,
+        //         allSeries = pointSeries.chart.series;
 
-            pointProto.remove.apply(this, arguments as any);
-        },
-        update: function (this: Highcharts.Point): void {
-            this.series.chart.series.forEach(function (
-                otherSeries: Highcharts.Series
-            ): void {
-                otherSeries.isDirty = true;
-            });
+        //     allSeries.forEach(function (
+        //         otherSeries: Highcharts.Series
+        //     ): void {
+        //         // consider mixed type series (column/columnrange)
+        //         // what about pointSeries === otherSeries?
+        //         if (
+        //             (
+        //                 otherSeries.type === 'column' ||
+        //                 otherSeries.type === 'columnrange'
+        //             ) &&
+        //             otherSeries.type === pointSeries.type &&
+        //             otherSeries.xAxis === pointSeries.xAxis &&
+        //             (otherSeries as any).hasPointInX(point, otherSeries)
+        //         ) {
+        //             otherSeries.isDirty = true;
+        //         }
+        //     });
 
-            pointProto.update.apply(this, arguments as any);
-        }
+        //     pointProto.remove.apply(this, arguments as any);
+        // },
+        // update: function (this: Highcharts.Point): void {
+        //     var point = this,
+        //         pointSeries = point.series,
+        //         allSeries = pointSeries.chart.series;
+
+        //     allSeries.forEach(function (
+        //         otherSeries: Highcharts.Series
+        //     ): void {
+        //         if (
+        //             (
+        //                 otherSeries.type === 'column' ||
+        //                 otherSeries.type === 'columnrange'
+        //             ) &&
+        //             otherSeries.type === pointSeries.type &&
+        //             otherSeries.xAxis === pointSeries.xAxis &&
+        //             (otherSeries as any).hasPointInX(point, otherSeries)
+        //         ) {
+        //             otherSeries.isDirty = true;
+        //         }
+        //     });
+
+        //     pointProto.update.apply(this, arguments as any);
+        // }
     }
 );
 

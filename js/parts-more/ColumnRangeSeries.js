@@ -135,6 +135,12 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     drawTracker: function () {
         return colProto.drawTracker.apply(this, arguments);
     },
+    hasPointInX: function (point, otherSeries) {
+        return colProto.hasPointInX.apply(this, arguments);
+    },
+    getColumnCount: function (point) {
+        return colProto.getColumnCount.apply(this, arguments);
+    },
     getColumnMetrics: function () {
         return colProto.getColumnMetrics.apply(this, arguments);
     },
@@ -154,7 +160,9 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
         return colProto.translate3dShapes.apply(this, arguments);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: colProto.pointClass.prototype.setState,
+    remove: colProto.pointClass.prototype.remove,
+    update: colProto.pointClass.prototype.update
 });
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
