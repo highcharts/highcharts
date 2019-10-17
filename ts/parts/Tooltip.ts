@@ -1188,58 +1188,69 @@ H.Tooltip.prototype = {
         labels: (string|Array<(boolean|string)>),
         points: Array<Highcharts.Point>
     ): void {
-        var tooltip = this,
-            boxes = [] as Array<Highcharts.Dictionary<any>>,
-            chart = this.chart,
-            ren = chart.renderer,
-            rightAligned = true,
-            options = this.options,
-            headerHeight = 0,
-            headerTop: boolean,
-            tooltipLabel = this.getLabel(),
-            distributionBoxTop = chart.plotTop;
+        const tooltip = this;
+        const {
+            chart: {
+                chartWidth,
+                marginRight = 0,
+                plotHeight,
+                plotLeft,
+                plotTop,
+                pointer,
+                renderer: ren,
+                scrollablePixelsX = 0,
+                styledMode,
+                xAxis: [{ opposite }]
+            },
+            distance,
+            options,
+            options: {
+                positioner
+            }
+        } = tooltip;
+        const tooltipLabel = tooltip.getLabel();
+        const headerTop = Boolean(opposite);
+        const boxes: Array<Highcharts.Dictionary<any>> = [];
 
-        const positioner = options.positioner;
+        let distributionBoxTop = plotTop;
+        let rightAligned = true;
+        let headerHeight = 0;
 
         // Graceful degradation for legacy formatters
         if (isString(labels)) {
-            labels = [false, labels as any];
+            labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
-        (labels as any).slice(0, points.length + 1).forEach(function (
+        labels.slice(0, points.length + 1).forEach(function (
             str: (boolean|string),
             i: number
         ): void {
             if (str !== false && str !== '') {
-                var point = points[i - 1] ||
-                    {
-                        // Item 0 is the header. Instead of this, we could also
-                        // use the crosshair label
-                        isHeader: true,
-                        plotX: points[0].plotX,
-                        plotY: chart.plotHeight
-                    },
-                    owner = point.series || tooltip,
-                    tt = owner.tt,
-                    series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick(
-                        point.colorIndex, series.colorIndex, 'none'
-                    ),
-                    target,
-                    x,
-                    bBox,
-                    boxWidth,
-                    attribs: Highcharts.SVGAttributes;
+                const point = points[i - 1] || {
+                    // Item 0 is the header. Instead of this, we could also
+                    // use the crosshair label
+                    isHeader: true,
+                    plotX: points[0].plotX,
+                    plotY: plotHeight
+                };
+                const series = point.series || {};
+                const owner = point.series || tooltip;
+                const colorClass = 'highcharts-color-' + pick(
+                    point.colorIndex, series.colorIndex, 'none'
+                );
+                const { plotX = 0, plotY = 0 } = point;
+                const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip referance on the series
+                let tt = owner.tt;
                 if (!tt) {
 
-                    attribs = {
+                    const attribs: Highcharts.SVGAttributes = {
                         padding: options.padding,
                         r: options.borderRadius
                     };
 
-                    if (!chart.styledMode) {
+                    if (!styledMode) {
                         attribs.fill = options.backgroundColor;
                         attribs['stroke-width'] = options.borderWidth;
                     }
@@ -1249,18 +1260,14 @@ H.Tooltip.prototype = {
                             null as any,
                             null as any,
                             null as any,
-                            (
-                                (point as any).isHeader ?
-                                    options.headerShape :
-                                    options.shape
-                            ) || 'callout',
+                            (options[isHeader ? 'headerShape' : 'shape']) ||
+                            'callout',
                             null as any,
                             null as any,
                             options.useHTML
                         )
                         .addClass(
-                            (point as any).isHeader ?
-                                'highcharts-tooltip-header ' : '' +
+                            isHeader ? 'highcharts-tooltip-header ' : '' +
                             'highcharts-tooltip-box ' +
                             colorClass
                         )
@@ -1272,7 +1279,7 @@ H.Tooltip.prototype = {
                 tt.attr({
                     text: str
                 });
-                if (!chart.styledMode) {
+                if (!styledMode) {
                     tt.css(options.style as any)
                         .shadow(options.shadow)
                         .attr({
@@ -1287,35 +1294,32 @@ H.Tooltip.prototype = {
 
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
-                bBox = tt.getBBox();
-                boxWidth = bBox.width + tt.strokeWidth();
-                if ((point as any).isHeader) {
+                const bBox = tt.getBBox();
+                const boxWidth = bBox.width + tt.strokeWidth();
+                let x: number;
+                if (isHeader) {
                     headerHeight = bBox.height;
-                    if (chart.xAxis[0].opposite) {
-                        headerTop = true;
+                    if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
                     x = Math.max(
                         0, // No left overflow
                         Math.min(
-                            (point.plotX as any) +
-                            chart.plotLeft -
-                            boxWidth / 2,
+                            plotX + plotLeft - boxWidth / 2,
                             // No right overflow (#5794)
-                            (chart.chartWidth as any) +
+                            chartWidth +
                             (
                                 // Scrollable plot area
-                                chart.scrollablePixelsX ?
-                                    chart.scrollablePixelsX -
-                                        (chart.marginRight as any) :
+                                scrollablePixelsX ?
+                                    scrollablePixelsX - marginRight :
                                     0
                             ) -
                             boxWidth
                         )
                     );
                 } else {
-                    x = (point.plotX as any) + chart.plotLeft -
-                        pick(options.distance, 16) - boxWidth;
+                    x = plotX + plotLeft - pick(options.distance, 16) -
+                        boxWidth;
                 }
 
 
@@ -1325,21 +1329,21 @@ H.Tooltip.prototype = {
                 }
 
                 // Prepare for distribution
-                if ((point as any).isHeader) {
+                let target: number;
+                if (isHeader) {
                     target = headerTop ?
                         -headerHeight :
-                        chart.plotHeight + headerHeight;
+                        plotHeight + headerHeight;
                 } else {
-                    const yAxis = (series.yAxis as any);
+                    const yAxis = series.yAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(
-                        0,
-                        Math.min((point.plotY || 0), yAxis.len)
+                        0, Math.min(plotY, yAxis.len)
                     ); // Limit target position to within yAxis
                 }
                 const box: Highcharts.Dictionary<any> = {
                     target: target,
-                    rank: (point as any).isHeader ? 1 : 0,
-                    size: (owner.tt as any).getBBox().height + 1,
+                    rank: isHeader ? 1 : 0,
+                    size: tt.getBBox().height + 1,
                     point: point as any,
                     x: x,
                     tt: tt
@@ -1363,12 +1367,12 @@ H.Tooltip.prototype = {
         });
 
         // Clean previous run (for missing points)
-        this.cleanSplit();
+        tooltip.cleanSplit();
 
         // Distribute and put in place
-        (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
+        H.distribute(boxes as any, plotHeight + headerHeight, void 0 as any);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-            var point = box.point,
+            const point = box.point,
                 series = point.series,
                 yAxis = series && series.yAxis;
 
@@ -1378,13 +1382,13 @@ H.Tooltip.prototype = {
                     'hidden' : 'inherit',
                 x: (rightAligned || point.isHeader || positioner ?
                     box.x :
-                    point.plotX + chart.plotLeft + tooltip.distance),
+                    point.plotX + plotLeft + distance),
                 y: box.pos + distributionBoxTop,
                 anchorX: point.isHeader ?
-                    point.plotX + chart.plotLeft :
+                    point.plotX + plotLeft :
                     point.plotX + series.xAxis.pos,
                 anchorY: point.isHeader ?
-                    chart.plotTop + chart.plotHeight / 2 :
+                    plotTop + plotHeight / 2 :
                     yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
             });
         });
@@ -1401,7 +1405,7 @@ H.Tooltip.prototype = {
         } = tooltip;
         if (outside && container && renderer) {
             // Position the tooltip container to the chart container
-            const chartPosition = chart.pointer.getChartPosition();
+            const chartPosition = pointer.getChartPosition();
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
 
