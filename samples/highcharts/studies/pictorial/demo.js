@@ -2,6 +2,9 @@
  * Experimental pictorial series type
  *
  * To do
+ * - Consider simply clipping a column stack.
+ * - If scaling is problematic, consider setting the path in a callback where
+ *   the width and the height are supplied.
  * - Make the patterns stretch to the rect or the stack box. Check out
  *   patternContentUnits: 'objectBoundingBox'. For stack box math,
  *   see ColumnPyramidSeries.ts.
