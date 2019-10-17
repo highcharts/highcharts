@@ -238,6 +238,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointStart, softThreshold, stacking, step, threshold,
      *               turboThreshold, zoneAxis, zones
+     * @requires     modules/timeline.js
      * @optionparent plotOptions.timeline
      */
     {
@@ -921,6 +922,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
  *            zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/timeline.js
  * @apioption series.timeline
  */
 

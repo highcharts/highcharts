@@ -1540,6 +1540,7 @@ H.defaultOptions = {
          * @default   false
          * @since     2.3.0
          * @product   highcharts
+         * @requires  highcharts-more
          * @apioption chart.polar
          */
 

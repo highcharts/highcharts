@@ -32,6 +32,7 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  *
  * @extends      plotOptions.scatter
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
 seriesType('bubble', 'scatter', {
@@ -491,6 +492,7 @@ Axis.prototype.beforePadding = function () {
  * @extends   series,plotOptions.bubble
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.bubble
  */
 /**

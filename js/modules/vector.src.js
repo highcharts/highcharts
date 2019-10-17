@@ -37,6 +37,7 @@ seriesType('vector', 'scatter'
  *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
  *               dataGrouping, linecap, shadow, stacking, step, jitter
  * @product      highcharts highstock
+ * @requires     modules/vector.js
  * @optionparent plotOptions.vector
  */
 , {
@@ -256,6 +257,7 @@ seriesType('vector', 'scatter'
  * @extends   series,plotOptions.vector
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
+ * @requires  modules/vector.js
  * @apioption series.vector
  */
 /**

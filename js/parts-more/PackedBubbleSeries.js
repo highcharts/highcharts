@@ -279,6 +279,7 @@ seriesType('packedbubble', 'bubble',
  *               zMax, zMin
  * @product      highcharts
  * @since        7.0.0
+ * @requires     highcharts-more
  * @optionparent plotOptions.packedbubble
  */
 {
@@ -1217,6 +1218,7 @@ addEvent(Chart, 'beforeRedraw', function () {
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser,dataURL,stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.packedbubble
  */
 /**

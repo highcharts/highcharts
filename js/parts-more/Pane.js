@@ -130,6 +130,7 @@ extend(Pane.prototype, {
      *
      * @since        2.3.0
      * @product      highcharts
+     * @requires     highcharts-more
      * @optionparent pane
      */
     defaultOptions: {

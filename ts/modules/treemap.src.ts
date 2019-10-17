@@ -374,6 +374,7 @@ seriesType<Highcharts.TreemapSeries>(
      * @extends      plotOptions.scatter
      * @excluding    dragDrop, marker, jitter
      * @product      highcharts
+     * @requires     modules/treemap.js
      * @optionparent plotOptions.treemap
      */
     , {
@@ -2275,6 +2276,7 @@ seriesType<Highcharts.TreemapSeries>(
  * @extends   series,plotOptions.treemap
  * @excluding dataParser, dataURL, stack
  * @product   highcharts
+ * @requires  modules/treemap.js
  * @apioption series.treemap
  */
 

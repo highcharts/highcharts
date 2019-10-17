@@ -15,51 +15,57 @@ var addEvent = H.addEvent, merge = H.merge;
 /**
  * The line marks the last price from visible range of points.
  *
- * @product   highstock
  * @sample {highstock} stock/indicators/last-visible-price
  *         Last visible price
- * @apioption   plotOptions.series.lastVisiblePrice
+ *
+ * @product   highstock
+ * @requires  modules/stock
+ * @requires  modules/price-indicator
+ * @apioption plotOptions.series.lastVisiblePrice
  */
 /**
  * Enable or disable the indicator.
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastVisiblePrice.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastVisiblePrice.enabled
  */
 /**
  * Enable or disable the label.
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastVisiblePrice.label.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  *
  */
 /**
  * The line marks the last price from all points.
  *
- * @product   highstock
  * @sample {highstock} stock/indicators/last-price
  *         Last price
- * @apioption   plotOptions.series.lastPrice
+ *
+ * @product   highstock
+ * @requires  modules/stock
+ * @requires  modules/price-indicator
+ * @apioption plotOptions.series.lastPrice
  */
 /**
  * Enable or disable the indicator.
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastPrice.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastPrice.enabled
  */
 /**
  * The color of the line of last price.
  *
  * @type      {string}
  * @product   highstock
- * @default red
- * @apioption   plotOptions.series.lastPrice.color
+ * @default   red
+ * @apioption plotOptions.series.lastPrice.color
  *
  */
 /* eslint-disable no-invalid-this */

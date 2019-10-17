@@ -60,6 +60,7 @@ seriesType('treemap', 'scatter'
  * @extends      plotOptions.scatter
  * @excluding    dragDrop, marker, jitter
  * @product      highcharts
+ * @requires     modules/treemap.js
  * @optionparent plotOptions.treemap
  */
 , {

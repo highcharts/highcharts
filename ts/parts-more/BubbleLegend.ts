@@ -177,6 +177,7 @@ setOptions({ // Set default bubble legend options
          *
          * @since        7.0.0
          * @product      highcharts highstock highmaps
+         * @requires     highcharts-more
          * @optionparent legend.bubbleLegend
          */
         bubbleLegend: {

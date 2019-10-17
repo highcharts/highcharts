@@ -34,6 +34,7 @@ var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 seriesType('boxplot', 'column', {
@@ -423,6 +424,7 @@ seriesType('boxplot', 'column', {
  * @extends   series,plotOptions.boxplot
  * @excluding dataParser, dataURL, marker, stack, stacking, states
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.boxplot
  */
 /**

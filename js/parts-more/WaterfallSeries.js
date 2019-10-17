@@ -91,6 +91,7 @@ Axis.prototype.renderWaterfallStackTotals = function () {
  *
  * @extends      plotOptions.column
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
  */
 seriesType('waterfall', 'column', {
@@ -615,6 +616,7 @@ seriesType('waterfall', 'column', {
  * @extends   series,plotOptions.waterfall
  * @excluding dataParser, dataURL
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.waterfall
  */
 /**

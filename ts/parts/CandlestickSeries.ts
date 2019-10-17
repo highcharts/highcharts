@@ -62,6 +62,7 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * @extends      plotOptions.ohlc
  * @excluding    borderColor,borderRadius,borderWidth
  * @product      highstock
+ * @requires     modules/stock.js
  * @optionparent plotOptions.candlestick
  */
 var candlestickOptions = {
@@ -361,6 +362,7 @@ seriesType<Highcharts.CandlestickSeries>(
  * @extends   series,plotOptions.candlestick
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  modules/stock.js
  * @apioption series.candlestick
  */
 

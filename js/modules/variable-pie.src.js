@@ -41,6 +41,7 @@ seriesType('variablepie', 'pie',
  * @excluding    dragDrop
  * @since        6.0.0
  * @product      highcharts
+ * @requires     modules/variable-pie.js
  * @optionparent plotOptions.variablepie
  */
 {
@@ -318,6 +319,7 @@ seriesType('variablepie', 'pie',
  * @extends   series,plotOptions.variablepie
  * @excluding dataParser, dataURL, stack, xAxis, yAxis
  * @product   highcharts
+ * @requires  modules/variable-pie.js
  * @apioption series.variablepie
  */
 /**

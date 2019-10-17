@@ -84,7 +84,6 @@ var noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
- * Requires `highcharts-more.js`.
  *
  * @sample {highcharts} highcharts/demo/arearange/
  *         Area range chart
@@ -94,6 +93,7 @@ var noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H
  * @extends      plotOptions.area
  * @product      highcharts highstock
  * @excluding    stack, stacking
+ * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
@@ -581,6 +581,7 @@ seriesType('arearange', 'area', {
  * @extends   series,plotOptions.arearange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.arearange
  */
 /**
