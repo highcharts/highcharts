@@ -38,10 +38,10 @@ import H from './Globals.js';
  *         Parsed JavaScript time value.
  */
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, fireEvent = H.fireEvent, merge = H.merge;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, fireEvent = H.fireEvent, merge = H.merge;
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
  * ************************************************************************** */

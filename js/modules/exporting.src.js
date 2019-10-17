@@ -78,12 +78,12 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
+var discardElement = U.discardElement, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, discardElement = H.discardElement, css = H.css, merge = H.merge, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, css = H.css, merge = H.merge, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -1247,7 +1247,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // restore all body content
                 [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
                 chart.isPrinting = false;

@@ -1525,7 +1525,7 @@ function arrayMin(data) {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data) {
+function arrayMax(data) {
     var i = data.length, max = data[0];
     while (i--) {
         if (data[i] > max) {
@@ -1533,7 +1533,7 @@ H.arrayMax = function (data) {
         }
     }
     return max;
-};
+}
 /**
  * Utility method that destroys any SVGElement instances that are properties on
  * the given object. It loops all properties and invokes destroy if there is a
@@ -1549,7 +1549,7 @@ H.arrayMax = function (data) {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj, except) {
+function destroyObjectProperties(obj, except) {
     objectEach(obj, function (val, n) {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -1559,7 +1559,7 @@ H.destroyObjectProperties = function (obj, except) {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -1570,7 +1570,7 @@ H.destroyObjectProperties = function (obj, except) {
  *
  * @return {void}
  */
-H.discardElement = function (element) {
+function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
@@ -1581,7 +1581,7 @@ H.discardElement = function (element) {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 /**
  * Fix JS round off float errors.
  *
@@ -1617,9 +1617,9 @@ H.correctFloat = function (num, prec) {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (animation, chart) {
+function setAnimation(animation, chart) {
     chart.renderer.globalAnimation = pick(animation, chart.options.chart.animation, true);
-};
+}
 /**
  * Get the animation in object form, where a disabled animation is always
  * returned as `{ duration: 0 }`.
@@ -2484,9 +2484,12 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
     defined: defined,
+    destroyObjectProperties: destroyObjectProperties,
+    discardElement: discardElement,
     erase: erase,
     extend: extend,
     isArray: isArray,
@@ -2498,6 +2501,7 @@ var utils = {
     objectEach: objectEach,
     pick: pick,
     pInt: pInt,
+    setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout
 };

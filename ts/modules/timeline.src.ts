@@ -191,6 +191,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
     arrayMin,
     defined,
     isNumber,
@@ -589,7 +590,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             return {
                 min: arrayMin(filteredData),
-                max: H.arrayMax(filteredData)
+                max: arrayMax(filteredData)
             };
         },
         generatePoints: function (this: Highcharts.TimelineSeries): void {

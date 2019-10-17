@@ -60,6 +60,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
     arrayMin,
     isNumber,
     objectEach
@@ -69,7 +70,6 @@ import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
     correctFloat = H.correctFloat,
-    arrayMax = H.arrayMax,
     merge = H.merge;
 
 /* ************************************************************************** *

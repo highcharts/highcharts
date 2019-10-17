@@ -23,6 +23,10 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
+            public getValues(
+                series: Series,
+                params: AroonIndicatorParamsOptions
+            ): (IndicatorValuesObject|IndicatorMultipleValuesObject);
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public options: AroonIndicatorOptions;

@@ -2198,7 +2198,7 @@ function arrayMin(data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data: Array<any>): number {
+function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2208,7 +2208,7 @@ H.arrayMax = function (data: Array<any>): number {
         }
     }
     return max;
-};
+}
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -2225,7 +2225,7 @@ H.arrayMax = function (data: Array<any>): number {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj: any, except?: any): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -2236,7 +2236,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 
 
 /**
@@ -2249,7 +2249,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
  *
  * @return {void}
  */
-H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
+function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2262,7 +2262,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 
 /**
  * Fix JS round off float errors.
@@ -2302,7 +2302,7 @@ H.correctFloat = function (num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (
+function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
@@ -2311,7 +2311,7 @@ H.setAnimation = function (
         (chart.options.chart as any).animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -3362,9 +3362,12 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    arrayMax,
     arrayMin,
     attr,
     defined,
+    destroyObjectProperties,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -3376,6 +3379,7 @@ const utils = {
     objectEach,
     pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 };

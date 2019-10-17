@@ -176,6 +176,8 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    destroyObjectProperties,
+    discardElement,
     extend,
     isNumber,
     objectEach,
@@ -193,8 +195,6 @@ var addEvent = H.addEvent,
     css = H.css,
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
-    discardElement = H.discardElement,
     fireEvent = H.fireEvent,
     merge = H.merge;
 

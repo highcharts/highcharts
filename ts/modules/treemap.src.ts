@@ -1901,6 +1901,7 @@ seriesType<Highcharts.TreemapSeries>(
                                 zIndex: 1000 - (levelDynamic as any)
                             })
                             .add(series.group);
+                        (series as any)[groupKey].survive = true;
                     }
                 }
 
