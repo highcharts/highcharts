@@ -847,7 +847,6 @@ H.Tooltip.prototype = {
         var headerTop = Boolean(opposite);
         var boxes = [];
         var distributionBoxTop = plotTop;
-        var rightAligned = true;
         var headerHeight = 0;
         // Graceful degradation for legacy formatters
         if (isString(labels)) {
@@ -927,20 +926,28 @@ H.Tooltip.prototype = {
                     x = plotX + plotLeft - pick(options.distance, 16) -
                         boxWidth;
                 }
-                // If overflow left, we don't use this x in the next loop
+                // If overflow left, set a new x position
                 if (x < 0) {
-                    rightAligned = false;
+                    x = plotX + plotLeft + distance;
                 }
                 // Prepare for distribution
                 var target = void 0;
+                var anchorX = void 0;
+                var anchorY = void 0;
                 if (isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         plotHeight + headerHeight;
+                    anchorX = plotX + plotLeft;
+                    anchorY = plotTop + plotHeight / 2;
                 }
                 else {
                     var yAxis = series.yAxis;
+                    var xAxis = series.xAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min(plotY, yAxis.len)); // Limit target position to within yAxis
+                    anchorX = plotX + xAxis.pos;
+                    anchorY = yAxis.pos +
+                        Math.max(0, Math.min(plotY, yAxis.len));
                 }
                 var box = {
                     target: target,
@@ -948,7 +955,9 @@ H.Tooltip.prototype = {
                     size: tt.getBBox().height + 1,
                     point: point,
                     x: x,
-                    tt: tt
+                    tt: tt,
+                    anchorX: anchorX,
+                    anchorY: anchorY
                 };
                 if (positioner) {
                     var boxPosition = positioner.call(tooltip, box.tt.getBBox().width, box.size, box.point);
@@ -965,21 +974,18 @@ H.Tooltip.prototype = {
         // Distribute and put in place
         H.distribute(boxes, plotHeight + headerHeight, void 0);
         boxes.forEach(function (box) {
-            var point = box.point, series = point.series, yAxis = series && series.yAxis;
+            var anchorX = box.anchorX, anchorY = box.anchorY, pos = box.pos, x = box.x;
             // Put the label in place
             box.tt.attr({
-                visibility: typeof box.pos === 'undefined' ?
-                    'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader || positioner ?
-                    box.x :
-                    point.plotX + plotLeft + distance),
-                y: box.pos + distributionBoxTop,
-                anchorX: point.isHeader ?
-                    point.plotX + plotLeft :
-                    point.plotX + series.xAxis.pos,
-                anchorY: point.isHeader ?
-                    plotTop + plotHeight / 2 :
-                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
+                visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
+                x: x,
+                /* NOTE: y should equal pos to be consistent with !split
+                 * tooltip, but is currently relative to plotTop. Is left as is
+                 * to avoid breaking change.
+                 */
+                y: pos + distributionBoxTop,
+                anchorX: anchorX,
+                anchorY: anchorY
             });
         });
         /* If we have a seperate tooltip container, then update the necessary
