@@ -1199,6 +1199,8 @@ H.Tooltip.prototype = {
             tooltipLabel = this.getLabel(),
             distributionBoxTop = chart.plotTop;
 
+        const positioner = options.positioner;
+
         // Graceful degradation for legacy formatters
         if (isString(labels)) {
             labels = [false, labels as any];
@@ -1334,35 +1336,34 @@ H.Tooltip.prototype = {
                         Math.min((point.plotY || 0), yAxis.len)
                     ); // Limit target position to within yAxis
                 }
-                boxes.push({
+                const box: Highcharts.Dictionary<any> = {
                     target: target,
                     rank: (point as any).isHeader ? 1 : 0,
                     size: (owner.tt as any).getBBox().height + 1,
-                    point: point,
+                    point: point as any,
                     x: x,
                     tt: tt
-                });
+                };
+
+                if (positioner) {
+                    const boxPosition = positioner.call(
+                        tooltip,
+                        box.tt.getBBox().width,
+                        box.size,
+                        box.point
+                    );
+
+                    box.x = boxPosition.x;
+                    box.align = 0; // 0-align to the top, 1-align to the bottom
+                    box.target = boxPosition.y;
+                    box.rank = pick((boxPosition as any).rank, box.rank);
+                }
+                boxes.push(box);
             }
         });
 
         // Clean previous run (for missing points)
         this.cleanSplit();
-
-        if (options.positioner) {
-            boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-                var boxPosition = (options.positioner as any).call(
-                    tooltip,
-                    box.tt.getBBox().width,
-                    box.size,
-                    box.point
-                );
-
-                box.x = boxPosition.x;
-                box.align = 0; // 0-align to the top, 1-align to the bottom
-                box.target = boxPosition.y;
-                box.rank = pick(boxPosition.rank, box.rank);
-            });
-        }
 
         // Distribute and put in place
         (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
@@ -1375,7 +1376,7 @@ H.Tooltip.prototype = {
             box.tt.attr({
                 visibility: typeof box.pos === 'undefined' ?
                     'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader || options.positioner ?
+                x: (rightAligned || point.isHeader || positioner ?
                     box.x :
                     point.plotX + chart.plotLeft + tooltip.distance),
                 y: box.pos + distributionBoxTop,
