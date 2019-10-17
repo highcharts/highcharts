@@ -59,6 +59,7 @@ var seriesType = H.seriesType,
  * @since     2.3.0
  * @excluding step
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption plotOptions.areasplinerange
  */
 seriesType<Highcharts.AreaSplineSeries>(
@@ -79,6 +80,7 @@ seriesType<Highcharts.AreaSplineSeries>(
  * @extends   series,plotOptions.areasplinerange
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.areasplinerange
  */
 

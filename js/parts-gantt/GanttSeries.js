@@ -34,6 +34,7 @@ seriesType('gantt', 'xrange'
  *
  * @extends      plotOptions.xrange
  * @product      gantt
+ * @requires     highcharts-gantt
  * @optionparent plotOptions.gantt
  */
 , {
@@ -113,7 +114,7 @@ seriesType('gantt', 'xrange'
      * This override draws the point as a diamond if point.options.milestone
      * is true, and uses the original drawPoint() if it is false or not set.
      *
-     * @requires module:highcharts-gantt
+     * @requires highcharts-gantt
      *
      * @private
      * @function Highcharts.seriesTypes.gantt#drawPoint
@@ -219,6 +220,7 @@ seriesType('gantt', 'xrange'
  *            getExtremesFromAll, marker, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart
  * @product   gantt
+ * @requires  highcharts-gantt
  * @apioption series.gantt
  */
 /**

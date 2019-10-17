@@ -31,6 +31,7 @@ seriesType('streamgraph', 'areaspline'
  * @extends      plotOptions.areaspline
  * @since        6.0.0
  * @product      highcharts highstock
+ * @requires     modules/streamgraph
  * @optionparent plotOptions.streamgraph
  */
 , {
@@ -61,6 +62,7 @@ seriesType('streamgraph', 'areaspline'
  * @extends   series,plotOptions.streamgraph
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
+ * @requires  modules/streamgraph
  * @apioption series.streamgraph
  */
 /**

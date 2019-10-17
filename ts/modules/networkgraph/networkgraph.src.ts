@@ -309,6 +309,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointStart, softThreshold, stack, stacking, step,
      *               threshold, xAxis, yAxis, zoneAxis
+     * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
     {
@@ -1362,6 +1363,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
  *            step, threshold, xAxis, yAxis, zoneAxis
  * @product   highcharts
+ * @requires  modules/networkgraph
  * @apioption series.networkgraph
  */
 

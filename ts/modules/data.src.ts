@@ -286,6 +286,7 @@ var addEvent = Highcharts.addEvent,
  *         CSV
  *
  * @since     4.0
+ * @requires  modules/data
  * @apioption data
  */
 

@@ -136,6 +136,7 @@ var Axis = H.Axis,
  *
  * @extends      plotOptions.scatter
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
 seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
@@ -768,6 +769,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
  * @extends   series,plotOptions.bubble
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.bubble
  */
 

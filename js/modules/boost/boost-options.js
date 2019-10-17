@@ -12,6 +12,10 @@
 'use strict';
 import '../../parts/Globals.js';
 /**
+ * @requires  modules/boost
+ * @apioption boost
+ */
+/**
  * Set the series threshold for when the boost should kick in globally.
  *
  * Setting to e.g. 20 will cause the whole chart to enter boost mode
@@ -169,6 +173,7 @@ import '../../parts/Globals.js';
  * @type       {string}
  * @default    undefined
  * @validvalue ["add", "multiply", "darken"]
+ * @requires   modules/boost
  * @apioption  plotOptions.series.boostBlending
  */
 ''; // adds doclets above to transpiled file

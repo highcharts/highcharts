@@ -47,6 +47,11 @@ declare global {
 }
 
 /**
+ * @requires  modules/boost
+ * @apioption boost
+ */
+
+/**
  * Set the series threshold for when the boost should kick in globally.
  *
  * Setting to e.g. 20 will cause the whole chart to enter boost mode
@@ -217,6 +222,7 @@ declare global {
  * @type       {string}
  * @default    undefined
  * @validvalue ["add", "multiply", "darken"]
+ * @requires   modules/boost
  * @apioption  plotOptions.series.boostBlending
  */
 

@@ -70,6 +70,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @since        4.1.0
  * @excluding    jitter, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
 seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
@@ -125,6 +126,7 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
  * @extends   series,plotOptions.polygon
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.polygon
  */
 

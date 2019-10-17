@@ -25,6 +25,7 @@ var colProto = seriesTypes.column.prototype;
  * @since        2.3.0
  * @excluding    negativeColor, stacking, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions = {
@@ -164,6 +165,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @extends   series,plotOptions.columnrange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnrange
  */
 /**
