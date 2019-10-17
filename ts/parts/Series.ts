@@ -2470,6 +2470,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * will be hidden when moving the mouse between series. Defaults to true
          * for line and area type series, but to false for columns, pies etc.
          *
+         * **Note:** The boost module will force this option because of
+         * technical limitations.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-stickytracking-true/
          *         True by default
          * @sample {highcharts} highcharts/plotoptions/series-stickytracking-false/
