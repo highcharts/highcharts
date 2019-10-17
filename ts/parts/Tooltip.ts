@@ -1256,7 +1256,12 @@ H.Tooltip.prototype = {
                             null as any,
                             options.useHTML
                         )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(
+                            (point as any).isHeader ?
+                                'highcharts-tooltip-header ' : '' +
+                            'highcharts-tooltip-box ' +
+                            colorClass
+                        )
                         .attr(attribs)
                         .add(tooltipLabel);
                 }

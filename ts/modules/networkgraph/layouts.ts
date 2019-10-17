@@ -145,7 +145,8 @@ import U from '../../parts/Utilities.js';
 const {
     defined,
     extend,
-    pick
+    pick,
+    setAnimation
 } = U;
 
 
@@ -896,7 +897,7 @@ addEvent(Chart as any, 'render', function (
     }
 
     if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
+        setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {

@@ -312,6 +312,7 @@ commonOptions = {
     spline: {},
     area: {},
     areaspline: {},
+    arearange: {},
     column: {
         groupPixelWidth: 10
     },
@@ -466,7 +467,7 @@ seriesProto.processData = function () {
                 if ((!defined(xAxis.options.min) &&
                     xAxis.min <= xAxis.dataMin) ||
                     xAxis.min === xAxis.dataMin) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], xAxis.min);
                 }
                 xAxis.dataMin = groupedXData[0];
             }

@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class BBIndicator extends SMAIndicator
             implements MultipleLinesIndicator {
-            public data: Array<BbIndicatorPoint>;
+            public data: Array<BBIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -28,15 +28,15 @@ declare global {
                 params: BBIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
             public options: BBIndicatorOptions;
-            public pointClass: typeof BbIndicatorPoint;
-            public points: Array<BbIndicatorPoint>;
+            public pointClass: typeof BBIndicatorPoint;
+            public points: Array<BBIndicatorPoint>;
         }
 
         interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             standardDeviation?: number;
         }
 
-        class BbIndicatorPoint extends SMAIndicatorPoint {
+        class BBIndicatorPoint extends SMAIndicatorPoint {
             public series: BBIndicator;
         }
 
@@ -221,6 +221,8 @@ H.seriesType<Highcharts.BBIndicator>(
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject|
                     Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorUndefinableValuesObject|
+                    Highcharts.IndicatorMultipleNullableValuesObject|
                     Highcharts.IndicatorMultipleUndefinableValuesObject
                 ),
                 i: number;

@@ -612,7 +612,7 @@ module.exports = function (config) {
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
-        options.concurrency = 1;
+        options.concurrency = 2;
         options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000

@@ -32,16 +32,17 @@ declare global {
             public processData: Series['processData'];
             public requiredIndicators: Array<string>;
             public useCommonDataGrouping: boolean;
-            public destroy(): void;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
             public getValues(
                 series: Series,
                 params: SMAIndicatorParamsOptions
             ): (
-                boolean|IndicatorValuesObject|IndicatorMultipleValuesObject|
-                IndicatorNullableValuesObject|
+                boolean|IndicatorValuesObject|IndicatorNullableValuesObject|
+                IndicatorUndefinableValuesObject|IndicatorMultipleValuesObject|
+                IndicatorMultipleNullableValuesObject|
                 IndicatorMultipleUndefinableValuesObject
+
             );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
@@ -50,16 +51,16 @@ declare global {
             public series: SMAIndicator;
         }
 
-        interface IndicatorValuesObject {
-            values: Array<Array<number>>;
-            xData: Array<number>;
-            yData: Array<number>;
+        interface IndicatorMultipleNullableValuesObject {
+            values: IndicatorNullableValuesObject['values'];
+            xData: IndicatorNullableValuesObject['xData'];
+            yData: Array<Array<(number|null)>>;
         }
 
-        interface IndicatorNullableValuesObject {
-            values: Array<Array<(number|null)>>;
-            xData: Array<(number|null)>;
-            yData: Array<(number|null)>;
+        interface IndicatorMultipleUndefinableValuesObject {
+            values: IndicatorUndefinableValuesObject['values'];
+            xData: IndicatorUndefinableValuesObject['xData'];
+            yData: Array<Array<(number|undefined)>>;
         }
 
         interface IndicatorMultipleValuesObject {
@@ -68,11 +69,23 @@ declare global {
             yData: Array<Array<number>>;
         }
 
-        interface IndicatorMultipleUndefinableValuesObject {
+        interface IndicatorNullableValuesObject {
+            values: Array<Array<(number|null)>>;
+            xData: Array<(number|null)>;
+            yData: Array<(number|null)>;
+        }
+        interface IndicatorUndefinableValuesObject {
             values: Array<Array<(number|undefined)>>;
             xData: Array<(number|undefined)>;
-            yData: Array<Array<(number|undefined)>>;
+            yData: Array<(number|undefined)>;
         }
+
+        interface IndicatorValuesObject {
+            values: Array<Array<number>>;
+            xData: Array<number>;
+            yData: Array<number>;
+        }
+
 
         interface LineSeriesOptions {
             useOhlcData?: boolean;
