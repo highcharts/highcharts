@@ -443,6 +443,7 @@ Text styles for the title. Replaces [title.style](https://api.highcharts.com/hi
     .highcharts-tooltip  
     .highcharts-tooltip-box  
     .highcharts-tooltip text
+    .highcharts-tooltip-header
 
 Styles for the tooltip. The tooltip box is the shape or path where the background and border can be set. Text styles should be applied to the text element.
 

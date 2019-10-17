@@ -146,6 +146,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    destroyObjectProperties,
     pick
 } = U;
 
@@ -156,7 +157,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

@@ -1163,6 +1163,7 @@ seriesType('treemap', 'scatter'
                         zIndex: 1000 - levelDynamic
                     })
                         .add(series.group);
+                    series[groupKey].survive = true;
                 }
             }
             // Draw the point

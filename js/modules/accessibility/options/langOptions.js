@@ -317,7 +317,14 @@ var langOptions = {
              *
              * @since 6.0.6
              */
-            yAxisDescription: 'Y axis, {name}'
+            yAxisDescription: 'Y axis, {name}',
+
+            /**
+             * Description for the value of null points.
+             *
+             * @since next
+             */
+            nullPointValue: 'No value'
 
         }
     }

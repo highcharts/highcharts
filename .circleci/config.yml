@@ -376,7 +376,7 @@ workflows:
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - "test-Win.IE8"
+            - install_dependencies
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
@@ -388,7 +388,7 @@ workflows:
           name: "test-Win.Chrome"
           browsercount: 2
           requires:
-            - "test-Mac.Firefox"
+            - "test-Win.IE8"
           browsers: "Win.Chrome"
 
   nightly:

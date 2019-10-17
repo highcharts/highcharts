@@ -85,7 +85,7 @@ import H from '../parts/Globals.js';
 * @type {number|undefined}
 */
 import U from '../parts/Utilities.js';
-var arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 var addEvent = H.addEvent, LegendSymbolMixin = H.LegendSymbolMixin, TrackerMixin = H.TrackerMixin, merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
@@ -376,7 +376,7 @@ seriesType('timeline', 'line',
         });
         return {
             min: arrayMin(filteredData),
-            max: H.arrayMax(filteredData)
+            max: arrayMax(filteredData)
         };
     },
     generatePoints: function () {

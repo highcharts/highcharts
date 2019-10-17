@@ -28,6 +28,68 @@ var getAxisDescription = ChartUtilities.getAxisDescription,
     unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 
 
+function findFirstPointWithGraphic(point) {
+    if (!point.series || !point.series.data || point.index === undefined) {
+        return null;
+    }
+
+    return point.series.data.find(function (p) {
+        return p && p.index > point.index && p.graphic && p.graphic.element;
+    }) || null;
+}
+
+
+function makeDummyElement(point, pos) {
+    var renderer = point.series.chart.renderer,
+        dummy = renderer.rect(pos.x, pos.y, 1, 1);
+
+    dummy.attr({
+        'class': 'highcharts-a11y-dummy-point',
+        strokeWidth: 0,
+        fill: 'none',
+        opacity: 0
+    });
+
+    return dummy;
+}
+
+
+/**
+ * @private
+ * @param {Highcharts.Point} point
+ * @return {Highcharts.SVGDOMElement}
+ */
+function addDummyPointElement(point) {
+    var series = point.series,
+        firstPointWithGraphic = findFirstPointWithGraphic(point),
+        parentGroup = firstPointWithGraphic ?
+            firstPointWithGraphic.graphic.parentGroup :
+            series.graph || series.group,
+        dummyPos = firstPointWithGraphic ? {
+            x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
+            y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
+        } : {
+            x: pick(point.plotX, 0),
+            y: pick(point.plotY, 0)
+        },
+        dummyElement = makeDummyElement(point, dummyPos);
+
+    if (parentGroup && parentGroup.element) {
+        point.graphic = dummyElement;
+
+        dummyElement.add(parentGroup);
+
+        // Move to correct pos in DOM
+        parentGroup.element.insertBefore(
+            dummyElement.element,
+            firstPointWithGraphic ? firstPointWithGraphic.graphic.element : null
+        );
+
+        return dummyElement.element;
+    }
+}
+
+
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -186,35 +248,57 @@ function getPointXDescription(point) {
 /**
  * @private
  * @param {Highcharts.Point} point
+ * @param {string} prefix
+ * @param {string} suffix
+ * @return {string}
+ */
+function getPointArrayMapValueDescription(point, prefix, suffix) {
+    var pre = prefix || '',
+        suf = suffix || '',
+        keyToValStr = function (key) {
+            var num = pointNumberToString(
+                point,
+                pick(point[key], point.options[key])
+            );
+            return key + ': ' + pre + num + suf;
+        },
+        pointArrayMap = point.series.pointArrayMap;
+
+    return pointArrayMap.reduce(function (desc, key) {
+        return desc + (desc.length ? ', ' : '') + keyToValStr(key);
+    }, '');
+}
+
+
+/**
+ * @private
+ * @param {Highcharts.Point} point
  * @return {string}
  */
 function getPointValueDescription(point) {
     var series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
-        numFormat = function (val) {
-            return pointNumberToString(point, val);
-        },
         valuePrefix = a11yPointOpts.valuePrefix ||
             tooltipOptions.valuePrefix || '',
         valueSuffix = a11yPointOpts.valueSuffix ||
             tooltipOptions.valueSuffix || '',
-        addPrefixSuffix = function (val) {
-            return valuePrefix + val + valueSuffix;
-        },
-        keyToValStr = function (key) {
-            return key + ': ' + addPrefixSuffix(
-                numFormat(pick(point[key], point.options[key]))
-            );
-        },
         fallbackKey = point.value !== undefined ? 'value' : 'y',
-        pointArrayMap = point.series.pointArrayMap;
+        fallbackDesc = pointNumberToString(point, point[fallbackKey]);
 
-    return pointArrayMap ?
-        pointArrayMap.reduce(function (desc, key) {
-            return desc + (desc.length ? ', ' : '') + keyToValStr(key);
-        }, '') :
-        addPrefixSuffix(numFormat(point[fallbackKey]));
+    if (point.isNull) {
+        return series.chart.langFormat('accessibility.series.nullPointValue', {
+            point: point
+        });
+    }
+
+    if (series.pointArrayMap) {
+        return getPointArrayMapValueDescription(
+            point, valuePrefix, valueSuffix
+        );
+    }
+
+    return valuePrefix + fallbackDesc + valueSuffix;
 }
 
 
@@ -282,7 +366,9 @@ function describePointsInSeries(series) {
 
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach(function (point) {
-            var pointEl = point.graphic && point.graphic.element;
+            var shouldAddDummyPoint = point.isNull,
+                pointEl = point.graphic && point.graphic.element ||
+                    shouldAddDummyPoint && addDummyPointElement(point);
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting
@@ -378,8 +464,10 @@ function describeSeries(series) {
         seriesEl = getSeriesA11yElement(series),
         describeSingleSeriesOption = chart.options.accessibility.series
             .describeSingleSeries,
+        exposeAsGroupOnlyOption = (series.options.accessibility || {})
+            .exposeAsGroupOnly,
         shouldDescribeSeriesElement = chart.series.length > 1 ||
-            describeSingleSeriesOption;
+            describeSingleSeriesOption || exposeAsGroupOnlyOption;
 
     if (seriesEl) {
         // For some series types the order of elements do not match the

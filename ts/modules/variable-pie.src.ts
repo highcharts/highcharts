@@ -65,6 +65,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
     arrayMin,
     pick
 } = U;
@@ -72,7 +73,6 @@ const {
 import '../parts/Options.js';
 
 var fireEvent = H.fireEvent,
-    arrayMax = H.arrayMax,
     seriesType = H.seriesType,
     pieProto = H.seriesTypes.pie.prototype;
 

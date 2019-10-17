@@ -68,6 +68,10 @@ QUnit.test('Undefined value (#6589)', function (assert) {
 
 QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (assert) {
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces graphic for null points
+        },
+
         chart: {
             type: 'pie',
             width: 600

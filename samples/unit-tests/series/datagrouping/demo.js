@@ -448,7 +448,10 @@ QUnit.test('Data grouping and extremes change', function (assert) {
                 pointInterval: 12 * 3600 * 1000,
                 data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
             }]
-        });
+        }),
+        series = chart.series[0],
+        controller = new TestController(chart),
+        expectedMin;
 
     assert.strictEqual(
         chart.xAxis[0].getExtremes().min,
@@ -461,7 +464,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         minPadding: 0.1
     });
 
-    chart.series[0].setData([
+    series.setData([
         [
             26179200000,
             0
@@ -478,9 +481,60 @@ QUnit.test('Data grouping and extremes change', function (assert) {
     ]);
 
     assert.strictEqual(
-        chart.xAxis[0].getExtremes().min < chart.series[0].points[0].x,
+        chart.xAxis[0].getExtremes().min < series.points[0].x,
         true,
         'minPadding should decrease xAxis.min even when points are grouped (#10932).'
+    );
+
+    series.setData(new Array(100).fill(10));
+    chart.xAxis[0].setExtremes(
+        series.options.pointStart + 5 * series.options.pointInterval,
+        series.options.pointStart + 15 * series.options.pointInterval
+    );
+    expectedMin = chart.xAxis[0].toValue(-30, true);
+
+    controller.mouseDown(
+        series.points[7].plotX,
+        series.points[7].plotY
+    );
+
+    controller.mouseMove(
+        series.points[7].plotX + 30,
+        series.points[7].plotY
+    );
+
+    controller.mouseUp(
+        series.points[7].plotX + 30,
+        series.points[7].plotY
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        expectedMin,
+        'DataGrouping should not prevent panning to the LEFT (#12099)'
+    );
+
+    expectedMin = chart.xAxis[0].toValue(30, true);
+
+    controller.mouseDown(
+        series.points[7].plotX,
+        series.points[7].plotY
+    );
+
+    controller.mouseMove(
+        series.points[7].plotX - 30,
+        series.points[7].plotY
+    );
+
+    controller.mouseUp(
+        series.points[7].plotX - 30,
+        series.points[7].plotY
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        expectedMin,
+        'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
 });
 
