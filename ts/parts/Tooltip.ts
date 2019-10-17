@@ -1213,7 +1213,6 @@ H.Tooltip.prototype = {
         const boxes: Array<Highcharts.Dictionary<any>> = [];
 
         let distributionBoxTop = plotTop;
-        let rightAligned = true;
         let headerHeight = 0;
 
         // Graceful degradation for legacy formatters
@@ -1323,30 +1322,40 @@ H.Tooltip.prototype = {
                 }
 
 
-                // If overflow left, we don't use this x in the next loop
+                // If overflow left, set a new x position
                 if (x < 0) {
-                    rightAligned = false;
+                    x = plotX + plotLeft + distance;
                 }
 
                 // Prepare for distribution
                 let target: number;
+                let anchorX: number;
+                let anchorY: number;
                 if (isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         plotHeight + headerHeight;
+                    anchorX = plotX + plotLeft;
+                    anchorY = plotTop + plotHeight / 2;
                 } else {
                     const yAxis = series.yAxis;
+                    const xAxis = series.xAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(
                         0, Math.min(plotY, yAxis.len)
                     ); // Limit target position to within yAxis
+                    anchorX = plotX + xAxis.pos;
+                    anchorY = yAxis.pos +
+                        Math.max(0, Math.min(plotY, yAxis.len));
                 }
                 const box: Highcharts.Dictionary<any> = {
-                    target: target,
+                    target,
                     rank: isHeader ? 1 : 0,
                     size: tt.getBBox().height + 1,
                     point: point as any,
-                    x: x,
-                    tt: tt
+                    x,
+                    tt,
+                    anchorX,
+                    anchorY
                 };
 
                 if (positioner) {
@@ -1372,24 +1381,18 @@ H.Tooltip.prototype = {
         // Distribute and put in place
         H.distribute(boxes as any, plotHeight + headerHeight, void 0 as any);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-            const point = box.point,
-                series = point.series,
-                yAxis = series && series.yAxis;
-
+            const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
-                visibility: typeof box.pos === 'undefined' ?
-                    'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader || positioner ?
-                    box.x :
-                    point.plotX + plotLeft + distance),
-                y: box.pos + distributionBoxTop,
-                anchorX: point.isHeader ?
-                    point.plotX + plotLeft :
-                    point.plotX + series.xAxis.pos,
-                anchorY: point.isHeader ?
-                    plotTop + plotHeight / 2 :
-                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
+                visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
+                x,
+                /* NOTE: y should equal pos to be consistent with !split
+                 * tooltip, but is currently relative to plotTop. Is left as is
+                 * to avoid breaking change.
+                 */
+                y: pos + distributionBoxTop,
+                anchorX,
+                anchorY
             });
         });
 
