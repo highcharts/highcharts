@@ -158,6 +158,8 @@ function hashFromObject(obj, preSeed) {
  *        The pattern to set dimensions on.
  *
  * @return {void}
+ *
+ * @requires modules/pattern-fill
  */
 H.Point.prototype.calculatePatternDimensions = function (pattern) {
     if (pattern.width && pattern.height) {
@@ -233,6 +235,8 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  *
  * @return {Highcharts.SVGElement|undefined}
  * The added pattern. Undefined if the pattern already exists.
+ *
+ * @requires modules/pattern-fill
  */
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
     var pattern, animate = pick(animation, true), animationOptions = H.animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {

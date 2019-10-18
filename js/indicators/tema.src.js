@@ -26,8 +26,6 @@ H.seriesType('tema', 'ema',
  * `linkedTo` option to be set and should be loaded after the
  * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
  *
- * Requires `https://code.highcharts.com/stock/indicators/ema.js`.
- *
  * @sample {highstock} stock/indicators/tema
  *         TEMA indicator
  *
@@ -38,7 +36,6 @@ H.seriesType('tema', 'ema',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ema
  * @requires     stock/indicators/tema
@@ -162,7 +159,6 @@ H.seriesType('tema', 'ema',
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/ema
  * @requires  stock/indicators/tema

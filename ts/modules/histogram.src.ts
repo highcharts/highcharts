@@ -139,6 +139,7 @@ seriesType<Highcharts.HistogramSeries>(
      *               stacking
      * @product      highcharts
      * @since        6.0.0
+     * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
     {
@@ -302,6 +303,7 @@ seriesType<Highcharts.HistogramSeries>(
  * @excluding data, dataParser, dataURL
  * @product   highcharts
  * @since     6.0.0
+ * @requires  modules/histogram
  * @apioption series.histogram
  */
 

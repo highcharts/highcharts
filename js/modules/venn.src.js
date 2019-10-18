@@ -672,7 +672,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
  * @product      highcharts
- * @requires     modules/venn.js
+ * @requires     modules/venn
  * @optionparent plotOptions.venn
  */
 var vennOptions = {
@@ -934,7 +934,7 @@ var vennPoint = {
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
  *            threshold, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
- * @requires  modules/venn.js
+ * @requires  modules/venn
  * @apioption series.venn
  */
 /**

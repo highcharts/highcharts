@@ -49,6 +49,7 @@ var extendedOptions = {
          * @since      5.0.15
          * @validvalue ['offset', 'chart', 'flap', 'ortho']
          * @product    highcharts
+         * @requires   highcharts-3d
          */
         position3d: 'offset',
         /**
@@ -62,8 +63,9 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @since   5.0.15
-         * @product highcharts
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: false
     },
@@ -93,9 +95,10 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type       {"offset"|"chart"|"flap"|"ortho"|null}
-         * @since      5.0.15
-         * @product    highcharts
+         * @type     {"offset"|"chart"|"flap"|"ortho"|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         position3d: null,
         /**
@@ -111,9 +114,10 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type    {boolean|null}
-         * @since   5.0.15
-         * @product highcharts
+         * @type     {boolean|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: null
     }

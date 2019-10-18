@@ -518,7 +518,7 @@ function updateFieldBoundaries(field, rectangle) {
  *               softThreshold, stacking, threshold, zoneAxis, zones
  * @product      highcharts
  * @since        6.0.0
- * @requires     modules/wordcloud.js
+ * @requires     modules/wordcloud
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
@@ -854,7 +854,7 @@ var wordCloudPoint = {
  *
  * @extends   series,plotOptions.wordcloud
  * @product   highcharts
- * @requires  modules/wordcloud.js
+ * @requires  modules/wordcloud
  * @apioption series.wordcloud
  */
 /**

@@ -112,7 +112,6 @@ H.seriesType<Highcharts.BBIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     modules/stock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
@@ -282,7 +281,6 @@ H.seriesType<Highcharts.BBIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/bollinger-bands
  * @apioption series.bb

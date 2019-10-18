@@ -45,6 +45,7 @@ seriesType('cylinder', 'column',
  * @product      highcharts
  * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
  *               dragDrop
+ * @requires     modules/cylinder
  * @optionparent plotOptions.cylinder
  */
 {}, {}, 
@@ -64,6 +65,7 @@ seriesType('cylinder', 'column',
  * @since     7.0.0
  * @product   highcharts
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @requires  modules/cylinder
  * @apioption series.cylinder
  */
 /**

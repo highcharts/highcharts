@@ -260,10 +260,9 @@ extend(H.defaultOptions, {
  * @apioption plotOptions.series.connectors
  */
 /**
- * Connect to a point. Requires Highcharts Gantt to be loaded. This option can
- * be either a string, referring to the ID of another point, or an object, or an
- * array of either. If the option is an array, each element defines a
- * connection.
+ * Connect to a point. This option can be either a string, referring to the ID
+ * of another point, or an object, or an array of either. If the option is an
+ * array, each element defines a connection.
  *
  * @sample gantt/pathfinder/demo
  *         Different connection types
@@ -273,6 +272,7 @@ extend(H.defaultOptions, {
  * @since     6.2.0
  * @excluding enabled
  * @product   gantt
+ * @requires  highcharts-gantt
  * @apioption series.xrange.data.connect
  */
 /**

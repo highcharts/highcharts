@@ -67,8 +67,8 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
- * Y values along an X axis. Requires `highcharts-more.js`. To display
- * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
+ * Y values along an X axis. To display horizontal bars, set
+ * [chart.inverted](#chart.inverted) to `true`.
  *
  * @sample {highcharts|highstock} highcharts/demo/columnrange/
  *         Inverted column range

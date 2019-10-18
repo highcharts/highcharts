@@ -32,7 +32,6 @@ seriesType('zigzag', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/zigzag
  * @optionparent plotOptions.zigzag
@@ -176,7 +175,6 @@ seriesType('zigzag', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/zigzag
  * @apioption series.zigzag

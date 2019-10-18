@@ -57,7 +57,6 @@ H.seriesType('abands', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking,
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/acceleration-bands
  * @optionparent plotOptions.abands
@@ -176,7 +175,6 @@ merge(multipleLinesMixin, {
  *            joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            stacking, showInNavigator,
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/acceleration-bands
  * @apioption series.abands

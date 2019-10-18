@@ -52,7 +52,6 @@ H.seriesType('aroon', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/aroon
  * @optionparent plotOptions.aroon
@@ -148,7 +147,6 @@ H.merge(multipleLinesMixin, {
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/aroon
  * @apioption series.aroon

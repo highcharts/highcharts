@@ -119,7 +119,6 @@ seriesType('ikh', 'sma',
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
  * @product      highstock
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ichimoku-kinko-hyo
  * @optionparent plotOptions.ikh
@@ -633,7 +632,6 @@ seriesType('ikh', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/ichimoku-kinko-hyo
  * @apioption series.ikh

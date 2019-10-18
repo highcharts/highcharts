@@ -123,7 +123,6 @@ seriesType<Highcharts.ROCIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     modules/stock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/roc
      * @optionparent plotOptions.roc
@@ -202,7 +201,6 @@ seriesType<Highcharts.ROCIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/roc
  * @apioption series.roc

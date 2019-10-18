@@ -369,6 +369,7 @@ seriesType<Highcharts.SankeySeries>(
      *               pointPlacement, pointRange, pointStart, pointWidth,
      *               shadow, softThreshold, stacking, threshold, zoneAxis,
      *               zones, minPointLength
+     * @requires     modules/sankey
      * @optionparent plotOptions.sankey
      */
     {
@@ -1250,6 +1251,7 @@ seriesType<Highcharts.SankeySeries>(
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
  *            threshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/sankey
  * @apioption series.sankey
  */
 

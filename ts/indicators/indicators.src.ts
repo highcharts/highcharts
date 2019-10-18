@@ -217,7 +217,6 @@ seriesType<Highcharts.SMAIndicator>(
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, useOhlcData
      * @product      highstock
-     * @requires     modules/stock
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
@@ -585,7 +584,6 @@ seriesType<Highcharts.SMAIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL, useOhlcData
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @apioption series.sma
  */

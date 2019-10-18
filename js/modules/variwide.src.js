@@ -39,7 +39,7 @@ seriesType('variwide', 'column'
  * @product      highcharts
  * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
  *               groupZPadding
- * @requires     modules/variwide.js
+ * @requires     modules/variwide
  * @optionparent plotOptions.variwide
  */
 , {
@@ -239,7 +239,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, hor
  *
  * @extends   series,plotOptions.variwide
  * @product   highcharts
- * @requires  modules/variwide.js
+ * @requires  modules/variwide
  * @apioption series.variwide
  */
 /**

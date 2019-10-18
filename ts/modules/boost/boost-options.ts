@@ -200,10 +200,9 @@ declare global {
  * `cropThreshold`, all points are rendered although outside the visible plot
  * area, and the `boostThreshold` won't take effect.
  *
- * Requires `modules/boost.js`.
- *
  * @type      {number}
  * @default   5000
+ * @requires  modules/boost
  * @apioption plotOptions.series.boostThreshold
  */
 
