@@ -352,7 +352,7 @@ AccessibilityComponent.prototype = {
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(
                     e.type,
-                    e.type === 'click' || e.canBubble, // #10561
+                    e.bubbles, // #10561, #12161
                     e.cancelable,
                     e.view,
                     e.detail,
