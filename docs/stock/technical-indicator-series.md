@@ -94,30 +94,30 @@ Technical indicators modules are implemented as series, that means almost all of
 
 There are no limitations to the number of technical indicators that can be bound to one main series. The following example creates a chart with four series: one main, two SMA, and one EMA:
 
-    
-    series: [{
-      id: ‘main-series’,
-      data: [ … ]
-    }, {
-      type: ‘sma’,
-      linkedTo: ‘main-series’,
-      params: {
-        period: 14
-      }
-    }, {
-      type: ‘sma’,
-      linkedTo: ‘main-series’,
-      params: {
-        period: 28
-      }
-    }, {
-      type: ‘ema’,
-      linkedTo: ‘main-series’,
-      params: {
-        period: 7
-      }
-    }]
-    
+```js
+series: [{
+  id: ‘main-series’,
+  data: [ … ]
+}, {
+  type: ‘sma’,
+  linkedTo: ‘main-series’,
+  params: {
+    period: 14
+  }
+}, {
+  type: ‘sma’,
+  linkedTo: ‘main-series’,
+  params: {
+    period: 28
+  }
+}, {
+  type: ‘ema’,
+  linkedTo: ‘main-series’,
+  params: {
+    period: 7
+  }
+}]
+```
 
 <iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/macd-pivot-points allow="fullscreen"></iframe>
 
@@ -130,29 +130,29 @@ Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Point
 
 1. Create required yAxis:
 
-    
-    yAxis: [{
-      // Main series yAxis:
-      height: ‘50%’
-    }, {
-      // yAxis for Stochastic technical indicator:
-      top: ‘50%’,
-      height: ‘50%’
-    }]
-    
+```js
+yAxis: [{
+  // Main series yAxis:
+  height: ‘50%’
+}, {
+  // yAxis for Stochastic technical indicator:
+  top: ‘50%’,
+  height: ‘50%’
+}]
+```
 
 2. Bind indicator to this yAxis:
 
-    
-    series: [{
-      id: ‘main-series’,
-      data: [ … ]
-    }, {
-      type: ‘stochastic’,
-      linkedTo: ‘main-series’,
-      yAxis: 1
-    }]
-    
+```js
+series: [{
+  id: ‘main-series’,
+  data: [ … ]
+}, {
+  type: ‘stochastic’,
+  linkedTo: ‘main-series’,
+  yAxis: 1
+}]
+```
 
 Multiple series bindings
 ------------------------
@@ -160,6 +160,7 @@ Multiple series bindings
 Some of the technical indicators require two series for calculations. Here is a full list of those indicators:
 
 *   Accumulation/Distribution
+*   Chaikin Oscillator
 *   CMF
 *   MFI
 *   Volume by Price
@@ -167,19 +168,20 @@ Some of the technical indicators require two series for calculations. Here is a 
 
 These indicators require the following parameter `params.volumeSeriesID` to calculate properly:
 
-    
-    series: [{
-      id: ‘main-series’,
-      data: [ … ]
-    }, {
-      id: ‘volume-series’,
-      yAxis: 1,
-      data: [ … ]
-    }, {
-      type: ‘mfi’,
-      linkedTo: ‘main-series’,
-      yAxis: 2,
-      params: {
-        volumeSeriesID: ‘volume-series’
-      }
-    }]
+```js
+series: [{
+  id: ‘main-series’,
+  data: [ … ]
+}, {
+  id: ‘volume-series’,
+  yAxis: 1,
+  data: [ … ]
+}, {
+  type: ‘mfi’,
+  linkedTo: ‘main-series’,
+  yAxis: 2,
+  params: {
+    volumeSeriesID: ‘volume-series’
+  }
+}]
+```
