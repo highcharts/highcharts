@@ -44,8 +44,7 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
-// pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
+var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg, pointProto = H.seriesTypes.line.prototype.pointClass.prototype;
 /**
  * The column series type.
  *
@@ -474,38 +473,29 @@ seriesType('column', 'line',
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      * @return {Highcharts.ColumnMetricsObject}
      */
-    // addPoint: function (this: Highcharts.ColumnSeries): void {
-    //     let series = this,
-    //         allSeries = series.chart.series,
-    //         point = {
-    //             x: 1
-    //         };
-    //     allSeries.forEach(function (
-    //         otherSeries: Highcharts.Series
-    //     ): void {
-    //         if (
-    //             (
-    //                 otherSeries.type === 'column' ||
-    //                 otherSeries.type === 'columnrange'
-    //             ) &&
-    //             otherSeries.type === series.type &&
-    //             otherSeries.xAxis === series.xAxis &&
-    //             (otherSeries as any).hasPointInX(point, otherSeries)
-    //         ) {
-    //             otherSeries.isDirty = true;
-    //         }
-    //     });
-    //     Series.prototype.addPoint.apply(this, arguments as any);
-    // },
+    dirtyTheSeries: function (series, point) {
+        series.xAxis.series.forEach(function (otherSeries) {
+            if (otherSeries.type === series.type &&
+                otherSeries.hasPointInX(point, otherSeries)) {
+                otherSeries.isDirty = true;
+            }
+        });
+    },
+    addPoint: function () {
+        var series = this, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
+        if (series.options.ignoreNulls) {
+            H.seriesTypes.column.prototype.dirtyTheSeries.call(series, series, point);
+        }
+        Series.prototype.addPoint.apply(series, arguments);
+    },
     hasPointInX: function (point, otherSeries) {
-        var xData = otherSeries.processedXData, yData = otherSeries.processedYData;
+        var series = this, xData = otherSeries.processedXData, yData = otherSeries.processedYData;
         var hasPointInX = false;
         xData.forEach(function (x) {
-            if (point && x === point.x &&
-                point.series.xAxis === otherSeries.xAxis) {
-                var index = void 0, pointY_1;
+            if (point && point.x === x &&
+                series.xAxis === otherSeries.xAxis) {
+                var index = xData.indexOf(x), pointY_1;
                 var indices = [];
-                index = xData.indexOf(x);
                 while (index !== -1) {
                     indices.push(index);
                     index = xData.indexOf(x, index + 1);
@@ -515,7 +505,6 @@ seriesType('column', 'line',
                     if (H.isArray(pointY_1) ?
                         pointY_1[0] !== null : pointY_1 !== null) {
                         hasPointInX = true;
-                        otherSeries.isDirty = true;
                     }
                 });
             }
@@ -919,50 +908,20 @@ seriesType('column', 'line',
         Series.prototype.remove.apply(series, arguments);
     }
 }, {
-// remove: function (this: Highcharts.Point): void {
-//     var point = this,
-//         pointSeries = point.series,
-//         allSeries = pointSeries.chart.series;
-//     allSeries.forEach(function (
-//         otherSeries: Highcharts.Series
-//     ): void {
-//         // consider mixed type series (column/columnrange)
-//         // what about pointSeries === otherSeries?
-//         if (
-//             (
-//                 otherSeries.type === 'column' ||
-//                 otherSeries.type === 'columnrange'
-//             ) &&
-//             otherSeries.type === pointSeries.type &&
-//             otherSeries.xAxis === pointSeries.xAxis &&
-//             (otherSeries as any).hasPointInX(point, otherSeries)
-//         ) {
-//             otherSeries.isDirty = true;
-//         }
-//     });
-//     pointProto.remove.apply(this, arguments as any);
-// },
-// update: function (this: Highcharts.Point): void {
-//     var point = this,
-//         pointSeries = point.series,
-//         allSeries = pointSeries.chart.series;
-//     allSeries.forEach(function (
-//         otherSeries: Highcharts.Series
-//     ): void {
-//         if (
-//             (
-//                 otherSeries.type === 'column' ||
-//                 otherSeries.type === 'columnrange'
-//             ) &&
-//             otherSeries.type === pointSeries.type &&
-//             otherSeries.xAxis === pointSeries.xAxis &&
-//             (otherSeries as any).hasPointInX(point, otherSeries)
-//         ) {
-//             otherSeries.isDirty = true;
-//         }
-//     });
-//     pointProto.update.apply(this, arguments as any);
-// }
+    remove: function () {
+        var point = this, series = point.series;
+        if (series.options.ignoreNulls) {
+            H.seriesTypes.column.prototype.dirtyTheSeries.call(point, series, point);
+        }
+        pointProto.remove.apply(this, arguments);
+    },
+    update: function () {
+        var point = this, series = point.series;
+        if (series.options.ignoreNulls) {
+            H.seriesTypes.column.prototype.dirtyTheSeries.call(point, series, point);
+        }
+        pointProto.update.apply(this, arguments);
+    }
 });
 /* eslint-enable valid-jsdoc */
 /**
