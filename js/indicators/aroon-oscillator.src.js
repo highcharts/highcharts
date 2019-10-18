@@ -35,6 +35,10 @@ H.seriesType('aroonoscillator', 'aroon',
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/aroon
+ * @requires     stock/indicators/aroon-oscillator
  * @optionparent plotOptions.aroonoscillator
  */
 {
@@ -101,6 +105,10 @@ H.merge(multipleLinesMixin, {
  *            dataURL, joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/aroon
+ * @requires  stock/indicators/aroon-oscillator
  * @apioption series.aroonoscillator
  */
 ''; // adds doclet above to the transpiled file
