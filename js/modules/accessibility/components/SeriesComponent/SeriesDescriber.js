@@ -45,8 +45,9 @@ function makeDummyElement(point, pos) {
 
     dummy.attr({
         'class': 'highcharts-a11y-dummy-point',
-        strokeWidth: 0,
         fill: 'none',
+        'fill-opacity': 0,
+        'stroke-opacity': 0,
         opacity: 0
     });
 
@@ -462,12 +463,15 @@ function describeSeries(series) {
     var chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
         seriesEl = getSeriesA11yElement(series),
+        chartOptions = chart.options.chart || {},
+        chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
+        hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption = chart.options.accessibility.series
             .describeSingleSeries,
         exposeAsGroupOnlyOption = (series.options.accessibility || {})
             .exposeAsGroupOnly,
-        shouldDescribeSeriesElement = chart.series.length > 1 ||
-            describeSingleSeriesOption || exposeAsGroupOnlyOption;
+        shouldDescribeSeriesElement = !chartHas3d && (hasMultipleSeries ||
+            describeSingleSeriesOption || exposeAsGroupOnlyOption);
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
