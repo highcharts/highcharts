@@ -118,6 +118,9 @@ H.seriesType<Highcharts.AroonIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
     {
@@ -237,6 +240,9 @@ H.seriesType<Highcharts.AroonIndicator>(
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/aroon
  * @apioption series.aroon
  */
 

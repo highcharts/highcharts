@@ -85,6 +85,9 @@ H.seriesType<Highcharts.AOIndicator>(
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               params, pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
     {
@@ -260,6 +263,9 @@ H.seriesType<Highcharts.AOIndicator>(
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ao
  * @apioption series.ao
  */
 

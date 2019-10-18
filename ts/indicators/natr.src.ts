@@ -70,6 +70,9 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
      * @extends      plotOptions.atr
      * @since        7.0.0
      * @product      highstock
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
      */
     {
@@ -113,6 +116,9 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/natr
  * @apioption series.natr
  */
 
