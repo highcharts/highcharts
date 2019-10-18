@@ -32,6 +32,9 @@ seriesType('linearRegression', 'sma',
  * @extends      plotOptions.sma
  * @since        7.0.0
  * @product      highstock
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/regressions
  * @optionparent plotOptions.linearregression
  */
 {
@@ -208,6 +211,9 @@ seriesType('linearRegression', 'sma',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregression
  */
 /* ************************************************************************** */
@@ -252,6 +258,9 @@ seriesType('linearRegressionSlope', 'linearRegression',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionslope
  */
 /* ************************************************************************** */
@@ -296,6 +305,9 @@ seriesType('linearRegressionIntercept', 'linearRegression',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionintercept
  */
 /* ************************************************************************** */
@@ -319,6 +331,9 @@ seriesType('linearRegressionAngle', 'linearRegression',
  * @extends      plotOptions.linearregression
  * @since        7.0.0
  * @product      highstock
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/regressions
  * @optionparent plotOptions.linearregressionangle
  */
 {
@@ -355,6 +370,9 @@ seriesType('linearRegressionAngle', 'linearRegression',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionangle
  */
 ''; // to include the above in the js output

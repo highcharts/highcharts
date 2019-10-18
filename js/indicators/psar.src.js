@@ -105,6 +105,9 @@ H.seriesType('psar', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/psar
  * @optionparent plotOptions.psar
  */
 {
@@ -222,6 +225,9 @@ H.seriesType('psar', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/psar
  * @apioption series.psar
  */
 ''; // to include the above in the js output
