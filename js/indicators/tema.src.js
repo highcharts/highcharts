@@ -38,6 +38,10 @@ H.seriesType('tema', 'ema',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ema
+ * @requires     stock/indicators/tema
  * @optionparent plotOptions.tema
  */
 {}, 
@@ -158,6 +162,10 @@ H.seriesType('tema', 'ema',
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/tema
  * @apioption series.tema
  */
 ''; // to include the above in the js output

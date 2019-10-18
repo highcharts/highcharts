@@ -36,6 +36,10 @@ H.seriesType('dema', 'ema',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ema
+ * @requires     stock/indicators/dema
  * @optionparent plotOptions.dema
  */
 {}, 
@@ -122,6 +126,10 @@ H.seriesType('dema', 'ema',
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/dema
  * @apioption series.dema
  */
 ''; // adds doclet above to the transpiled file
