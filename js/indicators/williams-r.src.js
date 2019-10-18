@@ -34,6 +34,9 @@ H.seriesType('williamsr', 'sma',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     modules/stock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/williams-r
  * @optionparent plotOptions.williamsr
  */
 {
@@ -98,6 +101,9 @@ H.seriesType('williamsr', 'sma',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/williams-r
  * @apioption series.williamsr
  */
 ''; // adds doclets above to the transpiled file
