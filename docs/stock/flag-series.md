@@ -11,18 +11,19 @@ Every flag consists of x, title and text. The attribute "x" must be set to the 
 
 To create a flag series, add the following configuration in the series option:
 
-    
-    {
-        type : 'flags',
-        data : [{
-            x : 0,      // Point where the flag appears
-            title : '', // Title of flag displayed on the chart 
-            text : ''   // Text displayed when the flag are highlighted.
-        }],
-        onSeries : '',  // Id of which series it should be placed on. If not defined 
-                        // the flag series will be put on the X axis
-        shape : 'flag'  // Defines the shape of the flags.
-    }
+```js
+{
+    type : 'flags',
+    data : [{
+        x : 0,      // Point where the flag appears
+        title : '', // Title of flag displayed on the chart 
+        text : ''   // Text displayed when the flag are highlighted.
+    }],
+    onSeries : '',  // Id of which series it should be placed on. If not defined 
+                    // the flag series will be put on the X axis
+    shape : 'flag'  // Defines the shape of the flags.
+}
+```
 
 For an overview of the flag series options see the [API reference](https://api.highcharts.com/highstock/plotOptions.flags).
 
