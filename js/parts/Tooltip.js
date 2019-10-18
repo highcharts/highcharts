@@ -842,7 +842,7 @@ H.Tooltip.prototype = {
      */
     renderSplit: function (labels, points) {
         var tooltip = this;
-        var _a = tooltip.chart, chartWidth = _a.chartWidth, _b = _a.marginRight, marginRight = _b === void 0 ? 0 : _b, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, pointer = _a.pointer, ren = _a.renderer, _c = _a.scrollablePixelsX, scrollablePixelsX = _c === void 0 ? 0 : _c, styledMode = _a.styledMode, _d = __read(_a.xAxis, 1), opposite = _d[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
+        var _a = tooltip.chart, chartWidth = _a.chartWidth, _b = _a.marginRight, marginRight = _b === void 0 ? 0 : _b, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, pointer = _a.pointer, ren = _a.renderer, _c = _a.scrollablePixelsX, scrollablePixelsX = _c === void 0 ? 0 : _c, _d = _a.scrollablePixelsY, scrollablePixelsY = _d === void 0 ? 0 : _d, styledMode = _a.styledMode, _e = __read(_a.xAxis, 1), opposite = _e[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
         var tooltipLabel = tooltip.getLabel();
         var headerTop = Boolean(opposite);
         var boxes = [];
@@ -939,15 +939,17 @@ H.Tooltip.prototype = {
                         -headerHeight :
                         plotHeight + headerHeight;
                     anchorX = plotX + plotLeft;
-                    anchorY = plotTop + plotHeight / 2;
+                    // Set anchorY to center of visible plot area.
+                    anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 }
                 else {
                     var yAxis = series.yAxis;
                     var xAxis = series.xAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min(plotY, yAxis.len)); // Limit target position to within yAxis
                     anchorX = plotX + xAxis.pos;
-                    anchorY = yAxis.pos +
-                        Math.max(0, Math.min(plotY, yAxis.len));
+                    // Set anchorY to plotY. Limit to within visible plot area,
+                    // and within yAxis.
+                    anchorY = Math.max(plotTop, yAxis.pos, Math.min(plotTop + plotHeight - scrollablePixelsY, yAxis.pos + yAxis.len, yAxis.pos + plotY));
                 }
                 var box = {
                     target: target,
@@ -981,7 +983,8 @@ H.Tooltip.prototype = {
                 x: x,
                 /* NOTE: y should equal pos to be consistent with !split
                  * tooltip, but is currently relative to plotTop. Is left as is
-                 * to avoid breaking change.
+                 * to avoid breaking change. Remove distributionBoxTop to make
+                 * it consistent.
                  */
                 y: pos + distributionBoxTop,
                 anchorX: anchorX,
@@ -1000,7 +1003,7 @@ H.Tooltip.prototype = {
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
             // Set container size to fit the tooltip
-            var _e = tooltipLabel.getBBox(), width = _e.width, height = _e.height, x = _e.x, y = _e.y;
+            var _f = tooltipLabel.getBBox(), width = _f.width, height = _f.height, x = _f.x, y = _f.y;
             renderer.setSize(width + x, height + y, false);
         }
     },

@@ -1199,6 +1199,7 @@ H.Tooltip.prototype = {
                 pointer,
                 renderer: ren,
                 scrollablePixelsX = 0,
+                scrollablePixelsY = 0,
                 styledMode,
                 xAxis: [{ opposite }]
             },
@@ -1336,7 +1337,8 @@ H.Tooltip.prototype = {
                         -headerHeight :
                         plotHeight + headerHeight;
                     anchorX = plotX + plotLeft;
-                    anchorY = plotTop + plotHeight / 2;
+                    // Set anchorY to center of visible plot area.
+                    anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 } else {
                     const yAxis = series.yAxis;
                     const xAxis = series.xAxis;
@@ -1344,8 +1346,17 @@ H.Tooltip.prototype = {
                         0, Math.min(plotY, yAxis.len)
                     ); // Limit target position to within yAxis
                     anchorX = plotX + xAxis.pos;
-                    anchorY = yAxis.pos +
-                        Math.max(0, Math.min(plotY, yAxis.len));
+                    // Set anchorY to plotY. Limit to within visible plot area,
+                    // and within yAxis.
+                    anchorY = Math.max(
+                        plotTop,
+                        yAxis.pos,
+                        Math.min(
+                            plotTop + plotHeight - scrollablePixelsY,
+                            yAxis.pos + yAxis.len,
+                            yAxis.pos + plotY
+                        )
+                    );
                 }
                 const box: Highcharts.Dictionary<any> = {
                     target,
@@ -1388,7 +1399,8 @@ H.Tooltip.prototype = {
                 x,
                 /* NOTE: y should equal pos to be consistent with !split
                  * tooltip, but is currently relative to plotTop. Is left as is
-                 * to avoid breaking change.
+                 * to avoid breaking change. Remove distributionBoxTop to make
+                 * it consistent.
                  */
                 y: pos + distributionBoxTop,
                 anchorX,
