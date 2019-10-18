@@ -134,6 +134,13 @@ jobs:
       - store_artifacts:
           path: ../test-results
 
+  check_for_docs_changes_and_deploy:
+    <<: *defaults
+    description: Checks for changes in docs/ and triggers deploy via doc-builder
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=staging-docs.highcharts.com --token=${CIRCLE_API_TOKEN}
+
   generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
@@ -391,6 +398,11 @@ workflows:
           requires:
             - "test-Mac.Firefox"
           browsers: "Win.Chrome"
+      - check_for_docs_changes_and_deploy:
+          requires: ["test-Win.IE8", "test-Mac.Firefox", "test-Mac.Safari", "test-Win.Chrome"]
+          filters:
+            branches:
+              only: [master, tools/trigger-docs-deploy]
 
   nightly:
     triggers:
