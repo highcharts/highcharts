@@ -188,6 +188,9 @@ seriesType<Highcharts.VBPIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/volume-by-price
      * @optionparent plotOptions.vbp
      */
     {
@@ -850,6 +853,9 @@ seriesType<Highcharts.VBPIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/volume-by-price
  * @apioption series.vbp
  */
 

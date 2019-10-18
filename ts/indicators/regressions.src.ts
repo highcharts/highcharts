@@ -169,6 +169,9 @@ seriesType<Highcharts.LinearRegressionIndicator>(
      * @extends      plotOptions.sma
      * @since        7.0.0
      * @product      highstock
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregression
      */
     {
@@ -420,6 +423,9 @@ seriesType<Highcharts.LinearRegressionIndicator>(
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregression
  */
 
@@ -472,6 +478,9 @@ seriesType<Highcharts.LinearRegressionSlopesIndicator>(
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionslope
  */
 
@@ -524,6 +533,9 @@ seriesType<Highcharts.LinearRegressionInterceptIndicator>(
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionintercept
  */
 
@@ -551,6 +563,9 @@ seriesType<Highcharts.LinearRegressionAngleIndicator>(
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
     {
@@ -594,6 +609,9 @@ seriesType<Highcharts.LinearRegressionAngleIndicator>(
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionangle
  */
 

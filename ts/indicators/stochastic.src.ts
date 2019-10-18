@@ -97,6 +97,9 @@ H.seriesType<Highcharts.StochasticIndicator>(
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     modules/stock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/stochastic
      * @optionparent plotOptions.stochastic
      */
     {
@@ -259,6 +262,9 @@ H.seriesType<Highcharts.StochasticIndicator>(
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  modules/stock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/stochastic
  * @apioption series.stochastic
  */
 
