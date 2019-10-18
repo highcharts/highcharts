@@ -143,8 +143,9 @@ extend(defaultOptions.lang,
      * to the parent series. The parent series' name is inserted for
      * `{series.name}`.
      *
-     * @since   3.0.8
-     * @product highcharts highmaps
+     * @since    3.0.8
+     * @product  highcharts highmaps
+     * @requires modules/drilldown
      *
      * @private
      */
