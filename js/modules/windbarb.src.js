@@ -65,7 +65,7 @@ seriesType('windbarb', 'column'
  *               linecap, shadow, stacking, step
  * @since        6.0.0
  * @product      highcharts highstock
- * @requires     modules/windbarb.js
+ * @requires     modules/windbarb
  * @optionparent plotOptions.windbarb
  */
 , {

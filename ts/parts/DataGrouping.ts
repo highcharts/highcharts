@@ -1124,6 +1124,7 @@ export default dataGrouping;
  * altered through a custom `approximation` callback function.
  *
  * @product   highstock
+ * @requires  modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
  */
 

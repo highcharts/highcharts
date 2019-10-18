@@ -103,7 +103,6 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     modules/stock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
@@ -341,7 +340,6 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/price-envelopes
  * @apioption series.priceenvelopes

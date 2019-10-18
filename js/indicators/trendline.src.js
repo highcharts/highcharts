@@ -31,7 +31,6 @@ seriesType('trendline', 'sma',
  * @extends      plotOptions.sma
  * @since        7.1.3
  * @product      highstock
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/trendline
  * @optionparent plotOptions.trendline
@@ -99,7 +98,6 @@ seriesType('trendline', 'sma',
  * @since     7.1.3
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/trendline
  * @apioption series.trendline

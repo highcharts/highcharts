@@ -135,8 +135,6 @@ H.setOptions({
              * The series labels currently work with series types having a
              * `graph` or an `area`.
              *
-             * Requires the `series-label.js` module.
-             *
              * @sample highcharts/series-label/line-chart
              *         Line chart
              * @sample highcharts/demo/streamgraph
@@ -144,8 +142,9 @@ H.setOptions({
              * @sample highcharts/series-label/stock-chart
              *         Stock chart
              *
-             * @since   6.0.0
-             * @product highcharts highstock gantt
+             * @since    6.0.0
+             * @product  highcharts highstock gantt
+             * @requires modules/series-label
              */
             label: {
 

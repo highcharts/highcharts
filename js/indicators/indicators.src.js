@@ -68,7 +68,6 @@ seriesType('sma', 'line',
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking, useOhlcData
  * @product      highstock
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @optionparent plotOptions.sma
  */
@@ -312,7 +311,6 @@ seriesType('sma', 'line',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL, useOhlcData
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @apioption series.sma
  */

@@ -126,6 +126,7 @@ H.seriesType<Highcharts.ItemSeries>(
      * @product      highcharts
      * @excluding    borderColor, borderWidth, depth, linecap, shadow,
      *               slicedOffset
+     * @requires     modules/item-series
      * @optionparent plotOptions.item
      */
     {
@@ -584,6 +585,7 @@ H.seriesType<Highcharts.ItemSeries>(
  * @extends   series,plotOptions.item
  * @excluding dataParser, dataURL, stack, xAxis, yAxis
  * @product   highcharts
+ * @requires  modules/item-series
  * @apioption series.item
  */
 

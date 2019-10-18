@@ -19,7 +19,6 @@ var addEvent = H.addEvent, merge = H.merge;
  *         Last visible price
  *
  * @product   highstock
- * @requires  modules/stock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastVisiblePrice
  */
@@ -47,7 +46,6 @@ var addEvent = H.addEvent, merge = H.merge;
  *         Last price
  *
  * @product   highstock
- * @requires  modules/stock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastPrice
  */

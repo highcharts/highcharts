@@ -31,7 +31,6 @@ seriesType('macd', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/macd
  * @optionparent plotOptions.macd
@@ -341,7 +340,6 @@ seriesType('macd', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/macd
  * @apioption series.macd

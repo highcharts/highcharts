@@ -88,7 +88,6 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
      *               joinBy, keys, navigatorOptions, pointInterval,
      *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
      *               showInNavigator, stacking
-     * @requires     modules/stock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/aroon
      * @requires     stock/indicators/aroon-oscillator
@@ -184,7 +183,6 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
  *            dataURL, joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/aroon
  * @requires  stock/indicators/aroon-oscillator

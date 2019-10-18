@@ -153,7 +153,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
      *               linecap, shadow, stacking, step
      * @since        6.0.0
      * @product      highcharts highstock
-     * @requires     modules/windbarb.js
+     * @requires     modules/windbarb
      * @optionparent plotOptions.windbarb
      */
     , {
@@ -507,7 +507,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
  * @extends   series,plotOptions.windbarb
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
- * @requires  modules/windbarb.js
+ * @requires  modules/windbarb
  * @apioption series.windbarb
  */
 

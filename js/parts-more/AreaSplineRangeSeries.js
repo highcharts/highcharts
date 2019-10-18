@@ -15,8 +15,7 @@ var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * The area spline range is a cartesian series type with higher and
  * lower Y values along an X axis. The area inside the range is colored, and
- * the graph outlining the area is a smoothed spline. Requires
- * `highcharts-more.js`.
+ * the graph outlining the area is a smoothed spline.
  *
  * @sample {highstock|highstock} stock/demo/areasplinerange/
  *         Area spline range

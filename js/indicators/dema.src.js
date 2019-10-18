@@ -36,7 +36,6 @@ H.seriesType('dema', 'ema',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ema
  * @requires     stock/indicators/dema
@@ -126,7 +125,6 @@ H.seriesType('dema', 'ema',
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/ema
  * @requires  stock/indicators/dema

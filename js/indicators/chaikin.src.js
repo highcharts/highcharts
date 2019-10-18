@@ -35,7 +35,6 @@ H.seriesType('chaikin', 'ema',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     modules/stock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ema
  * @requires     stock/indicators/chaikin
@@ -136,7 +135,6 @@ H.seriesType('chaikin', 'ema',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
- * @requires  modules/stock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/ema
  * @requires  stock/indicators/chaikin

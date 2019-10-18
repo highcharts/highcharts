@@ -65,8 +65,8 @@ seriesType<Highcharts.ColumnPyramidSeries>(
 
     /**
      * Column pyramid series display one pyramid per value along an X axis.
-     * Requires `highcharts-more.js`. To display horizontal pyramids,
-     * set [chart.inverted](#chart.inverted) to `true`.
+     * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
+     * `true`.
      *
      * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
      *         Column pyramid
