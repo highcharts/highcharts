@@ -17,6 +17,10 @@ import H from '../parts/Globals.js';
  *
  * @interface Highcharts.PatternOptionsObject
  */ /**
+* Background color for the pattern if a `path` is set (not images).
+* @name Highcharts.PatternOptionsObject#backgroundColor
+* @type {Highcharts.ColorString}
+*/ /**
 * URL to an image to use as the pattern.
 * @name Highcharts.PatternOptionsObject#image
 * @type {string}
@@ -233,9 +237,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
     var pattern, animate = pick(animation, true), animationOptions = H.animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
         ren.rect(0, 0, width, height)
-            .attr({
-            fill: fill
-        })
+            .attr({ fill: fill })
             .add(pattern);
     }, attribs;
     if (!id) {
@@ -255,6 +257,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
     pattern = this.createElement('pattern').attr({
         id: id,
         patternUnits: 'userSpaceOnUse',
+        patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
         width: width,
         height: height,
         x: options._x || options.x || 0,
@@ -266,8 +269,8 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
     if (options.path) {
         path = options.path;
         // The background
-        if (path.fill) {
-            rect(path.fill);
+        if (options.backgroundColor) {
+            rect(options.backgroundColor);
         }
         // The pattern
         attribs = {
@@ -275,7 +278,11 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;
-            attribs['stroke-width'] = path.strokeWidth || 2;
+            attribs['stroke-width'] = pick(path.strokeWidth, 2);
+            attribs.fill = path.fill || 'none';
+        }
+        if (path.transform) {
+            attribs.transform = path.transform;
         }
         this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;

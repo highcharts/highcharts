@@ -36,12 +36,14 @@ declare global {
             _x?: number;
             _y?: number;
             aspectRatio?: number;
+            backgroundColor?: ColorString;
             color: ColorString;
             height: number;
             id: string;
             image?: string;
             opacity?: number;
             path: (string|SVGAttributes);
+            patternContentUnits?: 'string';
             width: number;
             x?: number;
             y?: number;
@@ -65,6 +67,10 @@ declare global {
  * Pattern options
  *
  * @interface Highcharts.PatternOptionsObject
+ *//**
+ * Background color for the pattern if a `path` is set (not images).
+ * @name Highcharts.PatternOptionsObject#backgroundColor
+ * @type {Highcharts.ColorString}
  *//**
  * URL to an image to use as the pattern.
  * @name Highcharts.PatternOptionsObject#image
@@ -328,14 +334,12 @@ H.SVGRenderer.prototype.addPattern = function (
         height: number = (
             options.height || (options._height as any) || defaultSize
         ),
-        color = options.color || '#343434',
+        color: Highcharts.ColorString = options.color || '#343434',
         id = options.id,
         ren = this,
-        rect = function (fill: Highcharts.PatternObject): void {
+        rect = function (fill: Highcharts.ColorString): void {
             ren.rect(0, 0, width, height)
-                .attr({
-                    fill: fill
-                })
+                .attr({ fill })
                 .add(pattern);
         },
         attribs: Highcharts.SVGAttributes;
@@ -360,6 +364,7 @@ H.SVGRenderer.prototype.addPattern = function (
     pattern = this.createElement('pattern').attr({
         id: id,
         patternUnits: 'userSpaceOnUse',
+        patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
         width: width,
         height: height,
         x: options._x || options.x || 0,
@@ -374,8 +379,8 @@ H.SVGRenderer.prototype.addPattern = function (
         path = options.path as any;
 
         // The background
-        if (path.fill) {
-            rect(path.fill as any);
+        if (options.backgroundColor) {
+            rect(options.backgroundColor);
         }
 
         // The pattern
@@ -384,7 +389,11 @@ H.SVGRenderer.prototype.addPattern = function (
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;
-            attribs['stroke-width'] = path.strokeWidth || 2;
+            attribs['stroke-width'] = pick(path.strokeWidth, 2);
+            attribs.fill = path.fill || 'none';
+        }
+        if (path.transform) {
+            attribs.transform = path.transform;
         }
         this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;
