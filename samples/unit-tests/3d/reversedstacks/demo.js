@@ -37,15 +37,13 @@ QUnit.test('Test different reversedStacks options for 3D (#4369)', function (ass
 
     container1 =  document.createElement("div");
     document.body.appendChild(container1);
-    container1.id = "container1";
 
     container2 =  document.createElement("div");
     document.body.appendChild(container2);
-    container2.id = "container2";
 
-    chart1 = $("#container1").highcharts(options).highcharts();
+    chart1 = $(container1).highcharts(options).highcharts();
     options.yAxis.reversedStacks = true;
-    chart2 = $("#container2").highcharts(options).highcharts();
+    chart2 = $(container2).highcharts(options).highcharts();
 
     // non-reversed stacks
     for (var i = chart1.series.length - 1; i >= 1; i--) {
