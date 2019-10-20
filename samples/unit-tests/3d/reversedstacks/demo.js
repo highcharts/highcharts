@@ -64,4 +64,10 @@ QUnit.test('Test different reversedStacks options for 3D (#4369)', function (ass
             'Series descendig order'
         );
     }
+
+    chart1.destroy();
+    container1.parentNode.removeChild(container1);
+    chart2.destroy();
+    container2.parentNode.removeChild(container2);
+
 });
