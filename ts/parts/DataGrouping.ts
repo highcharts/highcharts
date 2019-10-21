@@ -125,7 +125,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'
+            'windbarb'|'ichimoku-averages'
         );
     }
 }
@@ -149,6 +149,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
     arrayMin,
     defined,
     extend,
@@ -161,7 +162,6 @@ import './Series.js';
 import './Tooltip.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -554,6 +554,7 @@ var seriesProto = Series.prototype,
         spline: {},
         area: {},
         areaspline: {},
+        arearange: {},
         column: {
             groupPixelWidth: 10
         },
@@ -785,7 +786,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     ) ||
                     xAxis.min === xAxis.dataMin
                 ) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
                 }
                 xAxis.dataMin = groupedXData[0];
             }

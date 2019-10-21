@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var arrayMax = U.arrayMax, pick = U.pick;
 var seriesType = H.seriesType;
 /**
  * The vector series class.
@@ -156,7 +156,7 @@ seriesType('vector', 'scatter'
      */
     translate: function () {
         H.Series.prototype.translate.call(this);
-        this.lengthMax = H.arrayMax(this.lengthData);
+        this.lengthMax = arrayMax(this.lengthData);
     },
     /**
      * @private

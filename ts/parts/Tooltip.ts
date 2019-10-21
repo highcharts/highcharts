@@ -15,6 +15,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     defined,
+    discardElement,
     extend,
     isNumber,
     isString,
@@ -628,7 +629,7 @@ H.Tooltip.prototype = {
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            H.discardElement(this.container as any);
+            discardElement(this.container as any);
         }
         H.clearTimeout(this.hideTimer as any);
         H.clearTimeout(this.tooltipTimeout as any);
@@ -1255,7 +1256,12 @@ H.Tooltip.prototype = {
                             null as any,
                             options.useHTML
                         )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
+                        .addClass(
+                            (point as any).isHeader ?
+                                'highcharts-tooltip-header ' : '' +
+                            'highcharts-tooltip-box ' +
+                            colorClass
+                        )
                         .attr(attribs)
                         .add(tooltipLabel);
                 }

@@ -9,6 +9,13 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
             chart: {
                 zoomType: 'xy'
             },
+            plotOptions: {
+                series: {
+                    dragDrop: {
+                        draggableY: true
+                    }
+                }
+            },
             xAxis: {
                 minRange: 0.1
             },
@@ -129,5 +136,17 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
                 eventName + ' should be fired (#11970)'
             );
         }
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        'Dragging an annotation should not drag point too (#12073)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].y,
+        6,
+        'Dragging an annotation should not drag point too (#12073)'
     );
 });
