@@ -640,3 +640,33 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
         'dataGroup should consider crop start'
     );
 });
+
+QUnit.test('DataGrouping and update', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            id: 'usdeur',
+            dataGrouping: {
+                forced: true
+            },
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.update({
+        series: [{
+            id: 'usdeur',
+            data: [3, 2, 1]
+        }, {
+            id: 'eurusd',
+            data: [1, 2, 3]
+        }]
+    }, true, true);
+
+    assert.ok(
+        true,
+        `Should be no errors when:
+            - updating one-to-one with IDs
+            - DG enabled
+        (#11471)`
+    );
+});
