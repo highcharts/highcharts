@@ -811,7 +811,7 @@ extend(ColorAxis.prototype, {
                     Math.max(this.dataMax, cSeries.maxColorValue);
             }
             if (!calculatedExtremes) {
-                Highcharts.Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.getExtremes.call(cSeries);
             }
         }
     },
