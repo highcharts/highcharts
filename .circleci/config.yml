@@ -375,7 +375,6 @@ workflows:
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
-          browsercount: 2
           requires:
             - install_dependencies
           browsers: "Mac.Safari"
