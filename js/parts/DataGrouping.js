@@ -495,14 +495,20 @@ seriesProto.processData = function () {
 };
 // Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function () {
-    var groupedData = this.groupedData;
-    // clear previous groups
-    (groupedData || []).forEach(function (point, i) {
-        if (point) {
-            groupedData[i] = point.destroy ? point.destroy() : null;
-        }
-    });
-    this.groupedData = null;
+    // Clear previous groups
+    if (this.groupedData) {
+        this.groupedData.forEach(function (point, i) {
+            if (point) {
+                this.groupedData[i] = point.destroy ?
+                    point.destroy() : null;
+            }
+        }, this);
+        // Clears all:
+        // - `this.groupedData`
+        // - `this.points`
+        // - `preserve` object in series.update()
+        this.groupedData.length = 0;
+    }
 };
 // Override the generatePoints method by adding a reference to grouped data
 seriesProto.generatePoints = function () {
