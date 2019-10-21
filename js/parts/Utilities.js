@@ -347,8 +347,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  */
 H.error = function (code, stop, chart) {
     var msg = isNumber(code) ?
-        'Highcharts error #' + code + ': www.highcharts.com/errors/' +
-            code :
+        "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
         code, defaultHandler = function () {
         if (stop) {
             throw new Error(msg);
@@ -359,6 +358,28 @@ H.error = function (code, stop, chart) {
         }
     };
     if (chart) {
+        if (code === 17) {
+            var options = chart.options;
+            var seriesOptions = (options.series || []);
+            var missingSeries = void 0;
+            if (options.chart &&
+                options.chart.defaultSeriesType &&
+                typeof (H.seriesTypes[options.chart.defaultSeriesType]) === 'undefined') {
+                missingSeries = options.chart.defaultSeriesType;
+            }
+            else {
+                for (var i = 0, ie = seriesOptions.length; i < ie; ++i) {
+                    missingSeries = seriesOptions[i].type;
+                    if (missingSeries &&
+                        typeof H.seriesTypes[missingSeries] === 'undefined') {
+                        break;
+                    }
+                }
+            }
+            if (typeof missingSeries === 'string') {
+                msg += "?missingModuleFor=" + missingSeries;
+            }
+        }
         H.fireEvent(chart, 'displayError', { code: code, message: msg }, defaultHandler);
     }
     else {
