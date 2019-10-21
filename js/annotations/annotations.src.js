@@ -595,6 +595,8 @@ merge(
              * Options for annotation's shapes. Each shape inherits options from
              * the shapeOptions object. An option from the shapeOptions can be
              * overwritten by config for a specific shape.
+             *
+             * @requires  modules/annotations
              */
             shapeOptions: {
 
@@ -679,6 +681,7 @@ merge(
              * by options in a specific control point.
              *
              * @type      {Annotation.ControlPoint.Options}
+             * @requires  modules/annotations
              * @apioption annotations.controlPointOptions
              */
             controlPointOptions: {
@@ -727,6 +730,8 @@ merge(
 
             /**
              * Events available in annotations.
+             *
+             * @requires modules/annotations
              */
             events: {},
 
