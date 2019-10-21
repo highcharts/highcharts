@@ -33,7 +33,6 @@ var removeElement = HTMLUtilities.removeElement;
 H.Chart.prototype.showExportMenu = function () {
     if (this.exportSVGElements && this.exportSVGElements[0]) {
         this.exportSVGElements[0].element.onclick();
-        this.highlightExportItem(0);
     }
 };
 
@@ -81,7 +80,7 @@ H.Chart.prototype.highlightExportItem = function (ix) {
 
     if (
         listItem &&
-        listItem.tagName === 'DIV' &&
+        listItem.tagName === 'LI' &&
         !(listItem.children && listItem.children.length)
     ) {
         // Test if we have focus support for SVG elements
@@ -194,7 +193,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         if (menu) {
             this.addAccessibleContextMenuAttribs();
             unhideChartElementFromAT(chart, menu);
-            chart.highlightExportItem(0);
         }
 
         this.setExportButtonExpandedState('true');
@@ -265,10 +263,9 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // Set tabindex on the menu items to allow focusing by script
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach(function (item) {
-                if (item.tagName === 'DIV' &&
+                if (item.tagName === 'LI' &&
                     !(item.children && item.children.length)) {
-                    item.setAttribute('role', 'listitem');
-                    item.setAttribute('tabindex', 0);
+                    item.setAttribute('tabindex', -1);
                 } else {
                     item.setAttribute('aria-hidden', 'true');
                 }
@@ -276,7 +273,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
             // Set accessibility properties on parent div
             var parentDiv = exportList[0].parentNode;
-            parentDiv.setAttribute('role', 'list');
             parentDiv.removeAttribute('aria-hidden');
             parentDiv.setAttribute(
                 'aria-label',
@@ -332,10 +328,10 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             init: function (direction) {
                 chart.showExportMenu();
 
-                // If coming back to export menu from other module, try to
-                // highlight last item in menu
                 if (direction < 0) {
                     chart.highlightLastExportItem();
+                } else {
+                    chart.highlightExportItem(0);
                 }
             },
 
