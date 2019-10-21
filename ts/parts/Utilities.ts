@@ -709,8 +709,7 @@ H.error = function (
     chart?: Highcharts.Chart
 ): void {
     var msg = isNumber(code) ?
-            'Highcharts error #' + code + ': www.highcharts.com/errors/' +
-            code :
+            `Highcharts error #${code}: www.highcharts.com/errors/${code}/` :
             code,
         defaultHandler = function (): void {
             if (stop) {
@@ -723,6 +722,33 @@ H.error = function (
         };
 
     if (chart) {
+        if (code === 17) {
+            const options = chart.options;
+            const seriesOptions = (options.series || []);
+            let missingSeries: (string|undefined);
+            if (
+                options.chart &&
+                options.chart.defaultSeriesType &&
+                typeof (
+                    H.seriesTypes[options.chart.defaultSeriesType]
+                ) === 'undefined'
+            ) {
+                missingSeries = options.chart.defaultSeriesType;
+            } else {
+                for (let i = 0, ie = seriesOptions.length; i < ie; ++i) {
+                    missingSeries = seriesOptions[i].type;
+                    if (
+                        missingSeries &&
+                        typeof H.seriesTypes[missingSeries] === 'undefined'
+                    ) {
+                        break;
+                    }
+                }
+            }
+            if (typeof missingSeries === 'string') {
+                msg += `?missingModuleFor=${missingSeries}`;
+            }
+        }
         H.fireEvent(
             chart,
             'displayError',
