@@ -14,16 +14,14 @@ Highcharts.mapChart('container', {
     },
     plotOptions: {
         mappoint: {
-            marker: {
-                cluster: {
-                    enabled: true,
-                    layoutAlgorithm: {
-                        type: 'kmeans',
-                        distance: 50
-                    },
-                    style: {
-                        fillColor: 'rgba(67, 67, 72, 0.85)'
-                    }
+            cluster: {
+                enabled: true,
+                layoutAlgorithm: {
+                    type: 'kmeans',
+                    distance: 50
+                },
+                marker: {
+                    fillColor: 'rgba(67, 67, 72, 0.85)'
                 }
             }
         }

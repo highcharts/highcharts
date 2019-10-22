@@ -141,7 +141,7 @@ seriesType<Highcharts.HeatmapSeries>(
      *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
      *               lineWidth, marker, pointInterval, pointIntervalUnit,
      *               pointRange, pointStart, shadow, softThreshold, stacking,
-     *               step, threshold
+     *               step, threshold, cluster
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */

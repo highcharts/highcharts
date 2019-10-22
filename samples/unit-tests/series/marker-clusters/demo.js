@@ -2,6 +2,9 @@ var options = {
     chart: {
         width: 500
     },
+    title: {
+        text: ''
+    },
     plotOptions: {
         scatter: {
             tooltip: {
@@ -12,20 +15,18 @@ var options = {
             dataLabels: {
                 enabled: true
             },
-            marker: {
-                cluster: {
+            cluster: {
+                enabled: true,
+                layoutAlgorithm: {
+                    type: 'grid'
+                },
+                dataLabels: {
                     enabled: true,
-                    layoutAlgorithm: {
-                        type: 'grid'
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.clusterPointsAmount}',
-                        verticalAlign: 'middle',
-                        align: 'center',
-                        style: {
-                            fontSize: '9px'
-                        }
+                    format: '{point.clusterPointsAmount}',
+                    verticalAlign: 'middle',
+                    align: 'center',
+                    marker: {
+                        fontSize: '9px'
                     }
                 }
             }
@@ -100,7 +101,7 @@ var options = {
 QUnit.test('General marker-clusters', function (assert) {
     var chart = Highcharts.chart('container', options),
         series = chart.series[0],
-        clusterOptions = series.options.marker.cluster,
+        clusterOptions = series.options.cluster,
         posX = 0,
         posY = 0,
         cluster,
@@ -108,20 +109,18 @@ QUnit.test('General marker-clusters', function (assert) {
         result;
 
     series.update({
-        marker: {
-            cluster: {
-                minimumClusterSize: 3,
-                layoutAlgorithm: {
-                    type: 'grid',
-                    gridSize: 50
-                }
+        cluster: {
+            minimumClusterSize: 3,
+            layoutAlgorithm: {
+                type: 'grid',
+                gridSize: 50
             }
         }
     });
 
     result = true;
 
-    series.clusters.clusterElements.forEach(function (cluster) {
+    series.markerClusterInfo.clusters.forEach(function (cluster) {
         if (cluster.data.length < clusterOptions.minimumClusterSize) {
             result = false;
         }
@@ -130,17 +129,15 @@ QUnit.test('General marker-clusters', function (assert) {
     assert.ok(result, 'Cluster data size should be greater or equal minimumClusterSize.');
 
     series.update({
-        marker: {
-            cluster: {
-                minimumClusterSize: 2,
-                style: {
-                    radius: 18
-                }
+        cluster: {
+            minimumClusterSize: 2,
+            marker: {
+                radius: 18
             }
         }
     });
 
-    cluster = series.clusters.clusterElements[0];
+    cluster = series.markerClusterInfo.clusters[0];
     cluster.data.forEach(function (p) {
         posX += p.x;
         posY += p.y;
@@ -159,44 +156,42 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     series.update({
-        marker: {
-            cluster: {
-                zones: [{
-                    from: 1,
-                    to: 2,
-                    style: {
-                        fillColor: '#25b35b',
-                        radius: 13
-                    }
-                }, {
-                    from: 3,
-                    to: 4,
-                    style: {
-                        fillColor: '#ff9603',
-                        radius: 15
-                    }
-                }, {
-                    from: 4,
-                    to: 5,
-                    style: {
-                        fillColor: '#ff5500',
-                        radius: 18
-                    }
-                }, {
-                    from: 6,
-                    to: 10,
-                    style: {
-                        fillColor: '#fc1100',
-                        className: 'test-class-name',
-                        radius: 18
-                    }
-                }]
-            }
+        cluster: {
+            zones: [{
+                from: 1,
+                to: 2,
+                marker: {
+                    fillColor: '#25b35b',
+                    radius: 13
+                }
+            }, {
+                from: 3,
+                to: 4,
+                marker: {
+                    fillColor: '#ff9603',
+                    radius: 15
+                }
+            }, {
+                from: 4,
+                to: 5,
+                marker: {
+                    fillColor: '#ff5500',
+                    radius: 18
+                }
+            }, {
+                from: 6,
+                to: 10,
+                marker: {
+                    fillColor: '#fc1100',
+                    className: 'test-class-name',
+                    radius: 18
+                }
+            }]
         }
     });
 
 
-    clusters = series.clusters.clusterElements;
+    clusters = series.markerClusterInfo.clusters;
     assert.deepEqual(
         [
             clusters[0].point.graphic.fillColor,
@@ -218,11 +213,11 @@ QUnit.test('General marker-clusters', function (assert) {
         'Clusters tooltip format should be consistent with tooltip.clusterFormat.'
     );
 
-    series.clusters.noiseElements[0].point.onMouseOver();
+    series.markerClusterInfo.noise[0].point.onMouseOver();
 
     assert.strictEqual(
         chart.tooltip.label.text.element.textContent,
-        'value: ' + series.clusters.noiseElements[0].point.y,
+        'value: ' + series.markerClusterInfo.noise[0].point.y,
         'Noise tooltip format should be consistent with tooltip.pointFormat.'
     );
 
@@ -232,7 +227,7 @@ QUnit.test('General marker-clusters', function (assert) {
     });
 
     assert.strictEqual(
-        series.clusters.clusterElements[3].data.length,
+        series.markerClusterInfo.clusters[3].data.length,
         5,
         'After addPoint() cluster size should be updated.'
     );
@@ -244,23 +239,23 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.deepEqual(
         [
-            series.clusters.clusterElements[3].clusterZone,
-            series.clusters.clusterElements[3].point.graphic.fillColor
+            series.markerClusterInfo.clusters[3].clusterZone,
+            series.markerClusterInfo.clusters[3].point.graphic.fillColor
         ],
         [
-            series.options.marker.cluster.zones[3],
-            series.options.marker.cluster.zones[3].style.fillColor
+            series.options.cluster.zones[3],
+            series.options.cluster.zones[3].marker.fillColor
         ],
         'After addPoint() cluster zone should be updated.'
     );
 
     assert.strictEqual(
-        series.clusters.clusterElements[3].point.graphic.className,
+        series.markerClusterInfo.clusters[3].point.graphic.className,
         'test-class-name',
         'Cluster class name should be consistent with zone.className.'
     );
 
-    series.clusters.clusterElements[3].point.firePointEvent('click');
+    series.markerClusterInfo.clusters[3].point.firePointEvent('click');
 
     assert.deepEqual(
         [
@@ -296,27 +291,25 @@ QUnit.test('Grid algorithm tests.', function (assert) {
         i;
 
     series.update({
-        marker: {
-            cluster: {
-                layoutAlgorithm: {
-                    type: 'grid',
-                    gridSize: 50
-                }
+        cluster: {
+            layoutAlgorithm: {
+                type: 'grid',
+                gridSize: 50
             }
         }
     });
 
-    clusteredPointsLen = series.clusters.noiseElements.length;
-    clusterOptions = series.options.marker.cluster;
+    clusteredPointsLen = series.markerClusterInfo.noise.length;
+    clusterOptions = series.options.cluster;
 
-    for (i = 0; i < series.clusters.clusterElements.length; i++) {
-        clusteredPointsLen += series.clusters.clusterElements[i].data.length;
+    for (i = 0; i < series.markerClusterInfo.clusters.length; i++) {
+        clusteredPointsLen += series.markerClusterInfo.clusters[i].data.length;
     }
 
     assert.deepEqual(
         [
-            series.clusters.clusterElements.length,
-            series.clusters.noiseElements.length,
+            series.markerClusterInfo.clusters.length,
+            series.markerClusterInfo.noise.length,
             clusteredPointsLen
         ],
         [
@@ -327,7 +320,7 @@ QUnit.test('Grid algorithm tests.', function (assert) {
         'Cluster and noise amount should be correct.'
     );
 
-    cluster = series.clusters.clusterElements[0];
+    cluster = series.markerClusterInfo.clusters[0];
     gridOffset = series.getGridOffset();
 
     assert.deepEqual(
@@ -350,18 +343,16 @@ QUnit.test('Grid algorithm tests.', function (assert) {
     );
 
     series.update({
-        marker: {
-            cluster: {
-                allowOverlap: false
-            }
+        cluster: {
+            allowOverlap: false
         }
     });
 
     result = true;
 
-    series.clusters.clusterElements.forEach(function (cluster, i) {
+    series.markerClusterInfo.clusters.forEach(function (cluster, i) {
         if (result) {
-            series.clusters.clusterElements.forEach(function (nextCluster, j) {
+            series.markerClusterInfo.clusters.forEach(function (nextCluster, j) {
                 if (i !== j && result) {
                     distance = Math.sqrt(
                         Math.pow(cluster.point.plotX - nextCluster.point.plotX, 2) +
@@ -400,17 +391,15 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
         i;
 
     series.update({
-        marker: {
-            cluster: {
-                layoutAlgorithm: {
-                    type: 'kmeans',
-                    distance: maxDistance
-                }
+        cluster: {
+            layoutAlgorithm: {
+                type: 'kmeans',
+                distance: maxDistance
             }
         }
     });
 
-    clusters = series.clusters.clusterElements;
+    clusters = series.markerClusterInfo.clusters;
 
     for (i = 0; i < series.xData.length; i++) {
         pointClusterDistance = [];
@@ -473,7 +462,7 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
 
     assert.strictEqual(
         noiseTest.length,
-        series.clusters.noiseElements.length,
+        series.markerClusterInfo.noise.length,
         'Noise points amount should be correct.'
     );
 });
@@ -491,16 +480,16 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     yAxis.setExtremes(500, 700, false);
     chart.redraw();
 
-    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+    groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
         series.xData,
         series.yData,
         [],
         { processedDistance: maxDistance }
     );
-    series.clusters = null;
+    series.markerClusterInfo = null;
 
-    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+    groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
         series.xData,
         series.yData,
@@ -518,7 +507,7 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     yAxis.setExtremes(530, 700, false);
     chart.redraw();
 
-    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+    groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
         series.xData,
         series.yData,
@@ -526,7 +515,7 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
         { processedDistance: maxDistance }
     );
 
-    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+    groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
         series.xData,
         series.yData,
@@ -544,7 +533,7 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     yAxis.setExtremes(250, 800, false);
     chart.redraw();
 
-    groupedPointsKM = series.clusterAlgorithms.kmeans.call(
+    groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
         series.xData,
         series.yData,
@@ -552,7 +541,7 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
         { processedDistance: maxDistance }
     );
 
-    groupedPointsOKM = series.clusterAlgorithms.optimizedKmeans.call(
+    groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
         series.xData,
         series.yData,

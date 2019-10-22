@@ -49,39 +49,37 @@ $.get(
             },
             plotOptions: {
                 mappoint: {
-                    marker: {
-                        cluster: {
-                            enabled: true,
-                            layoutAlgorithm: {
-                                type: 'kmeans',
-                                distance: 50
-                            },
-                            zones: [{
-                                from: 1,
-                                to: 4,
-                                style: {
-                                    radius: 13
-                                }
-                            }, {
-                                from: 5,
-                                to: 9,
-                                style: {
-                                    radius: 15
-                                }
-                            }, {
-                                from: 10,
-                                to: 25,
-                                style: {
-                                    radius: 17
-                                }
-                            }, {
-                                from: 16,
-                                to: 20,
-                                style: {
-                                    radius: 19
-                                }
-                            }]
-                        }
+                    cluster: {
+                        enabled: true,
+                        layoutAlgorithm: {
+                            type: 'kmeans',
+                            distance: 50
+                        },
+                        zones: [{
+                            from: 1,
+                            to: 4,
+                            marker: {
+                                radius: 13
+                            }
+                        }, {
+                            from: 5,
+                            to: 9,
+                            marker: {
+                                radius: 15
+                            }
+                        }, {
+                            from: 10,
+                            to: 25,
+                            marker: {
+                                radius: 17
+                            }
+                        }, {
+                            from: 16,
+                            to: 20,
+                            marker: {
+                                radius: 19
+                            }
+                        }]
                     }
                 }
             },

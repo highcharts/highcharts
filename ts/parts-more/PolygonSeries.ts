@@ -68,14 +68,11 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  *
  * @extends      plotOptions.scatter
  * @since        4.1.0
- * @excluding    jitter, softThreshold, threshold
+ * @excluding    jitter, softThreshold, threshold, cluster
  * @product      highcharts highstock
  * @optionparent plotOptions.polygon
  */
 seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
-    /**
-     * @excluding cluster
-     */
     marker: {
         enabled: false,
         states: {

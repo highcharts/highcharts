@@ -31,6 +31,7 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
+ * @excluding    cluster
  * @product      highcharts highstock
  * @optionparent plotOptions.bubble
  */
@@ -70,7 +71,7 @@ seriesType('bubble', 'scatter', {
      */
     /**
      * @extends   plotOptions.series.marker
-     * @excluding enabled, enabledThreshold, height, radius, width, cluster
+     * @excluding enabled, enabledThreshold, height, radius, width
      */
     marker: {
         lineColor: null,

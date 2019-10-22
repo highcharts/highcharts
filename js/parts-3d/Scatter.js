@@ -31,19 +31,14 @@ seriesType('scatter3d', 'scatter',
  *         Draggable 3d scatter
  *
  * @extends      plotOptions.scatter
- * @excluding    dragDrop
+ * @excluding    dragDrop, cluster
  * @product      highcharts
  * @optionparent plotOptions.scatter3d
  */
 {
     tooltip: {
         pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-    },
-    /**
-     * @extends   plotOptions.series.marker
-     * @excluding cluster
-     */
-    marker: {}
+    }
     // Series class
 }, {
     pointAttribs: function (point) {

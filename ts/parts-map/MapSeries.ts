@@ -183,7 +183,7 @@ seriesType<Highcharts.MapSeries>(
      *         Choropleth map
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker
+     * @excluding    marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
      */

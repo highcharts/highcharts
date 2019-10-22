@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/marker-clusters.js';
+import '../../modules/marker-clusters.src.js';

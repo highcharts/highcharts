@@ -18,12 +18,10 @@ Highcharts.mapChart('container', {
     },
     plotOptions: {
         mappoint: {
-            marker: {
-                cluster: {
-                    enabled: true,
-                    layoutAlgorithm: {
-                        type: 'optimalizedKmeans'
-                    }
+            cluster: {
+                enabled: true,
+                layoutAlgorithm: {
+                    type: 'optimalizedKmeans'
                 }
             }
         }

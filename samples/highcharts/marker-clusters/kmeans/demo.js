@@ -38,53 +38,53 @@ Highcharts.chart('container', {
                 clusterFormat: 'Clustered points: {point.clusterPointsAmount}'
             },
             marker: {
-                radius: 5,
-                cluster: {
-                    enabled: true,
-                    allowOverlap: false,
-                    layoutAlgorithm: {
-                        type: 'kmeans',
-                        distance: '7%'
-                    },
-                    dataLabels: {
-                        style: {
-                            fontSize: '9px'
-                        },
-                        y: -1
-                    },
+                radius: 5
+            },
+            cluster: {
+                enabled: true,
+                allowOverlap: false,
+                layoutAlgorithm: {
+                    type: 'kmeans',
+                    distance: '7%'
+                },
+                dataLabels: {
                     style: {
-                        lineColor: 'rgba(0, 0, 0, 0.1)'
+                        fontSize: '9px'
                     },
-                    zones: [{
-                        from: 1,
-                        to: 2,
-                        style: {
-                            fillColor: '#AAE0EE',
-                            radius: 12
-                        }
-                    }, {
-                        from: 3,
-                        to: 5,
-                        style: {
-                            fillColor: '#65CDEF',
-                            radius: 13
-                        }
-                    }, {
-                        from: 6,
-                        to: 9,
-                        style: {
-                            fillColor: '#0DA9DD',
-                            radius: 15
-                        }
-                    }, {
-                        from: 10,
-                        to: 100,
-                        style: {
-                            fillColor: '#2583C5',
-                            radius: 18
-                        }
-                    }]
-                }
+                    y: -1
+                },
+                marker: {
+                    lineColor: 'rgba(0, 0, 0, 0.1)'
+                },
+                zones: [{
+                    from: 1,
+                    to: 2,
+                    marker: {
+                        fillColor: '#AAE0EE',
+                        radius: 12
+                    }
+                }, {
+                    from: 3,
+                    to: 5,
+                    marker: {
+                        fillColor: '#65CDEF',
+                        radius: 13
+                    }
+                }, {
+                    from: 6,
+                    to: 9,
+                    marker: {
+                        fillColor: '#0DA9DD',
+                        radius: 15
+                    }
+                }, {
+                    from: 10,
+                    to: 100,
+                    marker: {
+                        fillColor: '#2583C5',
+                        radius: 18
+                    }
+                }]
             }
         }
     },

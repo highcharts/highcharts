@@ -135,6 +135,7 @@ var Axis = H.Axis,
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
+ * @excluding    cluster
  * @product      highcharts highstock
  * @optionparent plotOptions.bubble
  */
@@ -180,7 +181,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     /**
      * @extends   plotOptions.series.marker
-     * @excluding enabled, enabledThreshold, height, radius, width, cluster
+     * @excluding enabled, enabledThreshold, height, radius, width
      */
     marker: {
 
