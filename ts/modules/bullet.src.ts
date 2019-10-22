@@ -92,6 +92,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @requires     modules/bullet
      * @optionparent plotOptions.bullet
      */
     , {
@@ -352,6 +353,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, marker
+ * @requires  modules/bullet
  * @apioption series.bullet
  */
 

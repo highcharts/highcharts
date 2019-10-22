@@ -31,6 +31,8 @@ seriesType('macd', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/macd
  * @optionparent plotOptions.macd
  */
 {
@@ -338,6 +340,8 @@ seriesType('macd', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/macd
  * @apioption series.macd
  */
 ''; // to include the above in the js output

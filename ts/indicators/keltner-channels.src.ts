@@ -103,6 +103,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
     {
@@ -257,6 +259,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

@@ -1167,13 +1167,12 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
 
         /**
-         * Requires the Accessibility module.
-         *
          * A description of the series to add to the screen reader information
          * about the series.
          *
          * @type      {string}
          * @since     5.0.0
+         * @requires  modules/accessibility
          * @apioption plotOptions.series.description
          */
 
@@ -2469,6 +2468,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
          * will be hidden when moving the mouse between series. Defaults to true
          * for line and area type series, but to false for columns, pies etc.
+         *
+         * **Note:** The boost module will force this option because of
+         * technical limitations.
          *
          * @sample {highcharts} highcharts/plotoptions/series-stickytracking-true/
          *         True by default
@@ -6274,10 +6276,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
 /**
  * A description of the point to add to the screen reader information
- * about the point. Requires the Accessibility module.
+ * about the point.
  *
  * @type      {string}
  * @since     5.0.0
+ * @requires  modules/accessibility
  * @apioption series.line.data.description
  */
 

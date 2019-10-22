@@ -29,7 +29,7 @@ When the angles are not given, the layout will be rectangular, and the [layout](
 Symbols
 -------
 
-When used as an infographic, we would typically use custom symbols to denote the type of data, for example a count of men vs women. This is done in the [marker](https://api.highcharts.com/highcharts/plotOptions.item.marker.symbol) options. See the [live demo at jsFiddle](https://github.com/highcharts/highcharts/blob/master/docs/item-series.md).
+When used as an infographic, we would typically use custom symbols to denote the type of data, for example a count of men vs women. This is done in the [marker](https://api.highcharts.com/highcharts/plotOptions.item.marker.symbol) options. See the [live demo at jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-item/symbols).
 
 API options
 -----------

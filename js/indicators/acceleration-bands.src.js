@@ -57,6 +57,8 @@ H.seriesType('abands', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking,
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/acceleration-bands
  * @optionparent plotOptions.abands
  */
 {
@@ -166,13 +168,15 @@ merge(multipleLinesMixin, {
  * An Acceleration bands indicator. If the [type](#series.abands.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends      series,plotOptions.abands
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
- *               joinBy, keys, navigatorOptions, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
- *               stacking, showInNavigator,
+ * @extends   series,plotOptions.abands
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *            stacking, showInNavigator,
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/acceleration-bands
  * @apioption series.abands
  */
 ''; // to include the above in jsdoc

@@ -71,7 +71,7 @@
     "gzip-size": "^5.1.1",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.3.5",
     "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.14",
-    "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.2",
+    "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.3",
     "highcharts-utils": "github:highcharts/highcharts-utils",
     "husky": "^3.0.2",
     "js-yaml": "^3.13.1",

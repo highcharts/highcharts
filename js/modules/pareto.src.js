@@ -42,6 +42,7 @@ seriesType('pareto', 'line'
  *               pointPadding, pointPlacement, pointRange, pointStart,
  *               pointWidth, shadow, step, softThreshold, stacking,
  *               threshold, zoneAxis, zones
+ * @requires     modules/pareto
  * @optionparent plotOptions.pareto
  */
 , {
@@ -57,6 +58,7 @@ merge(derivedSeriesMixin, {
      *
      * @private
      * @function Highcharts.Series#setDerivedData
+     * @requires modules/pareto
      */
     setDerivedData: function () {
         var xValues = this.baseSeries.xData, yValues = this.baseSeries.yData, sum = this.sumPointsPercents(yValues, xValues, null, true);
@@ -82,6 +84,8 @@ merge(derivedSeriesMixin, {
      *
      * @return {number|Array<number,number>}
      * Returns sum of points or array of points [x,sum]
+     *
+     * @requires modules/pareto
      */
     sumPointsPercents: function (yValues, xValues, sum, isSum) {
         var sumY = 0, sumPercent = 0, percentPoints = [], percentPoint;
@@ -113,6 +117,7 @@ merge(derivedSeriesMixin, {
  * @since     6.0.0
  * @product   highcharts
  * @excluding data, dataParser, dataURL
+ * @requires  modules/pareto
  * @apioption series.pareto
  */
 /**

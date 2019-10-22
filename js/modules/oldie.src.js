@@ -22,6 +22,7 @@ var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElemen
  * @type      {string}
  * @default   http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
  * @since     2.3.0
+ * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
 H.getOptions().global.VMLRadialGradientURL =

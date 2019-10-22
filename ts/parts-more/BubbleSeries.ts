@@ -129,13 +129,14 @@ var Axis = H.Axis,
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position
  * along the X and Y axes mark the X and Y values, and the size of the bubble
- * relates to the Z value. Requires `highcharts-more.js`.
+ * relates to the Z value.
  *
  * @sample {highcharts} highcharts/demo/bubble/
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
 seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
@@ -768,6 +769,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
  * @extends   series,plotOptions.bubble
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.bubble
  */
 

@@ -63,6 +63,8 @@ seriesType('wma', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/wma
  * @optionparent plotOptions.wma
  */
 {
@@ -119,6 +121,8 @@ seriesType('wma', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/wma
  * @apioption series.wma
  */
 ''; // adds doclet above to the transpiled file

@@ -100,6 +100,8 @@ H.seriesType<Highcharts.MFIIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
      */
     {
@@ -245,6 +247,8 @@ H.seriesType<Highcharts.MFIIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/mfi
  * @apioption series.mfi
  */
 

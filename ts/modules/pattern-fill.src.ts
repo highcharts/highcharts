@@ -229,6 +229,8 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
  *        The pattern to set dimensions on.
  *
  * @return {void}
+ *
+ * @requires modules/pattern-fill
  */
 H.Point.prototype.calculatePatternDimensions = function (
     pattern: Highcharts.PatternOptionsObject
@@ -320,6 +322,8 @@ H.Point.prototype.calculatePatternDimensions = function (
  *
  * @return {Highcharts.SVGElement|undefined}
  * The added pattern. Undefined if the pattern already exists.
+ *
+ * @requires modules/pattern-fill
  */
 H.SVGRenderer.prototype.addPattern = function (
     options: Highcharts.PatternOptionsObject,

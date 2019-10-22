@@ -201,6 +201,7 @@ merge(
          *
          * @type         {Array<*>}
          * @since        6.0.0
+         * @requires     modules/annotations
          * @optionparent annotations
          */
         defaultOptions: {
@@ -238,6 +239,8 @@ merge(
              * Options for annotation's labels. Each label inherits options
              * from the labelOptions object. An option from the labelOptions
              * can be overwritten by config for a specific label.
+             *
+             * @requires modules/annotations
              */
             labelOptions: {
 
@@ -487,6 +490,7 @@ merge(
              *         Attach annotation to a mock point
              *
              * @type      {string|Highcharts.MockPointOptionsObject}
+             * @requires  modules/annotations
              * @apioption annotations.labels.point
              */
 
@@ -591,6 +595,8 @@ merge(
              * Options for annotation's shapes. Each shape inherits options from
              * the shapeOptions object. An option from the shapeOptions can be
              * overwritten by config for a specific shape.
+             *
+             * @requires  modules/annotations
              */
             shapeOptions: {
 
@@ -675,6 +681,7 @@ merge(
              * by options in a specific control point.
              *
              * @type      {Annotation.ControlPoint.Options}
+             * @requires  modules/annotations
              * @apioption annotations.controlPointOptions
              */
             controlPointOptions: {
@@ -723,6 +730,8 @@ merge(
 
             /**
              * Events available in annotations.
+             *
+             * @requires modules/annotations
              */
             events: {},
 

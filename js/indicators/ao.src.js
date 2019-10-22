@@ -33,6 +33,8 @@ H.seriesType('ao', 'sma',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               params, pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ao
  * @optionparent plotOptions.ao
  */
 {
@@ -153,6 +155,8 @@ H.seriesType('ao', 'sma',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ao
  * @apioption series.ao
  */
 ''; // for including the above in the doclets

@@ -108,6 +108,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
  * @return {void}
+ * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (
     labels: Array<Highcharts.SVGElement>

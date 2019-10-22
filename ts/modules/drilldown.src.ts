@@ -331,8 +331,9 @@ extend(
          * to the parent series. The parent series' name is inserted for
          * `{series.name}`.
          *
-         * @since   3.0.8
-         * @product highcharts highmaps
+         * @since    3.0.8
+         * @product  highcharts highmaps
+         * @requires modules/drilldown
          *
          * @private
          */
@@ -350,6 +351,7 @@ extend(
  * ](code.highcharts.com/modules/drilldown.js).
  *
  * @product      highcharts highmaps
+ * @requires     modules/drilldown
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {
@@ -573,6 +575,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drilldown
  */
 
@@ -583,6 +586,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillup
  */
 
@@ -594,6 +598,7 @@ defaultOptions.drilldown = {
  * @since     4.2.4
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillupall
  */
 
@@ -607,6 +612,7 @@ defaultOptions.drilldown = {
  * @type      {string}
  * @since     3.0.8
  * @product   highcharts
+ * @requires  modules/drilldown
  * @apioption series.line.data.drilldown
  */
 
@@ -871,11 +877,13 @@ Chart.prototype.showDrillUpButton = function (): void {
 
 /**
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
- * will drill up to the parent series. Requires the drilldown module.
+ * will drill up to the parent series.
  *
  * @function Highcharts.Chart#drillUp
  *
  * @return {void}
+ *
+ * @requires  modules/drilldown
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {

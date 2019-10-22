@@ -89,6 +89,8 @@ seriesType<Highcharts.EMAIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     {
@@ -222,6 +224,8 @@ seriesType<Highcharts.EMAIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 
