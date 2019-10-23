@@ -368,6 +368,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var series = this.series, i = fromIndex || 0;
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Returns the series' index in the `Chart.series`
+                 * array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number|undefined}
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
