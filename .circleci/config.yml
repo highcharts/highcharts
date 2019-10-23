@@ -15,6 +15,13 @@ load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
 
+load_source_from_cache: &load_source_from_cache
+  - restore_cache:
+      keys:
+        - source-v1-{{ .Branch }}-{{ .Revision }}
+        - source-v1-{{ .Branch }}-
+        - source-v1-
+
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
       fingerprints:
@@ -59,14 +66,18 @@ jobs:
       # to avoid a huge and slow checkout depth
      - <<: *add_gh_keys
      - <<: *add_to_ssh_config
-     - run:
-         name: Clone GitHub highcharts repository
-         command: |
-           if [ -n "$CIRCLE_TAG" ]; then
-            git clone --branch "${CIRCLE_TAG}" ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           else
-            git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           fi
+     - << : *load_source_from_cache
+     # Temporary workaround for https://discuss.circleci.com/t/22437
+     - run: |
+        if [ -n "$CIRCLE_TAG" ]
+        then
+          git fetch --force origin "refs/tags/${CIRCLE_TAG}:refs/tags/${CIRCLE_TAG}"
+        fi
+     - checkout
+     - save_cache:
+         key: source-v1-{{ .Branch }}-{{ .Revision }}
+         paths:
+           - ".git"
      - <<: *persist_workspace
 
   install_dependencies:
@@ -152,10 +163,8 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
       - run: sudo apt-get install -y rsync
-      - run: git fetch origin master:master && git checkout master && npm i && npx gulp scripts
+      - run: git checkout master && npm i && npx gulp scripts
       - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
@@ -282,9 +291,6 @@ jobs:
       - run:
           name: install pre dependencies
           command: sudo apt-get install cpio
-      - run:
-          name: Fetch full highcharts/master branch
-          command: git fetch --unshallow
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
