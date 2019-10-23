@@ -792,14 +792,19 @@ H.Fx.prototype = {
         } else if (i === end.length && now < 1) {
             while (i--) {
                 startVal = parseFloat(start[i]);
-                ret[i] =
-                    isNaN(startVal) ? // a letter instruction like M or L
-                        end[i] :
-                        (
-                            now *
-                            parseFloat('' + (end[i] - startVal)) +
-                            startVal
-                        );
+                ret[i] = (
+                    // A letter instruction like M or L
+                    isNaN(startVal) ||
+                    // Arc boolean flags:
+                    end[i - 4] === 'A' || // large-arc-flag
+                    end[i - 5] === 'A' // sweep-flag
+                ) ?
+                    end[i] :
+                    (
+                        now *
+                        parseFloat('' + (end[i] - startVal)) +
+                        startVal
+                    );
 
             }
         // If animation is finished or length not matching, land on right value
