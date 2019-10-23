@@ -67,6 +67,17 @@ function getLatestCommitShaSync(useShortVersion = false) {
     return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
 }
 
+/**
+ * Returns the files changed compared with master branch
+ *
+ * @return {Promise<String>}
+ *         Promise to keep with results
+ */
+function getFilesChanged() {
+    const ChildProcess = require('child_process');
+    return ChildProcess.execSync('git diff --name-status master').toString() || '';
+}
+
 /* *
  *
  *  Exports
@@ -75,5 +86,6 @@ function getLatestCommitShaSync(useShortVersion = false) {
 
 module.exports = {
     getStatus,
-    getLatestCommitShaSync
+    getLatestCommitShaSync,
+    getFilesChanged
 };

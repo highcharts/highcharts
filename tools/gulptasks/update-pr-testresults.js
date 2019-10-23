@@ -7,6 +7,7 @@ const request = require('request');
 const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
+const { getFilesChanged } = require('./lib/git');
 
 const DEFAULT_COMMENT_MATCH = '## Visual test results';
 const DEFAULT_OPTIONS = {
@@ -150,6 +151,48 @@ function completeTask(message) {
 }
 
 /**
+ * Takes a git file change status character and returns
+ * a human readable string.
+ * @param {string} changeCharacter from git command output
+ * @return {string} a human readable status string.
+ */
+function resolveGitFileStatus(changeCharacter) {
+    switch (changeCharacter) {
+        case 'M': return 'Modified';
+        case 'A': return 'Added';
+        case 'D': return 'Deleted';
+        case 'R': return 'Renamed';
+        case 'C': return 'Copied';
+        case 'U': return 'Unmerged';
+        case 'T': return 'Changed file type';
+        case 'X': return 'Unknown';
+        default: return '?';
+    }
+}
+
+/**
+ * Retrieves changes from samples/ folder and returns a markdown
+ * template that lists the changed files (compared with master).
+ * @param {string} folder to look for changes in.
+ * @return {string} markdown template with the changed files.
+ */
+function createChangedDirFilesTemplate(folder) {
+    let gitChangedFiles = getFilesChanged();
+    logLib.message(`Changed files:\n ${gitChangedFiles}`);
+    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && line.includes(folder));
+    let samplesChangedTemplate = '';
+    if (gitChangedFiles && gitChangedFiles.length > 0) {
+        samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n```\n| Change type | Sample |\n| --- | --- |\n' +
+            gitChangedFiles.map(line => {
+                const parts = line.split('\t');
+                return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
+            });
+        samplesChangedTemplate += '\n```\n\n</p>\n</details>\n';
+    }
+    return samplesChangedTemplate;
+}
+
+/**
  * Task for adding a visual test result as a comment to a PR.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
@@ -187,14 +230,16 @@ async function commentOnPR() {
         return typeof value === 'number' && value > 0;
     });
 
-    const commentTemplate = diffs.length === 0 ?
+    let commentTemplate = diffs.length === 0 ?
         `${DEFAULT_COMMENT_MATCH} - No difference found` :
         `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff |\n| --- | --- |\n${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' |').join('\n')}
             ${process.env.CIRCLE_BUILD_URL ? `\n\nCompared SVGs can be found under the [CI job artifacts](${process.env.CIRCLE_BUILD_URL}#artifacts).` : ''}`;
 
+    const changedSamplesTemplate = createChangedDirFilesTemplate('samples/');
+    commentTemplate += `\n\n${changedSamplesTemplate}`;
+
     try {
         let result;
-
         if (!alwaysAdd && existingComments.length > 0) {
             logLib.message(`Updating existing comment for #${pr}`);
             result = await updatePRComment(existingComments[0].id, commentTemplate);
