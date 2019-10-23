@@ -265,7 +265,7 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
         // SVG download. In this case, we want to use Microsoft specific Blob if
         // available
         try {
-            if (nav.msSaveOrOpenBlob) {
+            if (typeof nav.msSaveOrOpenBlob !== 'undefined') {
                 blob = new MSBlobBuilder();
                 blob.append(svg);
                 svgurl = blob.getBlob('image/svg+xml');

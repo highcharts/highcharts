@@ -16,40 +16,41 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface AbandsIndicatorOptions extends SmaIndicatorOptions,
-            MultipleLinesIndicatorOptions {
-            params?: AbandsIndicatorParamsOptions;
-            lineWidth?: number;
-            topLine?: Dictionary<CSSObject>;
-            bottomLine?: Dictionary<CSSObject>;
-        }
-
-        interface AbandsIndicatorParamsOptions
-            extends SmaIndicatorParamsOptions {
-            factor?: number;
-        }
-
-        class AbandsIndicator
-            extends SmaIndicator implements MultipleLinesIndicator {
-            public options: AbandsIndicatorOptions;
-            public data: Array<AbandsIndicatorPoint>;
-            public linesApiNames: MultipleLinesMixin['linesApiNames'];
+        class ABandsIndicator
+            extends SMAIndicator implements MultipleLinesIndicator {
+            public data: Array<ABandsIndicatorPoint>;
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
+            public linesApiNames: MultipleLinesMixin['linesApiNames'];
+            public options: ABandsIndicatorOptions;
+            public pointClass: typeof ABandsIndicatorPoint;
+            public points: Array<ABandsIndicatorPoint>;
             public getValues(
                 series: Series,
-                params: AbandsIndicatorParamsOptions
+                params: ABandsIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
-            public yData: Array<Array<number>>;
         }
 
-        class AbandsIndicatorPoint extends SmaIndicatorPoint {
-            public series: AbandsIndicator;
+        interface ABandsIndicatorOptions extends SMAIndicatorOptions,
+            MultipleLinesIndicatorOptions {
+            bottomLine?: Dictionary<CSSObject>;
+            lineWidth?: number;
+            params?: ABandsIndicatorParamsOptions;
+            topLine?: Dictionary<CSSObject>;
+        }
+
+        interface ABandsIndicatorParamsOptions
+            extends SMAIndicatorParamsOptions {
+            factor?: number;
+        }
+
+        class ABandsIndicatorPoint extends SMAIndicatorPoint {
+            public series: ABandsIndicator;
         }
 
         interface SeriesTypesDictionary {
-            abands: typeof AbandsIndicator;
+            abands: typeof ABandsIndicator;
         }
     }
 }
@@ -97,7 +98,7 @@ function getPointLB(low: number, base: number): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AbandsIndicator>(
+H.seriesType<Highcharts.ABandsIndicator>(
     'abands',
     'sma',
     /**
@@ -160,9 +161,9 @@ H.seriesType<Highcharts.AbandsIndicator>(
         nameComponents: ['period', 'factor'],
         linesApiNames: ['topLine', 'bottomLine'],
         getValues: function (
-            this: Highcharts.AbandsIndicator,
+            this: Highcharts.ABandsIndicator,
             series: Highcharts.Series,
-            params: Highcharts.AbandsIndicatorParamsOptions
+            params: Highcharts.ABandsIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),

@@ -118,17 +118,30 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-Highcharts.wrap(Highcharts, 'getJSON', function (proceed, url, callback) {
-    if (window.JSONSources[url]) {
-        callback(window.JSONSources[url]);
+
+// Override Highcharts and jQuery ajax functions to load from local
+Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
+    var success = attr.success;
+    attr.error = function (e) {
+        throw new Error('Failed to load: ' + attr.url);
+    };
+    if (attr.url && window.JSONSources[attr.url]) {
+        success.call(attr, window.JSONSources[attr.url]);
     } else {
-        console.log('@getJSON: Loading over network', url);
-        return proceed.call(Highcharts, url, function (data) {
-            window.JSONSources[url] = data;
-            callback(data);
-        });
+        console.log('@ajax: Loading over network', attr.url);
+        attr.success = function (data) {
+            window.JSONSources[attr.url] = data;
+            success.call(this, data);
+        };
+        return proceed.call(this, attr);
     }
 });
+if (window.$) {
+    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
+        callback(window.JSONSources[url]);
+    };
+}
+
 function resetDefaultOptions(testName) {
 
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
@@ -404,7 +417,12 @@ function getSVG(chart) {
     if (chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
-        svg = container.querySelector('svg').outerHTML;
+        svg = container.querySelector('svg')
+            .outerHTML
+            .replace(
+                /<svg /,
+                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+            );
 
         if (chart.styledMode) {
             svg = svg.replace(
@@ -605,19 +623,3 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         return ret;
     };
 }());
-
-// Override getJSON
-window.JSONSources = {};
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-/*
-window.onbeforeunload = function () {
-    console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
-    if (currentTests.length) {
-        return false;
-    }
-};
-*/

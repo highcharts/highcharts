@@ -20,14 +20,14 @@ See documentation on [GitHub](https://github.com/highcharts/node-export-server/b
 Deprecated Export Server
 ------------------------
 
-Our older, [legacy export server](docs/export-module/setting-up-the-server) includes a PhantomJS script package, which makes it possible to run Highcharts on the server without a client internet browser involved. **Note that there are no features in the legacy export server which are not included in the new node export server**.
+Our older, [legacy export server](https://highcharts.com/docs/export-module/setting-up-the-server) includes a PhantomJS script package, which makes it possible to run Highcharts on the server without a client internet browser involved. **Note that there are no features in the legacy export server which are not included in the new node export server**.
 
 Typical use cases are:
 
 *   you want to include your charts in emails or automated management reports
 *   you want to have a consistency between graphs you present on your website and your backend produced reports
 
-We're using [PhantomJS](http://phantomjs.org) for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary, it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
+We're using [PhantomJS](https://phantomjs.org) for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary, it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
 
 ### Command line usage
 
@@ -70,12 +70,13 @@ Filename containing a callback JavaScript. The callback is a function which will
 
 Stringified JSON which can contain three properties js, css and files. See below here for an example
 
-    
-    { 
-    "files": "highstock.js,highcharts-more.js,data.js,drilldown.js,funnel.js,heatmap.js,treemap.js,highcharts-3d.js,no-data-to-display.js,map.js,solid-gauge.js,broken-axis.js", 
-    "css": "g.highcharts-series path {stroke-width:2;stroke: pink}", 
-    "js": "document.body.style.webkitTransform = \\"rotate(-10deg)\\";" 
-    }
+```json
+{ 
+"files": "highstock.js,highcharts-more.js,data.js,drilldown.js,funnel.js,heatmap.js,treemap.js,highcharts-3d.js,no-data-to-display.js,map.js,solid-gauge.js,broken-axis.js", 
+"css": "g.highcharts-series path {stroke-width:2;stroke: pink}", 
+"js": "document.body.style.webkitTransform = 'rotate(-10deg)';" 
+}
+```
 
 *   `files`: A comma separated string of filenames that need to be injected to the page for rendering a chart. Only files with the extensions `.css` and `.js` are injected, the rest is ignored.
 *   `css`: css inserted in the body of the page
@@ -104,27 +105,31 @@ This is how you start a web server in PhantomJS with the highcharts-convert.js s
 
 Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note these parameters are defined: 'infile', 'callback' and 'constr';
 
-    
-    {"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
+```json
+{"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
+```
 
 This is how you can send a POST from the command line with Curl (MAC & Ubuntu);
 
-    
-    curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: [\\"Jan\\", \\"Feb\\", \\"Mar\\"]},series: [{data: [29.9, 71.5, 106.4]}]}"}' 127.0.0.1:3005
+```sh
+curl -H "Content-Type: application/json" -X POST -d '{"infile":"{xAxis: {categories: [\"Jan\", \"Feb\", \"Mar\"]},series: [{data: [29.9, 71.5, 106.4]}]}"}' 127.0.0.1:3005
+```
 
 Example of sending the contents of a file
 
-    
-    curl http://127.0.0.1:3005 -H "Content-Type: application/json" -X POST --data-binary "@/Users/yourname/yourfolder/chart-config.json"
+```sh
+curl http://127.0.0.1:3005 -H "Content-Type: application/json" -X POST --data-binary "@/Users/yourname/yourfolder/chart-config.json"
+```
 
 This is how you can send a POST from the commandline with Curl (Windows);
 
-    
-    curl -H "Content-Type: application/json" -X POST -d "{\\"infile\\":\\"{series:[{data:[29.9,71.5,106.4]}]}\\"}" 127.0.0.1:3005
+```sh
+curl -H "Content-Type: application/json" -X POST -d "{\"infile\":\"{series:[{data:[29.9,71.5,106.4]}]}\"}" 127.0.0.1:3005
+```
 
 ### Setting it up
 
-1.  For download and install of PhantomJS, see [http://phantomjs.org/download.html](http://phantomjs.org/download.html)
+1.  For download and install of PhantomJS, see [https://phantomjs.org/download.html](https://phantomjs.org/download.html)
 2.  Clone the [highcharts-export-server](https://github.com/highcharts/highcharts-export-server) repository from GitHub or download the zip file containing the repository and copy the [phantomjs](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs) folder to your installation folder
 3.  In the copied phantomjs folder is a file named [resources.json](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs/resources.json). This file specifies the Highcharts javascript files for creating the charts. Make sure the files can be looked up through the resources.json file. The files will be looked up relative to the working directory of PhantomJS, but you can also specify your own locations.
 4.  If you experience issues with PDF export not matching the page size, try changing the dpiCorrection setting in the highcharts-convert.js script. The issue is likely related to this PhantomJS [bug](https://github.com/ariya/phantomjs/issues/12685).

@@ -12,8 +12,10 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
+    destroyObjectProperties = U.destroyObjectProperties,
     erase = U.erase,
     extend = U.extend,
+    pick = U.pick,
     splat = U.splat;
 
 import '../parts/Chart.js';
@@ -31,9 +33,7 @@ var merge = H.merge,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     find = H.find,
-    pick = H.pick,
     reduce = H.reduce,
-    destroyObjectProperties = H.destroyObjectProperties,
     chartProto = H.Chart.prototype;
 
 /* *********************************************************************
@@ -65,9 +65,9 @@ var merge = H.merge,
  * @name Highcharts.Annotation
  *
  * @param {Highcharts.Chart} chart a chart instance
- * @param {Highcharts.AnnotationsOptions} options the options object
+ * @param {Highcharts.AnnotationsOptions} userOptions the options object
  */
-var Annotation = H.Annotation = function (chart, options) {
+var Annotation = H.Annotation = function (chart, userOptions) {
     var labelsAndShapes;
 
     /**
@@ -112,24 +112,23 @@ var Annotation = H.Annotation = function (chart, options) {
      *
      * @type {Highcharts.AnnotationsOptions}
      */
-    // this.options = merge(this.defaultOptions, userOptions);
-    this.options = options;
+    this.options = merge(this.defaultOptions, userOptions);
 
     /**
      * The user options for the annotations.
      *
      * @type {Highcharts.AnnotationsOptions}
      */
-    this.userOptions = merge(true, {}, options);
+    this.userOptions = userOptions;
 
     // Handle labels and shapes - those are arrays
     // Merging does not work with arrays (stores reference)
     labelsAndShapes = this.getLabelsAndShapesOptions(
-        this.userOptions,
-        options
+        this.options,
+        userOptions
     );
-    this.userOptions.labels = labelsAndShapes.labels;
-    this.userOptions.shapes = labelsAndShapes.shapes;
+    this.options.labels = labelsAndShapes.labels;
+    this.options.shapes = labelsAndShapes.shapes;
 
     /**
      * The callback that reports to the overlapping-labels module which
@@ -164,7 +163,7 @@ var Annotation = H.Annotation = function (chart, options) {
      * @type {Highcharts.SVGElement}
      */
 
-    this.init(chart, options);
+    this.init(chart, this.options);
 };
 
 
@@ -768,17 +767,19 @@ merge(
         },
 
         addShapes: function () {
-            (this.options.shapes || []).forEach(
-                this.initShape,
-                this
-            );
+            (this.options.shapes || []).forEach(function (shapeOptions, i) {
+                var shape = this.initShape(shapeOptions, i);
+
+                merge(true, this.options.shapes[i], shape.options);
+            }, this);
         },
 
         addLabels: function () {
-            (this.options.labels || []).forEach(
-                this.initLabel,
-                this
-            );
+            (this.options.labels || []).forEach(function (labelsOptions, i) {
+                var labels = this.initLabel(labelsOptions, i);
+
+                merge(true, this.options.labels[i], labels.options);
+            }, this);
         },
 
         addClipPaths: function () {
@@ -1094,7 +1095,7 @@ merge(
                 }
 
                 item.redraw(
-                    H.pick(animation, true) && item.graphic.placed
+                    pick(animation, true) && item.graphic.placed
                 );
 
                 if (item.points.length) {
@@ -1202,11 +1203,7 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
     initAnnotation: function (userOptions) {
         var Constructor =
             Annotation.types[userOptions.type] || Annotation,
-            options = H.merge(
-                Constructor.prototype.defaultOptions,
-                userOptions
-            ),
-            annotation = new Constructor(this, options);
+            annotation = new Constructor(this, userOptions);
 
         this.annotations.push(annotation);
 

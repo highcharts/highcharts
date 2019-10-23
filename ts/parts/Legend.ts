@@ -44,12 +44,12 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
-        interface PlotSeriesOptions {
-            legendType?: ('point'|'series');
-        }
         interface Point extends LegendItemObject {
         }
         interface Series extends LegendItemObject {
+        }
+        interface SeriesOptions {
+            legendType?: ('point'|'series');
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
@@ -70,6 +70,7 @@ declare global {
             public initialItemY: number;
             public itemHeight: number;
             public itemHiddenStyle?: CSSObject;
+            public itemMarginBottom: number;
             public itemMarginTop: number;
             public itemStyle?: CSSObject;
             public itemX: number;
@@ -217,19 +218,20 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
-    isNumber
+    discardElement,
+    isNumber,
+    pick,
+    setAnimation,
+    syncTimeout
 } = U;
 
 var H = Highcharts,
     addEvent = H.addEvent,
     css = H.css,
-    discardElement = H.discardElement,
     fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     merge = H.merge,
-    pick = H.pick,
-    setAnimation = H.setAnimation,
     stableSort = H.stableSort,
     win = H.win,
     wrap = H.wrap;
@@ -347,6 +349,7 @@ Highcharts.Legend.prototype = {
         }
 
         this.itemMarginTop = options.itemMarginTop || 0;
+        this.itemMarginBottom = options.itemMarginBottom || 0;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
         this.symbolWidth = pick(options.symbolWidth, 16);
@@ -882,7 +885,7 @@ Highcharts.Legend.prototype = {
             padding = this.padding,
             horizontal = options.layout === 'horizontal',
             itemHeight = item.itemHeight,
-            itemMarginBottom = options.itemMarginBottom || 0,
+            itemMarginBottom = this.itemMarginBottom,
             itemMarginTop = this.itemMarginTop,
             itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
             maxLegendWidth = this.maxLegendWidth,
@@ -1079,7 +1082,7 @@ Highcharts.Legend.prototype = {
             item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
         ): void {
             var lastPoint: (Highcharts.Point|undefined),
-                height,
+                height: number,
                 useFirstPoint = alignLeft,
                 target,
                 top;
@@ -1097,7 +1100,10 @@ Highcharts.Legend.prototype = {
                         return isNumber(item.plotY);
                     }
                 );
-                height = (item.legendGroup as any).getBBox().height;
+
+                height = this.itemMarginTop +
+                    (item.legendItem as any).getBBox().height +
+                    this.itemMarginBottom;
 
                 top = (item as any).yAxis.top - chart.plotTop;
                 if (item.visible) {
@@ -1537,7 +1543,8 @@ Highcharts.Legend.prototype = {
         scrollBy: number,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
-        var pages = this.pages,
+        var chart = this.chart,
+            pages = this.pages,
             pageCount = pages.length,
             currentPage = (this.currentPage as any) + scrollBy,
             clipHeight = this.clipHeight,
@@ -1553,7 +1560,7 @@ Highcharts.Legend.prototype = {
         if (currentPage > 0) {
 
             if (animation !== undefined) {
-                setAnimation(animation, this.chart);
+                setAnimation(animation, chart);
             }
 
             (this.nav as any).attr({
@@ -1584,7 +1591,7 @@ Highcharts.Legend.prototype = {
                 });
             }, this);
 
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 (this.up as any)
                     .attr({
                         fill: currentPage === 1 ?
@@ -1617,8 +1624,15 @@ Highcharts.Legend.prototype = {
 
             this.currentPage = currentPage;
             this.positionCheckboxes();
-        }
 
+            // Fire event after scroll animation is complete
+            const animOptions = H.animObject(
+                pick(animation, chart.renderer.globalAnimation, true)
+            );
+            syncTimeout((): void => {
+                fireEvent(this, 'afterScroll', { currentPage });
+            }, animOptions.duration || 0);
+        }
     }
 
 } as any;

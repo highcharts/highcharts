@@ -111,6 +111,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var pick = U.pick;
 
 // Default options for Instrument constructor
 var defaultOptions = {
@@ -304,8 +306,8 @@ Instrument.prototype.cancelGainRamp = function () {
  */
 Instrument.prototype.getValidFrequency = function (frequency, min, max) {
     var validFrequencies = this.options.allowedFrequencies,
-        maximum = H.pick(max, Infinity),
-        minimum = H.pick(min, -Infinity);
+        maximum = pick(max, Infinity),
+        minimum = pick(min, -Infinity);
 
     return !validFrequencies || !validFrequencies.length ?
         // No valid frequencies for this instrument, return the target
@@ -501,8 +503,8 @@ Instrument.prototype.play = function (options) {
         });
 
         // Set the volume and panning
-        setOrStartTimer(H.pick(options.volume, 1), 'setGain', 4); // Slight ramp
-        setOrStartTimer(H.pick(options.pan, 0), 'setPan');
+        setOrStartTimer(pick(options.volume, 1), 'setGain', 4); // Slight ramp
+        setOrStartTimer(pick(options.pan, 0), 'setPan');
     } else {
         // No note duration, so just stop immediately
         onStop();

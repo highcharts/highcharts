@@ -21,21 +21,21 @@ declare global {
         interface Indicator {
             generateMessage: RequiredIndicatorMixin['generateMessage'];
             isParentLoaded: RequiredIndicatorMixin['isParentLoaded'];
+            prototype: SMAIndicator;
         }
 
         interface IndicatorCallbackFunction {
-            (indicator: Indicator): boolean;
+            (indicator: Indicator): (boolean|undefined);
         }
         interface RequiredIndicatorMixin {
             generateMessage(indicatorType: string, required: string): string;
             isParentLoaded(
-                this: Indicator,
                 indicator: (Indicator|undefined),
                 requiredIndicator: string,
                 type: string,
                 callback: IndicatorCallbackFunction,
-                errMessage: string
-            ): boolean;
+                errMessage?: string
+            ): (boolean|undefined);
         }
     }
 }
@@ -56,7 +56,7 @@ var requiredIndicatorMixin: Highcharts.RequiredIndicatorMixin = {
      *        Required indicator type.
      * @param {string} type
      *        Type of indicator where function was called (parent).
-     * @param {Highcharts.IndicatorConstructorFunction} callback
+     * @param {Highcharts.IndicatorCallbackFunction} callback
      *        Callback which is triggered if the given indicator is loaded.
      *        Takes indicator as an argument.
      * @param {string} errMessage
@@ -70,8 +70,8 @@ var requiredIndicatorMixin: Highcharts.RequiredIndicatorMixin = {
         requiredIndicator: string,
         type: string,
         callback: Highcharts.IndicatorCallbackFunction,
-        errMessage: string
-    ): boolean {
+        errMessage?: string
+    ): (boolean|undefined) {
         if (indicator) {
             return callback ? callback(indicator) : true;
         }

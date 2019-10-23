@@ -77,10 +77,10 @@ import H from '../parts/Globals.js';
 * @product highcharts highstock
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
-var noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
+var noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.

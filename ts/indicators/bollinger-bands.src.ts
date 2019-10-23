@@ -16,9 +16,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class BBIndicator extends SmaIndicator
+        class BBIndicator extends SMAIndicator
             implements MultipleLinesIndicator {
-            public data: Array<BbIndicatorPoint>;
+            public data: Array<BBIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -28,20 +28,19 @@ declare global {
                 params: BBIndicatorParamsOptions
             ): (boolean|IndicatorMultipleValuesObject);
             public options: BBIndicatorOptions;
-            public pointClass: typeof BbIndicatorPoint;
-            public points: Array<BbIndicatorPoint>;
-            public yData: Array<Array<number>>;
+            public pointClass: typeof BBIndicatorPoint;
+            public points: Array<BBIndicatorPoint>;
         }
 
-        interface BBIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             standardDeviation?: number;
         }
 
-        class BbIndicatorPoint extends SmaIndicatorPoint {
+        class BBIndicatorPoint extends SMAIndicatorPoint {
             public series: BBIndicator;
         }
 
-        interface BBIndicatorOptions extends SmaIndicatorOptions,
+        interface BBIndicatorOptions extends SMAIndicatorOptions,
             MultipleLinesIndicatorOptions {
             bottomLine?: Dictionary<CSSObject>;
             params?: BBIndicatorParamsOptions;
@@ -196,13 +195,13 @@ H.seriesType<Highcharts.BBIndicator>(
         },
         getValues: function (
             this: Highcharts.BBIndicator,
-            series: Highcharts.BBIndicator,
+            series: Highcharts.Series,
             params: Highcharts.BBIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 // 0- date, 1-middle line, 2-top line, 3-bottom line
                 BB: Array<Array<number>> = [],
@@ -220,7 +219,11 @@ H.seriesType<Highcharts.BBIndicator>(
                 point: (
                     boolean|
                     Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorMultipleValuesObject
+                    Highcharts.IndicatorMultipleValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorUndefinableValuesObject|
+                    Highcharts.IndicatorMultipleNullableValuesObject|
+                    Highcharts.IndicatorMultipleUndefinableValuesObject
                 ),
                 i: number;
 

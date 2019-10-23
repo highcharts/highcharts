@@ -18,6 +18,10 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
                 medianPlot = Math.floor(point.medianPlot) + 0.5,
                 lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
 
+            if (point.isNull) {
+                return;
+            }
+
             if (!graphic) {
                 point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
             }
@@ -58,15 +62,26 @@ var chart = Highcharts.chart('container', {
     },
 
     accessibility: {
-        keyboardNavigation: {
-            skipNullPoints: true
+        point: {
+            descriptionFormatter: function (point) {
+                // Use default formatter for null points
+                if (point.isNull) {
+                    return false;
+                }
+
+                return point.category + ', low ' + point.low + ', median ' +
+                    point.median + ', high ' + point.high;
+            }
         },
-        pointDescriptionFormatter: function (point) {
-            return point.category + ', low ' + point.low + ', median ' + point.median + ', high ' + point.high;
+
+        series: {
+            descriptionFormatter: function (series) {
+                return series.name + ', series ' + (series.index + 1) + ' of ' +
+                    series.chart.series.length + ' with ' + series.points.length +
+                    ' data points.';
+            }
         },
-        seriesDescriptionFormatter: function (series) {
-            return series.name + ', series ' + (series.index + 1) + ' of ' + series.chart.series.length + ' with ' + series.points.length + ' data points.';
-        },
+
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
 

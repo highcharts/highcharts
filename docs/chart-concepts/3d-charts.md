@@ -82,12 +82,12 @@ In _chart.options3d_ there is also the possibility to construct three panes aro
 3D Columns
 ----------
 
-A 3D chart of type [columns](docs/chart-and-series-types/column-chart) will draw each column as a cuboid and thus create a 3D effect. By default the depth of this column is set to 25. To define another depth you have to go into the _plotOptions_ and define one for the columns:
+A 3D chart of type [columns](https://highcharts.com/docs/chart-and-series-types/column-chart) will draw each column as a cuboid and thus create a 3D effect. By default the depth of this column is set to 25. To define another depth you have to go into the _plotOptions_ and define one for the columns:
 
     
     plotOptions.column.depth: The depth of each individual column.
 
-<iframe width="320" height="240" style="width: 100%; height: 550px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive></iframe>
+<iframe style="width: 100%; height: 550px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive allow="fullscreen"></iframe>
 
 ### Displaying multiple columns
 
@@ -103,24 +103,24 @@ By default, _grouping_ is **true** in Highcharts, displaying the columns next to
 
 A regular Highcharts column chart also offers the possibility to stack columns together, this is of course still available in 3D charts and works in exactly the same way by setting _stacking_ to **true** and defining a stack number for each series.
 
-<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping></iframe>
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping allow="fullscreen"></iframe>
 
 3D Pie
 ------
 
-For a [pie chart](docs/chart-and-series-types/pie-chart) the depth of the total chart is not important and setting the frame does not do anything (the frame is linked to the axis line and pies do not have these in the same way the other charts have). For pie charts it is important to set the depth property in _plotOptions_.
+For a [pie chart](https://highcharts.com/docs/chart-and-series-types/pie-chart) the depth of the total chart is not important and setting the frame does not do anything (the frame is linked to the axis line and pies do not have these in the same way the other charts have). For pie charts it is important to set the depth property in _plotOptions_.
 
     
     plotOptions.pie.depth: Defines the 'thickness' of the pie.
 
-<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie></iframe>
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie allow="fullscreen"></iframe>
 
 3D Scatter
 ----------
 
-In addition to x & y coordinates like in a regular [scatter chart](docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent eithe literally or using an array:
+In addition to x & y coordinates like in a regular [scatter chart](https://highcharts.com/docs/chart-and-series-types/scatter-chart), the 3D plugin adds an extra z coordinate to each point to place in 3 dimensions. Similar to the normal chart these coordinates can be sent eithe literally or using an array:
 
     
     {x: 1, y: 1, z: 1} is the same point as [1,1,1]
 
-<iframe width="320" height="240" style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/samples/highcharts/3d/scatter></iframe>
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/samples/highcharts/3d/scatter allow="fullscreen"></iframe>

@@ -21,8 +21,8 @@ Does Highcharts refer to files outside our domain?
 
 For basic usage, Highcharts doesn't refer to any files other than highcharts.js/highstock.js, though there are some cases that you should be aware of.
 
-*   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, http://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](docs/export-module/setting-up-the-server). 
-*   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](docs/getting-started/optional-dependencies) documentation article.
+*   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](https://highcharts.com/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). 
+*   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](https://highcharts.com/docs/getting-started/optional-dependencies) documentation article.
 
 * * *
 
@@ -48,7 +48,7 @@ var chart = new Highcharts.Chart({
 });
 ```
 
-[Try it live](http://jsfiddle.net/highcharts/DXnPa/).
+[Try it live](https://jsfiddle.net/highcharts/DXnPa/).
 
 Another case where legacy IE fails to show charts, is when the security setting "ActiveX controls and plug-ins" => "Binary and script behavious" is disabled. This happens very rarely on user computers, but we have seen it from time to time on company networks. In this case, IE fails to draw any of the vector graphics, only the the text is shown. 
 
@@ -76,11 +76,11 @@ Technically Highcharts Stock is implemented as a set of plugins for Highcharts. 
 
 Examples:
 
-*   [Using flags in Highcharts](http://jsfiddle.net/highcharts/2BGSK/)
+*   [Using flags in Highcharts](https://jsfiddle.net/highcharts/2BGSK/)
     
-*   [Enabling a scrollbar in Highcharts](http://jsfiddle.net/highcharts/fj6d2/)
+*   [Enabling a scrollbar in Highcharts](https://jsfiddle.net/highcharts/fj6d2/)
     
-*   [Gap size in Highcharts](http://jsfiddle.net/highcharts/VwkHu/)
+*   [Gap size in Highcharts](https://jsfiddle.net/highcharts/VwkHu/)
     
 
 * * *
@@ -88,7 +88,7 @@ Examples:
 Can I add a data table to the exported chart?
 ---------------------------------------------
 
-If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/exporting-table/) for source code and live example.
+If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/exporting-table/) for source code and live example.
 
 * * *
 
@@ -98,9 +98,9 @@ How can I get the best performance out of Highcharts?
 When working with series with a high number of data points, there are a few things to consider.
 
 1.  First of all, consider using [the Boost module](news/175-highcharts-performance-boost).
-2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [http://highcharts.com/demo/line-time-series](http://highcharts.com/demo/line-time-series).
+2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
-4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](http://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.
+4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.
 
 * * *
 
@@ -109,7 +109,7 @@ Can I export multiple charts to the same image or PDF?
 
 Currently this isn't implemented in the core, but there are a couple of paths you can go to achieve this. 
 
-1.  Use our hack for [exporting multiple charts](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
+1.  Use our hack for [exporting multiple charts](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
 2.  Create a HTML file on your server that contains all your desired charts, and do a pure server side conversion of this. See [Can I generate charts on the server without using a browser?](#server-side-charts)
 
 * * *
@@ -134,14 +134,14 @@ If you're using German umlauts, Scandinavian vowels or non-European alphabets, y
 Can I generate charts on the server without using a browser?
 ------------------------------------------------------------
 
-Yes. See our article, [Render charts on the server](docs/export-module/render-charts-serverside).
+Yes. See our article, [Render charts on the server](https://highcharts.com/docs/export-module/render-charts-serverside).
 
 * * *
 
 How do I define irregular time data?
 ------------------------------------
 
-To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [http://jsfiddle.net/highcharts/Jx5n2/](http://jsfiddle.net/highcharts/Jx5n2/).
+To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [https://jsfiddle.net/highcharts/Jx5n2/](https://jsfiddle.net/highcharts/Jx5n2/).
 
 If you want the line to be broken for missing dates, insert null values instead.
 
@@ -150,11 +150,11 @@ If you want the line to be broken for missing dates, insert null values instead.
 How do I add data from a MySQL database?
 ----------------------------------------
 
-See [Preprocessing data from a database](docs/working-with-data/data-from-a-database).
+See [Preprocessing data from a database](https://highcharts.com/docs/working-with-data/data-from-a-database).
 
 * * *
 
 Your map of my country does not include a disputed area
 -------------------------------------------------------
 
-We do our best not to take sides in border conflicts, however we realize the need for maps including disputed areas. To solve this, we try to keep our default maps conforming to neutral de facto borders or conventions, while providing alternative maps that include disputed areas. For a complete list of all of our maps, visit our [Map Collection](http://code.highcharts.com/mapdata).
+We do our best not to take sides in border conflicts, however we realize the need for maps including disputed areas. To solve this, we try to keep our default maps conforming to neutral de facto borders or conventions, while providing alternative maps that include disputed areas. For a complete list of all of our maps, visit our [Map Collection](https://code.highcharts.com/mapdata).

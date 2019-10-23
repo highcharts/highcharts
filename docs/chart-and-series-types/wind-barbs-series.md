@@ -3,11 +3,11 @@ Wind barbs
 
 Wind barbs visualize wind speed and direction in one graphical form. The stem direction defines the wind direction, while the barbs’ numbers and shapes define the wind speed.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.windbarb)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.windbarb)_
 
-<iframe width="320" height="240" style="width: 100%; height: 332px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/windbarb-series></iframe>
+<iframe style="width: 100%; height: 332px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/windbarb-series allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/windbarb-series/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/windbarb-series/) to check the code.
 
 Data structure
 --------------

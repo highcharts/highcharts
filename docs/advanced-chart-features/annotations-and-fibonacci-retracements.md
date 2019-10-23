@@ -1,11 +1,10 @@
 Annotations and fibonacci replacements
 ===
 
-A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](http://www.investopedia.com/terms/f/fibonacciretracement.asp).
+A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp).
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=stock/annotations/fibonacci-retracements></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/stock/annotations/fibonacci-retracements" allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/annotations/fibonacci-retracements) to check the code.
 
 THE CONCEPT
 -----------
@@ -124,4 +123,4 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         };
     
 
-Check the live demo [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/annotations/fibonacci-retracements).
+Check the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/annotations/fibonacci-retracements).

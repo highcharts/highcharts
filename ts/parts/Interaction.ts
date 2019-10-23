@@ -82,6 +82,9 @@ declare global {
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
         }
+        interface SeriesOptions {
+            inactiveOtherPoints?: boolean;
+        }
         interface TrackerMixin {
             drawTrackerGraph(this: Highcharts.Series): void;
             drawTrackerPoint(this: Series): void;
@@ -148,7 +151,8 @@ const {
     extend,
     isArray,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Chart.js';
@@ -167,7 +171,6 @@ var addEvent = H.addEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

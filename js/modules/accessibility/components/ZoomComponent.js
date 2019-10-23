@@ -12,10 +12,25 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+
+import ChartUtilities from '../utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var setElAttrs = HTMLUtilities.setElAttrs,
+    removeElement = HTMLUtilities.removeElement;
+
+
+function chartHasMapZoom(chart) {
+    return chart.mapZoom &&
+        chart.mapNavButtons &&
+        chart.mapNavButtons.length;
+}
 
 
 /**
@@ -53,13 +68,8 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  * @private
  * @class
  * @name Highcharts.ZoomComponent
- * @param {Highcharts.Chart} chart
- *        Chart object
  */
-var ZoomComponent = function (chart) {
-    this.initBase(chart);
-    this.init();
-};
+var ZoomComponent = function () {};
 ZoomComponent.prototype = new AccessibilityComponent();
 extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
@@ -89,18 +99,33 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         // Make map zoom buttons accessible
         if (chart.mapNavButtons) {
             chart.mapNavButtons.forEach(function (button, i) {
-                component.unhideElementFromScreenReaders(button.element);
-                button.element.setAttribute('tabindex', -1);
-                button.element.setAttribute('role', 'button');
-                button.element.setAttribute(
-                    'aria-label',
-                    chart.langFormat(
-                        'accessibility.mapZoom' + (i ? 'Out' : 'In'),
-                        { chart: chart }
-                    )
+                unhideChartElementFromAT(chart, button.element);
+                component.setMapNavButtonAttrs(
+                    button.element,
+                    'accessibility.zoom.mapZoom' + (i ? 'Out' : 'In')
                 );
             });
         }
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} button
+     * @param {string} labelFormatKey
+     */
+    setMapNavButtonAttrs: function (button, labelFormatKey) {
+        var chart = this.chart,
+            label = chart.langFormat(
+                labelFormatKey,
+                { chart: chart }
+            );
+
+        setElAttrs(button, {
+            tabindex: -1,
+            role: 'button',
+            'aria-label': label
+        });
     },
 
 
@@ -117,37 +142,24 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Update proxy overlays, recreating the buttons.
      */
     updateProxyOverlays: function () {
-        var component = this,
-            chart = this.chart,
-            proxyButton = function (buttonEl, buttonProp, groupProp, label) {
-                component.removeElement(component[groupProp]);
-                component[groupProp] = component.addProxyGroup();
-                component[buttonProp] = component.createProxyButton(
-                    buttonEl,
-                    component[groupProp],
-                    {
-                        'aria-label': label,
-                        tabindex: -1
-                    }
-                );
-            };
+        var chart = this.chart;
 
         // Always start with a clean slate
-        component.removeElement(component.drillUpProxyGroup);
-        component.removeElement(component.resetZoomProxyGroup);
+        removeElement(this.drillUpProxyGroup);
+        removeElement(this.resetZoomProxyGroup);
 
         if (chart.resetZoomButton) {
-            proxyButton(
+            this.recreateProxyButtonAndGroup(
                 chart.resetZoomButton, 'resetZoomProxyButton',
                 'resetZoomProxyGroup', chart.langFormat(
-                    'accessibility.resetZoomButton',
+                    'accessibility.zoom.resetZoomButton',
                     { chart: chart }
                 )
             );
         }
 
         if (chart.drillUpButton) {
-            proxyButton(
+            this.recreateProxyButtonAndGroup(
                 chart.drillUpButton, 'drillUpProxyButton',
                 'drillUpProxyGroup', chart.langFormat(
                     'accessibility.drillUpButton',
@@ -158,6 +170,25 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 )
             );
         }
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} buttonEl
+     * @param {string} buttonProp
+     * @param {string} groupProp
+     * @param {string} label
+     */
+    recreateProxyButtonAndGroup: function (
+        buttonEl, buttonProp, groupProp, label
+    ) {
+        removeElement(this[groupProp]);
+        this[groupProp] = this.addProxyGroup();
+        this[buttonProp] = this.createProxyButton(
+            buttonEl,
+            this[groupProp], { 'aria-label': label, tabindex: -1 }
+        );
     },
 
 
@@ -173,85 +204,110 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                // Arrow keys
-                [[
-                    keys.up, keys.down, keys.left, keys.right
-                ], function (keyCode) {
-                    chart[
-                        keyCode === keys.up || keyCode === keys.down ?
-                            'yAxis' : 'xAxis'
-                    ][0].panStep(
-                        keyCode === keys.left || keyCode === keys.up ? -1 : 1
-                    );
-                    return this.response.success;
-                }],
+                [[keys.up, keys.down, keys.left, keys.right],
+                    function (keyCode) {
+                        return component.onMapKbdArrow(this, keyCode);
+                    }],
 
-                // Tabs
-                [[
-                    keys.tab
-                ], function (keyCode, e) {
-                    var button;
+                [[keys.tab],
+                    function (keyCode, e) {
+                        return component.onMapKbdTab(this, e);
+                    }],
 
-                    // Deselect old
-                    chart.mapNavButtons[
-                        component.focusedMapNavButtonIx
-                    ].setState(0);
-
-                    // Trying to go somewhere we can't?
-                    if (
-                        e.shiftKey && !component.focusedMapNavButtonIx ||
-                        !e.shiftKey && component.focusedMapNavButtonIx
-                    ) {
-                        chart.mapZoom(); // Reset zoom
-                        // Nowhere to go, go to prev/next module
-                        return this.response[e.shiftKey ? 'prev' : 'next'];
-                    }
-
-                    // Select other button
-                    component.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
-                    button = chart.mapNavButtons[
-                        component.focusedMapNavButtonIx
-                    ];
-                    chart.setFocusToElement(button.box, button.element);
-                    button.setState(2);
-
-                    return this.response.success;
-                }],
-
-                // Press button
-                [[
-                    keys.space, keys.enter
-                ], function () {
-                    component.fakeClickEvent(
-                        chart.mapNavButtons[
-                            component.focusedMapNavButtonIx
-                        ].element
-                    );
-                    return this.response.success;
+                [[keys.space, keys.enter], function () {
+                    return component.onMapKbdClick(this);
                 }]
             ],
 
-            // Only run this module if we have map zoom on the chart
             validate: function () {
-                return (
-                    chart.mapZoom &&
-                    chart.mapNavButtons &&
-                    chart.mapNavButtons.length === 2
-                );
+                return chartHasMapZoom(chart);
             },
 
-            // Make zoom buttons do their magic
             init: function (direction) {
-                var zoomIn = chart.mapNavButtons[0],
-                    zoomOut = chart.mapNavButtons[1],
-                    initialButton = direction > 0 ? zoomIn : zoomOut;
-                chart.setFocusToElement(
-                    initialButton.box, initialButton.element
-                );
-                initialButton.setState(2);
-                component.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
+                return component.onMapNavInit(direction);
             }
         });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @param {number} keyCode
+     * @return {number} Response code
+     */
+    onMapKbdArrow: function (keyboardNavigationHandler, keyCode) {
+        var keys = this.keyCodes,
+            panAxis = keyCode === keys.up || keyCode === keys.down ?
+                'yAxis' : 'xAxis',
+            stepDirection = keyCode === keys.left || keyCode === keys.up ?
+                -1 : 1;
+
+        this.chart[panAxis][0].panStep(stepDirection);
+
+        return keyboardNavigationHandler.response.success;
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @param {global.Event} event
+     * @return {number} Response code
+     */
+    onMapKbdTab: function (keyboardNavigationHandler, event) {
+        var button,
+            chart = this.chart,
+            response = keyboardNavigationHandler.response,
+            isBackwards = event.shiftKey,
+            isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||
+                !isBackwards && this.focusedMapNavButtonIx;
+
+        // Deselect old
+        chart.mapNavButtons[this.focusedMapNavButtonIx].setState(0);
+
+        if (isMoveOutOfRange) {
+            chart.mapZoom(); // Reset zoom
+            return response[isBackwards ? 'prev' : 'next'];
+        }
+
+        // Select other button
+        this.focusedMapNavButtonIx += isBackwards ? -1 : 1;
+        button = chart.mapNavButtons[this.focusedMapNavButtonIx];
+        chart.setFocusToElement(button.box, button.element);
+        button.setState(2);
+
+        return response.success;
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
+     * @return {number} Response code
+     */
+    onMapKbdClick: function (keyboardNavigationHandler) {
+        this.fakeClickEvent(
+            this.chart.mapNavButtons[this.focusedMapNavButtonIx].element
+        );
+        return keyboardNavigationHandler.response.success;
+    },
+
+
+    /**
+     * @private
+     * @param {number} direction
+     */
+    onMapNavInit: function (direction) {
+        var chart = this.chart,
+            zoomIn = chart.mapNavButtons[0],
+            zoomOut = chart.mapNavButtons[1],
+            initialButton = direction > 0 ? zoomIn : zoomOut;
+
+        chart.setFocusToElement(initialButton.box, initialButton.element);
+        initialButton.setState(2);
+
+        this.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
     },
 
 
@@ -270,33 +326,28 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                // Arrow/tab just move
-                [[
-                    keys.tab, keys.up, keys.down, keys.left, keys.right
-                ], function (keyCode, e) {
-                    return this.response[
-                        keyCode === this.tab && e.shiftKey ||
-                        keyCode === keys.left || keyCode === keys.up ?
-                            'prev' : 'next'
-                    ];
-                }],
+                [[keys.tab, keys.up, keys.down, keys.left, keys.right],
+                    function (keyCode, e) {
+                        var isBackwards = keyCode === keys.tab && e.shiftKey ||
+                            keyCode === keys.left || keyCode === keys.up;
 
-                // Select to click
-                [[
-                    keys.space, keys.enter
-                ], function () {
-                    onClick(chart);
-                    return this.response.success;
-                }]
+                        // Arrow/tab => just move
+                        return this.response[isBackwards ? 'prev' : 'next'];
+                    }],
+
+                [[keys.space, keys.enter],
+                    function () {
+                        var res = onClick(this, chart);
+                        return pick(res, this.response.success);
+                    }]
             ],
 
-            // Only run if we have the button
             validate: function () {
-                return chart[buttonProp] && chart[buttonProp].box &&
+                var hasButton = chart[buttonProp] && chart[buttonProp].box &&
                     component[proxyProp];
+                return hasButton;
             },
 
-            // Focus button initially
             init: function () {
                 chart.setFocusToElement(
                     chart[buttonProp].box, component[proxyProp]
@@ -316,15 +367,16 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
             this.simpleButtonNavigation(
                 'resetZoomButton',
                 'resetZoomProxyButton',
-                function (chart) {
+                function (handler, chart) {
                     chart.zoomOut();
                 }
             ),
             this.simpleButtonNavigation(
                 'drillUpButton',
                 'drillUpProxyButton',
-                function (chart) {
+                function (handler, chart) {
                     chart.drillUp();
+                    return handler.response.prev;
                 }
             ),
             this.getMapZoomNavigation()

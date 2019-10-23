@@ -79,8 +79,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    splat = U.splat;
+const {
+    isNumber,
+    pick,
+    splat
+} = U;
 
 import './CurrentDateIndicator.js';
 import './GridAxis.js';
@@ -91,7 +94,6 @@ import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
     merge = H.merge,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Series = H.Series,

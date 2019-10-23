@@ -3,7 +3,7 @@ Flag series (Highstock only)
 
 A flag series consists of flags marking events or points of interests. Used alone flag series will make no sense. Flags can be placed on either the serie of the chart or on the axis.
 
-Flag series belong to Highstock, but they can also be applied to a regular Highcharts chart created with the Highcharts.Chart() constructor as long as the highstock.js file is loaded in the page. See the [FAQ item](docs/frequently-asked-questions#highstock-features-in-highcharts) on the matter. 
+Flag series belong to Highstock, but they can also be applied to a regular Highcharts chart created with the Highcharts.Chart() constructor as long as the highstock.js file is loaded in the page. See the [FAQ item](https://highcharts.com/docs/frequently-asked-questions#highstock-features-in-highcharts) on the matter. 
 
 ![flagseries.png](flagseries.png)
 
@@ -24,11 +24,11 @@ To create a flag series, add the following configuration in the series option:
         shape : 'flag'  // Defines the shape of the flags.
     }
 
-For an overview of the flag series options see the [API reference](http://api.highcharts.com/highstock/plotOptions.flags).
+For an overview of the flag series options see the [API reference](https://api.highcharts.com/highstock/plotOptions.flags).
 
 Flagseries examples
 -------------------
 
-*   [Flags marking events](http://highcharts.com/stock/demo/flags-general)
-*   [Flags placement](http://highcharts.com/stock/demo/flags-placement)
-*   [Flags shapes and colors](http://highcharts.com/stock/demo/flags-shapes)
+*   [Flags marking events](https://highcharts.com/stock/demo/flags-general)
+*   [Flags placement](https://highcharts.com/stock/demo/flags-placement)
+*   [Flags shapes and colors](https://highcharts.com/stock/demo/flags-shapes)

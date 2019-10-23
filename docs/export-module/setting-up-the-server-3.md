@@ -1,9 +1,9 @@
 Setting up your own export server
 =================================
 
-There may be cases where you don't want to use Highcharts' export server running at [export.highcharts.com](http://export.highcharts.com), for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
+There may be cases where you don't want to use Highcharts' export server running at [export.highcharts.com](https://export.highcharts.com), for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
 
-Before setting up your own server, consider using the [client side export module](docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
+Before setting up your own server, consider using the [client side export module](https://highcharts.com/docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
 
 Node export server
 ------------------
@@ -47,11 +47,11 @@ You can for example change the location of the PhantomJS executable, the name of
 
 #### 1.3. Copy Highcharts Javascript to the maven project
 
-Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](docs/export-module/render-charts-serverside)
+Highcharts JS is needed on the server for supporting server-side rendering of charts. Instead of posting a SVG from the browser to the server, you can also post a Highcharts configuration in javascript and let PhantomJS generate the chart on the server. Read more on server-side rendering [here.](https://highcharts.com/docs/export-module/render-charts-serverside)
 
 To make this work we need to run a headless browser, PhantomJS and PhantomJS needs in it's turn the Highcharts JS files on the server. For licensing reasons the Highcharts export server doesn't ship with Highcharts javascript files. We need to copy the Highcharts files manually to the project.
 
-Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](http://code.highcharts.com)/[highcharts-version-you-use]/
+Save `highcharts.js` or `highstock.js` for stock charts, `highcharts-more.js` (for bubble, range, polar charts), `funnel.js` for supporting funnel charts, etc. to this location: `highcharts-export-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs` It's recommended to use the Highcharts compiled files from [code.highcharts.com](https://code.highcharts.com)/[highcharts-version-you-use]/
 
 The javascript files are already configured in the `resources.json` file which is used by PhantomJS to determine which files need to be injected to PhantomJS. If convenient, you can specify alternative paths in the `resources.json`. So make sure the resources.json matches the files you just copied in this step.
 
@@ -90,7 +90,7 @@ Upload/copy this to the application server. You're done with setting up the hig
 
 *   We added the Jetty Server dependency in pom.xml file for testing convenience. For running the export-server locally, during development, navigate in a DOS/Shell to the highcharts-export/highcharts-export-web folder, and run this command: `mvn jetty:run`. This starts the Jetty application server and the application is now accessible at `http://localhost:8080/export`.
     
-*   Change you url property for the [exporting option](http://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
+*   Change you url property for the [exporting option](https://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
     
         
         exporting:{
@@ -98,7 +98,7 @@ Upload/copy this to the application server. You're done with setting up the hig
         }
 *   Remember to install necessary fonts on the server. When characters are missing, they will be displayed as squares on the exported charts. The application will automatically pick the fonts up after installation.
     
-    Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](http://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
+    Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
     
 *   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
     
@@ -142,7 +142,7 @@ Typical use cases are:
 *   you want to include your charts in emails or automated management reports
 *   you want to have a consistency between graphs you present on your website and your backend produced reports
 
-We're using [PhantomJS ](http://phantomjs.org)for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
+We're using [PhantomJS ](https://phantomjs.org)for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
 
 ##### COMMAND LINE USAGE
 
@@ -246,7 +246,7 @@ The `index.php` file that handles the POST can be downloaded from our [GitHub
 1.  Make sure that PHP and Java is installed on your server.
 2.  Upload the `index.php` file from the [exporting-server](https://github.com/highcharts/highcharts-export-server/tree/master/php/php-batik) repository to your server.
 3.  In your FTP program, create directory called `temp` in the same directory as `index.php` and chmod this new directory to 777 (Linux/Unix servers only).
-4.  Download Batik from the [Batik Distribution Mirror](http://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.  
+4.  Download Batik from the [Batik Distribution Mirror](https://www.apache.org/dyn/closer.cgi/xmlgraphics/batik). Find the binary distribution for your java version.  
     
 5.  Upload `batik-rasterizer.jar` and the entire `lib` directory to a location on your web server.
 6.  In the options in the top of the index.php file, set the path to batik-rasterier.jar.

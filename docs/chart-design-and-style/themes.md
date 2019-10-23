@@ -11,7 +11,7 @@ The themes can also be found on github: [https://github.com/highslide-software/
 Creating your own theme
 -----------------------
 
-It can be useful to separate the styling of a chart from the data. Such a separation allows the look and feel of your charts to be shared easily between charts across your website. This can be done by creating a options object and apply it to the chart using the [Highcharts.setOptions](http://api.highcharts.com/highcharts#Highcharts.setOptions()) method (which is done in the theme JavaScript files)
+It can be useful to separate the styling of a chart from the data. Such a separation allows the look and feel of your charts to be shared easily between charts across your website. This can be done by creating a options object and apply it to the chart using the [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions()) method (which is done in the theme JavaScript files)
 
 Here is simple example to show the process:
 

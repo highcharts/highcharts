@@ -10,10 +10,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray;
+var extend = U.extend, isArray = U.isArray, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Series.js';
-var addEvent = H.addEvent, pick = H.pick, find = H.find, fireEvent = H.fireEvent, Axis = H.Axis, Series = H.Series;
+var addEvent = H.addEvent, find = H.find, fireEvent = H.fireEvent, Axis = H.Axis, Series = H.Series;
 /**
  * Returns the first break found where the x is larger then break.from and
  * smaller then break.to.

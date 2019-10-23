@@ -9,9 +9,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 // Mathematical Functionility
-var deg2rad = H.deg2rad, pick = H.pick;
+var deg2rad = H.deg2rad;
 /* eslint-disable max-len */
 /**
  * Apply 3-D rotation

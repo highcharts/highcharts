@@ -77,7 +77,8 @@ const {
     defined,
     extend,
     isNumber,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Series.js';
@@ -435,7 +436,7 @@ H.seriesType<Highcharts.ItemSeries>(
                         pointMarkerOptions.symbol ||
                         (seriesMarkerOptions.symbol as any)
                     ),
-                    r = H.pick(
+                    r = pick(
                         pointMarkerOptions.radius,
                         seriesMarkerOptions.radius
                     ),

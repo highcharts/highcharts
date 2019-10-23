@@ -1,7 +1,7 @@
 Latitude/longitude
 ===
 
-<iframe width="320" height="240" style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced></iframe>
+<iframe style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced allow="fullscreen"></iframe>
 
 Highmaps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highmaps. The latest version of the proj4js library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 
@@ -44,7 +44,7 @@ For custom maps to support latitude/longitude they must have a `hc-transform` ob
     	}
     }
 
-This object contains information necessary to transform the coordinates used in the map to latitude/longitude, and vice versa. Adding this information to your map is easily done with a text editor, assuming your map is stored in [GeoJSON](docs/maps/custom-geojson-maps) format.
+This object contains information necessary to transform the coordinates used in the map to latitude/longitude, and vice versa. Adding this information to your map is easily done with a text editor, assuming your map is stored in [GeoJSON](https://highcharts.com/docs/maps/custom-geojson-maps) format.
 
 It is possible to expand on the definition above for more complex maps. The following is an example where the map is split into multiple zones, where each zone has its own transform object. This is useful if you have combined multiple maps together, as is often seen with overseas areas:
 

@@ -265,9 +265,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    discardElement,
     extend,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -282,10 +284,8 @@ var defaultOptions = H.defaultOptions,
     removeEvent = H.removeEvent,
     fireEvent = H.fireEvent,
     createElement = H.createElement,
-    discardElement = H.discardElement,
     css = H.css,
     merge = H.merge,
-    pick = H.pick,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
@@ -1677,7 +1677,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     i: number
                 ): void {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
 
@@ -1754,9 +1754,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 ) as Highcharts.ExportingDivElement;
 
             innerMenu = createElement(
-                'div',
+                'ul',
                 { className: 'highcharts-menu' },
-                null as any,
+                {
+                    listStyle: 'none',
+                    margin: 0,
+                    padding: 0
+                },
                 menu
             );
 
@@ -1827,7 +1831,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         );
 
                     } else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e: PointerEvent): void {
                                 if (e) { // IE7
@@ -1898,6 +1902,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(menu, menuStyle);
         css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
+        fireEvent(chart, 'exportMenuShown');
     },
 
     /**

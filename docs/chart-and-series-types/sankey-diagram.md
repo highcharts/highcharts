@@ -3,9 +3,9 @@ Sankey digram
 
 A Sankey diagram is a type of flow diagram, in which the width of the link between two nodes is shown proportionally to the flow quantity.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.sankey)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.sankey)_
 
-<iframe width="320" height="240" style="width: 100%; height: 485px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sankey-diagram></iframe>
+<iframe style="width: 100%; height: 485px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sankey-diagram allow="fullscreen"></iframe>
 
 Data structure
 --------------
@@ -46,4 +46,4 @@ Nodes
 
 The nodes are generated so that the total weight going in or out of a node is visualized. Nodes are instances of [Point](https://api.highcharts.com/class-reference/Highcharts.Point) and are available from the `series.nodes` array. The width of the nodes can be set with the `nodeWidth` option, and padding between them with `nodePadding`.
 
-In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, [nodes](http://api.highcharts.com/highcharts/series.sankey.nodes), to the series options and linking the nodes by id; the following jsfiddle [demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-inverted/) illustrates this concept.
+In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, [nodes](https://api.highcharts.com/highcharts/series.sankey.nodes), to the series options and linking the nodes by id; the following jsfiddle [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-inverted/) illustrates this concept.

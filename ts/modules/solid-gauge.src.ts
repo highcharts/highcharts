@@ -37,7 +37,7 @@ declare global {
             public translate(): void;
         }
         interface SeriesTypesDictionary {
-            'solidgauge': typeof SolidGaugeSeries;
+            solidgauge: typeof SolidGaugeSeries;
         }
         interface SolidGaugeAxis extends RadialAxis {
             dataClasses: ColorAxis['dataClasses'];
@@ -91,14 +91,14 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     isNumber,
+    pick,
     pInt
 } = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var pick = H.pick,
-    wrap = H.wrap,
+var wrap = H.wrap,
     Renderer = H.Renderer,
     colorAxisMethods: Partial<Highcharts.SolidGaugeAxis>;
 

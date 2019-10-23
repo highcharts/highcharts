@@ -28,7 +28,7 @@ The Timeline series data is structured differently for the above alternatives fo
 
 ### Data series for a Timeline chart with time periods
 
-The data series has no \`x\`property set.
+The data series has no `x`property set.
 
     
      data: [{
@@ -43,7 +43,7 @@ The data series has no \`x\`property set.
 
 ### Events tied to a datetime axis
 
-Set for each data point the n \`x\` property with a timestamp in milliseconds since 1970.
+Set for each data point the n `x` property with a timestamp in milliseconds since 1970.
 
 Examples of data series:
 
@@ -62,25 +62,25 @@ Examples of data series:
 
 _The demo below illustrates a timeline of space exploration. The demo shows even intervals_
 
-<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/connector-styles></iframe>
+<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/connector-styles allow="fullscreen"></iframe>
 
 The demo below also illustrates the key moments of space exploration, but it’s extended by further events, and it shows real-time dates distributed along a `datetime` axis.
 
-<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/datetime-axis></iframe>
+<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/datetime-axis allow="fullscreen"></iframe>
 
 Vertical timeline
 -----------------
 
 To display a vertical timeline, set `chart.inverted` to `true`.
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted allow="fullscreen"></iframe>
 
 Alternate labels
 ----------------
 
 Use the `alternate` property in the `dataLabels` configuration, for placing the data labels alternately (on both sides of the point).
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels allow="fullscreen"></iframe>
 
 Other configuring options
 -------------------------
@@ -89,4 +89,4 @@ Customize a timeline chart with options that are standard to most Highcharts cha
 
 The demo below illustrates styling of different elements in the timeline series chart.
 
-<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/gvaartjes/7htbp82f/embedded/result></iframe>
+<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/gvaartjes/7htbp82f/embedded/result allow="fullscreen"></iframe>

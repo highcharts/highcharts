@@ -1,16 +1,16 @@
 Treemap
 ===
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels></iframe>
+<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels allow="fullscreen"></iframe>
 
 ### Requirements
 
 The treemap chart requires the file`modules/treemap.js`.  
-For use with [colorAxis](http://api.highcharts.com/highmaps/colorAxis), the `modules/heatmap.js` must be included as well.
+For use with [colorAxis](https://api.highcharts.com/highmaps/colorAxis), the `modules/heatmap.js` must be included as well.
 
 ### Data structure
 
-The data is structured as a [Tree](http://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.
+The data is structured as a [Tree](https://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.
 
 The tree automatically has one node at the top representing the root node. If a point has an undefined parent, or the parent is not matching any id, the parent will be automatically set to the root node.
 
@@ -39,25 +39,25 @@ Algorithms decide the positioning and sizing of the points. Which algorithm you 
 
 Simple and fast algorithm which is great for structuring the points. The drawback with the Slice And Dice is that nodes can get really bad aspect ratio, and thus become hard to compare. This occurs often with larger datasets.
 
-See an [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/) of Slice And Dice.
+See an [example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/) of Slice And Dice.
 
 ##### Stripes
 
 Also a simple algorithm which is quite similar to Slice And Dice. Instead of alternating the direction between each node, it draws all nodes in same direction, creating a set of columns.
 
-See an [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-stripes/) of Stripes.
+See an [example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-stripes/) of Stripes.
 
 ##### Squarified
 
 An algorithm which aims to give each point a low aspect ratio. It adds the points one by one to a strip until it finds the best aspect ratio available. Then it alternates the direction and does the same with a new strip. The process continues in the same pattern until all points are placed in the chart.
 
-See an [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-squarified/) of Squarified.
+See an [example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-squarified/) of Squarified.
 
 ##### Strip
 
 Not to be mistaken as the Stripes algorithm, it has some clear differences in behavior. The Strip algorithm has the same objective as the Squarified algorithm, to get low aspect ratios. The process is quite similar, but instead of alternating the direction, the strips are drawn side by side as columns.
 
-See an [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-strip/) of Strip.
+See an [example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-layoutalgorithm-strip/) of Strip.
 
 ##### Add your own algorithm
 
@@ -147,15 +147,15 @@ Below is an example where the first level will use the Slice And Dice algorithm,
 
 levelIsConstant is an option used together with the levels and allowDrillToNode options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
 
-An [example](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-large-dataset) where levelIsConstant is set to false.
+An [example](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-large-dataset) where levelIsConstant is set to false.
 
 ### Use with ColorAxis
 
-<iframe width="320" height="240" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-coloraxis></iframe>
+<iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis allow="fullscreen"></iframe>
 
 For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 
-After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](http://api.highcharts.com/highmaps/colorAxis) for details about its options.
+After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
     
     var chart = new Highcharts.Chart({
@@ -189,14 +189,14 @@ And each point needs its own colorValue.
     });
     
 
-[Full example is found here](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-coloraxis)
+[Full example is found here](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-coloraxis)
 
 ### Options
 
-For an overview over the options for the treemap, see the [API](http://api.highcharts.com/highcharts/plotOptions.treemap).
+For an overview over the options for the treemap, see the [API](https://api.highcharts.com/highcharts/plotOptions.treemap).
 
 ### Mode demos
 
-*   [Treemap with colorAxis](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-coloraxis)
-*   [Treemap displaying the global mortality rate and causes](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-large-dataset)
-*   [Treemap using level specific options](http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-with-levels)
+*   [Treemap with colorAxis](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-coloraxis)
+*   [Treemap displaying the global mortality rate and causes](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-large-dataset)
+*   [Treemap using level specific options](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/treemap-with-levels)

@@ -78,12 +78,12 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isObject = U.isObject, objectEach = U.objectEach;
+var discardElement = U.discardElement, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, discardElement = H.discardElement, css = H.css, merge = H.merge, pick = H.pick, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, removeEvent = H.removeEvent, fireEvent = H.fireEvent, createElement = H.createElement, css = H.css, merge = H.merge, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -1247,7 +1247,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // restore all body content
                 [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
-                        node.style.display = origDisplay[i];
+                        node.style.display = (origDisplay[i] || '');
                     }
                 });
                 chart.isPrinting = false;
@@ -1293,7 +1293,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     padding: menuPadding + 'px',
                     pointerEvents: 'auto'
                 }, chart.fixedDiv || chart.container);
-            innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+            innerMenu = createElement('ul', { className: 'highcharts-menu' }, {
+                listStyle: 'none',
+                margin: 0,
+                padding: 0
+            }, menu);
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend({
@@ -1342,7 +1346,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         element = createElement('hr', null, null, innerMenu);
                     }
                     else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e) {
                                 if (e) { // IE7
@@ -1398,6 +1402,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         css(menu, menuStyle);
         css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
+        fireEvent(chart, 'exportMenuShown');
     },
     /**
      * Add the export button to the chart, with options.

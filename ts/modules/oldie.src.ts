@@ -318,11 +318,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    discardElement,
     erase,
     extend,
     isArray,
     isNumber,
     isObject,
+    pick,
     pInt
 } = U;
 
@@ -335,12 +337,10 @@ var VMLRenderer,
     createElement = H.createElement,
     css = H.css,
     deg2rad = H.deg2rad,
-    discardElement = H.discardElement,
     doc = H.doc,
     extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,

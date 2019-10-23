@@ -5,11 +5,11 @@ The pareto chart is used to graphically summarize and display the relative impor
 
 The Pareto series is represented by a line series of datapoints extracted from a base series, which is typically a column type. Calculated values are from the range: 0% - 100% and should be assigned to additional yAxis.
 
-_For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.pareto)_
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.pareto)_
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/pareto></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/pareto allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/pareto/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/pareto/) to check the code.
 
 How to create Pareto Chart
 --------------------------
@@ -36,7 +36,7 @@ Here are the steps to create a Pareto chart:
       }]
     
 
-For more details about yAxis click on the following [link](http://api.highcharts.com/highcharts/yAxis).
+For more details about yAxis click on the following [link](https://api.highcharts.com/highcharts/yAxis).
 
 2.Set a column series (sorted by y descending). Points are data source for the Pareto series.
 

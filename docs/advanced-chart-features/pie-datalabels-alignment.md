@@ -30,7 +30,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-connectors></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors allow="fullscreen"></iframe>
 
 **Demo with plotEdges**
 
@@ -40,7 +40,7 @@ Alignment method for data labels. Possible values are:
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-alignto-plotedges></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges allow="fullscreen"></iframe>
 
 ### dataLabels.connectorShape
 
@@ -54,7 +54,7 @@ Specifies the method that is used to generate the connector path. Highcharts pro
       }
     
 
-<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/></iframe>
+<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/ allow="fullscreen"></iframe>
 
 **straight:**
 
@@ -76,7 +76,7 @@ This option can be used with crookDistance parameter. It defines how far from th
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-crookdistance></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance allow="fullscreen"></iframe>
 
 Users can provide their own method by passing a callback function instead of a String. Three arguments are passed to the callback:
 
@@ -111,7 +111,7 @@ Users can provide their own method by passing a callback function instead of a S
       }
     
 
-<iframe width="320" height="240" style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/plotoptions/pie-datalabels-connectorshape-function></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function allow="fullscreen"></iframe>
 
 API documents
 -------------

@@ -12,9 +12,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PointOptionsObject {
-            value?: (number|null);
-        }
         interface TreeColorObject {
             color: ColorType;
             colorIndex: number;
@@ -24,10 +21,18 @@ declare global {
             i: number;
             id: string;
             level: number;
+            val: number;
             visible: boolean;
+        }
+        interface TreePoint extends Point {
+            options: TreePointOptions;
+        }
+        interface TreePointOptions extends PointOptionsObject {
+            value?: (number|null);
         }
         interface TreeSeries extends Series {
             mapOptionsToLevel: any;
+            points: Array<TreePoint>;
             tree: TreeNodeObject;
         }
         interface TreeSeriesMixin {
@@ -66,7 +71,8 @@ const {
     extend,
     isArray,
     isNumber,
-    isObject
+    isObject,
+    pick
 } = U;
 
 var isBoolean = function (x: unknown): x is boolean {
@@ -75,8 +81,7 @@ var isBoolean = function (x: unknown): x is boolean {
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
     },
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* eslint-disable valid-jsdoc */
 
@@ -117,7 +122,10 @@ var setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         tree = before(tree, options);
     }
     // First give the children some values
-    tree.children.forEach(function (child: any, i: number): void {
+    tree.children.forEach(function (
+        child: Highcharts.TreeNodeObject,
+        i: number
+    ): void {
         var newOptions = extend<Highcharts.TreeValuesOptionsObject>(
             {} as any, options
         );

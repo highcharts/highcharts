@@ -6,17 +6,20 @@ QUnit.test('Series should be hidden from screen readers when not visible', funct
                 data: [4, 5, 6]
             }]
         }),
-        seriesComponent = chart.accessibility.components.series,
         seriesA = chart.series[0],
-        seriesB = chart.series[1];
+        seriesB = chart.series[1],
+        getSeriesAriaHidden = function (series) {
+            return Highcharts.A11yChartUtilities.getSeriesA11yElement(series)
+                .getAttribute('aria-hidden');
+        };
 
     assert.strictEqual(
-        seriesComponent.getSeriesElement(seriesA).getAttribute('aria-hidden'),
+        getSeriesAriaHidden(seriesA),
         'false',
         'Series should not be hidden from AT'
     );
     assert.strictEqual(
-        seriesComponent.getSeriesElement(seriesB).getAttribute('aria-hidden'),
+        getSeriesAriaHidden(seriesB),
         'false',
         'Series should not be hidden from AT'
     );
@@ -24,12 +27,12 @@ QUnit.test('Series should be hidden from screen readers when not visible', funct
     seriesB.hide();
 
     assert.strictEqual(
-        seriesComponent.getSeriesElement(seriesA).getAttribute('aria-hidden'),
+        getSeriesAriaHidden(seriesA),
         'false',
         'Series should still not be hidden from AT'
     );
     assert.strictEqual(
-        seriesComponent.getSeriesElement(seriesB).getAttribute('aria-hidden'),
+        getSeriesAriaHidden(seriesB),
         'true',
         'Series should be hidden from AT'
     );

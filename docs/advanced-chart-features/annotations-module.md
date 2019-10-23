@@ -1,13 +1,13 @@
 Annotations module
 ===
 
-The annotations module allows users to annotate a chart freely with labels and shapes. Without the annotations module, the only way to render shapes or labels in any place on a chart was to use the [Renderer API](http://api.highcharts.com/highcharts/Renderer). The Annotations creates a declarative API for adding shapes and labels to a chart. 
+The annotations module allows users to annotate a chart freely with labels and shapes. Without the annotations module, the only way to render shapes or labels in any place on a chart was to use the [Renderer API](https://api.highcharts.com/highcharts/Renderer). The Annotations creates a declarative API for adding shapes and labels to a chart. 
 
 Include the following file ‘modules/annotations.js’ after highcharts.js or highstock.js to enable annotations.
 
-<iframe width="320" height="240" style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/annotations></iframe>
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/annotations allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/annotations/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/annotations/) to check the code.
 
 The concept
 -----------
@@ -59,7 +59,7 @@ Both annotation configurations are represented on this chart (see below). Try to
 
 ![P7kgHMWcW-vEf9pq7zlMWRUkSWJ1wpU34eiNhXQbrxUtphxVt7XqaiHhOZ28qeWzjX9rkNp_8drmwwei1r_vEdZebo4yKch_QX6tvaopLQUueknr8ClOBPqFxol9czL1Ujhp_mUn](https://lh6.googleusercontent.com/P7kgHMWcW-vEf9pq7zlMWRUkSWJ1wpU34eiNhXQbrxUtphxVt7XqaiHhOZ28qeWzjX9rkNp_8drmwwei1r_vEdZebo4yKch_QX6tvaopLQUueknr8ClOBPqFxol9czL1Ujhp_mUn)
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/mock-point/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/mock-point/) to check the code.
 
 The labels option
 -----------------
@@ -109,4 +109,4 @@ The path type allows to define points property that takes an array of points.
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](http://api.highcharts.com/highcharts/defs.markers).
+It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://api.highcharts.com/highcharts/defs.markers).

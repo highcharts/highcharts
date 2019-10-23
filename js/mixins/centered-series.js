@@ -20,8 +20,8 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
-var deg2rad = H.deg2rad, pick = H.pick, relativeLength = H.relativeLength;
+var isNumber = U.isNumber, pick = U.pick;
+var deg2rad = H.deg2rad, relativeLength = H.relativeLength;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

@@ -3,9 +3,9 @@ Word cloud
 
 A word cloud is a visualization of a set of words, where the size and placement of a word is determined by how it is weighted.
 
-<iframe width="320" height="240" style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/wordcloud></iframe>
+<iframe style="width: 100%; height: 416px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/wordcloud allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/wordcloud/) to check the code
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/wordcloud/) to check the code
 
 Requirements
 ------------

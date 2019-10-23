@@ -45,6 +45,7 @@ declare global {
             y?: number;
         }
         interface Funnel3dSeriesOptions extends ColumnSeriesOptions {
+            center?: Array<(number|string|null)>;
             data?: Array<(Funnel3dPointOptions|PointOptionsType)>;
             gradientForSides?: boolean;
             height?: (number|string);
@@ -92,7 +93,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    pick
 } = U;
 
 import '../parts/ColumnSeries.js';
@@ -102,7 +104,6 @@ var charts = H.charts,
     color = H.color,
     error = H.error,
     merge = H.merge,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     relativeLength = H.relativeLength,

@@ -8,7 +8,7 @@ Solid colors
 
 Primarily, Highcharts supports solid colors given in hex format _#00FF00_ and rgb format _rgb(0,255,0)_.
 
-Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](http://jsfiddle.net/highcharts/zy1epj3o/).
+Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddle.net/highcharts/zy1epj3o/).
 
 ### Semi-transparent colors - opacity
 
@@ -35,7 +35,7 @@ The color is given as an object literal containing two properties:
 
 In modern SVG enabled browsers the linear gradients can be applied to both fills (backgrounds) and strokes (lines). Internet Explorer 8 and less doesn't support gradients on lines, so in these browsers only the first stop color is used.
 
-See the online example of a [linear gradient chart background](http://jsfiddle.net/highcharts/4rTBY/).
+See the online example of a [linear gradient chart background](https://jsfiddle.net/highcharts/4rTBY/).
 
 Radial gradients
 ----------------
@@ -58,9 +58,9 @@ The color is given as an object literal containing two properties:
 
 When a radial gradient is used as the color of a pie slice or the background color of a gauge or polar chart, the gradient is drawn relative to the full circle, not only the specific shape.
 
-In Internet Explorer 8 and less, radial gradients are not natively supported. Instead, we emulate the effect by loading a graphic pattern image. This image is by default loaded from the Highcharts CDN. To load it from your own server, set the [VMLRadialGradientURL](http://api.highcharts.com/highcharts#global.VMLRadialGradientURL).
+In Internet Explorer 8 and less, radial gradients are not natively supported. Instead, we emulate the effect by loading a graphic pattern image. This image is by default loaded from the Highcharts CDN. To load it from your own server, set the [VMLRadialGradientURL](https://api.highcharts.com/highcharts#global.VMLRadialGradientURL).
 
-See the demo of [radial gradients in a pie chart](demo/pie-gradient).
+See the demo of [radial gradients in a pie chart](https://highcharts.com/demo/pie-gradient).
 
 Pattern fills
 -------------

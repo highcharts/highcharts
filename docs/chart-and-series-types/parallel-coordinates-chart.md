@@ -5,9 +5,9 @@ In cartesian charting, it is easy to show the relations between two or three dim
 
 Visualizing relationships with more than four dimensions become challenging with conventional charts, as they support only three dimensions. However, parallel coordinates chart can include many dimensions thanks to its capability to add many axes on one chart. Each axis is a separate series in the parallel coordinates chart, that means “line” or “spline” series can easily be added in any series. Highcharts will create all necessary yAxes, when creating chart according to the points in series.
 
-<iframe width="320" height="240" style="width: 100%; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/parallel-coordinates></iframe>
+<iframe style="width: 100%; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/parallel-coordinates allow="fullscreen"></iframe>
 
-Click [here](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/parallel-coordinates/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/parallel-coordinates/) to check the code.
 
 How to create parallel coordinates chart
 ----------------------------------------
@@ -67,4 +67,4 @@ Parallel coordinates chart specific options
 
 *   **chart.parallelCoordinates**: Enable this option to create Parallel Coordinates Chart.
 *   **chart.parallelAxes**: This option is used to configure all yAxis at once.
-*   **yAxis.tooltipValueFormat**: Use this option to personalize the tooltip for point.y and available in [tooltip.pointFormat](http://api.highcharts.com/highcharts/tooltip.pointFormat) as `{point.formattedValue}`.
+*   **yAxis.tooltipValueFormat**: Use this option to personalize the tooltip for point.y and available in [tooltip.pointFormat](https://api.highcharts.com/highcharts/tooltip.pointFormat) as `{point.formattedValue}`.

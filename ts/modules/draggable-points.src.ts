@@ -29,6 +29,8 @@ declare global {
             dragGuideBox?: SVGElement;
             /** @requires modules/draggable-points */
             hasAddedDragDropEvents?: boolean;
+            /** @requires modules/annotations */
+            hasDraggedAnnotation?: boolean;
             /** @requires modules/draggable-points */
             isDragDropAnimating?: boolean;
             /** @requires modules/draggable-points */
@@ -149,9 +151,6 @@ declare global {
             target: Point;
             type: 'drop';
         }
-        interface PlotSeriesOptions {
-            dragDrop?: DragDropOptionsObject;
-        }
         interface PointOptionsObject {
             dragDrop?: DragDropOptionsObject;
         }
@@ -185,6 +184,9 @@ declare global {
         }
         interface SeriesDragDropPropsResizeSideFunction {
             (...args: Array<any>): string;
+        }
+        interface SeriesOptions {
+            dragDrop?: DragDropOptionsObject;
         }
     }
 }
@@ -383,10 +385,12 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+const {
+    objectEach,
+    pick
+} = U;
 
 var addEvent = H.addEvent,
-    pick = H.pick,
     merge = H.merge,
     seriesTypes = H.seriesTypes;
 
@@ -2350,15 +2354,15 @@ H.Point.prototype.getDropValues = function (
     const limitToRange = function (val: number, direction: string): number {
         var defaultPrecision = (series as any)[direction.toLowerCase() + 'Axis']
                 .categories ? 1 : 0,
-            precision = pick<number>(
+            precision = pick<number|undefined, number>(
                 (options as any)['dragPrecision' + direction], defaultPrecision
             ),
-            min = pick<number>(
-                (options as any)['dragMin' + direction],
+            min = pick<number|undefined, number>(
+                (options as any)['dragMin' + direction] as any,
                 -Infinity
             ),
-            max = pick<number>(
-                (options as any)['dragMax' + direction],
+            max = pick<number|undefined, number>(
+                (options as any)['dragMax' + direction] as number,
                 Infinity
             ),
             res = val;
@@ -2944,13 +2948,15 @@ function mouseDown(
     // Reset cancel click
     chart.cancelClick = false;
 
-    // Ignore if option is disable for the point
-    if (!(draggableX || draggableY)) {
-        return;
-    }
-
-    // Ignore if zoom/pan key is pressed
-    if (chart.zoomOrPanKeyPressed(e)) {
+    // Ignore if:
+    if (
+        // Option is disabled for the point
+        !(draggableX || draggableY) ||
+        // Zoom/pan key is pressed
+        chart.zoomOrPanKeyPressed(e) ||
+        // Dragging an annotation
+        chart.hasDraggedAnnotation
+    ) {
         return;
     }
 

@@ -7,7 +7,7 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
 *   Constructor logic is consequently kept in a method, `init`, to allow overriding the initiation.
 *   Events can be added to the instance through framework event binding. If your framework is jQuery, you can for example run  
     `$(chart).bind('load', someFunction);`
-*   Some, but not all, prototypes and properties are listed at [api.highcharts.com](http://api.highcharts.com) under Methods and Properties. Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of highcharts.src.js.
+*   Some, but not all, prototypes and properties are listed at [api.highcharts.com](https://api.highcharts.com) under Methods and Properties. Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of highcharts.src.js.
 
 Wrapping up a plugin
 --------------------
@@ -66,7 +66,7 @@ It's best explained by a code sample:
     });
     
 
-[Try it live](http://jsfiddle.net/highcharts/DuuBr/)
+[Try it live](https://jsfiddle.net/highcharts/DuuBr/)
 
 Example extension
 -----------------
@@ -149,4 +149,4 @@ Now the trackball will be displayed, but we also need to hide it when the toolti
         });
     });
 
-That was all, the whole [sample can be viewed in jsFiddle](http://jsfiddle.net/highcharts/nhVbs/).
+That was all, the whole [sample can be viewed in jsFiddle](https://jsfiddle.net/highcharts/nhVbs/).

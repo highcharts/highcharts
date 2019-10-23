@@ -26,8 +26,8 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber;
-var correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, deg2rad = H.deg2rad;
+var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var correctFloat = H.correctFloat, fireEvent = H.fireEvent, merge = H.merge, deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Tick class.

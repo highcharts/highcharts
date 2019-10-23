@@ -77,6 +77,7 @@ declare global {
         {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
+            inactiveOtherPoints?: boolean;
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
             link?: SVGAttributes;
             marker?: NetworkgraphPointMarkerOptionsObject;
@@ -264,7 +265,10 @@ declare global {
  */
 
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    pick
+} = U;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
@@ -275,7 +279,6 @@ import './draggable-nodes.js';
 var addEvent = H.addEvent,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     dragNodesMixin = H.dragNodesMixin;

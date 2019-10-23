@@ -103,8 +103,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     isNumber,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Options.js';
@@ -112,9 +115,6 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 
 var correctFloat = H.correctFloat,
-    pick = H.pick,
-    arrayMin = H.arrayMin,
-    arrayMax = H.arrayMax,
     addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
@@ -689,13 +689,28 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
         pt: Highcharts.WaterfallPoint
     ): any {
         if (pt.isSum) {
-            // #3245 Error when first element is Sum or Intermediate Sum
-            return (pt.x === 0 ? null : 'sum');
+            return 'sum';
         }
         if (pt.isIntermediateSum) {
-            return (pt.x === 0 ? null : 'intermediateSum'); // #3245
+            return 'intermediateSum';
         }
         return pt.y;
+    },
+
+    updateParallelArrays: function (
+        this: Highcharts.WaterfallSeries,
+        point: Highcharts.Point,
+        i: (number|string)
+    ): void {
+        Series.prototype.updateParallelArrays.call(
+            this,
+            point,
+            i
+        );
+        // Prevent initial sums from triggering an error (#3245, #7559)
+        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
+            this.yData[0] = null;
+        }
     },
 
     // Postprocess mapping between options and SVG attributes

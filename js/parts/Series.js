@@ -203,13 +203,13 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, splat = U.splat, syncTimeout = U.syncTimeout;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, animObject = H.animObject, arrayMax = H.arrayMax, arrayMin = H.arrayMin, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, pick = H.pick, Point = H.Point, // @todo  add as a requirement
+var addEvent = H.addEvent, animObject = H.animObject, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+merge = H.merge, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
@@ -3211,7 +3211,7 @@ null,
                 if (yBottom === stackThreshold &&
                     stackIndicator.key ===
                         stack[xValue].base) {
-                    yBottom = (pick((isNumber(threshold) && threshold), yAxis.min));
+                    yBottom = pick((isNumber(threshold) && threshold), yAxis.min);
                 }
                 // #1200, #1232
                 if (yAxis.positiveValuesOnly && yBottom <= 0) {
@@ -3482,7 +3482,7 @@ null,
      * @function Highcharts.Series#drawPoints
      */
     drawPoints: function () {
-        var series = this, points = series.points, chart = series.chart, i, point, symbol, graphic, verb, options = series.options, seriesMarkerOptions = options.marker, pointMarkerOptions, hasPointMarker, enabled, isInside, markerGroup = (series[series.specialGroup] ||
+        var series = this, points = series.points, chart = series.chart, i, point, graphic, verb, options = series.options, seriesMarkerOptions = options.marker, pointMarkerOptions, hasPointMarker, enabled, isInside, markerGroup = (series[series.specialGroup] ||
             series.markerGroup), xAxis = series.xAxis, markerAttribs, globallyEnabled = pick(seriesMarkerOptions.enabled, !xAxis || xAxis.isRadial ? true : null, 
         // Use larger or equal as radius is null in bubbles (#6321)
         series.closestPointRangePx >= (seriesMarkerOptions.enabledThreshold *
@@ -3501,7 +3501,7 @@ null,
                 // only draw the point if y is defined
                 if (enabled && !point.isNull) {
                     // Shortcuts
-                    symbol = pick(pointMarkerOptions.symbol, series.symbol);
+                    var symbol = pick(pointMarkerOptions.symbol, series.symbol);
                     markerAttribs = series.markerAttribs(point, (point.selected && 'select'));
                     if (graphic) { // update
                         // Since the marker group isn't clipped, each
@@ -3597,7 +3597,7 @@ null,
      * @private
      * @function Highcharts.Series#pointAttribs
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.Point} [point]
      *        The point instance to inspect.
      *
      * @param {string} [state]

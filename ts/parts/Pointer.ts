@@ -231,6 +231,7 @@ const {
     isNumber,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
@@ -245,7 +246,6 @@ var H = Highcharts,
     find = H.find,
     fireEvent = H.fireEvent,
     offset = H.offset,
-    pick = H.pick,
     Tooltip = H.Tooltip;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -576,16 +576,18 @@ Highcharts.Pointer.prototype = {
         var series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            plotX = pick(point.clientX, point.plotX),
+            plotX = pick<number|undefined, number>(
+                point.clientX, point.plotX as any
+            ),
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
             return inverted ? {
-                chartX: xAxis.len + (xAxis.pos as any) - plotX,
-                chartY: yAxis.len + (yAxis.pos as any) - (point.plotY as any)
+                chartX: xAxis.len + xAxis.pos - plotX,
+                chartY: yAxis.len + yAxis.pos - (point.plotY as any)
             } : {
-                chartX: plotX + (xAxis.pos as any),
-                chartY: (point.plotY as any) + (yAxis.pos as any)
+                chartX: plotX + xAxis.pos,
+                chartY: (point.plotY as any) + yAxis.pos
             };
         }
 

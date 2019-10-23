@@ -18,53 +18,56 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type DataGroupingApproximationValue = (
-            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'
-        );
         interface Axis {
             getGroupPixelWidth(): number;
             setDataGrouping(
-                dataGrouping?: (boolean|PlotSeriesDataGroupingOptions),
+                dataGrouping?: (boolean|DataGroupingOptionsObject),
                 redraw?: boolean
             ): void;
+        }
+        interface ColumnSeriesOptions {
+            groupPixelWidth?: number;
+        }
+        interface ColumnRangeSeriesOptions {
+            groupPixelWidth?: number;
         }
         interface DataGrounpingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Dictionary<Function>
+            extends Dictionary<(Function|undefined)>
         {
-            average(
+            average: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            averages(
+            ) => (null|number|undefined);
+            averages: (
                 ...arrs: DataGrounpingApproximationsArray
-            ): (Array<(null|number|undefined)>|undefined);
-            close(
+            ) => (Array<(null|number|undefined)>|undefined);
+            close: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            high(
+            ) => (null|number|undefined);
+            high: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            low(
+            ) => (null|number|undefined);
+            low: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            open(
+            ) => (null|number|undefined);
+            open: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            sum(
+            ) => (null|number|undefined);
+            sum: (
                 arr: DataGrounpingApproximationsArray
-            ): (null|number|undefined);
-            ohlc(
+            ) => (null|number|undefined);
+            ohlc: (
                 open: DataGrounpingApproximationsArray,
                 high: DataGrounpingApproximationsArray,
                 low: DataGrounpingApproximationsArray,
                 close: DataGrounpingApproximationsArray
-            ): ([number, number, number, number]|undefined);
-            range(
+            ) => ([number, number, number, number]|undefined);
+            range: (
                 low: DataGrounpingApproximationsArray,
                 high: DataGrounpingApproximationsArray
-            ): ([number, number]|null|undefined);
+            ) => ([number, number]|null|undefined);
         }
         interface DataGroupingFunctionsObject {
             approximations: DataGroupingApproximationsDictionary;
@@ -75,15 +78,7 @@ declare global {
             options?: SeriesOptionsType;
             start: number;
         }
-        interface DataGroupingResultObject {
-            groupedXData: Array<number>;
-            groupedYData: (
-                Array<(number|null|undefined)>|
-                Array<Array<(number|null|undefined)>>
-            );
-            groupMap: Array<DataGroupingInfoObject>;
-        }
-        interface PlotSeriesDataGroupingOptions {
+        interface DataGroupingOptionsObject {
             approximation?: (DataGroupingApproximationValue|Function);
             dateTimeLabelFormats?: Dictionary<Array<string>>;
             enabled?: boolean;
@@ -92,6 +87,14 @@ declare global {
             groupPixelWidth?: number;
             smoothed?: boolean;
             units?: Array<[string, (Array<number>|null)]>;
+        }
+        interface DataGroupingResultObject {
+            groupedXData: Array<number>;
+            groupedYData: (
+                Array<(number|null|undefined)>|
+                Array<Array<(number|null|undefined)>>
+            );
+            groupMap: Array<DataGroupingInfoObject>;
         }
         interface Series {
             cropStart?: number;
@@ -120,6 +123,10 @@ declare global {
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
+        type DataGroupingApproximationValue = (
+            'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
+            'windbarb'|'ichimoku-averages'
+        );
     }
 }
 
@@ -142,9 +149,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
     extend,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import './Axis.js';
@@ -152,14 +162,11 @@ import './Series.js';
 import './Tooltip.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     Axis = H.Axis,
     correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     Tooltip = H.Tooltip;
@@ -342,12 +349,12 @@ var groupData = function (
             return approx;
         }
         if (approximations[approx]) {
-            return approximations[approx];
+            return approximations[approx] as any;
         }
         return approximations[
             (series.getDGApproximation && series.getDGApproximation()) ||
             'average'
-        ];
+        ] as any;
     }
     approximationFn = getApproximation(approximation);
 
@@ -490,10 +497,7 @@ var dataGrouping = {
 var seriesProto = Series.prototype,
     baseProcessData = seriesProto.processData,
     baseGeneratePoints = seriesProto.generatePoints,
-
-    /**
-     * @ignore
-     */
+    /** @ignore */
     commonOptions = {
         // enabled: null, // (true for stock charts, false for basic),
         // forced: undefined,
@@ -545,12 +549,12 @@ var seriesProto = Series.prototype,
         }
         // smoothed = false, // enable this for navigator series only
     },
-
     specificOptions = { // extends common options
         line: {},
         spline: {},
         area: {},
         areaspline: {},
+        arearange: {},
         column: {
             groupPixelWidth: 10
         },
@@ -782,7 +786,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     ) ||
                     xAxis.min === xAxis.dataMin
                 ) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
                 }
                 xAxis.dataMin = groupedXData[0];
             }
@@ -950,13 +954,15 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // some series types are defined after this.
 addEvent(Series, 'afterSetOptions', function (
     this: Highcharts.Series,
-    e: { options: Highcharts.PlotSeriesOptions }
+    e: { options: Highcharts.SeriesOptions }
 ): void {
 
     var options = e.options,
         type = this.type,
-        plotOptions = this.chart.options.plotOptions as Highcharts.PlotOptions,
-        defaultOptions = defaultPlotOptions[type].dataGrouping,
+        plotOptions: Highcharts.PlotOptions =
+            this.chart.options.plotOptions as any,
+        defaultOptions: Highcharts.DataGroupingOptionsObject =
+            (defaultPlotOptions[type] as any).dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -970,7 +976,8 @@ addEvent(Series, 'afterSetOptions', function (
             baseOptions,
             defaultOptions,
             plotOptions.series && plotOptions.series.dataGrouping, // #1228
-            plotOptions[type].dataGrouping, // Set by the StockChart constructor
+            // Set by the StockChart constructor:
+            (plotOptions[type] as any).dataGrouping,
             this.userOptions.dataGrouping
         );
     }
@@ -1056,7 +1063,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  */
 Axis.prototype.setDataGrouping = function (
     this: Highcharts.Axis,
-    dataGrouping?: (boolean|Highcharts.PlotSeriesDataGroupingOptions),
+    dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
     redraw?: boolean
 ): void {
     var i;
@@ -1067,7 +1074,7 @@ Axis.prototype.setDataGrouping = function (
         dataGrouping = {
             forced: false,
             units: null as any
-        } as Highcharts.PlotSeriesDataGroupingOptions;
+        } as Highcharts.DataGroupingOptionsObject;
     }
 
     // Axis is instantiated, update all series

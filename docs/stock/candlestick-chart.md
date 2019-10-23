@@ -5,4 +5,4 @@ A candlestick chart is typically used to present the open, high, low and close p
 
 ![candlestick.png](candlestick.png)
 
-For more information on the candlestick chart, see the [API reference](http://api.highcharts.com/highstock/plotOptions.candlestick).
+For more information on the candlestick chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.candlestick).

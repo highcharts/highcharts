@@ -54,7 +54,7 @@ declare global {
             _offsetMin?: number;
             _range?: number;
             count?: number;
-            dataGrouping?: PlotSeriesDataGroupingOptions;
+            dataGrouping?: DataGroupingOptionsObject;
             events?: RangeSelectorButtonsEventsOptions;
             offsetMax?: number;
             offsetMin?: number;
@@ -176,9 +176,12 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    destroyObjectProperties,
+    discardElement,
     extend,
     isNumber,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -192,11 +195,8 @@ var addEvent = H.addEvent,
     css = H.css,
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
-    discardElement = H.discardElement,
     fireEvent = H.fireEvent,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -760,7 +760,9 @@ RangeSelector.prototype = {
             dataMax = unionExtremes.dataMax,
             newMin,
             newMax = baseAxis && Math.round(
-                Math.min(baseAxis.max as any, pick(dataMax, baseAxis.max))
+                Math.min(
+                    baseAxis.max as any, pick(dataMax, baseAxis.max as any)
+                )
             ), // #1568
             type = rangeOptions.type,
             baseXAxisOptions: Highcharts.AxisOptions,

@@ -47,13 +47,13 @@ declare global {
             len: number;
             to: number;
         }
-        interface PlotSeriesOptions {
-            gapSize?: number;
-            gapUnit?: string;
-        }
         interface Series {
             /** @requires modules/broken-axis */
             drawBreaks(axis: Axis, keys: Array<string>): void;
+        }
+        interface SeriesOptions {
+            gapSize?: number;
+            gapUnit?: string;
         }
         interface XAxisBreaksOptions {
             inclusive?: boolean;
@@ -64,14 +64,14 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
-    isArray
+    isArray,
+    pick
 } = U;
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
-    pick = H.pick,
     find = H.find,
     fireEvent = H.fireEvent,
     Axis = H.Axis,
@@ -495,7 +495,7 @@ H.Series.prototype.drawBreaks = function (
     var series = this,
         points = series.points,
         breaks: Array<Highcharts.AxisBreakObject>,
-        threshold: (number|null),
+        threshold: (number|null|undefined),
         eventName: string,
         y: (number|null|undefined);
 

@@ -18,12 +18,49 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type PointOptionsType = (
-            number|string|Array<(number|string)>|PointOptionsObject|null
-        );
-        interface PlotSeriesOptions {
-            marker?: PointMarkerOptionsObject;
-            point?: PlotSeriesPointOptions;
+        class Point {
+            public constructor();
+            public color?: ColorType;
+            public colorIndex: number;
+            public formatPrefix: string;
+            public id: string;
+            public isNull: boolean;
+            public marker?: PointMarkerOptionsObject;
+            public nonZonedColor?: (
+                ColorString|GradientColorObject|PatternObject
+            );
+            public options: PointOptionsObject;
+            public percentage?: number;
+            public series: Series;
+            public shapeArgs?: SVGAttributes;
+            public shapeType?: string;
+            public state?: string;
+            public total?: number;
+            public visible: boolean;
+            public x: (number|null);
+            public y?: (number|null);
+            public applyOptions(options: PointOptionsType, x?: number): Point;
+            public destroy(): void;
+            public destroyElements(kinds?: Dictionary<number>): void;
+            public getClassName(): string;
+            public firePointEvent(
+                eventType: string,
+                eventArgs?: (Dictionary<any>|Event),
+                defaultFunction?: (EventCallbackFunction<Point>|Function)
+            ): void;
+            public getLabelConfig(): PointLabelObject;
+            public getZone(): SeriesZonesOptions;
+            public hasNewShapeType (this: Point): boolean|undefined;
+            public init(
+                series: Series,
+                options: PointOptionsType,
+                x?: number
+            ): Point;
+            public isValid?(): boolean;
+            public optionsToObject(options: PointOptionsType): Dictionary<any>;
+            public resolveColor(): void;
+            public setNestedProperty<T>(object: T, value: any, key: string): T;
+            public tooltipFormatter(pointFormat: string): string;
         }
         interface PlotSeriesPointOptions {
             events?: PointEventsOptionsObject;
@@ -133,54 +170,15 @@ declare global {
         }
         interface SeriesOptions {
             data?: Array<PointOptionsType>;
+            marker?: PointMarkerOptionsObject;
+            point?: PlotSeriesPointOptions;
         }
         interface SeriesPointOptions {
             events?: PointEventsOptionsObject;
         }
-        class Point {
-            public constructor();
-            public color?: ColorType;
-            public colorIndex: number;
-            public formatPrefix: string;
-            public id: string;
-            public isNull: boolean;
-            public marker?: PointMarkerOptionsObject;
-            public nonZonedColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            public options: PointOptionsObject;
-            public percentage?: number;
-            public series: Series;
-            public shapeArgs?: SVGAttributes;
-            public shapeType?: string;
-            public state?: string;
-            public total?: number;
-            public visible: boolean;
-            public x: (number|null);
-            public y?: (number|null);
-            public applyOptions(options: PointOptionsType, x?: number): Point;
-            public destroy(): void;
-            public destroyElements(kinds?: Dictionary<number>): void;
-            public getClassName(): string;
-            public firePointEvent(
-                eventType: string,
-                eventArgs?: (Dictionary<any>|Event),
-                defaultFunction?: (EventCallbackFunction<Point>|Function)
-            ): void;
-            public getLabelConfig(): PointLabelObject;
-            public getZone(): PlotSeriesZonesOptions;
-            public hasNewShapeType (this: Point): boolean|undefined;
-            public init(
-                series: Series,
-                options: PointOptionsType,
-                x?: number
-            ): Point;
-            public isValid?(): boolean;
-            public optionsToObject(options: PointOptionsType): Dictionary<any>;
-            public resolveColor(): void;
-            public setNestedProperty<T>(object: T, value: any, key: string): T;
-            public tooltipFormatter(pointFormat: string): string;
-        }
+        type PointOptionsType = (
+            number|string|Array<(number|string)>|PointOptionsObject|null
+        );
     }
 }
 
@@ -627,14 +625,14 @@ const {
     extend,
     isArray,
     isNumber,
-    isObject
+    isObject,
+    pick
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     fireEvent = H.fireEvent,
     format = H.format,
-    pick = H.pick,
     uniqueKey = H.uniqueKey,
     removeEvent = H.removeEvent;
 
@@ -1013,7 +1011,7 @@ Highcharts.Point.prototype = {
      */
     getZone: function (
         this: Highcharts.Point
-    ): Highcharts.PlotSeriesZonesOptions {
+    ): Highcharts.SeriesZonesOptions {
         var series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y',
@@ -1186,9 +1184,7 @@ Highcharts.Point.prototype = {
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
         var series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick<(number|string)>(
-                seriesTooltipOptions.valueDecimals, ''
-            ),
+            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 

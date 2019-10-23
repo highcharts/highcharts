@@ -39,6 +39,8 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    arrayMax: U.arrayMax,
+    arrayMin: U.arrayMin,
     attr: U.attr,
     defined: U.defined,
     erase: U.erase,
@@ -50,7 +52,9 @@ extend(Highcharts, {
     isObject: U.isObject,
     isString: U.isString,
     objectEach: U.objectEach,
+    pick: U.pick,
     pInt: U.pInt,
+    setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout
 });

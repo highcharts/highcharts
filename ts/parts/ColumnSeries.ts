@@ -22,11 +22,6 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
@@ -40,11 +35,7 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
-            startFromThreshold?: boolean;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
-        }
-        interface PlotSeriesOptions {
-            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -61,6 +52,11 @@ declare global {
         }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
+        }
+        interface SeriesZonesOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -132,7 +128,8 @@ import U from './Utilities.js';
 const {
     defined,
     extend,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import './Color.js';
@@ -145,7 +142,6 @@ var animObject = H.animObject,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     svg = H.svg;
@@ -824,7 +820,7 @@ seriesType<Highcharts.ColumnSeries>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold),
+                var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,

@@ -3,7 +3,7 @@ Heatmap
 
 A heat map is a graphical representation of data where the individual values contained in a matrix are represented as colors.
 
-<iframe width="320" height="240" style="width: 100%; border: none; height: 500px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/heatmap></iframe>
+<iframe style="width: 100%; border: none; height: 500px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/heatmap allow="fullscreen"></iframe>
 
 ### Setting up the heat map series
 
@@ -13,10 +13,10 @@ The heat map series is defined by setting the type to `heatmap`. A heat map has 
 
 ### The color axis
 
-Heat maps borrow a central concept from Highmaps, the color axis. See the docs article on [color axis](docs/maps/color-axis/) for details
+Heat maps borrow a central concept from Highmaps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details
 
 ### Resources
 
-See the featured demos at [Heat map](demo/heatmap/) and [Large heatmap](demo/heatmap-canvas/). The latter demonstrates how a HTML5 canvas can be plugged in to optimize rendering times.
+See the featured demos at [Heat map](https://highcharts.com/demo/heatmap/) and [Large heatmap](https://highcharts.com/demo/heatmap-canvas/). The latter demonstrates how a HTML5 canvas can be plugged in to optimize rendering times.
 
 See [heatmap](https://api.highcharts.com/highmaps/plotOptions.heatmap) in the Highmaps docs.

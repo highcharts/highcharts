@@ -9,10 +9,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend;
-var min = Math.min, max = Math.max, abs = Math.abs, pick = H.pick;
+var extend = U.extend, pick = U.pick;
+var min = Math.min, max = Math.max, abs = Math.abs;
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and
  * thus requires that obstacles are sorted by xMin value.

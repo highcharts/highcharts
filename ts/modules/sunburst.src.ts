@@ -136,6 +136,7 @@ declare global {
             value?: number;
         }
         interface SunburstSeriesOptions extends TreemapSeriesOptions {
+            center?: Array<(number|string|null)>;
             dataLabels?: (
                 SunburstDataLabelsOptionsObject|
                 Array<SunburstDataLabelsOptionsObject>
@@ -145,6 +146,7 @@ declare global {
             levelSize?: SunburstSeriesLevelSizeOptions;
             mapIdToNode?: SunburstSeries['nodeMap'];
             rootId?: string;
+            slicedOffset?: number;
             startAngle?: number;
             states?: SeriesStatesOptionsObject<SunburstSeries>;
         }

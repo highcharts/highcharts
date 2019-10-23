@@ -3,7 +3,7 @@ Creating custom maps
 
 Highmaps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
 
-1. The first step is to install [Inkscape](http://www.inkscape.org/en/) on your system. This is the only tool you need to install, and it's free. Open up Inkscape, it opens a new document by default.
+1. The first step is to install [Inkscape](https://www.inkscape.org/en/) on your system. This is the only tool you need to install, and it's free. Open up Inkscape, it opens a new document by default.
 
 2. We will use a PNG image in the background and draw actual SVG shapes on top of it. Open the PNG image in Inkscape. Inkscape ask if you want to link or embed the image, choose either of the two.
 
@@ -39,15 +39,15 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 12. After you're finished drawing, save the file. Inkscape saves as SVG by default. Open the file in a text editor so that you see the SVG/XML markup. Select all and copy. 
 
-13. Using a modern browser (tested with Chrome), go to [www.highcharts.com/studies/map-from-svg.htm](studies/map-from-svg.htm). In the textarea labeled "Online SVG URL or SVG markup", paste your SVG markup. Hit the Load button. Now an interactive map should display on the right.
+13. Using a modern browser (tested with Chrome), go to [www.highcharts.com/studies/map-from-svg.htm](https://highcharts.com/studies/map-from-svg.htm). In the textarea labeled "Online SVG URL or SVG markup", paste your SVG markup. Hit the Load button. Now an interactive map should display on the right.
 
 ![map-from-svg-9.png](map-from-svg-9.png)
 
-14. The actual map shape data is available under the "View data" link. Click it and copy the whole contents of the text area to the right. This is a JSON object containing the template for the entire [series](http://api.highcharts.com/highmaps/series) options of a new map chart, combining real area data and separator lines.
+14. The actual map shape data is available under the "View data" link. Click it and copy the whole contents of the text area to the right. This is a JSON object containing the template for the entire [series](https://api.highcharts.com/highmaps/series) options of a new map chart, combining real area data and separator lines.
 
 ![map-from-svg-10.png](map-from-svg-10.png)
 
-15. Go to [jsfiddle.net/highcharts/TUy7x/](http://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highmaps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](http://jsfiddle.net/highcharts/TUy7x/1/).
+15. Go to [jsfiddle.net/highcharts/TUy7x/](https://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highmaps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](https://jsfiddle.net/highcharts/TUy7x/1/).
 
     
     $(function () {
@@ -57,6 +57,6 @@ Highmaps can be used for more than geographic data, and more than the featured m
         });
     });
 
-16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](http://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
+16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](https://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
 
 Good luck, and don't hesitate to contact us via our [Support Page](support) if you have any problems or corrections to this article.

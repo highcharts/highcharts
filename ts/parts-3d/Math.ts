@@ -53,11 +53,13 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 // Mathematical Functionility
-var deg2rad = H.deg2rad,
-    pick = H.pick;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable max-len */
 /**

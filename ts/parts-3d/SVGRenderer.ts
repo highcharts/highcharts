@@ -106,7 +106,8 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Color.js';
@@ -122,7 +123,6 @@ var animObject = H.animObject,
     deg2rad = H.deg2rad,
     merge = H.merge,
     perspective = H.perspective,
-    pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     // internal:
@@ -490,7 +490,7 @@ element3dMethods = {
         (elem3d.parts as any).forEach(function (part: string): void {
             // if different props for different parts
             if (partsProps) {
-                props = H.pick(partsProps[part], false);
+                props = pick(partsProps[part], false);
             }
 
             // only if something to set, but allow undefined

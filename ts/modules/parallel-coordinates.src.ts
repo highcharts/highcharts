@@ -57,9 +57,12 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
     defined,
     erase,
     extend,
+    pick,
     splat
 } = U;
 
@@ -74,11 +77,8 @@ var Axis = H.Axis,
     AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
-    pick = H.pick,
     wrap = H.wrap,
-    merge = H.merge,
-    arrayMin = H.arrayMin,
-    arrayMax = H.arrayMax;
+    merge = H.merge;
 
 var defaultXAxisOptions = {
     lineWidth: 0,

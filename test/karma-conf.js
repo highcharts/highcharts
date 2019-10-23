@@ -74,12 +74,12 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
+    const regex = /(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/g;
+    let match;
+    const codeblocks = [];
 
-    const match = js.match(/(\$|Highcharts)\.getJSON\([ \n]*'([^']+)/);
-
-    if (match) {
+    while (match = regex.exec(js)) {
         let src = match[2];
-
 
         let innerMatch = src.match(
             /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
@@ -102,21 +102,16 @@ function resolveJSON(js) {
             if (data) {
 
                 if (/json$/.test(filename)) {
-                    return `
-                    window.JSONSources['${src}'] = ${data};
-                    ${js}
-                    `;
+                    codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
                 }
                 if (/csv$/.test(filename)) {
-                    return `
-                    window.JSONSources['${src}'] = \`${data}\`;
-                    ${js}
-                    `;
+                    codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
                 }
             }
         }
     }
-    return js;
+    codeblocks.push(js);
+    return codeblocks.join('\n');
 }
 
 /**
@@ -319,6 +314,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'test/json-sources.js',
             'test/karma-setup.js'
         ], tests),
 
@@ -331,16 +327,6 @@ module.exports = function (config) {
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js',
-
-            // Trying to get Edge to pass:
-            //'samples/unit-tests/interaction/*/demo.js',
-            //'samples/unit-tests/stock-tools/*/demo.js',
-            //'samples/unit-tests/drag-panes/pointer-interactions/demo.js',
-            //'samples/unit-tests/chart/zoomtype/demo.js',
-            //'samples/unit-tests/drilldown/drillup/demo.js',
-            //'samples/unit-tests/rangeselector/selected/demo.js',
-            //'samples/unit-tests/point/point/demo.js',
-            //'samples/unit-tests/pointer/members/demo.js',
 
             // --- VISUAL TESTS ---
 
@@ -394,12 +380,13 @@ module.exports = function (config) {
 
             // visual tests excluded for now due to failure
             'samples/highcharts/demo/funnel3d/demo.js',
+            'samples/highcharts/demo/live-data/demo.js',
             'samples/highcharts/demo/organization-chart/demo.js',
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
         ],
-        reporters: ['imagecapture', 'progress', 'json-log'],
+        reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
@@ -414,10 +401,6 @@ module.exports = function (config) {
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
         },
-        jsonLogReporter: {
-            outputPath: 'test/',
-        },
-
 
         formatError: function (s) {
             let ret = s.replace(
@@ -428,12 +411,19 @@ module.exports = function (config) {
                 }
             );
 
-            ret = s.replace(
-                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
-                }
-            );
+            // Insert link to utils
+            let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
+            let match = s.match(regex);
+
+            if (match) {
+                // Insert the utils link before the first line with mixed indent
+                ret = s.replace(
+                    '\t    ',
+                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                );
+
+                ret = ret.replace(regex, a => a.cyan);
+            }
 
             // Skip the call stack, it's internal QUnit stuff
             ret = ret.split('<<<splitter>>>')[0];
@@ -556,40 +546,22 @@ module.exports = function (config) {
                             done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
                             return;
                         }
-
                         assertion = `
                         compareToReference(chart, '${path}')
                             .then(actual => {
-                                if (${argv.difflog}) {
-                                    var today = new Date().toISOString().slice(0,10);
-                                    var diffLog = {
-                                        name: 'visual-test-results',
-                                        object: {
-                                            '${path}': actual,
-                                            meta: {
-                                                runDate: today,
-                                                gitSha: __karma__.config.gitSha
-                                            },
-                                        },
-                                    };
-                                    if (actual || actual === 0) {
-                                        window.dump(JSON.stringify( diffLog ));
-                                    }
-                                    assert.ok(true, 'Explicitly ignoring failures, e.g to create diffed images.');
-                                } else {
-                                    assert.strictEqual(
-                                        actual,
-                                        0,
-                                        'Different pixels\\n' +
-                                        '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                        '- samples/${path}/reference.svg\\n' +
-                                        '- samples/${path}/diff.gif'
-                                    );
-                                }
-                                done();
+                                assert.strictEqual(
+                                    actual,
+                                    0,
+                                    'Different pixels\\n' +
+                                    '- http://utils.highcharts.local/samples/#test/${path}\\n' +
+                                    '- samples/${path}/reference.svg\\n' +
+                                    '- samples/${path}/diff.gif'
+                                );
                             })
                             .catch(err => {
                                 console.error(err);
+                            })
+                            .finally(() => {
                                 done();
                             });
                         `;
@@ -602,6 +574,14 @@ module.exports = function (config) {
         }
     };
 
+    if (argv.visualcompare || argv.reference) {
+        options.reporters.push('imagecapture');
+        options.imageCapture = {
+            resultsOutputPath: 'test/visual-test-results.json',
+        };
+        options.browserDisconnectTolerance = 1; // default 0
+        options.browserDisconnectTimeout = 30000; // default 2000
+    }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
@@ -632,7 +612,7 @@ module.exports = function (config) {
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
-        options.concurrency = 1;
+        options.concurrency = 2;
         options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000

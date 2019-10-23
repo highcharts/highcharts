@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class CCIIndicator extends SmaIndicator {
+        class CCIIndicator extends SMAIndicator {
             public data: Array<CCIIndicatorPoint>;
             public getValues(
                 series: Series,
@@ -24,18 +24,17 @@ declare global {
             public pointClass: typeof CCIIndicatorPoint;
             public points: Array<CCIIndicatorPoint>;
             public options: CCIIndicatorOptions;
-            public yData: Array<Array<number>>;
         }
 
-        interface CCIIndicatorOptions extends SmaIndicatorOptions {
+        interface CCIIndicatorOptions extends SMAIndicatorOptions {
             params?: CCIIndicatorParamsOptions;
         }
 
-        interface CCIIndicatorParamsOptions extends SmaIndicatorParamsOptions {
+        interface CCIIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             // declared for inheritance
         }
 
-        class CCIIndicatorPoint extends SmaIndicatorPoint {
+        class CCIIndicatorPoint extends SMAIndicatorPoint {
             public series: CCIIndicator;
         }
 
@@ -111,12 +110,12 @@ seriesType<Highcharts.CCIIndicator>(
      */
     {
         getValues: function (
-            series: Highcharts.CCIIndicator,
+            series: Highcharts.Series,
             params: Highcharts.CCIIndicatorParamsOptions
         ): (boolean|Highcharts.IndicatorValuesObject) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 TP: Array<number> = [],
                 periodTP: Array<number> = [],

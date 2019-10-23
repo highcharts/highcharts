@@ -12,4 +12,4 @@ By default, the grouping [approximation](https://api.highcharts.com/highstock/pl
 
 Grouping is activated when there are many data points in the chart. As well as increasing performance it makes it easier to spot trends in a chart.
 
-Data grouping is a Highstock feature and is enabled by default. To see dataGrouping options see the [API reference](http://api.highcharts.com/highstock/plotOptions.series.dataGrouping).
+Data grouping is a Highstock feature and is enabled by default. To see dataGrouping options see the [API reference](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping).

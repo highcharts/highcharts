@@ -40,10 +40,12 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
-var pick = H.pick,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
@@ -132,7 +134,9 @@ seriesType<Highcharts.ColumnPyramidSeries>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPyramidPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold),
+                var yBottom = pick<number|undefined, number>(
+                        point.yBottom, translatedThreshold as any
+                    ),
                     safeDistance = 999 + Math.abs(yBottom),
                     plotY = Math.min(
                         Math.max(-safeDistance, point.plotY as any),

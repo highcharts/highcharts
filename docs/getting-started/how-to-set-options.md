@@ -10,7 +10,7 @@ Highcharts use a JavaScript object structure to define the options or settings 
 The options object
 ------------------
 
-When you initialize the chart using its constructor [Highcharts.Chart](http://api.highcharts.com/highcharts#Highcharts.Chart()), the options object is the first parameter you pass.
+When you initialize the chart using its constructor [Highcharts.Chart](https://api.highcharts.com/highcharts#Highcharts.Chart()), the options object is the first parameter you pass.
 
 In the example below the code marked as red represents the options object:
 
@@ -157,6 +157,6 @@ $(function() {
 ```
     
 
-Note: The themes supplied with Highcharts download use this function. See [Themes](docs/chart-design-and-style/themes) for more information.
+Note: The themes supplied with Highcharts download use this function. See [Themes](https://highcharts.com/docs/chart-design-and-style/themes) for more information.
 
-For a full reference of the options available, see the [Highcharts options reference](http://api.highcharts.com/highcharts) or the [Highstock options reference](http://api.highcharts.com/highstock).
+For a full reference of the options available, see the [Highcharts options reference](https://api.highcharts.com/highcharts) or the [Highstock options reference](https://api.highcharts.com/highstock).

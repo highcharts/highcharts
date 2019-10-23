@@ -107,6 +107,7 @@ declare global {
         interface TimelineSeriesOptions extends LineSeriesOptions {
             data?: Array<TimelinePointOptions>;
             dataLabels?: TimelineDataLabelsOptionsObject;
+            ignoreHiddenPoint?: boolean;
             radius?: number;
             radiusPlus?: number;
             states?: SeriesStatesOptionsObject<TimelineSeries>;
@@ -189,15 +190,19 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    arrayMax,
+    arrayMin,
+    defined,
+    isNumber,
+    objectEach,
+    pick
+} = U;
 
 var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -584,8 +589,8 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                 });
 
             return {
-                min: H.arrayMin(filteredData),
-                max: H.arrayMax(filteredData)
+                min: arrayMin(filteredData),
+                max: arrayMax(filteredData)
             };
         },
         generatePoints: function (this: Highcharts.TimelineSeries): void {
@@ -674,14 +679,14 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     pointMarkerOptions.symbol || seriesMarkerOptions.symbol
                 ),
                 pointStateOptions,
-                width = pick(
+                width = pick<number|undefined, number|undefined, number>(
                     pointMarkerOptions.width,
                     seriesMarkerOptions.width,
-                    series.closestPointRangePx
+                    series.closestPointRangePx as any
                 ),
-                height = pick(
+                height = pick<number|undefined, number>(
                     pointMarkerOptions.height,
-                    seriesMarkerOptions.height
+                    seriesMarkerOptions.height as any
                 ),
                 radius = 0,
                 attribs: (Highcharts.SVGAttributes|undefined);

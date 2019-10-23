@@ -53,13 +53,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Series.js';
 
-var pick = H.pick,
-    seriesType = H.seriesType;
+var seriesType = H.seriesType;
 
 /**
  * @private
@@ -129,7 +129,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
                 }
 
                 itemY = point.y;
-                yTop = pick(point.stackY, point.y);
+                yTop = pick(point.stackY, point.y as any);
                 size = Math.min(
                     point.pointWidth,
                     series.yAxis.transA - itemPaddingTranslated
