@@ -3005,6 +3005,12 @@ null,
                 }
             }
             if (point) { // #6279
+                /**
+                 * Returns the point's index in the `Series.points` array.
+                 *
+                 * @name Highcharts.Point#index
+                 * @type {number|undefined}
+                 */
                 point.index = cursor; // For faster access in Point.update
                 points[i] = point;
             }
