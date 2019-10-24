@@ -48,35 +48,35 @@ To get the most out of Highcharts, it is important to understand how the options
 
 *   The Highcharts options in the examples are defined as object literals. By notating the configuration this way, we can have a clean, human readable and low space consuming config object. The following complicated code is perhaps more familiar to developers with a background from C-type languages:
 
-    
-    // Bad code:
-    var options = new Object();
-    
-    options.chart = new Object();
-    options.chart.renderTo = 'container';
-    options.chart.type = 'bar';
-    
-    options.series = new Array();
-    options.series[0] = new Object();
-    options.series[0].name = 'Jane';
-    options.series[0].data = new Array(1, 0, 4);
-    
+```js
+// Bad code:
+var options = new Object();
+
+options.chart = new Object();
+options.chart.renderTo = 'container';
+options.chart.type = 'bar';
+
+options.series = new Array();
+options.series[0] = new Object();
+options.series[0].name = 'Jane';
+options.series[0].data = new Array(1, 0, 4);
+```
 
 As JavaScript object literals, we would write it like below. Note that the two options objects will produce exactly the same result.
 
-    
-    // Good code:
-    var options = {
-        chart: {
-            renderTo: 'container',
-            type: 'bar'
-        },
-        series: [{
-            name: 'Jane',
-            data: [1, 0, 4]
-        }]
-    };
-    
+```js
+// Good code:
+var options = {
+    chart: {
+        renderTo: 'container',
+        type: 'bar'
+    },
+    series: [{
+        name: 'Jane',
+        data: [1, 0, 4]
+    }]
+};
+```
 
 In the example above the options object is created by itself and can be added to the chart by passing it to the chart constructor:
 
