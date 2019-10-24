@@ -390,6 +390,9 @@ if (!defaultOptions.navigation) {
 }
 merge(true, defaultOptions.navigation, {
 
+    /**
+     * @optionparent navigation.buttonOptions
+     */
     buttonOptions: {
 
         theme: {},
