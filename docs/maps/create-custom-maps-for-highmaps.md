@@ -49,13 +49,14 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 15. Go to [jsfiddle.net/highcharts/TUy7x/](https://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highmaps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](https://jsfiddle.net/highcharts/TUy7x/1/).
 
-    
-    $(function () {
-        // Initiate the chart
-        $('#container').highcharts('Map', {
-            series: /* paste your content here */
-        });
+```js
+$(function () {
+    // Initiate the chart
+    $('#container').highcharts('Map', {
+        series: /* paste your content here */
     });
+});
+```
 
 16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](https://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
 
