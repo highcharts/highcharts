@@ -470,8 +470,10 @@ function describeSeries(series) {
             .describeSingleSeries,
         exposeAsGroupOnlyOption = (series.options.accessibility || {})
             .exposeAsGroupOnly,
-        shouldDescribeSeriesElement = !chartHas3d && (hasMultipleSeries ||
-            describeSingleSeriesOption || exposeAsGroupOnlyOption);
+        noDescribe3D = chartHas3d && hasMultipleSeries,
+        shouldDescribeSeriesElement = !noDescribe3D &&
+            (hasMultipleSeries || describeSingleSeriesOption ||
+                exposeAsGroupOnlyOption);
 
     if (seriesEl) {
         // For some series types the order of elements do not match the

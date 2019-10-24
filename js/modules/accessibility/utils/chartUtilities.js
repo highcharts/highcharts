@@ -29,14 +29,16 @@ function getChartTitle(chart) {
  * @return {string}
  */
 function getAxisDescription(axis) {
-    return axis && (
-        axis.userOptions && axis.userOptions.accessibility &&
-            axis.userOptions.accessibility.description ||
-        axis.axisTitle && axis.axisTitle.textStr ||
-        axis.options.id ||
-        axis.categories && 'categories' ||
-        axis.isDatetimeAxis && 'Time' ||
-        'values'
+    return stripHTMLTags(
+        axis && (
+            axis.userOptions && axis.userOptions.accessibility &&
+                axis.userOptions.accessibility.description ||
+            axis.axisTitle && axis.axisTitle.textStr ||
+            axis.options.id ||
+            axis.categories && 'categories' ||
+            axis.isDatetimeAxis && 'Time' ||
+            'values'
+        )
     );
 }
 
