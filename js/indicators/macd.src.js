@@ -255,7 +255,7 @@ seriesType('macd', 'sma',
         this.zones = this.signalZones.zones;
         SMA.prototype.applyZones.call(this);
         // applyZones hides only main series.graph, hide macd line manually
-        if (this.options.macdLine.zones.length) {
+        if (this.graphmacd && this.options.macdLine.zones.length) {
             this.graphmacd.hide();
         }
         this.zones = histogramZones;
