@@ -416,7 +416,7 @@ seriesType<Highcharts.MACDIndicator>(
             SMA.prototype.applyZones.call(this);
 
             // applyZones hides only main series.graph, hide macd line manually
-            if ((this.options.macdLine as any).zones.length) {
+            if (this.graphmacd && (this.options.macdLine as any).zones.length) {
                 (this.graphmacd as any).hide();
             }
 
