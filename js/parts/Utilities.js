@@ -343,44 +343,38 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *        Important note: This argument is undefined for errors that lack
  *        access to the Chart instance.
  *
+ * @param {Highcharts.Dictionary<string>} [params]
+ *        Additional parameters for the generated message.
+ *
  * @return {void}
  */
-H.error = function (code, stop, chart) {
-    var msg = isNumber(code) ?
+H.error = function (code, stop, chart, params) {
+    var isCode = isNumber(code), message = isCode ?
         "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
-        code, defaultHandler = function () {
+        code.toString(), defaultHandler = function () {
         if (stop) {
-            throw new Error(msg);
+            throw new Error(message);
         }
         // else ...
         if (win.console) {
-            console.log(msg); // eslint-disable-line no-console
+            console.log(message); // eslint-disable-line no-console
         }
     };
-    if (chart) {
-        if (code === 17) {
-            var options = chart.options;
-            var seriesOptions = (options.series || []);
-            var missingSeries = void 0;
-            if (options.chart &&
-                options.chart.defaultSeriesType &&
-                typeof (H.seriesTypes[options.chart.defaultSeriesType]) === 'undefined') {
-                missingSeries = options.chart.defaultSeriesType;
-            }
-            else {
-                for (var i = 0, ie = seriesOptions.length; i < ie; ++i) {
-                    missingSeries = seriesOptions[i].type;
-                    if (missingSeries &&
-                        typeof H.seriesTypes[missingSeries] === 'undefined') {
-                        break;
-                    }
-                }
-            }
-            if (typeof missingSeries === 'string') {
-                msg += "?missingModuleFor=" + missingSeries;
-            }
+    if (typeof params !== 'undefined') {
+        var additionalMessages_1 = '';
+        if (isCode) {
+            message += '?';
         }
-        H.fireEvent(chart, 'displayError', { code: code, message: msg }, defaultHandler);
+        H.objectEach(params, function (value, key) {
+            additionalMessages_1 += ('\n' + key + ': ' + value);
+            if (isCode) {
+                message += encodeURI(key) + '=' + encodeURI(value);
+            }
+        });
+        message += additionalMessages_1;
+    }
+    if (chart) {
+        H.fireEvent(chart, 'displayError', { code: code, message: message, params: params }, defaultHandler);
     }
     else {
         defaultHandler();

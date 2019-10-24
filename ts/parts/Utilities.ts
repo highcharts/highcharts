@@ -82,6 +82,7 @@ declare global {
         interface ErrorMessageEventObject {
             code: number;
             message: string;
+            params: Dictionary<string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (Dictionary<any>|Event)): (boolean|void);
@@ -193,7 +194,8 @@ declare global {
         function error(
             code: (number|string),
             stop?: boolean,
-            chart?: Chart
+            chart?: Chart,
+            param?: Dictionary<string>
         ): void;
         function extend<T extends object>(a: (T|undefined), b: object): T;
         function extendClass<T, TReturn = T>(
@@ -701,58 +703,50 @@ var charts = H.charts,
  *        Important note: This argument is undefined for errors that lack
  *        access to the Chart instance.
  *
+ * @param {Highcharts.Dictionary<string>} [params]
+ *        Additional parameters for the generated message.
+ *
  * @return {void}
  */
 H.error = function (
     code: (number|string),
     stop?: boolean,
-    chart?: Highcharts.Chart
+    chart?: Highcharts.Chart,
+    params?: Highcharts.Dictionary<string>
 ): void {
-    var msg = isNumber(code) ?
+    var isCode = isNumber(code),
+        message = isCode ?
             `Highcharts error #${code}: www.highcharts.com/errors/${code}/` :
-            code,
+            code.toString(),
         defaultHandler = function (): void {
             if (stop) {
-                throw new Error(msg as any);
+                throw new Error(message);
             }
             // else ...
             if (win.console) {
-                console.log(msg); // eslint-disable-line no-console
+                console.log(message); // eslint-disable-line no-console
             }
         };
 
-    if (chart) {
-        if (code === 17) {
-            const options = chart.options;
-            const seriesOptions = (options.series || []);
-            let missingSeries: (string|undefined);
-            if (
-                options.chart &&
-                options.chart.defaultSeriesType &&
-                typeof (
-                    H.seriesTypes[options.chart.defaultSeriesType]
-                ) === 'undefined'
-            ) {
-                missingSeries = options.chart.defaultSeriesType;
-            } else {
-                for (let i = 0, ie = seriesOptions.length; i < ie; ++i) {
-                    missingSeries = seriesOptions[i].type;
-                    if (
-                        missingSeries &&
-                        typeof H.seriesTypes[missingSeries] === 'undefined'
-                    ) {
-                        break;
-                    }
-                }
-            }
-            if (typeof missingSeries === 'string') {
-                msg += `?missingModuleFor=${missingSeries}`;
-            }
+    if (typeof params !== 'undefined') {
+        let additionalMessages = '';
+        if (isCode) {
+            message += '?';
         }
+        H.objectEach(params, function (value: string, key: string): void {
+            additionalMessages += ('\n' + key + ': ' + value);
+            if (isCode) {
+                message += encodeURI(key) + '=' + encodeURI(value);
+            }
+        });
+        message += additionalMessages;
+    }
+
+    if (chart) {
         H.fireEvent(
             chart,
             'displayError',
-            { code: code, message: msg } as Highcharts.ErrorMessageEventObject,
+            { code, message, params } as Highcharts.ErrorMessageEventObject,
             defaultHandler
         );
     } else {

@@ -635,7 +635,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
 
         series = new Constr();
