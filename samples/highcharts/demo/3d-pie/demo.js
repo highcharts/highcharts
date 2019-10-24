@@ -16,7 +16,9 @@ Highcharts.chart('container', {
         align: 'center'
     },
     accessibility: {
-        pointValueSuffix: '%'
+        point: {
+            valueSuffix: '%'
+        }
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

@@ -52,9 +52,6 @@ var chart = new Highcharts.Chart({
             border: '1px solid #ddd'
         }
     },
-    accessibility: {
-        describeSingleSeries: true
-    },
     plotOptions: {
         scatter: {
             width: 10,

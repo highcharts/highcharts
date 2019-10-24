@@ -1,3 +1,5 @@
+var colors = Highcharts.getOptions().colors;
+
 Highcharts.chart('container', {
     chart: {
         type: 'spline'
@@ -8,15 +10,15 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Desktop screen readers from 2009 to 2015'
+        text: 'Most common desktop screen readers'
     },
 
     subtitle: {
-        text: 'Click on point to visit official website'
+        text: 'Source: WebAIM. Click on points to visit official screen reader website'
     },
 
     caption: {
-        text: 'Line chart demonstrating some accessibility features of Highcharts. Chart displays the most commonly used desktop screen readers from January 2009 to July 2015 as reported in the 6th Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
+        text: 'Line chart demonstrating some accessibility features of Highcharts. The chart displays the most commonly used screen readers in surveys taken by WebAIM from December 2010 to September 2019. JAWS was the most used screen reader until 2019, when NVDA took over. VoiceOver is the third most used screen reader, followed by Narrator. ZoomText/Fusion had a surge in 2015, but usage is otherwise low. The overall use of other screen readers has declined drastically the past few years.'
     },
 
     yAxis: {
@@ -30,9 +32,13 @@ Highcharts.chart('container', {
             text: 'Time'
         },
         accessibility: {
-            description: 'Time from January 2009 to July 2015'
+            description: 'Time from December 2010 to September 2019'
         },
-        categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
+        categories: ['December 2010', 'May 2012', 'January 2014', 'July 2015', 'October 2017', 'September 2019']
+    },
+
+    tooltip: {
+        valueSuffix: '%'
     },
 
     plotOptions: {
@@ -50,50 +56,43 @@ Highcharts.chart('container', {
 
     series: [
         {
-            name: 'JAWS',
-            data: [74, 69.6, 63.7, 63.9, 43.7],
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
-        }, {
             name: 'NVDA',
-            data: [8, 34.8, 43.0, 51.2, 41.4],
+            data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
             website: 'https://www.nvaccess.org',
-            dashStyle: 'Dot'
+            color: colors[2],
+            accessibility: {
+                description: 'This is the most used screen reader in 2019'
+            }
+        }, {
+            name: 'JAWS',
+            data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7],
+            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
+            dashStyle: 'ShortDashDot',
+            color: colors[0]
         }, {
             name: 'VoiceOver',
-            data: [6, 20.2, 30.7, 36.8, 30.9],
+            data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1],
             website: 'http://www.apple.com/accessibility/osx/voiceover',
             dashStyle: 'ShortDot',
-            color: Highcharts.getOptions().colors[7]
+            color: colors[1]
         }, {
-            name: 'Window-Eyes',
-            data: [23, 19.0, 20.7, 13.9, 29.6],
-            website: 'http://www.gwmicro.com/window-eyes',
+            name: 'Narrator',
+            data: [null, null, null, null, 21.4, 30.3],
+            website: 'https://support.microsoft.com/en-us/help/22798/windows-10-complete-guide-to-narrator',
             dashStyle: 'Dash',
-            color: Highcharts.getOptions().colors[0]
+            color: colors[9]
         }, {
-            name: 'ZoomText',
-            data: [0, 6.1, 6.8, 5.3, 27.5],
+            name: 'ZoomText/Fusion',
+            data: [6.1, 6.8, 5.3, 27.5, 6.0, 5.5],
             website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader',
-            dashStyle: 'ShortDashDot',
-            color: Highcharts.getOptions().colors[8]
-        }, {
-            name: 'System Access To Go',
-            data: [0, 16.2, 22.1, 26.2, 6.9],
-            website: 'https://www.satogo.com',
-            dashStyle: 'ShortDash',
-            color: Highcharts.getOptions().colors[1]
-        }, {
-            name: 'ChromeVox',
-            data: [0, 0, 2.8, 4.8, 2.8],
-            website: 'http://www.chromevox.com',
-            dashStyle: 'DotDash',
-            color: Highcharts.getOptions().colors[4]
+            dashStyle: 'ShortDot',
+            color: colors[5]
         }, {
             name: 'Other',
-            data: [0, 7.4, 5.9, 9.3, 6.5],
+            data: [42.6, 51.5, 54.2, 45.8, 20.2, 15.4],
             website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php',
-            dashStyle: 'LongDash',
-            color: Highcharts.getOptions().colors[7]
+            dashStyle: 'ShortDash',
+            color: colors[3]
         }
     ],
 
