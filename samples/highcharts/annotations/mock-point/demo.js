@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    chart: {
+        zoomType: 'x'
+    },
 
     title: {
         text: 'Highcharts Annotations'
