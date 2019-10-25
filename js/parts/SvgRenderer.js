@@ -1152,13 +1152,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             return this['stroke-width'] || 0;
         }
         // In styled mode, read computed stroke width
-        var val = this.getStyle('stroke-width'), ret, dummy;
+        var val = this.getStyle('stroke-width'), ret = 0, dummy;
         // Read pixel values directly
         if (val.indexOf('px') === val.length - 2) {
             ret = pInt(val);
             // Other values like em, pt etc need to be measured
         }
-        else {
+        else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect');
             attr(dummy, {
                 width: val,
@@ -4226,6 +4226,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY: anchorY
                 });
             }
+            updateBoxSize();
+            updateTextPadding();
         };
         /*
          * Add specific attribute setters.
