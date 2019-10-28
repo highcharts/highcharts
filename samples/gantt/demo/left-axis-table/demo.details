@@ -1,6 +1,9 @@
 ---
- name: Gantt Chart with Table
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Left axis as a table
+js_wrap: b
+authors:
+  - Lars Cabrera
+tags: []
+categories:
+  - Highcharts Gantt
 ...
