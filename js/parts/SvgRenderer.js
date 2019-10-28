@@ -4226,8 +4226,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY: anchorY
                 });
             }
-            updateBoxSize();
-            updateTextPadding();
         };
         /*
          * Add specific attribute setters.
