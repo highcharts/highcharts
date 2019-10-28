@@ -14,7 +14,7 @@
     });
 }(Highcharts));
 
-Highcharts.Chart({
+Highcharts.chart({
 
     chart: {
         renderTo: 'container'
