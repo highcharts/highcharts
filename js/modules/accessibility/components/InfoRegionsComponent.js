@@ -25,6 +25,7 @@ var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
 import HTMLUtilities from '../utils/htmlUtilities.js';
 var setElAttrs = HTMLUtilities.setElAttrs,
     escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
+    stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
@@ -368,7 +369,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getSubtitleText: function () {
         var subtitle = this.chart.options.subtitle;
-        return subtitle && subtitle.text || '';
+        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
     },
 
 
