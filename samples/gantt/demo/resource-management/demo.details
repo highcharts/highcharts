@@ -1,6 +1,9 @@
 ---
- name: Gantt Project Management
- js_wrap: b
- authors:
-   - Jon Arild Nygård
+name: Resource Management
+js_wrap: b
+authors:
+  - Jon Arild Nygård
+tags: []
+categories:
+  - Highcharts Gantt
 ...
