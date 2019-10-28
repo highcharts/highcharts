@@ -123,7 +123,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
         getValues: function (
             this: Highcharts.VWAPIndicator,
             series: Highcharts.VWAPLinkedParentSeries,
-            params: Highcharts.VWAPIndicatorParamsOptions,
+            params: Highcharts.VWAPIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject {
             var indicator = this,
                 chart: Highcharts.Chart = series.chart,
