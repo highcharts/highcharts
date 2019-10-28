@@ -182,12 +182,12 @@ function createChangedDirFilesTemplate(folder) {
     gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && line.includes(folder));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
-        samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n```\n| Change type | Sample |\n| --- | --- |\n' +
+        samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
             gitChangedFiles.map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
             });
-        samplesChangedTemplate += '\n```\n\n</p>\n</details>\n';
+        samplesChangedTemplate += '\n\n</p>\n</details>\n';
     }
     return samplesChangedTemplate;
 }
