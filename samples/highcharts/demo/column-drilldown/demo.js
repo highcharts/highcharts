@@ -9,6 +9,14 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
+    caption: {
+        text: 'Chart showing browser market shares. Clicking on individual columns brings up more detailed data.'
+    },
+    accessibility: {
+        announceNewData: {
+            enabled: true
+        }
+    },
     xAxis: {
         type: 'category'
     },

@@ -18,6 +18,25 @@ Highcharts.chart('container', {
         text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
     },
 
+    caption: {
+        text: 'Chart showing basic use of bubble series with a custom tooltip formatter. The chart uses plot lines to show safe intake levels for sugar and fat.'
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var index = point.index + 1,
+                    country = point.name,
+                    fatIntake = point.x,
+                    sugarIntake = point.y,
+                    obesity = point.z;
+
+                return index + ', ' + country + ', fat: ' + fatIntake +
+                    'g, sugar: ' + sugarIntake + 'g, obesity: ' + obesity + '%.';
+            }
+        }
+    },
+
     xAxis: {
         gridLineWidth: 1,
         title: {
@@ -40,7 +59,10 @@ Highcharts.chart('container', {
                 text: 'Safe fat intake 65g/day'
             },
             zIndex: 3
-        }]
+        }],
+        accessibility: {
+            rangeDescription: 'Range: 60 to 100 grams.'
+        }
     },
 
     yAxis: {
@@ -67,7 +89,10 @@ Highcharts.chart('container', {
                 x: -10
             },
             zIndex: 3
-        }]
+        }],
+        accessibility: {
+            rangeDescription: 'Range: 0 to 160 grams.'
+        }
     },
 
     tooltip: {

@@ -8,6 +8,10 @@ Highcharts.chart('container', {
         text: 'Highcharts Box Plot Example'
     },
 
+    caption: {
+        text: 'Chart showing the use of box plots with outliers. The chart makes use of a plot line to show the theoretical mean value.'
+    },
+
     legend: {
         enabled: false
     },
@@ -50,7 +54,7 @@ Highcharts.chart('container', {
             headerFormat: '<em>Experiment No {point.key}</em><br/>'
         }
     }, {
-        name: 'Outlier',
+        name: 'Outliers',
         color: Highcharts.getOptions().colors[0],
         type: 'scatter',
         data: [ // x, y positions where 0 is the first category

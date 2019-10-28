@@ -5,6 +5,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Efficiency Optimization by Branch'
     },
+    caption: {
+        text: 'Chart showing overlapping placement of columns.',
+        align: 'center'
+    },
     xAxis: {
         categories: [
             'Seattle HQ',

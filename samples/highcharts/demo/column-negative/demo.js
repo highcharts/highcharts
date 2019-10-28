@@ -5,6 +5,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Column chart with negative values'
     },
+    caption: {
+        text: 'Basic chart showing column comparisons with negative values.',
+        align: 'center'
+    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

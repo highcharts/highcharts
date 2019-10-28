@@ -15,6 +15,10 @@ Highcharts.chart('container', {
         text: 'Bell curve'
     },
 
+    caption: {
+        text: 'Chart showing the use of a bell curve computed automatically from a dataset.'
+    },
+
     xAxis: [{
         title: {
             text: 'Data'
@@ -46,6 +50,9 @@ Highcharts.chart('container', {
         name: 'Data',
         type: 'scatter',
         data: data,
+        accessibility: {
+            exposeAsGroupOnly: true
+        },
         marker: {
             radius: 1.5
         }

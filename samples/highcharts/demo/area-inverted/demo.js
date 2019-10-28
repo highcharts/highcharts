@@ -11,7 +11,9 @@ Highcharts.chart('container', {
     },
     accessibility: {
         keyboardNavigation: {
-            mode: 'serialize'
+            seriesNavigation: {
+                mode: 'serialize'
+            }
         }
     },
     legend: {

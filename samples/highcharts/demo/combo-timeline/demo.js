@@ -240,6 +240,10 @@ var options = {
         text: 'Highcharts and Highsoft timeline'
     },
 
+    caption: {
+        text: 'An advanced demo showing a combination of various Highcharts features, including flags and plot bands. The chart shows how Highcharts and Highsoft has evolved over time, with number of employees, revenue, search popularity, office locations, and various events of interest.'
+    },
+
     tooltip: {
         style: {
             width: '250px'

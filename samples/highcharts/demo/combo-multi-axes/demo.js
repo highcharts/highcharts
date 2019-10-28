@@ -10,6 +10,10 @@ Highcharts.chart('container', {
         text: 'Source: WorldClimate.com',
         align: 'left'
     },
+    caption: {
+        text: 'Chart showing use of multiple y-axes, where each series has a separate axis.',
+        align: 'center'
+    },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

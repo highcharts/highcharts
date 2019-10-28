@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Stacked column chart'
     },
+    caption: {
+        text: 'Chart showing stacked percentage columns, where each column totals 100%, and each element value is visualized by giving it a size relative to the other elements.'
+    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

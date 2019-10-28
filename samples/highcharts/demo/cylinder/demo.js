@@ -12,6 +12,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Cylinder Chart'
     },
+    caption: {
+        text: 'Chart showing basic use of 3D cylindrical columns.',
+        align: 'center'
+    },
     plotOptions: {
         series: {
             depth: 25,
