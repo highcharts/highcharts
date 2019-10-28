@@ -1,6 +1,13 @@
 ---
- name: Highcharts Demo
- authors:
-   - Øystein Moseng
- js_wrap: b
+name: Highcharts Demo
+authors:
+  - Øystein Moseng
+js_wrap: b
+title: Highcharts draggable gantt demo
+modules:
+  - /gantt/modules/draggable-points.js
+packages:
+  - gantt
+tags: []
+categories: []
 ...

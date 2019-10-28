@@ -1,9 +1,17 @@
 ---
- name: Gantt Chart with Interactive Editing
- js_wrap: b
- authors:
-   - Øystein Moseng
- resources: 
-  - https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css
- requiresManualTesting: true
+name: Interactive gantt
+js_wrap: b
+authors:
+  - Øystein Moseng
+resources:
+  - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
+requiresManualTesting: true
+title: Interactive Gantt Chart
+modules:
+  - /gantt/modules/draggable-points.js
+packages:
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...

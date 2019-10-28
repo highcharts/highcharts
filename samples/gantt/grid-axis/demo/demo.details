@@ -1,6 +1,13 @@
 ---
- name: GridAxis Demo
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: GridAxis Demo
+js_wrap: b
+authors:
+  - Lars Cabrera
+title: Highcharts Grid axis
+modules:
+  - /gantt/modules/grid-axis.js
+packages:
+  - gantt
+tags: []
+categories: []
 ...

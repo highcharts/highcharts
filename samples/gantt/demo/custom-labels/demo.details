@@ -1,8 +1,15 @@
 ---
- name: Gantt Demo
- js_wrap: b
- authors:
-   - Torstein Hønsi
- resources: 
-  - https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css
+name: Custom data labels with symbols
+js_wrap: b
+authors:
+  - Torstein Hønsi
+resources:
+  - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
+title: Highcharts Gantt Chart
+modules: []
+packages:
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...

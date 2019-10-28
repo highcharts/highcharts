@@ -1,9 +1,19 @@
 ---
- name: Gantt Logistics Demo
- js_wrap: b
- authors:
-   - Jon Arild Nygård
-   - Torstein Hønsi
-   - Øystein Moseng
- skipTest: true
+name: Gantt Logistics Demo
+js_wrap: b
+authors:
+  - Jon Arild Nygård
+  - Torstein Hønsi
+  - Øystein Moseng
+skipTest: true
+title: ''
+modules:
+  - /stock/modules/stock.js
+  - /gantt/modules/draggable-points.js
+packages:
+  - stock
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...
