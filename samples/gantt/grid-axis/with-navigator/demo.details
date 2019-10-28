@@ -1,14 +1,6 @@
 ---
-name: GridAxis with Navigator
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Grid axis with navigator
-modules:
-  - /gantt/modules/grid-axis.js
-packages:
-  - stock
-  - gantt
-tags: []
-categories: []
+ name: GridAxis with Navigator
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

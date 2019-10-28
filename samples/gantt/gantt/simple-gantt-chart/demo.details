@@ -1,12 +1,6 @@
 ---
-name: Simple Gantt Chart
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Simple Gantt Chart
-modules: []
-packages:
-  - gantt
-tags: []
-categories: []
+ name: Simple Gantt Chart
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

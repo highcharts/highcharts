@@ -1,12 +1,6 @@
 ---
-name: Gantt Chart with Milestones
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Gantt Chart
-modules: []
-packages:
-  - gantt
-tags: []
-categories: []
+ name: Gantt Chart with Milestones
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

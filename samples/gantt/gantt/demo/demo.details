@@ -1,13 +1,6 @@
 ---
-name: Gantt Demo
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Gantt Chart Test
-modules:
-  - /gantt/modules/exporting.js
-packages:
-  - gantt
-tags: []
-categories: []
+ name: Gantt Demo
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

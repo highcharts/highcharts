@@ -1,13 +1,6 @@
 ---
-name: Subtasks
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Highcharts Gantt With Subtasks
-modules: []
-packages:
-  - gantt
-tags: []
-categories:
-  - Highcharts Gantt
+ name: Gantt Demo
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

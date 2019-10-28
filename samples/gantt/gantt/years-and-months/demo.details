@@ -1,12 +1,6 @@
 ---
-name: Gantt Chart with Years and Months
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Gantt Chart with Years and Months
-modules: []
-packages:
-  - gantt
-tags: []
-categories: []
+ name: Gantt Chart with Years and Months
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...

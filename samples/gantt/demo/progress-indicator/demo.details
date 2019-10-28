@@ -1,14 +1,7 @@
 ---
-name: Progress indicator
-js_wrap: b
-authors:
-  - Lars Cabrera
-compareTooltips: true
-title: Gantt Chart with Progress Indicators
-modules: []
-packages:
-  - gantt
-tags: []
-categories:
-  - Highcharts Gantt
+ name: Gantt Chart with Progress Indicator
+ js_wrap: b
+ authors:
+   - Lars Cabrera
+ compareTooltips: true
 ...
