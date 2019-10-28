@@ -1,13 +1,6 @@
 ---
-name: TreeGrid Demo
-js_wrap: b
-authors:
-  - Jon Arild Nygård
-title: Highcharts TreeGrid
-modules:
-  - /gantt/modules/treegrid.js
-packages:
-  - gantt
-tags: []
-categories: []
+ name: TreeGrid Demo
+ js_wrap: b
+ authors:
+   - Jon Arild Nygård
 ...

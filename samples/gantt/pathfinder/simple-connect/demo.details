@@ -1,13 +1,6 @@
 ---
-name: Connectors Demo
-js_wrap: b
-authors:
-  - Øystein Moseng
-title: ''
-modules:
-  - /gantt/modules/pathfinder.js
-packages:
-  - gantt
-tags: []
-categories: []
+ name: Connectors Demo
+ js_wrap: b
+ authors:
+   - Øystein Moseng
 ...

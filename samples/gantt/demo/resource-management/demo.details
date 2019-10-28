@@ -1,14 +1,6 @@
 ---
-name: Resource Management
-js_wrap: b
-authors:
-  - Jon Arild Nygård
-title: Car Rental Schedule
-modules:
-  - /gantt/modules/exporting.js
-packages:
-  - gantt
-tags: []
-categories:
-  - Highcharts Gantt
+ name: Gantt Project Management
+ js_wrap: b
+ authors:
+   - Jon Arild Nygård
 ...

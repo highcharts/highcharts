@@ -1,16 +1,6 @@
 ---
-name: Gantt Demo
-js_wrap: b
-authors:
-  - Øystein Moseng
-title: ''
-modules:
-  - /stock/modules/stock.js
-  - /gantt/modules/draggable-points.js
-  - /gantt/modules/exporting.js
-packages:
-  - stock
-  - gantt
-tags: []
-categories: []
+ name: Gantt Demo
+ js_wrap: b
+ authors:
+   - Øystein Moseng
 ...

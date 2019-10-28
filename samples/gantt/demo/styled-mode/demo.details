@@ -1,13 +1,6 @@
 ---
-name: Styled mode
-js_wrap: b
-authors:
-  - Lars Cabrera
-title: Highcharts Gantt in Styled Mode
-modules: []
-packages:
-  - gantt
-tags: []
-categories:
-  - Highcharts Gantt
+ name: Gantt Demo
+ js_wrap: b
+ authors:
+   - Lars Cabrera
 ...
