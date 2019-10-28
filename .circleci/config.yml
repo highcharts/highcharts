@@ -86,8 +86,16 @@ jobs:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
       - run: node --version && npm --version
+      - restore_cache:
+          keys:
+            - v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-npm-deps-{{ .Branch }}
       - run: npm install --quiet
-      - run: npm run gulp scripts # needed for running the tests
+      - save_cache:
+          paths:
+            - /home/circleci/repo/highcharts/node_modules
+          key: v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm run gulp scripts
       - <<: *persist_workspace
 
   generate_ts_declarations:
