@@ -1,6 +1,13 @@
 ---
- name: Pathfinder with Automatic Marker Placement
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Pathfinder with Automatic Marker Placement
+js_wrap: b
+authors:
+  - Lars Cabrera
+title: ''
+modules:
+  - /gantt/modules/pathfinder.js
+packages:
+  - gantt
+tags: []
+categories: []
 ...

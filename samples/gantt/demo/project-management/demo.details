@@ -1,6 +1,14 @@
 ---
- name: Gantt Project Management
- js_wrap: b
- authors:
-   - Jon Arild Nygård
+name: Project Management
+js_wrap: b
+authors:
+  - Jon Arild Nygård
+title: Gantt Project Management
+modules:
+  - /gantt/modules/exporting.js
+packages:
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...

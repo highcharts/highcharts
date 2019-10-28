@@ -1,6 +1,13 @@
 ---
- name: Current Date Indicator Demo
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Current Date Indicator Demo
+js_wrap: b
+authors:
+  - Lars Cabrera
+title: Current Date Indicator
+modules:
+  - /gantt/modules/current-date-indicator.js
+packages:
+  - gantt
+tags: []
+categories: []
 ...

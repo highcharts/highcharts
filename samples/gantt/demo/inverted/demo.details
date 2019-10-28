@@ -1,6 +1,14 @@
 ---
- name: Gantt Demo
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Inverted chart
+js_wrap: b
+authors:
+  - Lars Cabrera
+title: Inverted Gantt Chart
+modules:
+  - /gantt/modules/exporting.js
+packages:
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...

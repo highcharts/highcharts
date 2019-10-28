@@ -1,6 +1,15 @@
 ---
- name: GridAxis with Navigator
- js_wrap: b
- authors:
-   - Torstein Hønsi
+name: With navigation
+js_wrap: b
+authors:
+  - Torstein Hønsi
+title: Gantt Chart with Navigation
+modules:
+  - /stock/modules/exporting.js
+packages:
+  - stock
+  - gantt
+tags: []
+categories:
+  - Highcharts Gantt
 ...

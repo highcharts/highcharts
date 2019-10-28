@@ -1,6 +1,12 @@
 ---
- name: Gantt Chart with Different Algorithm Margins
- js_wrap: b
- authors:
-   - Øystein Moseng
+name: Gantt Chart with Different Algorithm Margins
+js_wrap: b
+authors:
+  - Øystein Moseng
+title: Small algorithmMargin
+modules: []
+packages:
+  - gantt
+tags: []
+categories: []
 ...

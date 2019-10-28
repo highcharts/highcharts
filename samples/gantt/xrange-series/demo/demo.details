@@ -1,7 +1,15 @@
 ---
- name: XRange Demo
- js_wrap: b
- authors:
-   - Torstein Hønsi
-   - Lars Cabrera
+name: XRange Demo
+js_wrap: b
+authors:
+  - Torstein Hønsi
+  - Lars Cabrera
+title: Highcharts X-range series
+modules:
+  - /modules/xrange.js
+  - /modules/exporting.js
+packages:
+  - highcharts
+tags: []
+categories: []
 ...
