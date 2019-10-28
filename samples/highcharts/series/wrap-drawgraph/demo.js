@@ -2,19 +2,19 @@
     H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
 
         // Before the original function
-        console.log("We are about to draw the graph:", this.graph);
+        console.log("We are about to draw the graph:", typeof this.graph);
 
-        // Now apply the original function with the original arguments, 
+        // Now apply the original function with the original arguments,
         // which are sliced off this function's arguments
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
         // Add some code after the original function
-        console.log("We just finished drawing the graph:", this.graph);
+        console.log("We just finished drawing the graph:", typeof this.graph);
 
     });
 }(Highcharts));
 
-var chart = new Highcharts.Chart({
+Highcharts.Chart({
 
     chart: {
         renderTo: 'container'

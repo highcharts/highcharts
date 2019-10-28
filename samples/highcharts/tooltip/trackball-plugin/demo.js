@@ -48,25 +48,26 @@
     });
 }(Highcharts));
 
-$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
     // Split the data set into ohlc and volume
     var ohlc = [],
         volume = [],
-        dataLength = data.length;
+        dataLength = data.length,
+        i;
 
     for (i = 0; i < dataLength; i++) {
         ohlc.push([
-        data[i][0], // the date
-        data[i][1], // open
-        data[i][2], // high
-        data[i][3], // low
-        data[i][4] // close
+            data[i][0], // the date
+            data[i][1], // open
+            data[i][2], // high
+            data[i][3], // low
+            data[i][4] // close
         ]);
 
         volume.push([
-        data[i][0], // the date
-        data[i][5] // the volume
+            data[i][0], // the date
+            data[i][5] // the volume
         ]);
     }
 
