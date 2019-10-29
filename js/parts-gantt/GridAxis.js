@@ -568,6 +568,7 @@ function () {
         if (axis.isOuterAxis() && axis.axisLine) {
             var lineWidth = options.lineWidth;
             if (lineWidth) {
+                lineWidth += 2;
                 var linePath = axis.getLinePath(lineWidth);
                 xStartIndex = linePath.indexOf('M') + 1;
                 xEndIndex = linePath.indexOf('L') + 1;
@@ -576,7 +577,7 @@ function () {
                 // Negate distance if top or left axis
                 // Subtract 1px to draw the line at the end of the tick
                 var distance = (axis.tickSize('tick')[0] - 1) * ((axis.side === axisSide.top ||
-                    axis.side === axisSide.left) ? -1 : 1);
+                    axis.side === axisSide.left) ? -1 : 1) + 5;
                 // If axis is horizontal, reposition line path vertically
                 if (axis.horiz) {
                     linePath[yStartIndex] =

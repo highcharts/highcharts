@@ -896,8 +896,9 @@ addEvent(
                                                        */
             if (axis.isOuterAxis() && axis.axisLine) {
 
-                const lineWidth = options.lineWidth;
+                let lineWidth = options.lineWidth;
                 if (lineWidth) {
+                    lineWidth += 2;
                     const linePath = axis.getLinePath(lineWidth);
                     xStartIndex = linePath.indexOf('M') + 1;
                     xEndIndex = linePath.indexOf('L') + 1;
@@ -909,7 +910,7 @@ addEvent(
                     const distance = (axis.tickSize('tick')[0] - 1) * ((
                         axis.side === axisSide.top ||
                         axis.side === axisSide.left
-                    ) ? -1 : 1);
+                    ) ? -1 : 1) + 5;
 
                     // If axis is horizontal, reposition line path vertically
                     if (axis.horiz) {
