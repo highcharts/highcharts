@@ -57,11 +57,8 @@ var chart = Highcharts.chart('container', {
         text: 'Daily company fruit consumption 2015'
     },
 
-    caption: {
-        text: 'Chart demonstrating more advanced accessibility configuration. The chart is depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
-    },
-
     accessibility: {
+        linkedDescription: 'chart-description',
         point: {
             descriptionFormatter: function (point) {
                 // Use default formatter for null points

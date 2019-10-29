@@ -23,12 +23,21 @@ var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
     getAxisDescription = ChartUtilities.getAxisDescription;
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs,
+var addClass = HTMLUtilities.addClass,
+    setElAttrs = HTMLUtilities.setElAttrs,
     escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
     stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
+
+function getLinkedDescriptionElement(chart) {
+    var chartOptions = chart.options,
+        linkedDescId = chartOptions.accessibility.linkedDescription,
+        linkedDescEl = linkedDescId && getElement(linkedDescId);
+
+    return linkedDescEl;
+}
 
 function getTypeDescForMapChart(chart, formatContext) {
     return formatContext.mapTitle ?
@@ -218,9 +227,25 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     onChartUpdate: function () {
         var component = this;
+
         Object.keys(this.screenReaderSections).forEach(function (regionKey) {
             component.updateScreenReaderSection(regionKey);
         });
+
+        this.setLinkedDescriptionAttrs();
+    },
+
+
+    /**
+     * @private
+     */
+    setLinkedDescriptionAttrs: function () {
+        var el = getLinkedDescriptionElement(this.chart);
+
+        if (el) {
+            el.setAttribute('aria-hidden', 'true');
+            addClass(el, 'highcharts-linked-description');
+        }
     },
 
 
@@ -327,12 +352,26 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      * @return {string}
      */
+    getLinkedDescription: function () {
+        var el = getLinkedDescriptionElement(this.chart),
+            content = el && el.innerHTML || '';
+
+        return stripHTMLTagsFromString(content);
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
     getLongdescText: function () {
         var chartOptions = this.chart.options,
             captionOptions = chartOptions.caption,
-            captionText = captionOptions && captionOptions.text;
-        return chartOptions.accessibility.description ||
-                captionText || '';
+            captionText = captionOptions && captionOptions.text,
+            linkedDescription = this.getLinkedDescription();
+
+        return chartOptions.accessibility.description || linkedDescription ||
+            captionText || '';
     },
 
 

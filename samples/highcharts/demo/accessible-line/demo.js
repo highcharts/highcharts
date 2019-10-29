@@ -17,8 +17,8 @@ Highcharts.chart('container', {
         text: 'Source: WebAIM. Click on points to visit official screen reader website'
     },
 
-    caption: {
-        text: 'Line chart demonstrating some accessibility features of Highcharts. The chart displays the most commonly used screen readers in surveys taken by WebAIM from December 2010 to September 2019. JAWS was the most used screen reader until 2019, when NVDA took over. VoiceOver is the third most used screen reader, followed by Narrator. ZoomText/Fusion had a surge in 2015, but usage is otherwise low. The overall use of other screen readers has declined drastically the past few years.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
 
     yAxis: {
