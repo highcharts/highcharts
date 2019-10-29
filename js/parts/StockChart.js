@@ -763,3 +763,56 @@ addEvent(Chart, 'update', function (e) {
         delete options.scrollbar;
     }
 });
+
+/**
+ * The following function is licensed under the MIT license.
+ * Author: Eirik L. Djuve
+ *
+ * Highstock only. Calculates what is the current hovered point/points for shared tooltip. If more than one sticky series
+ * will return the last price at or before the hover point so that it will always show tooltip for both series.
+ *
+ * @private
+ * @function Highcharts.Pointer#getSharedHoverPoints
+ *
+ *
+ * @param {Array<Highcharts.Series>} searchSeries
+ *        All the series in the chart with sticky tracking.
+ *
+ * @param {Highcharts.Point|undefined} hoverPoint
+ *        The point currrently beeing hovered.
+ *
+ * @return {Array<Highcharts.Point|undefined>}
+ *         Array containing the hover points
+ */
+Pointer.prototype.getSharedHoverPoints() = function(searchSeries, hoverPoint){
+    var hoverPoints = [];
+
+    searchSeries.forEach(function (s) {
+        var point = searchSeries.length === 1 ?
+            // When just showing one series get the point with the same x value as the hoverPoint 
+            find(s.points, function (p) {
+                return p.x === hoverPoint.x && !p.isNull;
+            }) :
+            // When showing multiple series get the point with the same or lower x value as the hoverPoint from all series 
+            findLast(s.points, function (p) {
+                return p.x <= hoverPoint.x && !p.isNull;
+            });
+        if (isObject(point)) {
+            /*
+            * Boost returns a minimal point. Convert it to a usable
+            * point for tooltip and states.
+            */
+            if (s.chart.isBoosting) {
+                point = s.getPoint(point);
+            }
+            hoverPoints.push(point);
+        }
+    });
+    //When showing multiple x values the one with highest x value must go last, 
+    //so that the dateTime tooltip and crosshair gets the latest timestamp
+    hoverPoints.sort((a, b) => {
+        return a.x > b.x;
+    })
+
+    return hoverPoints;
+}

@@ -412,22 +412,7 @@ Highcharts.Pointer.prototype = {
                 searchSeries = series.filter(function (s) {
                     return filter(s) && !s.noSharedTooltip;
                 });
-                // Get all points with the same x value as the hoverPoint
-                searchSeries.forEach(function (s) {
-                    var point = find(s.points, function (p) {
-                        return p.x === hoverPoint.x && !p.isNull;
-                    });
-                    if (isObject(point)) {
-                        /*
-                        * Boost returns a minimal point. Convert it to a usable
-                        * point for tooltip and states.
-                        */
-                        if (s.chart.isBoosting) {
-                            point = s.getPoint(point);
-                        }
-                        hoverPoints.push(point);
-                    }
-                });
+                hoverPoints = this.getSharedHoverPoints(searchSeries, hoverPoint);
             }
             else {
                 hoverPoints.push(hoverPoint);
@@ -438,6 +423,42 @@ Highcharts.Pointer.prototype = {
             hoverSeries: hoverSeries,
             hoverPoints: hoverPoints
         };
+    },
+
+    /**
+     * Calculates what is the current hovered point/points for shared tooltip.
+     *
+     * @private
+     * @function Highcharts.Pointer#getSharedHoverPoints
+     *
+     *
+     * @param {Array<Highcharts.Series>} searchSeries
+     *        All the series in the chart with sticky tracking.
+     *
+     * @param {Highcharts.Point|undefined} hoverPoint
+     *        The point currrently beeing hovered.
+     *
+     * @return {Array<Highcharts.Point|undefined>}
+     *         Array containing the hover points
+     */
+    getSharedHoverPoints(searchSeries, hoverPoint){
+        var hoverPoints = [];
+        searchSeries.forEach(function (s) {
+            var point = find(s.points, function (p) {
+                return p.x === hoverPoint.x && !p.isNull;
+            });
+            if (isObject(point)) {
+                /*
+                * Boost returns a minimal point. Convert it to a usable
+                * point for tooltip and states.
+                */
+                if (s.chart.isBoosting) {
+                    point = s.getPoint(point);
+                }
+                hoverPoints.push(point);
+            }
+        });
+        return hoverPoints
     },
     /**
      * With line type charts with a single tracker, get the point closest to the

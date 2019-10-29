@@ -37,7 +37,8 @@ function createChart() {
         tooltip: {
             pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
             valueDecimals: 2,
-            split: true
+            split: true,
+            shared: true
         },
 
         series: seriesOptions
@@ -47,6 +48,10 @@ function createChart() {
 function success(data) {
     var name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
     var i = names.indexOf(name);
+    if(name == "MSFT"){
+        var quarter = data.length / 4;
+        data.splice(quarter, quarter);
+    }
     seriesOptions[i] = {
         name: name,
         data: data

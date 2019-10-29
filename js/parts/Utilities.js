@@ -1893,6 +1893,35 @@ H.find = Array.prototype.find ?
         }
     };
 /**
+ * Return the value of the last element in the array that satisfies the
+ * provided testing function.
+* @function Highcharts.findLast<T>
+*
+* @param {Array<T>} arr
+*        The array to test.
+*
+* @param {Function} callback
+*        The callback function. The function receives the item as the first
+*        argument. Return `true` if this item satisfies the condition.
+*
+* @return {T|undefined}
+*         The value of the element.
+*/
+H.findLast = Array.prototype.findLast ?
+    /* eslint-enable valid-jsdoc */
+    function (arr, callback) {
+        return arr.findLast(callback);
+    } :
+    // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
+    function (arr, callback) {
+        var i, length = arr.length;
+        for (i = length -1; i < 0; i--) {
+            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+                return arr[i];
+            }
+        }
+    };
+/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
