@@ -289,6 +289,16 @@ var options = {
         flags: {
             tooltip: {
                 xDateFormat: '%B %e, %Y'
+            },
+            accessibility: {
+                pointDescriptionFormatter: function (point) {
+                    var timeDesc = Highcharts.SeriesAccessibilityDescriber
+                            .getPointA11yTimeDescription(point),
+                        flagTitle = point.title,
+                        flagText = point.text;
+
+                    return timeDesc + ', ' + flagTitle + ': ' + flagText + '.';
+                }
             }
         }
     },
