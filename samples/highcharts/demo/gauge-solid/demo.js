@@ -1,10 +1,13 @@
 var gaugeOptions = {
-
     chart: {
         type: 'solidgauge'
     },
 
     title: null,
+
+    accessibility: {
+        description: 'Chart demonstrating a solid gauge with dynamic data.'
+    },
 
     pane: {
         center: ['50%', '85%'],
@@ -18,6 +21,10 @@ var gaugeOptions = {
             outerRadius: '100%',
             shape: 'arc'
         }
+    },
+
+    exporting: {
+        enabled: false
     },
 
     tooltip: {

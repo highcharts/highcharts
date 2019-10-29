@@ -12,6 +12,11 @@ Highcharts.chart('container', {
         text: 'Speedometer'
     },
 
+    caption: {
+        text: 'Chart showing use of multiple panes and axis plot bands with a gauge series',
+        align: 'center'
+    },
+
     pane: {
         startAngle: -150,
         endAngle: 150,

@@ -24,10 +24,26 @@ Highcharts.chart('container', {
     title: {
         text: 'Live random data'
     },
+
+    accessibility: {
+        linkedDescription: 'chart-description',
+        announceNewData: {
+            enabled: true,
+            minAnnounceInterval: 15000,
+            announcementFormatter: function (allSeries, newSeries, newPoint) {
+                if (newPoint) {
+                    return 'New point added. Value: ' + newPoint.y;
+                }
+                return false;
+            }
+        }
+    },
+
     xAxis: {
         type: 'datetime',
         tickPixelInterval: 150
     },
+
     yAxis: {
         title: {
             text: 'Value'
@@ -38,16 +54,20 @@ Highcharts.chart('container', {
             color: '#808080'
         }]
     },
+
     tooltip: {
         headerFormat: '<b>{series.name}</b><br/>',
         pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
     },
+
     legend: {
         enabled: false
     },
+
     exporting: {
         enabled: false
     },
+
     series: [{
         name: 'Random data',
         data: (function () {

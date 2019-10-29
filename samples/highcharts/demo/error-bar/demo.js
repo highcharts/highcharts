@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Temperature vs Rainfall'
     },
+    accessibility: {
+        linkedDescription: 'chart-description'
+    },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }],

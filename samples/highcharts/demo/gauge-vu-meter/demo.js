@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge',
         plotBorderWidth: 1,
@@ -19,6 +18,10 @@ Highcharts.chart('container', {
         text: 'VU meter'
     },
 
+    accessibility: {
+        linkedDescription: 'chart-description'
+    },
+
     pane: [{
         startAngle: -45,
         endAngle: 45,
@@ -32,6 +35,10 @@ Highcharts.chart('container', {
         center: ['75%', '145%'],
         size: 300
     }],
+
+    exporting: {
+        enabled: false
+    },
 
     tooltip: {
         enabled: false
@@ -91,7 +98,6 @@ Highcharts.chart('container', {
             }
         }
     },
-
 
     series: [{
         name: 'Channel A',

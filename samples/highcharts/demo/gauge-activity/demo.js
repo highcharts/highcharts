@@ -101,6 +101,10 @@ Highcharts.chart('container', {
         }
     },
 
+    accessibility: {
+        description: 'A chart showing multiple gauges arcing around the center point. Each gauge has a custom icon, and the tooltip is positioned statically in the center.'
+    },
+
     tooltip: {
         borderWidth: 0,
         backgroundColor: 'none',
@@ -108,7 +112,8 @@ Highcharts.chart('container', {
         style: {
             fontSize: '16px'
         },
-        pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
+        valueSuffix: '%',
+        pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}</span>',
         positioner: function (labelWidth) {
             return {
                 x: (this.chart.chartWidth - labelWidth) / 2,

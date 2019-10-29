@@ -41,6 +41,11 @@ Highcharts.chart('container', {
         text: 'The Highcharts clock'
     },
 
+    caption: {
+        text: 'A chart using gauge series to create a working clock.',
+        align: 'center'
+    },
+
     pane: {
         background: [{
             // default background

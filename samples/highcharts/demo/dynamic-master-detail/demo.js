@@ -38,6 +38,9 @@ Highcharts.getJSON(
                     text: 'Select an area by dragging across the lower chart',
                     align: 'left'
                 },
+                accessibility: {
+                    linkedDescription: 'chart-description'
+                },
                 xAxis: {
                     type: 'datetime'
                 },
@@ -139,6 +142,9 @@ Highcharts.getJSON(
                 },
                 title: {
                     text: null
+                },
+                accessibility: {
+                    enabled: false
                 },
                 xAxis: {
                     type: 'datetime',

@@ -4,6 +4,20 @@ Highcharts.chart('container', {
         text: 'Highcharts Dependency Wheel'
     },
 
+    accessibility: {
+        linkedDescription: 'chart-description',
+        point: {
+            descriptionFormatter: function (point) {
+                var index = point.index + 1,
+                    from = point.from,
+                    to = point.to,
+                    weight = point.weight;
+
+                return index + '. From ' + from + ' to ' + to + ': ' + weight + '.';
+            }
+        }
+    },
+
     series: [{
         keys: ['from', 'to', 'weight'],
         data: [
