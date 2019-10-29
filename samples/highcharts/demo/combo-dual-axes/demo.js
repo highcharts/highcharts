@@ -8,9 +8,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: WorldClimate.com'
     },
-    caption: {
-        text: 'Chart showing a combination of a column and a line chart, using multiple y-axes.',
-        align: 'center'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

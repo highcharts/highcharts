@@ -18,11 +18,8 @@ Highcharts.chart('container', {
         text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
     },
 
-    caption: {
-        text: 'Chart showing basic use of bubble series with a custom tooltip formatter. The chart uses plot lines to show safe intake levels for sugar and fat.'
-    },
-
     accessibility: {
+        linkedDescription: 'chart-description',
         point: {
             descriptionFormatter: function (point) {
                 var index = point.index + 1,

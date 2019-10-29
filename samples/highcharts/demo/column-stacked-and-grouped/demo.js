@@ -8,8 +8,8 @@ Highcharts.chart('container', {
         text: 'Total fruit consumtion, grouped by gender'
     },
 
-    caption: {
-        text: 'Chart showing stacked columns with grouping, allowing specific series to be stacked on the same column.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
 
     xAxis: {

@@ -8,8 +8,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: Wikipedia.org'
     },
-    caption: {
-        text: 'Demonstrating a percentage-stacked area chart, a variation of the stacked area chart where each data series is visualized as a running percentage of the total.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     xAxis: {
         categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],

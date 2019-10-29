@@ -2,8 +2,8 @@ Highcharts.chart('container', {
     title: {
         text: 'Combination chart'
     },
-    caption: {
-        text: 'Chart showing how different series types can be combined in a single chart. The chart is using a set of column series, overlaid by a line and a pie series.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Bananas', 'Plums']

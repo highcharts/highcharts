@@ -17,9 +17,8 @@ Highcharts.getJSON(
                 text: 'Temperature variation by day'
             },
 
-            caption: {
-                text: 'Demonstrating an arearange chart with a low and high value per point.',
-                align: 'center'
+            accessibility: {
+                linkedDescription: 'chart-description'
             },
 
             xAxis: {

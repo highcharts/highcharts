@@ -8,8 +8,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
     },
-    caption: {
-        text: 'Column chart showing horizontal bars. This chart type is often beneficial for smaller screens, as the user can scroll through the data vertically.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     xAxis: {
         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],

@@ -42,15 +42,8 @@ var chart = new Highcharts.Chart({
     subtitle: {
         text: 'Click and drag the plot area to rotate in space'
     },
-    caption: {
-        text: 'Chart demonstrating a 3D scatter plot, where the chart can be ' +
-            'rotated to inspect points from different angles.',
-        useHTML: true,
-        style: {
-            backgroundColor: '#fff',
-            padding: '10px',
-            border: '1px solid #ddd'
-        }
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     plotOptions: {
         scatter: {

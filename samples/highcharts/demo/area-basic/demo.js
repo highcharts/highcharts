@@ -13,10 +13,6 @@ Highcharts.chart('container', {
             'thebulletin.org</a> &amp; <a href="https://www.armscontrol.org/factsheets/Nuclearweaponswhohaswhat">' +
             'armscontrol.org</a>'
     },
-    caption: {
-        text: 'Demonstrating a basic area chart, also known as a mountain chart.',
-        align: 'center'
-    },
     xAxis: {
         allowDecimals: false,
         labels: {

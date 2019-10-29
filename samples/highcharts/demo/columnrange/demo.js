@@ -17,10 +17,6 @@ Highcharts.chart('container', {
         text: 'Observed in Vik i Sogn, Norway, 2017'
     },
 
-    caption: {
-        text: 'Chart showing ranges using horizontal columns. Each range is represented with a low and high value, with a bar between them.'
-    },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

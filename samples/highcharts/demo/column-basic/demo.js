@@ -8,8 +8,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: WorldClimate.com'
     },
-    caption: {
-        text: 'A basic column chart compares rainfall values between four cities. Tokyo has the overall highest amount of rainfall, followed by New York.'
+    accessibility: {
+        linkedDescription: 'chart-description'
     },
     xAxis: {
         categories: [
