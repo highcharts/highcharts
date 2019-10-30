@@ -2164,6 +2164,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         plotHeight
                     ).add();
                 } else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
+
                     plotBGImage.animate(plotBox as Highcharts.SVGAttributes);
                 }
             }
