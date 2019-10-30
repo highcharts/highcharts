@@ -33,6 +33,7 @@ H.seriesType('dependencywheel', 'sankey',
  * @extends      plotOptions.sankey
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/dependencywheel
  * @optionparent plotOptions.dependencywheel
  */
 {
@@ -275,6 +276,7 @@ H.seriesType('dependencywheel', 'sankey',
  *
  * @extends   series,plotOptions.dependencywheel
  * @product   highcharts
+ * @requires  modules/dependencywheel
  * @apioption series.dependencywheel
  */
 /**

@@ -1173,7 +1173,7 @@ extend(ColorAxis.prototype, {
             }
 
             if (!calculatedExtremes) {
-                Highcharts.Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.getExtremes.call(cSeries);
             }
         }
     },

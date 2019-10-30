@@ -97,6 +97,9 @@ H.seriesType<Highcharts.DEMAIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
     {},
@@ -249,6 +252,9 @@ H.seriesType<Highcharts.DEMAIndicator>(
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/dema
  * @apioption series.dema
  */
 

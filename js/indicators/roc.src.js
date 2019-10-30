@@ -67,6 +67,8 @@ seriesType('roc', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/roc
  * @optionparent plotOptions.roc
  */
 {
@@ -125,6 +127,8 @@ seriesType('roc', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/roc
  * @apioption series.roc
  */
 ''; // to include the above in the js output

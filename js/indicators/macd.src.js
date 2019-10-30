@@ -31,6 +31,8 @@ seriesType('macd', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/macd
  * @optionparent plotOptions.macd
  */
 {
@@ -253,7 +255,7 @@ seriesType('macd', 'sma',
         this.zones = this.signalZones.zones;
         SMA.prototype.applyZones.call(this);
         // applyZones hides only main series.graph, hide macd line manually
-        if (this.options.macdLine.zones.length) {
+        if (this.graphmacd && this.options.macdLine.zones.length) {
             this.graphmacd.hide();
         }
         this.zones = histogramZones;
@@ -338,6 +340,8 @@ seriesType('macd', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/macd
  * @apioption series.macd
  */
 ''; // to include the above in the js output

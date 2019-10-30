@@ -57,7 +57,8 @@ In our first annotation, the label was attached to the chart’s pixel coordinat
 
 Both annotation configurations are represented on this chart (see below). Try to zoom in and out to see the differences:
 
-![P7kgHMWcW-vEf9pq7zlMWRUkSWJ1wpU34eiNhXQbrxUtphxVt7XqaiHhOZ28qeWzjX9rkNp_8drmwwei1r_vEdZebo4yKch_QX6tvaopLQUueknr8ClOBPqFxol9czL1Ujhp_mUn](https://lh6.googleusercontent.com/P7kgHMWcW-vEf9pq7zlMWRUkSWJ1wpU34eiNhXQbrxUtphxVt7XqaiHhOZ28qeWzjX9rkNp_8drmwwei1r_vEdZebo4yKch_QX6tvaopLQUueknr8ClOBPqFxol9czL1Ujhp_mUn)
+
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/annotations/mock-point allow="fullscreen"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/mock-point/) to check the code.
 

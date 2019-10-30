@@ -178,6 +178,7 @@ seriesType('sankey', 'column',
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
  *               zones, minPointLength
+ * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */
 {
@@ -810,6 +811,7 @@ seriesType('sankey', 'column',
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
  *            threshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/sankey
  * @apioption series.sankey
  */
 /**

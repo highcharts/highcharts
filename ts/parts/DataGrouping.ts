@@ -821,19 +821,24 @@ seriesProto.processData = function (this: Highcharts.Series): any {
 
 // Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
+    // Clear previous groups
+    if (this.groupedData) {
+        this.groupedData.forEach(function (
+            point: Highcharts.Point,
+            i: number
+        ): void {
+            if (point) {
+                (this.groupedData as any)[i] = point.destroy ?
+                    point.destroy() : null;
+            }
+        }, this);
 
-    var groupedData = this.groupedData;
-
-    // clear previous groups
-    (groupedData || []).forEach(function (
-        point: Highcharts.Point,
-        i: number
-    ): void {
-        if (point) {
-            (groupedData as any)[i] = point.destroy ? point.destroy() : null;
-        }
-    });
-    this.groupedData = null;
+        // Clears all:
+        // - `this.groupedData`
+        // - `this.points`
+        // - `preserve` object in series.update()
+        this.groupedData.length = 0;
+    }
 };
 
 // Override the generatePoints method by adding a reference to grouped data
@@ -1124,6 +1129,7 @@ export default dataGrouping;
  * altered through a custom `approximation` callback function.
  *
  * @product   highstock
+ * @requires  modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
  */
 

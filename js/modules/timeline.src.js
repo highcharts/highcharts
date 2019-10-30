@@ -116,6 +116,7 @@ seriesType('timeline', 'line',
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stacking, step, threshold,
  *               turboThreshold, zoneAxis, zones
+ * @requires     modules/timeline
  * @optionparent plotOptions.timeline
  */
 {
@@ -571,6 +572,7 @@ seriesType('timeline', 'line',
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
  *            zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/timeline
  * @apioption series.timeline
  */
 /**

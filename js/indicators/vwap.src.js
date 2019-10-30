@@ -35,6 +35,8 @@ seriesType('vwap', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/vwap
  * @optionparent plotOptions.vwap
  */
 {
@@ -139,6 +141,8 @@ seriesType('vwap', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/vwap
  * @apioption series.vwap
  */
 ''; // to include the above in the js output

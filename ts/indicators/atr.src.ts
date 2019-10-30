@@ -125,6 +125,8 @@ seriesType<Highcharts.ATRIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
      */
     {
@@ -214,6 +216,8 @@ seriesType<Highcharts.ATRIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @apioption series.atr
  */
 

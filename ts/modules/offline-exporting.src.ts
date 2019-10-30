@@ -690,7 +690,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
 
 /**
  * Exporting and offline-exporting modules required. Export a chart to an image
- * locally in the user's browser. Requires the regular exporting module.
+ * locally in the user's browser.
  *
  * @function Highcharts.Chart#exportChartLocal
  *
@@ -704,6 +704,8 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
  *         for export only.
  *
  * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,

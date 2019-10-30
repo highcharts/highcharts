@@ -82,6 +82,8 @@ seriesType<Highcharts.ZigzagIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
      */
     {
@@ -273,6 +275,8 @@ seriesType<Highcharts.ZigzagIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
  */
 

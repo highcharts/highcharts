@@ -173,10 +173,10 @@ setOptions({ // Set default bubble legend options
          * can be defined by user or calculated from series. In the case of
          * automatically calculated ranges, a 1px margin of error is
          * permitted.
-         * Requires `highcharts-more.js`.
          *
          * @since        7.0.0
          * @product      highcharts highstock highmaps
+         * @requires     highcharts-more
          * @optionparent legend.bubbleLegend
          */
         bubbleLegend: {

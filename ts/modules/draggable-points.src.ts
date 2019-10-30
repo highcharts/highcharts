@@ -603,11 +603,11 @@ if (seriesTypes.bullet) {
         x: columnDragDropProps.x,
         y: columnDragDropProps.y,
         /**
-         * Allow target value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow target value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.bullet.dragDrop.draggableTarget
          */
         target: {
@@ -640,11 +640,11 @@ if (seriesTypes.columnrange) {
             move: true
         },
         /**
-         * Allow low value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow low value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.columnrange.dragDrop.draggableLow
          */
         low: {
@@ -672,11 +672,11 @@ if (seriesTypes.columnrange) {
             }
         },
         /**
-         * Allow high value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow high value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.columnrange.dragDrop.draggableHigh
          */
         high: {
@@ -711,11 +711,11 @@ if (seriesTypes.boxplot) {
     seriesTypes.boxplot.prototype.dragDropProps = {
         x: columnDragDropProps.x,
         /**
-         * Allow low value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow low value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.boxplot.dragDrop.draggableLow
          */
         low: {
@@ -741,11 +741,11 @@ if (seriesTypes.boxplot) {
             }
         },
         /**
-         * Allow Q1 value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow Q1 value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.boxplot.dragDrop.draggableQ1
          */
         q1: {
@@ -777,11 +777,11 @@ if (seriesTypes.boxplot) {
             move: true
         },
         /**
-         * Allow Q3 value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow Q3 value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.boxplot.dragDrop.draggableQ3
          */
         q3: {
@@ -807,11 +807,11 @@ if (seriesTypes.boxplot) {
             }
         },
         /**
-         * Allow high value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow high value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.boxplot.dragDrop.draggableHigh
          */
         high: {
@@ -845,11 +845,11 @@ if (seriesTypes.ohlc) {
     seriesTypes.ohlc.prototype.dragDropProps = {
         x: columnDragDropProps.x,
         /**
-         * Allow low value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow low value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.ohlc.dragDrop.draggableLow
          */
         low: {
@@ -875,11 +875,11 @@ if (seriesTypes.ohlc) {
             }
         },
         /**
-         * Allow high value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow high value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.ohlc.dragDrop.draggableHigh
          */
         high: {
@@ -905,11 +905,11 @@ if (seriesTypes.ohlc) {
             }
         },
         /**
-         * Allow open value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow open value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.ohlc.dragDrop.draggableOpen
          */
         open: {
@@ -937,11 +937,11 @@ if (seriesTypes.ohlc) {
             }
         },
         /**
-         * Allow close value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow close value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.ohlc.dragDrop.draggableClose
          */
         close: {
@@ -993,11 +993,11 @@ if (seriesTypes.arearange) {
     seriesTypes.arearange.prototype.dragDropProps = {
         x: (columnrangeDragDropProps as any).x,
         /**
-         * Allow low value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow low value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.arearange.dragDrop.draggableLow
          */
         low: {
@@ -1020,11 +1020,11 @@ if (seriesTypes.arearange) {
             propValidate: (columnrangeDragDropProps as any).low.propValidate
         },
         /**
-         * Allow high value to be dragged individually. Requires
-         * `draggable-points` module.
+         * Allow high value to be dragged individually.
          *
          * @type      {boolean}
          * @default   true
+         * @requires  modules/draggable-points
          * @apioption plotOptions.arearange.dragDrop.draggableHigh
          */
         high: {
@@ -1101,11 +1101,11 @@ if (seriesTypes.xrange) {
                 move: true
             },
             /**
-             * Allow x value to be dragged individually. Requires
-             * `draggable-points` module.
+             * Allow x value to be dragged individually.
              *
              * @type      {boolean}
              * @default   true
+             * @requires  modules/draggable-points
              * @apioption plotOptions.xrange.dragDrop.draggableX1
              */
             x: {
@@ -1128,11 +1128,11 @@ if (seriesTypes.xrange) {
                 }
             },
             /**
-             * Allow x2 value to be dragged individually. Requires
-             * `draggable-points` module.
+             * Allow x2 value to be dragged individually.
              *
              * @type      {boolean}
              * @default   true
+             * @requires  modules/draggable-points
              * @apioption plotOptions.xrange.dragDrop.draggableX2
              */
             x2: {
@@ -1161,11 +1161,11 @@ if (seriesTypes.xrange) {
         seriesTypes.gantt.prototype.dragDropProps = {
             y: xrangeDragDropProps.y,
             /**
-             * Allow start value to be dragged individually. Requires
-             * `draggable-points` module.
+             * Allow start value to be dragged individually.
              *
              * @type      {boolean}
              * @default   true
+             * @requires  modules/draggable-points
              * @apioption plotOptions.gantt.dragDrop.draggableStart
              */
             start: merge(xrangeDragDropProps.x, {
@@ -1178,11 +1178,11 @@ if (seriesTypes.xrange) {
                 }
             }),
             /**
-             * Allow end value to be dragged individually. Requires
-             * `draggable-points` module.
+             * Allow end value to be dragged individually.
              *
              * @type      {boolean}
              * @default   true
+             * @requires  modules/draggable-points
              * @apioption plotOptions.gantt.dragDrop.draggableEnd
              */
             end: merge(xrangeDragDropProps.x2, {
@@ -1236,8 +1236,6 @@ if (seriesTypes.xrange) {
  * [point.drag](plotOptions.series.point.events.drag) and
  * [point.drop](plotOptions.series.point.events.drop).
  *
- * It requires the `modules/draggable-points.js` file to be loaded.
- *
  * @sample highcharts/dragdrop/resize-column
  *         Draggable column and line series
  * @sample highcharts/dragdrop/bar-series
@@ -1248,6 +1246,7 @@ if (seriesTypes.xrange) {
  *         Draggable X range series
  *
  * @since     6.2.0
+ * @requires  modules/draggable-points
  * @apioption plotOptions.series.dragDrop
  */
 
@@ -1521,13 +1520,14 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  */
 
 /**
- * Set a key to hold when dragging to zoom the chart. Requires the
- * draggable-points module. This is useful to avoid zooming while moving points.
- * Should be set different than [chart.panKey](#chart.panKey).
+ * Set a key to hold when dragging to zoom the chart. This is useful to avoid
+ * zooming while moving points. Should be set different than
+ * [chart.panKey](#chart.panKey).
  *
  * @type       {string}
  * @since      6.2.0
  * @validvalue ["alt", "ctrl", "meta", "shift"]
+ * @requires  modules/draggable-points
  * @apioption  chart.zoomKey
  */
 
@@ -1537,13 +1537,12 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * the data property being dragged. The `this` context is the point. See
  * [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the `draggable-points` module.
- *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
  *
  * @type      {Highcharts.PointDragStartCallbackFunction}
  * @since     6.2.0
+ * @requires  modules/draggable-points
  * @apioption plotOptions.series.point.events.dragStart
  */
 
@@ -1556,13 +1555,12 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * being dragged. To stop the default drag action, return false. See
  * [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the `draggable-points` module.
- *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
  *
  * @type      {Highcharts.PointDragCallbackFunction}
  * @since     6.2.0
+ * @requires  modules/draggable-points
  * @apioption plotOptions.series.point.events.drag
  */
 
@@ -1572,13 +1570,12 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * default drop action, return false. See
  * [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the `draggable-points` module.
- *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
  *
  * @type      {Highcharts.PointDropCallbackFunction}
  * @since     6.2.0
+ * @requires  modules/draggable-points
  * @apioption plotOptions.series.point.events.drop
  */
 
@@ -1586,10 +1583,9 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * Point specific options for the draggable-points module. Overrides options on
  * `series.dragDrop`.
  *
- * Requires the `draggable-points` module.
- *
  * @extends   plotOptions.series.dragDrop
  * @since     6.2.0
+ * @requires  modules/draggable-points
  * @apioption series.line.data.dragDrop
  */
 

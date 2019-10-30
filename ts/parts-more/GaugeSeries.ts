@@ -117,6 +117,7 @@ var merge = H.merge,
  *               pointPlacement, shadow, softThreshold, stacking, states, step,
  *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
 seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
@@ -662,6 +663,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.gauge
  */
 

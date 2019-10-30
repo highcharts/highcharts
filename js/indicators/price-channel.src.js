@@ -35,6 +35,8 @@ H.seriesType('pc', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/price-channel
  * @optionparent plotOptions.pc
  */
 {
@@ -126,6 +128,8 @@ merge(multipleLinesMixin, {
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/price-channel
  * @apioption    series.pc
  */
 ''; // to include the above in the js output

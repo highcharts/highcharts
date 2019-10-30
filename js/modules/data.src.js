@@ -107,6 +107,7 @@ var addEvent = Highcharts.addEvent, Chart = Highcharts.Chart, win = Highcharts.w
  *         CSV
  *
  * @since     4.0
+ * @requires  modules/data
  * @apioption data
  */
 /**

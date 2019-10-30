@@ -25,6 +25,7 @@ var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  *
  * @extends      plotOptions.boxplot
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {
@@ -103,6 +104,7 @@ seriesType('errorbar', 'boxplot', {
  * @extends   series,plotOptions.errorbar
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.errorbar
  */
 /**

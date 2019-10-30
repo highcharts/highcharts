@@ -1524,8 +1524,7 @@ H.defaultOptions = {
         /**
          * When true, cartesian charts like line, spline, area and column are
          * transformed into the polar coordinate system. This produces _polar
-         * charts_, also known as _radar charts_. Requires
-         * `highcharts-more.js`.
+         * charts_, also known as _radar charts_.
          *
          * @sample {highcharts} highcharts/demo/polar/
          *         Polar chart
@@ -1540,6 +1539,7 @@ H.defaultOptions = {
          * @default   false
          * @since     2.3.0
          * @product   highcharts
+         * @requires  highcharts-more
          * @apioption chart.polar
          */
 
@@ -3348,6 +3348,14 @@ H.defaultOptions = {
          * @type      {*}
          * @default   true
          * @apioption tooltip.crosshairs
+         */
+
+        /**
+         * Distance from point to tooltip in pixels.
+         *
+         * @type      {number}
+         * @default   16
+         * @apioption tooltip.distance
          */
 
         /**

@@ -345,6 +345,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *               minSize, navigatorOptions, pointRange
  * @product      highcharts
+ * @requires     modules/sunburst.js
  * @optionparent plotOptions.sunburst
  * @private
  */
@@ -805,6 +806,7 @@ var sunburstPoint = {
  * @extends   series,plotOptions.sunburst
  * @excluding dataParser, dataURL, stack
  * @product   highcharts
+ * @requires  modules/sunburst.js
  * @apioption series.sunburst
  */
 /**
