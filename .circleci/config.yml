@@ -377,7 +377,7 @@ workflows:
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - lint
+            - "test-Win.IE8"
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
@@ -389,7 +389,7 @@ workflows:
           name: "test-Win.Chrome"
           browsercount: 2
           requires:
-            - "test-Win.IE8"
+            - "test-Mac.Firefox"
           browsers: "Win.Chrome"
 
   nightly:
