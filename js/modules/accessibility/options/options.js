@@ -206,7 +206,7 @@ var options = {
          * Note: Since Highcharts now supports captions and linked descriptions,
          * it is preferred to define the description using those methods, as a
          * visible caption/description benefits all users. If the
-         * accessibility.description option is defined, the linked description
+         * `accessibility.description` option is defined, the linked description
          * is ignored, and the caption is hidden from screen reader users.
          *
          * @see [linkedDescription](#accessibility.linkedDescription)
