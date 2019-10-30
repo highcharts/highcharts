@@ -167,7 +167,10 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
             if (label.textStr && !isNumber(label.textPxLength)) {
                 label.textPxLength = label.getBBox().width;
             }
-            tickWidth = isNumber(label.textPxLength) ? label.textPxLength : 0;
+            tickWidth = isNumber(label.textPxLength) ?
+                // Math.round ensures crisp lines
+                Math.round(label.textPxLength) :
+                0;
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(tickHeight, dimensions.height);
             dimensions.width = Math.max(tickWidth, dimensions.width);
@@ -593,16 +596,16 @@ function () {
                     axis.axisLineExtra = renderer
                         .path(linePath)
                         .attr({
-                        /* eslint-disable spaced-comment */
-                        /*= if (build.classic) { =*/
-                        stroke: options.lineColor,
-                        'stroke-width': lineWidth,
-                        /*= } =*/
-                        /* eslint-enable spaced-comment */
                         zIndex: 7
                     })
                         .addClass('highcharts-axis-line')
                         .add(axis.axisGroup);
+                    if (!renderer.styledMode) {
+                        axis.axisLineExtra.attr({
+                            stroke: options.lineColor,
+                            'stroke-width': lineWidth
+                        });
+                    }
                 }
                 else {
                     axis.axisLineExtra.animate({

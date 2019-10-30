@@ -461,7 +461,7 @@ seriesType<Highcharts.FunnelSeries>(
 
         // Extend the pie data label method
         drawDataLabels: function (
-            this: Highcharts.FunnelSeries,
+            this: Highcharts.FunnelSeries
         ): void {
             var series = this,
                 data = series.data,

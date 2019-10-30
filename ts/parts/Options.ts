@@ -3351,6 +3351,14 @@ H.defaultOptions = {
          */
 
         /**
+         * Distance from point to tooltip in pixels.
+         *
+         * @type      {number}
+         * @default   16
+         * @apioption tooltip.distance
+         */
+
+        /**
          * Whether the tooltip should follow the mouse as it moves across
          * columns, pie slices and other point types with an extent.
          * By default it behaves this way for pie, polygon, map, sankey
