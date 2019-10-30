@@ -371,9 +371,11 @@ Highcharts.Pointer.prototype = {
     getChartPosition: function (
         this: Highcharts.Pointer
     ): Highcharts.OffsetObject {
+        const { chart } = this;
+        const container = chart.scrollingContainer || chart.container;
         return (
             this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container))
+            (this.chartPosition = offset(container))
         );
     },
 

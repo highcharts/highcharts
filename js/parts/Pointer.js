@@ -190,8 +190,10 @@ Highcharts.Pointer.prototype = {
      *         The offset of the chart container within the page
      */
     getChartPosition: function () {
+        var chart = this.chart;
+        var container = chart.scrollingContainer || chart.container;
         return (this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container)));
+            (this.chartPosition = offset(container)));
     },
     /**
      * Takes a browser event object and extends it with custom Highcharts
