@@ -186,7 +186,7 @@ function createChangedDirFilesTemplate(folder) {
             gitChangedFiles.map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
-            });
+            }).join('\n');
         samplesChangedTemplate += '\n\n</p>\n</details>\n';
     }
     return samplesChangedTemplate;
@@ -221,10 +221,6 @@ async function commentOnPR() {
         return completeTask(errMsg);
     }
 
-    const { containsText = DEFAULT_COMMENT_MATCH } = argv;
-    const existingComments = await fetchPRComments(pr, user, containsText);
-
-
     const diffs = Object.entries(testResults).filter(entry => {
         const value = entry[1];
         return typeof value === 'number' && value > 0;
@@ -237,6 +233,9 @@ async function commentOnPR() {
 
     const changedSamplesTemplate = createChangedDirFilesTemplate('samples/');
     commentTemplate += `\n\n${changedSamplesTemplate}`;
+
+    const { containsText = DEFAULT_COMMENT_MATCH } = argv;
+    const existingComments = await fetchPRComments(pr, user, containsText);
 
     try {
         let result;
