@@ -1196,10 +1196,15 @@ H.Tooltip.prototype = {
                 plotHeight,
                 plotLeft,
                 plotTop,
+                plotWidth,
                 pointer,
                 renderer: ren,
                 scrollablePixelsX = 0,
                 scrollablePixelsY = 0,
+                scrollingContainer: {
+                    scrollLeft,
+                    scrollTop
+                } = { scrollLeft: 0, scrollTop: 0 },
                 styledMode,
                 xAxis: [{ opposite }]
             },
@@ -1209,6 +1214,19 @@ H.Tooltip.prototype = {
                 positioner
             }
         } = tooltip;
+        const clamp = (value: number, min: number, max: number) =>
+            value > min ? value < max ? value : max : min;
+        const clampToHorizontalPlotArea = (value: number) => clamp(
+            value,
+            plotLeft,
+            plotLeft + plotWidth - scrollablePixelsX
+        );
+        const clampToVerticalPlotArea = (value: number) => clamp(
+            value,
+            plotTop,
+            plotTop + plotHeight - scrollablePixelsY
+        );
+
         const tooltipLabel = tooltip.getLabel();
         const headerTop = Boolean(opposite);
         const boxes: Array<Highcharts.Dictionary<any>> = [];
@@ -1336,7 +1354,9 @@ H.Tooltip.prototype = {
                     target = headerTop ?
                         -headerHeight :
                         plotHeight + headerHeight;
-                    anchorX = plotX + plotLeft;
+
+                    // Set anchorX to plotX
+                    anchorX = plotLeft + plotX - scrollLeft;
                     // Set anchorY to center of visible plot area.
                     anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 } else {
@@ -1345,19 +1365,20 @@ H.Tooltip.prototype = {
                     target = yAxis.pos - distributionBoxTop + Math.max(
                         0, Math.min(plotY, yAxis.len)
                     ); // Limit target position to within yAxis
-                    anchorX = plotX + xAxis.pos;
-                    // Set anchorY to plotY. Limit to within visible plot area,
-                    // and within yAxis.
-                    anchorY = Math.max(
-                        plotTop,
-                        yAxis.pos,
-                        Math.min(
-                            plotTop + plotHeight - scrollablePixelsY,
-                            yAxis.pos + yAxis.len,
-                            yAxis.pos + plotY
-                        )
-                    );
+
+                    // Set anchorX to plotX. Limit to within xAxis.
+                    anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
+                        - scrollLeft;
+
+                    // Set anchorY to plotY. Limit to within yAxis.
+                    anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
+                        - scrollTop;
                 }
+
+                // Limit values to plot area
+                anchorX = clampToHorizontalPlotArea(anchorX);
+                anchorY = clampToVerticalPlotArea(anchorY);
+
                 const box: Highcharts.Dictionary<any> = {
                     target,
                     rank: isHeader ? 1 : 0,

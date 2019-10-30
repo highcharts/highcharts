@@ -842,7 +842,12 @@ H.Tooltip.prototype = {
      */
     renderSplit: function (labels, points) {
         var tooltip = this;
-        var _a = tooltip.chart, chartWidth = _a.chartWidth, _b = _a.marginRight, marginRight = _b === void 0 ? 0 : _b, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, pointer = _a.pointer, ren = _a.renderer, _c = _a.scrollablePixelsX, scrollablePixelsX = _c === void 0 ? 0 : _c, _d = _a.scrollablePixelsY, scrollablePixelsY = _d === void 0 ? 0 : _d, styledMode = _a.styledMode, _e = __read(_a.xAxis, 1), opposite = _e[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
+        var _a = tooltip.chart, chartWidth = _a.chartWidth, _b = _a.marginRight, marginRight = _b === void 0 ? 0 : _b, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _c = _a.scrollablePixelsX, scrollablePixelsX = _c === void 0 ? 0 : _c, _d = _a.scrollablePixelsY, scrollablePixelsY = _d === void 0 ? 0 : _d, _e = _a.scrollingContainer, _f = _e === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _e, scrollLeft = _f.scrollLeft, scrollTop = _f.scrollTop, styledMode = _a.styledMode, _g = __read(_a.xAxis, 1), opposite = _g[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
+        var clamp = function (value, min, max) {
+            return value > min ? value < max ? value : max : min;
+        };
+        var clampToHorizontalPlotArea = function (value) { return clamp(value, plotLeft, plotLeft + plotWidth - scrollablePixelsX); };
+        var clampToVerticalPlotArea = function (value) { return clamp(value, plotTop, plotTop + plotHeight - scrollablePixelsY); };
         var tooltipLabel = tooltip.getLabel();
         var headerTop = Boolean(opposite);
         var boxes = [];
@@ -938,7 +943,8 @@ H.Tooltip.prototype = {
                     target = headerTop ?
                         -headerHeight :
                         plotHeight + headerHeight;
-                    anchorX = plotX + plotLeft;
+                    // Set anchorX to plotX
+                    anchorX = plotLeft + plotX - scrollLeft;
                     // Set anchorY to center of visible plot area.
                     anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 }
@@ -946,11 +952,16 @@ H.Tooltip.prototype = {
                     var yAxis = series.yAxis;
                     var xAxis = series.xAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min(plotY, yAxis.len)); // Limit target position to within yAxis
-                    anchorX = plotX + xAxis.pos;
-                    // Set anchorY to plotY. Limit to within visible plot area,
-                    // and within yAxis.
-                    anchorY = Math.max(plotTop, yAxis.pos, Math.min(plotTop + plotHeight - scrollablePixelsY, yAxis.pos + yAxis.len, yAxis.pos + plotY));
+                    // Set anchorX to plotX. Limit to within xAxis.
+                    anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
+                        - scrollLeft;
+                    // Set anchorY to plotY. Limit to within yAxis.
+                    anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
+                        - scrollTop;
                 }
+                // Limit values to plot area
+                anchorX = clampToHorizontalPlotArea(anchorX);
+                anchorY = clampToVerticalPlotArea(anchorY);
                 var box = {
                     target: target,
                     rank: isHeader ? 1 : 0,
@@ -1003,7 +1014,7 @@ H.Tooltip.prototype = {
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
             // Set container size to fit the tooltip
-            var _f = tooltipLabel.getBBox(), width = _f.width, height = _f.height, x = _f.x, y = _f.y;
+            var _h = tooltipLabel.getBBox(), width = _h.width, height = _h.height, x = _h.x, y = _h.y;
             renderer.setSize(width + x, height + y, false);
         }
     },
