@@ -617,6 +617,7 @@ module.exports = function (config) {
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
+        options.captureTimeout = 100000;
 
         options.plugins = [
             'karma-browserstack-launcher',
