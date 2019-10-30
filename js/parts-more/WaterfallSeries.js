@@ -455,7 +455,7 @@ seriesType('waterfall', 'column', {
                     yPos
                 ];
             }
-            if (!stacking &&
+            if (!stacking && d &&
                 (prevPoint.y < 0 && !reversedYAxis) ||
                 (prevPoint.y > 0 && reversedYAxis)) {
                 d[2] += prevArgs.height;

@@ -825,7 +825,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             }
 
             if (
-                !stacking &&
+                !stacking && d &&
                 (prevPoint.y < 0 && !reversedYAxis) ||
                 (prevPoint.y > 0 && reversedYAxis)
             ) {
