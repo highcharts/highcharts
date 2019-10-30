@@ -84,6 +84,7 @@ declare global {
         }
         interface WaterfallStacksObject {
             changed: boolean;
+            alreadyChanged?: Array<string>;
             waterfall?: Dictionary<WaterfallStacksItemObject>;
         }
         interface WaterfallStacksItemObject {
@@ -145,6 +146,13 @@ addEvent(Axis as any, 'afterInit', function (
             changed: false
         };
     }
+});
+
+addEvent(Axis as any, 'afterBuildStacks', function (
+    this: Highcharts.WaterfallAxis
+): void {
+    this.waterfallStacks.changed = false;
+    delete this.waterfallStacks.alreadyChanged;
 });
 
 addEvent(Chart as any, 'beforeRedraw', function (
@@ -869,7 +877,9 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             negTotal,
             xPoint,
             yVal,
-            x;
+            x,
+            alreadyChanged,
+            changed;
 
         // function responsible for calculating correct values for stackState
         // array of each stack item. The arguments are: firstS - the value for
@@ -905,6 +915,17 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
         if (series.visible ||
             !(series.chart.options.chart as any).ignoreHiddenSeries
         ) {
+            changed = waterfallStacks.changed;
+            alreadyChanged = waterfallStacks.alreadyChanged;
+
+            // in case of a redraw, stack for each x value must be
+            // emptied (only for the first series in a specific stack)
+            // and recalculated once more
+            if (alreadyChanged &&
+                alreadyChanged.indexOf(stackKey) < 0) {
+                changed = true;
+            }
+
             if (!waterfallStacks[stackKey]) {
                 (waterfallStacks as any)[stackKey] = {};
             }
@@ -912,7 +933,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             actualStack = waterfallStacks[stackKey];
             for (var i = 0; i < xLength; i++) {
                 x = xData[i];
-                if (!(actualStack as any)[x] || waterfallStacks.changed) {
+                if (!(actualStack as any)[x] || changed) {
                     (actualStack as any)[x] = {
                         negTotal: 0,
                         posTotal: 0,
@@ -921,7 +942,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                         stateIndex: 0,
                         stackState: [],
                         label: (
-                            (waterfallStacks.changed &&
+                            (changed &&
                             (actualStack as any)[x]) ?
                                 (actualStack as any)[x].label :
                                 undefined
@@ -985,6 +1006,10 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                 stackThreshold += (actualStackX as any).stackTotal;
             }
             waterfallStacks.changed = false;
+            if (!waterfallStacks.alreadyChanged) {
+                waterfallStacks.alreadyChanged = [];
+            }
+            waterfallStacks.alreadyChanged.push(stackKey);
         }
     },
 
