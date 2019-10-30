@@ -18,7 +18,8 @@ Highcharts.chart('container', {
 
     yAxis: {
         categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        title: null
+        title: null,
+        reversed: true
     },
 
     colorAxis: {
@@ -51,6 +52,23 @@ Highcharts.chart('container', {
             enabled: true,
             color: '#000000'
         }
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                yAxis: {
+                    labels: {
+                        formatter: function () {
+                            return this.value.charAt(0);
+                        }
+                    }
+                }
+            }
+        }]
+    }
 
 });
