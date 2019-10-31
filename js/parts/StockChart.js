@@ -26,7 +26,7 @@ import './Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, merge = H.merge, Point = H.Point, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, merge = H.merge, Point = H.Point, Pointer = H.Pointer, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -784,20 +784,20 @@ addEvent(Chart, 'update', function (e) {
  * @return {Array<Highcharts.Point|undefined>}
  *         Array containing the hover points
  */
-Pointer.prototype.getSharedHoverPoints() = function(searchSeries, hoverPoint){
+Pointer.prototype.getSharedHoverPoints = function(searchSeries, hoverPoint){
     var hoverPoints = [];
 
     searchSeries.forEach(function (s) {
         var point = searchSeries.length === 1 ?
             // When just showing one series get the point with the same x value as the hoverPoint 
-            find(s.points, function (p) {
+            H.find(s.points, function (p) {
                 return p.x === hoverPoint.x && !p.isNull;
             }) :
             // When showing multiple series get the point with the same or lower x value as the hoverPoint from all series 
-            findLast(s.points, function (p) {
+            H.findLast(s.points, function (p) {
                 return p.x <= hoverPoint.x && !p.isNull;
             });
-        if (isObject(point)) {
+        if (H.isObject(point)) {
             /*
             * Boost returns a minimal point. Convert it to a usable
             * point for tooltip and states.

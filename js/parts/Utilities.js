@@ -1915,7 +1915,7 @@ H.findLast = Array.prototype.findLast ?
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
     function (arr, callback) {
         var i, length = arr.length;
-        for (i = length -1; i < 0; i--) {
+        for (i = length -1; i >= 0; i--) {
             if (callback(arr[i], i)) { // eslint-disable-line callback-return
                 return arr[i];
             }
