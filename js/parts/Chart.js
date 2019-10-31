@@ -295,6 +295,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
             charts.push(chart);
@@ -369,11 +370,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         for (; i < series.length; i++) {
             if (series[i]) {
                 /**
-                 * Returns the series' index in the `Chart.series`
-                 * array.
+                 * Contains the series' index in the `Chart.series` array.
                  *
                  * @name Highcharts.Series#index
                  * @type {number|undefined}
+                 * @readonly
                  */
                 series[i].index = i;
                 series[i].name = series[i].getName();
