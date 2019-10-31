@@ -206,7 +206,7 @@ function buildImgURL(filename, sample, pr) {
 }
 
 function buildImgMarkdownLinks(sample, pr) {
-    return `[diff](${buildImgURL('diff.gif', sample, pr)}) \| [reference](${buildImgURL('reference.svg', sample, pr)}) \| [candidate](${buildImgURL('candidate.svg', sample, pr)})`;
+    return `[diff](${buildImgURL('diff.gif', sample, pr)}) &#124; [reference](${buildImgURL('reference.svg', sample, pr)}) &#124; [candidate](${buildImgURL('candidate.svg', sample, pr)})`;
 }
 
 /* eslint-enable require-jsdoc */
