@@ -1237,6 +1237,37 @@ H.Tooltip.prototype = {
         if (isString(labels)) {
             labels = [false, labels];
         }
+
+        // Calculate the x and y position for the anchor
+        function getAnchor(
+            point: Highcharts.Point & { isHeader?: boolean }
+        ): [number, number] {
+            const { isHeader, plotX = 0, plotY = 0, series } = point;
+
+            let anchorX;
+            let anchorY;
+            if (isHeader) {
+                // Set anchorX to plotX
+                anchorX = plotLeft + plotX - scrollLeft;
+
+                // Set anchorY to center of visible plot area.
+                anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
+            } else {
+                const { xAxis, yAxis } = series;
+                // Set anchorX to plotX. Limit to within xAxis.
+                anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
+                    - scrollLeft;
+                // Set anchorY to plotY. Limit to within yAxis.
+                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
+                    - scrollTop;
+            }
+
+            // Limit values to plot area
+            anchorX = clamp(anchorX, boundaries.left, boundaries.right);
+            anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
+            return [anchorX, anchorY];
+        }
+
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (
             str: (boolean|string),
@@ -1255,7 +1286,7 @@ H.Tooltip.prototype = {
                 const colorClass = 'highcharts-color-' + pick(
                     point.colorIndex, series.colorIndex, 'none'
                 );
-                const { plotX = 0, plotY = 0 } = point;
+                const { plotY = 0 } = point;
                 const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip referance on the series
@@ -1323,39 +1354,21 @@ H.Tooltip.prototype = {
 
                 // Prepare for distribution
                 let target: number;
-                let anchorX: number;
-                let anchorY: number;
+
+                const [anchorX, anchorY] = getAnchor(point);
                 if (isHeader) {
                     target = headerTop ?
                         -headerHeight :
                         plotHeight + headerHeight;
 
-                    // Set anchorX to plotX
-                    anchorX = plotLeft + plotX - scrollLeft;
                     x = anchorX - (boxWidth / 2);
-
-                    // Set anchorY to center of visible plot area.
-                    anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 } else {
                     const yAxis = series.yAxis;
-                    const xAxis = series.xAxis;
                     target = yAxis.pos - distributionBoxTop + Math.max(
                         0, Math.min(plotY, yAxis.len)
                     ); // Limit target position to within yAxis
-
-                    // Set anchorX to plotX. Limit to within xAxis.
-                    anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
-                        - scrollLeft;
                     x = anchorX - distance - boxWidth;
-
-                    // Set anchorY to plotY. Limit to within yAxis.
-                    anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
-                        - scrollTop;
                 }
-
-                // Limit values to plot area
-                anchorX = clamp(anchorX, boundaries.left, boundaries.right);
-                anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
 
                 if (isHeader) {
                     x = clamp(x, boundaries.left, boundaries.right - boxWidth);
