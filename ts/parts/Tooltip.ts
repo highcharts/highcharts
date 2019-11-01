@@ -1286,7 +1286,6 @@ H.Tooltip.prototype = {
                 const colorClass = 'highcharts-color-' + pick(
                     point.colorIndex, series.colorIndex, 'none'
                 );
-                const { plotY = 0 } = point;
                 const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip referance on the series
@@ -1363,10 +1362,7 @@ H.Tooltip.prototype = {
 
                     x = anchorX - (boxWidth / 2);
                 } else {
-                    const yAxis = series.yAxis;
-                    target = yAxis.pos - distributionBoxTop + Math.max(
-                        0, Math.min(plotY, yAxis.len)
-                    ); // Limit target position to within yAxis
+                    target = anchorY - distributionBoxTop;
                     x = anchorX - distance - boxWidth;
                 }
 

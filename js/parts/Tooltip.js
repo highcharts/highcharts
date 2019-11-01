@@ -901,7 +901,6 @@ H.Tooltip.prototype = {
                 var series = point.series || {};
                 var owner = point.series || tooltip;
                 var colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none');
-                var _a = point.plotY, plotY = _a === void 0 ? 0 : _a;
                 var isHeader = point.isHeader;
                 // Store the tooltip referance on the series
                 var tt = owner.tt;
@@ -950,7 +949,7 @@ H.Tooltip.prototype = {
                 }
                 // Prepare for distribution
                 var target = void 0;
-                var _b = __read(getAnchor(point), 2), anchorX = _b[0], anchorY = _b[1];
+                var _a = __read(getAnchor(point), 2), anchorX = _a[0], anchorY = _a[1];
                 if (isHeader) {
                     target = headerTop ?
                         -headerHeight :
@@ -958,8 +957,7 @@ H.Tooltip.prototype = {
                     x = anchorX - (boxWidth / 2);
                 }
                 else {
-                    var yAxis = series.yAxis;
-                    target = yAxis.pos - distributionBoxTop + Math.max(0, Math.min(plotY, yAxis.len)); // Limit target position to within yAxis
+                    target = anchorY - distributionBoxTop;
                     x = anchorX - distance - boxWidth;
                 }
                 if (isHeader) {
