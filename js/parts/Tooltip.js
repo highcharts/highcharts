@@ -966,7 +966,7 @@ H.Tooltip.prototype = {
                 var box = {
                     target: target,
                     rank: isHeader ? 1 : 0,
-                    size: tt.getBBox().height + 1,
+                    size: bBox.height + 1,
                     point: point,
                     x: x,
                     tt: tt,
@@ -974,7 +974,7 @@ H.Tooltip.prototype = {
                     anchorY: anchorY
                 };
                 if (positioner) {
-                    var boxPosition = positioner.call(tooltip, box.tt.getBBox().width, box.size, box.point);
+                    var boxPosition = positioner.call(tooltip, boxWidth, box.size, box.point);
                     box.x = boxPosition.x;
                     box.align = 0; // 0-align to the top, 1-align to the bottom
                     box.target = boxPosition.y;
