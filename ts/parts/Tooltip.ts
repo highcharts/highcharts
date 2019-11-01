@@ -1192,7 +1192,7 @@ H.Tooltip.prototype = {
         const {
             chart: {
                 chartWidth,
-                marginRight = 0,
+                chartHeight,
                 plotHeight,
                 plotLeft,
                 plotTop,
@@ -1208,7 +1208,7 @@ H.Tooltip.prototype = {
                 styledMode,
                 xAxis: [{ opposite }]
             },
-            distance,
+            distance = 16,
             options,
             options: {
                 positioner
@@ -1226,6 +1226,15 @@ H.Tooltip.prototype = {
             plotTop,
             plotTop + plotHeight - scrollablePixelsY
         );
+
+        const boundaries = {
+            left: scrollablePixelsX ? plotLeft : 0,
+            right: scrollablePixelsX ?
+                plotLeft + plotWidth - scrollablePixelsX : chartWidth,
+            top: scrollablePixelsY ? plotTop : 0,
+            bottom: scrollablePixelsY ?
+                plotTop + plotHeight - scrollablePixelsY : chartHeight
+        }
 
         const tooltipLabel = tooltip.getLabel();
         const headerTop = Boolean(opposite);
@@ -1320,30 +1329,6 @@ H.Tooltip.prototype = {
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
-                    x = Math.max(
-                        0, // No left overflow
-                        Math.min(
-                            plotX + plotLeft - boxWidth / 2,
-                            // No right overflow (#5794)
-                            chartWidth +
-                            (
-                                // Scrollable plot area
-                                scrollablePixelsX ?
-                                    scrollablePixelsX - marginRight :
-                                    0
-                            ) -
-                            boxWidth
-                        )
-                    );
-                } else {
-                    x = plotX + plotLeft - pick(options.distance, 16) -
-                        boxWidth;
-                }
-
-
-                // If overflow left, set a new x position
-                if (x < 0) {
-                    x = plotX + plotLeft + distance;
                 }
 
                 // Prepare for distribution
@@ -1357,6 +1342,8 @@ H.Tooltip.prototype = {
 
                     // Set anchorX to plotX
                     anchorX = plotLeft + plotX - scrollLeft;
+                    x = anchorX - (boxWidth / 2);
+
                     // Set anchorY to center of visible plot area.
                     anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 } else {
@@ -1369,6 +1356,7 @@ H.Tooltip.prototype = {
                     // Set anchorX to plotX. Limit to within xAxis.
                     anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
                         - scrollLeft;
+                    x = anchorX - distance - boxWidth;
 
                     // Set anchorY to plotY. Limit to within yAxis.
                     anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
@@ -1378,6 +1366,16 @@ H.Tooltip.prototype = {
                 // Limit values to plot area
                 anchorX = clampToHorizontalPlotArea(anchorX);
                 anchorY = clampToVerticalPlotArea(anchorY);
+
+                if (isHeader) {
+                    x = clamp(x, boundaries.left, boundaries.right - boxWidth);
+                } else if (x < boundaries.left) {
+                    // Align label to the right side if overflow left.
+                    x = anchorX + distance; 
+                } else if (boundaries.right < x + boxWidth) {
+                    // Limit label to plot area.
+                    x = boundaries.right - boxWidth;
+                }
 
                 const box: Highcharts.Dictionary<any> = {
                     target,
