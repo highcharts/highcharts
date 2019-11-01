@@ -1903,8 +1903,9 @@ null,
      * @since     2.3
      * @extends   tooltip
      * @excluding animation, backgroundColor, borderColor, borderRadius,
-     *            borderWidth, crosshairs, enabled, formatter, positioner,
-     *            shadow, shape, shared, snap, style, useHTML
+     *            borderWidth, className, crosshairs, enabled, formatter,
+     *            headerShape, hideDelay, outside, padding, positioner,
+     *            shadow, shape, shared, snap, split, style, useHTML
      * @apioption plotOptions.series.tooltip
      */
     /**

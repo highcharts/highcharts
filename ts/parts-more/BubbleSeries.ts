@@ -824,9 +824,15 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
  *
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
- * @excluding marker
  * @product   highcharts
  * @apioption series.bubble.data
+ */
+
+/**
+ * @extends     series.line.data.marker
+ * @excluding   enabledThreshold, height, radius, width
+ * @product     highcharts
+ * @apioption   series.bubble.data.marker
  */
 
 /**

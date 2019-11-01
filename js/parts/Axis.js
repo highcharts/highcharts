@@ -537,6 +537,18 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @apioption xAxis.crosshair.label.borderWidth
          */
         /**
+         * Flag to enable crosshair's label.
+         *
+         * @sample {highstock} stock/xaxis/crosshairs-xy/
+         *         Enabled label for yAxis' crosshair
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     2.1
+         * @product   highstock
+         * @apioption xAxis.crosshair.label.enabled
+         */
+        /**
          * A format string for the crosshair label. Defaults to `{value}` for
          * numeric axes and `{value:%b %d, %Y}` for datetime axes.
          *
