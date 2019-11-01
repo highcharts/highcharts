@@ -846,8 +846,11 @@ seriesType<Highcharts.PackedBubbleSeries>(
         pointArrayMap: ['value'],
         pointValKey: 'value',
         isCartesian: false,
+        requireSorting: false,
+        directTouch: true,
         axisTypes: [],
         noSharedTooltip: true,
+        searchPoint: H.noop as any,
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
