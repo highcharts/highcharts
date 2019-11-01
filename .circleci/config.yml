@@ -120,7 +120,9 @@ jobs:
         default: 1
     steps:
       - << : *load_workspace
-      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
+      - run:
+          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
+          no_output_timeout: 20m
       - run: mkdir ../test-results
       - run:
           name: Save test results
