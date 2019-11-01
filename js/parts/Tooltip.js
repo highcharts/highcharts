@@ -846,8 +846,6 @@ H.Tooltip.prototype = {
         var clamp = function (value, min, max) {
             return value > min ? value < max ? value : max : min;
         };
-        var clampToHorizontalPlotArea = function (value) { return clamp(value, plotLeft, plotLeft + plotWidth - scrollablePixelsX); };
-        var clampToVerticalPlotArea = function (value) { return clamp(value, plotTop, plotTop + plotHeight - scrollablePixelsY); };
         var boundaries = {
             left: scrollablePixelsX ? plotLeft : 0,
             right: scrollablePixelsX ?
@@ -952,8 +950,8 @@ H.Tooltip.prototype = {
                         - scrollTop;
                 }
                 // Limit values to plot area
-                anchorX = clampToHorizontalPlotArea(anchorX);
-                anchorY = clampToVerticalPlotArea(anchorY);
+                anchorX = clamp(anchorX, boundaries.left, boundaries.right);
+                anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
                 if (isHeader) {
                     x = clamp(x, boundaries.left, boundaries.right - boxWidth);
                 }
