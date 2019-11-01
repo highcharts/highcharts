@@ -856,13 +856,8 @@ H.Tooltip.prototype = {
         };
         var tooltipLabel = tooltip.getLabel();
         var headerTop = Boolean(opposite);
-        var boxes = [];
         var distributionBoxTop = plotTop;
         var headerHeight = 0;
-        // Graceful degradation for legacy formatters
-        if (isString(labels)) {
-            labels = [false, labels];
-        }
         // Calculate the x and y position for the anchor
         function getAnchor(point) {
             var isHeader = point.isHeader, _a = point.plotX, plotX = _a === void 0 ? 0 : _a, _b = point.plotY, plotY = _b === void 0 ? 0 : _b, series = point.series;
@@ -950,15 +945,20 @@ H.Tooltip.prototype = {
             }
             return tt;
         }
+        // Graceful degradation for legacy formatters
+        if (isString(labels)) {
+            labels = [false, labels];
+        }
         // Create the individual labels for header and points, ignore footer
-        labels.slice(0, points.length + 1).forEach(function (str, i) {
+        var boxes = labels.slice(0, points.length + 1).reduce(function (boxes, str, i) {
             if (str !== false && str !== '') {
                 var point = points[i - 1] || {
                     // Item 0 is the header. Instead of this, we could also
                     // use the crosshair label
                     isHeader: true,
                     plotX: points[0].plotX,
-                    plotY: plotHeight
+                    plotY: plotHeight,
+                    series: {}
                 };
                 var isHeader = point.isHeader;
                 // Store the tooltip referance on the series
@@ -990,7 +990,8 @@ H.Tooltip.prototype = {
                     x: boxPosition.x
                 });
             }
-        });
+            return boxes;
+        }, []);
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
         // Distribute and put in place
