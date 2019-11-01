@@ -515,6 +515,7 @@ seriesType('packedbubble', 'bubble',
     directTouch: true,
     axisTypes: [],
     noSharedTooltip: true,
+    // solving #12287
     searchPoint: H.noop,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**

@@ -850,6 +850,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
         directTouch: true,
         axisTypes: [],
         noSharedTooltip: true,
+        // solving #12287
         searchPoint: H.noop as any,
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
