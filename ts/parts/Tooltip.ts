@@ -1228,15 +1228,9 @@ H.Tooltip.prototype = {
 
         const tooltipLabel = tooltip.getLabel();
         const headerTop = Boolean(opposite);
-        const boxes: Array<Highcharts.Dictionary<any>> = [];
 
         let distributionBoxTop = plotTop;
         let headerHeight = 0;
-
-        // Graceful degradation for legacy formatters
-        if (isString(labels)) {
-            labels = [false, labels];
-        }
 
         // Calculate the x and y position for the anchor
         function getAnchor(
@@ -1363,18 +1357,24 @@ H.Tooltip.prototype = {
             return tt;
         }
 
+        // Graceful degradation for legacy formatters
+        if (isString(labels)) {
+            labels = [false, labels];
+        }
         // Create the individual labels for header and points, ignore footer
-        labels.slice(0, points.length + 1).forEach(function (
+        const boxes = labels.slice(0, points.length + 1).reduce(function (
+            boxes: Array<Highcharts.Dictionary<any>>,
             str: (boolean|string),
             i: number
-        ): void {
+        ): Array<Highcharts.Dictionary<any>> {
             if (str !== false && str !== '') {
                 const point = points[i - 1] || {
                     // Item 0 is the header. Instead of this, we could also
                     // use the crosshair label
                     isHeader: true,
                     plotX: points[0].plotX,
-                    plotY: plotHeight
+                    plotY: plotHeight,
+                    series: {}
                 };
                 const isHeader: boolean = (point as any).isHeader;
 
@@ -1420,7 +1420,8 @@ H.Tooltip.prototype = {
                     x: boxPosition.x
                 });
             }
-        });
+            return boxes;
+        }, []);
 
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
