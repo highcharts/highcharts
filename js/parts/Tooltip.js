@@ -888,6 +888,30 @@ H.Tooltip.prototype = {
             anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
             return [anchorX, anchorY];
         }
+        function defaultPositioner(anchorX, anchorY, isHeader, bBox) {
+            var boxWidth = bBox.width;
+            var y;
+            var x;
+            if (isHeader) {
+                y = headerTop ?
+                    -headerHeight :
+                    plotHeight + headerHeight;
+                x = clamp(anchorX - (boxWidth / 2), boundaries.left, boundaries.right - boxWidth);
+            }
+            else {
+                y = anchorY - distributionBoxTop;
+                x = anchorX - distance - boxWidth;
+                if (x < boundaries.left) {
+                    // Align label to the right side if overflow left.
+                    x = anchorX + distance;
+                }
+                else if (boundaries.right < x + boxWidth) {
+                    // Limit label to plot area.
+                    x = boundaries.right - boxWidth;
+                }
+            }
+            return { x: x, y: y };
+        }
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (str, i) {
             if (str !== false && str !== '') {
@@ -940,55 +964,27 @@ H.Tooltip.prototype = {
                 // case of overflow
                 var bBox = tt.getBBox();
                 var boxWidth = bBox.width + tt.strokeWidth();
-                var x = void 0;
                 if (isHeader) {
                     headerHeight = bBox.height;
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
                 }
-                // Prepare for distribution
-                var target = void 0;
                 var _a = __read(getAnchor(point), 2), anchorX = _a[0], anchorY = _a[1];
-                if (isHeader) {
-                    target = headerTop ?
-                        -headerHeight :
-                        plotHeight + headerHeight;
-                    x = anchorX - (boxWidth / 2);
-                }
-                else {
-                    target = anchorY - distributionBoxTop;
-                    x = anchorX - distance - boxWidth;
-                }
-                if (isHeader) {
-                    x = clamp(x, boundaries.left, boundaries.right - boxWidth);
-                }
-                else if (x < boundaries.left) {
-                    // Align label to the right side if overflow left.
-                    x = anchorX + distance;
-                }
-                else if (boundaries.right < x + boxWidth) {
-                    // Limit label to plot area.
-                    x = boundaries.right - boxWidth;
-                }
-                var box = {
-                    target: target,
-                    rank: isHeader ? 1 : 0,
-                    size: bBox.height + 1,
-                    point: point,
-                    x: x,
-                    tt: tt,
+                var size = bBox.height + 1;
+                var boxPosition = positioner ? positioner.call(tooltip, boxWidth, size, point) : defaultPositioner(anchorX, anchorY, isHeader, bBox);
+                boxes.push({
+                    // 0-align to the top, 1-align to the bottom
+                    align: positioner ? 0 : void 0,
                     anchorX: anchorX,
-                    anchorY: anchorY
-                };
-                if (positioner) {
-                    var boxPosition = positioner.call(tooltip, boxWidth, box.size, box.point);
-                    box.x = boxPosition.x;
-                    box.align = 0; // 0-align to the top, 1-align to the bottom
-                    box.target = boxPosition.y;
-                    box.rank = pick(boxPosition.rank, box.rank);
-                }
-                boxes.push(box);
+                    anchorY: anchorY,
+                    point: point,
+                    rank: pick(boxPosition.rank, isHeader ? 1 : 0),
+                    size: size,
+                    target: boxPosition.y,
+                    tt: tt,
+                    x: boxPosition.x
+                });
             }
         });
         // Clean previous run (for missing points)

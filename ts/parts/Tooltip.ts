@@ -1268,6 +1268,40 @@ H.Tooltip.prototype = {
             return [anchorX, anchorY];
         }
 
+        function defaultPositioner(
+            anchorX: number,
+            anchorY: number,
+            isHeader: boolean,
+            bBox: Highcharts.BBoxObject
+        ): Highcharts.PositionObject {
+            const boxWidth = bBox.width;
+
+            let y;
+            let x;
+            if (isHeader) {
+                y = headerTop ?
+                    -headerHeight :
+                    plotHeight + headerHeight;
+
+                x = clamp(
+                    anchorX - (boxWidth / 2),
+                    boundaries.left,
+                    boundaries.right - boxWidth
+                );
+            } else {
+                y = anchorY - distributionBoxTop;
+                x = anchorX - distance - boxWidth;
+                if (x < boundaries.left) {
+                    // Align label to the right side if overflow left.
+                    x = anchorX + distance; 
+                } else if (boundaries.right < x + boxWidth) {
+                    // Limit label to plot area.
+                    x = boundaries.right - boxWidth;
+                }
+            }
+            return { x, y };
+        }
+
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (
             str: (boolean|string),
@@ -1343,7 +1377,6 @@ H.Tooltip.prototype = {
                 // case of overflow
                 const bBox = tt.getBBox();
                 const boxWidth = bBox.width + tt.strokeWidth();
-                let x: number;
                 if (isHeader) {
                     headerHeight = bBox.height;
                     if (headerTop) {
@@ -1351,56 +1384,32 @@ H.Tooltip.prototype = {
                     }
                 }
 
-                // Prepare for distribution
-                let target: number;
-
                 const [anchorX, anchorY] = getAnchor(point);
-                if (isHeader) {
-                    target = headerTop ?
-                        -headerHeight :
-                        plotHeight + headerHeight;
-
-                    x = anchorX - (boxWidth / 2);
-                } else {
-                    target = anchorY - distributionBoxTop;
-                    x = anchorX - distance - boxWidth;
-                }
-
-                if (isHeader) {
-                    x = clamp(x, boundaries.left, boundaries.right - boxWidth);
-                } else if (x < boundaries.left) {
-                    // Align label to the right side if overflow left.
-                    x = anchorX + distance; 
-                } else if (boundaries.right < x + boxWidth) {
-                    // Limit label to plot area.
-                    x = boundaries.right - boxWidth;
-                }
-
-                const box: Highcharts.Dictionary<any> = {
-                    target,
-                    rank: isHeader ? 1 : 0,
-                    size: bBox.height + 1,
-                    point: point as any,
-                    x,
-                    tt,
+                const size = bBox.height + 1;
+                const boxPosition = positioner ? positioner.call(
+                    tooltip,
+                    boxWidth,
+                    size,
+                    point as any
+                ) : defaultPositioner(
                     anchorX,
-                    anchorY
-                };
+                    anchorY,
+                    isHeader,
+                    bBox
+                );
 
-                if (positioner) {
-                    const boxPosition = positioner.call(
-                        tooltip,
-                        boxWidth,
-                        box.size,
-                        box.point
-                    );
-
-                    box.x = boxPosition.x;
-                    box.align = 0; // 0-align to the top, 1-align to the bottom
-                    box.target = boxPosition.y;
-                    box.rank = pick((boxPosition as any).rank, box.rank);
-                }
-                boxes.push(box);
+                boxes.push({
+                    // 0-align to the top, 1-align to the bottom
+                    align: positioner ? 0 : void 0,
+                    anchorX,
+                    anchorY,
+                    point: point as any,
+                    rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
+                    size,
+                    target: boxPosition.y,
+                    tt,
+                    x: boxPosition.x
+                });
             }
         });
 
