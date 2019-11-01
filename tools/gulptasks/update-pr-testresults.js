@@ -176,13 +176,12 @@ function resolveGitFileStatus(changeCharacter) {
 /**
  * Retrieves changes from samples/ folder and returns a markdown
  * template that lists the changed files (compared with master).
- * @param {string} folder to look for changes in.
  * @return {string} markdown template with the changed files.
  */
-function createChangedDirFilesTemplate(folder) {
+function createTemplateForChangeSamples() {
     let gitChangedFiles = getFilesChanged();
-    logLib.message(`Changed files:\n ${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && line.includes(folder));
+    logLib.message(`Changed files:\n${gitChangedFiles}`);
+    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
@@ -283,7 +282,7 @@ async function commentOnPR() {
         `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff | Images |\n| --- | --- | --- |\n` +
             `${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' | ' + buildImgMarkdownLinks(diff[0], pr) + ' |').join('\n')}\n`;
 
-    const changedSamplesTemplate = createChangedDirFilesTemplate('samples/');
+    const changedSamplesTemplate = createTemplateForChangeSamples();
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
     const { containsText = DEFAULT_COMMENT_MATCH } = argv;
