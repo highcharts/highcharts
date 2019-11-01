@@ -815,6 +815,18 @@ H.merge = function () {
     return ret;
 };
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value, min, max) {
+    return value > min ? value < max ? value : max : min;
+}
+/**
  * Shortcut for parseInt
  *
  * @private
@@ -2508,6 +2520,7 @@ var utils = {
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
+    clamp: clamp,
     correctFloat: correctFloat,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,

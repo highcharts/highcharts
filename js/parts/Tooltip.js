@@ -26,7 +26,7 @@ var __read = (this && this.__read) || function (o, n) {
 };
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -843,9 +843,6 @@ H.Tooltip.prototype = {
     renderSplit: function (labels, points) {
         var tooltip = this;
         var _a = tooltip.chart, chartWidth = _a.chartWidth, chartHeight = _a.chartHeight, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _b = _a.scrollablePixelsX, scrollablePixelsX = _b === void 0 ? 0 : _b, _c = _a.scrollablePixelsY, scrollablePixelsY = _c === void 0 ? 0 : _c, _d = _a.scrollingContainer, _e = _d === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _d, scrollLeft = _e.scrollLeft, scrollTop = _e.scrollTop, styledMode = _a.styledMode, _f = __read(_a.xAxis, 1), opposite = _f[0].opposite, _g = tooltip.distance, distance = _g === void 0 ? 16 : _g, options = tooltip.options, positioner = tooltip.options.positioner;
-        var clamp = function (value, min, max) {
-            return value > min ? value < max ? value : max : min;
-        };
         var boundaries = {
             left: scrollablePixelsX ? plotLeft : 0,
             right: scrollablePixelsX ?
@@ -858,7 +855,15 @@ H.Tooltip.prototype = {
         var headerTop = Boolean(opposite);
         var distributionBoxTop = plotTop;
         var headerHeight = 0;
-        // Calculate the x and y position for the anchor
+        /**
+         * Calculates the anchor position for the tooltip
+         *
+         * @private
+         * Calculate the x and y position for the anchor
+         * @param {Highcharts.Point & { isHeader?: boolean }} point
+         *  The point related to the tooltip
+         * @return {[number, number]} Returns the anchor's x and y position
+         */
         function getAnchor(point) {
             var isHeader = point.isHeader, _a = point.plotX, plotX = _a === void 0 ? 0 : _a, _b = point.plotY, plotY = _b === void 0 ? 0 : _b, series = point.series;
             var anchorX;
@@ -872,17 +877,26 @@ H.Tooltip.prototype = {
             else {
                 var xAxis = series.xAxis, yAxis = series.yAxis;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
-                    - scrollLeft;
+                anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len) - scrollLeft;
                 // Set anchorY to plotY. Limit to within yAxis.
-                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
-                    - scrollTop;
+                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len) - scrollTop;
             }
             // Limit values to plot area
             anchorX = clamp(anchorX, boundaries.left, boundaries.right);
             anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
             return [anchorX, anchorY];
         }
+        /**
+         * Calculates the position of the tooltip
+         *
+         * @private
+         * @param {number} anchorX The tooltip anchor x position
+         * @param {number} anchorY The tooltip anchor y position
+         * @param {boolean} isHeader Wether the tooltip is a header
+         * @param {Highcharts.BBoxObject} bBox The bounding box of the tooltip
+         * @return {Highcharts.PositionObject} Returns the tooltip x and y
+         * position
+         */
         function defaultPositioner(anchorX, anchorY, isHeader, bBox) {
             var boxWidth = bBox.width;
             var y;
@@ -907,6 +921,17 @@ H.Tooltip.prototype = {
             }
             return { x: x, y: y };
         }
+        /**
+         * Updates the attributes and styling of the tooltip. Creates a new
+         * tooltip if it does not exists.
+         *
+         * @private
+         * @param {Highcharts.Tooltip|undefined} tooltip The tooltip to update
+         * @param {Highcharts.Point & { isHeader?: boolean }} point
+         *  The point related to the tooltip
+         * @param {boolean|string} str The label for the tooltip
+         * @return {Highcharts.SVGElement} Returns the updated tooltip
+         */
         function updateTooltip(tooltip, point, str) {
             var tt = tooltip;
             var isHeader = point.isHeader, series = point.series;
