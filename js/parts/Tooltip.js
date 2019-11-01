@@ -912,6 +912,44 @@ H.Tooltip.prototype = {
             }
             return { x: x, y: y };
         }
+        function updateTooltip(tooltip, point, str) {
+            var tt = tooltip;
+            var isHeader = point.isHeader, series = point.series;
+            var colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none');
+            if (!tt) {
+                var attribs = {
+                    padding: options.padding,
+                    r: options.borderRadius
+                };
+                if (!styledMode) {
+                    attribs.fill = options.backgroundColor;
+                    attribs['stroke-width'] = options.borderWidth;
+                }
+                tt = ren
+                    .label(null, null, null, (options[isHeader ? 'headerShape' : 'shape']) ||
+                    'callout', null, null, options.useHTML)
+                    .addClass(isHeader ? 'highcharts-tooltip-header ' : '' +
+                    'highcharts-tooltip-box ' +
+                    colorClass)
+                    .attr(attribs)
+                    .add(tooltipLabel);
+            }
+            tt.isActive = true;
+            tt.attr({
+                text: str
+            });
+            if (!styledMode) {
+                tt.css(options.style)
+                    .shadow(options.shadow)
+                    .attr({
+                    stroke: (options.borderColor ||
+                        point.color ||
+                        series.color ||
+                        '${palette.neutralColor80}')
+                });
+            }
+            return tt;
+        }
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (str, i) {
             if (str !== false && str !== '') {
@@ -922,44 +960,10 @@ H.Tooltip.prototype = {
                     plotX: points[0].plotX,
                     plotY: plotHeight
                 };
-                var series = point.series || {};
-                var owner = point.series || tooltip;
-                var colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none');
                 var isHeader = point.isHeader;
                 // Store the tooltip referance on the series
-                var tt = owner.tt;
-                if (!tt) {
-                    var attribs = {
-                        padding: options.padding,
-                        r: options.borderRadius
-                    };
-                    if (!styledMode) {
-                        attribs.fill = options.backgroundColor;
-                        attribs['stroke-width'] = options.borderWidth;
-                    }
-                    owner.tt = tt = ren
-                        .label(null, null, null, (options[isHeader ? 'headerShape' : 'shape']) ||
-                        'callout', null, null, options.useHTML)
-                        .addClass(isHeader ? 'highcharts-tooltip-header ' : '' +
-                        'highcharts-tooltip-box ' +
-                        colorClass)
-                        .attr(attribs)
-                        .add(tooltipLabel);
-                }
-                tt.isActive = true;
-                tt.attr({
-                    text: str
-                });
-                if (!styledMode) {
-                    tt.css(options.style)
-                        .shadow(options.shadow)
-                        .attr({
-                        stroke: (options.borderColor ||
-                            point.color ||
-                            series.color ||
-                            '${palette.neutralColor80}')
-                    });
-                }
+                var owner = isHeader ? tooltip : point.series;
+                var tt = owner.tt = updateTooltip(owner.tt, point, str);
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 var bBox = tt.getBBox();

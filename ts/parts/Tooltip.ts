@@ -1302,6 +1302,67 @@ H.Tooltip.prototype = {
             return { x, y };
         }
 
+        function updateTooltip(
+            tooltip: (Highcharts.SVGElement|undefined),
+            point: (Highcharts.Point & { isHeader?: boolean }),
+            str: (boolean|string)
+        ): Highcharts.SVGElement {
+            let tt = tooltip;
+            const { isHeader, series } = point;
+            const colorClass = 'highcharts-color-' + pick(
+                point.colorIndex, series.colorIndex, 'none'
+            );
+            if (!tt) {
+
+                const attribs: Highcharts.SVGAttributes = {
+                    padding: options.padding,
+                    r: options.borderRadius
+                };
+
+                if (!styledMode) {
+                    attribs.fill = options.backgroundColor;
+                    attribs['stroke-width'] = options.borderWidth;
+                }
+
+                tt = ren
+                    .label(
+                        null as any,
+                        null as any,
+                        null as any,
+                        (options[isHeader ? 'headerShape' : 'shape']) ||
+                        'callout',
+                        null as any,
+                        null as any,
+                        options.useHTML
+                    )
+                    .addClass(
+                        isHeader ? 'highcharts-tooltip-header ' : '' +
+                        'highcharts-tooltip-box ' +
+                        colorClass
+                    )
+                    .attr(attribs)
+                    .add(tooltipLabel);
+            }
+
+            tt.isActive = true;
+            tt.attr({
+                text: str
+            });
+            if (!styledMode) {
+                tt.css(options.style as any)
+                    .shadow(options.shadow)
+                    .attr({
+                        stroke: (
+                            options.borderColor ||
+                            point.color ||
+                            series.color ||
+                            '${palette.neutralColor80}'
+                        )
+                    });
+            }
+            return tt;
+        }
+
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (
             str: (boolean|string),
@@ -1315,64 +1376,12 @@ H.Tooltip.prototype = {
                     plotX: points[0].plotX,
                     plotY: plotHeight
                 };
-                const series = point.series || {};
-                const owner = point.series || tooltip;
-                const colorClass = 'highcharts-color-' + pick(
-                    point.colorIndex, series.colorIndex, 'none'
-                );
                 const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip referance on the series
-                let tt = owner.tt;
-                if (!tt) {
-
-                    const attribs: Highcharts.SVGAttributes = {
-                        padding: options.padding,
-                        r: options.borderRadius
-                    };
-
-                    if (!styledMode) {
-                        attribs.fill = options.backgroundColor;
-                        attribs['stroke-width'] = options.borderWidth;
-                    }
-
-                    owner.tt = tt = ren
-                        .label(
-                            null as any,
-                            null as any,
-                            null as any,
-                            (options[isHeader ? 'headerShape' : 'shape']) ||
-                            'callout',
-                            null as any,
-                            null as any,
-                            options.useHTML
-                        )
-                        .addClass(
-                            isHeader ? 'highcharts-tooltip-header ' : '' +
-                            'highcharts-tooltip-box ' +
-                            colorClass
-                        )
-                        .attr(attribs)
-                        .add(tooltipLabel);
-                }
-
-                tt.isActive = true;
-                tt.attr({
-                    text: str
-                });
-                if (!styledMode) {
-                    tt.css(options.style as any)
-                        .shadow(options.shadow)
-                        .attr({
-                            stroke: (
-                                options.borderColor ||
-                                point.color ||
-                                series.color ||
-                                '${palette.neutralColor80}'
-                            )
-                        });
-                }
-
+                const owner = isHeader ? tooltip : point.series;
+                const tt = owner.tt = updateTooltip(owner.tt, point, str);
+                
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 const bBox = tt.getBBox();
