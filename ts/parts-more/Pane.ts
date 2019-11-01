@@ -378,7 +378,7 @@ extend(Pane.prototype, {
         /**
          * The background color or gradient for the pane.
          *
-         * @type    {Highcharts.GradientColorObject}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
          * @since   2.3.0
          * @product highcharts
