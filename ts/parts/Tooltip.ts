@@ -1370,7 +1370,7 @@ H.Tooltip.prototype = {
                 const box: Highcharts.Dictionary<any> = {
                     target,
                     rank: isHeader ? 1 : 0,
-                    size: tt.getBBox().height + 1,
+                    size: bBox.height + 1,
                     point: point as any,
                     x,
                     tt,
@@ -1381,7 +1381,7 @@ H.Tooltip.prototype = {
                 if (positioner) {
                     const boxPosition = positioner.call(
                         tooltip,
-                        box.tt.getBBox().width,
+                        boxWidth,
                         box.size,
                         box.point
                     );
