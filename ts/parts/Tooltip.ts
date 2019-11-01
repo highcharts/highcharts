@@ -1216,16 +1216,6 @@ H.Tooltip.prototype = {
         } = tooltip;
         const clamp = (value: number, min: number, max: number) =>
             value > min ? value < max ? value : max : min;
-        const clampToHorizontalPlotArea = (value: number) => clamp(
-            value,
-            plotLeft,
-            plotLeft + plotWidth - scrollablePixelsX
-        );
-        const clampToVerticalPlotArea = (value: number) => clamp(
-            value,
-            plotTop,
-            plotTop + plotHeight - scrollablePixelsY
-        );
 
         const boundaries = {
             left: scrollablePixelsX ? plotLeft : 0,
@@ -1364,8 +1354,8 @@ H.Tooltip.prototype = {
                 }
 
                 // Limit values to plot area
-                anchorX = clampToHorizontalPlotArea(anchorX);
-                anchorY = clampToVerticalPlotArea(anchorY);
+                anchorX = clamp(anchorX, boundaries.left, boundaries.right);
+                anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
 
                 if (isHeader) {
                     x = clamp(x, boundaries.left, boundaries.right - boxWidth);
