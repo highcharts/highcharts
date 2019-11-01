@@ -842,12 +842,20 @@ H.Tooltip.prototype = {
      */
     renderSplit: function (labels, points) {
         var tooltip = this;
-        var _a = tooltip.chart, chartWidth = _a.chartWidth, _b = _a.marginRight, marginRight = _b === void 0 ? 0 : _b, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _c = _a.scrollablePixelsX, scrollablePixelsX = _c === void 0 ? 0 : _c, _d = _a.scrollablePixelsY, scrollablePixelsY = _d === void 0 ? 0 : _d, _e = _a.scrollingContainer, _f = _e === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _e, scrollLeft = _f.scrollLeft, scrollTop = _f.scrollTop, styledMode = _a.styledMode, _g = __read(_a.xAxis, 1), opposite = _g[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
+        var _a = tooltip.chart, chartWidth = _a.chartWidth, chartHeight = _a.chartHeight, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _b = _a.scrollablePixelsX, scrollablePixelsX = _b === void 0 ? 0 : _b, _c = _a.scrollablePixelsY, scrollablePixelsY = _c === void 0 ? 0 : _c, _d = _a.scrollingContainer, _e = _d === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _d, scrollLeft = _e.scrollLeft, scrollTop = _e.scrollTop, styledMode = _a.styledMode, _f = __read(_a.xAxis, 1), opposite = _f[0].opposite, _g = tooltip.distance, distance = _g === void 0 ? 16 : _g, options = tooltip.options, positioner = tooltip.options.positioner;
         var clamp = function (value, min, max) {
             return value > min ? value < max ? value : max : min;
         };
         var clampToHorizontalPlotArea = function (value) { return clamp(value, plotLeft, plotLeft + plotWidth - scrollablePixelsX); };
         var clampToVerticalPlotArea = function (value) { return clamp(value, plotTop, plotTop + plotHeight - scrollablePixelsY); };
+        var boundaries = {
+            left: scrollablePixelsX ? plotLeft : 0,
+            right: scrollablePixelsX ?
+                plotLeft + plotWidth - scrollablePixelsX : chartWidth,
+            top: scrollablePixelsY ? plotTop : 0,
+            bottom: scrollablePixelsY ?
+                plotTop + plotHeight - scrollablePixelsY : chartHeight
+        };
         var tooltipLabel = tooltip.getLabel();
         var headerTop = Boolean(opposite);
         var boxes = [];
@@ -916,24 +924,6 @@ H.Tooltip.prototype = {
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
-                    x = Math.max(0, // No left overflow
-                    Math.min(plotX + plotLeft - boxWidth / 2, 
-                    // No right overflow (#5794)
-                    chartWidth +
-                        (
-                        // Scrollable plot area
-                        scrollablePixelsX ?
-                            scrollablePixelsX - marginRight :
-                            0) -
-                        boxWidth));
-                }
-                else {
-                    x = plotX + plotLeft - pick(options.distance, 16) -
-                        boxWidth;
-                }
-                // If overflow left, set a new x position
-                if (x < 0) {
-                    x = plotX + plotLeft + distance;
                 }
                 // Prepare for distribution
                 var target = void 0;
@@ -945,6 +935,7 @@ H.Tooltip.prototype = {
                         plotHeight + headerHeight;
                     // Set anchorX to plotX
                     anchorX = plotLeft + plotX - scrollLeft;
+                    x = anchorX - (boxWidth / 2);
                     // Set anchorY to center of visible plot area.
                     anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
                 }
@@ -955,6 +946,7 @@ H.Tooltip.prototype = {
                     // Set anchorX to plotX. Limit to within xAxis.
                     anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
                         - scrollLeft;
+                    x = anchorX - distance - boxWidth;
                     // Set anchorY to plotY. Limit to within yAxis.
                     anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
                         - scrollTop;
@@ -962,6 +954,17 @@ H.Tooltip.prototype = {
                 // Limit values to plot area
                 anchorX = clampToHorizontalPlotArea(anchorX);
                 anchorY = clampToVerticalPlotArea(anchorY);
+                if (isHeader) {
+                    x = clamp(x, boundaries.left, boundaries.right - boxWidth);
+                }
+                else if (x < boundaries.left) {
+                    // Align label to the right side if overflow left.
+                    x = anchorX + distance;
+                }
+                else if (boundaries.right < x + boxWidth) {
+                    // Limit label to plot area.
+                    x = boundaries.right - boxWidth;
+                }
                 var box = {
                     target: target,
                     rank: isHeader ? 1 : 0,
