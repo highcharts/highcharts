@@ -12,12 +12,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick;
 import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop, seriesType = H.seriesType;
 // eslint-disable-next-line valid-jsdoc
 /**
- * Once off, register the windbarb approximation for data grouping.This can be
+ * Once off, register the windbarb approximation for data grouping. This can be
  * called anywhere (not necessarily in the translate function), but must happen
  * after the data grouping module is loaded and before the wind barb series uses
  * it.
@@ -42,7 +42,7 @@ function registerApproximation() {
         };
     }
 }
-registerApproximation(); // @todo called immediately anway
+registerApproximation();
 /**
  * @private
  * @class
@@ -167,7 +167,7 @@ seriesType('windbarb', 'column'
         24.5, 28.5, 32.7],
     trackerGroups: ['markerGroup'],
     init: function (chart, options) {
-        // registerApproximation(); // @todo not necessary
+        registerApproximation();
         H.Series.prototype.init.call(this, chart, options);
     },
     // Get presentational attributes.
@@ -306,7 +306,7 @@ seriesType('windbarb', 'column'
         else {
             this.markerGroup.animate({
                 opacity: 1
-            }, H.animObject(this.options.animation));
+            }, animObject(this.options.animation));
             this.animate = null;
         }
     },

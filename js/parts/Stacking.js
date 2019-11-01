@@ -295,6 +295,7 @@ Axis.prototype.buildStacks = function () {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
+        H.fireEvent(this, 'afterBuildStacks');
     }
 };
 /**

@@ -42,6 +42,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-options',
     'jsdoc-server',
     'jsdoc-watch',
+    'jsdoc-websearch',
     'lint',
     'lint-dts',
     'lint-js',

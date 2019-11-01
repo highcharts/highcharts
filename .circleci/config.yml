@@ -15,6 +15,13 @@ load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
 
+load_source_from_cache: &load_source_from_cache
+  - restore_cache:
+      keys:
+        - source-v1-{{ .Branch }}-{{ .Revision }}
+        - source-v1-{{ .Branch }}-
+        - source-v1-
+
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
       fingerprints:
@@ -52,32 +59,37 @@ commands:
             fi
 
 jobs:
-  checkout_code:
+  checkout_and_install:
     <<: *defaults
     steps:
       # rather than using the checkout keyword we checkout via commandline
       # to avoid a huge and slow checkout depth
      - <<: *add_gh_keys
      - <<: *add_to_ssh_config
-     - run:
-         name: Clone GitHub highcharts repository
-         command: |
-           if [ -n "$CIRCLE_TAG" ]; then
-            git clone --branch "${CIRCLE_TAG}" ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           else
-            git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           fi
+     - << : *load_source_from_cache
+     # Temporary workaround for https://discuss.circleci.com/t/22437
+     - run: |
+        if [ -n "$CIRCLE_TAG" ]
+        then
+          git fetch --force origin "refs/tags/${CIRCLE_TAG}:refs/tags/${CIRCLE_TAG}"
+        fi
+     - checkout
+     - save_cache:
+         key: source-v1-{{ .Branch }}-{{ .Revision }}
+         paths:
+           - ".git"
+     - run: node --version && npm --version
+     - restore_cache:
+         keys:
+           - v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+           - v1-npm-deps-{{ .Branch }}
+     - run: npm install --quiet
+     - save_cache:
+         paths:
+           - /home/circleci/repo/highcharts/node_modules
+         key: v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+     - run: npm run gulp scripts
      - <<: *persist_workspace
-
-  install_dependencies:
-    <<: *defaults
-    steps:
-      # Restore checked out code and built dependencies.
-      - << : *load_workspace
-      - run: node --version && npm --version
-      - run: npm install --quiet
-      - run: npm run gulp scripts # needed for running the tests
-      - <<: *persist_workspace
 
   generate_ts_declarations:
     <<: *defaults
@@ -152,15 +164,13 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
       - run: sudo apt-get install -y rsync
-      - run: git fetch origin master:master && git checkout master && npm i && npx gulp scripts
+      - run: git checkout -B master origin/master && git log --oneline -5 && npm i && npx gulp scripts
       - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: git checkout ${CIRCLE_BRANCH} && npm i && npx gulp scripts
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
@@ -283,9 +293,6 @@ jobs:
           name: install pre dependencies
           command: sudo apt-get install cpio
       - run:
-          name: Fetch full highcharts/master branch
-          command: git fetch --unshallow
-      - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
       - run:
@@ -324,19 +331,13 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code:
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-      - install_dependencies:
-          requires:
-            - checkout_code
+      - checkout_and_install:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - lint:
           requires:
-            - install_dependencies
+            - checkout_and_install
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
@@ -348,14 +349,14 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
       - visual_comparison_with_master:
           requires:
-            - install_dependencies
+            - lint
           filters:
             branches:
               ignore: master
           context: highcharts-staging
       - generate_release_reference_images:
           requires:
-            - install_dependencies
+            - lint
           filters:
             branches:
               ignore: /.*/
@@ -367,16 +368,16 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires:
-            - install_dependencies
+            - lint
       - test_browsers:
           name: "test-Win.IE8"
           requires:
-            - install_dependencies
+            - lint
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - install_dependencies
+            - "test-Win.IE8"
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
@@ -388,7 +389,7 @@ workflows:
           name: "test-Win.Chrome"
           browsercount: 2
           requires:
-            - "test-Win.IE8"
+            - "test-Mac.Firefox"
           browsers: "Win.Chrome"
 
   nightly:
@@ -401,19 +402,16 @@ workflows:
                 - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
-      - checkout_code
-      - install_dependencies:
-          requires:
-            - checkout_code
+      - checkout_and_install
       - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
           requires:
-            - install_dependencies
+            - checkout_and_install
           context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
           requires:
-            - install_dependencies
+            - checkout_and_install
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Win.Chrome"
@@ -433,7 +431,7 @@ workflows:
           browsers: "Win.IE8 --oldie"
       - build_dist:
           requires:
-            - install_dependencies
+            - checkout_and_install
             - "test-Mac.Firefox"
             - "test-Mac.Safari"
             - "test-Win.IE8"

@@ -1,6 +1,8 @@
 ---
- name: Gantt Demo
- js_wrap: b
- authors:
-   - Øystein Moseng
+name: Gantt Demo
+js_wrap: b
+authors:
+  - Øystein Moseng
+tags: []
+categories: []
 ...

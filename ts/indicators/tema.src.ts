@@ -39,11 +39,11 @@ declare global {
                 tripledPeriod: number,
                 EMAlevels: EMAIndicatorLevelsObject,
                 i: number
-            ): [number, number];
+            ): ([number, (number|null)]|undefined);
             public getValues(
                 series: TEMAIndicatorLinkedParentSeries,
                 params: TEMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (boolean|IndicatorNullableValuesObject);
             public init(): void;
             public options: TEMAIndicatorOptions;
             public pointClass: typeof TEMAIndicatorPoint;
@@ -174,7 +174,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
             this: Highcharts.TEMAIndicator,
             series: Highcharts.TEMAIndicatorLinkedParentSeries,
             params: Highcharts.TEMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (boolean|Highcharts.IndicatorNullableValuesObject) {
             var period: number = (params.period as any),
                 doubledPeriod = 2 * period,
                 tripledPeriod = 3 * period,
@@ -184,9 +184,9 @@ H.seriesType<Highcharts.TEMAIndicator>(
                 index = -1,
                 accumulatePeriodPoints = 0,
                 SMA = 0,
-                TEMA: Array<[number, number]> = [],
-                xDataTema: Array<number> = [],
-                yDataTema: Array<number> = [],
+                TEMA: Array<[number, (number|null)]> = [],
+                xDataTema: Array<(number|null)> = [],
+                yDataTema: Array<(number|null)> = [],
                 // EMA of previous point
                 prevEMA: (number|undefined),
                 prevEMAlevel2: (number|undefined),
@@ -194,7 +194,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
                 EMAvalues: Array<number> = [],
                 EMAlevel2values: Array<number> = [],
                 i: number,
-                TEMAPoint: [number, number],
+                TEMAPoint: ([number, (number|null)]|undefined),
                 // This object contains all EMA EMAlevels calculated like below
                 // EMA = level1
                 // EMA(EMA) = level2,

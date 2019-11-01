@@ -645,6 +645,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     arrayMin,
     defined,
@@ -665,7 +666,6 @@ import './Point.js';
 import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
-    animObject = H.animObject,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -2494,8 +2494,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @since     2.3
          * @extends   tooltip
          * @excluding animation, backgroundColor, borderColor, borderRadius,
-         *            borderWidth, crosshairs, enabled, formatter, positioner,
-         *            shadow, shape, shared, snap, style, useHTML
+         *            borderWidth, className, crosshairs, enabled, formatter,
+         *            headerShape, hideDelay, outside, padding, positioner,
+         *            shadow, shape, shared, snap, split, style, useHTML
          * @apioption plotOptions.series.tooltip
          */
 

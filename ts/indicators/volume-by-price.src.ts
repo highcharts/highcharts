@@ -122,10 +122,13 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax,
-    arrayMin = U.arrayMin,
-    extend = U.extend,
-    isArray = U.isArray;
+const {
+    animObject,
+    arrayMax,
+    arrayMin,
+    extend,
+    isArray
+} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -367,7 +370,7 @@ seriesType<Highcharts.VBPIndicator>(
                 attr.translateX = series.yAxis.pos;
                 (series.group as any).animate(
                     attr,
-                    extend(H.animObject(series.options.animation), {
+                    extend(animObject(series.options.animation), {
                         step: function (val: any, fx: any): void {
                             (series.group as any).attr({
                                 scaleX: Math.max(0.001, fx.pos)

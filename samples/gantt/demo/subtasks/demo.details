@@ -1,6 +1,9 @@
 ---
- name: Gantt Demo
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Subtasks
+js_wrap: b
+authors:
+  - Lars Cabrera
+tags: []
+categories:
+  - Highcharts Gantt
 ...
