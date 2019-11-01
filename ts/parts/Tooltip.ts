@@ -14,6 +14,7 @@ import H from './Globals.js';
 
 import U from './Utilities.js';
 const {
+    clamp,
     defined,
     discardElement,
     extend,
@@ -1214,8 +1215,6 @@ H.Tooltip.prototype = {
                 positioner
             }
         } = tooltip;
-        const clamp = (value: number, min: number, max: number) =>
-            value > min ? value < max ? value : max : min;
 
         const boundaries = {
             left: scrollablePixelsX ? plotLeft : 0,
@@ -1224,7 +1223,7 @@ H.Tooltip.prototype = {
             top: scrollablePixelsY ? plotTop : 0,
             bottom: scrollablePixelsY ?
                 plotTop + plotHeight - scrollablePixelsY : chartHeight
-        }
+        };
 
         const tooltipLabel = tooltip.getLabel();
         const headerTop = Boolean(opposite);
@@ -1232,7 +1231,15 @@ H.Tooltip.prototype = {
         let distributionBoxTop = plotTop;
         let headerHeight = 0;
 
-        // Calculate the x and y position for the anchor
+        /**
+         * Calculates the anchor position for the tooltip
+         *
+         * @private
+         * Calculate the x and y position for the anchor
+         * @param {Highcharts.Point & { isHeader?: boolean }} point
+         *  The point related to the tooltip
+         * @return {[number, number]} Returns the anchor's x and y position
+         */
         function getAnchor(
             point: Highcharts.Point & { isHeader?: boolean }
         ): [number, number] {
@@ -1243,17 +1250,14 @@ H.Tooltip.prototype = {
             if (isHeader) {
                 // Set anchorX to plotX
                 anchorX = plotLeft + plotX - scrollLeft;
-
                 // Set anchorY to center of visible plot area.
                 anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len)
-                    - scrollLeft;
+                anchorX = xAxis.pos + clamp(plotX, 0, xAxis.len) - scrollLeft;
                 // Set anchorY to plotY. Limit to within yAxis.
-                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len)
-                    - scrollTop;
+                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len) - scrollTop;
             }
 
             // Limit values to plot area
@@ -1262,6 +1266,17 @@ H.Tooltip.prototype = {
             return [anchorX, anchorY];
         }
 
+        /**
+         * Calculates the position of the tooltip
+         *
+         * @private
+         * @param {number} anchorX The tooltip anchor x position
+         * @param {number} anchorY The tooltip anchor y position
+         * @param {boolean} isHeader Wether the tooltip is a header
+         * @param {Highcharts.BBoxObject} bBox The bounding box of the tooltip
+         * @return {Highcharts.PositionObject} Returns the tooltip x and y
+         * position
+         */
         function defaultPositioner(
             anchorX: number,
             anchorY: number,
@@ -1287,7 +1302,7 @@ H.Tooltip.prototype = {
                 x = anchorX - distance - boxWidth;
                 if (x < boundaries.left) {
                     // Align label to the right side if overflow left.
-                    x = anchorX + distance; 
+                    x = anchorX + distance;
                 } else if (boundaries.right < x + boxWidth) {
                     // Limit label to plot area.
                     x = boundaries.right - boxWidth;
@@ -1296,6 +1311,17 @@ H.Tooltip.prototype = {
             return { x, y };
         }
 
+        /**
+         * Updates the attributes and styling of the tooltip. Creates a new
+         * tooltip if it does not exists.
+         *
+         * @private
+         * @param {Highcharts.Tooltip|undefined} tooltip The tooltip to update
+         * @param {Highcharts.Point & { isHeader?: boolean }} point
+         *  The point related to the tooltip
+         * @param {boolean|string} str The label for the tooltip
+         * @return {Highcharts.SVGElement} Returns the updated tooltip
+         */
         function updateTooltip(
             tooltip: (Highcharts.SVGElement|undefined),
             point: (Highcharts.Point & { isHeader?: boolean }),
@@ -1381,7 +1407,7 @@ H.Tooltip.prototype = {
                 // Store the tooltip referance on the series
                 const owner = isHeader ? tooltip : point.series;
                 const tt = owner.tt = updateTooltip(owner.tt, point, str);
-                
+
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 const bBox = tt.getBBox();
