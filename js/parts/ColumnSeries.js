@@ -757,7 +757,7 @@ seriesType('column', 'line',
         var series = this, chart = this.chart, options = series.options, renderer = chart.renderer, animationLimit = options.animationLimit || 250, shapeArgs;
         // draw the columns
         series.points.forEach(function (point) {
-            var plotY = point.plotY, graphic = point.graphic, verb = graphic && chart.pointCount < animationLimit ?
+            var plotY = point.plotY, graphic = point.graphic, hasGraphic = !!graphic, verb = graphic && chart.pointCount < animationLimit ?
                 'animate' : 'attr';
             if (isNumber(plotY) && point.y !== null) {
                 shapeArgs = point.shapeArgs;
@@ -766,13 +766,29 @@ seriesType('column', 'line',
                 if (graphic && point.hasNewShapeType()) {
                     graphic = graphic.destroy();
                 }
-                if (graphic) { // update
-                    graphic[verb](merge(shapeArgs));
+                // Set starting position for point sliding animation.
+                if (series.enabledDataSorting) {
+                    point.startXPos = series.xAxis.reversed ?
+                        -(shapeArgs ? shapeArgs.width : 0) :
+                        series.xAxis.width;
                 }
-                else {
+                if (!graphic) {
                     point.graphic = graphic =
                         renderer[point.shapeType](shapeArgs)
                             .add(point.group || series.group);
+                    if (graphic &&
+                        series.enabledDataSorting &&
+                        chart.hasRendered &&
+                        chart.pointCount < animationLimit) {
+                        graphic.attr({
+                            x: point.startXPos
+                        });
+                        hasGraphic = true;
+                        verb = 'animate';
+                    }
+                }
+                if (graphic && hasGraphic) { // update
+                    graphic[verb](merge(shapeArgs));
                 }
                 // Border radius is not stylable (#6900)
                 if (options.borderRadius) {

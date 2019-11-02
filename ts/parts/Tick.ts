@@ -248,7 +248,8 @@ H.Tick.prototype = {
                     pos
             ),
             label = tick.label,
-            animateLabels = labelOptions.animate,
+            animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
+                axis.tickInterval === 1,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
             dateTimeLabelFormats,

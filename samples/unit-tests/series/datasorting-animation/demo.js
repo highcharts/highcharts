@@ -77,15 +77,17 @@ QUnit.test('Data sorting animation', function (assert) {
             'Time 0 - point has not started moving'
         );
         // Label
-        assert.strictEqual(
+        assert.close(
             getPhysicalXPos(label, labelWidth),
             initialLabelPos,
+            2,
             'Time 0 - label has not started moving'
         );
         // dataLabel
-        assert.strictEqual(
+        assert.close(
             dataLabel.translateX,
             initialDataLabelsPos,
+            2,
             'Time 0 - label has not started moving'
         );
 
@@ -131,7 +133,7 @@ QUnit.test('Data sorting animation', function (assert) {
             assert.close(
                 Math.round(dataLabel.translateX),
                 Math.round(getCalculatedXPos(pointA) - dataLabel.width / 2),
-                1,
+                2,
                 'Time 600 - label has landed'
             );
 
@@ -225,7 +227,7 @@ QUnit.test('Data sorting animation - removing and adding points', function (asse
         assert.close(
             labelCInitPos,
             labelC.getBBox(true).y,
-            1,
+            2,
             'Time 0 - label has not started moving'
         );
         // Old datalabel
@@ -238,7 +240,7 @@ QUnit.test('Data sorting animation - removing and adding points', function (asse
         assert.close(
             pointD.graphic.getBBox().x,
             0,
-            1,
+            2,
             'Time 0 - new point should be placed at chart edge'
         );
         // New label
@@ -248,9 +250,10 @@ QUnit.test('Data sorting animation - removing and adding points', function (asse
             'Time 0 - new label has been created below the chart'
         );
         // New datalabel
-        assert.strictEqual(
-            dataLabelDInitPos > chart.chartHeight,
-            true,
+        assert.close(
+            dataLabelDInitPos,
+            xAxis.height - dataLabelD.height / 2,
+            2,
             'Time 0 - datalabel has been created below the chart'
         );
 

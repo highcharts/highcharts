@@ -174,7 +174,6 @@ declare global {
             ): SVGElement;
             public pointAttribs(point?: Point, state?: string): SVGAttributes;
             public pointPlacementToXValue(): number;
-            public animateNewPoints(): void;
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
             public redrawPoints(): void;
@@ -245,7 +244,6 @@ declare global {
             low?: number;
             negative?: boolean;
             options: PointOptionsObject;
-            originalIndex: number;
             plotX?: number;
             plotY?: number;
             stackTotal?: number;
@@ -1203,7 +1201,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
 
         /**
-         * Enable or disable data sorting for the series.
+         * Enable or disable data sorting for the series. Use [xAxis.reversed](
+         * #xAxis.reversed) to change the sorting order.
          *
          * @sample {highcharts} highcharts/datasorting/animation/
          *         Data sorting in scatter-3d
@@ -1218,7 +1217,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
 
         /**
-         * Whether to allow matching points by name in a update. If this option
+         * Whether to allow matching points by name in an update. If this option
          * is disabled, points will be matched by order.
          *
          * @sample {highcharts} highcharts/datasorting/match-by-name/
@@ -3603,7 +3602,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             // If we did not find keys (ids or x-values), and the length is the
             // same, update one-to-one
-            } else if (equalLength && !options.dataSorting) {
+            } else if (equalLength && (!dataSorting || !dataSorting.enabled)) {
                 data.forEach(function (
                     point: Highcharts.PointOptionsType,
                     i: number
@@ -4974,13 +4973,15 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                             (point.selected && 'select') as any
                         );
 
-                        if (graphic) { // update
-                            // Since the marker group isn't clipped, each
-                            // individual marker must be toggled
-                            graphic[isInside ? 'show' : 'hide'](isInside)
-                                .animate(markerAttribs);
+                        // Set starting position for point sliding animation.
+                        if (series.enabledDataSorting) {
+                            point.startXPos = xAxis.reversed ?
+                                -markerAttribs.width :
+                                xAxis.width;
+                        }
 
-                        } else if (
+                        if (
+                            !graphic &&
                             isInside &&
                             (markerAttribs.width > 0 || point.hasImage)
                         ) {
@@ -5010,6 +5011,24 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                                         seriesMarkerOptions
                                 )
                                 .add(markerGroup);
+                            // Sliding animation for new points
+                            if (
+                                series.enabledDataSorting &&
+                                chart.hasRendered
+                            ) {
+                                graphic.attr({
+                                    x: point.startXPos
+                                });
+                                verb = 'animate';
+                            }
+                        }
+
+                        if (graphic && verb === 'animate') { // update
+                            // Since the marker group isn't clipped, each
+                            // individual marker must be toggled
+                            graphic[isInside ? 'show' : 'hide'](isInside)
+                                .animate(markerAttribs);
+
                         }
 
                         // Presentational attributes
@@ -5990,14 +6009,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // Draw the points
             if (series.visible) {
                 series.drawPoints();
-
-                if (
-                    series.group &&
-                    series.enabledDataSorting &&
-                    series.xAxis
-                ) {
-                    series.animateNewPoints();
-                }
             }
 
             /* series.points.forEach(function (point) {
@@ -6060,56 +6071,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             series.hasRendered = true;
 
             fireEvent(series, 'afterRender');
-        },
-
-        /**
-         * Apply a sliding animation for new points with dataSorting.
-         *
-         * @private
-         * @function Highcharts.Series#animateNewPoints
-         * @return {void}
-         */
-        animateNewPoints: function (this: Highcharts.Series): void {
-            var series = this,
-                reversed = series.xAxis.reversed,
-                chart = series.chart,
-                inverted = chart.inverted,
-                startPos: number,
-                targetPos,
-                points = series.points;
-
-            startPos = inverted ? series.yAxis.width : series.xAxis.width;
-            startPos = reversed ? 0 : startPos;
-
-            points.forEach(function (point: Highcharts.Point): void {
-                if ((point.shapeArgs || point.marker) && reversed) {
-                    point.startXPos = -(point as any)[point.shapeArgs ?
-                        'shapeArgs' : 'marker'
-                    ].width;
-
-                } else {
-                    point.startXPos = startPos;
-                }
-
-                if (point.isNew) {
-                    if (!point.shapeArgs) {
-                        targetPos = series.markerAttribs(point).x;
-
-                    } else {
-                        targetPos = point.shapeArgs.x;
-                    }
-
-                    if (point.graphic) {
-                        point.graphic.attr({
-                            x: point.startXPos
-                        }).animate({
-                            x: targetPos
-                        });
-                    }
-
-                    point.isNew = false;
-                }
-            });
         },
 
         /**

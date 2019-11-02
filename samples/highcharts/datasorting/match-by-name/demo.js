@@ -60,13 +60,6 @@ var chart = Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' millions'
     },
-    plotOptions: {
-        bar: {
-            dataLabels: {
-                enabled: true
-            }
-        }
-    },
     legend: {
         layout: 'vertical',
         align: 'right',
@@ -87,21 +80,31 @@ var chart = Highcharts.chart('container', {
             enabled: true,
             matchByName: true
         },
+        dataLabels: {
+            enabled: true
+        },
         name: 'Year 1800',
         data: getYear1800()
     }]
 });
 
-setTimeout(function () {
+document.getElementById('y1800').addEventListener('click', function () {
+    chart.series[0].update({
+        name: 'Year 1800',
+        data: getYear1800()
+    });
+});
+
+document.getElementById('y1900').addEventListener('click', function () {
     chart.series[0].update({
         name: 'Year 1900',
         data: getYear1900()
     });
-}, 2000);
+});
 
-setTimeout(function () {
+document.getElementById('y2000').addEventListener('click', function () {
     chart.series[0].update({
         name: 'Year 2000',
         data: getYear2000()
     });
-}, 4000);
+});

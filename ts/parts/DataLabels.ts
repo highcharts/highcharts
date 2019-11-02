@@ -117,12 +117,6 @@ declare global {
                 alignTo: BBoxObject,
                 isNew?: boolean
             ): void;
-            animateDataLabel(
-                point: ColumnPoint,
-                dataLabel: SVGElement,
-                isNew: boolean|undefined,
-                isInside: boolean
-            ): void;
             drawDataLabels(): void;
             justifyDataLabel(
                 dataLabel: SVGElement,
@@ -133,6 +127,13 @@ declare global {
                 isNew?: boolean
             ): (boolean|undefined);
             placeDataLabels?(): void;
+            setDataLabelStartPos(
+                point: ColumnPoint,
+                dataLabel: SVGElement,
+                isNew: boolean|undefined,
+                isInside: boolean,
+                alignOptions: AlignObject
+            ): void;
             verifyDataLabelOverflow?(overflow: Array<number>): boolean;
         }
         interface SeriesDataLabelPositionersObject {
@@ -1265,7 +1266,8 @@ Series.prototype.alignDataLabel = function (
     alignTo: Highcharts.BBoxObject,
     isNew?: boolean
 ): void {
-    var chart = this.chart,
+    var series = this,
+        chart = this.chart,
         inverted = this.isCartesian && chart.inverted,
         enabledDataSorting = this.enabledDataSorting,
         plotX = pick(
@@ -1303,7 +1305,18 @@ Series.prototype.alignDataLabel = function (
         justify = pick(
             options.overflow,
             (enabledDataSorting ? 'none' : 'justify')
-        ) === 'justify';
+        ) === 'justify',
+        setStartPos = function (alignOptions: Highcharts.AlignObject): void {
+            if (enabledDataSorting && series.xAxis) {
+                series.setDataLabelStartPos(
+                    point as Highcharts.ColumnPoint,
+                    dataLabel,
+                    isNew,
+                    isInsidePlot,
+                    alignOptions
+                );
+            }
+        };
 
     if (visible) {
 
@@ -1347,6 +1360,7 @@ Series.prototype.alignDataLabel = function (
                     alignTo.height
                 )
             };
+            setStartPos(alignAttr); // data sorting
             dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
                 .attr({ // #3003
                     align: align
@@ -1369,6 +1383,7 @@ Series.prototype.alignDataLabel = function (
             dataLabel.alignAttr = alignAttr;
 
         } else {
+            setStartPos(alignTo); // data sorting
             dataLabel.align(options as any, null as any, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
@@ -1411,39 +1426,33 @@ Series.prototype.alignDataLabel = function (
         }
     }
 
-    if (enabledDataSorting && this.xAxis) {
-        this.animateDataLabel(
-            point as Highcharts.ColumnPoint,
-            dataLabel,
-            isNew,
-            isInsidePlot
-        );
-
     // Show or hide based on the final aligned position
-    } else if (!visible) {
+    if (!visible && !enabledDataSorting) {
         dataLabel.hide(true);
         dataLabel.placed = false; // don't animate back in
     }
 };
 
 /**
- * Apply a sorting animation for a data label.
+ * Set starting position for data label sorting animation.
  *
  * @private
- * @function Highcharts.Series#animateDataLabel
+ * @function Highcharts.Series#setDataLabelStartPos
  * @param {Highcharts.SVGElement} dataLabel
  * @param {Highcharts.ColumnPoint} point
  * @param {boolean | undefined} [isNew]
  * @param {boolean} [isInside]
+ * @param {Highcharts.AlignObject} [alignOptions]
  *
  * @return {void}
  */
-Series.prototype.animateDataLabel = function (
+Series.prototype.setDataLabelStartPos = function (
     this: Highcharts.Series,
     point: Highcharts.ColumnPoint,
     dataLabel: Highcharts.SVGElement,
     isNew: boolean,
-    isInside: boolean
+    isInside: boolean,
+    alignOptions: Highcharts.AlignObject
 ): void {
     var chart = this.chart,
         inverted = chart.inverted,
@@ -1453,12 +1462,10 @@ Series.prototype.animateDataLabel = function (
         pointWidth = point.pointWidth,
         halfWidth = pointWidth ? pointWidth / 2 : 0,
         startXPos,
-        startYPos,
-        xPos = dataLabel.x,
-        yPos = dataLabel.y;
+        startYPos;
 
     startXPos = inverted ?
-        xPos :
+        alignOptions.x :
         (reversed ?
             -labelCenter - halfWidth :
             xAxis.width - labelCenter + halfWidth
@@ -1466,18 +1473,18 @@ Series.prototype.animateDataLabel = function (
 
     startYPos = inverted ?
         (reversed ?
-            this.yAxis.width - labelCenter + halfWidth :
+            this.yAxis.height - labelCenter + halfWidth :
             -labelCenter - halfWidth
-        ) : yPos;
+        ) : alignOptions.y;
 
     dataLabel.startXPos = startXPos;
     dataLabel.startYPos = startYPos;
-    dataLabel.placed = true;
 
+    // Save start position on first render, but do not animate
     if (!chart.hasRendered) {
         return;
     }
-
+    // We need to handle visibility in case of sorting point outside plot area
     if (!isInside) {
         dataLabel
             .attr({ opacity: 1 })
@@ -1493,12 +1500,12 @@ Series.prototype.animateDataLabel = function (
             .attr({ opacity: 0 })
             .animate({ opacity: 1 });
     }
-
+    // Set start position
     if (isNew) {
-        dataLabel
-            .attr({ x: dataLabel.startXPos, y: dataLabel.startYPos })
-            .animate({ x: xPos, y: yPos });
+        dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos });
     }
+
+    dataLabel.placed = true;
 };
 
 /**

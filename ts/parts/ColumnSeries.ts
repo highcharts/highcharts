@@ -1056,6 +1056,7 @@ seriesType<Highcharts.ColumnSeries>(
             ): void {
                 var plotY = point.plotY,
                     graphic = point.graphic,
+                    hasGraphic = !!graphic,
                     verb = graphic && chart.pointCount < animationLimit ?
                         'animate' : 'attr';
 
@@ -1068,15 +1069,37 @@ seriesType<Highcharts.ColumnSeries>(
                         graphic = graphic.destroy();
                     }
 
-                    if (graphic) { // update
-                        graphic[verb](
-                            merge(shapeArgs)
-                        );
+                    // Set starting position for point sliding animation.
+                    if (series.enabledDataSorting) {
+                        point.startXPos = series.xAxis.reversed ?
+                            -(shapeArgs ? shapeArgs.width : 0) :
+                            series.xAxis.width;
+                    }
 
-                    } else {
+                    if (!graphic) {
                         point.graphic = graphic =
                             (renderer as any)[point.shapeType as any](shapeArgs)
                                 .add(point.group || series.group);
+
+                        if (
+                            graphic &&
+                            series.enabledDataSorting &&
+                            chart.hasRendered &&
+                            chart.pointCount < animationLimit
+                        ) {
+                            graphic.attr({
+                                x: point.startXPos
+                            });
+
+                            hasGraphic = true;
+                            verb = 'animate';
+                        }
+                    }
+
+                    if (graphic && hasGraphic) { // update
+                        graphic[verb](
+                            merge(shapeArgs)
+                        );
                     }
 
                     // Border radius is not stylable (#6900)
