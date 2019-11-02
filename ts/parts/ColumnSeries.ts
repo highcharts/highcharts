@@ -478,15 +478,11 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         dataLabels: {
-            /**
-             * @internal
-             */
+            /** @ignore-option */
             align: null,
-            /**
-             * @internal
-             */
+            /** @ignore-option */
             verticalAlign: null,
-            /** @internal */
+            /** @ignore-options */
             y: null
         },
 

@@ -1587,46 +1587,54 @@ null,
      *         Data labels enabled
      * @sample highcharts/plotoptions/series-datalabels-multiple
      *         Multiple data labels on a bar series
+     * @sample highcharts/css/series-datalabels
+     *         Style mode example
      *
      * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
+     * @default {
+     *          "align": "center",
+     *          "formatter": function () {
+     *            return H.numberFormat(this.y, -1);
+     *          },
+     *          "padding": 5,
+     *          "style": {
+     *            "color": "contrast",
+     *            "fontSize": "11px",
+     *            "fontWeight": "bold",
+     *            "textOutline": "1px contrast"
+     *          },
+     *          "verticalAlign": "bottom",
+     *          "x": 0,
+     *          "y": 0
+     *          }
      *
      * @private
      */
     dataLabels: {
-        /** @internal */
+        /** @ignore-option */
         align: 'center',
         // eslint-disable-next-line valid-jsdoc
-        /**
-         * @internal
-         * @default function () { return H.numberFormat(this.y, -1); }
-         */
+        /** @ignore-option */
         formatter: function () {
             return this.y === null ? '' : H.numberFormat(this.y, -1);
         },
-        /** @internal */
+        /** @ignore-option */
         padding: 5,
-        /**
-         * @internal
-         * @type {Highcharts.CSSObject}
-         */
+        /** @ignore-option */
         style: {
-            /** @internal */
             fontSize: '11px',
-            /** @internal */
             fontWeight: 'bold',
-            /** @internal */
             color: 'contrast',
-            /** @internal */
             textOutline: '1px contrast'
         },
         /**
          * above singular point
-         * @internal
+         * @ignore-option
          */
         verticalAlign: 'bottom',
-        /** @internal */
+        /** @ignore-option */
         x: 0,
-        /** @internal */
+        /** @ignore-option */
         y: 0
     },
     /**
@@ -3010,7 +3018,7 @@ null,
                  * Contains the point's index in the `Series.points` array.
                  *
                  * @name Highcharts.Point#index
-                 * @type {number|undefined}
+                 * @type {number}
                  * @readonly
                  */
                 point.index = cursor; // For faster access in Point.update

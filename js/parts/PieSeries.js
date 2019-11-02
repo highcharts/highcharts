@@ -544,7 +544,10 @@ seriesType('pie', 'line',
      * @private
      */
     borderWidth: 1,
-    /** @ignore-options */
+    /**
+     * @ignore-options
+     * @private
+     */
     lineWidth: undefined,
     states: {
         /**

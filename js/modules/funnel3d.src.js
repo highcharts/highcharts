@@ -113,6 +113,7 @@ seriesType('funnel3d', 'column',
     colorByPoint: true,
     showInLegend: false,
     /**
+     * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
      * @default {"align": "right", "crop": false, "inside": false, "overflow": "allow"}
      */
     dataLabels: {

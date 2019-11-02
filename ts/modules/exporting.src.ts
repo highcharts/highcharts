@@ -392,6 +392,8 @@ merge(true, defaultOptions.navigation, {
 
     /**
      * @optionparent navigation.buttonOptions
+     *
+     * @private
      */
     buttonOptions: {
 

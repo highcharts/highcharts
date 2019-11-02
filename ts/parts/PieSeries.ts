@@ -706,7 +706,10 @@ seriesType<Highcharts.PieSeries>(
          */
         borderWidth: 1,
 
-        /** @ignore-options */
+        /**
+         * @ignore-options
+         * @private
+         */
         lineWidth: undefined, // #12222
         states: {
 
