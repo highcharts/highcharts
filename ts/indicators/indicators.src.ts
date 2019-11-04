@@ -38,10 +38,10 @@ declare global {
                 series: Series,
                 params: SMAIndicatorParamsOptions
             ): (
-                boolean|IndicatorValuesObject|IndicatorNullableValuesObject|
+                IndicatorValuesObject|IndicatorNullableValuesObject|
                 IndicatorUndefinableValuesObject|IndicatorMultipleValuesObject|
                 IndicatorMultipleNullableValuesObject|
-                IndicatorMultipleUndefinableValuesObject
+                IndicatorMultipleUndefinableValuesObject|undefined
 
             );
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
@@ -512,7 +512,7 @@ seriesType<Highcharts.SMAIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.SMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<(
@@ -529,7 +529,7 @@ seriesType<Highcharts.SMAIndicator>(
                 SMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
-                return false;
+                return undefined;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

@@ -81,7 +81,7 @@ H.seriesType('ppo', 'ema',
         if (periods.length !== 2 || periods[1] <= periods[0]) {
             error('Error: "PPO requires two periods. Notice, first period ' +
                 'should be lower than the second one."');
-            return false;
+            return undefined;
         }
         SPE = EMA.prototype.getValues.call(this, series, {
             index: index,
@@ -93,7 +93,7 @@ H.seriesType('ppo', 'ema',
         });
         // Check if ema is calculated properly, if not skip
         if (!SPE || !LPE) {
-            return false;
+            return undefined;
         }
         periodsOffset = periods[1] - periods[0];
         for (i = 0; i < LPE.yData.length; i++) {

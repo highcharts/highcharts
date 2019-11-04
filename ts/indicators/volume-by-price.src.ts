@@ -40,7 +40,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: VBPIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject|undefined);
             public init(chart: Chart): Highcharts.VBPIndicator;
             public nameBase: string;
             public negWidths: Array<number>;
@@ -554,7 +554,7 @@ seriesType<Highcharts.VBPIndicator>(
             this: Highcharts.VBPIndicator,
             series: Highcharts.Series,
             params: Highcharts.VBPIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var indicator = this,
                 xValues: Array<number> = series.processedXData,
                 yValues: Array<Array<number>> = (series.processedYData as any),
@@ -569,38 +569,41 @@ seriesType<Highcharts.VBPIndicator>(
 
             // Checks if base series exists
             if (!series.chart) {
-                return (H.error(
+                H.error(
                     'Base series not found! In case it has been removed, add ' +
                     'a new one.',
                     true,
                     chart
-                ) as any);
+                );
+                return undefined;
             }
 
             // Checks if volume series exists
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     chart
-                ) as any);
+                );
+                return undefined;
             }
 
             // Checks if series data fits the OHLC format
             isOHLC = isArray(yValues[0]);
 
             if (isOHLC && yValues[0].length !== 4) {
-                return (H.error(
+                H.error(
                     'Type of ' +
                     series.name +
                     ' series is different than line, OHLC or candlestick.',
                     true,
                     chart
-                ) as any);
+                );
+                return undefined;
             }
 
             // Price zones contains all the information about the zones (index,

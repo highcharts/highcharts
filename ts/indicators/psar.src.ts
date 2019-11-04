@@ -27,7 +27,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: PSARIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public options: PSARIndicatorOptions;
             public pointClass: typeof PSARIndicatorPoint;
             public points: Array<PSARIndicatorPoint>;
@@ -248,7 +248,7 @@ H.seriesType<Highcharts.PSARIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.PSARIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 // Extreme point is the lowest low for falling and highest high
@@ -286,7 +286,7 @@ H.seriesType<Highcharts.PSARIndicator>(
                 ind: number;
 
             if (index >= yVal.length) {
-                return false;
+                return undefined;
             }
 
             for (ind = 0; ind < index; ind++) {

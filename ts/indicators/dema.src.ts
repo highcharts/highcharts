@@ -30,7 +30,7 @@ declare global {
             public getValues(
                 series: DEMAIndicatorLinkedParentSeries,
                 params: DEMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public init(): void;
             public options: DEMAIndicatorOptions;
             public pointClass: typeof DEMAIndicatorPoint;
@@ -146,7 +146,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
             this: Highcharts.DEMAIndicator,
             series: Highcharts.DEMAIndicatorLinkedParentSeries,
             params: Highcharts.DEMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod: number = 2 * period,
                 xVal: Array<number> = series.xData,
@@ -173,7 +173,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 2 * period - 1) {
-                return false;
+                return undefined;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

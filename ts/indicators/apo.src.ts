@@ -21,7 +21,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: APOIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public init(): void;
             public nameBase: string;
             public nameComponents: Array<string>;
@@ -127,7 +127,7 @@ H.seriesType<Highcharts.APOIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.APOIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var periods: Array<number> = (params.periods as any),
                 index: number = (params.index as any),
                 // 0- date, 1- Absolute price oscillator
@@ -137,13 +137,15 @@ H.seriesType<Highcharts.APOIndicator>(
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
                 ),
                 oscillator: number,
                 i: number;
@@ -154,7 +156,7 @@ H.seriesType<Highcharts.APOIndicator>(
                     'Error: "APO requires two periods. Notice, first period ' +
                     'should be lower than the second one."'
                 );
-                return false;
+                return undefined;
             }
 
             SPE = EMA.prototype.getValues.call(this, series, {
@@ -169,12 +171,12 @@ H.seriesType<Highcharts.APOIndicator>(
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
-                return false;
+                return undefined;
             }
 
             periodsOffset = periods[1] - periods[0];
 
-            for (i = 0; i < (LPE as any).yData.length; i++) {
+            for (i = 0; i < LPE.yData.length; i++) {
                 oscillator = (
                     (SPE as any).yData[i + periodsOffset] -
                     (LPE as any).yData[i]

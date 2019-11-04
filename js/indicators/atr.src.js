@@ -74,7 +74,7 @@ seriesType('atr', 'sma',
         if ((xVal.length <= period) ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return undefined;
         }
         for (i = 1; i <= yValLen; i++) {
             accumulateAverage(points, xVal, yVal, i);

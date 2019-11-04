@@ -20,7 +20,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: CCIIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public pointClass: typeof CCIIndicatorPoint;
             public points: Array<CCIIndicatorPoint>;
             public options: CCIIndicatorOptions;
@@ -114,7 +114,7 @@ seriesType<Highcharts.CCIIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.CCIIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -139,7 +139,7 @@ seriesType<Highcharts.CCIIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return undefined;
             }
 
             // accumulate first N-points

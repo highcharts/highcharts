@@ -43,7 +43,7 @@ declare global {
             public getValues(
                 series: TEMAIndicatorLinkedParentSeries,
                 params: TEMAIndicatorParamsOptions
-            ): (boolean|IndicatorNullableValuesObject);
+            ): (IndicatorNullableValuesObject|undefined);
             public init(): void;
             public options: TEMAIndicatorOptions;
             public pointClass: typeof TEMAIndicatorPoint;
@@ -174,7 +174,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
             this: Highcharts.TEMAIndicator,
             series: Highcharts.TEMAIndicatorLinkedParentSeries,
             params: Highcharts.TEMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorNullableValuesObject) {
+        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod = 2 * period,
                 tripledPeriod = 3 * period,
@@ -205,7 +205,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 3 * period - 2) {
-                return false;
+                return undefined;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

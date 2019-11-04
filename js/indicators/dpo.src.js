@@ -73,7 +73,7 @@ H.seriesType('dpo', 'sma',
         // 0- date, 1- Detrended Price Oscillator
         DPO = [], xData = [], yData = [], sum = 0, oscillator, periodIndex, rangeIndex, price, i, j;
         if (xVal.length <= range) {
-            return false;
+            return undefined;
         }
         // Accumulate first N-points for SMA
         for (i = 0; i < period - 1; i++) {

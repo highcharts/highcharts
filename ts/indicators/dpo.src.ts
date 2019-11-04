@@ -29,7 +29,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: DPOIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
         }
 
         interface DPOIndicatorOptions extends SMAIndicatorOptions {
@@ -126,7 +126,7 @@ H.seriesType<Highcharts.DPOIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.DPOIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
@@ -148,7 +148,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 j: number;
 
             if (xVal.length <= range) {
-                return false;
+                return undefined;
             }
 
             // Accumulate first N-points for SMA

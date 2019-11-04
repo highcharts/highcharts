@@ -136,7 +136,7 @@ H.merge(multipleLinesMixin, {
         // middle line, top line and bottom line
         ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, stdDev, isOHLC, point, i;
         if (xVal.length < period) {
-            return false;
+            return undefined;
         }
         isOHLC = isArray(yVal[0]);
         for (i = period; i <= yValLen; i++) {

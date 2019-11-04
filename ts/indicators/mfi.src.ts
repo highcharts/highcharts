@@ -25,7 +25,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: MFIIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public nameBase: string;
             public options: MFIIndicatorOptions;
             public pointClass: typeof MFIIndicatorPoint;
@@ -131,7 +131,7 @@ H.seriesType<Highcharts.MFIIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.MFIIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -162,13 +162,14 @@ H.seriesType<Highcharts.MFIIndicator>(
                 i: number;
 
             if (!volumeSeries) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     series.chart
-                ) as any);
+                );
+                return undefined;
             }
 
             // MFI requires high low and close values
@@ -177,7 +178,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 yVal[0].length !== 4 ||
                 !yValVolume
             ) {
-                return false;
+                return undefined;
             }
             // Calculate first typical price
             newTypicalPrice = calculateTypicalPrice(yVal[range]);
