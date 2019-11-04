@@ -1209,7 +1209,7 @@ H.Tooltip.prototype = {
                 styledMode,
                 xAxis: [{ opposite }]
             },
-            distance = 16,
+            distance,
             options,
             options: {
                 positioner
@@ -1230,15 +1230,15 @@ H.Tooltip.prototype = {
 
         let distributionBoxTop = plotTop;
         let headerHeight = 0;
+        let rightAlign = false;
+        let maxLength = plotHeight - scrollablePixelsY;
 
         /**
          * Calculates the anchor position for the tooltip
          *
          * @private
-         * Calculate the x and y position for the anchor
-         * @param {Highcharts.Point & { isHeader?: boolean }} point
-         *  The point related to the tooltip
-         * @return {[number, number]} Returns the anchor's x and y position
+         * @param {Highcharts.Point} point The point related to the tooltip
+         * @return {Array<number>} Returns the anchor's x and y position
          */
         function getAnchor(
             point: Highcharts.Point & { isHeader?: boolean }
@@ -1287,7 +1287,7 @@ H.Tooltip.prototype = {
             let y;
             let x;
             if (isHeader) {
-                y = headerTop ? 0 : plotHeight - scrollablePixelsY;
+                y = headerTop ? 0 : maxLength;
                 x = clamp(
                     anchorX - (boxWidth / 2),
                     boundaries.left,
@@ -1297,8 +1297,8 @@ H.Tooltip.prototype = {
                 y = anchorY - distributionBoxTop;
                 x = anchorX - distance - boxWidth;
                 if (x < boundaries.left) {
-                    // Align label to the right side if overflow left.
-                    x = anchorX + distance;
+                    // Align all labels to the right side if overflow left.
+                    rightAlign = true;
                 } else if (boundaries.right < x + boxWidth) {
                     // Limit label to plot area.
                     x = boundaries.right - boxWidth;
@@ -1315,8 +1315,7 @@ H.Tooltip.prototype = {
          *
          * @private
          * @param {Highcharts.Tooltip|undefined} tooltip The tooltip to update
-         * @param {Highcharts.Point & { isHeader?: boolean }} point
-         *  The point related to the tooltip
+         * @param {Highcharts.Point} point The point related to the tooltip
          * @param {boolean|string} str The label for the tooltip
          * @return {Highcharts.SVGElement} Returns the updated tooltip
          */
@@ -1412,6 +1411,7 @@ H.Tooltip.prototype = {
                 const boxWidth = bBox.width + tt.strokeWidth();
                 if (isHeader) {
                     headerHeight = bBox.height;
+                    maxLength += headerHeight;
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
@@ -1433,7 +1433,7 @@ H.Tooltip.prototype = {
 
                 boxes.push({
                     // 0-align to the top, 1-align to the bottom
-                    align: positioner || isHeader ? 0 : void 0,
+                    align: positioner ? 0 : void 0,
                     anchorX,
                     anchorY,
                     point: point as any,
@@ -1451,13 +1451,13 @@ H.Tooltip.prototype = {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, plotHeight + headerHeight, void 0 as any);
+        H.distribute(boxes as any, maxLength, void 0 as any);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-            const { anchorX, anchorY, pos, x } = box;
+            const { anchorX, anchorY, pos, x, point: { isHeader } } = box;
             // Put the label in place
             box.tt.attr({
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
-                x,
+                x: !rightAlign || isHeader ? x : anchorX + tooltip.distance,
                 /* NOTE: y should equal pos to be consistent with !split
                  * tooltip, but is currently relative to plotTop. Is left as is
                  * to avoid breaking change. Remove distributionBoxTop to make

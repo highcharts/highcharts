@@ -842,7 +842,7 @@ H.Tooltip.prototype = {
      */
     renderSplit: function (labels, points) {
         var tooltip = this;
-        var _a = tooltip.chart, chartWidth = _a.chartWidth, chartHeight = _a.chartHeight, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _b = _a.scrollablePixelsX, scrollablePixelsX = _b === void 0 ? 0 : _b, _c = _a.scrollablePixelsY, scrollablePixelsY = _c === void 0 ? 0 : _c, _d = _a.scrollingContainer, _e = _d === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _d, scrollLeft = _e.scrollLeft, scrollTop = _e.scrollTop, styledMode = _a.styledMode, _f = __read(_a.xAxis, 1), opposite = _f[0].opposite, _g = tooltip.distance, distance = _g === void 0 ? 16 : _g, options = tooltip.options, positioner = tooltip.options.positioner;
+        var _a = tooltip.chart, chartWidth = _a.chartWidth, chartHeight = _a.chartHeight, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, plotWidth = _a.plotWidth, pointer = _a.pointer, ren = _a.renderer, _b = _a.scrollablePixelsX, scrollablePixelsX = _b === void 0 ? 0 : _b, _c = _a.scrollablePixelsY, scrollablePixelsY = _c === void 0 ? 0 : _c, _d = _a.scrollingContainer, _e = _d === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _d, scrollLeft = _e.scrollLeft, scrollTop = _e.scrollTop, styledMode = _a.styledMode, _f = __read(_a.xAxis, 1), opposite = _f[0].opposite, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
         var boundaries = {
             left: scrollablePixelsX ? plotLeft : 0,
             right: scrollablePixelsX ?
@@ -855,14 +855,14 @@ H.Tooltip.prototype = {
         var headerTop = Boolean(opposite);
         var distributionBoxTop = plotTop;
         var headerHeight = 0;
+        var rightAlign = false;
+        var maxLength = plotHeight - scrollablePixelsY;
         /**
          * Calculates the anchor position for the tooltip
          *
          * @private
-         * Calculate the x and y position for the anchor
-         * @param {Highcharts.Point & { isHeader?: boolean }} point
-         *  The point related to the tooltip
-         * @return {[number, number]} Returns the anchor's x and y position
+         * @param {Highcharts.Point} point The point related to the tooltip
+         * @return {Array<number>} Returns the anchor's x and y position
          */
         function getAnchor(point) {
             var isHeader = point.isHeader, _a = point.plotX, plotX = _a === void 0 ? 0 : _a, _b = point.plotY, plotY = _b === void 0 ? 0 : _b, series = point.series;
@@ -901,15 +901,15 @@ H.Tooltip.prototype = {
             var y;
             var x;
             if (isHeader) {
-                y = headerTop ? 0 : plotHeight - scrollablePixelsY;
+                y = headerTop ? 0 : maxLength;
                 x = clamp(anchorX - (boxWidth / 2), boundaries.left, boundaries.right - boxWidth);
             }
             else {
                 y = anchorY - distributionBoxTop;
                 x = anchorX - distance - boxWidth;
                 if (x < boundaries.left) {
-                    // Align label to the right side if overflow left.
-                    x = anchorX + distance;
+                    // Align all labels to the right side if overflow left.
+                    rightAlign = true;
                 }
                 else if (boundaries.right < x + boxWidth) {
                     // Limit label to plot area.
@@ -925,8 +925,7 @@ H.Tooltip.prototype = {
          *
          * @private
          * @param {Highcharts.Tooltip|undefined} tooltip The tooltip to update
-         * @param {Highcharts.Point & { isHeader?: boolean }} point
-         *  The point related to the tooltip
+         * @param {Highcharts.Point} point The point related to the tooltip
          * @param {boolean|string} str The label for the tooltip
          * @return {Highcharts.SVGElement} Returns the updated tooltip
          */
@@ -993,6 +992,7 @@ H.Tooltip.prototype = {
                 var boxWidth = bBox.width + tt.strokeWidth();
                 if (isHeader) {
                     headerHeight = bBox.height;
+                    maxLength += headerHeight;
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
@@ -1002,7 +1002,7 @@ H.Tooltip.prototype = {
                 var boxPosition = positioner ? positioner.call(tooltip, boxWidth, size, point) : defaultPositioner(anchorX, anchorY, isHeader, boxWidth);
                 boxes.push({
                     // 0-align to the top, 1-align to the bottom
-                    align: positioner || isHeader ? 0 : void 0,
+                    align: positioner ? 0 : void 0,
                     anchorX: anchorX,
                     anchorY: anchorY,
                     point: point,
@@ -1018,13 +1018,13 @@ H.Tooltip.prototype = {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
         // Distribute and put in place
-        H.distribute(boxes, plotHeight + headerHeight, void 0);
+        H.distribute(boxes, maxLength, void 0);
         boxes.forEach(function (box) {
-            var anchorX = box.anchorX, anchorY = box.anchorY, pos = box.pos, x = box.x;
+            var anchorX = box.anchorX, anchorY = box.anchorY, pos = box.pos, x = box.x, isHeader = box.point.isHeader;
             // Put the label in place
             box.tt.attr({
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
-                x: x,
+                x: !rightAlign || isHeader ? x : anchorX + tooltip.distance,
                 /* NOTE: y should equal pos to be consistent with !split
                  * tooltip, but is currently relative to plotTop. Is left as is
                  * to avoid breaking change. Remove distributionBoxTop to make
@@ -1043,7 +1043,7 @@ H.Tooltip.prototype = {
         var container = tooltip.container, outside = tooltip.outside, renderer = tooltip.renderer;
         if (outside && container && renderer) {
             // Set container size to fit the tooltip
-            var _h = tooltipLabel.getBBox(), width = _h.width, height = _h.height, x = _h.x, y = _h.y;
+            var _g = tooltipLabel.getBBox(), width = _g.width, height = _g.height, x = _g.x, y = _g.y;
             renderer.setSize(width + x, height + y, false);
             // Position the tooltip container to the chart container
             var chartPosition = pointer.getChartPosition();
