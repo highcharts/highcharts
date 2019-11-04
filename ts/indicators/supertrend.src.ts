@@ -53,7 +53,7 @@ declare global {
             public getValues(
                 series: SupertrendLinkedParentObject,
                 params: SupertrendIndicatorParamsOptions
-            ): (boolean|IndicatorUndefinableValuesObject);
+            ): (IndicatorUndefinableValuesObject|undefined);
             public init(): void;
             public linkedParent: SupertrendLinkedParentObject;
             public nameBase: string;
@@ -541,7 +541,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
         getValues: function (
             series: Highcharts.SupertrendLinkedParentObject,
             params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorUndefinableValuesObject) {
+        ): (Highcharts.IndicatorUndefinableValuesObject|undefined) {
             var period: number = (params.period as any),
                 multiplier: number = (params.multiplier as any),
                 xVal: Array<number> = series.xData,
@@ -571,7 +571,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                 (xVal.length <= period) || !isArray(yVal[0]) ||
                 yVal[0].length !== 4 || period < 0
             ) {
-                return false;
+                return undefined;
             }
 
             ATRData = (ATR.prototype.getValues.call(this, series, {

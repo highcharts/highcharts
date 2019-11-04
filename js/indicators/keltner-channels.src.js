@@ -134,7 +134,7 @@ merge(multipleLinesMixin, {
             period: periodATR
         }), pointEMA, pointATR, xData = [], yData = [], i;
         if (yValLen < period) {
-            return false;
+            return undefined;
         }
         for (i = period; i <= yValLen; i++) {
             pointEMA = seriesEMA.values[i - period];

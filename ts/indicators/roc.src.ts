@@ -24,7 +24,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ROCIndicatorParamsOptions
-            ): (boolean|IndicatorNullableValuesObject);
+            ): (IndicatorNullableValuesObject|undefined);
             public nameBase: string;
             public options: ROCIndicatorOptions;
             public pointClass: typeof ROCIndicatorPoint;
@@ -141,7 +141,7 @@ seriesType<Highcharts.ROCIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.ROCIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorNullableValuesObject) {
+        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -156,7 +156,7 @@ seriesType<Highcharts.ROCIndicator>(
             // Period is used as a number of time periods ago, so we need more
             // (at least 1 more) data than the period value
             if (xVal.length <= period) {
-                return false;
+                return undefined;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

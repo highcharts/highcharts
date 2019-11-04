@@ -91,7 +91,7 @@ H.seriesType('cmf', 'sma',
      */
     getValues: function (series, params) {
         if (!this.isValid()) {
-            return false;
+            return undefined;
         }
         return this.getMoneyFlow(series.xData, series.yData, this.volumeSeries.yData, params.period);
     },

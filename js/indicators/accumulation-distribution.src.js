@@ -67,12 +67,13 @@ seriesType('ad', 'sma',
         if (xVal.length <= period &&
             yValLen &&
             yVal[0].length !== 4) {
-            return false;
+            return undefined;
         }
         if (!volumeSeries) {
-            return H.error('Series ' +
+            H.error('Series ' +
                 volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
+            return undefined;
         }
         // i = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data

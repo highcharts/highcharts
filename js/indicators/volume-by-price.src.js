@@ -311,21 +311,24 @@ seriesType('vbp', 'sma',
         var indicator = this, xValues = series.processedXData, yValues = series.processedYData, chart = indicator.chart, ranges = params.ranges, VBP = [], xData = [], yData = [], isOHLC, volumeSeries, priceZones;
         // Checks if base series exists
         if (!series.chart) {
-            return H.error('Base series not found! In case it has been removed, add ' +
+            H.error('Base series not found! In case it has been removed, add ' +
                 'a new one.', true, chart);
+            return undefined;
         }
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            return H.error('Series ' +
+            H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
+            return undefined;
         }
         // Checks if series data fits the OHLC format
         isOHLC = isArray(yValues[0]);
         if (isOHLC && yValues[0].length !== 4) {
-            return H.error('Type of ' +
+            H.error('Type of ' +
                 series.name +
                 ' series is different than line, OHLC or candlestick.', true, chart);
+            return undefined;
         }
         // Price zones contains all the information about the zones (index,
         // start, end, volumes, etc.)

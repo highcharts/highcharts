@@ -39,7 +39,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: CMFIndicatorParamsOptions
-            ): (boolean|IndicatorNullableValuesObject);
+            ): (IndicatorNullableValuesObject|undefined);
             public isValid(): boolean;
         }
 
@@ -162,9 +162,9 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
             this: Highcharts.CMFIndicator,
             series: Highcharts.CMFIndicatorLinkedParentSeries,
             params: Highcharts.CMFIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorNullableValuesObject) {
+        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
             if (!this.isValid()) {
-                return false;
+                return undefined;
             }
 
             return this.getMoneyFlow(

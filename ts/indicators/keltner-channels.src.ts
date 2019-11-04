@@ -41,7 +41,7 @@ declare global {
             public getValues(
                 series: KeltnerChannelsLinkedParentSeries,
                 params: KeltnerChannelsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject)
+            ): (IndicatorMultipleValuesObject|undefined)
         }
 
         interface KeltnerChannelsIndicatorOptions
@@ -194,7 +194,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
         getValues: function (
             series: Highcharts.KeltnerChannelsLinkedParentSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period = (params.period as any),
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
@@ -210,14 +210,15 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 BL: number,
                 date: number,
                 seriesEMA: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
                 ) = EMA.prototype.getValues(series,
                     {
                         period: period,
                         index: index
                     }),
-                seriesATR: (boolean|Highcharts.IndicatorValuesObject) =
+                seriesATR: (Highcharts.IndicatorValuesObject|undefined) =
                     ATR.prototype.getValues(series,
                         {
                             period: periodATR
@@ -229,7 +230,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 i: number;
 
             if (yValLen < period) {
-                return false;
+                return undefined;
             }
 
             for (i = period; i <= yValLen; i++) {

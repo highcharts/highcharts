@@ -110,7 +110,7 @@ H.seriesType('ao', 'sma',
         if (xVal.length <= longPeriod ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return undefined;
         }
         for (i = 0; i < longPeriod - 1; i++) {
             price = (yVal[i][high] + yVal[i][low]) / 2;

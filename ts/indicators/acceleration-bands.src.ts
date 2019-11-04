@@ -29,7 +29,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ABandsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
         }
 
         interface ABandsIndicatorOptions extends SMAIndicatorOptions,
@@ -169,7 +169,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
             this: Highcharts.ABandsIndicator,
             series: Highcharts.Series,
             params: Highcharts.ABandsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),
                 index: number = (params.index as any),
@@ -201,7 +201,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 i: (number|undefined);
 
             if (yValLen < period) {
-                return false;
+                return undefined;
             }
 
             for (i = 0; i <= yValLen; i++) {

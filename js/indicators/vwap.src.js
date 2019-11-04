@@ -70,9 +70,10 @@ seriesType('vwap', 'sma',
         var indicator = this, chart = series.chart, xValues = series.xData, yValues = series.yData, period = params.period, isOHLC = true, volumeSeries;
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            return H.error('Series ' +
+            H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
+            return undefined;
         }
         // Checks if series data fits the OHLC format
         if (!(isArray(yValues[0]))) {

@@ -28,7 +28,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: MACDIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleNullableValuesObject);
+            ): (IndicatorMultipleNullableValuesObject|undefined);
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -427,7 +427,7 @@ seriesType<Highcharts.MACDIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.MACDIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleNullableValuesObject) {
+        ): (Highcharts.IndicatorMultipleNullableValuesObject|undefined) {
             var j = 0,
                 MACD: Array<[number, number, number|null, number]> = [],
                 xMACD: Array<number> = [],
@@ -440,7 +440,7 @@ seriesType<Highcharts.MACDIndicator>(
             if ((series.xData as any).length <
                 (params.longPeriod as any) + params.signalPeriod
             ) {
-                return false;
+                return undefined;
             }
 
             // Calculating the short and long EMA used when calculating the MACD

@@ -65,7 +65,7 @@ H.seriesType('williamsr', 'sma',
         if (xVal.length < period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return undefined;
         }
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list

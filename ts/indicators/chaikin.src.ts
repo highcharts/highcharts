@@ -22,7 +22,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ChaikinIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject)
+            ): (IndicatorValuesObject|undefined)
             public nameBase: string;
             public nameComponents: Array<string>;
             public options: ChaikinIndicatorOptions;
@@ -140,11 +140,11 @@ H.seriesType<Highcharts.ChaikinIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.ChaikinIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var periods: Array<number> = (params.periods as any),
                 period: number = (params.period as any),
                 // Accumulation Distribution Line data
-                ADL: (boolean|Highcharts.IndicatorValuesObject),
+                ADL: (Highcharts.IndicatorValuesObject|undefined),
                 // 0- date, 1- Chaikin Oscillator
                 CHA: Array<[number, number]> = [],
                 xData: Array<number> = [],
@@ -152,13 +152,15 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    boolean|Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
                 ),
                 oscillator: number,
                 i: number;
@@ -169,7 +171,7 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                     'Error: "Chaikin requires two periods. Notice, first ' +
                     'period should be lower than the second one."'
                 );
-                return false;
+                return undefined;
             }
 
             ADL = AD.prototype.getValues.call(this, series, {
@@ -179,7 +181,7 @@ H.seriesType<Highcharts.ChaikinIndicator>(
 
             // Check if adl is calculated properly, if not skip
             if (!ADL) {
-                return false;
+                return undefined;
             }
 
             SPE = EMA.prototype.getValues.call(this, (ADL as any), {
@@ -192,12 +194,12 @@ H.seriesType<Highcharts.ChaikinIndicator>(
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
-                return false;
+                return undefined;
             }
 
             periodsOffset = periods[1] - periods[0];
 
-            for (i = 0; i < (LPE as any).yData.length; i++) {
+            for (i = 0; i < LPE.yData.length; i++) {
                 oscillator = correctFloat(
                     (SPE as any).yData[i + periodsOffset] -
                     (LPE as any).yData[i]
