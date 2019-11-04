@@ -893,18 +893,15 @@ H.Tooltip.prototype = {
          * @param {number} anchorX The tooltip anchor x position
          * @param {number} anchorY The tooltip anchor y position
          * @param {boolean} isHeader Wether the tooltip is a header
-         * @param {Highcharts.BBoxObject} bBox The bounding box of the tooltip
+         * @param {number} boxWidth Width of the tooltip
          * @return {Highcharts.PositionObject} Returns the tooltip x and y
          * position
          */
-        function defaultPositioner(anchorX, anchorY, isHeader, bBox) {
-            var boxWidth = bBox.width;
+        function defaultPositioner(anchorX, anchorY, isHeader, boxWidth) {
             var y;
             var x;
             if (isHeader) {
-                y = headerTop ?
-                    -headerHeight :
-                    plotHeight + headerHeight;
+                y = headerTop ? 0 : plotHeight - scrollablePixelsY;
                 x = clamp(anchorX - (boxWidth / 2), boundaries.left, boundaries.right - boxWidth);
             }
             else {
@@ -919,6 +916,7 @@ H.Tooltip.prototype = {
                     x = boundaries.right - boxWidth;
                 }
             }
+            // NOTE: y is relative to distributionBoxTop
             return { x: x, y: y };
         }
         /**
@@ -1001,10 +999,10 @@ H.Tooltip.prototype = {
                 }
                 var _a = __read(getAnchor(point), 2), anchorX = _a[0], anchorY = _a[1];
                 var size = bBox.height + 1;
-                var boxPosition = positioner ? positioner.call(tooltip, boxWidth, size, point) : defaultPositioner(anchorX, anchorY, isHeader, bBox);
+                var boxPosition = positioner ? positioner.call(tooltip, boxWidth, size, point) : defaultPositioner(anchorX, anchorY, isHeader, boxWidth);
                 boxes.push({
                     // 0-align to the top, 1-align to the bottom
-                    align: positioner ? 0 : void 0,
+                    align: positioner || isHeader ? 0 : void 0,
                     anchorX: anchorX,
                     anchorY: anchorY,
                     point: point,

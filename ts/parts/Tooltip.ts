@@ -1273,7 +1273,7 @@ H.Tooltip.prototype = {
          * @param {number} anchorX The tooltip anchor x position
          * @param {number} anchorY The tooltip anchor y position
          * @param {boolean} isHeader Wether the tooltip is a header
-         * @param {Highcharts.BBoxObject} bBox The bounding box of the tooltip
+         * @param {number} boxWidth Width of the tooltip
          * @return {Highcharts.PositionObject} Returns the tooltip x and y
          * position
          */
@@ -1281,17 +1281,13 @@ H.Tooltip.prototype = {
             anchorX: number,
             anchorY: number,
             isHeader: boolean,
-            bBox: Highcharts.BBoxObject
+            boxWidth: number
         ): Highcharts.PositionObject {
-            const boxWidth = bBox.width;
 
             let y;
             let x;
             if (isHeader) {
-                y = headerTop ?
-                    -headerHeight :
-                    plotHeight + headerHeight;
-
+                y = headerTop ? 0 : plotHeight - scrollablePixelsY;
                 x = clamp(
                     anchorX - (boxWidth / 2),
                     boundaries.left,
@@ -1308,6 +1304,8 @@ H.Tooltip.prototype = {
                     x = boundaries.right - boxWidth;
                 }
             }
+
+            // NOTE: y is relative to distributionBoxTop
             return { x, y };
         }
 
@@ -1430,12 +1428,12 @@ H.Tooltip.prototype = {
                     anchorX,
                     anchorY,
                     isHeader,
-                    bBox
+                    boxWidth
                 );
 
                 boxes.push({
                     // 0-align to the top, 1-align to the bottom
-                    align: positioner ? 0 : void 0,
+                    align: positioner || isHeader ? 0 : void 0,
                     anchorX,
                     anchorY,
                     point: point as any,
