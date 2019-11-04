@@ -1482,11 +1482,6 @@ H.Tooltip.prototype = {
             renderer
         } = tooltip;
         if (outside && container && renderer) {
-            // Position the tooltip container to the chart container
-            const chartPosition = pointer.getChartPosition();
-            container.style.left = chartPosition.left + 'px';
-            container.style.top = chartPosition.top + 'px';
-
             // Set container size to fit the tooltip
             const { width, height, x, y } = tooltipLabel.getBBox();
             renderer.setSize(
@@ -1494,6 +1489,11 @@ H.Tooltip.prototype = {
                 height + y,
                 false
             );
+
+            // Position the tooltip container to the chart container
+            const chartPosition = pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
         }
     },
 

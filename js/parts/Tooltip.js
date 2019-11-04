@@ -1044,13 +1044,13 @@ H.Tooltip.prototype = {
          */
         var container = tooltip.container, outside = tooltip.outside, renderer = tooltip.renderer;
         if (outside && container && renderer) {
+            // Set container size to fit the tooltip
+            var _h = tooltipLabel.getBBox(), width = _h.width, height = _h.height, x = _h.x, y = _h.y;
+            renderer.setSize(width + x, height + y, false);
             // Position the tooltip container to the chart container
             var chartPosition = pointer.getChartPosition();
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
-            // Set container size to fit the tooltip
-            var _h = tooltipLabel.getBBox(), width = _h.width, height = _h.height, x = _h.x, y = _h.y;
-            renderer.setSize(width + x, height + y, false);
         }
     },
     /**
