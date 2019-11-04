@@ -40,9 +40,6 @@ var chart = Highcharts.chart('container', {
     },
     xAxis: {
         type: 'category',
-        labels: {
-            animate: true
-        },
         title: {
             text: null
         }
@@ -69,13 +66,13 @@ var chart = Highcharts.chart('container', {
         floating: true,
         borderWidth: 1,
         backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
-        shadow: true
+            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     credits: {
         enabled: false
     },
     series: [{
+        colorByPoint: true,
         dataSorting: {
             enabled: true,
             matchByName: true
