@@ -706,6 +706,8 @@ seriesType<Highcharts.PieSeries>(
          */
         borderWidth: 1,
 
+        /** @ignore-options */
+        lineWidth: undefined, // #12222
         states: {
 
             /**

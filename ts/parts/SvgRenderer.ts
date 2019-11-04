@@ -808,6 +808,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
     destroyObjectProperties,
@@ -958,7 +959,7 @@ extend((
         options?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var animOptions = H.animObject(
+        var animOptions = animObject(
             pick(options, this.renderer.globalAnimation, true)
         );
 
@@ -1866,7 +1867,7 @@ extend((
 
         // In styled mode, read computed stroke width
         var val = this.getStyle('stroke-width'),
-            ret: number,
+            ret = 0,
             dummy: Highcharts.SVGDOMElement;
 
         // Read pixel values directly
@@ -1874,7 +1875,7 @@ extend((
             ret = pInt(val);
 
         // Other values like em, pt etc need to be measured
-        } else {
+        } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as any;
             attr(dummy, {
                 width: val,

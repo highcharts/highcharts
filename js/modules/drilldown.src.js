@@ -125,13 +125,13 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, extend = U.extend, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-var animObject = H.animObject, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
+var noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -143,8 +143,9 @@ extend(defaultOptions.lang,
      * to the parent series. The parent series' name is inserted for
      * `{series.name}`.
      *
-     * @since   3.0.8
-     * @product highcharts highmaps
+     * @since    3.0.8
+     * @product  highcharts highmaps
+     * @requires modules/drilldown
      *
      * @private
      */
@@ -160,6 +161,7 @@ extend(defaultOptions.lang,
  * ](code.highcharts.com/modules/drilldown.js).
  *
  * @product      highcharts highmaps
+ * @requires     modules/drilldown
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {
@@ -369,6 +371,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drilldown
  */
 /**
@@ -378,6 +381,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillup
  */
 /**
@@ -388,6 +392,7 @@ defaultOptions.drilldown = {
  * @since     4.2.4
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillupall
  */
 /**
@@ -400,6 +405,7 @@ defaultOptions.drilldown = {
  * @type      {string}
  * @since     3.0.8
  * @product   highcharts
+ * @requires  modules/drilldown
  * @apioption series.line.data.drilldown
  */
 /**
@@ -597,11 +603,13 @@ Chart.prototype.showDrillUpButton = function () {
 };
 /**
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
- * will drill up to the parent series. Requires the drilldown module.
+ * will drill up to the parent series.
  *
  * @function Highcharts.Chart#drillUp
  *
  * @return {void}
+ *
+ * @requires  modules/drilldown
  */
 Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {

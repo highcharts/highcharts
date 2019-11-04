@@ -45,6 +45,8 @@ H.seriesType('supertrend', 'sma',
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking, threshold
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/supertrend
  * @optionparent plotOptions.supertrend
  */
 {
@@ -419,6 +421,8 @@ H.seriesType('supertrend', 'sma',
  *            dataURL, joinBy, keys, navigatorOptions, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking, threshold
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/supertrend
  * @apioption series.supertrend
  */
 ''; // to include the above in the js output

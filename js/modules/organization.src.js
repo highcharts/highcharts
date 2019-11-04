@@ -69,6 +69,7 @@ H.seriesType('organization', 'sankey',
  * @excluding    allowPointSelect, curveFactor
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/organization
  * @optionparent plotOptions.organization
  */
 {
@@ -394,6 +395,7 @@ H.seriesType('organization', 'sankey',
  *
  * @extends   series,plotOptions.organization
  * @product   highcharts
+ * @requires  modules/organization
  * @apioption series.organization
  */
 /**

@@ -591,7 +591,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * renders a value in X, Y position. Each point is drawn as a bubble
      * where the bubbles don't overlap with each other and the radius
      * of the bubble relates to the value.
-     * Requires `highcharts-more.js`.
      *
      * @sample highcharts/demo/packed-bubble/
      *         Packed bubble chart
@@ -604,6 +603,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
      *               zMax, zMin
      * @product      highcharts
      * @since        7.0.0
+     * @requires     highcharts-more
      * @optionparent plotOptions.packedbubble
      */
     {
@@ -846,8 +846,12 @@ seriesType<Highcharts.PackedBubbleSeries>(
         pointArrayMap: ['value'],
         pointValKey: 'value',
         isCartesian: false,
+        requireSorting: false,
+        directTouch: true,
         axisTypes: [],
         noSharedTooltip: true,
+        // solving #12287
+        searchPoint: H.noop as any,
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -1889,6 +1893,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser,dataURL,stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.packedbubble
  */
 

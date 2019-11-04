@@ -67,8 +67,8 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
- * Y values along an X axis. Requires `highcharts-more.js`. To display
- * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
+ * Y values along an X axis. To display horizontal bars, set
+ * [chart.inverted](#chart.inverted) to `true`.
  *
  * @sample {highcharts|highstock} highcharts/demo/columnrange/
  *         Inverted column range
@@ -77,6 +77,7 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
  * @since        2.3.0
  * @excluding    negativeColor, stacking, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
@@ -271,6 +272,7 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
  * @extends   series,plotOptions.columnrange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnrange
  */
 

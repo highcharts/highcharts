@@ -89,6 +89,8 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/vwap
      * @optionparent plotOptions.vwap
      */
     {
@@ -121,7 +123,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
         getValues: function (
             this: Highcharts.VWAPIndicator,
             series: Highcharts.VWAPLinkedParentSeries,
-            params: Highcharts.VWAPIndicatorParamsOptions,
+            params: Highcharts.VWAPIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject {
             var indicator = this,
                 chart: Highcharts.Chart = series.chart,
@@ -247,6 +249,8 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/vwap
  * @apioption series.vwap
  */
 

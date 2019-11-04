@@ -548,6 +548,7 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
+        H.fireEvent(this, 'afterBuildStacks');
     }
 };
 

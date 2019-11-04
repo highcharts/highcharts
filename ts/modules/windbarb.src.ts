@@ -79,6 +79,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     isNumber,
     pick
 } = U;
@@ -90,13 +91,13 @@ var noop = H.noop,
 
 // eslint-disable-next-line valid-jsdoc
 /**
- * Once off, register the windbarb approximation for data grouping.This can be
+ * Once off, register the windbarb approximation for data grouping. This can be
  * called anywhere (not necessarily in the translate function), but must happen
  * after the data grouping module is loaded and before the wind barb series uses
  * it.
  * @private
  */
-function registerApproximation(): void { // @todo remove function wrap
+function registerApproximation(): void {
     if (H.approximations && !H.approximations.windbarb) {
         H.approximations.windbarb = function (
             values: Array<number>,
@@ -128,7 +129,7 @@ function registerApproximation(): void { // @todo remove function wrap
     }
 }
 
-registerApproximation(); // @todo called immediately anway
+registerApproximation();
 
 /**
  * @private
@@ -153,6 +154,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
      *               linecap, shadow, stacking, step
      * @since        6.0.0
      * @product      highcharts highstock
+     * @requires     modules/windbarb
      * @optionparent plotOptions.windbarb
      */
     , {
@@ -259,7 +261,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             chart: Highcharts.Chart,
             options: Highcharts.WindbarbSeriesOptions
         ): void {
-            // registerApproximation(); // @todo not necessary
+            registerApproximation();
             H.Series.prototype.init.call(this, chart, options);
         },
 
@@ -481,7 +483,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             } else {
                 (this.markerGroup as any).animate({
                     opacity: 1
-                }, H.animObject(this.options.animation));
+                }, animObject(this.options.animation));
 
                 this.animate = null as any;
             }
@@ -506,6 +508,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
  * @extends   series,plotOptions.windbarb
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
+ * @requires  modules/windbarb
  * @apioption series.windbarb
  */
 

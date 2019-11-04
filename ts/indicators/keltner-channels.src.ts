@@ -103,6 +103,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
     {
@@ -204,12 +206,14 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 TL: number,
                 BL: number,
                 date: number,
-                seriesEMA: (boolean|Highcharts.IndicatorValuesObject) =
-                    EMA.prototype.getValues(series,
-                        {
-                            period: period,
-                            index: index
-                        }),
+                seriesEMA: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ) = EMA.prototype.getValues(series,
+                    {
+                        period: period,
+                        index: index
+                    }),
                 seriesATR: (boolean|Highcharts.IndicatorValuesObject) =
                     ATR.prototype.getValues(series,
                         {
@@ -257,6 +261,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

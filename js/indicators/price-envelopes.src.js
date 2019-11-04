@@ -31,6 +31,8 @@ H.seriesType('priceenvelopes', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/price-envelopes
  * @optionparent plotOptions.priceenvelopes
  */
 {
@@ -204,6 +206,8 @@ H.seriesType('priceenvelopes', 'sma',
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/price-envelopes
  * @apioption series.priceenvelopes
  */
 ''; // to include the above in the js output

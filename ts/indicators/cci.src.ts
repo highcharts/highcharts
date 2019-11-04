@@ -98,6 +98,8 @@ seriesType<Highcharts.CCIIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
     {
@@ -181,6 +183,8 @@ seriesType<Highcharts.CCIIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cci
  * @apioption series.cci
  */
 

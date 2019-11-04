@@ -34,6 +34,9 @@ H.seriesType('apo', 'ema',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ema
+ * @requires     stock/indicators/apo
  * @optionparent plotOptions.apo
  */
 {
@@ -118,6 +121,9 @@ H.seriesType('apo', 'ema',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/apo
  * @apioption series.apo
  */
 ''; // to include the above in the js output

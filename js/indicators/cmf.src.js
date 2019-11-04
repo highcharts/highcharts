@@ -33,6 +33,8 @@ H.seriesType('cmf', 'sma',
  * @since        6.0.0
  * @excluding    animationLimit
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/cmf
  * @optionparent plotOptions.cmf
  */
 {
@@ -175,6 +177,8 @@ H.seriesType('cmf', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cmf
  * @apioption series.cmf
  */
 ''; // adds doclet above to the transpiled file

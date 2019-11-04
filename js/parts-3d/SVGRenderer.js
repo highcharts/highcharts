@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+var animObject = U.animObject, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var animObject = H.animObject, charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -297,6 +297,7 @@ SVGRenderer.prototype.elements3d = {
 /**
  * return result, generalization
  * @private
+ * @requires highcharts-3d
  */
 SVGRenderer.prototype.element3d = function (type, shapeArgs) {
     // base

@@ -266,6 +266,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
     discardElement,
@@ -290,7 +291,6 @@ import './Pointer.js';
 
 var addEvent = H.addEvent,
     animate = H.animate,
-    animObject = H.animObject,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
@@ -564,6 +564,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
@@ -637,7 +638,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
 
         series = new Constr();
@@ -708,6 +709,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Contains the series' index in the `Chart.series` array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number|undefined}
+                 * @readonly
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
@@ -2212,6 +2220,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         plotHeight
                     ).add();
                 } else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
+
                     plotBGImage.animate(plotBox as Highcharts.SVGAttributes);
                 }
             }

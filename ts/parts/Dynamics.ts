@@ -1572,7 +1572,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         } else {
-            H.error(17, true, chart);
+            H.error(
+                17,
+                true,
+                chart,
+                { missingModuleFor: (newType || initialType) }
+            );
         }
 
         // Re-register groups (#3094) and other preserved properties

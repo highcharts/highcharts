@@ -665,6 +665,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     defined,
     extend,
@@ -882,7 +883,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
-        seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
+        seriesAnimDuration = animObject(seriesOptions.animation).duration,
         fadeInDuration = Math.min(seriesAnimDuration as any, 200),
         defer = !chart.renderer.forExport && pick(
             (seriesDlOptions as any).defer,

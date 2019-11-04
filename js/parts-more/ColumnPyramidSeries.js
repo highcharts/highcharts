@@ -25,8 +25,8 @@ var colProto = seriesTypes.column.prototype;
 seriesType('columnpyramid', 'column', 
 /**
  * Column pyramid series display one pyramid per value along an X axis.
- * Requires `highcharts-more.js`. To display horizontal pyramids,
- * set [chart.inverted](#chart.inverted) to `true`.
+ * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
+ * `true`.
  *
  * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
  *         Column pyramid
@@ -41,6 +41,7 @@ seriesType('columnpyramid', 'column',
  * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
  *               edgeWidth, groupZPadding, negativeColor, softThreshold,
  *               threshold, zoneAxis, zones
+ * @requires     highcharts-more
  * @optionparent plotOptions.columnpyramid
  */
 {
@@ -179,6 +180,7 @@ seriesType('columnpyramid', 'column',
  * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
  *            gapSize, gapUnit, linecap, lineWidth, marker, step
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnpyramid
  */
 /**

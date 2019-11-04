@@ -122,6 +122,7 @@ seriesType<Highcharts.CylinderSeries>(
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
      *               dragDrop
+     * @requires     modules/cylinder
      * @optionparent plotOptions.cylinder
      */
     {},
@@ -144,6 +145,7 @@ seriesType<Highcharts.CylinderSeries>(
  * @since     7.0.0
  * @product   highcharts
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @requires  modules/cylinder
  * @apioption series.cylinder
  */
 

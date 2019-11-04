@@ -133,10 +133,13 @@ import NelderMeadModule from '../mixins/nelder-mead.js';
 var nelderMead = NelderMeadModule.nelderMead;
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isNumber = U.isNumber,
-    isObject = U.isObject,
-    isString = U.isString;
+const {
+    animObject,
+    isArray,
+    isNumber,
+    isObject,
+    isString
+} = U;
 
 import '../parts/Series.js';
 
@@ -1073,6 +1076,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     modules/venn
  * @optionparent plotOptions.venn
  */
 var vennOptions: Highcharts.VennSeriesOptions = {
@@ -1325,7 +1329,7 @@ var vennSeries = {
     animate: function (this: Highcharts.VennSeries, init?: boolean): void {
         if (!init) {
             var series = this,
-                animOptions = H.animObject(series.options.animation);
+                animOptions = animObject(series.options.animation);
 
             series.points.forEach(function (point: Highcharts.VennPoint): void {
                 var args = point.shapeArgs;
@@ -1402,6 +1406,7 @@ var vennPoint = {
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
  *            threshold, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/venn
  * @apioption series.venn
  */
 

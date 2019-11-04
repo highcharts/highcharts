@@ -39,6 +39,7 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    animObject: U.animObject,
     arrayMax: U.arrayMax,
     arrayMin: U.arrayMin,
     attr: U.attr,

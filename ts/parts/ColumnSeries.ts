@@ -126,6 +126,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     defined,
     extend,
     isNumber,
@@ -137,8 +138,7 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var animObject = H.animObject,
-    color = H.color,
+var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,

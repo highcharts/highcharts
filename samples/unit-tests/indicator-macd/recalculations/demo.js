@@ -1,3 +1,41 @@
+QUnit.test('Zones on macd with no data.', function (assert) {
+
+    Highcharts.stockChart('container', {
+        yAxis: [{
+            height: '50%'
+        }, {
+            top: '60%',
+            height: '40%'
+        }],
+        series: [{
+            id: 'main',
+            data: []
+        }, {
+            yAxis: 1,
+            type: 'macd',
+            linkedTo: 'main',
+            params: {
+                shortPeriod: 12,
+                longPeriod: 26,
+                signalPeriod: 9,
+                period: 26
+            },
+            macdLine: {
+                zones: [{
+                    value: 0,
+                    color: 'green'
+                }, {
+                    color: 'red'
+                }]
+            }
+        }]
+    });
+
+    // We expect no JS error when applying zones on macd and chart has no data.
+    assert.expect(0);
+
+});
+
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

@@ -109,6 +109,7 @@ declare global {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
+            enabled?: boolean;
             format?: string;
             formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
             padding?: number;
@@ -689,6 +690,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     arrayMin,
     defined,
@@ -708,7 +710,6 @@ import './Options.js';
 import './Tick.js';
 
 var addEvent = H.addEvent,
-    animObject = H.animObject,
     color = H.color,
     correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
@@ -1071,6 +1072,19 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderWidth
+         */
+
+        /**
+         * Flag to enable crosshair's label.
+         *
+         * @sample {highstock} stock/xaxis/crosshairs-xy/
+         *         Enabled label for yAxis' crosshair
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     2.1
+         * @product   highstock
+         * @apioption xAxis.crosshair.label.enabled
          */
 
         /**

@@ -495,7 +495,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var animObject = U.animObject, arrayMax = U.arrayMax, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import './Series.js';
 var format = H.format, merge = H.merge, noop = H.noop, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
@@ -634,7 +634,7 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = H.animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private

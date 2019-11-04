@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isArray = U.isArray;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -54,6 +54,8 @@ seriesType('vbp', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/volume-by-price
  * @optionparent plotOptions.vbp
  */
 {
@@ -200,7 +202,7 @@ seriesType('vbp', 'sma',
         var series = this, attr = {};
         if (H.svg && !init) {
             attr.translateX = series.yAxis.pos;
-            series.group.animate(attr, extend(H.animObject(series.options.animation), {
+            series.group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
                         scaleX: Math.max(0.001, fx.pos)
@@ -482,6 +484,8 @@ seriesType('vbp', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/volume-by-price
  * @apioption series.vbp
  */
 ''; // to include the above in the js output

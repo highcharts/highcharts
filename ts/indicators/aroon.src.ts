@@ -23,6 +23,10 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
+            public getValues(
+                series: Series,
+                params: AroonIndicatorParamsOptions
+            ): (IndicatorValuesObject|IndicatorMultipleValuesObject);
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public options: AroonIndicatorOptions;
@@ -114,6 +118,8 @@ H.seriesType<Highcharts.AroonIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
     {
@@ -233,6 +239,8 @@ H.seriesType<Highcharts.AroonIndicator>(
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/aroon
  * @apioption series.aroon
  */
 

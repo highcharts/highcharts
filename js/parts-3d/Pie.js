@@ -15,12 +15,13 @@ import U from '../parts/Utilities.js';
 var pick = U.pick;
 var deg2rad = H.deg2rad, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
 /**
- * The thickness of a 3D pie. Requires `highcharts-3d.js`
+ * The thickness of a 3D pie.
  *
  * @type      {number}
  * @default   0
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.pie.depth
  */
 /* eslint-disable no-invalid-this */

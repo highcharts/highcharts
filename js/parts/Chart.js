@@ -77,12 +77,12 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, doc = H.doc, Axis = H.Axis, // @todo add as requirement
+var addEvent = H.addEvent, animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
 createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
 removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, win = H.win;
@@ -295,6 +295,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
             charts.push(chart);
@@ -347,7 +348,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             optionsChart.defaultSeriesType), series, Constr = seriesTypes[type];
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
         series = new Constr();
         series.init(this, options);
@@ -403,6 +404,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var series = this.series, i = fromIndex || 0;
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Contains the series' index in the `Chart.series` array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number|undefined}
+                 * @readonly
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
@@ -1499,6 +1507,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight).add();
                 }
                 else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
                     plotBGImage.animate(plotBox);
                 }
             }

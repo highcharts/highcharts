@@ -41,6 +41,9 @@ seriesType('heatmap', 'scatter',
  * A heatmap is a graphical representation of data where the individual
  * values contained in a matrix are represented as colors.
  *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
+ *
  * @sample highcharts/demo/heatmap/
  *         Simple heatmap
  * @sample highcharts/demo/heatmap-canvas/
@@ -314,6 +317,9 @@ seriesType('heatmap', 'scatter',
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
  * @excluding dataParser, dataURL, marker, pointRange, stack
