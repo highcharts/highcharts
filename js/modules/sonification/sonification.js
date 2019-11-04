@@ -11,6 +11,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+var addEvent = H.addEvent;
+
 import U from '../../parts/Utilities.js';
 var extend = U.extend;
 
@@ -105,6 +107,10 @@ extend(H.Chart.prototype, {
     getCurrentSonifyPoints: chartSonifyFunctions.getCurrentPoints,
     setSonifyCursor: chartSonifyFunctions.setCursor,
     resetSonifyCursor: chartSonifyFunctions.resetCursor,
-    resetSonifyCursorEnd: chartSonifyFunctions.resetCursorEnd,
-    sonification: {}
+    resetSonifyCursorEnd: chartSonifyFunctions.resetCursorEnd
+});
+
+// Prepare charts for sonification on init
+addEvent(H.Chart, 'init', function () {
+    this.sonification = {};
 });
