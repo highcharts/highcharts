@@ -5,9 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Efficiency Optimization by Branch'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: {
         categories: [
             'Seattle HQ',

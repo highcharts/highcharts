@@ -8,9 +8,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: Wikipedia.org'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: {
         categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
         tickmarkPlacement: 'on',

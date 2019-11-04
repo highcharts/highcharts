@@ -8,9 +8,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: {
         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
         title: {

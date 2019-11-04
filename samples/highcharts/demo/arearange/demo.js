@@ -17,10 +17,6 @@ Highcharts.getJSON(
                 text: 'Temperature variation by day'
             },
 
-            accessibility: {
-                linkedDescription: 'chart-description'
-            },
-
             xAxis: {
                 type: 'datetime',
                 accessibility: {

@@ -17,10 +17,6 @@ Highcharts.chart('container', {
         text: 'Source: WebAIM. Click on points to visit official screen reader website'
     },
 
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
-
     yAxis: {
         title: {
             text: 'Percentage usage'

@@ -169,6 +169,47 @@ var options = {
         landmarkVerbosity: 'all',
 
         /**
+         * Link the chart to an HTML element describing the contents of the
+         * chart.
+         *
+         * It is always recommended to describe charts using visible text, to
+         * improve SEO as well as accessibility for users with disabilities.
+         * This option lets an HTML element with a description be linked to the
+         * chart, so that screen reader users can connect the two.
+         *
+         * By setting this option to a string, Highcharts runs the string as an
+         * HTML selector query on the entire document. If there is only a single
+         * match, this element is linked to the chart. The content of the linked
+         * element will be included in the chart description for screen reader
+         * users.
+         *
+         * By default, the chart looks for an adjacent sibling element with the
+         * `highcharts-description` class.
+         *
+         * The feature can be disabled by setting the option to an empty string,
+         * or overridden by providing the
+         * [accessibility.description](#accessibility.description) option.
+         * Alternatively, the HTML element to link can be passed in directly as
+         * an HTML node.
+         *
+         * If you need the description to be part of the exported image,
+         * consider using the [caption](#caption) feature.
+         *
+         * If you need the description to be hidden visually, use the
+         * [accessibility.description](#accessibility.description) option.
+         *
+         * @see [caption](#caption)
+         * @see [description](#accessibility.description)
+         * @see [typeDescription](#accessibility.typeDescription)
+         *
+         * @type      {string|Highcharts.HTMLDOMElement}
+         * @since     next
+         * @sample highcharts/accessibility/accessible-line
+         *         Accessible line chart
+         */
+        linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line
+
+        /**
          * A hook for adding custom components to the accessibility module.
          * Should be an object mapping component names to instances of classes
          * inheriting from the Highcharts.AccessibilityComponent base class.
@@ -216,31 +257,6 @@ var options = {
          * @type      {string}
          * @since     5.0.0
          * @apioption accessibility.description
-         */
-
-        /**
-         * The ID of an HTML element describing the contents of the chart.
-         *
-         * It is always recommended to describe charts using visible text, to
-         * improve SEO as well as accessibility for users with disabilities.
-         * This option lets an HTML element with a description be linked to the
-         * chart, so that screen reader users can connect the two.
-         *
-         * If you need the description to be part of the exported image,
-         * consider using the [caption](#caption) feature.
-         *
-         * If you need the description to be hidden visually, use the
-         * [accessibility.description](#accessibility.description) option.
-         *
-         * @see [caption](#caption)
-         * @see [description](#accessibility.description)
-         * @see [typeDescription](#accessibility.typeDescription)
-         *
-         * @type      {string}
-         * @since     next
-         * @sample highcharts/accessibility/accessible-line
-         *         Accessible line chart
-         * @apioption accessibility.linkedDescription
          */
 
         /**

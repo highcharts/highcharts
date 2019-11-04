@@ -2,9 +2,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Combination chart'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Bananas', 'Plums']
     },

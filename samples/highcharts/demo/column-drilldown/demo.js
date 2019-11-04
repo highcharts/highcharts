@@ -10,7 +10,6 @@ Highcharts.chart('container', {
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     accessibility: {
-        linkedDescription: 'chart-description',
         announceNewData: {
             enabled: true
         }

@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+var doc = H.win.document,
+    format = H.format;
+
 import U from '../../../parts/Utilities.js';
 var extend = U.extend,
     pick = U.pick;
@@ -30,14 +33,6 @@ var addClass = HTMLUtilities.addClass,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
-
-function getLinkedDescriptionElement(chart) {
-    var chartOptions = chart.options,
-        linkedDescId = chartOptions.accessibility.linkedDescription,
-        linkedDescEl = linkedDescId && getElement(linkedDescId);
-
-    return linkedDescEl;
-}
 
 function getTypeDescForMapChart(chart, formatContext) {
     return formatContext.mapTitle ?
@@ -228,11 +223,36 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     onChartUpdate: function () {
         var component = this;
 
+        this.linkedDescriptionElement = this.getLinkedDescriptionElement();
+        this.setLinkedDescriptionAttrs();
+
         Object.keys(this.screenReaderSections).forEach(function (regionKey) {
             component.updateScreenReaderSection(regionKey);
         });
+    },
 
-        this.setLinkedDescriptionAttrs();
+
+    /**
+     * @private
+     */
+    getLinkedDescriptionElement: function () {
+        var chartOptions = this.chart.options,
+            linkedDescOption = chartOptions.accessibility.linkedDescription;
+
+        if (!linkedDescOption) {
+            return;
+        }
+
+        if (linkedDescOption.innerHTML) {
+            return linkedDescOption;
+        }
+
+        var query = format(linkedDescOption, this.chart),
+            queryMatch = doc.querySelectorAll(query);
+
+        if (queryMatch.length === 1) {
+            return queryMatch[0];
+        }
     },
 
 
@@ -240,7 +260,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      */
     setLinkedDescriptionAttrs: function () {
-        var el = getLinkedDescriptionElement(this.chart);
+        var el = this.linkedDescriptionElement;
 
         if (el) {
             el.setAttribute('aria-hidden', 'true');
@@ -353,7 +373,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @return {string}
      */
     getLinkedDescription: function () {
-        var el = getLinkedDescriptionElement(this.chart),
+        var el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
         return stripHTMLTagsFromString(content);

@@ -8,9 +8,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: WorldClimate.com'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

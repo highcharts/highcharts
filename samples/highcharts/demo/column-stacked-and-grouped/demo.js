@@ -8,10 +8,6 @@ Highcharts.chart('container', {
         text: 'Total fruit consumtion, grouped by gender'
     },
 
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
-
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

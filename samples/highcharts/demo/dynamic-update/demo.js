@@ -26,7 +26,6 @@ Highcharts.chart('container', {
     },
 
     accessibility: {
-        linkedDescription: 'chart-description',
         announceNewData: {
             enabled: true,
             minAnnounceInterval: 15000,

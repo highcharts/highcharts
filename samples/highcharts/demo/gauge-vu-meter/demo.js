@@ -18,10 +18,6 @@ Highcharts.chart('container', {
         text: 'VU meter'
     },
 
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
-
     pane: [{
         startAngle: -45,
         endAngle: 45,

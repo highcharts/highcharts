@@ -42,9 +42,6 @@ var chart = new Highcharts.Chart({
     subtitle: {
         text: 'Click and drag the plot area to rotate in space'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     plotOptions: {
         scatter: {
             width: 10,

@@ -5,9 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Stacked bar chart'
     },
-    accessibility: {
-        linkedDescription: 'chart-description'
-    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

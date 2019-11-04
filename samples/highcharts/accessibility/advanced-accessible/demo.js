@@ -58,7 +58,6 @@ var chart = Highcharts.chart('container', {
     },
 
     accessibility: {
-        linkedDescription: 'chart-description',
         point: {
             descriptionFormatter: function (point) {
                 // Use default formatter for null points

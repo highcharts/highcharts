@@ -19,7 +19,6 @@ Highcharts.chart('container', {
     },
 
     accessibility: {
-        linkedDescription: 'chart-description',
         point: {
             descriptionFormatter: function (point) {
                 var index = point.index + 1,
