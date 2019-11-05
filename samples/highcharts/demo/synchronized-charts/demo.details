@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Synchronized charts
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Combinations
 ...

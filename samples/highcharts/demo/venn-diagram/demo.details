@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Jon Arild Nygård
- js_wrap: b
+name: Venn diagram
+authors:
+  - Jon Arild Nygård
+js_wrap: b
+tags: []
+categories:
+  - More chart types
 ...
