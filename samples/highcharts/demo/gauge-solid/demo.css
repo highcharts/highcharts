@@ -1,16 +1,12 @@
 .highcharts-figure .chart-container {
 	width: 300px;
-	float: left;
 	height: 200px;
-}
-.highcharts-yaxis-grid .highcharts-grid-line {
-	display: none;
+	float: left;
 }
 
 @media (max-width: 600px) {
 	.highcharts-figure {
 		width: 100%;
-		height: 400px;
 	}
 	.highcharts-figure .chart-container {
 		width: 300px;
@@ -22,7 +18,6 @@
 
 .highcharts-figure, .highcharts-data-table table {
 	width: 600px;
-	height: 200px;
 	margin: 0 auto;
 }
 

@@ -54,7 +54,7 @@ var chart = Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Daily company fruit consumption 2015'
+        text: 'Daily company fruit consumption 2019'
     },
 
     accessibility: {

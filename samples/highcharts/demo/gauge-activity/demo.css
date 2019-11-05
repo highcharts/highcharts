@@ -1,6 +1,11 @@
+#container {
+	max-width: 400px;
+	margin: 0 auto;
+}
+
 .highcharts-figure, .highcharts-data-table table {
-    min-width: 380px; 
-    max-width: 420px;
+	min-width: 380px;    
+	max-width: 600px;
     margin: 0 auto;
 }
 

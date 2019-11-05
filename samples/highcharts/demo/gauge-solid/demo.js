@@ -35,6 +35,7 @@ var gaugeOptions = {
             [0.9, '#DF5353'] // red
         ],
         lineWidth: 0,
+        tickWidth: 0,
         minorTickInterval: null,
         tickAmount: 2,
         title: {
