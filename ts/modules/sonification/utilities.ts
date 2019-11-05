@@ -153,7 +153,7 @@ SignalHandler.prototype.emitSignal = function (
         this.signals[signalName].forEach(function (handler: Function): void {
             var result = handler(data);
 
-            retval = result !== undefined ? result : retval;
+            retval = typeof result !== 'undefined' ? result : retval;
         });
     }
     return retval;
@@ -212,7 +212,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
             series.points.forEach(function (point: Highcharts.Point): void {
-                var val = (point as any)[prop] !== undefined ?
+                var val = typeof (point as any)[prop] !== 'undefined' ?
                     (point as any)[prop] : (point.options as any)[prop];
 
                 extremes.min = Math.min(extremes.min, val);

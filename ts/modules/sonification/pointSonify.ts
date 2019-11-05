@@ -285,7 +285,7 @@ function pointSonify(
             allowedValues?: boolean
         ): (number|Function|undefined) {
             // Fixed number, just use that
-            if (typeof value === 'number' || value === undefined) {
+            if (typeof value === 'number' || typeof value === 'undefined') {
                 return value;
             }
             // Function. Return new function if we try to use callback,

@@ -92,7 +92,7 @@ TimelineEvent.prototype.play = function (options) {
                         onEnd.apply(this, args);
                     }
                 });
-            } : undefined;
+            } : void 0;
         eventObject.sonify(playOptions);
     }
     else {
@@ -239,7 +239,7 @@ TimelinePath.prototype.getCursor = function () {
  */
 TimelinePath.prototype.setCursor = function (eventId) {
     var ix = this.eventIdMap[eventId];
-    if (ix !== undefined) {
+    if (typeof ix !== 'undefined') {
         this.cursor = ix;
         return true;
     }
