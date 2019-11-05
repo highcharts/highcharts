@@ -13,11 +13,6 @@ Highcharts.chart('container', {
         text: 'Speedometer with dual axes'
     },
 
-    caption: {
-        text: 'Chart showing multiple axes with a gauge series.',
-        align: 'center'
-    },
-
     pane: {
         startAngle: -150,
         endAngle: 150

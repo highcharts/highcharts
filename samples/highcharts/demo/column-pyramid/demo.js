@@ -5,9 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'The 5 highest pyramids in the World'
     },
-    caption: {
-        text: 'Chart showing use of the pyramid series type to visualize heights of pyramids. A pyramid series is similar to a column series, but with a different shape.'
-    },
     colors: ['#C79D6D', '#B5927B', '#CE9B84', '#B7A58C', '#C7A58C'],
     xAxis: {
         crosshair: true,

@@ -8,10 +8,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a href="http://en.wikipedia.org/wiki/List_of_cities_proper_by_population">Wikipedia</a>'
     },
-    caption: {
-        text: 'Chart showing use of rotated axis labels and data labels.',
-        align: 'center'
-    },
     xAxis: {
         type: 'category',
         labels: {

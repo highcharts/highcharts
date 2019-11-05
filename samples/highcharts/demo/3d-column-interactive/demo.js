@@ -17,10 +17,6 @@ var chart = new Highcharts.Chart({
     subtitle: {
         text: 'Test options by dragging the sliders below'
     },
-    caption: {
-        text: 'Chart designed to highlight 3D column chart rendering options.',
-        align: 'center'
-    },
     plotOptions: {
         column: {
             depth: 25

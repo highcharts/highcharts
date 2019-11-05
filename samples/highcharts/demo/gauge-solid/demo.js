@@ -5,10 +5,6 @@ var gaugeOptions = {
 
     title: null,
 
-    accessibility: {
-        description: 'Chart demonstrating a solid gauge with dynamic data.'
-    },
-
     pane: {
         center: ['50%', '85%'],
         size: '140%',

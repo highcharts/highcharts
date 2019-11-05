@@ -14,11 +14,6 @@ Highcharts.chart('container', {
         text: 'Total fruit consumption, grouped by gender'
     },
 
-    caption: {
-        text: 'Chart showing grouped and stacked 3D columns.',
-        align: 'center'
-    },
-
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas'],
         labels: {

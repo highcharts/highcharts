@@ -8,10 +8,6 @@ Highcharts.chart('container', {
         text: 'Highcharts Box Plot Example'
     },
 
-    caption: {
-        text: 'Chart showing the use of box plots with outliers. The chart makes use of a plot line to show the theoretical mean value.'
-    },
-
     legend: {
         enabled: false
     },

@@ -5,20 +5,23 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<div id="container"></div>
-<div id="sliders">
-    <table>
-        <tr>
-        	<td><label for="alpha">Alpha Angle</label></td>
-        	<td><input id="alpha" type="range" min="0" max="45" value="15"/> <span id="alpha-value" class="value"></span></td>
-        </tr>
-        <tr>
-        	<td><label for="beta">Beta Angle</label></td>
-        	<td><input id="beta" type="range" min="-45" max="45" value="15"/> <span id="beta-value" class="value"></span></td>
-        </tr>
-        <tr>
-        	<td><label for="depth">Depth</label></td>
-        	<td><input id="depth" type="range" min="20" max="100" value="50"/> <span id="depth-value" class="value"></span></td>
-        </tr>
-    </table>
-</div>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">Chart designed to highlight 3D column chart rendering options.</p>
+    <div id="sliders">
+        <table>
+            <tr>
+                <td><label for="alpha">Alpha Angle</label></td>
+                <td><input id="alpha" type="range" min="0" max="45" value="15"/> <span id="alpha-value" class="value"></span></td>
+            </tr>
+            <tr>
+                <td><label for="beta">Beta Angle</label></td>
+                <td><input id="beta" type="range" min="-45" max="45" value="15"/> <span id="beta-value" class="value"></span></td>
+            </tr>
+            <tr>
+                <td><label for="depth">Depth</label></td>
+                <td><input id="depth" type="range" min="20" max="100" value="50"/> <span id="depth-value" class="value"></span></td>
+            </tr>
+        </table>
+    </div>
+</figure>

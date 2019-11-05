@@ -101,10 +101,6 @@ Highcharts.chart('container', {
         }
     },
 
-    accessibility: {
-        description: 'A chart showing multiple gauges arcing around the center point. Each gauge has a custom icon, and the tooltip is positioned statically in the center.'
-    },
-
     tooltip: {
         borderWidth: 0,
         backgroundColor: 'none',

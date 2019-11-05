@@ -8,9 +8,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: Wikipedia.org'
     },
-    caption: {
-        text: 'A demo showing a stacked area chart, also sometimes referred to as a mountain chart.'
-    },
     xAxis: {
         categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
         tickmarkPlacement: 'on',

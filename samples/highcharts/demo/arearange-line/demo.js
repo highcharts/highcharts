@@ -72,11 +72,6 @@ Highcharts.chart('container', {
         text: 'July temperatures'
     },
 
-    caption: {
-        text: 'Chart demonstrating using an arearange series in combination with a line series.',
-        align: 'center'
-    },
-
     xAxis: {
         type: 'datetime',
         accessibility: {

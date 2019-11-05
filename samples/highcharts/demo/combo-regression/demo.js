@@ -2,10 +2,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Scatter plot with regression line'
     },
-    caption: {
-        text: 'Chart showing how a line chart can be used to show a regression line for a dataset.',
-        align: 'center'
-    },
     xAxis: {
         min: -0.5,
         max: 5.5

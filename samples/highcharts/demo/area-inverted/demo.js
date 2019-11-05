@@ -6,9 +6,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Average fruit consumption during one week'
     },
-    caption: {
-        text: 'Demonstrating an inverted area chart with a floating legend.'
-    },
     accessibility: {
         keyboardNavigation: {
             seriesNavigation: {

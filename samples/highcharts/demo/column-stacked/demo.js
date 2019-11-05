@@ -5,10 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Stacked column chart'
     },
-    caption: {
-        text: 'Chart showing stacked columns for comparing quantities.',
-        align: 'center'
-    },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
     },

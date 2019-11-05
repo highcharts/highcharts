@@ -19,9 +19,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
     },
-    caption: {
-        text: 'Bar chart showing german population distribution by using a mirrored horizontal column chart.'
-    },
     accessibility: {
         point: {
             descriptionFormatter: function (point) {

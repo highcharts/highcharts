@@ -5,9 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Sales funnel'
     },
-    accessibility: {
-        description: 'Chart showing an example of a sales funnel.'
-    },
     plotOptions: {
         series: {
             dataLabels: {

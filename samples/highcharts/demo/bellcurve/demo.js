@@ -15,10 +15,6 @@ Highcharts.chart('container', {
         text: 'Bell curve'
     },
 
-    caption: {
-        text: 'Chart showing the use of a bell curve computed automatically from a dataset.'
-    },
-
     xAxis: [{
         title: {
             text: 'Data'

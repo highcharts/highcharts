@@ -32,10 +32,6 @@ Highcharts.chart('container', {
         text: 'Source: WebAIM. Click on point to visit official website'
     },
 
-    caption: {
-        text: 'Pie chart demonstrating some accessibility features of Highcharts. The chart shows which screen reader is used as the primary screen reader by the respondents.'
-    },
-
     tooltip: {
         valueSuffix: '%',
         borderColor: '#8ae'

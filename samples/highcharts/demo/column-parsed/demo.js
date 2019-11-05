@@ -8,10 +8,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Data extracted from a HTML table in the page'
     },
-    caption: {
-        text: 'Chart showing how an HTML table can be used as the data source.',
-        align: 'center'
-    },
     yAxis: {
         allowDecimals: false,
         title: {

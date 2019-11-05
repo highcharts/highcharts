@@ -14,11 +14,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Notice the difference between a 0 value and a null point'
     },
-    caption: {
-        text: 'Chart designed to show difference between 0 and null in a ' +
-            '3D chart.',
-        align: 'center'
-    },
     plotOptions: {
         column: {
             depth: 25

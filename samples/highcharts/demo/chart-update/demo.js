@@ -8,10 +8,6 @@ var chart = Highcharts.chart('container', {
         text: 'Plain'
     },
 
-    caption: {
-        text: 'This demo shows how options can be changed on the fly, allowing for more dynamic charts.'
-    },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },

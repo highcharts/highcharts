@@ -5,10 +5,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Average fruit consumption during one week'
     },
-    caption: {
-        text: 'This demo demonstrates a smoothed area chart with an x-axis plot band highlighting an area of interest at the last two points.',
-        align: 'center'
-    },
     legend: {
         layout: 'vertical',
         align: 'left',

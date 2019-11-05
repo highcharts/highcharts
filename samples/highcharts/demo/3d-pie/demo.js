@@ -10,11 +10,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Browser market shares at a specific website, 2014'
     },
-    caption: {
-        text: 'Chart demonstrating the use of a 3D pie layout. ' +
-            'The "Chrome" slice has been selected, and is offset from the pie.',
-        align: 'center'
-    },
     accessibility: {
         point: {
             valueSuffix: '%'
