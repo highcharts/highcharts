@@ -140,7 +140,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
                 yValLen &&
                 (yVal[0] as any).length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             if (!volumeSeries) {
@@ -151,7 +151,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
                     true,
                     series.chart
                 );
-                return undefined;
+                return;
             }
 
             // i = period <-- skip first N-points

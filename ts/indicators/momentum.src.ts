@@ -125,14 +125,14 @@ seriesType<Highcharts.MomentumIndicator>(
                 MMPoint: [number, number];
 
             if (xVal.length <= period) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
             if (isArray(yVal[0])) {
                 yValue = (yVal[0][3] as any);
             } else {
-                return undefined;
+                return;
             }
             // Starting point
             points = [

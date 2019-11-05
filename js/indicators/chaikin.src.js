@@ -90,7 +90,7 @@ H.seriesType('chaikin', 'ema',
         if (periods.length !== 2 || periods[1] <= periods[0]) {
             error('Error: "Chaikin requires two periods. Notice, first ' +
                 'period should be lower than the second one."');
-            return undefined;
+            return;
         }
         ADL = AD.prototype.getValues.call(this, series, {
             volumeSeriesID: params.volumeSeriesID,
@@ -98,7 +98,7 @@ H.seriesType('chaikin', 'ema',
         });
         // Check if adl is calculated properly, if not skip
         if (!ADL) {
-            return undefined;
+            return;
         }
         SPE = EMA.prototype.getValues.call(this, ADL, {
             period: periods[0]
@@ -108,7 +108,7 @@ H.seriesType('chaikin', 'ema',
         });
         // Check if ema is calculated properly, if not skip
         if (!SPE || !LPE) {
-            return undefined;
+            return;
         }
         periodsOffset = periods[1] - periods[0];
         for (i = 0; i < LPE.yData.length; i++) {

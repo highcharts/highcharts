@@ -565,7 +565,7 @@ seriesType('ikh', 'sma',
         if (xVal.length <= period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return undefined;
+            return;
         }
         // Add timestamps at the beginning
         dateStart = xVal[0] - (period * closestPointRange);

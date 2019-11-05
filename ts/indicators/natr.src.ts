@@ -97,7 +97,7 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
                 i = 0;
 
             if (!atrData) {
-                return undefined;
+                return;
             }
 
             for (; i < atrLength; i++) {

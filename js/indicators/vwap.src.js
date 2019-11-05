@@ -73,7 +73,7 @@ seriesType('vwap', 'sma',
             H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
-            return undefined;
+            return;
         }
         // Checks if series data fits the OHLC format
         if (!(isArray(yValues[0]))) {

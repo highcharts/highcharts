@@ -575,7 +575,7 @@ seriesType<Highcharts.VBPIndicator>(
                     true,
                     chart
                 );
-                return undefined;
+                return;
             }
 
             // Checks if volume series exists
@@ -589,7 +589,7 @@ seriesType<Highcharts.VBPIndicator>(
                     true,
                     chart
                 );
-                return undefined;
+                return;
             }
 
             // Checks if series data fits the OHLC format
@@ -603,7 +603,7 @@ seriesType<Highcharts.VBPIndicator>(
                     true,
                     chart
                 );
-                return undefined;
+                return;
             }
 
             // Price zones contains all the information about the zones (index,

@@ -172,7 +172,7 @@ seriesType<Highcharts.EMAIndicator>(
 
             // Check period, if bigger than points length, skip
             if (yValLen < period) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

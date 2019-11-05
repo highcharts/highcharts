@@ -209,7 +209,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             // For a N-period, we start from N-1 point, to calculate Nth point

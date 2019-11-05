@@ -78,7 +78,7 @@ H.seriesType('tema', 'ema',
         series.EMApercent = (2 / (period + 1));
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 3 * period - 2) {
-            return undefined;
+            return;
         }
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {

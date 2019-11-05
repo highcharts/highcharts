@@ -128,7 +128,7 @@ H.seriesType<Highcharts.RSIIndicator>(
                 (xVal.length < period) || !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             // Calculate changes for first N points

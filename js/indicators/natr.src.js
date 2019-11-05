@@ -47,7 +47,7 @@ H.seriesType('natr', 'sma',
     getValues: function (series, params) {
         var atrData = (ATR.prototype.getValues.apply(this, arguments)), atrLength = atrData.values.length, period = params.period - 1, yVal = series.yData, i = 0;
         if (!atrData) {
-            return undefined;
+            return;
         }
         for (; i < atrLength; i++) {
             atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;

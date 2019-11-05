@@ -529,7 +529,7 @@ seriesType<Highcharts.SMAIndicator>(
                 SMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

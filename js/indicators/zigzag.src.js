@@ -83,7 +83,7 @@ seriesType('zigzag', 'sma',
             (yValLen &&
                 (yVal[0][lowIndex] === UNDEFINED ||
                     yVal[0][highIndex] === UNDEFINED))) {
-            return undefined;
+            return;
         }
         // Set first zigzag point candidate
         firstZigzagLow = yVal[0][lowIndex];

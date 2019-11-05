@@ -164,7 +164,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
             params: Highcharts.CMFIndicatorParamsOptions
         ): (Highcharts.IndicatorNullableValuesObject|undefined) {
             if (!this.isValid()) {
-                return undefined;
+                return;
             }
 
             return this.getMoneyFlow(

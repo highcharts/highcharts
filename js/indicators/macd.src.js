@@ -264,7 +264,7 @@ seriesType('macd', 'sma',
         var j = 0, MACD = [], xMACD = [], yMACD = [], signalLine = [], shortEMA, longEMA, i;
         if (series.xData.length <
             params.longPeriod + params.signalPeriod) {
-            return undefined;
+            return;
         }
         // Calculating the short and long EMA used when calculating the MACD
         shortEMA = EMA.prototype.getValues(series, {

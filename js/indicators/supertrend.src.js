@@ -361,7 +361,7 @@ H.seriesType('supertrend', 'sma',
         prevY, y, i;
         if ((xVal.length <= period) || !isArray(yVal[0]) ||
             yVal[0].length !== 4 || period < 0) {
-            return undefined;
+            return;
         }
         ATRData = ATR.prototype.getValues.call(this, series, {
             period: period
