@@ -95,6 +95,19 @@ var chart = Highcharts.chart('container', {
         min: 0
     },
 
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 550
+            },
+            chartOptions: {
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                }
+            }
+        }]
+    },
+
     plotOptions: {
         series: {
             stickyTracking: true,

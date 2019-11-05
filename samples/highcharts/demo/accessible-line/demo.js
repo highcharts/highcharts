@@ -95,11 +95,22 @@ Highcharts.chart('container', {
     responsive: {
         rules: [{
             condition: {
-                maxWidth: 500
+                maxWidth: 550
             },
             chartOptions: {
                 legend: {
                     itemWidth: 150
+                },
+                xAxis: {
+                    categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019']
+                },
+                yAxis: {
+                    title: {
+                        enabled: false
+                    },
+                    labels: {
+                        format: '{value}%'
+                    }
                 }
             }
         }]
