@@ -49,11 +49,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 import requiredIndicator from '../mixins/indicator-required.js';
 
-var correctFloat = H.correctFloat,
-    TEMA = H.seriesTypes.tema;
+var TEMA = H.seriesTypes.tema;
 
 /**
  * The TRIX series type.

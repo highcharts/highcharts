@@ -11,6 +11,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     pick
 } = U;
 
@@ -29,7 +30,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: DPOIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
         }
 
         interface DPOIndicatorOptions extends SMAIndicatorOptions {
@@ -50,8 +51,6 @@ declare global {
 
     }
 }
-
-var correctFloat = H.correctFloat;
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -126,7 +125,7 @@ H.seriesType<Highcharts.DPOIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.DPOIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
@@ -148,7 +147,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 j: number;
 
             if (xVal.length <= range) {
-                return false;
+                return;
             }
 
             // Accumulate first N-points for SMA

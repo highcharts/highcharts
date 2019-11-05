@@ -22,6 +22,10 @@ declare global {
         class IKHIndicator
             extends SMAIndicator {
             public data: Array<IKHIndicatorPoint>;
+            public getValues(
+                series: Series,
+                params: IKHIndicatorParamsOptions
+            ): (IndicatorMultipleUndefinableValuesObject|undefined);
             public graphCollection: Array<string>;
             public graphsenkouSpan: (SVGElement | undefined)
             public ikhMap: Dictionary<Array<IKHIndicatorPoint>>;
@@ -886,7 +890,7 @@ seriesType<Highcharts.IKHIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.IKHIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleUndefinableValuesObject) {
+        ): (Highcharts.IndicatorMultipleUndefinableValuesObject|undefined) {
 
             var period: number = (params.period as any),
                 periodTenkan: number = (params.periodTenkan as any),
@@ -921,7 +925,7 @@ seriesType<Highcharts.IKHIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
 

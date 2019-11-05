@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Spline with symbols
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Line charts
 ...

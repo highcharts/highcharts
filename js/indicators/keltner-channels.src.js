@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr, merge = H.merge, correctFloat = H.correctFloat;
+var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr, merge = H.merge;
 /**
  * The Keltner Channels series type.
  *
@@ -133,7 +134,7 @@ merge(multipleLinesMixin, {
             period: periodATR
         }), pointEMA, pointATR, xData = [], yData = [], i;
         if (yValLen < period) {
-            return false;
+            return;
         }
         for (i = period; i <= yValLen; i++) {
             pointEMA = seriesEMA.values[i - period];

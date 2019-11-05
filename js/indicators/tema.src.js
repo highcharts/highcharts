@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var correctFloat = U.correctFloat, isArray = U.isArray;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var EMAindicator = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin, correctFloat = H.correctFloat;
+var EMAindicator = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
 /**
  * The TEMA series type.
  *
@@ -78,7 +78,7 @@ H.seriesType('tema', 'ema',
         series.EMApercent = (2 / (period + 1));
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 3 * period - 2) {
-            return false;
+            return;
         }
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {

@@ -662,6 +662,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     erase,
     extend,
@@ -680,7 +681,6 @@ import './Point.js';
 import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     fireEvent = H.fireEvent,
@@ -1205,6 +1205,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @sample {highcharts} highcharts/datasorting/animation/
          *         Data sorting in scatter-3d
+         * @sample {highcharts} highcharts/datasorting/labels-animation/
+         *         Axis labels animation
          * @sample {highcharts} highcharts/datasorting/dependent-sorting/
          *         Dependent series sorting
          * @sample {highcharts} highcharts/datasorting/independent-sorting/

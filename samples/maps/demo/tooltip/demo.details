@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- requiresManualTesting: true
- js_wrap: b
+name: Fixed tooltip with HTML
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+tags: []
+categories:
+  - Dynamic
 ...

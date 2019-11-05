@@ -113,7 +113,7 @@ H.merge(multipleLinesMixin, {
         if (yValLen < periodK ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list

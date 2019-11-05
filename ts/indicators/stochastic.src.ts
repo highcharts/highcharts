@@ -25,7 +25,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: StochasticIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleNullableValuesObject);
+            ): (IndicatorMultipleNullableValuesObject|undefined);
             public init(): void;
             public linesApiNames: Array<string>;
             public nameBase: string;
@@ -172,7 +172,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
             this: Highcharts.StochasticIndicator,
             series: Highcharts.Series,
             params: Highcharts.StochasticIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleNullableValuesObject) {
+        ): (Highcharts.IndicatorMultipleNullableValuesObject|undefined) {
             var periodK: number = (params.periods as any)[0],
                 periodD: number = (params.periods as any)[1],
                 xVal: Array<number> = (series.xData as any),
@@ -191,12 +191,13 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 LL: number,
                 K: number,
                 D: number|null = null,
-                points: (boolean|Highcharts.IndicatorValuesObject|
+                points: (Highcharts.IndicatorValuesObject|
                 Highcharts.IndicatorNullableValuesObject|
                 Highcharts.IndicatorUndefinableValuesObject|
                 Highcharts.IndicatorMultipleValuesObject|
                 Highcharts.IndicatorMultipleNullableValuesObject|
-                Highcharts.IndicatorMultipleUndefinableValuesObject
+                Highcharts.IndicatorMultipleUndefinableValuesObject|
+                undefined
                 ),
                 extremes: [number, number],
                 i: number;
@@ -208,7 +209,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // For a N-period, we start from N-1 point, to calculate Nth point

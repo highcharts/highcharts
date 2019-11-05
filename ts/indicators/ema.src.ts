@@ -39,7 +39,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: EMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject|IndicatorNullableValuesObject);
+            ): (IndicatorValuesObject|IndicatorNullableValuesObject|undefined);
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {
@@ -62,10 +62,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var seriesType = H.seriesType,
-    correctFloat = H.correctFloat;
+var seriesType = H.seriesType;
 
 /**
  * The EMA series type.
@@ -154,7 +156,7 @@ seriesType<Highcharts.EMAIndicator>(
             this: Highcharts.EMAIndicator,
             series: Highcharts.Series,
             params: Highcharts.EMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -172,7 +174,7 @@ seriesType<Highcharts.EMAIndicator>(
 
             // Check period, if bigger than points length, skip
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

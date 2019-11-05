@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Fixed placement columns
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Column and bar charts
 ...

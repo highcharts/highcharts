@@ -137,6 +137,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    correctFloat,
     defined,
     destroyObjectProperties,
     extend,
@@ -145,8 +146,7 @@ const {
     pick
 } = U;
 
-var correctFloat = H.correctFloat,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     merge = H.merge,
     deg2rad = H.deg2rad;
 
@@ -684,7 +684,7 @@ H.Tick.prototype = {
 
         pos = {
             x: horiz ?
-                H.correctFloat(
+                correctFloat(
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old
                     ) as any) +
@@ -714,7 +714,7 @@ H.Tick.prototype = {
                     axis.offset -
                     (axis.opposite ? axis.height : 0)
                 ) :
-                H.correctFloat(
+                correctFloat(
                     (cHeight as any) -
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old

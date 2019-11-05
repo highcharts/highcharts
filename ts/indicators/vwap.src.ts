@@ -34,7 +34,7 @@ declare global {
             public getValues(
                 series: VWAPLinkedParentSeries,
                 params: VWAPIndicatorParamsOptions,
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject|undefined);
             public options: VWAPIndicatorOptions;
             public pointClass: typeof VWAPIndicatorPoint;
             public points: Array<VWAPIndicatorPoint>;
@@ -124,7 +124,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             this: Highcharts.VWAPIndicator,
             series: Highcharts.VWAPLinkedParentSeries,
             params: Highcharts.VWAPIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var indicator = this,
                 chart: Highcharts.Chart = series.chart,
                 xValues: Array<number> = series.xData,
@@ -139,13 +139,14 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     chart
-                ) as any);
+                );
+                return;
             }
 
             // Checks if series data fits the OHLC format

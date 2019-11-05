@@ -24,7 +24,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: PriceEnvelopesIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
             public nameBase: string;
             public options: PriceEnvelopesIndicatorOptions;
             public parallelArrays: Array<string>;
@@ -275,7 +275,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.PriceEnvelopesIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 topPercent: number = (params.topBand as any),
                 botPercent: number = (params.bottomBand as any),
@@ -302,7 +302,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {

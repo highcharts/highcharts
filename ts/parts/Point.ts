@@ -631,6 +631,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     defined,
     erase,
     extend,
@@ -643,7 +644,6 @@ const {
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
-    animObject = H.animObject,
     fireEvent = H.fireEvent,
     format = H.format,
     uniqueKey = H.uniqueKey,
@@ -1136,7 +1136,7 @@ Highcharts.Point.prototype = {
         this: Highcharts.Point
     ): void {
         var point = this,
-            animateParams = { x: point.startXPos },
+            animateParams = { x: point.startXPos, opacity: 0 },
             isDataLabel,
             graphicalProps = point.getGraphicalProps();
 

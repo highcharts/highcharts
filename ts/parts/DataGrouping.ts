@@ -151,6 +151,7 @@ import U from './Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     extend,
     isNumber,
@@ -163,7 +164,6 @@ import './Tooltip.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,

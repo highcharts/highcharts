@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import requiredIndicator from '../mixins/indicator-required.js';
-var correctFloat = H.correctFloat, TEMA = H.seriesTypes.tema;
+var TEMA = H.seriesTypes.tema;
 /**
  * The TRIX series type.
  *

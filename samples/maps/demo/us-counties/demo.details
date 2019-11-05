@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- requiresManualTesting: true
- js_wrap: b
+name: 'Detailed map, US counties'
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+tags: []
+categories:
+  - General
 ...
