@@ -198,7 +198,7 @@ H.seriesType<Highcharts.AOIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             for (i = 0; i < longPeriod - 1; i++) {

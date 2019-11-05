@@ -174,7 +174,7 @@ H.seriesType('priceenvelopes', 'sma',
         if (xVal.length < period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return undefined;
+            return;
         }
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);

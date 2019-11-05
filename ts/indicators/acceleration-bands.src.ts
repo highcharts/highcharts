@@ -201,7 +201,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 i: (number|undefined);
 
             if (yValLen < period) {
-                return undefined;
+                return;
             }
 
             for (i = 0; i <= yValLen; i++) {

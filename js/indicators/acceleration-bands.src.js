@@ -115,7 +115,7 @@ merge(multipleLinesMixin, {
         // middle line, top line and bottom line
         ML, TL, BL, date, bandBase, pointSMA, ubSMA, lbSMA, low = 2, high = 1, xData = [], yData = [], slicedX, slicedY, i;
         if (yValLen < period) {
-            return undefined;
+            return;
         }
         for (i = 0; i <= yValLen; i++) {
             // Get UB and LB values of every point. This condition

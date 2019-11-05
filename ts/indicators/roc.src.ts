@@ -156,7 +156,7 @@ seriesType<Highcharts.ROCIndicator>(
             // Period is used as a number of time periods ago, so we need more
             // (at least 1 more) data than the period value
             if (xVal.length <= period) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

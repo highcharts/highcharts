@@ -86,13 +86,13 @@ H.seriesType('mfi', 'sma',
             H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
-            return undefined;
+            return;
         }
         // MFI requires high low and close values
         if ((xVal.length <= period) || !isArray(yVal[0]) ||
             yVal[0].length !== 4 ||
             !yValVolume) {
-            return undefined;
+            return;
         }
         // Calculate first typical price
         newTypicalPrice = calculateTypicalPrice(yVal[range]);

@@ -146,7 +146,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
                     true,
                     chart
                 );
-                return undefined;
+                return;
             }
 
             // Checks if series data fits the OHLC format

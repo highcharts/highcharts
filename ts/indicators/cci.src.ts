@@ -139,7 +139,7 @@ seriesType<Highcharts.CCIIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             // accumulate first N-points

@@ -175,7 +175,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 2 * period - 1) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange

@@ -230,7 +230,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 i: number;
 
             if (xVal.length < period) {
-                return undefined;
+                return;
             }
 
             isOHLC = isArray(yVal[0]);

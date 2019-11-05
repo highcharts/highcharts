@@ -147,7 +147,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 j: number;
 
             if (xVal.length <= range) {
-                return undefined;
+                return;
             }
 
             // Accumulate first N-points for SMA

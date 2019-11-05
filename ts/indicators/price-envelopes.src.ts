@@ -302,7 +302,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return undefined;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {

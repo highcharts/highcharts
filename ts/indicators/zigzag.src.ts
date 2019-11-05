@@ -162,7 +162,7 @@ seriesType<Highcharts.ZigzagIndicator>(
                     )
                 )
             ) {
-                return undefined;
+                return;
             }
 
             // Set first zigzag point candidate

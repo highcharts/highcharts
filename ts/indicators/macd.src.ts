@@ -440,7 +440,7 @@ seriesType<Highcharts.MACDIndicator>(
             if ((series.xData as any).length <
                 (params.longPeriod as any) + params.signalPeriod
             ) {
-                return undefined;
+                return;
             }
 
             // Calculating the short and long EMA used when calculating the MACD

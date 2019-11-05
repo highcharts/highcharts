@@ -313,14 +313,14 @@ seriesType('vbp', 'sma',
         if (!series.chart) {
             H.error('Base series not found! In case it has been removed, add ' +
                 'a new one.', true, chart);
-            return undefined;
+            return;
         }
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
             H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
-            return undefined;
+            return;
         }
         // Checks if series data fits the OHLC format
         isOHLC = isArray(yValues[0]);
@@ -328,7 +328,7 @@ seriesType('vbp', 'sma',
             H.error('Type of ' +
                 series.name +
                 ' series is different than line, OHLC or candlestick.', true, chart);
-            return undefined;
+            return;
         }
         // Price zones contains all the information about the zones (index,
         // start, end, volumes, etc.)

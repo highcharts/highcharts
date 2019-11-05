@@ -171,7 +171,7 @@ seriesType<Highcharts.WMAIndicator>(
                 WMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
-                return undefined;
+                return;
             }
 
             // Switch index for OHLC / Candlestick

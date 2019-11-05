@@ -286,7 +286,7 @@ H.seriesType<Highcharts.PSARIndicator>(
                 ind: number;
 
             if (index >= yVal.length) {
-                return undefined;
+                return;
             }
 
             for (ind = 0; ind < index; ind++) {

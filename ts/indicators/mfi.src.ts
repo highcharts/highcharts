@@ -169,7 +169,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                     true,
                     series.chart
                 );
-                return undefined;
+                return;
             }
 
             // MFI requires high low and close values
@@ -178,7 +178,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 yVal[0].length !== 4 ||
                 !yValVolume
             ) {
-                return undefined;
+                return;
             }
             // Calculate first typical price
             newTypicalPrice = calculateTypicalPrice(yVal[range]);

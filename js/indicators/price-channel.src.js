@@ -97,7 +97,7 @@ merge(multipleLinesMixin, {
         // middle line, top line and bottom line
         ML, TL, BL, date, low = 2, high = 1, xData = [], yData = [], slicedY, extremes, i;
         if (yValLen < period) {
-            return undefined;
+            return;
         }
         for (i = period; i <= yValLen; i++) {
             date = xVal[i - 1];

@@ -170,7 +170,7 @@ H.seriesType<Highcharts.PCIndicator>(
                 i: number;
 
             if (yValLen < period) {
-                return undefined;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {
