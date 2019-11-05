@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Mustapha Mekhatria
- js_wrap: b
+name: 'Tile map, circles'
+authors:
+  - Mustapha Mekhatria
+js_wrap: b
+tags: []
+categories:
+  - Series types
 ...
