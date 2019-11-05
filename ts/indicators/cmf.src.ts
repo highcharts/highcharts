@@ -28,18 +28,22 @@ declare global {
             public pointClass: typeof CMFIndicatorPoint;
             public points: Array<CMFIndicatorPoint>;
             public volumeSeries: Series;
-            public linkedParent: CMFIndicatorLinkedParentSeries;
+            public linkedParent: LineSeries;
             public yData: Array<Array<number>>;
-            public getMoneyFlow(
+            public getMoneyFlow<TLinkedSeries extends LineSeries>(
                 xData: (Array<number>|undefined),
-                seriesYData: Array<Array<number>>,
+                seriesYData: (
+                    Array<(number|null|undefined)>|
+                    Array<Array<(number | null | undefined)>>|
+                    undefined
+                ),
                 volumeSeriesYData: Array<number>,
                 period: number
-            ): IndicatorNullableValuesObject;
-            public getValues(
-                series: Series,
+            ): IndicatorValuesObject<TLinkedSeries>;
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: CMFIndicatorParamsOptions
-            ): (IndicatorNullableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public isValid(): boolean;
         }
 
@@ -57,10 +61,6 @@ declare global {
 
         interface SeriesTypesDictionary {
             cmf: typeof CMFIndicator;
-        }
-
-        interface CMFIndicatorLinkedParentSeries extends Series {
-            yData: Array<Array<number>>;
         }
     }
 }
@@ -123,10 +123,10 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
                         chart.get((options.params as any).volumeSeriesID) as any
                     )
                 ),
-                isSeriesOHLC: boolean = (
+                isSeriesOHLC: (boolean|undefined) = (
                     series &&
                     series.yData &&
-                    series.yData[0].length === 4
+                    (series.yData as any)[0].length === 4
                 );
 
             /**
@@ -158,16 +158,18 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * @return {boolean|Highcharts.IndicatorNullableValuesObject} Returns false if the
          * indicator is not valid, otherwise returns Values object.
          */
-        getValues: function (
+        getValues: function<
+            TLinkedSeries extends Highcharts.LineSeries
+        > (
             this: Highcharts.CMFIndicator,
-            series: Highcharts.CMFIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.CMFIndicatorParamsOptions
-        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             if (!this.isValid()) {
                 return;
             }
 
-            return this.getMoneyFlow(
+            return this.getMoneyFlow<TLinkedSeries>(
                 series.xData,
                 series.yData,
                 (this.volumeSeries.yData as any),
@@ -184,13 +186,13 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
          * flow data
          */
-        getMoneyFlow: function (
+        getMoneyFlow: function<TLinkedSeries extends Highcharts.LineSeries> (
             xData: Array<number>,
-            seriesYData: Array<Array<number>>,
+            seriesYData: TLinkedSeries['yData'],
             volumeSeriesYData: Array<number>,
             period: number
-        ): Highcharts.IndicatorNullableValuesObject {
-            var len: number = seriesYData.length,
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
+            var len: number = (seriesYData as any).length,
                 moneyFlowVolume: Array<(number|null)> = [],
                 sumVolume = 0,
                 sumMoneyFlowVolume = 0,
@@ -249,7 +251,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
             if (period > 0 && period <= len) {
                 for (i = 0; i < period; i++) {
                     moneyFlowVolume[i] = getMoneyFlowVolume(
-                        seriesYData[i],
+                        (seriesYData as any)[i],
                         volumeSeriesYData[i]
                     );
                     sumVolume += volumeSeriesYData[i];
@@ -266,7 +268,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
 
                 for (; i < len; i++) {
                     moneyFlowVolume[i] = getMoneyFlowVolume(
-                        seriesYData[i],
+                        (seriesYData as any)[i],
                         volumeSeriesYData[i]
                     );
 
@@ -293,7 +295,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
                 values: values,
                 xData: moneyFlowXData,
                 yData: moneyFlowYData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

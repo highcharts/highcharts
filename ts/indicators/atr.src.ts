@@ -20,10 +20,10 @@ declare global {
             public data: Array<ATRIndicatorPoint>
             public pointClass: typeof ATRIndicatorPoint;
             public points: Array<ATRIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: ATRIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface ATRIndicatorOptions extends SMAIndicatorOptions {
@@ -138,10 +138,10 @@ seriesType<Highcharts.ATRIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.ATRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -202,7 +202,7 @@ seriesType<Highcharts.ATRIndicator>(
                 values: ATR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
 
     }

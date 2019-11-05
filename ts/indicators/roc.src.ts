@@ -21,10 +21,10 @@ declare global {
 
         class ROCIndicator extends SMAIndicator {
             public data: Array<ROCIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: ROCIndicatorParamsOptions
-            ): (IndicatorNullableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: ROCIndicatorOptions;
             public pointClass: typeof ROCIndicatorPoint;
@@ -138,10 +138,10 @@ seriesType<Highcharts.ROCIndicator>(
      */
     {
         nameBase: 'Rate of Change',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.ROCIndicatorParamsOptions
-        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -177,7 +177,7 @@ seriesType<Highcharts.ROCIndicator>(
                 values: ROC,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

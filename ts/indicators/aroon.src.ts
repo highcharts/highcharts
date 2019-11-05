@@ -23,10 +23,10 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
-            ): (IndicatorValuesObject|IndicatorMultipleValuesObject);
+            ): IndicatorValuesObject<TLinkedSeries>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public options: AroonIndicatorOptions;
@@ -173,10 +173,10 @@ H.seriesType<Highcharts.AroonIndicator>(
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
         linesApiNames: ['aroonDown'],
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
-        ): Highcharts.IndicatorMultipleValuesObject {
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -224,7 +224,7 @@ H.seriesType<Highcharts.AroonIndicator>(
                 values: AR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

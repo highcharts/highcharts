@@ -23,10 +23,10 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: WMAIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface WMAIndicatorOptions extends SMAIndicatorOptions {
@@ -151,10 +151,10 @@ seriesType<Highcharts.WMAIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.WMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -207,7 +207,7 @@ seriesType<Highcharts.WMAIndicator>(
                 values: WMA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

@@ -22,10 +22,10 @@ declare global {
         class IKHIndicator
             extends SMAIndicator {
             public data: Array<IKHIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: IKHIndicatorParamsOptions
-            ): (IndicatorMultipleUndefinableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public graphCollection: Array<string>;
             public graphsenkouSpan: (SVGElement | undefined)
             public ikhMap: Dictionary<Array<IKHIndicatorPoint>>;
@@ -887,10 +887,10 @@ seriesType<Highcharts.IKHIndicator>(
 
             return path;
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.IKHIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleUndefinableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
 
             var period: number = (params.period as any),
                 periodTenkan: number = (params.periodTenkan as any),
@@ -1011,7 +1011,7 @@ seriesType<Highcharts.IKHIndicator>(
                 values: IKH,
                 xData: xData,
                 yData: IKH
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

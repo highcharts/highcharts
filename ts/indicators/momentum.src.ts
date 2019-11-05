@@ -18,10 +18,10 @@ declare global {
     namespace Highcharts {
         class MomentumIndicator extends SMAIndicator {
             public data: Array<MomentumIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: MomentumIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: MomentumIndicatorOptions;
             public pointClass: typeof MomentumIndicatorPoint;
@@ -106,22 +106,22 @@ seriesType<Highcharts.MomentumIndicator>(
      */
     {
         nameBase: 'Momentum',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.MomentumIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 xValue: number = xVal[0],
                 yValue: (Array<number>|number) = yVal[0],
-                MM: Array<[number, number]> = [],
+                MM: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index: any,
                 i: number,
-                points: Array<[number, number]>,
+                points: Array<Array<number>>,
                 MMPoint: [number, number];
 
             if (xVal.length <= period) {
@@ -161,7 +161,7 @@ seriesType<Highcharts.MomentumIndicator>(
                 values: MM,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

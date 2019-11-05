@@ -27,9 +27,9 @@ declare global {
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues(
-                series: Series,
-            ): (IndicatorValuesObject|undefined);
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public translate: ColumnSeries['translate'];
         }
 
@@ -168,9 +168,9 @@ H.seriesType<Highcharts.AOIndicator>(
             }
         },
 
-        getValues: function (
-            series: Highcharts.Series
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var shortPeriod = 5,
                 longPeriod = 34,
                 xVal: Array<number> = series.xData || [],
@@ -249,7 +249,7 @@ H.seriesType<Highcharts.AOIndicator>(
                 values: AO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

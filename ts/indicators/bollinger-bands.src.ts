@@ -23,10 +23,10 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: BBIndicatorParamsOptions
-            ): (IndicatorMultipleValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: BBIndicatorOptions;
             public pointClass: typeof BBIndicatorPoint;
             public points: Array<BBIndicatorPoint>;
@@ -195,11 +195,11 @@ H.seriesType<Highcharts.BBIndicator>(
                 }
             }, this.options);
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
             this: Highcharts.BBIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.BBIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
                 xVal: Array<number> = (series.xData as any),
@@ -219,12 +219,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 stdDev: number,
                 isOHLC: boolean,
                 point: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorMultipleValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
-                    Highcharts.IndicatorUndefinableValuesObject|
-                    Highcharts.IndicatorMultipleNullableValuesObject|
-                    Highcharts.IndicatorMultipleUndefinableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 i: number;
@@ -246,7 +241,7 @@ H.seriesType<Highcharts.BBIndicator>(
                         yData: slicedY
                     } as any),
                     params
-                );
+                ) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
                 date = (point as any).xData[0];
                 ML = (point as any).yData[0];
@@ -268,7 +263,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 values: BB,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

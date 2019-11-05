@@ -17,10 +17,10 @@ declare global {
     namespace Highcharts {
         class CCIIndicator extends SMAIndicator {
             public data: Array<CCIIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: CCIIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public pointClass: typeof CCIIndicatorPoint;
             public points: Array<CCIIndicatorPoint>;
             public options: CCIIndicatorOptions;
@@ -111,10 +111,10 @@ seriesType<Highcharts.CCIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.CCIIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -170,7 +170,7 @@ seriesType<Highcharts.CCIIndicator>(
                 values: CCI,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

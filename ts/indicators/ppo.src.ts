@@ -19,10 +19,10 @@ declare global {
 
         class PPOIndicator extends EMAIndicator {
             public data: Array<PPOIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: PPOIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public options: PPOIndicatorOptions;
             public nameBase: string;
@@ -129,27 +129,25 @@ H.seriesType<Highcharts.PPOIndicator>(
                 }
             );
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.PPOIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periods: Array<number> = (params.periods as any),
                 index: number = (params.index as any),
                 // 0- date, 1- Percentage Price Oscillator
-                PPO: Array<[number, number]> = [],
+                PPO: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 oscillator: number,
@@ -167,12 +165,12 @@ H.seriesType<Highcharts.PPOIndicator>(
             SPE = EMA.prototype.getValues.call(this, series, {
                 index: index,
                 period: periods[0]
-            });
+            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
             LPE = EMA.prototype.getValues.call(this, series, {
                 index: index,
                 period: periods[1]
-            });
+            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
@@ -198,7 +196,7 @@ H.seriesType<Highcharts.PPOIndicator>(
                 values: PPO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

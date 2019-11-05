@@ -27,20 +27,18 @@ declare global {
                 i?: number,
                 xVal?: Array<number>
             ): [number, number];
-            public getValues(
-                series: DEMAIndicatorLinkedParentSeries,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: DEMAIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public options: DEMAIndicatorOptions;
             public pointClass: typeof DEMAIndicatorPoint;
             public points: Array<DEMAIndicatorPoint>;
         }
 
-        interface DEMAIndicatorLinkedParentSeries extends Series {
-            EMApercent: number;
-            xData: Array<number>;
-            yData: Array<Array<number>>;
+        interface DEMAIndicatorLinkedParentSeries extends LineSeries {
+            EMApercent?: number;
         }
 
         interface DEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
@@ -144,15 +142,17 @@ H.seriesType<Highcharts.DEMAIndicator>(
             );
         },
 
-        getValues: function (
+        getValues: function<
+            TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
+        > (
             this: Highcharts.DEMAIndicator,
-            series: Highcharts.DEMAIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.DEMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod: number = 2 * period,
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 index = -1,
                 accumulatePeriodPoints = 0,
@@ -239,7 +239,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
                 values: DEMA,
                 xData: xDataDema,
                 yData: yDataDema
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

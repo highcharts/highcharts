@@ -27,10 +27,10 @@ declare global {
             public options: DPOIndicatorOptions;
             public pointClass: typeof DPOIndicatorPoint;
             public points: Array<DPOIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: DPOIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface DPOIndicatorOptions extends SMAIndicatorOptions {
@@ -122,10 +122,10 @@ H.seriesType<Highcharts.DPOIndicator>(
      */
     {
         nameBase: 'DPO',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.DPOIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
@@ -135,7 +135,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                     (series.yData as any) || [],
                 yValLen: number = yVal.length,
                 // 0- date, 1- Detrended Price Oscillator
-                DPO: Array<[number, number]> = [],
+                DPO: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 sum = 0,
@@ -182,7 +182,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 values: DPO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

@@ -21,10 +21,10 @@ declare global {
             public data: Array<PriceEnvelopesIndicatorPoint>;
             public drawGraph(): void;
             public init(): void;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends LineSeries>(
+                series: TLinkedSeries,
                 params: PriceEnvelopesIndicatorParamsOptions
-            ): (IndicatorMultipleValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: PriceEnvelopesIndicatorOptions;
             public parallelArrays: Array<string>;
@@ -272,10 +272,10 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
             indicator.graph = middleLinePath;
             SMA.prototype.drawGraph.call(indicator);
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+            series: TLinkedSeries,
             params: Highcharts.PriceEnvelopesIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 topPercent: number = (params.topBand as any),
                 botPercent: number = (params.bottomBand as any),
@@ -293,7 +293,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 yData: Array<Array<number>> = [],
                 slicedX: Array<number>,
                 slicedY: Array<Array<number>>,
-                point: Highcharts.IndicatorValuesObject,
+                point: Highcharts.IndicatorValuesObject<TLinkedSeries>,
                 i: number;
 
             // Price envelopes requires close value
@@ -327,7 +327,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                 values: PE,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
