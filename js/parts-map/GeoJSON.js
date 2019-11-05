@@ -82,7 +82,7 @@ function pointInPolygon(point, polygon) {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return {
             x: 0,
@@ -127,7 +127,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return;
     }

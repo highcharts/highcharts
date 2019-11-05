@@ -705,7 +705,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     // "null" is also a valid symbol
                     if (options &&
                         options.marker &&
-                        options.marker.symbol !== undefined) {
+                        typeof options.marker.symbol !== 'undefined') {
                         point.graphic = graphic.destroy();
                     }
                 }
@@ -1033,7 +1033,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
-            options.pointStart !== undefined ||
+            typeof options.pointStart !== 'undefined' ||
             options.pointInterval ||
             options.pointIntervalUnit ||
             options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
@@ -1070,7 +1070,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         options = merge(oldOptions, animation, {
             // When oldOptions.index is null it should't be cleared.
             // Otherwise navigator series will have wrong indexes (#10193).
-            index: oldOptions.index === undefined ?
+            index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
@@ -1094,7 +1094,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // #3719).
         series.remove(false, null, false, true);
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
-            series[n] = undefined;
+            series[n] = void 0;
         }
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
@@ -1158,7 +1158,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         chart.linkSeries(); // Links are lost in series.remove (#3028)
         fireEvent(this, 'afterUpdate');
         if (pick(redraw, true)) {
-            chart.redraw(keepPoints ? undefined : false);
+            chart.redraw(keepPoints ? void 0 : false);
         }
     },
     /**
@@ -1212,7 +1212,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         // Remove old events, if no new exist (#8161)
         objectEach(chart.options[this.coll].events, function (fn, ev) {
             if (typeof newEvents[ev] === 'undefined') {
-                newEvents[ev] = undefined;
+                newEvents[ev] = void 0;
             }
         });
         this.destroy(true);

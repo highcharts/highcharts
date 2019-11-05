@@ -77,7 +77,7 @@ H.seriesType('stochastic', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     dataGrouping: {

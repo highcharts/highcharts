@@ -79,7 +79,7 @@ seriesType('sma', 'line',
      *
      * @type {string}
      */
-    name: undefined,
+    name: void 0,
     tooltip: {
         /**
          * Number of decimals in indicator series.
@@ -92,7 +92,7 @@ seriesType('sma', 'line',
      *
      * @type {string}
      */
-    linkedTo: undefined,
+    linkedTo: void 0,
     /**
      * Whether to compare indicator to the main series values
      * or indicator values.

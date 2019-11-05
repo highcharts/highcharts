@@ -162,7 +162,7 @@ seriesType<Highcharts.HistogramSeries>(
          *
          * @type {number}
          */
-        binWidth: undefined,
+        binWidth: void 0,
         pointPadding: 0,
         groupPadding: 0,
         grouping: false,

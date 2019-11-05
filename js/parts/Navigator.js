@@ -31,7 +31,7 @@ numExt = function (extreme) {
         return Math[extreme].apply(0, numbers);
     }
 };
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 extend(defaultOptions, {
@@ -547,7 +547,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined;
+        newMin = newMax = void 0;
     }
     return {
         min: newMin,
@@ -1242,7 +1242,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -1851,7 +1851,7 @@ if (!H.Navigator) {
                 }
             }
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

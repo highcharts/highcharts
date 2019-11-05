@@ -488,7 +488,7 @@ var sunburstOptions = {
      *
      * @type {string}
      */
-    rootId: undefined,
+    rootId: void 0,
     /**
      * Used together with the levels and `allowDrillToNode` options. When
      * set to false the first level visible when drilling is considered

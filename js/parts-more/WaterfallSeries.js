@@ -66,7 +66,7 @@ addEvent(Axis, 'afterRender', function () {
  * @function Highcharts.Axis#renderWaterfallStackTotals
  */
 Axis.prototype.renderWaterfallStackTotals = function () {
-    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, undefined);
+    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
     yAxis.dummyStackItem = dummyStackItem;
     // Render each waterfall stack total
     objectEach(waterfallStacks, function (type) {
@@ -530,7 +530,7 @@ seriesType('waterfall', 'column', {
                         label: ((changed &&
                             actualStack[x]) ?
                             actualStack[x].label :
-                            undefined)
+                            void 0)
                     };
                 }
                 actualStackX = actualStack[x];

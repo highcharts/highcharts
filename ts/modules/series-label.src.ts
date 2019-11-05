@@ -1133,7 +1133,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
 
             // Keep the position updated to the axis while redrawing
             if (closest) {
-                if (closest[0].plotX !== undefined) {
+                if (typeof closest[0].plotX !== 'undefined') {
                     label.animate({
                         x: closest[0].plotX + closest[1],
                         y: closest[0].plotY + closest[2]

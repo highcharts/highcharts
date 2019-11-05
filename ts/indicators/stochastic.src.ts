@@ -139,7 +139,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         dataGrouping: {

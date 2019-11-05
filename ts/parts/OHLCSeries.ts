@@ -321,7 +321,7 @@ seriesType<Highcharts.OHLCSeries>(
                     crispX,
                     isNew = !graphic;
 
-                if (point.plotY !== undefined) {
+                if (typeof point.plotY !== 'undefined') {
 
                     // Create and/or update the graphic
                     if (!graphic) {

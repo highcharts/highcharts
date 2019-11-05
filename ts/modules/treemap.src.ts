@@ -930,7 +930,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ): Highcharts.TreemapListOfParentsObject {
                     var parent = pick(curr.parent, '');
 
-                    if (prev[parent] === undefined) {
+                    if (typeof prev[parent] === 'undefined') {
                         prev[parent] = [];
                     }
                     prev[parent].push(i);

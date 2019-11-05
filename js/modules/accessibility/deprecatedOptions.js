@@ -76,7 +76,7 @@ function copyDeprecatedSeriesOptions(chart) {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
             var optionVal = series.options[oldOption];
-            if (optionVal !== undefined) {
+            if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(
                     series.options,

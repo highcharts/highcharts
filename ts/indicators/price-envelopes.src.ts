@@ -143,7 +143,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**

@@ -467,13 +467,12 @@ seriesType<Highcharts.PieSeries>(
             distance: 30,
             /** @ignore-option */
             enabled: true,
-            /* eslint-disable valid-jsdoc */
+            // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): (string|undefined) { // #2945
-                return this.point.isNull ? undefined : this.point.name;
-                /* eslint-enable valid-jsdoc */
+                return this.point.isNull ? void 0 : this.point.name;
             },
             /** @ignore-option */
             softConnector: true,
@@ -497,7 +496,7 @@ seriesType<Highcharts.PieSeries>(
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @private
          */
-        fillColor: undefined,
+        fillColor: void 0,
 
         /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
@@ -707,7 +706,7 @@ seriesType<Highcharts.PieSeries>(
         borderWidth: 1,
 
         /** @ignore-options */
-        lineWidth: undefined, // #12222
+        lineWidth: void 0, // #12222
         states: {
 
             /**
@@ -1246,7 +1245,7 @@ seriesType<Highcharts.PieSeries>(
                 b: Highcharts.PiePoint
             ): number {
                 return (
-                    ((a.angle !== undefined) as any) &&
+                    ((typeof a.angle !== 'undefined') as any) &&
                     ((b.angle as any) - (a.angle as any)) * sign
                 );
             });
@@ -1355,7 +1354,7 @@ seriesType<Highcharts.PieSeries>(
 
                 // If called without an argument, toggle visibility
                 point.visible = point.options.visible = vis =
-                    vis === undefined ? !point.visible : vis;
+                    typeof vis === 'undefined' ? !point.visible : vis;
                 // update userOptions.data
                 (series.options.data as any)[series.data.indexOf(point)] =
                     point.options;

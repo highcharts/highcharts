@@ -179,7 +179,7 @@ seriesType<Highcharts.MACDIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -203,7 +203,7 @@ seriesType<Highcharts.MACDIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         threshold: 0,

@@ -235,7 +235,7 @@ var addEvent = H.addEvent,
         }
     };
 
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 
@@ -843,7 +843,7 @@ Axis.prototype.toFixedRange = function (
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined as any;
+        newMin = newMax = void 0 as any;
     }
 
     return {
@@ -1837,7 +1837,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind: Function): void {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -2733,7 +2733,7 @@ if (!H.Navigator) {
             }
 
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

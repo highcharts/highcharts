@@ -324,11 +324,10 @@ seriesType('pie', 'line',
         distance: 30,
         /** @ignore-option */
         enabled: true,
-        /* eslint-disable valid-jsdoc */
+        // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         formatter: function () {
-            return this.point.isNull ? undefined : this.point.name;
-            /* eslint-enable valid-jsdoc */
+            return this.point.isNull ? void 0 : this.point.name;
         },
         /** @ignore-option */
         softConnector: true,
@@ -351,7 +350,7 @@ seriesType('pie', 'line',
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @private
      */
-    fillColor: undefined,
+    fillColor: void 0,
     /**
      * The end angle of the pie in degrees where 0 is top and 90 is right.
      * Defaults to `startAngle` plus 360.
@@ -545,7 +544,7 @@ seriesType('pie', 'line',
      */
     borderWidth: 1,
     /** @ignore-options */
-    lineWidth: undefined,
+    lineWidth: void 0,
     states: {
         /**
          * @extends   plotOptions.series.states.hover
@@ -931,7 +930,7 @@ seriesType('pie', 'line',
      */
     sortByAngle: function (points, sign) {
         points.sort(function (a, b) {
-            return ((a.angle !== undefined) &&
+            return ((typeof a.angle !== 'undefined') &&
                 (b.angle - a.angle) * sign);
         });
     },
@@ -1013,7 +1012,7 @@ seriesType('pie', 'line',
         if (vis !== point.visible) {
             // If called without an argument, toggle visibility
             point.visible = point.options.visible = vis =
-                vis === undefined ? !point.visible : vis;
+                typeof vis === 'undefined' ? !point.visible : vis;
             // update userOptions.data
             series.options.data[series.data.indexOf(point)] =
                 point.options;

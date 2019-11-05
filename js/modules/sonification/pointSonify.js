@@ -227,7 +227,7 @@ function pointSonify(options) {
             value, makeFunction, allowedExtremes, allowedValues
         ) {
             // Fixed number, just use that
-            if (typeof value === 'number' || value === undefined) {
+            if (typeof value === 'number' || typeof value === 'undefined') {
                 return value;
             }
             // Function. Return new function if we try to use callback,

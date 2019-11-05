@@ -103,7 +103,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             ),
             textWidth = pick(
                 isSettingWidth && styles.width,
-                undefined
+                void 0
             ),
             doTransform;
 
@@ -574,7 +574,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                             parentGroup.div =
                             (parentGroup.div as any) || createElement(
                                 'div',
-                                cls ? { className: cls } : undefined,
+                                cls ? { className: cls } : void 0,
                                 {
                                     position: 'absolute',
                                     left: (parentGroup.translateX || 0) + 'px',

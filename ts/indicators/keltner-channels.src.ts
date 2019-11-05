@@ -140,7 +140,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                  * Color of the line. If not set, it's inherited from
                  * `plotOptions.keltnerchannels.color`
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -151,7 +151,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
         topLine: {
             styles: {
                 lineWidth: 1,
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         tooltip: {

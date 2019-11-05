@@ -288,7 +288,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             };
         },
         markerAttribs: function (): undefined {
-            return undefined;
+            return;
         } as any,
         getPlotBox: onSeriesMixin.getPlotBox,
         // Create a single wind arrow. It is later rotated around the zero

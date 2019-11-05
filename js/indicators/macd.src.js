@@ -72,7 +72,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -96,7 +96,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     threshold: 0,

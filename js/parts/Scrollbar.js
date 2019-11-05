@@ -82,7 +82,7 @@ var defaultScrollbarOptions = {
      * @type  {boolean}
      * @since 1.3
      */
-    liveRedraw: undefined,
+    liveRedraw: void 0,
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
      * applied directly to an axis.

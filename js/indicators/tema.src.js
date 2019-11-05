@@ -54,7 +54,7 @@ H.seriesType('tema', 'ema',
         });
     },
     getEMA: function (yVal, prevEMA, SMA, index, i, xVal) {
-        return EMAindicator.prototype.calculateEma(xVal || [], yVal, i === undefined ? 1 : i, this.chart.series[0].EMApercent, prevEMA, index === undefined ? -1 : index, SMA);
+        return EMAindicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     },
     getTemaPoint: function (xVal, tripledPeriod, EMAlevels, i) {
         var TEMAPoint = [

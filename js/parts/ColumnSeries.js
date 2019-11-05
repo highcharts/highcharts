@@ -496,7 +496,8 @@ seriesType('column', 'line',
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
                     if (otherOptions.stacking) {
                         stackKey = otherSeries.stackKey;
-                        if (stackGroups[stackKey] === undefined) {
+                        if (typeof stackGroups[stackKey] ===
+                            'undefined') {
                             stackGroups[stackKey] = columnCount++;
                         }
                         columnIndex = stackGroups[stackKey];
@@ -722,7 +723,7 @@ seriesType('column', 'line',
                 {});
             brightness = stateOptions.brightness;
             fill =
-                stateOptions.color || (brightness !== undefined &&
+                stateOptions.color || (typeof brightness !== 'undefined' &&
                     color(fill)
                         .brighten(stateOptions.brightness)
                         .get()) || fill;

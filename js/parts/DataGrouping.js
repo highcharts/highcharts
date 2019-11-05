@@ -83,25 +83,25 @@ var approximations = H.approximations = {
         });
         // Return undefined when first elem. is undefined and let
         // sum method handle null (#7377)
-        return ret[0] === undefined ? undefined : ret;
+        return typeof ret[0] === 'undefined' ? void 0 : ret;
     },
     open: function (arr) {
-        return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
+        return arr.length ? arr[0] : (arr.hasNulls ? null : void 0);
     },
     high: function (arr) {
         return arr.length ?
             arrayMax(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     low: function (arr) {
         return arr.length ?
             arrayMin(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     close: function (arr) {
         return arr.length ?
             arr[arr.length - 1] :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     // ohlc and range are special cases where a multidimensional array is
     // input and an array is output
@@ -168,7 +168,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
     for (i; i <= dataLength; i++) {
         // when a new group is entered, summarize and initialize
         // the previous group
-        while ((groupPositions[pos + 1] !== undefined &&
+        while ((typeof groupPositions[pos + 1] !== 'undefined' &&
             xData[i] >= groupPositions[pos + 1]) ||
             i === dataLength) { // get the last group
             // get group x and y
@@ -194,7 +194,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
                 });
             }
             // push the grouped data
-            if (groupedY !== undefined) {
+            if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
                 groupMap.push(series.dataGroupInfo);

@@ -514,8 +514,8 @@ H.Tooltip.prototype = {
                     0,
                     0,
                     {},
-                    undefined,
-                    undefined,
+                    void 0,
+                    void 0,
                     renderer.styledMode
                 );
             }
@@ -672,10 +672,10 @@ H.Tooltip.prototype = {
             x: animate ? (2 * now.x + x) / 3 : x,
             y: animate ? (now.y + y) / 2 : y,
             anchorX: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
             anchorY: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (now.anchorY + anchorY) / 2 : anchorY
         });
 
@@ -760,7 +760,7 @@ H.Tooltip.prototype = {
 
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
-            if (mouseEvent.chartX === undefined) {
+            if (typeof mouseEvent.chartX === 'undefined') {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
@@ -1373,7 +1373,8 @@ H.Tooltip.prototype = {
 
             // Put the label in place
             box.tt.attr({
-                visibility: box.pos === undefined ? 'hidden' : 'inherit',
+                visibility: typeof box.pos === 'undefined' ?
+                    'hidden' : 'inherit',
                 x: (rightAligned || point.isHeader || options.positioner ?
                     box.x :
                     point.plotX + chart.plotLeft + tooltip.distance),

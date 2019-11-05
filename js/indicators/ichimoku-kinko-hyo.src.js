@@ -88,11 +88,11 @@ H.approximations['ichimoku-averages'] = function () {
     var ret = [], isEmptyRange;
     [].forEach.call(arguments, function (arr, i) {
         ret.push(H.approximations.average(arr));
-        isEmptyRange = !isEmptyRange && ret[i] === undefined;
+        isEmptyRange = !isEmptyRange && typeof ret[i] === 'undefined';
     });
     // Return undefined when first elem. is undefined and let
     // sum method handle null (#7377)
-    return isEmptyRange ? undefined : ret;
+    return isEmptyRange ? void 0 : ret;
 };
 /* eslint-enable require-jsdoc */
 /**
@@ -160,7 +160,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -177,7 +177,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -194,7 +194,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -211,7 +211,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -228,7 +228,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**

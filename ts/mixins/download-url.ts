@@ -106,7 +106,7 @@ Highcharts.downloadURL = function (
     }
 
     // Try HTML5 download attr if supported
-    if (a.download !== undefined) {
+    if (typeof a.download !== 'undefined') {
         a.href = dataURL as any;
         a.download = filename; // HTML5 download attribute
         doc.body.appendChild(a);
@@ -116,7 +116,7 @@ Highcharts.downloadURL = function (
         // No download attr, just opening data URI
         try {
             windowRef = win.open(dataURL as any, 'chart');
-            if (windowRef === undefined || windowRef === null) {
+            if (typeof windowRef === 'undefined' || windowRef === null) {
                 throw new Error('Failed to open window');
             }
         } catch (e) {

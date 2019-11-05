@@ -116,7 +116,7 @@ addEvent(Axis as any, 'afterSetAxisTranslation', function (
         preserveAspectRatio;
 
     // Check for map-like series
-    if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
+    if (this.coll === 'yAxis' && typeof xAxis.transA !== 'undefined') {
         this.series.forEach(function (series: Highcharts.MapSeries): void {
             if (series.preserveAspectRatio) {
                 preserveAspectRatio = true;
