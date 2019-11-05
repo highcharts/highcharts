@@ -71,7 +71,7 @@ H.seriesType('priceenvelopes', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**

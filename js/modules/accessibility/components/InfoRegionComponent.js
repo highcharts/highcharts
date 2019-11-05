@@ -347,7 +347,7 @@ extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent 
         // Handle overridden range description
         if (
             axisOptions.accessibility &&
-            axisOptions.accessibility.rangeDescription !== undefined
+            typeof axisOptions.accessibility.rangeDescription !== 'undefined'
         ) {
             return axisOptions.accessibility.rangeDescription;
         }

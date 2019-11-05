@@ -66,7 +66,7 @@ seriesType('ema', 'sma',
         var x = xVal[i - 1], yValue = index < 0 ?
             yVal[i - 1] :
             yVal[i - 1][index], y;
-        y = calEMA === undefined ?
+        y = typeof calEMA === 'undefined' ?
             SMA : correctFloat((yValue * EMApercent) +
             (calEMA * (1 - EMApercent)));
         return [x, y];

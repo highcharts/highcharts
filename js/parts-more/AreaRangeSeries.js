@@ -460,7 +460,7 @@ seriesType('arearange', 'area', {
             point.negative = point.high < (series.options.threshold || 0);
             point.zone = (series.zones.length && point.getZone());
             if (!series.chart.polar) {
-                point.isInside = point.isTopInside = (point.plotY !== undefined &&
+                point.isInside = point.isTopInside = (typeof point.plotY !== 'undefined' &&
                     point.plotY >= 0 &&
                     point.plotY <= series.yAxis.len && // #3519
                     point.plotX >= 0 &&
@@ -532,7 +532,7 @@ seriesType('arearange', 'area', {
             series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
             // Lower marker is stored at stateMarkerGraphic
             // to avoid reference duplication (#7021)
-            series.lowerStateMarkerGraphic = undefined;
+            series.lowerStateMarkerGraphic = void 0;
         }
         pointProto.setState.apply(this, arguments);
     },

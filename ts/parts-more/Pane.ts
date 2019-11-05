@@ -152,7 +152,7 @@ extend(Pane.prototype, {
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
             this.defaultOptions as any,
-            this.chart.angular ? { background: ({} as any) } : undefined,
+            this.chart.angular ? { background: ({} as any) } : void 0,
             options
         );
     },

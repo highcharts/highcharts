@@ -390,7 +390,7 @@ addEvent(Axis, 'autoLabelAlign', function (
             if ((labelOptions as any).x === 15) { // default
                 (labelOptions as any).x = 0;
             }
-            if ((labelOptions as any).align === undefined) {
+            if (typeof (labelOptions as any).align === 'undefined') {
                 (labelOptions as any).align = 'right';
             }
             panes[key] = this;
@@ -852,8 +852,8 @@ seriesProto.setCompare = function (
             var compareValue = this.compareValue;
 
             if (
-                value !== undefined &&
-                compareValue !== undefined
+                typeof value !== 'undefined' &&
+                typeof compareValue !== 'undefined'
             ) { // #2601, #5814
 
                 // Get the modified value

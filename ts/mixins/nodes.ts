@@ -220,7 +220,7 @@ H.NodesMixin = {
         this.nodes.forEach(function (node: Highcharts.NodesPoint): void {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
-            node.level = undefined;
+            node.level = void 0;
         });
 
         // Create the node list and set up links

@@ -158,7 +158,7 @@ Series.prototype.getPoint = function (
         point = (new this.pointClass()).init( // eslint-disable-line new-cap
             this,
             (this.options.data as any)[boostPoint.i],
-            xData ? xData[boostPoint.i] : undefined
+            xData ? xData[boostPoint.i] : void 0
         );
 
         point.category = pick(

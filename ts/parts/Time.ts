@@ -265,7 +265,7 @@ Highcharts.Time.prototype = {
          * @since     4.0.4
          * @product   highcharts highstock gantt
          */
-        Date: undefined,
+        Date: void 0,
         /**
          * A callback to return the time zone offset for a given datetime. It
          * takes the timestamp in terms of milliseconds since January 1 1970,
@@ -281,7 +281,7 @@ Highcharts.Time.prototype = {
          * @since     4.1.0
          * @product   highcharts highstock gantt
          */
-        getTimezoneOffset: undefined,
+        getTimezoneOffset: void 0,
 
         /**
          * Requires [moment.js](http://momentjs.com/). If the timezone option
@@ -300,7 +300,7 @@ Highcharts.Time.prototype = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: undefined,
+        timezone: void 0,
         /**
          * The timezone offset in minutes. Positive values are west, negative
          * values are east of UTC, as in the ECMAScript

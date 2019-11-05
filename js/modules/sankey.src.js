@@ -215,14 +215,14 @@ seriesType('sankey', 'column',
         /** @ignore-option */
         crop: false,
         /** @ignore-option */
-        nodeFormat: undefined,
+        nodeFormat: void 0,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         nodeFormatter: function () {
             return this.point.name;
         },
         /** @ignore-option */
-        format: undefined,
+        format: void 0,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         formatter: function () {
@@ -499,7 +499,7 @@ seriesType('sankey', 'column',
         }, this);
         // Fill in empty columns (#8865)
         for (var i = 0; i < columns.length; i++) {
-            if (columns[i] === undefined) {
+            if (typeof columns[i] === 'undefined') {
                 columns[i] = this.createNodeColumn();
             }
         }
@@ -550,7 +550,8 @@ seriesType('sankey', 'column',
          * @private
          */
         function order(node, level) {
-            if (node.level === undefined) { // Prevents circular recursion
+            // Prevents circular recursion:
+            if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (link) {
                     order(link.toNode, level + 1);

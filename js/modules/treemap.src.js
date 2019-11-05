@@ -546,7 +546,7 @@ seriesType('treemap', 'scatter'
     getListOfParents: function (data, existingIds) {
         var arr = isArray(data) ? data : [], ids = isArray(existingIds) ? existingIds : [], listOfParents = arr.reduce(function (prev, curr, i) {
             var parent = pick(curr.parent, '');
-            if (prev[parent] === undefined) {
+            if (typeof prev[parent] === 'undefined') {
                 prev[parent] = [];
             }
             prev[parent].push(i);

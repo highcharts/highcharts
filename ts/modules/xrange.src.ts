@@ -369,10 +369,10 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 ): boolean {
                     return point.id === id;
                 });
-                pointIndex = point ? point.index : undefined;
+                pointIndex = point ? point.index : void 0;
             }
 
-            if (pointIndex === undefined) {
+            if (typeof pointIndex === 'undefined') {
                 point = H.find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
@@ -383,7 +383,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                         oldData[pointIndex as any].touched)
                     );
                 });
-                pointIndex = point ? point.index : undefined;
+                pointIndex = point ? point.index : void 0;
             }
 
             // Reduce pointIndex if data is cropped
@@ -610,7 +610,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                     (seriesOpts.states as any)[pointState || 'normal'] ||
                     {}
                 ),
-                pointStateVerb = pointState === undefined ? 'attr' : verb,
+                pointStateVerb = typeof pointState === 'undefined' ?
+                    'attr' : verb,
                 pointAttr = series.pointAttribs(point, pointState),
                 animation = pick(
                     (series.chart.options.chart as any).animation,

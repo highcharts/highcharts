@@ -770,7 +770,7 @@ Series.prototype.drawDataLabels = function () {
                     }
                     // Remove unused attributes (#947)
                     objectEach(attr, function (val, name) {
-                        if (val === undefined) {
+                        if (typeof val === 'undefined') {
                             delete attr[name];
                         }
                     });
@@ -879,7 +879,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
                 alignTo.y + alignTo.height - 1, inverted))), alignAttr, // the final position;
     justify = pick(options.overflow, 'justify') === 'justify';
     if (visible) {
-        baseline = chart.renderer.fontMetrics(chart.styledMode ? undefined : options.style.fontSize, dataLabel).b;
+        baseline = chart.renderer.fontMetrics(chart.styledMode ? void 0 : options.style.fontSize, dataLabel).b;
         // The alignment box is a singular point
         alignTo = extend({
             x: inverted ? this.yAxis.len - plotY : plotX,
@@ -1195,7 +1195,7 @@ if (seriesTypes.pie) {
                 naturalY = labelPosition.natural.y;
                 y = naturalY;
                 if (positions && defined(point.distributeBox)) {
-                    if (point.distributeBox.pos === undefined) {
+                    if (typeof point.distributeBox.pos === 'undefined') {
                         visibility = 'hidden';
                     }
                     else {

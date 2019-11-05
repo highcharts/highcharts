@@ -78,7 +78,7 @@ H.seriesType('bb', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -92,7 +92,7 @@ H.seriesType('bb', 'sma',
             /**
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     tooltip: {

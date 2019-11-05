@@ -150,10 +150,10 @@ H.seriesType<Highcharts.TEMAIndicator>(
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
                 yVal,
-                i === undefined ? 1 : i,
+                typeof i === 'undefined' ? 1 : i,
                 (this.chart.series[0] as any).EMApercent,
                 prevEMA,
-                index === undefined ? -1 : index,
+                typeof index === 'undefined' ? -1 : index,
                 SMA
             );
         },

@@ -58,7 +58,7 @@ extend(Pane.prototype, {
      */
     setOptions: function (options) {
         // Set options. Angular charts have a default background (#3318)
-        this.options = options = merge(this.defaultOptions, this.chart.angular ? { background: {} } : undefined, options);
+        this.options = options = merge(this.defaultOptions, this.chart.angular ? { background: {} } : void 0, options);
     },
     /**
      * Render the pane with its backgrounds.

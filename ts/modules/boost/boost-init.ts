@@ -168,7 +168,7 @@ function init(): void {
                 // If all series were boosting, but are not anymore
                 // restore private markerGroup
                 if (this.markerGroup === chart.markerGroup) {
-                    this.markerGroup = undefined;
+                    this.markerGroup = void 0;
                 }
 
                 this.markerGroup = series.plotGroup(
@@ -260,16 +260,22 @@ function init(): void {
                         clientX = xAxis.toPixels(x, true);
 
                         if (sampling) {
-                            if (minI === undefined || clientX === lastClientX) {
+                            if (
+                                typeof minI === 'undefined' ||
+                                clientX === lastClientX
+                            ) {
                                 if (!isRange) {
                                     low = y;
                                 }
-                                if (maxI === undefined || y > (maxVal as any)) {
+                                if (
+                                    typeof maxI === 'undefined' ||
+                                    y > (maxVal as any)
+                                ) {
                                     maxVal = y;
                                     maxI = i;
                                 }
                                 if (
-                                    minI === undefined ||
+                                    typeof minI === 'undefined' ||
                                     low < (minVal as any)
                                 ) {
                                     minVal = low;
@@ -279,7 +285,8 @@ function init(): void {
                             }
                             // Add points and reset
                             if (clientX !== lastClientX) {
-                                if (minI !== undefined) { // maxI is number too
+                                // maxI is number too:
+                                if (typeof minI !== 'undefined') {
                                     plotY =
                                         yAxis.toPixels(maxVal as any, true);
                                     yBottom =
@@ -291,7 +298,7 @@ function init(): void {
                                     }
                                 }
 
-                                minI = maxI = undefined;
+                                minI = maxI = void 0;
                                 lastClientX = clientX;
                             }
                         } else {
@@ -408,7 +415,7 @@ function init(): void {
          */
         function preRender(): void {
             // Reset force state
-            chart.boostForceChartBoost = undefined;
+            chart.boostForceChartBoost = void 0;
             chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
             chart.isBoosting = false;
 

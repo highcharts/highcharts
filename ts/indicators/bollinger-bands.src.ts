@@ -143,7 +143,7 @@ H.seriesType<Highcharts.BBIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -157,7 +157,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 /**
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         tooltip: {

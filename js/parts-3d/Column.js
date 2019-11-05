@@ -229,7 +229,7 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
     if (series.chart.is3d()) {
         series.data.forEach(function (point) {
             point.visible = point.options.visible = vis =
-                vis === undefined ?
+                typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;
             pointVis = vis ? 'visible' : 'hidden';
             series.options.data[series.data.indexOf(point)] =
@@ -249,7 +249,8 @@ addEvent(Series, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
         var seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
-        if (!(grouping !== undefined && !grouping)) {
+        // @todo grouping === true ?
+        if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking), stack = seriesOptions.stack || 0, i; // position within the stack
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {

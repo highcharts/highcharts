@@ -146,7 +146,7 @@ seriesType<Highcharts.EMAIndicator>(
                     (yVal as any)[i - 1][index],
                 y: number;
 
-            y = calEMA === undefined ?
+            y = typeof calEMA === 'undefined' ?
                 SMA : correctFloat((yValue * EMApercent) +
                 (calEMA * (1 - EMApercent)));
 

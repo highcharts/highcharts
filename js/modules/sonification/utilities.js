@@ -94,7 +94,7 @@ SignalHandler.prototype.emitSignal = function (signalName, data) {
         this.signals[signalName].forEach(function (handler) {
             var result = handler(data);
 
-            retval = result !== undefined ? result : retval;
+            retval = typeof result !== 'undefined' ? result : retval;
         });
     }
     return retval;
@@ -141,7 +141,7 @@ var utilities = {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
             series.points.forEach(function (point) {
-                var val = point[prop] !== undefined ?
+                var val = typeof point[prop] !== 'undefined' ?
                     point[prop] : point.options[prop];
 
                 extremes.min = Math.min(extremes.min, val);

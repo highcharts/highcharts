@@ -204,7 +204,7 @@ TrackerMixin = H.TrackerMixin = {
                 var point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
-                if (point !== undefined) {
+                if (typeof point !== 'undefined') {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
@@ -1597,7 +1597,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             vis =
             series.options.visible =
             series.userOptions.visible =
-            vis === undefined ? !oldVisibility : vis; // #5618
+            typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
         showOrHide = vis ? 'show' : 'hide';
 
         // show or hide elements
@@ -1719,7 +1719,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         series.selected =
         selected =
         this.options.selected = (
-            selected === undefined ?
+            typeof selected === 'undefined' ?
                 !series.selected :
                 selected
         );
