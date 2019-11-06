@@ -386,10 +386,34 @@ Highcharts.Pointer.prototype = {
      *         and hoverPoints.
      */
     getHoverData: function (existingHoverPoint, existingHoverSeries, series, isDirectTouch, shared, e) {
-        var hoverPoint, hoverPoints = [], hoverSeries = existingHoverSeries, useExisting = !!(isDirectTouch && existingHoverPoint), notSticky = hoverSeries && !hoverSeries.stickyTracking, filter = function (s) {
+        var chart = this.chart, hoverPoint, hoverPoints = [], hoverSeries = existingHoverSeries, useExisting = !!(isDirectTouch && existingHoverPoint), notSticky = hoverSeries && !hoverSeries.stickyTracking, isInsidePane = function (x, y, center) {
+            var isInsidePane;
+            if (x === undefined || y === undefined) {
+                isInsidePane = undefined;
+            }
+            else {
+                isInsidePane = Math.sqrt((x - center[0]) * (x - center[0]) +
+                    (y - center[1]) * (y - center[1])) < center[2] / 2;
+            }
+            return isInsidePane;
+        }, 
+        // Find pane we are currently hovering over.
+        hoverPane = (function () {
+            var hoverPane;
+            if (chart.polar && e) {
+                chart.pane.forEach(function (pane) {
+                    var plotX = e.chartX - chart.plotLeft, plotY = e.chartY - chart.plotTop, x = chart.inverted ? plotY : plotX, y = chart.inverted ? plotX : plotY;
+                    if (isInsidePane(x, y, pane.center)) {
+                        hoverPane = pane;
+                    }
+                });
+            }
+            return hoverPane;
+        })(), filter = function (s) {
             return (s.visible &&
                 !(!shared && s.directTouch) && // #3821
-                pick(s.options.enableMouseTracking, true));
+                pick(s.options.enableMouseTracking, true) &&
+                (!chart.polar || s.xAxis.pane === hoverPane));
         }, 
         // Which series to look in for the hover point
         searchSeries = notSticky ?
@@ -403,6 +427,10 @@ Highcharts.Pointer.prototype = {
         hoverPoint = useExisting || !e ?
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e);
+        // Check whether the hoverPoint is inside pane we are hovering over.
+        if (hoverPane && hoverPoint) {
+            hoverPoint.isInsidePane = isInsidePane(hoverPoint.plotX, hoverPoint.plotY, hoverPane.center);
+        }
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
         // If we have a hoverPoint, assign hoverPoints.
@@ -516,7 +544,7 @@ Highcharts.Pointer.prototype = {
              */
             chart.hoverPoint = hoverPoint;
             // Draw tooltip if necessary
-            if (tooltip) {
+            if (tooltip && (!chart.polar || hoverPoint.isInsidePane)) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
             // Update positions (regardless of kdpoint or hoverPoint)

@@ -689,13 +689,29 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         plotY: number,
         inverted?: boolean
     ): boolean {
-        var x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY;
+        var chart = this,
+            x = inverted ? plotY : plotX,
+            y = inverted ? plotX : plotY,
+            center,
+            isInsidePlot;
 
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        if (chart.polar) {
+            isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
+                (pane): boolean => {
+                    center = pane.center;
+                    return Math.sqrt(
+                        (x - center[0]) * (x - center[0]) +
+                        (y - center[1]) * (y - center[1])
+                    ) < center[2] / 2;
+                });
+        } else {
+            isInsidePlot = x >= 0 &&
+                x <= chart.plotWidth &&
+                y >= 0 &&
+                y <= chart.plotHeight;
+        }
+
+        return isInsidePlot;
     },
 
     /**

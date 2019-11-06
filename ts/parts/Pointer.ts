@@ -637,16 +637,53 @@ Highcharts.Pointer.prototype = {
         shared: (boolean|undefined),
         e?: Highcharts.PointerEventObject
     ): Highcharts.PointerHoverDataObject {
-        var hoverPoint: Highcharts.Point,
+        var chart = this.chart,
+            hoverPoint: Highcharts.Point,
             hoverPoints = [] as Array<Highcharts.Point>,
             hoverSeries = existingHoverSeries,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
+            isInsidePane = (
+                x: number|undefined,
+                y: number|undefined,
+                center: Array<number>
+            ): boolean|undefined => {
+                let isInsidePane;
+
+                if (x === undefined || y === undefined) {
+                    isInsidePane = undefined;
+                } else {
+                    isInsidePane = Math.sqrt(
+                        (x - center[0]) * (x - center[0]) +
+                        (y - center[1]) * (y - center[1])
+                    ) < center[2] / 2;
+                }
+
+                return isInsidePane;
+            },
+            // Find pane we are currently hovering over.
+            hoverPane = ((): Highcharts.Pane|undefined => {
+                let hoverPane;
+                if (chart.polar && e) {
+                    (chart as Highcharts.PaneChart).pane.forEach(
+                        (pane): void => {
+                            const plotX = e.chartX - chart.plotLeft,
+                                plotY = e.chartY - chart.plotTop,
+                                x = chart.inverted ? plotY : plotX,
+                                y = chart.inverted ? plotX : plotY;
+                            if (isInsidePane(x, y, pane.center)) {
+                                hoverPane = pane;
+                            }
+                        });
+                }
+                return hoverPane;
+            })(),
             filter = function (s: Highcharts.Series): boolean {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821
-                    pick(s.options.enableMouseTracking, true)
+                    pick(s.options.enableMouseTracking, true) &&
+                    (!chart.polar || s.xAxis.pane === hoverPane)
                 );
             },
             // Which series to look in for the hover point
@@ -662,6 +699,15 @@ Highcharts.Pointer.prototype = {
         hoverPoint = useExisting || !e ?
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e) as any;
+
+        // Check whether the hoverPoint is inside pane we are hovering over.
+        if (hoverPane && hoverPoint) {
+            hoverPoint.isInsidePane = isInsidePane(
+                hoverPoint.plotX,
+                hoverPoint.plotY,
+                (hoverPane as Highcharts.Pane).center
+            );
+        }
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
@@ -832,7 +878,7 @@ Highcharts.Pointer.prototype = {
             chart.hoverPoint = hoverPoint;
 
             // Draw tooltip if necessary
-            if (tooltip) {
+            if (tooltip && (!chart.polar || hoverPoint.isInsidePane)) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
         // Update positions (regardless of kdpoint or hoverPoint)

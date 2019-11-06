@@ -39,6 +39,7 @@ declare global {
             public visible: boolean;
             public x: (number|null);
             public y?: (number|null);
+            public isInsidePane?: boolean;
             public applyOptions(options: PointOptionsType, x?: number): Point;
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;

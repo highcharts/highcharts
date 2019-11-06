@@ -14,7 +14,6 @@ QUnit.test("Tooltip isn't displayed when on column, when yAxis.max is lower than
         }]
     }).highcharts();
 
-
     chart.pointer.onContainerMouseMove({
         pageX: 150,
         pageY: 310,
@@ -26,7 +25,6 @@ QUnit.test("Tooltip isn't displayed when on column, when yAxis.max is lower than
         false,
         'Tooltip displayed properly'
     );
-
 });
 
 QUnit.test('JS error on hovering after destroy chart (#4998)', function (assert) {
@@ -68,5 +66,77 @@ QUnit.test('JS error on hovering after destroy chart (#4998)', function (assert)
     assert.ok(
         true,
         'No error'
+    );
+});
+
+QUnit.test('Hovering over panes (#11148)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+            chart: {
+                polar: true,
+                plotBackgroundColor: '#f2f2f2'
+            },
+
+            pane: [{
+                center: ['25%', '50%']
+            }, {
+                center: ['75%', '50%']
+            }],
+
+            series: [{
+                data: [140, 130, 53, 54, 50]
+            }, {
+                data: [120, 32, 64, 142],
+                yAxis: 1,
+                xAxis: 1
+            }],
+
+            xAxis: [{
+                pane: 0
+            }, {
+                pane: 1
+            }],
+
+            yAxis: [{
+                max: 100,
+                pane: 0
+            }, {
+                max: 100,
+                pane: 1
+            }]
+
+        }),
+        controller = new TestController(chart),
+        x = 260,
+        y = 180;
+
+    controller.moveTo(x, y);
+
+    assert.strictEqual(
+        chart.hoverPoint.y,
+        53,
+        'The other pane\'s point should be ignored'
+    );
+
+    chart.tooltip.hide(0);
+
+    x = 300;
+    y = 180;
+    controller.setPosition(x - 1, y - 1);
+    controller.moveTo(x, y);
+
+    assert.ok(
+        chart.tooltip.isHidden,
+        'Tooltip should not be displayed'
+    );
+
+    x = 340;
+    y = 180;
+    controller.setPosition(x - 1, y - 1);
+    controller.moveTo(x, y);
+
+    assert.ok(
+        chart.tooltip.isHidden,
+        'Tooltip should not be displayed (point is out of pane)'
     );
 });
