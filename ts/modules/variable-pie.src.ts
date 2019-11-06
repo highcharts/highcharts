@@ -142,7 +142,7 @@ seriesType<Highcharts.VariablePieSeries>(
          * @type  {number}
          * @since 6.0.0
          */
-        zMin: undefined,
+        zMin: void 0,
         /**
          * The maximum possible z value for the point's radius calculation. If
          * the point's Z value is bigger than zMax, the slice will be drawn
@@ -154,7 +154,7 @@ seriesType<Highcharts.VariablePieSeries>(
          * @type  {number}
          * @since 6.0.0
          */
-        zMax: undefined,
+        zMax: void 0,
         /**
          * Whether the pie slice's value should be represented by the area or
          * the radius of the slice. Can be either `area` or `radius`. The

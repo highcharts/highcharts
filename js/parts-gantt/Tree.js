@@ -34,7 +34,7 @@ var isFunction = function (x) {
 var getListOfParents = function (data, ids) {
     var listOfParents = data.reduce(function (prev, curr) {
         var parent = pick(curr.parent, '');
-        if (prev[parent] === undefined) {
+        if (typeof prev[parent] === 'undefined') {
             prev[parent] = [];
         }
         prev[parent].push(curr);

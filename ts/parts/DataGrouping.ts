@@ -151,6 +151,7 @@ import U from './Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     extend,
     isNumber,
@@ -163,7 +164,6 @@ import './Tooltip.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,
@@ -240,33 +240,33 @@ H.approximations = {
 
         // Return undefined when first elem. is undefined and let
         // sum method handle null (#7377)
-        return ret[0] === undefined ? undefined : ret;
+        return typeof ret[0] === 'undefined' ? void 0 : ret;
     },
     open: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
-        return arr.length ? arr[0] : ((arr as any).hasNulls ? null : undefined);
+        return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
     },
     high: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMax(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     low: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMin(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     close: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arr[arr.length - 1] :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     // ohlc and range are special cases where a multidimensional array is
     // input and an array is output
@@ -381,7 +381,7 @@ var groupData = function (
         // the previous group
         while (
             (
-                groupPositions[pos + 1] !== undefined &&
+                typeof groupPositions[pos + 1] !== 'undefined' &&
                 xData[i] >= groupPositions[pos + 1]
             ) ||
             i === dataLength
@@ -420,7 +420,7 @@ var groupData = function (
             }
 
             // push the grouped data
-            if (groupedY !== undefined) {
+            if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
                 groupMap.push(series.dataGroupInfo);

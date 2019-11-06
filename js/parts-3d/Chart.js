@@ -1290,7 +1290,7 @@ Chart.prototype.get3dFrame = function () {
             for (var j = 0; j < sources.length; j++) {
                 if (typeof sources[j] === 'object') {
                     var val = sources[j][attr];
-                    if (val !== undefined && val !== null) {
+                    if (typeof val !== 'undefined' && val !== null) {
                         options[attr] = val;
                         break;
                     }

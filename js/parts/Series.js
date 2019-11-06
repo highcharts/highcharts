@@ -203,12 +203,12 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, correctFloat = H.correctFloat, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, Point = H.Point, // @todo  add as a requirement
 removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
 /**
@@ -2245,9 +2245,11 @@ null,
                     // first axis
                     if (seriesOptions[AXIS] ===
                         axisOptions.index ||
-                        (seriesOptions[AXIS] !== undefined &&
+                        (typeof seriesOptions[AXIS] !==
+                            'undefined' &&
                             seriesOptions[AXIS] === axisOptions.id) ||
-                        (seriesOptions[AXIS] === undefined &&
+                        (typeof seriesOptions[AXIS] ===
+                            'undefined' &&
                             axisOptions.index === 0)) {
                         // register this series in the axis.series lookup
                         series.insert(axis.series);
@@ -2318,8 +2320,8 @@ null,
      */
     hasData: function () {
         return ((this.visible &&
-            this.dataMax !== undefined &&
-            this.dataMin !== undefined) || ( // #3703
+            typeof this.dataMax !== 'undefined' &&
+            typeof this.dataMin !== 'undefined') || ( // #3703
         this.visible &&
             this.yData &&
             this.yData.length > 0) // #9758
@@ -2479,7 +2481,7 @@ null,
             }
         }
         // Set the colorIndex
-        if (i !== undefined) {
+        if (typeof i !== 'undefined') {
             this[indexName] = i;
         }
         this[prop] = value;
@@ -2538,24 +2540,24 @@ null,
         if (id) {
             matchingPoint = this.chart.get(id);
             pointIndex = matchingPoint && matchingPoint.index;
-            if (pointIndex !== undefined) {
+            if (typeof pointIndex !== 'undefined') {
                 matchedById = true;
             }
         }
         // Search for the same X in the existing data set
-        if (pointIndex === undefined && isNumber(x)) {
+        if (typeof pointIndex === 'undefined' && isNumber(x)) {
             pointIndex = this.xData.indexOf(x, fromIndex);
         }
         // Reduce pointIndex if data is cropped
         if (pointIndex !== -1 &&
-            pointIndex !== undefined &&
+            typeof pointIndex !== 'undefined' &&
             this.cropped) {
             pointIndex = (pointIndex >= this.cropStart) ?
                 pointIndex - this.cropStart : pointIndex;
         }
         if (!matchedById &&
             oldData[pointIndex] && oldData[pointIndex].touched) {
-            pointIndex = undefined;
+            pointIndex = void 0;
         }
         return pointIndex;
     },
@@ -2594,7 +2596,7 @@ null,
                 // or used already due to ununique x values (#8995),
                 // add point (but later)
                 if (pointIndex === -1 ||
-                    pointIndex === undefined) {
+                    typeof pointIndex === 'undefined') {
                     pointsToAdd.push(pointOptions);
                     // Matching X found, update
                 }
@@ -2783,7 +2785,8 @@ null,
             }
             else {
                 for (i = 0; i < dataLength; i++) {
-                    if (data[i] !== undefined) { // stray commas in oldIE
+                    // stray commas in oldIE:
+                    if (typeof data[i] !== 'undefined') {
                         pt = { series: series };
                         series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
                         series.updateParallelArrays(pt, i);
@@ -2890,7 +2893,7 @@ null,
                 (processedXData[i] -
                     processedXData[i - 1]));
             if (distance > 0 &&
-                (closestPointRange === undefined ||
+                (typeof closestPointRange === 'undefined' ||
                     distance < closestPointRange)) {
                 closestPointRange = distance;
                 // Unsorted data is not supported by the line tooltip, as well
@@ -2973,7 +2976,8 @@ null,
             if (!hasGroupedData) {
                 point = data[cursor];
                 // #970:
-                if (!point && dataOptions[cursor] !== undefined) {
+                if (!point &&
+                    typeof dataOptions[cursor] !== 'undefined') {
                     data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
                 }
             }
@@ -3032,7 +3036,7 @@ null,
                 }
                 if (data[i]) {
                     data[i].destroyElements();
-                    data[i].plotX = undefined; // #1003
+                    data[i].plotX = void 0; // #1003
                 }
             }
         }
@@ -3254,9 +3258,9 @@ null,
             // #3201
             point.plotY = plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
                 limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
-                undefined);
+                void 0);
             point.isInside =
-                plotY !== undefined &&
+                typeof plotY !== 'undefined' &&
                     plotY >= 0 &&
                     plotY <= yAxis.len && // #3519
                     plotX >= 0 &&
@@ -3272,12 +3276,12 @@ null,
                 0);
             // some API data
             point.category = (categories &&
-                categories[point.x] !== undefined ?
+                typeof categories[point.x] !== 'undefined' ?
                 categories[point.x] :
                 point.x);
             // Determine auto enabling of markers (#3635, #5099)
             if (!point.isNull) {
-                if (lastPlotX !== undefined) {
+                if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
                 }
                 lastPlotX = plotX;
@@ -3506,7 +3510,7 @@ null,
                 pointMarkerOptions = point.marker || {};
                 hasPointMarker = !!point.marker;
                 enabled = (globallyEnabled &&
-                    pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
+                    typeof pointMarkerOptions.enabled === 'undefined') || pointMarkerOptions.enabled;
                 isInside = point.isInside !== false;
                 // only draw the point if y is defined
                 if (enabled && !point.isNull) {
@@ -3951,7 +3955,7 @@ null,
         if (zones.length &&
             (graph || area) &&
             axis &&
-            axis.min !== undefined) {
+            typeof axis.min !== 'undefined') {
             reversed = axis.reversed;
             horiz = axis.horiz;
             // The use of the Color Threshold assumes there are no gaps
@@ -4042,7 +4046,7 @@ null,
                 ignoreZones = threshold.value > extremes.max;
                 // Clear translatedTo for indicators
                 if (series.resetZones && translatedTo === 0) {
-                    translatedTo = undefined;
+                    translatedTo = void 0;
                 }
             });
             this.clips = clips;

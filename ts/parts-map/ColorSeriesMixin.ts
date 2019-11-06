@@ -108,7 +108,7 @@ H.colorSeriesMixin = {
                 (
                     point.isNull ?
                         nullColor :
-                        (colorAxis && value !== undefined) ?
+                        (colorAxis && typeof value !== 'undefined') ?
                             colorAxis.toColor(value, point) :
                             point.color || series.color
                 );

@@ -971,7 +971,7 @@ Highcharts.Legend.prototype = {
             // defaults to false.
             if (series && pick(
                 seriesOptions.showInLegend,
-                !defined(seriesOptions.linkedTo) ? undefined : false, true
+                !defined(seriesOptions.linkedTo) ? void 0 : false, true
             )) {
 
                 // Use points or series for the legend item depending on
@@ -1557,7 +1557,7 @@ Highcharts.Legend.prototype = {
 
         if (currentPage > 0) {
 
-            if (animation !== undefined) {
+            if (typeof animation !== 'undefined') {
                 setAnimation(animation, this.chart);
             }
 

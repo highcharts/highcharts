@@ -648,6 +648,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     erase,
     extend,
@@ -666,7 +667,6 @@ import './Point.js';
 import './SvgRenderer.js';
 
 var addEvent = H.addEvent,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     fireEvent = H.fireEvent,
@@ -2904,11 +2904,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                             (seriesOptions as any)[AXIS] ===
                             axisOptions.index ||
                             (
-                                (seriesOptions as any)[AXIS] !== undefined &&
+                                typeof (seriesOptions as any)[AXIS] !==
+                                'undefined' &&
                                 (seriesOptions as any)[AXIS] === axisOptions.id
                             ) ||
                             (
-                                (seriesOptions as any)[AXIS] === undefined &&
+                                typeof (seriesOptions as any)[AXIS] ===
+                                'undefined' &&
                                 axisOptions.index === 0
                             )
                         ) {
@@ -3000,8 +3002,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         hasData: function (this: Highcharts.Series): boolean {
             return ((
                 this.visible &&
-                this.dataMax !== undefined &&
-                this.dataMin !== undefined
+                typeof this.dataMax !== 'undefined' &&
+                typeof this.dataMin !== 'undefined'
             ) || ( // #3703
                 this.visible &&
                 (this.yData as any) &&
@@ -3253,7 +3255,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 }
             }
             // Set the colorIndex
-            if (i !== undefined) {
+            if (typeof i !== 'undefined') {
                 (this as any)[indexName] = i;
             }
             (this as any)[prop] = value;
@@ -3333,19 +3335,19 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (id) {
                 matchingPoint = this.chart.get(id);
                 pointIndex = matchingPoint && matchingPoint.index;
-                if (pointIndex !== undefined) {
+                if (typeof pointIndex !== 'undefined') {
                     matchedById = true;
                 }
             }
 
             // Search for the same X in the existing data set
-            if (pointIndex === undefined && isNumber(x)) {
+            if (typeof pointIndex === 'undefined' && isNumber(x)) {
                 pointIndex = (this.xData as any).indexOf(x as any, fromIndex);
             }
 
             // Reduce pointIndex if data is cropped
             if (pointIndex !== -1 &&
-                pointIndex !== undefined &&
+                typeof pointIndex !== 'undefined' &&
                 this.cropped
             ) {
                 pointIndex = (pointIndex >= (this.cropStart as any)) ?
@@ -3355,7 +3357,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (!matchedById &&
                 oldData[pointIndex] && oldData[pointIndex].touched
             ) {
-                pointIndex = undefined;
+                pointIndex = void 0;
             }
             return pointIndex;
         },
@@ -3428,7 +3430,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
-                        pointIndex === undefined
+                        typeof pointIndex === 'undefined'
                     ) {
                         pointsToAdd.push(pointOptions);
 
@@ -3672,7 +3674,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     }
                 } else {
                     for (i = 0; i < dataLength; i++) {
-                        if (data[i] !== undefined) { // stray commas in oldIE
+                        // stray commas in oldIE:
+                        if (typeof data[i] !== 'undefined') {
                             pt = { series: series };
                             series.pointClass.prototype.applyOptions.apply(
                                 pt,
@@ -3837,7 +3840,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                 if (distance > 0 &&
                     (
-                        closestPointRange === undefined ||
+                        typeof closestPointRange === 'undefined' ||
                         distance < closestPointRange
                     )
                 ) {
@@ -3962,7 +3965,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 if (!hasGroupedData) {
                     point = data[cursor];
                     // #970:
-                    if (!point && (dataOptions as any)[cursor] !== undefined) {
+                    if (
+                        !point &&
+                        typeof (dataOptions as any)[cursor] !== 'undefined'
+                    ) {
                         data[cursor] = point = (new PointClass()).init(
                             series,
                             (dataOptions as any)[cursor],
@@ -4036,7 +4042,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     }
                     if (data[i]) {
                         data[i].destroyElements();
-                        data[i].plotX = undefined; // #1003
+                        data[i].plotX = void 0; // #1003
                     }
                 }
             }
@@ -4373,11 +4379,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         limitedRange(yAxis.translate(
                             yValue, 0 as any, 1 as any, 0 as any, 1 as any
                         ) as any) :
-                        undefined
+                        void 0
                 );
 
                 point.isInside =
-                    plotY !== undefined &&
+                    typeof plotY !== 'undefined' &&
                     plotY >= 0 &&
                     plotY <= yAxis.len && // #3519
                     plotX >= 0 &&
@@ -4407,14 +4413,14 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // some API data
                 point.category = (
                     categories &&
-                    (categories as any)[point.x as any] !== undefined ?
+                    typeof (categories as any)[point.x as any] !== 'undefined' ?
                         (categories as any)[point.x as any] :
                         point.x
                 );
 
                 // Determine auto enabling of markers (#3635, #5099)
                 if (!point.isNull) {
-                    if (lastPlotX !== undefined) {
+                    if (typeof lastPlotX !== 'undefined') {
                         closestPointRangePx = Math.min(
                             closestPointRangePx,
                             Math.abs(plotX - lastPlotX)
@@ -4741,7 +4747,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     hasPointMarker = !!point.marker;
                     enabled = (
                         globallyEnabled &&
-                        pointMarkerOptions.enabled === undefined
+                        typeof pointMarkerOptions.enabled === 'undefined'
                     ) || pointMarkerOptions.enabled;
                     isInside = point.isInside !== false;
 
@@ -5417,10 +5423,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 pxPosMax: number,
                 ignoreZones = false;
 
-            if (zones.length &&
+            if (
+                zones.length &&
                 (graph || area) &&
                 axis &&
-                axis.min !== undefined
+                typeof axis.min !== 'undefined'
             ) {
                 reversed = axis.reversed;
                 horiz = axis.horiz;
@@ -5541,7 +5548,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                     // Clear translatedTo for indicators
                     if (series.resetZones && translatedTo === 0) {
-                        translatedTo = undefined;
+                        translatedTo = void 0;
                     }
                 });
                 this.clips = clips;

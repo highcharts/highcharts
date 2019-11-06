@@ -103,7 +103,7 @@ var getListOfParents = function (
         ): Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>> {
             var parent = pick(curr.parent, '');
 
-            if (prev[parent] === undefined) {
+            if (typeof prev[parent] === 'undefined') {
                 prev[parent] = [];
             }
             prev[parent].push(curr);

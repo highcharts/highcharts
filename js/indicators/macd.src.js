@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, defined = U.defined;
+var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**
  * The MACD series type.
  *
@@ -72,7 +72,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -96,7 +96,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     threshold: 0,
@@ -264,7 +264,7 @@ seriesType('macd', 'sma',
         var j = 0, MACD = [], xMACD = [], yMACD = [], signalLine = [], shortEMA, longEMA, i;
         if (series.xData.length <
             params.longPeriod + params.signalPeriod) {
-            return false;
+            return;
         }
         // Calculating the short and long EMA used when calculating the MACD
         shortEMA = EMA.prototype.getValues(series, {

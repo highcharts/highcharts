@@ -34,7 +34,7 @@ H.initCanvasBoost = function () {
                 // draw the columns
                 this.points.forEach(function (point) {
                     var plotY = point.plotY, shapeArgs, pointAttr;
-                    if (plotY !== undefined &&
+                    if (typeof plotY !== 'undefined' &&
                         !isNaN(plotY) &&
                         point.y !== null) {
                         shapeArgs = point.shapeArgs;
@@ -359,15 +359,16 @@ H.initCanvasBoost = function () {
                             (isNextInside || isPrevInside))) {
                         clientX = Math.round(xAxis.toPixels(x, true));
                         if (sampling) {
-                            if (minI === undefined || clientX === lastClientX) {
+                            if (typeof minI === 'undefined' ||
+                                clientX === lastClientX) {
                                 if (!isRange) {
                                     low = y;
                                 }
-                                if (maxI === undefined || y > maxVal) {
+                                if (typeof maxI === 'undefined' || y > maxVal) {
                                     maxVal = y;
                                     maxI = i;
                                 }
-                                if (minI === undefined ||
+                                if (typeof minI === 'undefined' ||
                                     low < minVal) {
                                     minVal = low;
                                     minI = i;
@@ -375,7 +376,8 @@ H.initCanvasBoost = function () {
                             }
                             // Add points and reset
                             if (clientX !== lastClientX) {
-                                if (minI !== undefined) { // maxI also a number
+                                // maxI also a number:
+                                if (typeof minI !== 'undefined') {
                                     plotY = yAxis.toPixels(maxVal, true);
                                     yBottom = yAxis.toPixels(minVal, true);
                                     drawPoint(clientX, hasThreshold ?
@@ -386,7 +388,7 @@ H.initCanvasBoost = function () {
                                         addKDPoint(clientX, yBottom, minI);
                                     }
                                 }
-                                minI = maxI = undefined;
+                                minI = maxI = void 0;
                                 lastClientX = clientX;
                             }
                         }
@@ -437,7 +439,7 @@ H.initCanvasBoost = function () {
                 series.buildKDTree();
                 // Don't do async on export, the exportChart, getSVGForExport and
                 // getSVG methods are not chained for it.
-            }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
+            }, chart.renderer.forExport ? Number.MAX_VALUE : void 0);
         }
     });
     seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {

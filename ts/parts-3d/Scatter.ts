@@ -108,7 +108,7 @@ seriesType(
             this: Highcharts.Scatter3dPoint
         ): Highcharts.Scatter3dPoint {
             Point.prototype.applyOptions.apply(this, arguments as any);
-            if (this.z === undefined) {
+            if (typeof this.z === 'undefined') {
                 this.z = 0;
             }
 

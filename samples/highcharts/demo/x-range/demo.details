@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: X-range series
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - More chart types
 ...

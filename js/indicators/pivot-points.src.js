@@ -183,7 +183,7 @@ H.seriesType('pivotpoints', 'sma',
         if (xVal.length < period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         for (i = period + 1; i <= yValLen + period; i += period) {
             slicedX = xVal.slice(i - period - 1, i);

@@ -251,7 +251,7 @@ addEvent(Axis, 'autoLabelAlign', function (e) {
             if (labelOptions.x === 15) { // default
                 labelOptions.x = 0;
             }
-            if (labelOptions.align === undefined) {
+            if (typeof labelOptions.align === 'undefined') {
                 labelOptions.align = 'right';
             }
             panes[key] = this;
@@ -586,8 +586,8 @@ seriesProto.setCompare = function (compare) {
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (value, point) {
             var compareValue = this.compareValue;
-            if (value !== undefined &&
-                compareValue !== undefined) { // #2601, #5814
+            if (typeof value !== 'undefined' &&
+                typeof compareValue !== 'undefined') { // #2601, #5814
                 // Get the modified value
                 if (compare === 'value') {
                     value -= compareValue;

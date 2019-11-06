@@ -263,7 +263,7 @@ cuboidMethods = H.merge(element3dMethods, {
         if (args.shapeArgs || defined(args.x)) {
             return this.singleSetterForParts('d', null, this.renderer[this.pathType + 'Path'](args.shapeArgs || args));
         }
-        return SVGElement.prototype.attr.call(this, args, undefined, complete, continueAnimation);
+        return SVGElement.prototype.attr.call(this, args, void 0, complete, continueAnimation);
     },
     animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {

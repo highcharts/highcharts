@@ -218,7 +218,7 @@ seriesType<Highcharts.LinearRegressionIndicator>(
              * @type    {number}
              * @product highstock
              */
-            xAxisUnit: undefined
+            xAxisUnit: void 0
         },
         tooltip: {
             valueDecimals: 4
@@ -341,8 +341,13 @@ seriesType<Highcharts.LinearRegressionIndicator>(
 
             for (i = 1; i < xData.length - 1; i++) {
                 distance = xData[i] - xData[i - 1];
-                if (distance > 0 && (closestDistance === undefined ||
-                  distance < closestDistance)) {
+                if (
+                    distance > 0 &&
+                    (
+                        typeof closestDistance === 'undefined' ||
+                        distance < closestDistance
+                    )
+                ) {
                     closestDistance = distance;
                 }
             }

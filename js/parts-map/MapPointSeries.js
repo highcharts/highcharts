@@ -60,8 +60,8 @@ seriesType('mappoint', 'scatter',
     // Point class
 }, {
     applyOptions: function (options, x) {
-        var mergedOptions = (options.lat !== undefined &&
-            options.lon !== undefined ?
+        var mergedOptions = (typeof options.lat !== 'undefined' &&
+            typeof options.lon !== 'undefined' ?
             merge(options, this.series.chart.fromLatLonToPoint(options)) :
             options);
         return Point.prototype

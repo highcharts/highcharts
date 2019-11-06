@@ -26,7 +26,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: PCIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public nameComponents: Array<string>;
@@ -149,7 +149,7 @@ H.seriesType<Highcharts.PCIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.PCIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -170,7 +170,7 @@ H.seriesType<Highcharts.PCIndicator>(
                 i: number;
 
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {

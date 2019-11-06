@@ -43,8 +43,10 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
             );
         }
         // Scroll if we have to
-        if (items[ix].pageIx !== undefined &&
-            items[ix].pageIx + 1 !== this.legend.currentPage) {
+        if (
+            typeof items[ix].pageIx !== 'undefined' &&
+            items[ix].pageIx + 1 !== this.legend.currentPage
+        ) {
             this.legend.scroll(1 + items[ix].pageIx - this.legend.currentPage);
         }
         // Focus

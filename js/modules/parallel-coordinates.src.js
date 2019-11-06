@@ -131,7 +131,7 @@ addEvent(Chart, 'init', function (e) {
         if (!options.legend) {
             options.legend = {};
         }
-        if (options.legend.enabled === undefined) {
+        if (typeof options.legend.enabled === 'undefined') {
             options.legend.enabled = false;
         }
         merge(true, options, 
@@ -310,7 +310,7 @@ addEvent(H.Series, 'afterTranslate', function () {
                 point.clientX = point.plotX;
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, null, true);
-                if (lastPlotX !== undefined) {
+                if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(closestPointRangePx, Math.abs(point.plotX - lastPlotX));
                 }
                 lastPlotX = point.plotX;

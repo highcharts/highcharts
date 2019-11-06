@@ -130,8 +130,9 @@ var onSeriesMixin = {
                 point = points[cursor];
                 point.y = leftPoint.y;
 
-                if (leftPoint.x <= (point.x as any) &&
-                    leftPoint[onKey] !== undefined
+                if (
+                    leftPoint.x <= (point.x as any) &&
+                    typeof leftPoint[onKey] !== 'undefined'
                 ) {
                     if ((point.x as any) <= lastX) { // #803
 
@@ -142,7 +143,10 @@ var onSeriesMixin = {
                             !step
                         ) {
                             rightPoint = (onData as any)[i + 1];
-                            if (rightPoint && rightPoint[onKey] !== undefined) {
+                            if (
+                                rightPoint &&
+                                typeof rightPoint[onKey] !== 'undefined'
+                            ) {
                                 // the distance ratio, between 0 and 1
                                 distanceRatio =
                                     ((point.x as any) - leftPoint.x) /
@@ -182,7 +186,7 @@ var onSeriesMixin = {
             // we must remove the shapeArgs (#847). For inverted charts, we need
             // to calculate position anyway, because series.invertGroups is not
             // defined
-            if (point.plotY === undefined || inverted) {
+            if (typeof point.plotY === 'undefined' || inverted) {
                 if ((point.plotX as any) >= 0 &&
                     (point.plotX as any) <= xAxis.len
                 ) {
@@ -216,7 +220,7 @@ var onSeriesMixin = {
             // if multiple flags appear at the same x, order them into a stack
             lastPoint = points[i - 1];
             if (lastPoint && lastPoint.plotX === point.plotX) {
-                if (lastPoint.stackIndex === undefined) {
+                if (typeof lastPoint.stackIndex === 'undefined') {
                     lastPoint.stackIndex = 0;
                 }
                 stackIndex = lastPoint.stackIndex + 1;

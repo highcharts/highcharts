@@ -803,7 +803,7 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
      *
      * @type {string}
      */
-    rootId: undefined,
+    rootId: void 0,
 
     /**
      * Used together with the levels and `allowDrillToNode` options. When
