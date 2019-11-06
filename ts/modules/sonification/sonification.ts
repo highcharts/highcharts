@@ -58,10 +58,6 @@ declare global {
             sonification: SonificationObject;
             sonify: SonifyChartFunctionsObject['chartSonify'];
         }
-        interface SonifyOptions {
-            cancelSonify: PointSonifyFunctions['pointCancelSonify'];
-            pointSonify: PointSonifyFunctions['pointSonify'];
-        }
         interface SonifyPoint extends Point {
             cancelSonify: PointSonifyFunctions['pointCancelSonify'];
             series: SonifySeries;
