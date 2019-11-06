@@ -2669,6 +2669,12 @@ null,
         pointsToAdd.forEach(function (point) {
             this.addPoint(point, false, null, null, false);
         }, this);
+        if (this.xIncrement === null &&
+            this.xData &&
+            this.xData.length) {
+            this.xIncrement = arrayMax(this.xData);
+            this.autoIncrement();
+        }
         return true;
     },
     /**

@@ -3522,6 +3522,15 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 this.addPoint(point, false, null as any, null as any, false);
             }, this);
 
+            if (
+                this.xIncrement === null &&
+                this.xData &&
+                this.xData.length
+            ) {
+                this.xIncrement = arrayMax(this.xData);
+                this.autoIncrement();
+            }
+
             return true;
         },
 

@@ -376,6 +376,35 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'Two points should be rendered (#12333).'
     );
 
+    // Auto incremented X should match current max X after update
+    chart.series[0].setData(
+        [{
+            id: 'one',
+            y: 10
+        }, {
+            id: 'two',
+            y: 10
+        }, {
+            y: 20
+        }]
+    );
+
+    chart.series[0].setData(
+        [{
+            id: 'one',
+            y: 20
+        }]
+    );
+    chart.series[0].addPoint({
+        y: 100
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[1].x,
+        1,
+        'Auto incremented X should not overlap first point.'
+    );
+
 });
 
 QUnit.test('Boosted series with updatePoints', function (assert) {
