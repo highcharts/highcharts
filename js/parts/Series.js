@@ -2623,6 +2623,10 @@ null,
                     hasUpdatedByKey = true;
                 }
             }
+            else {
+                // Gather all points that are not matched
+                pointsToAdd.push(pointOptions);
+            }
         }, this);
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
@@ -2644,6 +2648,8 @@ null,
                     oldData[i].update(point, false, null, false);
                 }
             });
+            // Don't add new points since those configs are used above
+            pointsToAdd.length = 0;
             // Did not succeed in updating data
         }
         else {
