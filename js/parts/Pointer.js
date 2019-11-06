@@ -646,7 +646,8 @@ Highcharts.Pointer.prototype = {
                 else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis) {
-                        if (axis.crosshair) {
+                        if (axis.crosshair &&
+                            hoverPoint.series[axis.coll] === axis) {
                             axis.drawCrosshair(null, hoverPoint);
                         }
                     });
