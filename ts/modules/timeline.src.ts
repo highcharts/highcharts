@@ -308,9 +308,13 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     ((this.point as any).label || '');
                 return format;
             },
+
             style: {
+                /** @internal */
                 textOutline: 'none',
+                /** @internal */
                 fontWeight: 'normal',
+                /** @internal */
                 fontSize: '12px'
             },
 

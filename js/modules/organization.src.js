@@ -167,7 +167,9 @@ H.seriesType('organization', 'sankey',
         },
         /* eslint-enable valid-jsdoc */
         style: {
+            /** @internal */
             fontWeight: 'normal',
+            /** @internal */
             fontSize: '13px'
         },
         useHTML: true

@@ -43,6 +43,7 @@ seriesType('mappoint', 'scatter',
         },
         overflow: false,
         style: {
+            /** @internal */
             color: '${palette.neutralColor100}'
         }
     }

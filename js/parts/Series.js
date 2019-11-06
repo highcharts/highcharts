@@ -1602,6 +1602,7 @@ null,
      *
      * @declare Highcharts.DataLabelsOptionsObject
      * @type    {*|Array<*>}
+     * @product highcharts highstock highmaps gantt
      *
      * @private
      */
@@ -1886,6 +1887,14 @@ null,
          */
         padding: 5,
         /**
+         * Aligns data labels relative to points. If `center` alignment is
+         * not possible, it defaults to `right`.
+         *
+         * @type      {Highcharts.AlignValue}
+         * @default   center
+         * @apioption plotOptions.series.dataLabels.position
+         */
+        /**
          * Text rotation in degrees. Note that due to a more complex
          * structure, backgrounds, borders and padding will be lost on a
          * rotated data label.
@@ -1956,14 +1965,17 @@ null,
          *         Bold labels
          *
          * @type      {Highcharts.CSSObject}
-         * @default   {"color": "contrast", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast"}
          * @since     4.1.0
          * @apioption plotOptions.series.dataLabels.style
          */
         style: {
+            /** @internal */
             fontSize: '11px',
+            /** @internal */
             fontWeight: 'bold',
+            /** @internal */
             color: 'contrast',
+            /** @internal */
             textOutline: '1px contrast'
         },
         /**

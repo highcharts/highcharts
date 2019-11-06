@@ -459,6 +459,7 @@ var sunburstOptions = {
          */
         rotationMode: 'auto',
         style: {
+            /** @internal */
             textOverflow: 'ellipsis'
         }
     },

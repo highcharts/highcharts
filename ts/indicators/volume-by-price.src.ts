@@ -272,6 +272,7 @@ seriesType<Highcharts.VBPIndicator>(
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
             padding: 0,
             style: {
+                /** @internal */
                 fontSize: '7px'
             },
             verticalAlign: 'top'

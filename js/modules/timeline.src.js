@@ -171,8 +171,11 @@ seriesType('timeline', 'line',
             return format;
         },
         style: {
+            /** @internal */
             textOutline: 'none',
+            /** @internal */
             fontWeight: 'normal',
+            /** @internal */
             fontSize: '12px'
         },
         /**

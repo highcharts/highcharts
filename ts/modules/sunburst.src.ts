@@ -775,6 +775,7 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
         rotationMode: 'auto',
 
         style: {
+            /** @internal */
             textOverflow: 'ellipsis'
         }
 

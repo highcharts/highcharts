@@ -91,6 +91,7 @@ seriesType<Highcharts.MapPointSeries>(
             },
             overflow: false as any,
             style: {
+                /** @internal */
                 color: '${palette.neutralColor100}'
             }
         }
