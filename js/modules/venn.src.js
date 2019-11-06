@@ -683,12 +683,8 @@ var vennOptions = {
     clip: false,
     colorByPoint: true,
     dataLabels: {
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'middle',
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         }

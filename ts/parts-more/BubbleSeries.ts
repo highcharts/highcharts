@@ -142,16 +142,12 @@ var Axis = H.Axis,
 seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function (
             this: Highcharts.DataLabelsFormatterContextObject
         ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
 

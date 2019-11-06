@@ -119,7 +119,6 @@ seriesType('waterfall', 'column', {
      * @apioption plotOptions.waterfall.upColor
      */
     dataLabels: {
-        /** @ignore-option */
         inside: true
     },
     /**

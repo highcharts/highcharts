@@ -123,7 +123,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
         grouping: false,
 
         dataLabels: {
-            /** @ignore-option */
             enabled: true
         },
         tooltip: {

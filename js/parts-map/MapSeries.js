@@ -42,20 +42,13 @@ seriesType('map', 'scatter',
 {
     animation: false,
     dataLabels: {
-        /** @ignore-option */
         crop: false,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.value;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         padding: 0,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     /**

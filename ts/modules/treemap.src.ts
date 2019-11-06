@@ -509,12 +509,8 @@ seriesType<Highcharts.TreemapSeries>(
          * @since 4.1.0
          */
         dataLabels: {
-            /** @ignore-option */
             defer: false,
-            /** @ignore-option */
             enabled: true,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): string {
                 var point: Highcharts.TreemapPoint = this && this.point ?
                         (this.point as Highcharts.TreemapPoint) :
@@ -523,9 +519,7 @@ seriesType<Highcharts.TreemapSeries>(
 
                 return name;
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 

@@ -350,11 +350,8 @@ seriesType('column', 'line',
         }
     },
     dataLabels: {
-        /** @ignore-option */
         align: null,
-        /** @ignore-option */
         verticalAlign: null,
-        /** @ignore-options */
         y: null
     },
     /**

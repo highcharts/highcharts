@@ -183,21 +183,15 @@ seriesType('treemap', 'scatter'
      * @since 4.1.0
      */
     dataLabels: {
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             var point = this && this.point ?
                 this.point :
                 {}, name = isString(point.name) ? point.name : '';
             return name;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     tooltip: {

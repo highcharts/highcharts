@@ -88,7 +88,6 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
         neckHeight: 0,
         neckWidth: 0,
         dataLabels: {
-            /** @ignore-options */
             verticalAlign: 'top'
         }
     }

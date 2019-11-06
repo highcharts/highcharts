@@ -338,12 +338,9 @@ extend(defaultOptions, {
              * disabled by default on the navigator series.
              *
              * @extends plotOptions.series.dataLabels
-             * @default { "enabled": false, "zIndex": 2 }
              */
             dataLabels: {
-                /** @ignore-option */
                 enabled: false,
-                /** @ignore-option */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',
