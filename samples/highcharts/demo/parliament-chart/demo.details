@@ -1,8 +1,13 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- isNew: true
- alt_text: Highcharts parliament item chart JavaScript example visualizes German political party breakdown by color and percentage proportion.
+name: Parliament (item) chart
+authors:
+  - Torstein Hønsi
+js_wrap: b
+isNew: true
+alt_text: >-
+  Highcharts parliament item chart JavaScript example visualizes German
+  political party breakdown by color and percentage proportion.
+tags: []
+categories:
+  - More chart types
 ...

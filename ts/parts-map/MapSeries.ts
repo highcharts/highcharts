@@ -585,14 +585,14 @@ seriesType<Highcharts.MapSeries>(
 
                 // If no minRange option is set, set the default minimum zooming
                 // range to 5 times the size of the smallest element
-                if (xAxis && xAxis.options.minRange === undefined) {
+                if (xAxis && typeof xAxis.options.minRange === 'undefined') {
                     xAxis.minRange = Math.min(
                         5 * minRange,
                         (this.maxX - this.minX) / 5,
                         xAxis.minRange || MAX_VALUE
                     );
                 }
-                if (yAxis && yAxis.options.minRange === undefined) {
+                if (yAxis && typeof yAxis.options.minRange === 'undefined') {
                     yAxis.minRange = Math.min(
                         5 * minRange,
                         (this.maxY - this.minY) / 5,
@@ -726,7 +726,10 @@ seriesType<Highcharts.MapSeries>(
                         // Run through pointArrayMap and what's left of the
                         // point data array in parallel, copying over the values
                         for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-                            if (pointArrayMap[j] && val[ix] !== undefined) {
+                            if (
+                                pointArrayMap[j] &&
+                                typeof val[ix] !== 'undefined'
+                            ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
                                     H.Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
@@ -1305,7 +1308,7 @@ seriesType<Highcharts.MapSeries>(
                 mapPoint;
 
             if (series.mapData) {
-                mapPoint = (point as any)[joinBy[1]] !== undefined &&
+                mapPoint = typeof (point as any)[joinBy[1]] !== 'undefined' &&
                     (series.mapMap as any)[(point as any)[joinBy[1]]];
                 if (mapPoint) {
                     // This applies only to bubbles

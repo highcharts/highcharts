@@ -244,7 +244,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
          * @apioption plotOptions.series.connectEnds
          */
         if (this.options.connectEnds !== false &&
-            firstValid !== undefined) {
+            typeof firstValid !== 'undefined') {
             this.connectEnds = true; // re-used in splines
             points.splice(points.length, 0, points[firstValid]);
             popLastPoint = true;
@@ -252,7 +252,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
         points.forEach(function (point) {
-            if (point.polarPlotY === undefined) {
+            if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
         });

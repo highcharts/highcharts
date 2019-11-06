@@ -112,18 +112,18 @@ function formatExtendedStatement(statement, ctx) {
             if (ix < 0) {
                 val = arr[arr.length + ix];
                 // Handle negative overshoot
-                if (val === undefined) {
+                if (typeof val === 'undefined') {
                     val = arr[0];
                 }
             } else {
                 val = arr[ix];
                 // Handle positive overshoot
-                if (val === undefined) {
+                if (typeof val === 'undefined') {
                     val = arr[arr.length - 1];
                 }
             }
         }
-        return val !== undefined ? val : '';
+        return typeof val !== 'undefined' ? val : '';
     }
 
     // Standard substitution, delegate to H.format or similar

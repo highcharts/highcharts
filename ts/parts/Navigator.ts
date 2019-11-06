@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    correctFloat,
     defined,
     destroyObjectProperties,
     erase,
@@ -234,7 +235,7 @@ var addEvent = H.addEvent,
         }
     };
 
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 
@@ -826,10 +827,10 @@ Axis.prototype.toFixedRange = function (
 
     // Add/remove half point range to/from the extremes (#1172)
     if (!defined(fixedMin)) {
-        newMin = H.correctFloat(newMin + halfPointRange);
+        newMin = correctFloat(newMin + halfPointRange);
     }
     if (!defined(fixedMax)) {
-        newMax = H.correctFloat(newMax - halfPointRange);
+        newMax = correctFloat(newMax - halfPointRange);
     }
 
     // If the difference between the fixed range and the actual requested range
@@ -843,7 +844,7 @@ Axis.prototype.toFixedRange = function (
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined as any;
+        newMin = newMax = void 0 as any;
     }
 
     return {
@@ -1269,8 +1270,8 @@ Navigator.prototype = {
             return;
         }
 
-        min = H.correctFloat(min - pointRange / 2);
-        max = H.correctFloat(max + pointRange / 2);
+        min = correctFloat(min - pointRange / 2);
+        max = correctFloat(max + pointRange / 2);
 
         // Don't render the navigator until we have data (#486, #4202, #5172).
         if (!isNumber(min) || !isNumber(max)) {
@@ -1316,12 +1317,8 @@ Navigator.prototype = {
         // Are we below the minRange? (#2618, #6191)
         newMin = xAxis.toValue(pxMin as any, true);
         newMax = xAxis.toValue(pxMax as any, true);
-
-        currentRange = Math.abs(H.correctFloat(newMax - newMin));
-
-        if (
-            H.correctFloat(currentRange - pointRange) < (minRange as any)
-        ) {
+        currentRange = Math.abs(correctFloat(newMax - newMin));
+        if (currentRange < (minRange as any)) {
             if (this.grabbedLeft) {
                 pxMin = xAxis.toPixels(
                     newMax - (minRange as any) - pointRange,
@@ -1335,7 +1332,7 @@ Navigator.prototype = {
             }
         } else if (
             defined(maxRange) &&
-            H.correctFloat(currentRange - pointRange) > (maxRange as any)
+            correctFloat(currentRange - pointRange) > (maxRange as any)
         ) {
             if (this.grabbedLeft) {
                 pxMin = xAxis.toPixels(
@@ -1841,7 +1838,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind: Function): void {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -2737,7 +2734,7 @@ if (!H.Navigator) {
             }
 
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

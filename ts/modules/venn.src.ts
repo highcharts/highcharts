@@ -452,7 +452,7 @@ var getLabelPosition = function getLabelPosition(
                 return best;
             }, best);
     }, {
-        point: undefined as any,
+        point: void 0 as any,
         margin: -Number.MAX_VALUE
     }).point;
 
@@ -833,7 +833,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
                 return best;
             }, {
                 loss: Number.MAX_VALUE,
-                coordinates: undefined as any
+                coordinates: void 0 as any
             });
 
         // Add the set to its final position.

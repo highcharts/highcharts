@@ -211,7 +211,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             objectEach(options.plotOptions, function (typeOptions, type) {
                 if (isObject(typeOptions)) { // #8766
                     typeOptions.tooltip = (userPlotOptions[type] && // override by copy:
-                        merge(userPlotOptions[type].tooltip)) || undefined; // or clear
+                        merge(userPlotOptions[type].tooltip)) || void 0; // or clear
                 }
             });
             // User options have higher priority than default options
@@ -696,7 +696,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.applyDescription('subtitle', subtitleOptions);
         // The initial call also adds the caption. On update, chart.update will
         // relay to Chart.setCaption.
-        this.applyDescription('caption', undefined);
+        this.applyDescription('caption', void 0);
         this.layOutTitles(redraw);
     },
     /**
@@ -1171,7 +1171,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     // Set size, it may have been destroyed in the meantime
                     // (#1257)
                     if (chart.container) {
-                        chart.setSize(undefined, undefined, false);
+                        chart.setSize(void 0, void 0, false);
                     }
                 }, e ? 100 : 0);
             }
@@ -1257,10 +1257,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         setAnimation(animation, chart);
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
-        if (width !== undefined) {
+        if (typeof width !== 'undefined') {
             chart.options.chart.width = width;
         }
-        if (height !== undefined) {
+        if (typeof height !== 'undefined') {
             chart.options.chart.height = height;
         }
         chart.getChartSize();
@@ -1823,7 +1823,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             erase(charts, chart); // #6569
         }
         else {
-            charts[chart.index] = undefined;
+            charts[chart.index] = void 0;
         }
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
@@ -1941,7 +1941,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Run callbacks, first the ones registered by modules, then user's one
         this.callbacks.concat([this.callback]).forEach(function (fn) {
             // Chart destroyed in its own callback (#3600)
-            if (fn && this.index !== undefined) {
+            if (fn && typeof this.index !== 'undefined') {
                 fn.apply(this, [this]);
             }
         }, this);

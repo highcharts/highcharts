@@ -1,6 +1,9 @@
 ---
- name: Highstock Demo
- authors:
-   - Pawel fus
- js_wrap: b
+name: MACD pivot points
+authors:
+  - Pawel fus
+js_wrap: b
+tags: []
+categories:
+  - Flags and Indicators
 ...

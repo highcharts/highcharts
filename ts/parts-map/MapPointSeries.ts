@@ -115,8 +115,8 @@ seriesType<Highcharts.MapPointSeries>(
             x?: number
         ): Highcharts.MapPointPoint {
             var mergedOptions = (
-                options.lat !== undefined &&
-                options.lon !== undefined ?
+                typeof options.lat !== 'undefined' &&
+                typeof options.lon !== 'undefined' ?
                     merge(
                         options, this.series.chart.fromLatLonToPoint(options)
                     ) :

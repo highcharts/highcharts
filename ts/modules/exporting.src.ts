@@ -1463,10 +1463,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (
                 axisCopy &&
-                (
-                    (userMin !== undefined && userMin !== axisCopy.min) ||
-                    (userMax !== undefined && userMax !== axisCopy.max)
-                )
+                ((
+                    typeof userMin !== 'undefined' &&
+                    userMin !== axisCopy.min) || (
+                    typeof userMax !== 'undefined' &&
+                    userMax !== axisCopy.max
+                ))
             ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
@@ -1673,10 +1675,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (handleMaxWidth) {
             resetParams = [
                 (chart.options.chart as any).width,
-                undefined,
+                void 0,
                 false
             ];
-            chart.setSize(printMaxWidth, undefined, false);
+            chart.setSize(printMaxWidth, void 0, false);
         }
 
         // hide all body content

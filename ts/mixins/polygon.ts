@@ -87,7 +87,7 @@ var deg2rad = H.deg2rad,
 
 /**
  * Alternative solution to correctFloat.
- * E.g H.correctFloat(123, 2) returns 120, when it should be 123.
+ * E.g Highcharts.correctFloat(123, 2) returns 120, when it should be 123.
  *
  * @private
  * @function correctFloat

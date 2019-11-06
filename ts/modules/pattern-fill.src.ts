@@ -423,7 +423,7 @@ H.SVGRenderer.prototype.addPattern = function (
     }
 
     // For non-animated patterns, set opacity now
-    if (!(options.image && animate) && options.opacity !== undefined) {
+    if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (
             child: Highcharts.SVGDOMElement
         ): void {

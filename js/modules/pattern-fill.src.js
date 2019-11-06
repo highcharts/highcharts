@@ -307,7 +307,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         }
     }
     // For non-animated patterns, set opacity now
-    if (!(options.image && animate) && options.opacity !== undefined) {
+    if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (child) {
             child.setAttribute('opacity', options.opacity);
         });

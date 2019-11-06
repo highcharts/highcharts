@@ -237,7 +237,7 @@ var getLabelPosition = function getLabelPosition(internal, external) {
             return best;
         }, best);
     }, {
-        point: undefined,
+        point: void 0,
         margin: -Number.MAX_VALUE
     }).point;
     // Use nelder mead to optimize the initial label position.
@@ -496,7 +496,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             return best;
         }, {
             loss: Number.MAX_VALUE,
-            coordinates: undefined
+            coordinates: void 0
         });
         // Add the set to its final position.
         positionSet(set, bestPosition.coordinates);

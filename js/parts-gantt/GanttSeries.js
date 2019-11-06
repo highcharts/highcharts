@@ -167,7 +167,7 @@ seriesType('gantt', 'xrange'
          * @private
          */
         function addIfExists(prop, val) {
-            if (val !== undefined) {
+            if (typeof val !== 'undefined') {
                 options[prop] = val;
             }
         }

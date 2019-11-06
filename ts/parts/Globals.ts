@@ -19,6 +19,12 @@ declare global {
      * [[include:README.md]]
      */
     namespace Highcharts {
+        interface Annotation { // @todo annotations
+            [key: string]: any; // @todo annotations
+        }
+        interface AnnotationOptions { // @todo annotations
+            [key: string]: any; // @todo annotations
+        }
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
@@ -31,16 +37,20 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
             hideOverlappingLabels: Function; // @todo overlapping module
+            navigationBindings?: any; // @todo annotations
         }
         interface ChartOptions {
             forExport?: any; // @todo
         }
-        interface Point {
-            startR?: any; // @todo solid-gauge
-            tooltipDateKeys?: any; // @todo xrange
+        interface NavigationBindings { // @todo annotations
+            [key: string]: any; // @todo annotations
         }
         interface Options {
             toolbar?: any; // @todo stock-tools
+        }
+        interface Point {
+            startR?: any; // @todo solid-gauge
+            tooltipDateKeys?: any; // @todo xrange
         }
         interface Series {
             fillGraph?: any; // @todo ichimoku indicator
@@ -56,9 +66,15 @@ declare global {
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
         }
+        interface StockToolsFieldsObject { // @todo annotations
+            [key: string]: any; // @todo annotations
+        }
         interface Tick {
             slotWidth?: any; // @todo
         }
+        const Annotation: any; // @todo annotations
+        const AnnotationOptions: any; // @todo annotations
+        const NavigationBindings: any; // @todo annotations
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
@@ -101,6 +117,8 @@ declare global {
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
     }
+    interface OscillatorNode extends AudioNode {
+    }
     interface PointerEvent {
         /** @deprecated */
         readonly toElement: Element;
@@ -111,6 +129,8 @@ declare global {
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
         opera?: unknown;
+        /** @deprecated */
+        webkitAudioContext?: typeof AudioContext;
         /** @deprecated */
         webkitURL?: typeof URL;
     }

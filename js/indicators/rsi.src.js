@@ -64,7 +64,7 @@ H.seriesType('rsi', 'sma',
         // RSI requires close value
         if ((xVal.length < period) || !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         // Calculate changes for first N points
         while (range < period) {

@@ -124,7 +124,7 @@ H.initCanvasBoost = function (): void {
                         pointAttr: Highcharts.SVGAttributes;
 
                     if (
-                        plotY !== undefined &&
+                        typeof plotY !== 'undefined' &&
                         !isNaN(plotY) &&
                         point.y !== null
                     ) {
@@ -647,16 +647,19 @@ H.initCanvasBoost = function (): void {
                         clientX = Math.round(xAxis.toPixels(x, true));
 
                         if (sampling) {
-                            if (minI === undefined || clientX === lastClientX) {
+                            if (
+                                typeof minI === 'undefined' ||
+                                clientX === lastClientX
+                            ) {
                                 if (!isRange) {
                                     low = y;
                                 }
-                                if (maxI === undefined || y > maxVal) {
+                                if (typeof maxI === 'undefined' || y > maxVal) {
                                     maxVal = y;
                                     maxI = i;
                                 }
                                 if (
-                                    minI === undefined ||
+                                    typeof minI === 'undefined' ||
                                     (low as any) < minVal
                                 ) {
                                     minVal = low as any;
@@ -666,7 +669,8 @@ H.initCanvasBoost = function (): void {
                             }
                             // Add points and reset
                             if (clientX !== lastClientX) {
-                                if (minI !== undefined) { // maxI also a number
+                                // maxI also a number:
+                                if (typeof minI !== 'undefined') {
                                     plotY = yAxis.toPixels(maxVal, true);
                                     yBottom = yAxis.toPixels(minVal, true);
                                     drawPoint(
@@ -689,7 +693,7 @@ H.initCanvasBoost = function (): void {
                                     }
                                 }
 
-                                minI = maxI = undefined;
+                                minI = maxI = void 0;
                                 lastClientX = clientX;
                             }
                         } else {
@@ -752,7 +756,7 @@ H.initCanvasBoost = function (): void {
 
             // Don't do async on export, the exportChart, getSVGForExport and
             // getSVG methods are not chained for it.
-            }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
+            }, chart.renderer.forExport ? Number.MAX_VALUE : void 0);
         }
     });
 

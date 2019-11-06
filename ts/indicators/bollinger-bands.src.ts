@@ -26,7 +26,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: BBIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
             public options: BBIndicatorOptions;
             public pointClass: typeof BBIndicatorPoint;
             public points: Array<BBIndicatorPoint>;
@@ -143,7 +143,7 @@ H.seriesType<Highcharts.BBIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -157,7 +157,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 /**
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         tooltip: {
@@ -199,7 +199,7 @@ H.seriesType<Highcharts.BBIndicator>(
             this: Highcharts.BBIndicator,
             series: Highcharts.Series,
             params: Highcharts.BBIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
                 xVal: Array<number> = (series.xData as any),
@@ -219,18 +219,18 @@ H.seriesType<Highcharts.BBIndicator>(
                 stdDev: number,
                 isOHLC: boolean,
                 point: (
-                    boolean|
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject|
                     Highcharts.IndicatorNullableValuesObject|
                     Highcharts.IndicatorUndefinableValuesObject|
                     Highcharts.IndicatorMultipleNullableValuesObject|
-                    Highcharts.IndicatorMultipleUndefinableValuesObject
+                    Highcharts.IndicatorMultipleUndefinableValuesObject|
+                    undefined
                 ),
                 i: number;
 
             if (xVal.length < period) {
-                return false;
+                return;
             }
 
             isOHLC = isArray(yVal[0]);

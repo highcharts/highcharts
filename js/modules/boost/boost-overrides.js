@@ -84,7 +84,7 @@ Series.prototype.getPoint = function (boostPoint) {
         false);
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
         point = (new this.pointClass()).init(// eslint-disable-line new-cap
-        this, this.options.data[boostPoint.i], xData ? xData[boostPoint.i] : undefined);
+        this, this.options.data[boostPoint.i], xData ? xData[boostPoint.i] : void 0);
         point.category = pick(this.xAxis.categories ?
             this.xAxis.categories[point.x] :
             point.x, // @todo simplify

@@ -170,7 +170,7 @@ Chart.prototype.transformFromLatLon = function (
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return {
             x: 0,
@@ -229,7 +229,7 @@ Chart.prototype.transformToLatLon = function (
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return;
     }
