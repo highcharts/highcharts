@@ -16,166 +16,6 @@ import H from './Globals.js';
 * @name Highcharts.PointOptionsObject#sliced
 * @type {boolean|undefined}
 */
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.SeriesPieDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- */ /**
-* Alignment method for data labels. Possible values are:
-*
-* - `toPlotEdges`: each label touches the nearest vertical edge of the plot
-*   area
-*
-* - `connectors`: connectors have the same x position and the widest label of
-*   each half (left & right) touches the nearest vertical edge of the plot
-*   area.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-alignto-connectors/|Highcharts-Demo:}
-*      alignTo: connectors
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-alignto-plotedges/|Highcharts-Demo:}
-*      alignTo: plotEdges
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#alignTo
-* @type {string|undefined}
-* @since 7.0.0
-* @product highcharts
-*/ /**
-* The color of the line connecting the data label to the pie slice. The default
-* color is the same as the point's color.
-*
-* In styled mode, the connector stroke is given in the
-* `.highcharts-data-label-connector` class.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorcolor/|Highcharts-Demo:}
-*      Blue connectors
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/|Highcharts-Demo:}
-*      Styled connectors
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorColor
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-* @since 2.1
-* @product highcharts
-*/ /**
-* The distance from the data label to the connector. Note that data labels also
-* have a default `padding`, so in order for the connector to touch the text,
-* the `padding` must also be 0.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorpadding/|Highcharts-Demo:}
-*      No padding
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorPadding
-* @type {number|undefined}
-* @default 5
-* @since 2.1
-* @product highcharts
-*/ /**
-* Specifies the method that is used to generate the connector path. Highcharts
-* provides 3 built-in connector shapes: `'fixedOffset'` (default), `'straight'`
-* and `'crookedLine'`. Using `'crookedLine'` has the most sense (in most of the
-* cases) when `'alignTo'` is set.
-*
-* Users can provide their own method by passing a function instead of a String.
-* 3 arguments are passed to the callback:
-*
-* - Object that holds the information about the coordinates of the label (`x` &
-*   `y` properties) and how the label is located in relation to the pie
-*   (`alignment` property). `alignment` can by one of the following:
-*   `'left'` (pie on the left side of the data label),
-*   `'right'` (pie on the right side of the data label) or
-*   `'center'` (data label overlaps the pie).
-*
-* - Object that holds the information about the position of the connector. Its
-*   `touchingSliceAt`  porperty tells the position of the place where the
-*   connector touches the slice.
-*
-* - Data label options
-*
-* The function has to return an SVG path definition in array form
-* (see the example).
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorshape-string/|Highcharts-Demo:}
-*      connectorShape is a String
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorshape-function/|Highcharts-Demo:}
-*      connectorShape is a function
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorShape
-* @type {string|Function|undefined}
-* @default fixedOffset
-* @since 7.0.0
-* @product highcharts
-*/ /**
-* The width of the line connecting the data label to the pie
-* slice.
-*
-*
-* In styled mode, the connector stroke width is given in the
-* `.highcharts-data-label-connector` class.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/|Highcharts-Demo:}
-*      Disable the connector
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/|Highcharts-Demo:}
-*      Styled connectors
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorWidth
-* @type {number|undefined}
-* @default 1
-* @since 2.1
-* @product highcharts
-*/ /**
-* Works only if `connectorShape` is `'crookedLine'`. It defines how
-* far from the vertical plot edge the coonnector path should be
-* crooked.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-crookdistance/|Highcharts-Demo:}
-*      crookDistance set to 90%
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#crookDistance
-* @type {string|undefined}
-* @default 70%
-* @since 7.0.0
-* @product highcharts
-*/ /**
-* The distance of the data label from the pie's edge. Negative numbers put the
-* data label on top of the pie slices. Can also be defined as a percentage of
-* pie's radius. Connectors are only shown for data labels outside the pie.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-distance/|Highcharts-Demo:}
-*      Data labels on top of the pie
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#distance
-* @type {number|undefined}
-* @default 30
-* @since 2.1
-* @product highcharts
-*/ /**
-* Whether to render the connector as a soft arc or a line with sharp break.
-* Works only if `connectorShape` equals to `fixedOffset`.
-*
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-softconnector-true/|Highcharts-Demo:}
-*      Soft
-* @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-softconnector-false/|Highcharts-Demo:}
-*      Non soft
-*
-* @name Highcharts.SeriesPieDataLabelsOptionsObject#softConnector
-* @type {boolean|undefined}
-* @default true
-* @since 2.1.7
-* @product highcharts
-*/
 import U from './Utilities.js';
 var defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
@@ -310,34 +150,170 @@ seriesType('pie', 'line',
      * @apioption plotOptions.pie.colors
      */
     /**
-     * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
-     * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
-     *
+     * @declare   Highcharts.SeriesPieDataLabelsOptionsObject
+     * @extends   plotOptions.series.dataLabels
+     * @excluding align, allowOverlap, staggerLines, step
      * @private
      */
     dataLabels: {
-        /** @ignore-option */
+        /**
+         * Alignment method for data labels. Possible values are:
+         *
+         * - `toPlotEdges`: Each label touches the nearest vertical edge of
+         *   the plot area.
+         *
+         * - `connectors`: Connectors have the same x position and the
+         *   widest label of each half (left & right) touches the nearest
+         *   vertical edge of the plot area.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/
+         *         alignTo: connectors
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/
+         *         alignTo: plotEdges
+         *
+         * @type      {string}
+         * @since     7.0.0
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.alignTo
+         */
         allowOverlap: true,
-        /** @ignore-option */
+        /**
+         * The color of the line connecting the data label to the pie slice.
+         * The default color is the same as the point's color.
+         *
+         * In styled mode, the connector stroke is given in the
+         * `.highcharts-data-label-connector` class.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/
+         *         Blue connectors
+         * @sample {highcharts} highcharts/css/pie-point/
+         *         Styled connectors
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     2.1
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorColor
+         */
+        /**
+         * The distance from the data label to the connector. Note that
+         * data labels also have a default `padding`, so in order for the
+         * connector to touch the text, the `padding` must also be 0.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
+         *         No padding
+         *
+         * @since   2.1
+         * @product highcharts
+         */
         connectorPadding: 5,
-        /** @ignore-option */
+        /**
+         * Specifies the method that is used to generate the connector path.
+         * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
+         * (default), `'straight'` and `'crookedLine'`. Using
+         * `'crookedLine'` has the most sense (in most of the cases) when
+         * `'alignTo'` is set.
+         *
+         * Users can provide their own method by passing a function instead
+         * of a String. 3 arguments are passed to the callback:
+         *
+         * - Object that holds the information about the coordinates of the
+         *   label (`x` & `y` properties) and how the label is located in
+         *   relation to the pie (`alignment` property). `alignment` can by
+         *   one of the following:
+         *   `'left'` (pie on the left side of the data label),
+         *   `'right'` (pie on the right side of the data label) or
+         *   `'center'` (data label overlaps the pie).
+         *
+         * - Object that holds the information about the position of the
+         *   connector. Its `touchingSliceAt`  porperty tells the position
+         *   of the place where the connector touches the slice.
+         *
+         * - Data label options
+         *
+         * The function has to return an SVG path definition in array form
+         * (see the example).
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/
+         *         connectorShape is a String
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/
+         *         connectorShape is a function
+         *
+         * @type    {string|Function}
+         * @since   7.0.0
+         * @product highcharts
+         */
+        connectorShape: 'fixedOffset',
+        /**
+         * The width of the line connecting the data label to the pie slice.
+         *
+         * In styled mode, the connector stroke width is given in the
+         * `.highcharts-data-label-connector` class.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/
+         *         Disable the connector
+         * @sample {highcharts} highcharts/css/pie-point/
+         *         Styled connectors
+         *
+         * @type      {number}
+         * @default   1
+         * @since     2.1
+         * @product   highcharts
+         * @apioption plotOptions.pie.dataLabels.connectorWidth
+         */
+        /**
+         * Works only if `connectorShape` is `'crookedLine'`. It defines how
+         * far from the vertical plot edge the coonnector path should be
+         * crooked.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/
+         *         crookDistance set to 90%
+         *
+         * @since   7.0.0
+         * @product highcharts
+         */
+        crookDistance: '70%',
+        /**
+         * The distance of the data label from the pie's edge. Negative
+         * numbers put the data label on top of the pie slices. Can also be
+         * defined as a percentage of pie's radius. Connectors are only
+         * shown for data labels outside the pie.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
+         *         Data labels on top of the pie
+         *
+         * @since   2.1
+         * @product highcharts
+         */
         distance: 30,
-        /** @ignore-option */
         enabled: true,
-        /* eslint-disable valid-jsdoc */
-        /** @ignore-option */
         formatter: function () {
             return this.point.isNull ? undefined : this.point.name;
             /* eslint-enable valid-jsdoc */
         },
-        /** @ignore-option */
+        /**
+         * Whether to render the connector as a soft arc or a line with
+         * sharp break. Works only if `connectorShape` equals to
+         * `fixedOffset`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/
+         *         Soft
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/
+         *         Non soft
+         *
+         * @since   2.1.7
+         * @product highcharts
+         */
         softConnector: true,
-        /** @ignore-option */
-        x: 0,
-        /** @ignore-option */
-        connectorShape: 'fixedOffset',
-        /** @ignore-option */
-        crookDistance: '70%'
+        /**
+         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+         *         Long labels truncated with an ellipsis
+         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+         *         Long labels are wrapped
+         *
+         * @type      {Highcharts.CSSObject}
+         * @apioption plotOptions.pie.dataLabels.style
+         */
+        x: 0
     },
     /**
      * If the total sum of the pie's values is 0, the series is represented

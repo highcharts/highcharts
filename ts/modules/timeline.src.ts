@@ -143,66 +143,6 @@ declare global {
  * @type {Highcharts.Series}
  */
 
-/**
- * @interface Highcharts.TimelineDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- *//**
- * Whether to position data labels alternately. For example, if
- * [distance](#plotOptions.timeline.dataLabels.distance)
- * is set equal to `100`, then data labels will be positioned alternately (on
- * both sides of the point) at a distance of 100px.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-timeline/alternate-disabled}
- *      Alternate disabled
- *
- * @name Highcharts.TimelineDataLabelsOptionsObject#alternate
- * @type {boolean|undefined}
- *//**
- * The color of the line connecting the data label to the point. The default
- * color is the same as the point's color.
- *
- * In styled mode, the connector stroke is given in the
- * `.highcharts-data-label-connector` class.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-timeline/connector-styles}
- *      Custom connector width and color
- *
- * @name Highcharts.TimelineDataLabelsOptionsObject#connectorColor
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- *//**
- * The width of the line connecting the data label to the point. In styled mode,
- * the connector stroke width is given in the `.highcharts-data-label-connector`
- * class.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-timeline/connector-styles}
- *      Custom connector width and color
- *
- * @name Highcharts.TimelineDataLabelsOptionsObject#connectorWidth
- * @type {number|undefined}
- *//**
- * A pixel value defining the distance between the data label and the point.
- * Negative numbers puts the label on top of the point.
- * @name Highcharts.TimelineDataLabelsOptionsObject#distance
- * @type {number|undefined}
- *//**
- * @default function () {
- *   var format;
- *   if (!this.series.chart.styledMode) {
- *     format = '<span style="color:' + this.point.color + '">● </span>';
- *   } else {
- *       format = '<span>● </span>';
- *   }
- *   format += '<span>' + (this.key || '') + '</span><br/>' +
- *     (this.point.label || '');
- *   return format;
- * }
- * @name Highcharts.TimelineDataLabelsOptionsObject#formatter
- * @type {Highcharts.TimelineDataLabelsFormatterCallbackFunction|undefined}
- *//**
- * @name Highcharts.TimelineDataLabelsOptionsObject#width
- * @type {number|undefined}
- */
-
 import U from '../parts/Utilities.js';
 const {
     arrayMax,
@@ -272,21 +212,83 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             }
         },
         /**
-         * @type    {Highcharts.TimelineDataLabelsOptionsObject|Array<Highcharts.TimelineDataLabelsOptionsObject>}
-         * @default { "allowOverlap": true, "connectorWidth": 1, "enabled": true }
-         * @private
+         * @declare Highcharts.TimelineDataLabelsOptionsObject
          */
         dataLabels: {
-            /** @ignore-options */
+
             enabled: true,
-            /** @ignore-options */
+
             allowOverlap: true,
-            /** @ignore-options */
-            connectorWidth: 1,
-            /** @ignore-options */
+
+            /**
+             * Whether to position data labels alternately. For example, if
+             * [distance](#plotOptions.timeline.dataLabels.distance)
+             * is set equal to `100`, then data labels will be positioned
+             * alternately (on both sides of the point) at a distance of 100px.
+             *
+             * @sample {highcharts} highcharts/series-timeline/alternate-disabled
+             *         Alternate disabled
+             */
+            alternate: true,
+
             backgroundColor: '${palette.backgroundColor}',
+
+            borderWidth: 1,
+
+            borderColor: '${palette.neutralColor40}',
+
+            borderRadius: 3,
+
+            color: '${palette.neutralColor80}',
+
+            /**
+             * The color of the line connecting the data label to the point.
+             * The default color is the same as the point's color.
+             *
+             * In styled mode, the connector stroke is given in the
+             * `.highcharts-data-label-connector` class.
+             *
+             * @sample {highcharts} highcharts/series-timeline/connector-styles
+             *         Custom connector width and color
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption plotOptions.timeline.dataLabels.connectorColor
+             */
+
+            /**
+             * The width of the line connecting the data label to the point.
+             *
+             * In styled mode, the connector stroke width is given in the
+             * `.highcharts-data-label-connector` class.
+             *
+             * @sample {highcharts} highcharts/series-timeline/connector-styles
+             *         Custom connector width and color
+             */
+            connectorWidth: 1,
+
+            /**
+             * A pixel value defining the distance between the data label and
+             * the point. Negative numbers puts the label on top of the point.
+             */
+            distance: 100,
+
             // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
+            /**
+             * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
+             * @default function () {
+             *   var format;
+             *
+             *   if (!this.series.chart.styledMode) {
+             *       format = '<span style="color:' + this.point.color +
+             *           '">● </span>';
+             *   } else {
+             *       format = '<span>● </span>';
+             *   }
+             *   format += '<span>' + (this.key || '') + '</span><br/>' +
+             *       (this.point.label || '');
+             *   return format;
+             * }
+             */
             formatter: function (
                 this: (
                     Highcharts.DataLabelsFormatterContextObject|
@@ -306,28 +308,26 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     ((this.point as any).label || '');
                 return format;
             },
-            /** @ignore-option */
-            borderWidth: 1,
-            /** @ignore-option */
-            borderColor: '${palette.neutralColor40}',
-            /** @ignore-option */
-            borderRadius: 3,
-            /** @ignore-option */
-            distance: 100,
-            /** @ignore-option */
-            alternate: true,
-            /** @ignore-option */
-            verticalAlign: 'middle',
-            /** @ignore-option */
-            color: '${palette.neutralColor80}',
-            /** @ignore-option */
             style: {
                 textOutline: 'none',
                 fontWeight: 'normal',
                 fontSize: '12px'
             },
-            /** @ignore-option */
-            shadow: false
+
+            /**
+             * Shadow options for the data label.
+             *
+             * @type {boolean|Highcharts.CSSObject}
+             */
+            shadow: false,
+
+            /**
+             * @type      {number}
+             * @apioption plotOptions.timeline.dataLabels.width
+             */
+
+            verticalAlign: 'middle'
+
         },
         marker: {
             enabledThreshold: 0,
