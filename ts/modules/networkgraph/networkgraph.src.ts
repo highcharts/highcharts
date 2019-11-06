@@ -218,14 +218,6 @@ declare global {
  * @since 7.0.0
  */
 
-/**
- * Data labels options
- *
- * @interface Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- * @since 7.0.0
- */
-
 import U from '../../parts/Utilities.js';
 const {
     defined,
