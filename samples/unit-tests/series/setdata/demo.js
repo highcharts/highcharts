@@ -346,6 +346,36 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         [4, 5, 5],
         'Data is set correctly when oldData has null values and the same length (#10187)'
     );
+
+    // #12333
+    // Some points with ID's, others without
+    chart.series[0].setData([
+        {
+            y: 10,
+            id: 'main1'
+        }, {
+            y: 20,
+            id: 'main2'
+        }, {
+            y: 10
+        }
+    ]);
+
+    chart.series[0].setData([
+        {
+            y: 20,
+            id: 'main1'
+        }, {
+            y: 20
+        }
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        2,
+        'Two points should be rendered (#12333).'
+    );
+
 });
 
 QUnit.test('Boosted series with updatePoints', function (assert) {

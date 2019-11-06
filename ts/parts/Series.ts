@@ -3470,6 +3470,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     ) {
                         hasUpdatedByKey = true;
                     }
+                } else {
+                    // Gather all points that are not matched
+                    pointsToAdd.push(pointOptions);
                 }
             }, this);
 
@@ -3496,6 +3499,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         oldData[i].update(point, false, null as any, false);
                     }
                 });
+                // Don't add new points since those configs are used above
+                pointsToAdd.length = 0;
 
             // Did not succeed in updating data
             } else {
