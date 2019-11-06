@@ -9,9 +9,46 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
 import musicalFrequencies from './musicalFrequencies.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class SignalHandler {
+            public constructor(supportedSignals: Array<string>);
+            public signals: Dictionary<Array<Function>>;
+            public supportedSignals: Array<string>;
+            public clearSignalCallbacks(signalNames?: Array<string>): void;
+            public emitSignal(
+                signalName: string,
+                data?: unknown
+            ): (unknown|undefined);
+            public init(supportedSignals: Array<string>): void;
+            public registerSignalCallbacks(
+                signals: Dictionary<(Function|undefined)>
+            ): void;
+        }
+        interface SonificationUtilitiesObject {
+            SignalHandler: typeof SignalHandler;
+            musicalFrequencies: Array<number>;
+            calculateDataExtremes(chart: Chart, prop: string): RangeObject;
+            getMusicalScale(semitones: Array<number>): Array<number>;
+            virtualAxisTranslate(
+                value: number,
+                dataExtremes: RangeObject,
+                limits: RangeObject
+            ): number;
+        }
+    }
+}
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
 /**
  * The SignalHandler class. Stores signal callbacks (event handlers), and
  * provides an interface to register them, and emit signals. The word "event" is
@@ -26,13 +63,20 @@ import musicalFrequencies from './musicalFrequencies.js';
  * @param {Array<string>} supportedSignals
  *        List of supported signal names.
  */
-function SignalHandler(supportedSignals) {
+function SignalHandler(
+    this: Highcharts.SignalHandler,
+    supportedSignals: Array<string>
+): void {
     this.init(supportedSignals || []);
 }
-SignalHandler.prototype.init = function (supportedSignals) {
+SignalHandler.prototype.init = function (
+    supportedSignals: Array<string>
+): void {
     this.supportedSignals = supportedSignals;
     this.signals = {};
 };
+
+
 /**
  * Register a set of signal callbacks with this SignalHandler.
  * Multiple signal callbacks can be registered for the same signal.
@@ -42,15 +86,27 @@ SignalHandler.prototype.init = function (supportedSignals) {
  * supported events are considered.
  * @return {void}
  */
-SignalHandler.prototype.registerSignalCallbacks = function (signals) {
+SignalHandler.prototype.registerSignalCallbacks = function (
+    this: Highcharts.SignalHandler,
+    signals: Highcharts.Dictionary<(Function|undefined)>
+): void {
     var signalHandler = this;
-    signalHandler.supportedSignals.forEach(function (supportedSignal) {
+
+    signalHandler.supportedSignals.forEach(function (
+        supportedSignal: string
+    ): void {
         if (signals[supportedSignal]) {
-            (signalHandler.signals[supportedSignal] =
-                signalHandler.signals[supportedSignal] || []).push(signals[supportedSignal]);
+            (
+                signalHandler.signals[supportedSignal] =
+                signalHandler.signals[supportedSignal] || []
+            ).push(
+                signals[supportedSignal] as any
+            );
         }
     });
 };
+
+
 /**
  * Clear signal callbacks, optionally by name.
  * @private
@@ -58,19 +114,24 @@ SignalHandler.prototype.registerSignalCallbacks = function (signals) {
  * not supplied, all signal callbacks are removed.
  * @return {void}
  */
-SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
+SignalHandler.prototype.clearSignalCallbacks = function (
+    this: Highcharts.SignalHandler,
+    signalNames?: Array<string>
+): void {
     var signalHandler = this;
+
     if (signalNames) {
-        signalNames.forEach(function (signalName) {
+        signalNames.forEach(function (signalName: string): void {
             if (signalHandler.signals[signalName]) {
                 delete signalHandler.signals[signalName];
             }
         });
-    }
-    else {
+    } else {
         signalHandler.signals = {};
     }
 };
+
+
 /**
  * Emit a signal. Does nothing if the signal does not exist, or has no
  * registered callbacks.
@@ -81,21 +142,32 @@ SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
  * Data to pass to the callback.
  * @return {*}
  */
-SignalHandler.prototype.emitSignal = function (signalName, data) {
-    var retval;
+SignalHandler.prototype.emitSignal = function (
+    this: Highcharts.SignalHandler,
+    signalName: string,
+    data?: unknown
+): (unknown|undefined) {
+    var retval: unknown;
+
     if (this.signals[signalName]) {
-        this.signals[signalName].forEach(function (handler) {
+        this.signals[signalName].forEach(function (handler: Function): void {
             var result = handler(data);
+
             retval = typeof result !== 'undefined' ? result : retval;
         });
     }
     return retval;
 };
-var utilities = {
+
+
+var utilities: Highcharts.SonificationUtilitiesObject = {
+
     // List of musical frequencies from C0 to C8
     musicalFrequencies: musicalFrequencies,
+
     // SignalHandler class
-    SignalHandler: SignalHandler,
+    SignalHandler: SignalHandler as any,
+
     /**
      * Get a musical scale by specifying the semitones from 1-12 to include.
      *  1: C, 2: C#, 3: D, 4: D#, 5: E, 6: F,
@@ -107,14 +179,21 @@ var utilities = {
      * @return {Array<number>}
      * Array of frequencies from C0 to C8 that are included in this scale.
      */
-    getMusicalScale: function (semitones) {
-        return musicalFrequencies.filter(function (freq, i) {
+    getMusicalScale: function (semitones: Array<number>): Array<number> {
+        return musicalFrequencies.filter(function (
+            freq: number,
+            i: number
+        ): boolean {
             var interval = i % 12 + 1;
-            return semitones.some(function (allowedInterval) {
+
+            return semitones.some(function (
+                allowedInterval: number
+            ): boolean {
                 return allowedInterval === interval;
             });
         });
     },
+
     /**
      * Calculate the extreme values in a chart for a data prop.
      * @private
@@ -122,13 +201,20 @@ var utilities = {
      * @param {string} prop - The data prop to find extremes for
      * @return {Highcharts.RangeObject} Object with min and max properties
      */
-    calculateDataExtremes: function (chart, prop) {
-        return chart.series.reduce(function (extremes, series) {
+    calculateDataExtremes: function (
+        chart: Highcharts.Chart,
+        prop: string
+    ): Highcharts.RangeObject {
+        return chart.series.reduce(function (
+            extremes: Highcharts.RangeObject,
+            series: Highcharts.Series
+        ): Highcharts.RangeObject {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
-            series.points.forEach(function (point) {
-                var val = typeof point[prop] !== 'undefined' ?
-                    point[prop] : point.options[prop];
+            series.points.forEach(function (point: Highcharts.Point): void {
+                var val = typeof (point as any)[prop] !== 'undefined' ?
+                    (point as any)[prop] : (point.options as any)[prop];
+
                 extremes.min = Math.min(extremes.min, val);
                 extremes.max = Math.max(extremes.max, val);
             });
@@ -138,6 +224,7 @@ var utilities = {
             max: -Infinity
         });
     },
+
     /**
      * Translate a value on a virtual axis. Creates a new, virtual, axis with a
      * min and max, and maps the relative value onto this axis.
@@ -151,12 +238,20 @@ var utilities = {
      * @return {number}
      * The value mapped to the virtual axis.
      */
-    virtualAxisTranslate: function (value, dataExtremes, limits) {
-        var lenValueAxis = dataExtremes.max - dataExtremes.min, lenVirtualAxis = limits.max - limits.min, virtualAxisValue = limits.min +
-            lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
+    virtualAxisTranslate: function (
+        value: number,
+        dataExtremes: Highcharts.RangeObject,
+        limits: Highcharts.RangeObject
+    ): number {
+        var lenValueAxis = dataExtremes.max - dataExtremes.min,
+            lenVirtualAxis = limits.max - limits.min,
+            virtualAxisValue = limits.min +
+                lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
+
         return lenValueAxis > 0 ?
             Math.max(Math.min(virtualAxisValue, limits.max), limits.min) :
             limits.min;
     }
 };
+
 export default utilities;

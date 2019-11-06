@@ -117,6 +117,8 @@ declare global {
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
     }
+    interface OscillatorNode extends AudioNode {
+    }
     interface PointerEvent {
         /** @deprecated */
         readonly toElement: Element;
@@ -127,6 +129,8 @@ declare global {
         createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
         opera?: unknown;
+        /** @deprecated */
+        webkitAudioContext?: typeof AudioContext;
         /** @deprecated */
         webkitURL?: typeof URL;
     }
