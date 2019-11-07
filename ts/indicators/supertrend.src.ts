@@ -170,6 +170,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
+         * @deprecated
          * @type {Highcharts.ColorString}
          */
         risingTrendColor: '${palette.indicatorPositiveLine}',
@@ -646,7 +647,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
  * @extends   series,plotOptions.supertrend
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, color, colorAxis, cropThreshold, data, dataParser,
+ * @excluding allAreas, colorAxis, cropThreshold, data, dataParser,
  *            dataURL, joinBy, keys, navigatorOptions, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking, threshold
