@@ -31,18 +31,18 @@ declare global {
         interface PointInstrumentObject {
             instrument: (string|Instrument);
             instrumentMapping: PointInstrumentMappingObject;
-            instrumentOptions?: PointInstrumentOptionsObject;
+            instrumentOptions?: Partial<PointInstrumentOptionsObject>;
             onEnd?: Function;
         }
         interface PointInstrumentOptionsObject {
-            maxDuration?: number;
-            minDuration?: number;
-            maxFrequency?: number;
-            minFrequency?: number;
-            maxPan?: number;
-            minPan?: number;
-            maxVolume?: number;
-            minVolume?: number;
+            maxDuration: number;
+            minDuration: number;
+            maxFrequency: number;
+            minFrequency: number;
+            maxPan: number;
+            minPan: number;
+            maxVolume: number;
+            minVolume: number;
         }
         interface PointSonifyFunctions {
             pointCancelSonify(this: SonifyablePoint, fadeOut?: boolean): void;
@@ -335,8 +335,8 @@ function pointSonify(
                 H.sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
-            extremes = H.merge<Highcharts.Dictionary<number>>(
-                defaultInstrumentOptions as any,
+            extremes = H.merge(
+                defaultInstrumentOptions,
                 instrumentDefinition.instrumentOptions
             ),
             id = instrument.id,
