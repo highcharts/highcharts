@@ -388,8 +388,8 @@ Highcharts.Pointer.prototype = {
     getHoverData: function (existingHoverPoint, existingHoverSeries, series, isDirectTouch, shared, e) {
         var chart = this.chart, hoverPoint, hoverPoints = [], hoverSeries = existingHoverSeries, useExisting = !!(isDirectTouch && existingHoverPoint), notSticky = hoverSeries && !hoverSeries.stickyTracking, isInsidePane = function (x, y, center) {
             var isInsidePane;
-            if (x === undefined || y === undefined) {
-                isInsidePane = undefined;
+            if (typeof x === 'undefined' || typeof y === 'undefined') {
+                isInsidePane = void 0;
             }
             else {
                 isInsidePane = Math.sqrt((x - center[0]) * (x - center[0]) +

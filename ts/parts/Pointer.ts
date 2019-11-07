@@ -650,8 +650,8 @@ Highcharts.Pointer.prototype = {
             ): boolean|undefined => {
                 let isInsidePane;
 
-                if (x === undefined || y === undefined) {
-                    isInsidePane = undefined;
+                if (typeof x === 'undefined' || typeof y === 'undefined') {
+                    isInsidePane = void 0;
                 } else {
                     isInsidePane = Math.sqrt(
                         (x - center[0]) * (x - center[0]) +
