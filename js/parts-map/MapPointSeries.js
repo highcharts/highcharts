@@ -35,21 +35,15 @@ seriesType('mappoint', 'scatter',
  */
 {
     dataLabels: {
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         },
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         style: {
+            /** @internal */
             color: '${palette.neutralColor100}'
         }
     }

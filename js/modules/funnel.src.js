@@ -107,7 +107,6 @@ seriesType('funnel', 'pie',
      */
     size: true,
     dataLabels: {
-        /** @ignore-option */
         connectorWidth: 1
     },
     /**

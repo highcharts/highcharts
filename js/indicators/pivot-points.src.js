@@ -69,9 +69,7 @@ H.seriesType('pivotpoints', 'sma',
     },
     enableMouseTracking: false,
     dataLabels: {
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         format: '{point.pivotLine}'
     },
     dataGrouping: {

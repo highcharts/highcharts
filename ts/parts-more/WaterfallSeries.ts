@@ -273,7 +273,6 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
      */
 
     dataLabels: {
-        /** @ignore-option */
         inside: true
     },
 

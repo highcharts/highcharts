@@ -41,7 +41,6 @@ seriesType('gantt', 'xrange'
     // options - default options merged with parent
     grouping: false,
     dataLabels: {
-        /** @ignore-option */
         enabled: true
     },
     tooltip: {

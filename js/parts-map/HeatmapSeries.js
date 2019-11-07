@@ -127,20 +127,13 @@ seriesType('heatmap', 'scatter',
      */
     nullColor: '${palette.neutralColor3}',
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.value;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle',
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         padding: 0 // #3837
     },
     /** @ignore-option */

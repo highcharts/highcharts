@@ -130,29 +130,6 @@ declare global {
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 
-/**
- * @interface Highcharts.SeriesOrganizationDataLabelsOptionsObject
- * @extends Highcharts.SeriesSankeyDataLabelsOptionsObject
- *//**
- * A callback for defining the format for _nodes_ in the
- * organization chart. The `nodeFormat` option takes precedence over
- * `nodeFormatter`.
- *
- * In an organization chart, the `nodeFormatter` is a quite complex
- * function of the available options, striving for a good default
- * layout of cards with or without images. In organization chart,
- * the data labels come with `useHTML` set to true, meaning they
- * will be rendered as true HTML above the SVG.
- *
- * @sample highcharts/series-organization/datalabels-nodeformatter
- *         Modify the default label format output
- *
- * @name Highcharts.SeriesOrganizationDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction|undefined}
- * @default function () { return this.point.name; }
- * @since 6.0.2
- */
-
 var base = H.seriesTypes.sankey.prototype;
 
 /**
@@ -211,12 +188,30 @@ H.seriesType<Highcharts.OrganizationSeries>(
         linkRadius: 10,
         borderWidth: 1,
         /**
-         * @type {Highcharts.SeriesOrganizationDataLabelsOptionsObject|Array<Highcharts.SeriesOrganizationDataLabelsOptionsObject>}
+         * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
+         *
          * @private
          */
         dataLabels: {
+
             /* eslint-disable valid-jsdoc */
-            /** @ignore-option */
+            /**
+             * A callback for defining the format for _nodes_ in the
+             * organization chart. The `nodeFormat` option takes precedence
+             * over `nodeFormatter`.
+             *
+             * In an organization chart, the `nodeFormatter` is a quite complex
+             * function of the available options, striving for a good default
+             * layout of cards with or without images. In organization chart,
+             * the data labels come with `useHTML` set to true, meaning they
+             * will be rendered as true HTML above the SVG.
+             *
+             * @sample highcharts/series-organization/datalabels-nodeformatter
+             *         Modify the default label format output
+             *
+             * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             * @since 6.0.2
+             */
             nodeFormatter: function (
                 this: (
                     Highcharts.DataLabelsFormatterContextObject|
@@ -310,13 +305,16 @@ H.seriesType<Highcharts.OrganizationSeries>(
                 return html;
             },
             /* eslint-enable valid-jsdoc */
-            /** @ignore-option */
+
             style: {
+                /** @internal */
                 fontWeight: 'normal',
+                /** @internal */
                 fontSize: '13px'
             },
-            /** @ignore-option */
+
             useHTML: true
+
         },
         /**
          * The indentation in pixels of hanging nodes, nodes which parent has

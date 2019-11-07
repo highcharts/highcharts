@@ -732,7 +732,7 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.PlotSeriesZonesOptions}
+     * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
     getZone: function () {
