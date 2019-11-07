@@ -39,6 +39,9 @@ if [ $DOCS_COMMIT = $LATEST_COMMIT ]; then
     # Circle API v2
     curl -X POST -H 'Content-Type: application/json' -d '{ "branch":"master", "parameters": { "run_deploy": true, "target_bucket": "${BUCKET}" }}' \
     https://circleci.com/api/v2/project/github/highcharts/doc-builder/pipeline?circle-token=${TOKEN}&branch=master
+
+    ret_code=$?
+    exit $ret_code
 else
      echo "No change in docs/ folder found."
      exit 0;
