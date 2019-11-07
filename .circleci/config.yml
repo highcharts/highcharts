@@ -1,6 +1,13 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
+parameters:
+  reset_tests_workflow:
+    type: boolean
+    default: false
+  reset_tests:
+    type: string
+    default: ""
 ######### Anchors ####################
 defaults: &defaults
   executor: node_image
@@ -123,16 +130,6 @@ jobs:
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
-      - run: mkdir ../test-results
-      - run:
-          name: Save test results
-          command: |
-            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
-          when: always
-      - store_test_results:
-          path: ../test-results
-      - store_artifacts:
-          path: ../test-results
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -157,6 +154,18 @@ jobs:
           command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
           when: always
       - <<: *persist_workspace
+
+  reset_visual_references_job:
+    <<: *defaults
+    description: Reset reference images stored on S3 based on
+    parameters:
+      reset_tests:
+        description: "Which tests to run?"
+        type: string
+        default: ""
+    steps:
+      - <<: *load_workspace
+      - run: "npx gulp reset-visual-references << parameters.reset_tests >> --reference --browsercount 2 --bucket ${HIGHCHARTS_STAGING_CODE_BUCKET}"
 
   visual_comparison_with_master:
     <<: *defaults
@@ -331,6 +340,7 @@ jobs:
 workflows:
   version: 2
   build_and_test:
+    unless: << pipeline.parameters.reset_tests_workflow >>
     jobs:
       - checkout_and_install:
           filters:
@@ -387,7 +397,8 @@ workflows:
           requires: ["test-Mac.Firefox", "test-Win.Chrome"]
           filters:
             branches:
-              only: [master, tools/trigger-docs-deploy]
+              only: [master]
+          context: highcharts-staging
 
   nightly:
     triggers:
@@ -434,3 +445,14 @@ workflows:
       - deploy_to_highcharts_dist:
           requires: [build_dist]
           context: highcharts-staging
+
+  reset_visual_test_references:
+    when: << pipeline.parameters.reset_tests_workflow >>
+    jobs:
+      - checkout_and_install:
+          filters:
+            branches:
+              only: [master, tools/reset-visual-test]
+      - reset_visual_references_job:
+          requires: [checkout_and_install]
+          reset_tests: << pipeline.parameters.reset_tests >>
