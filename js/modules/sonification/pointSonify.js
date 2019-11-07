@@ -211,11 +211,7 @@ function pointSonify(options) {
     var point = this, chart = point.series.chart, dataExtremes = options.dataExtremes || {}, 
     // Get the value to pass to instrument.play from the mapping value
     // passed in.
-    getMappingValue = function (value, makeFunction, allowedExtremes, allowedValues) {
-        // Fixed number, just use that
-        if (typeof value === 'number' || typeof value === 'undefined') {
-            return value;
-        }
+    getMappingValue = function (value, makeFunction, allowedExtremes) {
         // Function. Return new function if we try to use callback,
         // otherwise call it now and return result.
         if (typeof value === 'function') {
@@ -231,8 +227,10 @@ function pointSonify(options) {
             dataExtremes[value] = dataExtremes[value] ||
                 utilities.calculateDataExtremes(point.series.chart, value);
             // Find the value
-            return utilities.virtualAxisTranslate(pick(point[value], point.options[value]), dataExtremes[value], allowedExtremes, allowedValues);
+            return utilities.virtualAxisTranslate(pick(point[value], point.options[value]), dataExtremes[value], allowedExtremes);
         }
+        // Fixed number or something else weird, just use that
+        return value;
     };
     // Register playing point on chart
     chart.sonification.currentlyPlayingPoint = point;

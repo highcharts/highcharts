@@ -276,13 +276,8 @@ function pointSonify(
         getMappingValue = function (
             value: (number|string|Function),
             makeFunction: boolean,
-            allowedExtremes: Highcharts.RangeObject,
-            allowedValues?: boolean
-        ): (number|Function|undefined) {
-            // Fixed number, just use that
-            if (typeof value === 'number' || typeof value === 'undefined') {
-                return value;
-            }
+            allowedExtremes: Highcharts.RangeObject
+        ): (number|Function) {
             // Function. Return new function if we try to use callback,
             // otherwise call it now and return result.
             if (typeof value === 'function') {
@@ -300,13 +295,14 @@ function pointSonify(
                         point.series.chart, value
                     );
                 // Find the value
-                return (utilities.virtualAxisTranslate as any)(
+                return utilities.virtualAxisTranslate(
                     pick((point as any)[value], (point.options as any)[value]),
                     dataExtremes[value],
-                    allowedExtremes,
-                    allowedValues
+                    allowedExtremes
                 );
             }
+            // Fixed number or something else weird, just use that
+            return value;
         };
 
     // Register playing point on chart
@@ -384,14 +380,14 @@ function pointSonify(
                     mapping.frequency,
                     true,
                     { min: extremes.minFrequency, max: extremes.maxFrequency }
-                ) as any,
+                ),
                 duration: getMappingValue(
                     mapping.duration,
                     false,
                     { min: extremes.minDuration, max: extremes.maxDuration }
                 ) as any,
                 pan: getMappingValue(
-                    mapping.pan as any,
+                    mapping.pan,
                     true,
                     { min: extremes.minPan, max: extremes.maxPan }
                 ),

@@ -628,7 +628,7 @@ Instrument.prototype.play = function (
         );
 
         // Play the note
-        (setOrStartTimer as any)(options.frequency, 'setFrequency', null, {
+        setOrStartTimer(options.frequency, 'setFrequency', {
             minFrequency: options.minFrequency,
             maxFrequency: options.maxFrequency
         });

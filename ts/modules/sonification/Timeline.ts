@@ -26,9 +26,6 @@ declare global {
             cancelled?: boolean;
             path?: TimelinePath;
         }
-        interface SonificationObject {
-            fadeOutTime?: number;
-        }
         class Timeline {
             public constructor(options: TimelineOptionsObject);
             public cursor: number;
@@ -762,7 +759,7 @@ Timeline.prototype.playPaths = function (
             // Leave a timeout to let notes fade out before next play
             setTimeout(function (): void {
                 playPath(path);
-            }, H.sonification.fadeOutTime);
+            }, H.sonification.fadeOutDuration);
         }
     });
 };

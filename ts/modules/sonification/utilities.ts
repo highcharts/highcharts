@@ -93,15 +93,14 @@ SignalHandler.prototype.registerSignalCallbacks = function (
     var signalHandler = this;
 
     signalHandler.supportedSignals.forEach(function (
-        supportedSignal: string
+        supportedSignal: keyof typeof signals
     ): void {
-        if (signals[supportedSignal]) {
+        const signal = signals[supportedSignal];
+        if (signal) {
             (
                 signalHandler.signals[supportedSignal] =
                 signalHandler.signals[supportedSignal] || []
-            ).push(
-                signals[supportedSignal] as any
-            );
+            ).push(signal);
         }
     });
 };
