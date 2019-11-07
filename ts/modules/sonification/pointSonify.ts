@@ -21,6 +21,11 @@ var pick = U.pick;
  */
 declare global {
     namespace Highcharts {
+        interface SonificationObject {
+            currentlyPlayingPoint?: SonifyPoint;
+            instrumentsPlaying?: Dictionary<Instrument>;
+            signalHandler?: SignalHandler;
+        }
         interface PointInstrumentMappingObject {
             [key: string]: (number|string|Function);
             duration: (number|string|Function);
@@ -31,23 +36,23 @@ declare global {
         interface PointInstrumentObject {
             instrument: (string|Instrument);
             instrumentMapping: PointInstrumentMappingObject;
-            instrumentOptions?: Partial<PointInstrumentOptionsObject>;
+            instrumentOptions?: PointInstrumentOptionsObject;
             onEnd?: Function;
         }
         interface PointInstrumentOptionsObject {
-            maxDuration: number;
-            minDuration: number;
-            maxFrequency: number;
-            minFrequency: number;
-            maxPan: number;
-            minPan: number;
-            maxVolume: number;
-            minVolume: number;
+            maxDuration?: number;
+            minDuration?: number;
+            maxFrequency?: number;
+            minFrequency?: number;
+            maxPan?: number;
+            minPan?: number;
+            maxVolume?: number;
+            minVolume?: number;
         }
         interface PointSonifyFunctions {
-            pointCancelSonify(this: SonifyablePoint, fadeOut?: boolean): void;
+            pointCancelSonify(this: SonifyPoint, fadeOut?: boolean): void;
             pointSonify(
-                this: SonifyablePoint,
+                this: SonifyPoint,
                 options: PointSonifyOptionsObject
             ): void;
         }
@@ -265,7 +270,7 @@ var defaultInstrumentOptions: Highcharts.PointInstrumentOptionsObject = {
  * @return {void}
  */
 function pointSonify(
-    this: Highcharts.SonifyablePoint,
+    this: Highcharts.SonifyPoint,
     options: Highcharts.PointSonifyOptionsObject
 ): void {
     var point = this,
@@ -335,8 +340,8 @@ function pointSonify(
                 H.sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
-            extremes = H.merge(
-                defaultInstrumentOptions,
+            extremes = H.merge<Highcharts.Dictionary<number>>(
+                defaultInstrumentOptions as any,
                 instrumentDefinition.instrumentOptions
             ),
             id = instrument.id,
@@ -421,7 +426,7 @@ function pointSonify(
  * @return {void}
  */
 function pointCancelSonify(
-    this: Highcharts.SonifyablePoint,
+    this: Highcharts.SonifyPoint,
     fadeOut?: boolean
 ): void {
     var playing = this.sonification && this.sonification.instrumentsPlaying,

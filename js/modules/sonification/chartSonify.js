@@ -373,10 +373,9 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
  * Utility function to normalize the ordering of timeline paths when sonifying
  * a chart.
  * @private
- * @param {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>} orderOptions
+ * @param {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>} orderOptions -
  * Order options for the sonification.
- * @param {Highcharts.Chart} chart
- * The chart we are sonifying.
+ * @param {Highcharts.Chart} chart - The chart we are sonifying.
  * @param {Function} seriesOptionsCallback
  * A function that takes a series as argument, and returns the series options
  * for that series to be used with buildTimelinePathFromSeries.
@@ -409,8 +408,7 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
         // earcons or silent waits.
         order = orderOptions.reduce(function (orderList, orderDef) {
             // Return set of items to play simultaneously. Could be only one.
-            var simulItems = splat(orderDef)
-                .reduce(function (items, item) {
+            var simulItems = splat(orderDef).reduce(function (items, item) {
                 var itemObject;
                 // Is this item a series ID?
                 if (typeof item === 'string') {
