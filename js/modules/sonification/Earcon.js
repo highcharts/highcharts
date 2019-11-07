@@ -106,7 +106,7 @@ Earcon.prototype.sonify = function (options) {
     // Go through the instruments and play them
     playOptions.instruments.forEach(function (opts) {
         var instrument = typeof opts.instrument === 'string' ?
-            H.sonification.instruments[opts.instrument] : opts.instrument, instrumentOpts = H.merge(opts.playOptions), instrOnEnd, instrumentCopy, copyId;
+            H.sonification.instruments[opts.instrument] : opts.instrument, instrumentOpts = H.merge(opts.playOptions), instrOnEnd, instrumentCopy, copyId = '';
         if (instrument && instrument.play) {
             if (opts.playOptions) {
                 // Handle master pan/volume

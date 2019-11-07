@@ -497,7 +497,7 @@ Timeline.prototype.playPaths = function (direction) {
             // Leave a timeout to let notes fade out before next play
             setTimeout(function () {
                 playPath(path);
-            }, H.sonification.fadeOutTime);
+            }, H.sonification.fadeOutDuration);
         }
     });
 };

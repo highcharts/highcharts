@@ -45,9 +45,10 @@ SignalHandler.prototype.init = function (supportedSignals) {
 SignalHandler.prototype.registerSignalCallbacks = function (signals) {
     var signalHandler = this;
     signalHandler.supportedSignals.forEach(function (supportedSignal) {
-        if (signals[supportedSignal]) {
+        var signal = signals[supportedSignal];
+        if (signal) {
             (signalHandler.signals[supportedSignal] =
-                signalHandler.signals[supportedSignal] || []).push(signals[supportedSignal]);
+                signalHandler.signals[supportedSignal] || []).push(signal);
         }
     });
 };
