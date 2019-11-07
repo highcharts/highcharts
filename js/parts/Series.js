@@ -202,6 +202,11 @@ import H from './Globals.js';
  * @param {global.Event} event
  *        Event that occured.
  */
+/**
+ * Possible key values for the series state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
+ */
 import U from './Utilities.js';
 var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';

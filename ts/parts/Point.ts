@@ -179,6 +179,7 @@ declare global {
         type PointOptionsType = (
             number|string|Array<(number|string)>|PointOptionsObject|null
         );
+        type PointStateValue = keyof PointStatesOptionsObject;
     }
 }
 
@@ -592,6 +593,12 @@ declare global {
  * state's radius + 2.
  * @name Highcharts.PointStatesSelectOptionsObject#radius
  * @type {number|undefined}
+ */
+
+/**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
  */
 
 /**

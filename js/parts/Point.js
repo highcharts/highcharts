@@ -406,6 +406,11 @@ import Highcharts from './Globals.js';
 * @type {number|undefined}
 */
 /**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+/**
  * Gets fired when the point is updated programmatically through the `.update()`
  * method.
  *

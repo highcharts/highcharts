@@ -432,6 +432,7 @@ declare global {
         type SeriesStateOptionsObject<TSeries extends Series> = (
             Omit<TSeries['options'], ('states'|'data')>
         );
+        type SeriesStateValue = keyof SeriesStatesOptionsObject<Series>;
     }
 }
 
@@ -641,6 +642,12 @@ declare global {
  *
  * @param {global.Event} event
  *        Event that occured.
+ */
+
+/**
+ * Possible key values for the series state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
 import U from './Utilities.js';
