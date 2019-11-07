@@ -21,9 +21,6 @@ var splat = U.splat;
  */
 declare global {
     namespace Highcharts {
-        interface PointSonifyOptionsObject {
-            cancelled?: boolean;
-        }
         interface SignalDataObject {
             event?: TimelineEvent;
             cancelled?: boolean;
@@ -88,7 +85,7 @@ declare global {
             public constructor(options: TimelinePathOptionsObject);
             public cursor: number;
             public events: Array<TimelineEvent>;
-            public eventIdMap: Dictionary<number>;
+            public eventIdMap: Dictionary<(number|undefined)>;
             public eventsPlaying: Dictionary<TimelineEvent>;
             public id: string;
             public nextScheduledPlay?: number;
@@ -716,7 +713,7 @@ Timeline.prototype.playPaths = function (
             timeline.pathsPlaying[path.id] = path;
             // Do the play
             path[direction > 0 ? 'play' : 'rewind'](function (
-                callbackData?: Highcharts.PointSonifyOptionsObject
+                callbackData?: Highcharts.SignalDataObject
             ): void {
                 // Play ended callback
                 // Data to pass to signal callbacks
