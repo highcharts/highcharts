@@ -496,7 +496,7 @@ function seriesSonify(
         paths: [timelinePath]
     });
 
-    (chartSonification.timeline as any).play();
+    chartSonification.timeline.play();
 }
 
 
@@ -523,11 +523,7 @@ function buildSeriesOptions(
         Array<Partial<Highcharts.SonifySeriesOptionsObject>>
     ) = chartSonifyOptions.seriesOptions || {};
 
-    return H.merge<
-    Partial<Highcharts.SonifySeriesOptionsObject>,
-    Highcharts.SeriesOptions,
-    Partial<Highcharts.SonifySeriesOptionsObject>
-    >(
+    return H.merge(
         {
             // Calculated dataExtremes for chart
             dataExtremes: dataExtremes,
