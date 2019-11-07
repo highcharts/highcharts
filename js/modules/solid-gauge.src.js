@@ -103,8 +103,8 @@ colorAxisMethods = {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)) {
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)) {
                     color = dataClass.color;
                     if (point) {
                         point.dataClass = i;

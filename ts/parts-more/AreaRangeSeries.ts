@@ -659,7 +659,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
 
             if (!series.chart.polar) {
                 point.isInside = point.isTopInside = (
-                    point.plotY !== undefined &&
+                    typeof point.plotY !== 'undefined' &&
                     point.plotY >= 0 &&
                     point.plotY <= series.yAxis.len && // #3519
                     point.plotX >= 0 &&
@@ -752,7 +752,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
             // Lower marker is stored at stateMarkerGraphic
             // to avoid reference duplication (#7021)
-            series.lowerStateMarkerGraphic = undefined;
+            series.lowerStateMarkerGraphic = void 0;
         }
 
         pointProto.setState.apply(this, arguments as any);

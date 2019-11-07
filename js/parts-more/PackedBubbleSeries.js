@@ -511,8 +511,12 @@ seriesType('packedbubble', 'bubble',
     pointArrayMap: ['value'],
     pointValKey: 'value',
     isCartesian: false,
+    requireSorting: false,
+    directTouch: true,
     axisTypes: [],
     noSharedTooltip: true,
+    // solving #12287
+    searchPoint: H.noop,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Create a single array of all points from all series

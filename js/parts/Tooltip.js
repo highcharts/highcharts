@@ -325,7 +325,7 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0, {}, undefined, undefined, renderer.styledMode);
+                this.renderer = renderer = new H.Renderer(container, 0, 0, {}, void 0, void 0, renderer.styledMode);
             }
             // Create the label
             if (this.split) {
@@ -443,10 +443,10 @@ H.Tooltip.prototype = {
             x: animate ? (2 * now.x + x) / 3 : x,
             y: animate ? (now.y + y) / 2 : y,
             anchorX: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
             anchorY: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (now.anchorY + anchorY) / 2 : anchorY
         });
         // Move to the intermediate value
@@ -507,7 +507,7 @@ H.Tooltip.prototype = {
         points = splat(points);
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
-            if (mouseEvent.chartX === undefined) {
+            if (typeof mouseEvent.chartX === 'undefined') {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
@@ -945,7 +945,8 @@ H.Tooltip.prototype = {
             var point = box.point, series = point.series, yAxis = series && series.yAxis;
             // Put the label in place
             box.tt.attr({
-                visibility: box.pos === undefined ? 'hidden' : 'inherit',
+                visibility: typeof box.pos === 'undefined' ?
+                    'hidden' : 'inherit',
                 x: (rightAligned || point.isHeader || options.positioner ?
                     box.x :
                     point.plotX + chart.plotLeft + tooltip.distance),

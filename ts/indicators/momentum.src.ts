@@ -21,7 +21,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: MomentumIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public nameBase: string;
             public options: MomentumIndicatorOptions;
             public pointClass: typeof MomentumIndicatorPoint;
@@ -109,7 +109,7 @@ seriesType<Highcharts.MomentumIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.MomentumIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -125,14 +125,14 @@ seriesType<Highcharts.MomentumIndicator>(
                 MMPoint: [number, number];
 
             if (xVal.length <= period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
             if (isArray(yVal[0])) {
                 yValue = (yVal[0][3] as any);
             } else {
-                return false;
+                return;
             }
             // Starting point
             points = [

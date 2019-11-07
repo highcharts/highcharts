@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- compareTooltips: true
- js_wrap: b
+name: Heat map
+authors:
+  - Torstein Hønsi
+compareTooltips: true
+js_wrap: b
+tags: []
+categories:
+  - Heat and tree maps
 ...

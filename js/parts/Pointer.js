@@ -486,7 +486,7 @@ Highcharts.Pointer.prototype = {
     runPointActions: function (e, p) {
         var pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip && chart.tooltip.options.enabled ?
             chart.tooltip :
-            undefined), shared = (tooltip ?
+            void 0), shared = (tooltip ?
             tooltip.shared :
             false), hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
         // onMouseOver or already hovering a series with directTouch
@@ -565,7 +565,7 @@ Highcharts.Pointer.prototype = {
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
             var snap = pick(axis.crosshair.snap, true), point = !snap ?
-                undefined :
+                void 0 :
                 H.find(points, function (p) {
                     return p.series[axis.coll] === axis;
                 });
@@ -647,7 +647,8 @@ Highcharts.Pointer.prototype = {
         // #5101)
         if (allowMove && tooltipPoints) {
             splat(tooltipPoints).forEach(function (point) {
-                if (point.series.isCartesian && point.plotX === undefined) {
+                if (point.series.isCartesian &&
+                    typeof point.plotX === 'undefined') {
                     allowMove = false;
                 }
             });
@@ -674,7 +675,8 @@ Highcharts.Pointer.prototype = {
                 else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis) {
-                        if (axis.crosshair) {
+                        if (axis.crosshair &&
+                            hoverPoint.series[axis.coll] === axis) {
                             axis.drawCrosshair(null, hoverPoint);
                         }
                     });
@@ -987,7 +989,7 @@ Highcharts.Pointer.prototype = {
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
-            chart.pointer.chartPosition = undefined;
+            chart.pointer.chartPosition = void 0;
         }
     },
     /**

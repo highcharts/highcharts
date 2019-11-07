@@ -20,8 +20,8 @@ import H from '../parts/Globals.js';
 * @requires modules/xrange
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
-var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, correctFloat = H.correctFloat, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
+var correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
 /**
  * Return color of a point based on its category.
  *
@@ -215,16 +215,16 @@ seriesType('xrange', 'column'
             point = H.find(points, function (point) {
                 return point.id === id;
             });
-            pointIndex = point ? point.index : undefined;
+            pointIndex = point ? point.index : void 0;
         }
-        if (pointIndex === undefined) {
+        if (typeof pointIndex === 'undefined') {
             point = H.find(points, function (point) {
                 return (point.x === options.x &&
                     point.x2 === options.x2 &&
                     !(oldData[pointIndex] &&
                         oldData[pointIndex].touched));
             });
-            pointIndex = point ? point.index : undefined;
+            pointIndex = point ? point.index : void 0;
         }
         // Reduce pointIndex if data is cropped
         if (series.cropped &&
@@ -360,7 +360,8 @@ seriesType('xrange', 'column'
      */
     drawPoint: function (point, verb) {
         var series = this, seriesOpts = series.options, renderer = series.chart.renderer, graphic = point.graphic, type = point.shapeType, shapeArgs = point.shapeArgs, partShapeArgs = point.partShapeArgs, clipRectArgs = point.clipRectArgs, pfOptions = point.partialFill, cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, pointState = point.state, stateOpts = (seriesOpts.states[pointState || 'normal'] ||
-            {}), pointStateVerb = pointState === undefined ? 'attr' : verb, pointAttr = series.pointAttribs(point, pointState), animation = pick(series.chart.options.chart.animation, stateOpts.animation), fill;
+            {}), pointStateVerb = typeof pointState === 'undefined' ?
+            'attr' : verb, pointAttr = series.pointAttribs(point, pointState), animation = pick(series.chart.options.chart.animation, stateOpts.animation), fill;
         if (!point.isNull) {
             // Original graphic
             if (graphic) { // update

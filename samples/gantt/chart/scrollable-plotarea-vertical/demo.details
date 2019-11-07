@@ -1,6 +1,8 @@
 ---
- name: Gantt Chart with Scrollable Plot Area
- js_wrap: b
- authors:
-   - Torstein Hønsi
+name: Gantt Chart with Scrollable Plot Area
+js_wrap: b
+authors:
+  - Torstein Hønsi
+tags: []
+categories: []
 ...

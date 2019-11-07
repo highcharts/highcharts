@@ -23,19 +23,20 @@ echo $_GET['callback']. '('. json_encode($array) . ')';
 
 *   The JavaScript calling the callback function using jQuery.
 
+```js
+$(document).ready(function() {
+    var options = {
+        chart: {
+            renderTo: 'container',
+            type: 'spline'
+        },
+        series: [{}]
+    };
     
-    $(document).ready(function() {
-        var options = {
-            chart: {
-                renderTo: 'container',
-                type: 'spline'
-            },
-            series: [{}]
-        };
-        
-        var url =  "http://url-to-your-remote-server/jsonp.php?callback=?";
-        $.getJSON(url,  function(data) {
-            options.series[0].data = data;
-            var chart = new Highcharts.Chart(options);
-        });
+    var url =  "http://url-to-your-remote-server/jsonp.php?callback=?";
+    $.getJSON(url,  function(data) {
+        options.series[0].data = data;
+        var chart = new Highcharts.Chart(options);
     });
+});
+```

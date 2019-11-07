@@ -8,8 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 var isArray = U.isArray, objectEach = U.objectEach;
-var ATR = H.seriesTypes.atr, SMA = H.seriesTypes.sma, merge = H.merge, correctFloat = H.correctFloat;
+var ATR = H.seriesTypes.atr, SMA = H.seriesTypes.sma, merge = H.merge;
 /* eslint-disable require-jsdoc */
 // Utils:
 function createPointObj(mainSeries, index, close) {
@@ -361,7 +362,7 @@ H.seriesType('supertrend', 'sma',
         prevY, y, i;
         if ((xVal.length <= period) || !isArray(yVal[0]) ||
             yVal[0].length !== 4 || period < 0) {
-            return false;
+            return;
         }
         ATRData = ATR.prototype.getValues.call(this, series, {
             period: period

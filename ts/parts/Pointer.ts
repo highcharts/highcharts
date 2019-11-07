@@ -781,7 +781,7 @@ Highcharts.Pointer.prototype = {
             tooltip = (
                 chart.tooltip && chart.tooltip.options.enabled ?
                     chart.tooltip :
-                    undefined
+                    void 0
             ),
             shared = (
                 tooltip ?
@@ -910,7 +910,7 @@ Highcharts.Pointer.prototype = {
         ): void {
             var snap = pick((axis.crosshair as any).snap, true),
                 point = !snap ?
-                    undefined :
+                    void 0 :
                     H.find(points, function (p: Highcharts.Point): boolean {
                         return (p.series as any)[axis.coll] === axis;
                     });
@@ -1019,7 +1019,10 @@ Highcharts.Pointer.prototype = {
             splat(tooltipPoints).forEach(function (
                 point: Highcharts.Point
             ): void {
-                if (point.series.isCartesian && point.plotX === undefined) {
+                if (
+                    point.series.isCartesian &&
+                    typeof point.plotX === 'undefined'
+                ) {
                     allowMove = false;
                 }
             });
@@ -1048,7 +1051,10 @@ Highcharts.Pointer.prototype = {
                 } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis: Highcharts.Axis): void {
-                        if (axis.crosshair) {
+                        if (
+                            axis.crosshair &&
+                            (hoverPoint as any).series[axis.coll] === axis
+                        ) {
                             axis.drawCrosshair(null as any, hoverPoint);
                         }
                     });
@@ -1499,7 +1505,7 @@ Highcharts.Pointer.prototype = {
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
-            chart.pointer.chartPosition = undefined;
+            chart.pointer.chartPosition = void 0;
         }
     },
 

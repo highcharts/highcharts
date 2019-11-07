@@ -22,7 +22,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: NATRIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject|undefined);
             public options: NATRIndicatorOptions;
             public pointClass: typeof NATRIndicatorPoint;
             public points: Array<NATRIndicatorPoint>;
@@ -87,14 +87,18 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.NATRIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
-            var atrData: Highcharts.IndicatorValuesObject = (
-                    (ATR.prototype.getValues.apply(this, arguments) as any)
+        ): (Highcharts.IndicatorValuesObject|undefined) {
+            var atrData: Highcharts.IndicatorValuesObject|undefined = (
+                    ATR.prototype.getValues.apply(this, arguments)
                 ),
-                atrLength: number = atrData.values.length,
+                atrLength: number = (atrData as any).values.length,
                 period: number = (params.period as any) - 1,
                 yVal: Array<Array<number>> = (series.yData as any),
                 i = 0;
+
+            if (!atrData) {
+                return;
+            }
 
             for (; i < atrLength; i++) {
                 atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;

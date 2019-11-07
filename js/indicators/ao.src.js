@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var correctFloat = H.correctFloat, noop = H.noop;
+var correctFloat = U.correctFloat, isArray = U.isArray;
+var noop = H.noop;
 /**
  * The AO series type
  *
@@ -110,7 +110,7 @@ H.seriesType('ao', 'sma',
         if (xVal.length <= longPeriod ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         for (i = 0; i < longPeriod - 1; i++) {
             price = (yVal[i][high] + yVal[i][low]) / 2;

@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Small US with data labels
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - General
 ...

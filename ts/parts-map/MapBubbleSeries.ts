@@ -234,8 +234,8 @@ if (seriesTypes.bubble) {
 
                 if (
                     options &&
-                    (options as any).lat !== undefined &&
-                    (options as any).lon !== undefined
+                    typeof (options as any).lat !== 'undefined' &&
+                    typeof (options as any).lon !== 'undefined'
                 ) {
                     point = Point.prototype.applyOptions.call(
                         this,

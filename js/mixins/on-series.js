@@ -57,14 +57,15 @@ var onSeriesMixin = {
                 point = points[cursor];
                 point.y = leftPoint.y;
                 if (leftPoint.x <= point.x &&
-                    leftPoint[onKey] !== undefined) {
+                    typeof leftPoint[onKey] !== 'undefined') {
                     if (point.x <= lastX) { // #803
                         point.plotY = leftPoint[onKey];
                         // interpolate between points, #666
                         if (leftPoint.x < point.x &&
                             !step) {
                             rightPoint = onData[i + 1];
-                            if (rightPoint && rightPoint[onKey] !== undefined) {
+                            if (rightPoint &&
+                                typeof rightPoint[onKey] !== 'undefined') {
                                 // the distance ratio, between 0 and 1
                                 distanceRatio =
                                     (point.x - leftPoint.x) /
@@ -97,7 +98,7 @@ var onSeriesMixin = {
             // we must remove the shapeArgs (#847). For inverted charts, we need
             // to calculate position anyway, because series.invertGroups is not
             // defined
-            if (point.plotY === undefined || inverted) {
+            if (typeof point.plotY === 'undefined' || inverted) {
                 if (point.plotX >= 0 &&
                     point.plotX <= xAxis.len) {
                     // We're inside xAxis range
@@ -119,7 +120,7 @@ var onSeriesMixin = {
             // if multiple flags appear at the same x, order them into a stack
             lastPoint = points[i - 1];
             if (lastPoint && lastPoint.plotX === point.plotX) {
-                if (lastPoint.stackIndex === undefined) {
+                if (typeof lastPoint.stackIndex === 'undefined') {
                     lastPoint.stackIndex = 0;
                 }
                 stackIndex = lastPoint.stackIndex + 1;

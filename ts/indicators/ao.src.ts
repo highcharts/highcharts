@@ -29,7 +29,7 @@ declare global {
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues(
                 series: Series,
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public translate: ColumnSeries['translate'];
         }
 
@@ -55,10 +55,12 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var correctFloat = H.correctFloat,
-    noop = H.noop;
+var noop = H.noop;
 
 /**
  * The AO series type
@@ -168,7 +170,7 @@ H.seriesType<Highcharts.AOIndicator>(
 
         getValues: function (
             series: Highcharts.Series
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var shortPeriod = 5,
                 longPeriod = 34,
                 xVal: Array<number> = series.xData || [],
@@ -196,7 +198,7 @@ H.seriesType<Highcharts.AOIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             for (i = 0; i < longPeriod - 1; i++) {

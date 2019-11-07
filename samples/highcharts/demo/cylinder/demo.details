@@ -1,8 +1,13 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
-   - Kacper Madej
- js_wrap: b
- alt_text: Highcharts 3D cylinder chart JavaScript example graph compares variables as three dimensional vertical color bar chart.
+name: 3D cylinder
+authors:
+  - Torstein Hønsi
+  - Kacper Madej
+js_wrap: b
+alt_text: >-
+  Highcharts 3D cylinder chart JavaScript example graph compares variables as
+  three dimensional vertical color bar chart.
+tags: []
+categories:
+  - 3D charts
 ...

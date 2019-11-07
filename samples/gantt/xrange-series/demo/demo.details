@@ -1,7 +1,9 @@
 ---
- name: XRange Demo
- js_wrap: b
- authors:
-   - Torstein Hønsi
-   - Lars Cabrera
+name: XRange Demo
+js_wrap: b
+authors:
+  - Torstein Hønsi
+  - Lars Cabrera
+tags: []
+categories: []
 ...

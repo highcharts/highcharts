@@ -21,21 +21,19 @@ Data format
 The Network Graph needs a data format that builds up an array of links, where each link is specified by a `start` and an `end` node.
 
 ```js
-    {
-    series: [{ 
+series: [{
     data: [
-            {from: 'A', to: 'B'},
-            {from: 'A', to: 'C'},
-            {from: 'A', to: 'D'},
-            {from: 'A', to: 'E'},
-            {from: 'A', to: 'F'},
-            {from: 'A', to: 'G'},
+        {from: 'A', to: 'B'},
+        {from: 'A', to: 'C'},
+        {from: 'A', to: 'D'},
+        {from: 'A', to: 'E'},
+        {from: 'A', to: 'F'},
+        {from: 'A', to: 'G'},
 
-            {from: 'B', to: 'C'},
-            .....
-                ]
-        }] 
-    }
+        {from: 'B', to: 'C'},
+        ...
+    ]
+}]
 ```
     
 
@@ -102,44 +100,47 @@ Use Cases
 
 Simple example
 
-    
-    {
-        chart: {
-            type: ‘networkgraph’
-        },
-        series: [{
-                data: [
-                    [‘A’, ‘B’],
-                    [‘B’, ‘C’],
-                    [‘C’, ‘A’]
-                }]
-        }
+```js
+{
+    chart: {
+        type: 'networkgraph'
+    },
+    series: [{
+        data: [
+            ['A', 'B'],
+            ['B', 'C'],
+            ['C', 'A']
+        ]
+    }]
+}
+```
 
 Customized length between points and colored links:
 
-    
-    {
-        chart: {
-            type: ‘networkgraph’
-        },
-        plotOptions: {
-            networkgraph: {
-                layoutAlgorithm: {
-                    linkLength: 50 // in pixels 
-                },
-                link: {
-                    color: ‘red’
-                }
+```js
+{
+    chart: {
+        type: 'networkgraph'
+    },
+    plotOptions: {
+        networkgraph: {
+            layoutAlgorithm: {
+                linkLength: 50 // in pixels
+            },
+            link: {
+                color: 'red'
             }
-        },
-        series: [{
-                data: [
-                    [‘A’, ‘B’],
-                    [‘B’, ‘C’],
-                    [‘C’, ‘A’]
-                }]
         }
-    
+    },
+    series: [{
+        data: [
+            ['A', 'B'],
+            ['B', 'C'],
+            ['C', 'A']
+        ]
+    }]
+}
+```
 
 _See the demo below for a network graph with customized styled links per data series._
 

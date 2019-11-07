@@ -294,6 +294,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     extend,
     objectEach,
     pick,
@@ -306,8 +307,7 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-var animObject = H.animObject,
-    noop = H.noop,
+var noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
     format = H.format,
@@ -701,7 +701,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     // See if we can reuse the registered series from last run
     last = this.drilldownLevels[this.drilldownLevels.length - 1];
     if (last && last.levelNumber !== levelNumber) {
-        last = undefined;
+        last = void 0;
     }
 
     ddOptions = extend(extend<Highcharts.SeriesOptions>({
@@ -1116,7 +1116,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                     // Fade in other points
                     var verb =
                         i === (level && level.pointIndex) ? 'show' : 'fadeIn',
-                        inherit = verb === 'show' ? true : undefined,
+                        inherit = verb === 'show' ? true : void 0,
                         dataLabel = point.dataLabel;
 
 
@@ -1344,7 +1344,7 @@ H.Point.prototype.doDrilldown = function (
         category: category,
         originalEvent: originalEvent,
         points: (
-            category !== undefined &&
+            typeof category !== 'undefined' &&
             (this.series.xAxis.getDDPoints(category) as any).slice(0)
         )
     } as Highcharts.DrilldownEventObject, function (
@@ -1478,7 +1478,7 @@ H.addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
                 // #5822, x changed
                 series.xAxis.drilldownCategory(point.x as any, e);
             } else {
-                point.doDrilldown(undefined, undefined, e);
+                point.doDrilldown(void 0, void 0, e);
             }
         });
 

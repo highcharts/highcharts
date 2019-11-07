@@ -3,6 +3,7 @@
 /.pydevproject
 /.settings
 /.vscode
+/.history
 /api-docs
 /out
 /js/highcharts-3d.src.js

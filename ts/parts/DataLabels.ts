@@ -658,6 +658,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     defined,
     extend,
@@ -875,7 +876,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
-        seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
+        seriesAnimDuration = animObject(seriesOptions.animation).duration,
         fadeInDuration = Math.min(seriesAnimDuration as any, 200),
         defer = !chart.renderer.forExport && pick(
             (seriesDlOptions as any).defer,
@@ -1123,7 +1124,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
 
                     // Remove unused attributes (#947)
                     objectEach(attr, function (val: any, name: string): void {
-                        if (val === undefined) {
+                        if (typeof val === 'undefined') {
                             delete attr[name];
                         }
                     });
@@ -1297,7 +1298,7 @@ Series.prototype.alignDataLabel = function (
     if (visible) {
 
         baseline = chart.renderer.fontMetrics(
-            chart.styledMode ? undefined : (options.style as any).fontSize,
+            chart.styledMode ? void 0 : (options.style as any).fontSize,
             dataLabel
         ).b;
 
@@ -1762,7 +1763,9 @@ if (seriesTypes.pie) {
                 y = naturalY;
 
                 if (positions && defined(point.distributeBox)) {
-                    if ((point.distributeBox as any).pos === undefined) {
+                    if (
+                        typeof (point.distributeBox as any).pos === 'undefined'
+                    ) {
                         visibility = 'hidden';
                     } else {
                         labelHeight = (point.distributeBox as any).size;

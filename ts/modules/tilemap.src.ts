@@ -529,7 +529,7 @@ H.tileShapeTypes = {
                     hasPerPointPadding = false;
 
                 // If there is point padding defined on a single point, add it
-                if (point.pointPadding !== undefined) {
+                if (typeof point.pointPadding !== 'undefined') {
                     pointPadding = point.pointPadding;
                     hasPerPointPadding = true;
                     forceNextRadiusCompute = true;
@@ -665,7 +665,7 @@ H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
                 return (a && (a.padding as any)) > (b && (b.padding as any)) ?
                     a :
                     b;
-            }, undefined) ||
+            }, void 0) ||
             {
                 padding: 0,
                 axisLengthFactor: 1

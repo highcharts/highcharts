@@ -1716,8 +1716,8 @@ function getNormalizedEvent<T extends Highcharts.PointerEventObject>(
     chart: Highcharts.Chart
 ): Highcharts.PointerEventObject {
     return (
-        (e as Highcharts.PointerEventObject).chartX === undefined ||
-        (e as Highcharts.PointerEventObject).chartY === undefined ?
+        typeof (e as Highcharts.PointerEventObject).chartX === 'undefined' ||
+        typeof (e as Highcharts.PointerEventObject).chartY === 'undefined' ?
             chart.pointer.normalize(e) :
             e as Highcharts.PointerEventObject
     );
@@ -2328,7 +2328,7 @@ H.Point.prototype.getDropValues = function (
     // Find out if we only have one prop to update
     for (var key in updateProps) {
         if (Object.hasOwnProperty.call(updateProps, key)) {
-            if (updateSingleProp !== undefined) {
+            if (typeof updateSingleProp !== 'undefined') {
                 updateSingleProp = false;
                 break;
             }
@@ -2393,7 +2393,7 @@ H.Point.prototype.getDropValues = function (
                 val.propValidate &&
                 !val.propValidate(newVal, point)
             ) &&
-            oldVal !== undefined
+            typeof oldVal !== 'undefined'
         ) {
             result[key] = newVal;
         }

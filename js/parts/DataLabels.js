@@ -495,7 +495,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var animObject = U.animObject, arrayMax = U.arrayMax, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import './Series.js';
 var format = H.format, merge = H.merge, noop = H.noop, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
@@ -634,7 +634,7 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = H.animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -770,7 +770,7 @@ Series.prototype.drawDataLabels = function () {
                     }
                     // Remove unused attributes (#947)
                     objectEach(attr, function (val, name) {
-                        if (val === undefined) {
+                        if (typeof val === 'undefined') {
                             delete attr[name];
                         }
                     });
@@ -879,7 +879,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
                 alignTo.y + alignTo.height - 1, inverted))), alignAttr, // the final position;
     justify = pick(options.overflow, 'justify') === 'justify';
     if (visible) {
-        baseline = chart.renderer.fontMetrics(chart.styledMode ? undefined : options.style.fontSize, dataLabel).b;
+        baseline = chart.renderer.fontMetrics(chart.styledMode ? void 0 : options.style.fontSize, dataLabel).b;
         // The alignment box is a singular point
         alignTo = extend({
             x: inverted ? this.yAxis.len - plotY : plotX,
@@ -1195,7 +1195,7 @@ if (seriesTypes.pie) {
                 naturalY = labelPosition.natural.y;
                 y = naturalY;
                 if (positions && defined(point.distributeBox)) {
-                    if (point.distributeBox.pos === undefined) {
+                    if (typeof point.distributeBox.pos === 'undefined') {
                         visibility = 'hidden';
                     }
                     else {

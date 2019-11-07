@@ -639,7 +639,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
         if (subheaders) {
             html += '<tr>';
             for (i = 0, len = subheaders.length; i < len; ++i) {
-                if (subheaders[i] !== undefined) {
+                if (typeof subheaders[i] !== 'undefined') {
                     html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
                 }
             }

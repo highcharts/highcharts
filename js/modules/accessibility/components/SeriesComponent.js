@@ -242,12 +242,18 @@ function getClosestPoint(point, series, xWeight, yWeight) {
         distance,
         i = series.points.length;
 
-    if (point.plotX === undefined || point.plotY === undefined) {
+    if (
+        typeof point.plotX === 'undefined' ||
+        typeof point.plotY === 'undefined'
+    ) {
         return;
     }
     while (i--) {
         dPoint = series.points[i];
-        if (dPoint.plotX === undefined || dPoint.plotY === undefined) {
+        if (
+            typeof dPoint.plotX === 'undefined' ||
+            typeof dPoint.plotY === 'undefined'
+        ) {
             continue;
         }
         distance = (point.plotX - dPoint.plotX) *
@@ -259,7 +265,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
             minIx = i;
         }
     }
-    return minIx !== undefined && series.points[minIx];
+    return typeof minIx !== 'undefined' && series.points[minIx];
 }
 
 
@@ -479,7 +485,10 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         minDistance = Infinity,
         bestPoint;
 
-    if (curPoint.plotX === undefined || curPoint.plotY === undefined) {
+    if (
+        typeof curPoint.plotX === 'undefined' ||
+        typeof curPoint.plotY === 'undefined'
+    ) {
         return false;
     }
     this.series.forEach(function (series) {
@@ -487,8 +496,11 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
             return;
         }
         series.points.forEach(function (point) {
-            if (point.plotY === undefined || point.plotX === undefined ||
-                point === curPoint) {
+            if (
+                typeof point.plotY === 'undefined' ||
+                typeof point.plotX === 'undefined' ||
+                point === curPoint
+            ) {
                 return;
             }
             var yDistance = point.plotY - curPoint.plotY,
@@ -827,8 +839,9 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 component.dirty.hasDirty = true;
                 component.dirty.allSeries[series.name + series.index] = series;
                 // Add it to newSeries storage unless we already have one
-                component.dirty.newSeries = component.dirty.newSeries ===
-                    undefined ? series : null;
+                component.dirty.newSeries =
+                    typeof component.dirty.newSeries === 'undefined' ?
+                        series : null;
             }
         });
         // New point
@@ -836,8 +849,9 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             if (this.chart === chart &&
                 this.chart.options.accessibility.announceNewData.enabled) {
                 // Add it to newPoint storage unless we already have one
-                component.dirty.newPoint = component.dirty.newPoint ===
-                    undefined ? e.point : null;
+                component.dirty.newPoint =
+                    typeof component.dirty.newPoint === 'undefined' ?
+                        e.point : null;
             }
         });
         // On redraw: compile what we know about new data, and build
@@ -1250,7 +1264,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 !chart.angular
             ),
             pointCategory = series.xAxis && series.xAxis.categories &&
-                    point.category !== undefined && '' + point.category;
+                typeof point.category !== 'undefined' && '' + point.category;
 
         // Pick and choose properties for a succint label
         var xDesc = point.name || timeDesc ||
@@ -1266,15 +1280,20 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                     ) + valueSuffix;
                 }, '') :
                 (
-                    point.value !== undefined ?
+                    typeof point.value !== 'undefined' ?
                         valuePrefix + numberFormat(point.value) + valueSuffix :
                         valuePrefix + numberFormat(point.y) + valueSuffix
                 );
 
-        return (point.index !== undefined ? (point.index + 1) + '. ' : '') +
+        return (
+            (
+                typeof point.index !== 'undefined' ?
+                    (point.index + 1) + '. ' : ''
+            ) +
             (showXDescription ? xDesc + ', ' : '') + valueDesc + '.' +
             (description ? ' ' + description : '') +
-            (chart.series.length > 1 && series.name ? ' ' + series.name : '');
+            (chart.series.length > 1 && series.name ? ' ' + series.name : '')
+        );
     }
 
 });

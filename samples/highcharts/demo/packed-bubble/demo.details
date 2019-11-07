@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Sebastian Bochan
- js_wrap: b
- isNew: true
+name: Packed bubble chart
+authors:
+  - Sebastian Bochan
+js_wrap: b
+isNew: true
+tags: []
+categories:
+  - Scatter and bubble charts
 ...

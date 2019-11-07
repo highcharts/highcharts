@@ -68,7 +68,11 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    animObject
+} = U;
+
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 
@@ -353,7 +357,7 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
             init?: boolean
         ): void {
             if (!init) {
-                var duration = H.animObject(this.options.animation).duration,
+                var duration = animObject(this.options.animation).duration,
                     step = ((duration as any) / 2) / this.nodes.length;
                 this.nodes.forEach(function (
                     point: Highcharts.DependencyWheelPoint,

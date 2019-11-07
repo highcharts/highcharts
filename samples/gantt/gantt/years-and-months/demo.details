@@ -1,6 +1,8 @@
 ---
- name: Gantt Chart with Years and Months
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Gantt Chart with Years and Months
+js_wrap: b
+authors:
+  - Lars Cabrera
+tags: []
+categories: []
 ...

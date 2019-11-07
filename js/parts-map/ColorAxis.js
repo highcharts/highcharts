@@ -653,8 +653,8 @@ extend(ColorAxis.prototype, {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)) {
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)) {
                     color = dataClass.color;
                     if (point) {
                         point.dataClass = i;
@@ -804,7 +804,7 @@ extend(ColorAxis.prototype, {
                 cSeries.minColorValue = cSeries.dataMin;
                 cSeries.maxColorValue = cSeries.dataMax;
             }
-            if (cSeries.minColorValue !== undefined) {
+            if (typeof cSeries.minColorValue !== 'undefined') {
                 this.dataMin =
                     Math.min(this.dataMin, cSeries.minColorValue);
                 this.dataMax =
@@ -973,20 +973,20 @@ extend(ColorAxis.prototype, {
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
                 name = '';
-                if (from === undefined) {
+                if (typeof from === 'undefined') {
                     name = '< ';
                 }
-                else if (to === undefined) {
+                else if (typeof to === 'undefined') {
                     name = '> ';
                 }
-                if (from !== undefined) {
+                if (typeof from !== 'undefined') {
                     name += H.numberFormat(from, valueDecimals) +
                         valueSuffix;
                 }
-                if (from !== undefined && to !== undefined) {
+                if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
-                if (to !== undefined) {
+                if (typeof to !== 'undefined') {
                     name += H.numberFormat(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items

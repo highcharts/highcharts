@@ -195,7 +195,7 @@ H.tileShapeTypes = {
                 var x = between(Math.round(xAxis.len -
                     xAxis.translate(point.x, 0, 1, 0, 0)), -xAxis.len, 2 * xAxis.len), y = between(Math.round(yAxis.translate(point.y, 0, 1, 0, 0)), -yAxis.len, 2 * yAxis.len), pointPadding = seriesPointPadding, hasPerPointPadding = false;
                 // If there is point padding defined on a single point, add it
-                if (point.pointPadding !== undefined) {
+                if (typeof point.pointPadding !== 'undefined') {
                     pointPadding = point.pointPadding;
                     hasPerPointPadding = true;
                     forceNextRadiusCompute = true;
@@ -282,7 +282,7 @@ H.addEvent(H.Axis, 'afterSetAxisTranslation', function () {
         return (a && a.padding) > (b && b.padding) ?
             a :
             b;
-    }, undefined) ||
+    }, void 0) ||
         {
             padding: 0,
             axisLengthFactor: 1

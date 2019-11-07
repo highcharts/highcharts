@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, merge = H.merge, correctFloat = H.correctFloat;
+var SMA = H.seriesTypes.sma, merge = H.merge;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -114,7 +115,7 @@ merge(multipleLinesMixin, {
         // middle line, top line and bottom line
         ML, TL, BL, date, bandBase, pointSMA, ubSMA, lbSMA, low = 2, high = 1, xData = [], yData = [], slicedX, slicedY, i;
         if (yValLen < period) {
-            return false;
+            return;
         }
         for (i = 0; i <= yValLen; i++) {
             // Get UB and LB values of every point. This condition

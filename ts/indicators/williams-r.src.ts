@@ -18,6 +18,10 @@ declare global {
     namespace Highcharts {
         class WilliamsRIndicator extends SMAIndicator {
             data: Array<WilliamsRIndicatorPoint>;
+            getValues(
+                series: Series,
+                params: WilliamsRIndicatorParamsOptions
+            ): (IndicatorValuesObject|undefined);
             options: WilliamsRIndicatorOptions;
             pointClass: typeof WilliamsRIndicatorPoint;
             points: Array<WilliamsRIndicatorPoint>;
@@ -95,7 +99,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
             this: Highcharts.WilliamsRIndicator,
             series: Highcharts.Series,
             params: Highcharts.WilliamsRIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<Array<number>> = series.yData as any,
@@ -120,7 +124,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // For a N-period, we start from N-1 point, to calculate Nth point

@@ -14,7 +14,7 @@ const path = require('path');
 const MIMES = {
     css: 'text/css',
     eot: 'application/vnd.ms-fontobject',
-    js: 'text/javascript',
+    js: 'application/javascript',
     json: 'application/json',
     html: 'text/html',
     ico: 'image/x-icon',
@@ -108,7 +108,6 @@ function jsDocServer() {
     const fs = require('fs');
     const http = require('http');
     const log = require('./lib/log');
-    const url = require('url');
 
     return new Promise(resolve => {
 
@@ -117,8 +116,7 @@ function jsDocServer() {
         http
             .createServer((request, response) => {
 
-                // eslint-disable-next-line node/no-deprecated-api
-                let p = url.parse(request.url, true).pathname;
+                let p = request.url;
 
                 if (p === '/highcharts' || p === '/' || p === '') {
                     response302(response, '/highcharts/');

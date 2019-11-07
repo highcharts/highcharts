@@ -69,7 +69,7 @@ seriesType('cci', 'sma',
         if (xVal.length <= period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         // accumulate first N-points
         while (range < period) {

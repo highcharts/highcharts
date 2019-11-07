@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- compareTooltips: true
- js_wrap: b
+name: Inverted axes
+authors:
+  - Torstein Hønsi
+compareTooltips: true
+js_wrap: b
+tags: []
+categories:
+  - Area charts
 ...

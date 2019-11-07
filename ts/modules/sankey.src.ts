@@ -406,7 +406,7 @@ seriesType<Highcharts.SankeySeries>(
             /** @ignore-option */
             crop: false,
             /** @ignore-option */
-            nodeFormat: undefined,
+            nodeFormat: void 0,
             // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
             nodeFormatter: function (
@@ -418,7 +418,7 @@ seriesType<Highcharts.SankeySeries>(
                 return this.point.name;
             },
             /** @ignore-option */
-            format: undefined,
+            format: void 0,
             // eslint-disable-next-line valid-jsdoc
             /** @ignore-option */
             formatter: function (): undefined {
@@ -765,7 +765,7 @@ seriesType<Highcharts.SankeySeries>(
 
             // Fill in empty columns (#8865)
             for (var i = 0; i < columns.length; i++) {
-                if (columns[i] === undefined) {
+                if (typeof columns[i] === 'undefined') {
                     columns[i] = this.createNodeColumn();
                 }
             }
@@ -849,7 +849,8 @@ seriesType<Highcharts.SankeySeries>(
              * @private
              */
             function order(node: Highcharts.SankeyPoint, level: number): void {
-                if (node.level === undefined) { // Prevents circular recursion
+                // Prevents circular recursion:
+                if (typeof node.level === 'undefined') {
                     node.level = level;
                     node.linksFrom.forEach(function (
                         link: Highcharts.SankeyPoint

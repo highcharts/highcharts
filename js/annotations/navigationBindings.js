@@ -1342,11 +1342,11 @@ H.setOptions({
          */
 
         /**
-         * A `hidePopop` event. Fired when Popup should be hidden, for exampole
+         * A `closePopup` event. Fired when Popup should be hidden, for example
          * when clicking on an annotation again.
          *
          * @type      {Function}
-         * @apioption navigation.events.hidePopup
+         * @apioption navigation.events.closePopup
          */
 
         /**
