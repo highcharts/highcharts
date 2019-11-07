@@ -594,10 +594,8 @@ Highcharts.Time.prototype = {
 
     /**
      * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
-     * into a human readable date string. The format is a subset of the format
-     * keys for PHP's
-     * [strftime](http://www.php.net/manual/en/function.strftime.php)
-     * function. Additional formats can be given in the
+     * into a human readable date string. The available format keys are listed
+     * below. Additional formats can be given in the
      * {@link Highcharts.dateFormats} hook.
      *
      * Supported format keys:
@@ -620,6 +618,11 @@ Highcharts.Time.prototype = {
      * - `%P`: Lower case AM or PM
      * - `%S`: Two digits seconds, 00 through 59
      * - `%L`: Milliseconds (naming from Ruby)
+     *
+     * @example
+     * const time = new Highcharts.Time();
+     * const s = time.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2020, 0, 1));
+     * console.log(s); // => 2020-01-01 00:00:00
      *
      * @function Highcharts.Time#dateFormat
      *
