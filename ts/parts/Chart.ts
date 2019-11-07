@@ -665,7 +665,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                  * Contains the series' index in the `Chart.series` array.
                  *
                  * @name Highcharts.Series#index
-                 * @type {number|undefined}
+                 * @type {number}
                  * @readonly
                  */
                 series[i].index = i;

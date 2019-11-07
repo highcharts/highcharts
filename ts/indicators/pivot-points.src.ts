@@ -146,9 +146,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
         },
         enableMouseTracking: false,
         dataLabels: {
-            /** @ignore-option */
             enabled: true,
-            /** @ignore-option */
             format: '{point.pivotLine}'
         },
         dataGrouping: {

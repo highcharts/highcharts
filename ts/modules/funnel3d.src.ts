@@ -210,17 +210,10 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
         edgeWidth: 0,
         colorByPoint: true,
         showInLegend: false,
-        /**
-         * @default {"align": "right", "crop": false, "inside": false, "overflow": "allow"}
-         */
         dataLabels: {
-            /** @ignore-option */
             align: 'right',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             inside: false,
-            /** @ignore-option */
             overflow: 'allow'
         }
     }, {

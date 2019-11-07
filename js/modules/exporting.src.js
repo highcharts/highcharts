@@ -171,6 +171,8 @@ if (!defaultOptions.navigation) {
 merge(true, defaultOptions.navigation, {
     /**
      * @optionparent navigation.buttonOptions
+     *
+     * @private
      */
     buttonOptions: {
         theme: {},

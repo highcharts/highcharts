@@ -432,6 +432,7 @@ declare global {
         type SeriesStateOptionsObject<TSeries extends Series> = (
             Omit<TSeries['options'], ('states'|'data')>
         );
+        type SeriesStateValue = keyof SeriesStatesOptionsObject<Series>;
     }
 }
 
@@ -641,6 +642,12 @@ declare global {
  *
  * @param {global.Event} event
  *        Event that occured.
+ */
+
+/**
+ * Possible key values for the series state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
 import U from './Utilities.js';
@@ -1707,6 +1714,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * `.highcharts-point`, `.highcharts-point-hover` and
          * `.highcharts-point-select` class names.
          *
+         * @declare Highcharts.PointMarkerOptionsObject
+         *
          * @private
          */
         marker: {
@@ -1837,6 +1846,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             /**
              * States for a single point marker.
+             *
+             * @declare Highcharts.PointMarkerStatesOptionsObject
              */
             states: {
 
@@ -1844,6 +1855,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * The normal state of a single point marker. Currently only
                  * used for setting animation when returning to normal state
                  * from hover.
+                 *
+                 * @declare Highcharts.PointStatesNormalOptionsObject
                  */
                 normal: {
                     /**
@@ -1856,6 +1869,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                 /**
                  * The hover state for a single point marker.
+                 *
+                 * @declare Highcharts.PointStatesHoverOptionsObject
                  */
                 hover: {
 
@@ -1954,6 +1969,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * The appearance of the point marker when selected. In order to
                  * allow a point to be selected, set the
                  * `series.allowPointSelect` option to true.
+                 *
+                 * @declare Highcharts.PointStatesSelectOptionsObject
                  */
                 select: {
 
@@ -2147,33 +2164,409 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * `.highcharts-data-label-box` and `.highcharts-data-label` class names
          * ([see example](https://www.highcharts.com/samples/highcharts/css/series-datalabels)).
          *
-         * @sample highcharts/plotoptions/series-datalabels-enabled
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled
          *         Data labels enabled
-         * @sample highcharts/plotoptions/series-datalabels-multiple
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
+         * @sample {highcharts} highcharts/css/series-datalabels
+         *         Style mode example
          *
-         * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
+         * @declare Highcharts.DataLabelsOptionsObject
+         * @type    {*|Array<*>}
+         * @product highcharts highstock highmaps gantt
          *
          * @private
          */
         dataLabels: {
-            /** @internal */
+
+            /**
+             * The alignment of the data label compared to the point. If
+             * `right`, the right side of the label should be touching the
+             * point. For points with an extent, like columns, the alignments
+             * also dictates how to align it inside the box, as given with the
+             * [inside](#plotOptions.column.dataLabels.inside)
+             * option. Can be one of `left`, `center` or `right`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
+             *         Left aligned
+             * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
+             *         Data labels inside the bar
+             *
+             * @name Highcharts.DataLabelsOptionsObject#align
+             * @type {Highcharts.AlignValue|null}
+             */
             align: 'center',
+
+            /**
+             * Whether to allow data labels to overlap. To make the labels less
+             * sensitive for overlapping, the
+             * [dataLabels.padding](#plotOptions.series.dataLabels.padding)
+             * can be set to 0.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/
+             *         Don't allow overlap
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     4.1.0
+             * @apioption plotOptions.series.dataLabels.allowOverlap
+             */
+
+            /**
+             * The background color or gradient for the data label.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     2.2.1
+             * @apioption plotOptions.series.dataLabels.backgroundColor
+             */
+
+            /**
+             * The border color for the data label. Defaults to `undefined`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     2.2.1
+             * @apioption plotOptions.series.dataLabels.borderColor
+             */
+
+            /**
+             * The border radius in pixels for the data label.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @type      {number}
+             * @default   0
+             * @since     2.2.1
+             * @apioption plotOptions.series.dataLabels.borderRadius
+             */
+
+            /**
+             * The border width in pixels for the data label.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @type      {number}
+             * @default   0
+             * @since     2.2.1
+             * @apioption plotOptions.series.dataLabels.borderWidth
+             */
+
+            /**
+             * A class name for the data label. Particularly in styled mode,
+             * this can be used to give each series' or point's data label
+             * unique styling. In addition to this option, a default color class
+             * name is added so that we can give the labels a contrast text
+             * shadow.
+             *
+             * @sample {highcharts} highcharts/css/data-label-contrast/
+             *         Contrast text shadow
+             * @sample {highcharts} highcharts/css/series-datalabels/
+             *         Styling by CSS
+             *
+             * @type      {string}
+             * @since     5.0.0
+             * @apioption plotOptions.series.dataLabels.className
+             */
+
+            /**
+             * The text color for the data labels. Defaults to `undefined`. For
+             * certain series types, like column or map, the data labels can be
+             * drawn inside the points. In this case the data label will be
+             * drawn with maximum contrast by default. Additionally, it will be
+             * given a `text-outline` style with the opposite color, to further
+             * increase the contrast. This can be overridden by setting the
+             * `text-outline` style to `none` in the `dataLabels.style` option.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/
+             *         Red data labels
+             * @sample {highmaps} maps/demo/color-axis/
+             *         White data labels
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption plotOptions.series.dataLabels.color
+             */
+
+            /**
+             * Whether to hide data labels that are outside the plot area. By
+             * default, the data label is moved inside the plot area according
+             * to the
+             * [overflow](#plotOptions.series.dataLabels.overflow)
+             * option.
+             *
+             * @type      {boolean}
+             * @default   true
+             * @since     2.3.3
+             * @apioption plotOptions.series.dataLabels.crop
+             */
+
+            /**
+             * Whether to defer displaying the data labels until the initial
+             * series animation has finished.
+             *
+             * @type      {boolean}
+             * @default   true
+             * @since     4.0.0
+             * @product   highcharts highstock gantt
+             * @apioption plotOptions.series.dataLabels.defer
+             */
+
+            /**
+             * Enable or disable the data labels.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/
+             *         Data labels enabled
+             * @sample {highmaps} maps/demo/color-axis/
+             *         Data labels enabled
+             *
+             * @type      {boolean}
+             * @default   false
+             * @apioption plotOptions.series.dataLabels.enabled
+             */
+
+            /**
+             * A declarative filter to control of which data labels to display.
+             * The declarative filter is designed for use when callback
+             * functions are not available, like when the chart options require
+             * a pure JSON structure or for use with graphical editors. For
+             * programmatic control, use the `formatter` instead, and return
+             * `undefined` to disable a single data label.
+             *
+             * @example
+             * filter: {
+             *     property: 'percentage',
+             *     operator: '>',
+             *     value: 4
+             * }
+             *
+             * @sample {highcharts} highcharts/demo/pie-monochrome
+             *         Data labels filtered by percentage
+             *
+             * @declare   Highcharts.DataLabelsFilterOptionsObject
+             * @since     6.0.3
+             * @apioption plotOptions.series.dataLabels.filter
+             */
+
+            /**
+             * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`,
+             * `==`, and `===`.
+             *
+             * @type       {string}
+             * @validvalue [">", "<", ">=", "<=", "==", "==="]
+             * @apioption  plotOptions.series.dataLabels.filter.operator
+             */
+
+            /**
+             * The point property to filter by. Point options are passed
+             * directly to properties, additionally there are `y` value,
+             * `percentage` and others listed under {@link Highcharts.Point}
+             * members.
+             *
+             * @type      {string}
+             * @apioption plotOptions.series.dataLabels.filter.property
+             */
+
+            /**
+             * The value to compare against.
+             *
+             * @type      {number}
+             * @apioption plotOptions.series.dataLabels.filter.value
+             */
+
+            /**
+             * A
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for the data label. Available variables are the same as for
+             * `formatter`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+             *         Add a unit
+             * @sample {highmaps} maps/plotoptions/series-datalabels-format/
+             *         Formatted value in the data label
+             *
+             * @type      {string}
+             * @default   y
+             * @default   point.value
+             * @since     3.0
+             * @apioption plotOptions.series.dataLabels.format
+             */
+
             // eslint-disable-next-line valid-jsdoc
             /**
-             * @internal
-             * @default function () { return H.numberFormat(this.y, -1); }
+             * Callback JavaScript function to format the data label. Note that
+             * if a `format` is defined, the format takes precedence and the
+             * formatter is ignored.
+             *
+             * @sample {highmaps} maps/plotoptions/series-datalabels-format/
+             *         Formatted value
+             *
+             * @type {Highcharts.DataLabelsFormatterCallbackFunction}
              */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): string {
                 return this.y === null ? '' : H.numberFormat(this.y, -1);
             },
-            /** @internal */
-            padding: 5,
+
             /**
-             * @internal
-             * @type {Highcharts.CSSObject}
+             * For points with an extent, like columns or map areas, whether to
+             * align the data label inside the box or to the actual value point.
+             * Defaults to `false` in most cases, `true` in stacked columns.
+             *
+             * @type      {boolean}
+             * @since     3.0
+             * @apioption plotOptions.series.dataLabels.inside
+             */
+
+            /**
+             * Format for points with the value of null. Works analogously to
+             * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
+             * be applied only to series which support displaying null points.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+             *         Format data label and tooltip for null point.
+             *
+             * @type      {boolean|string}
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.nullFormat
+             */
+
+            /**
+             * Callback JavaScript function that defines formatting for points
+             * with the value of null. Works analogously to
+             * [formatter](#plotOptions.series.dataLabels.formatter).
+             * `nullPointFormatter` can be applied only to series which support
+             * displaying null points.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
+             *         Format data label and tooltip for null point.
+             *
+             * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.nullFormatter
+             */
+
+            /**
+             * How to handle data labels that flow outside the plot area. The
+             * default is `"justify"`, which aligns them inside the plot area.
+             * For columns and bars, this means it will be moved inside the bar.
+             * To display data labels outside the plot area, set `crop` to
+             * `false` and `overflow` to `"allow"`.
+             *
+             * @type       {Highcharts.DataLabelsOverflowValue}
+             * @default    justify
+             * @since      3.0.6
+             * @apioption  plotOptions.series.dataLabels.overflow
+             */
+
+            /**
+             * When either the `borderWidth` or the `backgroundColor` is set,
+             * this is the padding within the box.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             * @sample {highmaps} maps/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @since 2.2.1
+             */
+            padding: 5,
+
+            /**
+             * Aligns data labels relative to points. If `center` alignment is
+             * not possible, it defaults to `right`.
+             *
+             * @type      {Highcharts.AlignValue}
+             * @default   center
+             * @apioption plotOptions.series.dataLabels.position
+             */
+
+            /**
+             * Text rotation in degrees. Note that due to a more complex
+             * structure, backgrounds, borders and padding will be lost on a
+             * rotated data label.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
+             *         Vertical labels
+             *
+             * @type      {number}
+             * @default   0
+             * @apioption plotOptions.series.dataLabels.rotation
+             */
+
+            /**
+             * The shadow of the box. Works best with `borderWidth` or
+             * `backgroundColor`. Since 2.3 the shadow can be an object
+             * configuration containing `color`, `offsetX`, `offsetY`, `opacity`
+             * and `width`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
+             *         Data labels box options
+             *
+             * @type      {boolean|Highcharts.ShadowOptionsObject}
+             * @default   false
+             * @since     2.2.1
+             * @apioption plotOptions.series.dataLabels.shadow
+             */
+
+            /**
+             * The name of a symbol to use for the border around the label.
+             * Symbols are predefined functions on the Renderer object.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-shape/
+             *         A callout for annotations
+             *
+             * @type      {string}
+             * @default   square
+             * @since     4.1.2
+             * @apioption plotOptions.series.dataLabels.shape
+             */
+
+            /**
+             * Styles for the label. The default `color` setting is
+             * `"contrast"`, which is a pseudo color that Highcharts picks up
+             * and applies the maximum contrast to the underlying point item,
+             * for example the bar in a bar chart.
+             *
+             * The `textOutline` is a pseudo property that applies an outline of
+             * the given width with the given color, which by default is the
+             * maximum contrast to the text. So a bright text color will result
+             * in a black text outline for maximum readability on a mixed
+             * background. In some cases, especially with grayscale text, the
+             * text outline doesn't work well, in which cases it can be disabled
+             * by setting it to `"none"`. When `useHTML` is true, the
+             * `textOutline` will not be picked up. In this, case, the same
+             * effect can be acheived through the `text-shadow` CSS property.
+             *
+             * For some series types, where each point has an extent, like for
+             * example tree maps, the data label may overflow the point. There
+             * are two strategies for handling overflow. By default, the text
+             * will wrap to multiple lines. The other strategy is to set
+             * `style.textOverflow` to `ellipsis`, which will keep the text on
+             * one line plus it will break inside long words.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
+             *         Bold labels
+             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow/
+             *         Long labels truncated with an ellipsis in a pie
+             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap/
+             *         Long labels are wrapped in a pie
+             * @sample {highmaps} maps/demo/color-axis/
+             *         Bold labels
+             *
+             * @type      {Highcharts.CSSObject}
+             * @since     4.1.0
+             * @apioption plotOptions.series.dataLabels.style
              */
             style: {
                 /** @internal */
@@ -2185,15 +2578,88 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 /** @internal */
                 textOutline: '1px contrast'
             },
+
             /**
-             * above singular point
-             * @internal
+             * Options for a label text which should follow marker's shape.
+             * Border and background are disabled for a label that follows a
+             * path.
+             *
+             * **Note:** Only SVG-based renderer supports this option. Setting
+             * `useHTML` to true will disable this option.
+             *
+             * @declare   Highcharts.DataLabelsTextPathOptionsObject
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.textPath
+             */
+
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.textPath.attributes
+             */
+
+            /**
+             * Enable or disable `textPath` option for link's or marker's data
+             * labels.
+             *
+             * @type      {boolean}
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.textPath.enabled
+             */
+
+            /**
+             * Whether to
+             * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * to render the labels.
+             *
+             * @type      {boolean}
+             * @default   false
+             * @apioption plotOptions.series.dataLabels.useHTML
+             */
+
+            /**
+             * The vertical alignment of a data label. Can be one of `top`,
+             * `middle` or `bottom`. The default value depends on the data, for
+             * instance in a column chart, the label is above positive values
+             * and below negative values.
+             *
+             * @type  {Highcharts.VerticalAlignValue|null}
+             * @since 2.3.3
              */
             verticalAlign: 'bottom',
-            /** @internal */
+
+            /**
+             * The x position offset of the label relative to the point in
+             * pixels.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
+             *         Vertical and positioned
+             * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
+             *         Data labels inside the bar
+             */
             x: 0,
-            /** @internal */
+
+            /**
+             * The Z index of the data labels. The default Z index puts it above
+             * the series. Use a Z index of 2 to display it behind the series.
+             *
+             * @type      {number}
+             * @default   6
+             * @since     2.3.5
+             * @apioption plotOptions.series.dataLabels.z
+             */
+
+            /**
+             * The y position offset of the label relative to the point in
+             * pixels.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
+             *         Vertical and positioned
+             */
             y: 0
+
         } as Highcharts.DataLabelsOptionsObject,
 
         /**
@@ -2253,12 +2719,17 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          */
         softThreshold: true,
 
+        /**
+         * @declare Highcharts.SeriesStatesOptionsObject
+         */
         states: {
 
             /**
              * The normal state of a series, or for point items in column, pie
              * and similar series. Currently only used for setting animation
              * when returning to normal state from hover.
+             *
+             * @declare Highcharts.SeriesStatesNormalOptionsObject
              */
             normal: {
                 /**
@@ -2272,6 +2743,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             /**
              * Options for the hovered series. These settings override the
              * normal state options when a series is moused over or touched.
+             *
+             * @declare Highcharts.SeriesStatesHoverOptionsObject
              */
             hover: {
 
@@ -2297,6 +2770,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * Animation setting for hovering the graph in line-type series.
                  *
                  * @type    {boolean|Highcharts.AnimationOptionsObject}
+                 * @default {"duration": 50}
                  * @since   5.0.8
                  * @product highcharts highstock
                  */
@@ -2306,6 +2780,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                      * The duration of the hover animation in milliseconds. By
                      * default the hover state animates quickly in, and slowly
                      * back to normal.
+                     * @ignore-option
                      */
                     duration: 50
                 },
@@ -2322,7 +2797,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * @product   highcharts highstock
                  * @apioption plotOptions.series.states.hover.lineWidth
                  */
-
 
                 /**
                  * The additional line width for the graph of a hovered series.
@@ -2422,6 +2896,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              * @sample maps/plotoptions/series-allowpointselect/
              *         Allow point select demo
              *
+             * @declare   Highcharts.SeriesStatesSelectOptionsObject
              * @extends   plotOptions.series.states.hover
              * @excluding brightness
              */
@@ -2436,14 +2911,18 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              *
              * @sample highcharts/plotoptions/series-states-inactive-opacity
              *         Disabled inactive state by setting opacity
+             *
+             * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
                 /**
                  * The animation for entering the inactive state.
                  *
                  * @type    {boolean|Highcharts.AnimationOptionsObject}
+                 * @default {"duration": 50}
                  */
                 animation: {
+                    /** @ignore-option */
                     duration: 50
                 },
                 /**
@@ -2536,6 +3015,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @sample {highstock} highcharts/series/color-zones-simple/
          *         Color zones
          *
+         * @declare   Highcharts.SeriesZonesOptionsObject
          * @type      {Array<*>}
          * @since     4.1.0
          * @product   highcharts highstock
@@ -3470,6 +3950,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     ) {
                         hasUpdatedByKey = true;
                     }
+                } else {
+                    // Gather all points that are not matched
+                    pointsToAdd.push(pointOptions);
                 }
             }, this);
 
@@ -3496,6 +3979,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         oldData[i].update(point, false, null as any, false);
                     }
                 });
+                // Don't add new points since those configs are used above
+                pointsToAdd.length = 0;
 
             // Did not succeed in updating data
             } else {
@@ -3516,6 +4001,15 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             pointsToAdd.forEach(function (point): void {
                 this.addPoint(point, false, null as any, null as any, false);
             }, this);
+
+            if (
+                this.xIncrement === null &&
+                this.xData &&
+                this.xData.length
+            ) {
+                this.xIncrement = arrayMax(this.xData);
+                this.autoIncrement();
+            }
 
             return true;
         },
@@ -4014,7 +4508,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                      * Contains the point's index in the `Series.points` array.
                      *
                      * @name Highcharts.Point#index
-                     * @type {number|undefined}
+                     * @type {number}
                      * @readonly
                      */
                     point.index = cursor; // For faster access in Point.update

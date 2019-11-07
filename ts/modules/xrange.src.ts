@@ -225,8 +225,6 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         colorByPoint: true,
 
         dataLabels: {
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (string|undefined) {
                 var point = this.point,
                     amount = (point as Highcharts.XRangePoint).partialFill;
@@ -238,9 +236,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                     return correctFloat(amount * 100) + '%';
                 }
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 

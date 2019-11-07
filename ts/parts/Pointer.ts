@@ -371,9 +371,11 @@ Highcharts.Pointer.prototype = {
     getChartPosition: function (
         this: Highcharts.Pointer
     ): Highcharts.OffsetObject {
+        const { chart } = this;
+        const container = chart.scrollingContainer || chart.container;
         return (
             this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container))
+            (this.chartPosition = offset(container))
         );
     },
 
@@ -1005,7 +1007,10 @@ Highcharts.Pointer.prototype = {
                 } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis: Highcharts.Axis): void {
-                        if (axis.crosshair) {
+                        if (
+                            axis.crosshair &&
+                            (hoverPoint as any).series[axis.coll] === axis
+                        ) {
                             axis.drawCrosshair(null as any, hoverPoint);
                         }
                     });

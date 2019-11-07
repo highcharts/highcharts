@@ -652,7 +652,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.PointStateValue|""} [state]
      *        The new state, can be one of `''` (an empty string), `hover`,
      *        `select` or `inactive`.
      * @param {boolean} [move]
@@ -893,7 +893,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.SeriesStateValue|""} [state]
      *        Can be either `hover` or undefined to set to normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
