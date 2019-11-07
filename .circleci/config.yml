@@ -79,13 +79,13 @@ jobs:
      - run: node --version && npm --version
      - restore_cache:
          keys:
-           - v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
-           - v1-npm-deps-{{ .Branch }}
+           - v2-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+           - v2-npm-deps-{{ .Branch }}
      - run: npm install --quiet
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/node_modules
-         key: v1-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+         key: v2-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - <<: *persist_workspace
 
