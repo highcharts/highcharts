@@ -458,7 +458,7 @@ seriesType<Highcharts.SankeySeries>(
         /**
          * Can set `dataLabels` on all points which lay on the same level.
          *
-         * @type      {Highcharts.SeriesSankeyDataLabelsOptionsObject}
+         * @extends   plotOptions.sankey.dataLabels
          * @apioption plotOptions.sankey.levels.dataLabels
          */
 

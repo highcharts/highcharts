@@ -377,7 +377,7 @@ var sunburstOptions = {
     /**
      * Can set `dataLabels` on all points which lies on the same level.
      *
-     * @type      {Highcharts.SeriesSunburstDataLabelsOptionsObject}
+     * @extends   plotOptions.sunburst.dataLabels
      * @apioption plotOptions.sunburst.levels.dataLabels
      */
     /**
@@ -515,8 +515,8 @@ var sunburstOptions = {
     /**
      * Options for the button appearing when traversing down in a treemap.
      *
-     * @extends plotOptions.treemap.traverseUpButton
-     * @since 6.0.0
+     * @extends   plotOptions.treemap.traverseUpButton
+     * @since     6.0.0
      * @apioption plotOptions.sunburst.traverseUpButton
      */
     /**
@@ -818,7 +818,7 @@ var sunburstPoint = {
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.treemap.data.parent
+ * @apioption series.sunburst.data.parent
  */
 /**
   * Whether to display a slice offset from the center. When a sunburst point is
