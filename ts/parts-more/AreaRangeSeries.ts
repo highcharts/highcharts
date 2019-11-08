@@ -861,7 +861,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
  */
 
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
  */

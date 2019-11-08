@@ -281,13 +281,13 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 /**
                  * The opposite state of a hover for a single point node.
                  * Applied to all not connected nodes to the hovered one.
+                 *
+                 * @declare Highcharts.PointStatesInactiveOptionsObject
                  */
                 inactive: {
+
                     /**
                      * Opacity of inactive markers.
-                     *
-                     * @apioption plotOptions.series.marker.states.inactive.opacity
-                     * @type {number}
                      */
                     opacity: 0.3,
 
@@ -297,6 +297,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                      * @type {boolean|Highcharts.AnimationOptionsObject}
                      */
                     animation: {
+                        /** @internal */
                         duration: 50
                     }
                 }
@@ -306,6 +307,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
             /**
              * The opposite state of a hover for a single point link. Applied
              * to all links that are not comming from the hovered node.
+             *
+             * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
                 /**
@@ -319,6 +322,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                  * @type {boolean|Highcharts.AnimationOptionsObject}
                  */
                 animation: {
+                    /** @internal */
                     duration: 50
                 }
             }

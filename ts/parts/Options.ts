@@ -3306,6 +3306,8 @@ H.defaultOptions = {
     /**
      * Options for the tooltip that appears when the user hovers over a
      * series or point.
+     *
+     * @declare Highcharts.TooltipOptions
      */
     tooltip: {
 
@@ -3782,13 +3784,21 @@ H.defaultOptions = {
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /** @internal */
             millisecond: '%A, %b %e, %H:%M:%S.%L',
+            /** @internal */
             second: '%A, %b %e, %H:%M:%S',
+            /** @internal */
             minute: '%A, %b %e, %H:%M',
+            /** @internal */
             hour: '%A, %b %e, %H:%M',
+            /** @internal */
             day: '%A, %b %e, %Y',
+            /** @internal */
             week: 'Week from %A, %b %e, %Y',
+            /** @internal */
             month: '%B %Y',
+            /** @internal */
             year: '%Y'
         },
 
@@ -3961,29 +3971,18 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/tooltip/style/
          *         Greater padding, bold text
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor80}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'default',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '12px',
-            /**
-             * @ignore
-             */
+            /** @internal */
             pointerEvents: 'none',
-            /**
-             * @ignore
-             */
+            /** @internal */
             whiteSpace: 'nowrap'
         }
     },
@@ -4079,21 +4078,14 @@ H.defaultOptions = {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"cursor": "pointer", "color": "#999999", "fontSize": "10px"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'pointer',
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor40}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '9px'
         },
 

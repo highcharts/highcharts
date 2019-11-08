@@ -41,9 +41,8 @@ var options = {
      * on its features, see
      * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
      *
-     * @requires module:modules/accessibility
-     *
      * @since        5.0.0
+     * @requires     modules/accessibility
      * @optionparent accessibility
      */
     accessibility: {
@@ -69,9 +68,8 @@ var options = {
              * returns an automatic description of the chart based on
              * [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
              *
-             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-             * @default undefined
-             * @since   next
+             * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @since     next
              * @apioption accessibility.screenReaderSection.beforeChartFormatter
              */
 
@@ -99,9 +97,8 @@ var options = {
              * screen reader information region after the chart. Analogous to
              * [beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
              *
-             * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-             * @default undefined
-             * @since   next
+             * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
+             * @since     next
              * @apioption accessibility.screenReaderSection.afterChartFormatter
              */
 
@@ -120,6 +117,7 @@ var options = {
              * [dateFormat](/class-reference/Highcharts#dateFormat).
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
+             *
              * @since next
              */
             axisRangeDateFormat: '%Y-%m-%d %H:%M:%S'
@@ -137,7 +135,7 @@ var options = {
              * Whether or not to add series descriptions to charts with a single
              * series.
              *
-             * @since     next
+             * @since next
              */
             describeSingleSeries: false,
 
@@ -202,10 +200,11 @@ var options = {
          * @see [description](#accessibility.description)
          * @see [typeDescription](#accessibility.typeDescription)
          *
-         * @type      {string|Highcharts.HTMLDOMElement}
-         * @since     next
          * @sample highcharts/accessibility/accessible-line
          *         Accessible line chart
+         *
+         * @type  {string|Highcharts.HTMLDOMElement}
+         * @since next
          */
         linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line
 
@@ -217,10 +216,11 @@ var options = {
          * [keyboardNavigation.order](#accessibility.keyboardNavigation.order)
          * for the keyboard navigation to be usable.
          *
-         * @since 7.1.0
-         * @type {object}
          * @sample highcharts/accessibility/custom-component
          *         Custom accessibility component
+         *
+         * @type      {*}
+         * @since     7.1.0
          * @apioption accessibility.customComponents
          */
 
@@ -229,8 +229,8 @@ var options = {
          * detected. By default, a high contrast theme matching the high
          * contrast system system colors is used.
          *
-         * @since 7.1.3
-         * @type {object}
+         * @type      {*}
+         * @since     7.1.3
          * @apioption accessibility.highContrastTheme
          */
 
@@ -289,8 +289,7 @@ var options = {
         /**
          * Options for descriptions of individual data points.
          *
-         * @since next
-         * @type {object}
+         * @since     next
          * @apioption accessibility.point
          */
 
@@ -383,7 +382,8 @@ var options = {
         /**
          * Options for keyboard navigation.
          *
-         * @since 5.0.0
+         * @declare Highcharts.KeyboardNavigationOptionsObject
+         * @since   5.0.0
          */
         keyboardNavigation: {
 
@@ -401,7 +401,8 @@ var options = {
              * @sample highcharts/accessibility/custom-focus
              *         Custom focus ring
              *
-             * @since 6.0.3
+             * @declare Highcharts.KeyboardNavigationFocusBorderOptionsObject
+             * @since   6.0.3
              */
             focusBorder: {
 
@@ -429,15 +430,14 @@ var options = {
                  * `.highcharts-focus-border` class.
                  *
                  * @type    {Highcharts.CSSObject}
-                 * @default {"color": "#335cad", "lineWidth": 2, "borderRadius": 3}
                  * @since   6.0.3
                  */
                 style: {
-                    /** @ignore-option */
+                    /** @internal */
                     color: '${palette.highlightColor80}',
-                    /** @ignore-option */
+                    /** @internal */
                     lineWidth: 2,
-                    /** @ignore-option */
+                    /** @internal */
                     borderRadius: 3
                 },
 
@@ -456,8 +456,8 @@ var options = {
              * `rangeSelector`, `chartMenu`, `legend`. In addition, any custom
              * components can be added here.
              *
+             * @type  {Array<string>}
              * @since 7.1.0
-             * @type {Array<string>}
              */
             order: ['series', 'zoom', 'rangeSelector', 'legend', 'chartMenu'],
 
@@ -471,7 +471,8 @@ var options = {
             /**
              * Options for the keyboard navigation of data points and series.
              *
-             * @since next
+             * @declare Highcharts.KeyboardNavigationSeriesNavigationOptionsObject
+             * @since   next
              */
             seriesNavigation: {
                 /**
@@ -525,7 +526,8 @@ var options = {
          * applications, consider making snapshots of the data accessible, and
          * do the announcements in batches.
          *
-         * @since 7.1.0
+         * @declare Highcharts.AccessibilityAnnounceNewDataOptionsObject
+         * @since   7.1.0
          */
         announceNewData: {
             /**
@@ -545,10 +547,10 @@ var options = {
              * to the user. Return empty string to not announce anything.
              * Return `false` to use the default announcement format.
              *
-             * @type {Function}
-             * @default undefined
              * @sample highcharts/accessibility/custom-dynamic
              *         High priority live alerts
+             *
+             * @type      {Function}
              * @apioption accessibility.announceNewData.announcementFormatter
              */
 
@@ -581,21 +583,27 @@ var options = {
     },
 
     /**
-     * Provide a description of the data point, announced to screen readers.
+     * Accessibility options for a data point.
      *
-     * @type       {string}
-     * @since 7.1.0
-     * @default    undefined
-     * @apioption  series.line.data.accessibility.description
+     * @declare   Highcharts.PointAccessibilityOptionsObject
+     * @since     7.1.0
+     * @apioption series.line.data.accessibility
      */
 
     /**
-     * Accessibility options for a series. Requires the accessibility module.
+     * Provide a description of the data point, announced to screen readers.
      *
-     * @requires module:modules/accessibility
+     * @type      {string}
+     * @since     7.1.0
+     * @apioption series.line.data.accessibility.description
+     */
+
+    /**
+     * Accessibility options for a series.
      *
-     * @type       {object}
-     * @since 7.1.0
+     * @declare    Highcharts.SeriesAccessibilityOptionsObject
+     * @since      7.1.0
+     * @requires   modules/accessibility
      * @apioption  plotOptions.series.accessibility
      */
 
@@ -603,8 +611,7 @@ var options = {
      * Enable/disable accessibility functionality for a specific series.
      *
      * @type       {boolean}
-     * @since 7.1.0
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.enabled
      */
 
@@ -612,8 +619,7 @@ var options = {
      * Provide a description of the series, announced to screen readers.
      *
      * @type       {string}
-     * @since 7.1.0
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.description
      */
 
@@ -625,8 +631,7 @@ var options = {
      * @see [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter)
      *
      * @type      {Function}
-     * @since 7.1.0
-     * @default   undefined
+     * @since     7.1.0
      * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
      */
 
@@ -634,16 +639,15 @@ var options = {
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}
-     * @since 7.1.0
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
      */
 
     /**
      * Keyboard navigation for a series
      *
-     * @type       {object}
-     * @since 7.1.0
+     * @declare    Highcharts.SeriesAccessibilityKeyboardNavigationOptionsObject
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation
      */
 
@@ -659,9 +663,9 @@ var options = {
     /**
      * Accessibility options for an axis. Requires the accessibility module.
      *
-     * @requires module:modules/accessibility
-     * @since 7.1.0
-     * @type       {object}
+     * @declare    Highcharts.AxisAccessibilityOptionsObject
+     * @since      7.1.0
+     * @requires   modules/accessibility
      * @apioption  xAxis.accessibility
      */
 
@@ -671,18 +675,16 @@ var options = {
      * x values are not exposed to screen readers for the individual data points
      * by default.
      *
-     * @since 7.1.0
      * @type       {boolean}
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  xAxis.accessibility.enabled
      */
 
     /**
      * Description for an axis to expose to screen reader users.
      *
-     * @since 7.1.0
      * @type       {string}
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  xAxis.accessibility.description
      */
 
@@ -690,9 +692,8 @@ var options = {
      * Range description for an axis. Overrides the default range description.
      * Set to empty to disable range description for this axis.
      *
-     * @since 7.1.0
      * @type       {string}
-     * @default    undefined
+     * @since      7.1.0
      * @apioption  xAxis.accessibility.rangeDescription
      */
 
@@ -702,9 +703,8 @@ var options = {
          * Accessibility options for the legend. Requires the Accessibility
          * module.
          *
-         * @requires module:modules/accessibility
-         * @since 7.1.0
-         * @type {object}
+         * @since     7.1.0
+         * @requires  modules/accessibility
          * @apioption legend.accessibility
          */
         accessibility: {
@@ -712,7 +712,7 @@ var options = {
             /**
              * Enable accessibility support for the legend.
              *
-             * @since 7.1.0
+             * @since     7.1.0
              * @apioption legend.accessibility.enabled
              */
             enabled: true,
@@ -720,16 +720,17 @@ var options = {
             /**
              * Options for keyboard navigation for the legend.
              *
-             * @since 7.1.0
+             * @since     7.1.0
+             * @requires  modules/accessibility
              * @apioption legend.accessibility.keyboardNavigation
              */
             keyboardNavigation: {
                 /**
                  * Enable keyboard navigation for the legend.
                  *
-                 * @since 7.1.0
-                 * @see [accessibility.keyboardNavigation](
-                 *      #accessibility.keyboardNavigation.enabled)
+                 * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.enabled)
+                 *
+                 * @since     7.1.0
                  * @apioption legend.accessibility.keyboardNavigation.enabled
                  */
                 enabled: true
@@ -742,16 +743,15 @@ var options = {
          * Accessibility options for the exporting menu. Requires the
          * Accessibility module.
          *
-         * @requires module:modules/accessibility
-         * @since 7.1.0
-         * @type {object}
+         * @since     7.1.0
+         * @requires  modules/accessibility
          * @apioption exporting.accessibility
          */
         accessibility: {
             /**
              * Enable accessibility support for the export menu.
              *
-             * @since 7.1.0
+             * @since     7.1.0
              * @apioption exporting.accessibility.enabled
              */
             enabled: true

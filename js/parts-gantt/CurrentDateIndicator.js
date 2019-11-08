@@ -23,6 +23,7 @@ var defaultConfig = {
      * @sample gantt/current-date-indicator/object-config
      *         Current date indicator with custom options
      *
+     * @declare   Highcharts.AxisCurrentDateIndicatorOptions
      * @type      {boolean|*}
      * @default   true
      * @extends   xAxis.plotLines
@@ -33,6 +34,9 @@ var defaultConfig = {
     currentDateIndicator: true,
     color: '${palette.highlightColor20}',
     width: 2,
+    /**
+     * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
+     */
     label: {
         /**
          * Format of the label. This options is passed as the fist argument to
@@ -48,7 +52,11 @@ var defaultConfig = {
             return H.dateFormat(format, value);
         },
         rotation: 0,
+        /**
+         * @type {Highcharts.CSSObject}
+         */
         style: {
+            /** @internal */
             fontSize: '10px'
         }
     }

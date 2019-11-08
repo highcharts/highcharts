@@ -472,6 +472,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/marker/
          *         Black marker
          *
+         * @declare Highcharts.PointMarkerOptionsObject
          * @product highcharts highstock highmaps
          */
         marker: {
@@ -481,15 +482,14 @@ extend(ColorAxis.prototype, {
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
              * @type    {boolean|Highcharts.AnimationOptionsObject}
-             * @default {"duration": 50}
              * @product highcharts highstock highmaps
              */
             animation: {
-                /** @ignore */
+                /** @internal */
                 duration: 50
             },
 
-            /** @ignore */
+            /** @internal */
             width: 0.01,
 
             /**

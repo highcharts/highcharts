@@ -221,35 +221,6 @@ declare global {
  * @type {number|undefined}
  */
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * Callback that fires while dragging a point. The mouse event is passed in as
- * parameter. The original data can be accessed from `e.origin`, and the new
- * point values can be accessed from `e.newPoints`. If there is only a single
- * point being updated, it can be accessed from `e.newPoint` for simplicity, and
- * its ID can be accessed from `e.newPointId`. The this context is the point
- * being dragged. To stop the default drag action, return `false`.
- * @name Highcharts.PointEventsOptionsObject#drag
- * @type {Highcharts.PointDragCallbackFunction|undefined}
- * @requires modules/dragable-points
- *//**
- * Point specific options for the draggable-points module.
- * @name Highcharts.PointEventsOptionsObject#dragDrop
- * @type {Highcharts.SeriesLineDataDragDropOptions|Highcharts.SeriesXrangeDataDragDropOptions|undefined}
- *//**
- * Callback that fires when starting to drag a point. The mouse event object is
- * passed in as an argument. If a drag handle is used, `e.updateProp` is set to
- * the data property being dragged. The `this` context is the point.
- * @name Highcharts.PointEventsOptionsObject#dragStart
- * @type {Highcharts.PointDragStartCallbackFunction|undefined}
- *//**
- * Callback that fires when the point is dropped. The parameters passed are the
- * same as for drag. To stop the default drop action, return `false`.
- * @name Highcharts.PointEventsOptionsObject#drop
- * @type {Highcharts.PointDropCallbackFunction|undefined}
- */
-
 /**
  * Function callback to execute while series points are dragged. Return false to
  * stop the default drag action.
@@ -1246,6 +1217,7 @@ if (seriesTypes.xrange) {
  * @sample highcharts/dragdrop/drag-xrange
  *         Draggable X range series
  *
+ * @declare   Highcharts.SeriesDragDropOptionsObject
  * @since     6.2.0
  * @requires  modules/draggable-points
  * @apioption plotOptions.series.dragDrop
@@ -1269,7 +1241,7 @@ var defaultDragSensitivity = 2;
  * Style options for the guide box. The guide box has one state by default, the
  * `default` state.
  *
- * @type         {Highcharts.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>}
+ * @type         {Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>}
  * @since        6.2.0
  * @optionparent plotOptions.series.dragDrop.guideBox
  *
@@ -1281,7 +1253,8 @@ var defaultGuideBoxOptions: (
     /**
      * Style options for the guide box default state.
      *
-     * @since 6.2.0
+     * @declare Highcharts.DragDropGuideBoxOptionsObject
+     * @since   6.2.0
      */
     'default': {
         /**
@@ -1335,6 +1308,7 @@ var defaultGuideBoxOptions: (
 /**
  * Options for the drag handles.
  *
+ * @declare      Highcharts.DragDropHandleOptionsObject
  * @since        6.2.0
  * @optionparent plotOptions.series.dragDrop.dragHandle
  *
@@ -1584,6 +1558,7 @@ var defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * Point specific options for the draggable-points module. Overrides options on
  * `series.dragDrop`.
  *
+ * @declare   Highcharts.SeriesLineDataDragDropOptions
  * @extends   plotOptions.series.dragDrop
  * @since     6.2.0
  * @requires  modules/draggable-points
@@ -2256,7 +2231,7 @@ function dragMove(
  * @function Highcharts.Chart#setGuideBoxState
  * @param {string} state
  *        The state to set the guide box to.
- * @param {Highcharts.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>} [options]
+ * @param {Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>} [options]
  *        Additional overall guideBox options to consider.
  * @return {Highcharts.SVGElement}
  *         The modified guide box.

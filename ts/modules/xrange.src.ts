@@ -921,6 +921,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.XrangePointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data
  * @product   highcharts highstock gantt
@@ -968,6 +969,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
+ * @declare   Highcharts.XrangePointPartialFillOptionsObject
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill
  */

@@ -642,7 +642,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  *
  * @function Highcharts.Axis#setDataGrouping
  *
- * @param {boolean|Highcharts.PlotSeriesDataGroupingOptions} [dataGrouping]
+ * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
  *        A `dataGrouping` configuration. Use `false` to disable data grouping
  *        dynamically.
  *
@@ -700,6 +700,7 @@ export default dataGrouping;
  * the first point instance are copied over to the group point. This can be
  * altered through a custom `approximation` callback function.
  *
+ * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
  * @requires  modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
