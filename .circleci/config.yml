@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
 parameters:
-  reset_tests_workflow:
+  run_reset_tests:
     type: boolean
     default: false
   reset_tests:
@@ -165,7 +165,7 @@ jobs:
         default: ""
     steps:
       - <<: *load_workspace
-      - run: "npx gulp reset-visual-references << parameters.reset_tests >> --reference --browsercount 2 --bucket ${HIGHCHARTS_STAGING_CODE_BUCKET}"
+      - run: "npx gulp reset-visual-references --tests << parameters.reset_tests >> --reference --browsercount 2 --bucket ${HIGHCHARTS_STAGING_CODE_BUCKET}"
 
   visual_comparison_with_master:
     <<: *defaults
@@ -340,7 +340,7 @@ jobs:
 workflows:
   version: 2
   build_and_test:
-    unless: << pipeline.parameters.reset_tests_workflow >>
+    unless: << pipeline.parameters.run_reset_tests >>
     jobs:
       - checkout_and_install:
           filters:
@@ -447,7 +447,7 @@ workflows:
           context: highcharts-staging
 
   reset_visual_test_references:
-    when: << pipeline.parameters.reset_tests_workflow >>
+    when: << pipeline.parameters.run_reset_tests >>
     jobs:
       - checkout_and_install:
           filters:
