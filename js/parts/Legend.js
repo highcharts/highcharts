@@ -997,13 +997,8 @@ Highcharts.Legend.prototype = {
             currentPage = pageCount;
         }
         if (currentPage > 0) {
-<<<<<<< HEAD
-            if (animation !== undefined) {
-                setAnimation(animation, chart);
-=======
             if (typeof animation !== 'undefined') {
-                setAnimation(animation, this.chart);
->>>>>>> master
+                setAnimation(animation, chart);
             }
             this.nav.attr({
                 translateX: padding,
