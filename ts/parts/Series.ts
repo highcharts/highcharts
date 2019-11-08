@@ -1025,12 +1025,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @private
          */
         animation: {
-
-            /**
-             * @type      {number}
-             * @default   1000
-             * @apioption plotOptions.series.animation.duration
-             */
+            /** @internal */
             duration: 1000
         },
 
@@ -1580,6 +1575,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * also be attached to the series at run time using the
          * `Highcharts.addEvent` function.
          *
+         * @declare Highcharts.SeriesEventsOptionsObject
+         *
          * @private
          */
         events: {},
@@ -1721,36 +1718,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         marker: {
 
             /**
-             * The width of the point marker's outline.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
-             *         2px blue marker
-             */
-            lineWidth: 0,
-
-            /**
-             * The color of the point marker's outline. When `undefined`, the
-             * series' or point's color is used.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
-             *         Inherit from series color (undefined)
-             *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             */
-            lineColor: '${palette.backgroundColor}',
-
-            /**
-             * The fill color of the point marker. When `undefined`, the series'
-             * or point's color is used.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
-             *         White fill
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @apioption plotOptions.series.marker.fillColor
-             */
-
-            /**
              * Enable or disable the point marker. If `undefined`, the markers
              * are hidden when the data is dense, and shown for more widespread
              * data points.
@@ -1769,43 +1736,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              */
 
             /**
-             * Image markers only. Set the image width explicitly. When using
-             * this option, a `width` must also be set.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-width-height/
-             *         Fixed width and height
-             * @sample {highstock} highcharts/plotoptions/series-marker-width-height/
-             *         Fixed width and height
-             *
-             * @type      {number}
-             * @since     4.0.4
-             * @apioption plotOptions.series.marker.height
-             */
-
-            /**
-             * A predefined shape or symbol for the marker. When undefined, the
-             * symbol is pulled from options.symbols. Other possible values are
-             * "circle", "square", "diamond", "triangle" and "triangle-down".
-             *
-             * Additionally, the URL to a graphic can be given on this form:
-             * "url(graphic.png)". Note that for the image to be applied to
-             * exported charts, its URL needs to be accessible by the export
-             * server.
-             *
-             * Custom callbacks for symbol path generation can also be added to
-             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
-             * used by its method name, as shown in the demo.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/
-             *         Predefined, graphic and custom markers
-             * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
-             *         Predefined, graphic and custom markers
-             *
-             * @type      {string}
-             * @apioption plotOptions.series.marker.symbol
-             */
-
-            /**
              * The threshold for how dense the point markers should be before
              * they are hidden, given that `enabled` is not defined. The number
              * indicates the horizontal distance between the two closest points
@@ -1821,14 +1751,82 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             enabledThreshold: 2,
 
             /**
+             * The fill color of the point marker. When `undefined`, the series'
+             * or point's color is used.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
+             *         White fill
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption plotOptions.series.marker.fillColor
+             */
+
+            /**
+             * Image markers only. Set the image width explicitly. When using
+             * this option, a `width` must also be set.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-width-height/
+             *         Fixed width and height
+             * @sample {highstock} highcharts/plotoptions/series-marker-width-height/
+             *         Fixed width and height
+             *
+             * @type      {number}
+             * @since     4.0.4
+             * @apioption plotOptions.series.marker.height
+             */
+
+            /**
+             * The color of the point marker's outline. When `undefined`, the
+             * series' or point's color is used.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
+             *         Inherit from series color (undefined)
+             *
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             */
+            lineColor: '${palette.backgroundColor}',
+
+            /**
+             * The width of the point marker's outline.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
+             *         2px blue marker
+             */
+            lineWidth: 0,
+
+            /**
              * The radius of the point marker.
              *
              * @sample {highcharts} highcharts/plotoptions/series-marker-radius/
              *         Bigger markers
              *
-             * @default  {highstock} 2
+             * @default {highstock} 2
              */
             radius: 4,
+
+            /**
+             * A predefined shape or symbol for the marker. When undefined, the
+             * symbol is pulled from options.symbols. Other possible values are
+             * `'circle'`, `'square'`,`'diamond'`, `'triangle'` and
+             * `'triangle-down'`.
+             *
+             * Additionally, the URL to a graphic can be given on this form:
+             * `'url(graphic.png)'`. Note that for the image to be applied to
+             * exported charts, its URL needs to be accessible by the export
+             * server.
+             *
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+             * used by its method name, as shown in the demo.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/
+             *         Predefined, graphic and custom markers
+             * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
+             *         Predefined, graphic and custom markers
+             *
+             * @type      {string}
+             * @apioption plotOptions.series.marker.symbol
+             */
 
             /**
              * Image markers only. Set the image width explicitly. When using
@@ -1847,7 +1845,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             /**
              * States for a single point marker.
              *
-             * @declare Highcharts.PointMarkerStatesOptionsObject
+             * @declare Highcharts.PointStatesOptionsObject
              */
             states: {
 
@@ -1878,10 +1876,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                      * Animation when hovering over the marker.
                      *
                      * @type {boolean|Highcharts.AnimationOptionsObject}
-                     * @default {"duration": 50}
                      */
                     animation: {
-                        /** @ignore */
+                        /** @internal */
                         duration: 50
                     },
 
@@ -1975,17 +1972,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 select: {
 
                     /**
-                     * The radius of the point marker. In hover state, it
-                     * defaults to the normal state's radius + 2.
-                     *
-                     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/
-                     *         10px radius for selected points
-                     *
-                     * @type      {number}
-                     * @apioption plotOptions.series.marker.states.select.radius
-                     */
-
-                    /**
                      * Enable or disable visible feedback for selection.
                      *
                      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-enabled/
@@ -1994,6 +1980,17 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                      * @type      {boolean}
                      * @default   true
                      * @apioption plotOptions.series.marker.states.select.enabled
+                     */
+
+                    /**
+                     * The radius of the point marker. In hover state, it
+                     * defaults to the normal state's radius + 2.
+                     *
+                     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/
+                     *         10px radius for selected points
+                     *
+                     * @type      {number}
+                     * @apioption plotOptions.series.marker.states.select.radius
                      */
 
                     /**
@@ -2030,6 +2027,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
         /**
          * Properties for each single point.
+         *
+         * @declare Highcharts.PlotSeriesPointOptions
          *
          * @private
          */
@@ -2149,6 +2148,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             /**
              * Events for each single point.
+             *
+             * @declare Highcharts.PointEventsOptionsObject
              */
             events: {}
         },
@@ -2770,7 +2771,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * Animation setting for hovering the graph in line-type series.
                  *
                  * @type    {boolean|Highcharts.AnimationOptionsObject}
-                 * @default {"duration": 50}
                  * @since   5.0.8
                  * @product highcharts highstock
                  */
@@ -2780,7 +2780,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                      * The duration of the hover animation in milliseconds. By
                      * default the hover state animates quickly in, and slowly
                      * back to normal.
-                     * @ignore-option
+                     *
+                     * @internal
                      */
                     duration: 50
                 },
@@ -2844,6 +2845,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                  * @sample {highstock} highcharts/plotoptions/halo/
                  *         Halo options
                  *
+                 * @declare Highcharts.SeriesStatesHoverHaloOptionsObject
                  * @type    {null|*}
                  * @since   4.0
                  * @product highcharts highstock
@@ -2902,6 +2904,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              */
             select: {
                 animation: {
+                    /** @internal */
                     duration: 0
                 }
             },
@@ -2918,11 +2921,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 /**
                  * The animation for entering the inactive state.
                  *
-                 * @type    {boolean|Highcharts.AnimationOptionsObject}
-                 * @default {"duration": 50}
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
                  */
                 animation: {
-                    /** @ignore-option */
+                    /** @internal */
                     duration: 50
                 },
                 /**
@@ -2970,6 +2972,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * series. Properties are inherited from [tooltip](#tooltip), but only
          * the following properties can be defined on a series level.
          *
+         * @declare   Highcharts.SeriesTooltipOptionsObject
          * @since     2.3
          * @extends   tooltip
          * @excluding animation, backgroundColor, borderColor, borderRadius,
@@ -6717,6 +6720,16 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  *    }]
  *    ```
  *
+ * **Note:** In TypeScript you have to extend `PointOptionsObject` with an
+ * additional declaration to allow custom data options:
+ * ```ts
+ * declare module `highcharts` {
+ *   interface PointOptionsObject {
+ *     customProperty: string;
+ *   }
+ * }
+ * ```
+ *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
@@ -6728,6 +6741,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.PointOptionsObject
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @apioption series.line.data
  */
@@ -6778,7 +6792,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @type      {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
+ * @declare   Highcharts.DataLabelsOptionsObject
+ * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels
  */
@@ -6816,8 +6831,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  */
 
 /**
- * The name of the point as shown in the legend, tooltip, dataLabels
- * etc.
+ * The name of the point as shown in the legend, tooltip, dataLabels, etc.
  *
  * @see [xAxis.uniqueNames](#xAxis.uniqueNames)
  *
@@ -6855,7 +6869,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  */
 
 /**
- * Individual point events
+ * The individual point events.
  *
  * @extends   plotOptions.series.point.events
  * @product   highcharts highstock gantt
@@ -6863,6 +6877,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  */
 
 /**
+ * Options for the point markers of line-like series.
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker
  * @product   highcharts highstock
  * @apioption series.line.data.marker

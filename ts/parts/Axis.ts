@@ -964,6 +964,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          *
+         * @declare   Highcharts.AxisCrosshairOptions
          * @type      {boolean|*}
          * @default   false
          * @since     4.1
@@ -1019,6 +1020,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} highcharts/css/crosshair-label/
          *         Style mode
          *
+         * @declare   Highcharts.AxisCrosshairLabelOptions
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label
@@ -1216,10 +1218,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
          *
+         * @declare Highcharts.AxisDateTimeLabelFormatsOptions
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             millisecond: {
@@ -1227,6 +1231,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             second: {
@@ -1234,6 +1239,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             minute: {
@@ -1241,6 +1247,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             hour: {
@@ -1248,24 +1255,28 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             day: {
                 main: '%e. %b'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             week: {
                 main: '%e. %b'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             month: {
                 main: '%b \'%y'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             year: {

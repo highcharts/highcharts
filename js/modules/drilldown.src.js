@@ -257,12 +257,11 @@ defaultOptions.drilldown = {
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
      * @type    {boolean|Highcharts.AnimationOptionsObject}
-     * @default { "duration": 500 }
      * @since   3.0.8
      * @product highcharts highmaps
      */
     animation: {
-        /** @ignore-option */
+        /** @internal */
         duration: 500
     },
     /**

@@ -66,6 +66,7 @@ H.setOptions({
              * @sample highcharts/series-label/stock-chart
              *         Stock chart
              *
+             * @declare  Highcharts.SeriesLabelOptionsObject
              * @since    6.0.0
              * @product  highcharts highstock gantt
              * @requires modules/series-label
@@ -117,11 +118,10 @@ H.setOptions({
                  * Styles for the series label. The color defaults to the series
                  * color, or a contrast color if `onArea`.
                  *
-                 * @type    {Highcharts.CSSObject}
-                 * @default {"font-weight": "bold"}
+                 * @type {Highcharts.CSSObject}
                  */
                 style: {
-                    /** @ignore */
+                    /** @internal */
                     fontWeight: 'bold'
                 },
                 /**

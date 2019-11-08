@@ -481,7 +481,7 @@ seriesType<Highcharts.SankeySeries>(
         /**
          * Can set `states` on all nodes and points which lay on the same level.
          *
-         * @type      {Highcharts.PointStatesOptionsObject}
+         * @extends   plotOptions.sankey.states
          * @apioption plotOptions.sankey.levels.states
          */
 
@@ -536,6 +536,8 @@ seriesType<Highcharts.SankeySeries>(
             },
             /**
              * The opposite state of a hover for a single point node/link.
+             *
+             * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
                 /**
@@ -543,21 +545,23 @@ seriesType<Highcharts.SankeySeries>(
                  * inactive mode.
                  */
                 linkOpacity: 0.1,
+
                 /**
                  * Opacity of inactive markers.
                  *
                  * @type      {number}
-                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @apioption plotOptions.series.states.inactive.opacity
                  */
                 opacity: 0.1,
 
                 /**
                  * Animation when not hovering over the marker.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
-                 * @apioption plotOptions.series.marker.states.inactive.animation
+                 * @type      {boolean|Highcharts.AnimationOptionsObject}
+                 * @apioption plotOptions.series.states.inactive.animation
                  */
                 animation: {
+                    /** @internal */
                     duration: 50
                 }
             }
@@ -1244,6 +1248,7 @@ seriesType<Highcharts.SankeySeries>(
  * @sample highcharts/css/sankey/
  *         Sankey diagram with node options
  *
+ * @declare   Highcharts.SeriesSankeyNodesOptionsObject
  * @type      {Array<*>}
  * @product   highcharts
  * @apioption series.sankey.nodes
@@ -1294,8 +1299,7 @@ seriesType<Highcharts.SankeySeries>(
  * Individual data label for each node. The options are the same as
  * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
  *
- * @type    {Highcharts.SeriesSankeyDataLabelsOptionsObject|Array<Highcharts.SeriesSankeyDataLabelsOptionsObject>}
- *
+ * @extends   plotOptions.sankey.dataLabels
  * @apioption series.sankey.nodes.dataLabels
  */
 
@@ -1365,6 +1369,7 @@ seriesType<Highcharts.SankeySeries>(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.SeriesSankeyPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding dragDrop, drilldown, marker, x, y
