@@ -14,95 +14,45 @@ Highcharts.mapChart('container', {
     },
     plotOptions: {
         mappoint: {
-            tooltip: {
-                headerFormat: '',
-                pointFormat: '{point.name}'
-            },
             cluster: {
                 enabled: true,
                 minimumClusterSize: 2,
                 layoutAlgorithm: {
                     gridSize: 50,
                     type: function (
-                        processedXData,
-                        processedYData,
+                        dataX,
+                        dataY,
                         dataIndexes,
                         options
                     ) {
                         var series = this,
                             xAxis = series.xAxis,
                             yAxis = series.yAxis,
-                            group = {},
-                            offset = 5,
-                            distance, radius;
+                            grid = {},
+                            gridOffset = series.getGridOffset(),
+                            scaledGridSize, x, y, gridX, gridY, key, i;
 
-                        if (!series.markerClusterInfo) {
-                            group = series.markerClusterAlgorithms.grid.call(
-                                series,
-                                processedXData,
-                                processedYData,
-                                dataIndexes,
-                                options
-                            );
-                        } else {
-                            if (!series.baseClusters) {
-                                series.baseClusters = {
-                                    clusters: series.markerClusterInfo.clusters,
-                                    noise: series.markerClusterInfo.noise
-                                };
+                        scaledGridSize = series.getScaledGridSize(options);
+
+                        for (i = 0; i < dataX.length; i++) {
+                            x = xAxis.toPixels(dataX[i]) - gridOffset.plotLeft;
+                            y = yAxis.toPixels(dataY[i]) - gridOffset.plotTop;
+                            gridX = Math.floor(x / scaledGridSize);
+                            gridY = Math.floor(y / scaledGridSize);
+                            key = gridY + '-' + gridX;
+
+                            if (!grid[key]) {
+                                grid[key] = [];
                             }
 
-                            series.baseClusters.clusters.forEach(function (cluster) {
-                                cluster.pointsOutside = [];
-                                cluster.pointsInside = [];
-
-                                cluster.data.forEach(function (dataPoint) {
-
-                                    distance = Math.sqrt(
-                                        Math.pow(
-                                            xAxis.toPixels(dataPoint.x) -
-                                            xAxis.toPixels(cluster.x),
-                                            2
-                                        ) +
-                                        Math.pow(
-                                            yAxis.toPixels(dataPoint.y) -
-                                            yAxis.toPixels(cluster.y),
-                                            2
-                                        )
-                                    );
-
-                                    if (
-                                        cluster.clusterZone &&
-                                        cluster.clusterZone.marker &&
-                                        cluster.clusterZone.marker.radius
-                                    ) {
-                                        radius = cluster.clusterZone.marker.radius;
-                                    } else {
-                                        radius = series.options.marker.cluster.marker.radius || 15;
-                                    }
-
-                                    if (distance > radius + offset) {
-                                        cluster.pointsOutside.push(dataPoint);
-                                    } else {
-                                        cluster.pointsInside.push(dataPoint);
-                                    }
-                                });
-
-                                if (cluster.pointsInside.length) {
-                                    group[cluster.id] = cluster.pointsInside;
-                                }
-
-                                cluster.pointsOutside.forEach(function (p, i) {
-                                    group[cluster.id + '_noise' + i] = [p];
-                                });
-                            });
-
-                            series.baseClusters.noise.forEach(function (noise) {
-                                group[noise.id] = [noise];
+                            grid[key].push({
+                                dataIndex: dataIndexes[i],
+                                x: dataX[i],
+                                y: dataY[i]
                             });
                         }
 
-                        return group;
+                        return grid;
                     }
                 },
                 marker: {

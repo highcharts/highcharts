@@ -43,9 +43,10 @@ Highcharts.chart('container', {
             cluster: {
                 enabled: true,
                 minimumClusterSize: 3,
+                allowOverlap: false,
                 layoutAlgorithm: {
-                    type: 'kmeans',
-                    distance: 50
+                    type: 'grid',
+                    gridSize: 50
                 },
                 dataLabels: {
                     style: {

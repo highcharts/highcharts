@@ -17,6 +17,7 @@ var options = {
             },
             cluster: {
                 enabled: true,
+                animation: false,
                 layoutAlgorithm: {
                     type: 'grid'
                 },
@@ -106,7 +107,18 @@ QUnit.test('General marker-clusters', function (assert) {
         posY = 0,
         cluster,
         clusters,
-        result;
+        result,
+        resultparentIds,
+        resultPosition,
+        resultVisibility,
+        oldStateKeys,
+        id,
+        newPoint,
+        oldPoint,
+        newX,
+        oldX,
+        newY,
+        oldY;
 
     series.update({
         cluster: {
@@ -274,6 +286,79 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     chart.zoomOut();
+
+    assert.strictEqual(
+        series.markerClusterInfo.pointsState,
+        undefined,
+        'When animation is disabled pointsState should not be defined.'
+    );
+
+    // Animation tests.
+    series.update({
+        cluster: {
+            animation: {
+                duration: 1
+            }
+        }
+    });
+
+    series.markerClusterInfo.clusters[3].point.firePointEvent('click');
+
+    assert.deepEqual(
+        Object.keys(series.markerClusterInfo.pointsState),
+        ['oldState', 'newState'],
+        'When animation is enabled pointsState should have old and new state props.'
+    );
+
+    oldStateKeys = Object.keys(series.markerClusterInfo.pointsState.oldState);
+    resultparentIds = true;
+    resultPosition = true;
+    resultVisibility = true;
+
+    Highcharts.objectEach(series.markerClusterInfo.pointsState.newState, function (state) {
+        id = state.parentsId[0];
+
+        if (!oldStateKeys.includes(id)) {
+            resultparentIds = false;
+        }
+
+        newPoint = state.point;
+        oldPoint = series.markerClusterInfo.pointsState.oldState[id].point;
+
+        newX = newPoint.graphic.x + newPoint.graphic.radius;
+        oldX = oldPoint.plotX;
+        newY = newPoint.graphic.y + newPoint.graphic.radius;
+        oldY = oldPoint.plotY;
+
+        if (
+            newX && newY && oldX && oldY &&
+            (
+                newX.toFixed(4) !== oldX.toFixed(4) ||
+                newY.toFixed(4) !== oldY.toFixed(4)
+            )
+        ) {
+            resultPosition = false;
+        }
+
+        if (oldPoint.graphic && oldPoint.graphic.visibility !== 'hidden') {
+            resultVisibility = false;
+        }
+    });
+
+    assert.ok(
+        resultparentIds,
+        'New state parentIds values should be a part of old state object keys.'
+    );
+
+    assert.ok(
+        resultPosition,
+        'Points graphic should be translated to the parent point position before animation.'
+    );
+
+    assert.ok(
+        resultVisibility,
+        'Parent point should be hidden before animation.'
+    );
 });
 
 QUnit.test('Grid algorithm tests.', function (assert) {
