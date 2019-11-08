@@ -1,5 +1,4 @@
 var gaugeOptions = {
-
     chart: {
         type: 'solidgauge'
     },
@@ -20,6 +19,10 @@ var gaugeOptions = {
         }
     },
 
+    exporting: {
+        enabled: false
+    },
+
     tooltip: {
         enabled: false
     },
@@ -32,6 +35,7 @@ var gaugeOptions = {
             [0.9, '#DF5353'] // red
         ],
         lineWidth: 0,
+        tickWidth: 0,
         minorTickInterval: null,
         tickAmount: 2,
         title: {

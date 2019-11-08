@@ -9,15 +9,24 @@
  * */
 
 'use strict';
-import Highcharts from '../../parts/Globals.js';
+
+import H from '../../parts/Globals.js';
+var win = H.win,
+    doc = win.document,
+    merge = H.merge;
+
 import U from '../../parts/Utilities.js';
 var extend = U.extend,
     pick = U.pick;
 
-var win = Highcharts.win,
-    doc = win.document,
-    merge = Highcharts.merge,
-    addEvent = Highcharts.addEvent;
+import HTMLUtilities from './utils/htmlUtilities.js';
+var removeElement = HTMLUtilities.removeElement;
+
+import ChartUtilities from './utils/chartUtilities.js';
+var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+
+import EventProvider from './utils/EventProvider.js';
+import DOMElementProvider from './utils/DOMElementProvider.js';
 
 
 /** @lends Highcharts.AccessibilityComponent */
@@ -80,8 +89,10 @@ AccessibilityComponent.prototype = {
      */
     initBase: function (chart) {
         this.chart = chart;
-        this.eventRemovers = [];
-        this.domElements = [];
+
+        this.eventProvider = new EventProvider();
+        this.domElementProvider = new DOMElementProvider();
+
         // Key code enum for common keys
         this.keyCodes = {
             left: 37,
@@ -93,40 +104,28 @@ AccessibilityComponent.prototype = {
             esc: 27,
             tab: 9
         };
-        // CSS Styles for hiding elements visually but keeping them visible to
-        // AT.
-        this.hiddenStyle = {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            overflow: 'hidden'
-        };
     },
 
 
     /**
-     * Add an event to an element and keep track of it for destroy().
-     * Same args as Highcharts.addEvent
+     * Add an event to an element and keep track of it for later removal.
+     * See EventProvider for details.
      * @private
      */
     addEvent: function () {
-        var remover = Highcharts.addEvent.apply(Highcharts, arguments);
-        this.eventRemovers.push(remover);
-        return remover;
+        return this.eventProvider.addEvent.apply(this.eventProvider, arguments);
     },
 
 
     /**
-     * Create an element and keep track of it for destroy().
-     * Same args as document.createElement
+     * Create an element and keep track of it for later removal.
+     * See DOMElementProvider for details.
      * @private
      */
     createElement: function () {
-        var el = Highcharts.win.document.createElement.apply(
-            Highcharts.win.document, arguments
+        return this.domElementProvider.createElement.apply(
+            this.domElementProvider, arguments
         );
-        this.domElements.push(el);
-        return el;
     },
 
 
@@ -233,7 +232,7 @@ AccessibilityComponent.prototype = {
         proxy.className = 'highcharts-a11y-proxy-button';
 
         if (preClickEvent) {
-            addEvent(proxy, 'click', preClickEvent);
+            this.addEvent(proxy, 'click', preClickEvent);
         }
 
         this.setProxyButtonStyle(proxy, bBox);
@@ -242,8 +241,9 @@ AccessibilityComponent.prototype = {
         // Add to chart div and unhide from screen readers
         parentGroup.appendChild(proxy);
         if (!attrs['aria-hidden']) {
-            this.unhideElementFromScreenReaders(proxy);
+            unhideChartElementFromAT(this.chart, proxy);
         }
+
         return proxy;
     },
 
@@ -259,9 +259,11 @@ AccessibilityComponent.prototype = {
     getElementPosition: function (element) {
         var el = element.element,
             div = this.chart.renderTo;
+
         if (div && el && el.getBoundingClientRect) {
             var rectEl = el.getBoundingClientRect(),
                 rectDiv = div.getBoundingClientRect();
+
             return {
                 x: rectEl.left - rectDiv.left,
                 y: rectEl.top - rectDiv.top,
@@ -269,6 +271,7 @@ AccessibilityComponent.prototype = {
                 height: rectEl.bottom - rectEl.top
             };
         }
+
         return { x: 0, y: 0, width: 1, height: 1 };
     },
 
@@ -307,11 +310,13 @@ AccessibilityComponent.prototype = {
      */
     proxyMouseEventsForButton: function (source, button) {
         var component = this;
+
         [
             'click', 'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
         ].forEach(function (evtType) {
-            addEvent(button, evtType, function (e) {
+            component.addEvent(button, evtType, function (e) {
                 var clonedEvent = component.cloneMouseEvent(e);
+
                 if (source) {
                     if (clonedEvent) {
                         if (source.fireEvent) {
@@ -323,6 +328,7 @@ AccessibilityComponent.prototype = {
                         source['on' + evtType](e);
                     }
                 }
+
                 e.stopPropagation();
                 e.preventDefault();
             });
@@ -346,7 +352,7 @@ AccessibilityComponent.prototype = {
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(
                     e.type,
-                    e.type === 'click' || e.canBubble, // #10561
+                    e.bubbles, // #10561, #12161
                     e.cancelable,
                     e.view,
                     e.detail,
@@ -375,63 +381,13 @@ AccessibilityComponent.prototype = {
 
 
     /**
-     * Utility function for removing an element from the DOM.
-     * @private
-     * @param {Highcharts.HTMLDOMElement} element The element to remove.
-     */
-    removeElement: function (element) {
-        if (element && element.parentNode) {
-            element.parentNode.removeChild(element);
-        }
-    },
-
-
-    /**
-     * Unhide an element from screen readers. Also unhides parents, and hides
-     * siblings that are not explicitly unhidden.
-     * @private
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
-     *      The element to unhide
-     */
-    unhideElementFromScreenReaders: function (element) {
-        element.setAttribute('aria-hidden', false);
-        if (element === this.chart.renderTo || !element.parentNode) {
-            return;
-        }
-
-        // Hide siblings unless their hidden state is already explicitly set
-        Array.prototype.forEach.call(
-            element.parentNode.childNodes,
-            function (node) {
-                if (!node.hasAttribute('aria-hidden')) {
-                    node.setAttribute('aria-hidden', true);
-                }
-            }
-        );
-        // Repeat for parent
-        this.unhideElementFromScreenReaders(element.parentNode);
-    },
-
-
-    /**
-     * Should remove any event handlers added, as well as any DOM elements.
+     * Remove traces of the component.
      * @private
      */
     destroyBase: function () {
-        // Destroy proxy container
-        var chart = this.chart || {},
-            component = this;
-        this.removeElement(chart.a11yProxyContainer);
-
-        // Remove event callbacks and dom elements
-        this.eventRemovers.forEach(function (remover) {
-            remover();
-        });
-        this.domElements.forEach(function (element) {
-            component.removeElement(element);
-        });
-        this.eventRemovers = [];
-        this.domElements = [];
+        removeElement(this.chart.a11yProxyContainer);
+        this.domElementProvider.destroyCreatedElements();
+        this.eventProvider.removeAddedEvents();
     }
 };
 

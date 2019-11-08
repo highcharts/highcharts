@@ -19,11 +19,26 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
     },
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var index = point.index + 1,
+                    category = point.category,
+                    val = Math.abs(point.y),
+                    series = point.series.name;
+
+                return index + ', Age ' + category + ', ' + val + '%. ' + series + '.';
+            }
+        }
+    },
     xAxis: [{
         categories: categories,
         reversed: false,
         labels: {
             step: 1
+        },
+        accessibility: {
+            description: 'Age (male)'
         }
     }, { // mirror axis on right side
         opposite: true,
@@ -32,6 +47,9 @@ Highcharts.chart('container', {
         linkedTo: 0,
         labels: {
             step: 1
+        },
+        accessibility: {
+            description: 'Age (female)'
         }
     }],
     yAxis: {
@@ -42,6 +60,10 @@ Highcharts.chart('container', {
             formatter: function () {
                 return Math.abs(this.value) + '%';
             }
+        },
+        accessibility: {
+            description: 'Percentage population',
+            rangeDescription: 'Range: 0 to 5%'
         }
     },
 
@@ -54,7 +76,7 @@ Highcharts.chart('container', {
     tooltip: {
         formatter: function () {
             return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
-                'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1) + '%';
         }
     },
 

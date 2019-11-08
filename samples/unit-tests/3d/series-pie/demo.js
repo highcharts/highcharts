@@ -1,5 +1,8 @@
 QUnit.test('3d pie with zeroes (#4584)', function (assert) {
     var chart = $('#container').highcharts({
+        accessibility: {
+            enabled: false // A11y forces graphic for null points
+        },
         chart: {
             options3d: {
                 enabled: true,

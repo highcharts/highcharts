@@ -1330,7 +1330,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     padding: menuPadding + 'px',
                     pointerEvents: 'auto'
                 }, chart.fixedDiv || chart.container);
-            innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+            innerMenu = createElement('ul', { className: 'highcharts-menu' }, {
+                listStyle: 'none',
+                margin: 0,
+                padding: 0
+            }, menu);
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend({
@@ -1379,7 +1383,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         element = createElement('hr', null, null, innerMenu);
                     }
                     else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e) {
                                 if (e) { // IE7

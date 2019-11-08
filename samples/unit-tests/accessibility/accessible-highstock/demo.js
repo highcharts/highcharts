@@ -1,7 +1,9 @@
 QUnit.test('Basic stock chart', function (assert) {
     var chart = Highcharts.stockChart('container', {
         accessibility: {
-            pointDescriptionThreshold: 1
+            series: {
+                pointDescriptionEnabledThreshold: 1
+            }
         },
         series: [{
             data: [1, 2, 3, 4, 5, 6]
@@ -14,8 +16,8 @@ QUnit.test('Basic stock chart', function (assert) {
     );
 
     assert.ok(
-        chart.accessibility.components.infoRegion.screenReaderRegion
-            .getAttribute('aria-label'),
+        chart.accessibility.components.infoRegions.screenReaderSections.before
+            .element.getAttribute('aria-label'),
         'There be screen reader region'
     );
 });

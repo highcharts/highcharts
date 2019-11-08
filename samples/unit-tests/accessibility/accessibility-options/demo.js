@@ -1,3 +1,23 @@
+function getScreenReaderSectionEl(chart) {
+    var a11y = chart.accessibility,
+        components = a11y && a11y.components,
+        infoRegions = components && components.infoRegions;
+    return infoRegions && infoRegions.screenReaderSections.before.element;
+}
+
+function getPointAriaLabel(point) {
+    return point.graphic.element.getAttribute('aria-label');
+}
+
+function getSeriesAriaLabel(series) {
+    return series.markerGroup.element.getAttribute('aria-label');
+}
+
+function isPointAriaHidden(point) {
+    return point.graphic.element.getAttribute('aria-hidden') === 'true';
+}
+
+
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
@@ -8,92 +28,72 @@ QUnit.test('Accessibility disabled', function (assert) {
             }]
         }),
         point = chart.series[0].points[0],
-        infoRegion = chart.accessibility &&
-            chart.accessibility.components.infoRegion;
+        srSection = getScreenReaderSectionEl(chart);
+
+    assert.notOk(getPointAriaLabel(point), 'There be no ARIA on point');
 
     assert.notOk(
-        point.graphic.element.getAttribute('aria-label'),
-        'There be no ARIA on point'
-    );
-
-    assert.notOk(
-        infoRegion && infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        srSection && srSection.getAttribute('aria-label'),
         'There be no screen reader region'
     );
 });
 
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{}]
-        }),
-        infoRegion = chart.accessibility &&
-            chart.accessibility.components.infoRegion;
+        series: [{}]
+    });
 
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, empty series'
     );
 
     chart = Highcharts.chart('container', {});
-    infoRegion = chart.accessibility &&
-        chart.accessibility.components.infoRegion;
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, no series option'
     );
 
     chart = Highcharts.chart('container', {
         series: []
     });
-    infoRegion = chart.accessibility &&
-        chart.accessibility.components.infoRegion;
     assert.ok(
-        infoRegion.screenReaderRegion &&
-        infoRegion.screenReaderRegion.getAttribute('aria-label'),
+        getScreenReaderSectionEl(chart).getAttribute('aria-label'),
         'There be screen reader region, no series items'
     );
 });
 
-QUnit.test('pointDescriptionThreshold', function (assert) {
+QUnit.test('pointDescriptionEnabledThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionThreshold: 7,
-                describeSingleSeries: true
+                series: {
+                    pointDescriptionEnabledThreshold: 7,
+                    describeSingleSeries: true
+                }
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
             }]
         }),
-        point = chart.series[0].points[0];
+        series = chart.series[0];
 
-    assert.ok(
-        point.graphic.element.getAttribute('aria-label'),
-        'There be ARIA on point'
-    );
-    assert.ok(
-        chart.series[0].markerGroup.element.getAttribute('aria-label'),
-        'There be ARIA on series'
-    );
+    assert.ok(getPointAriaLabel(series.points[0]), 'There be ARIA on point');
+    assert.ok(getSeriesAriaLabel(series), 'There be ARIA on series');
 
-    point.series.addPoint(4);
+    series.addPoint(4);
 
-    assert.notOk(
-        point.series.points[6].graphic.element.getAttribute('aria-label'),
-        'There be no ARIA on point'
-    );
-    assert.ok(
-        chart.series[0].markerGroup.element.getAttribute('aria-label'),
-        'There be ARIA on series'
-    );
+    assert.notOk(getPointAriaLabel(series.points[6]), 'There be no ARIA on point');
+    assert.ok(getSeriesAriaLabel(series), 'There be ARIA on series');
 });
 
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointNavigationThreshold: 7
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        pointNavigationEnabledThreshold: 7
+                    }
+                }
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -101,17 +101,14 @@ QUnit.test('pointNavigationThreshold', function (assert) {
         }),
         point = chart.series[0].points[0];
 
-    assert.ok(
-        point.graphic.element.getAttribute('aria-label'),
-        'There be ARIA on point'
-    );
+    assert.ok(getPointAriaLabel(point), 'There be ARIA on point');
     assert.strictEqual(
         point.graphic.element.getAttribute('tabindex'),
         '-1',
         'There be tabindex on point'
     );
     assert.strictEqual(
-        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        getSeriesAriaLabel(chart.series[0]),
         '',
         'There be empty ARIA on series'
     );
@@ -119,11 +116,11 @@ QUnit.test('pointNavigationThreshold', function (assert) {
     point.series.addPoint(4);
 
     assert.ok(
-        point.series.points[6].graphic.element.getAttribute('aria-label'),
+        getPointAriaLabel(point.series.points[6]),
         'There still be ARIA on point'
     );
     assert.strictEqual(
-        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        getSeriesAriaLabel(chart.series[0]),
         '',
         'There still be ARIA on series'
     );
@@ -132,10 +129,12 @@ QUnit.test('pointNavigationThreshold', function (assert) {
 QUnit.test('seriesDescriptionFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
         accessibility: {
-            seriesDescriptionFormatter: function (series) {
-                return 'yo ' + series.name;
-            },
-            describeSingleSeries: true
+            series: {
+                descriptionFormatter: function (series) {
+                    return 'yo ' + series.name;
+                },
+                describeSingleSeries: true
+            }
         },
         series: [{
             data: [1, 2, 3, 4, 5, 6],
@@ -147,14 +146,12 @@ QUnit.test('seriesDescriptionFormatter', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.element.parentNode
-            .getAttribute('aria-label'),
+        getSeriesAriaLabel(chart.series[0]),
         'yo First',
         'Custom aria-label on series'
     );
     assert.strictEqual(
-        chart.series[1].points[0].graphic.element.parentNode
-            .getAttribute('aria-label'),
+        getSeriesAriaLabel(chart.series[1]),
         'yo Second with markup',
         'Custom aria-label, markup stripped away'
     );
@@ -163,8 +160,10 @@ QUnit.test('seriesDescriptionFormatter', function (assert) {
 QUnit.test('pointDescriptionFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return 'yo' + point.index;
+                point: {
+                    descriptionFormatter: function (point) {
+                        return 'yo' + point.index;
+                    }
                 }
             },
             series: [{
@@ -173,7 +172,7 @@ QUnit.test('pointDescriptionFormatter', function (assert) {
         }),
         point = chart.series[0].points[0];
 
-    assert.strictEqual(point.graphic.element.getAttribute('aria-label'), 'yo0', 'Custom aria-label on point');
+    assert.strictEqual(getPointAriaLabel(point), 'yo0', 'Custom aria-label on point');
 });
 
 QUnit.test('Chart description', function (assert) {
@@ -186,8 +185,7 @@ QUnit.test('Chart description', function (assert) {
         }]
     });
     assert.ok(
-        chart.accessibility.components.infoRegion.screenReaderRegion.innerHTML
-            .indexOf('Description: Yo.') > -1,
+        getScreenReaderSectionEl(chart).innerHTML.indexOf('Description: Yo.') > -1,
         'Chart description included in screen reader region'
     );
 });
@@ -221,4 +219,32 @@ QUnit.test('Landmark verbosity', function (assert) {
         }
     });
     assert.ok(numRegions(chart) > 1, 'More than one landmark');
+});
+
+QUnit.test('exposeAsGroupOnly', function (assert) {
+    const chart = Highcharts.chart('container', {
+            accessibility: {
+                series: {
+                    describeSingleSeries: false
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        }),
+        series = chart.series[0],
+        point = series.points[0];
+
+    assert.ok(getPointAriaLabel(point), 'Point has aria');
+    assert.notOk(isPointAriaHidden(point), 'Point is not aria hidden');
+    assert.notOk(getSeriesAriaLabel(chart.series[0]), 'Series does not have aria');
+
+    series.update({
+        accessibility: {
+            exposeAsGroupOnly: true
+        }
+    });
+
+    assert.ok(isPointAriaHidden(point), 'Point is aria hidden');
+    assert.ok(getSeriesAriaLabel(chart.series[0]), 'Series has aria');
 });

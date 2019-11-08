@@ -1792,9 +1792,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 ) as Highcharts.ExportingDivElement;
 
             innerMenu = createElement(
-                'div',
+                'ul',
                 { className: 'highcharts-menu' },
-                null as any,
+                {
+                    listStyle: 'none',
+                    margin: 0,
+                    padding: 0
+                },
                 menu
             );
 
@@ -1865,7 +1869,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         );
 
                     } else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e: PointerEvent): void {
                                 if (e) { // IE7
