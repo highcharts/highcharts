@@ -138,7 +138,7 @@ H.seriesType<Highcharts.ItemSeries>(
          *         Parliament chart
          * @type {undefined|number}
          */
-        endAngle: undefined,
+        endAngle: void 0,
         /**
          * In circular view, the size of the inner diameter of the circle. Can
          * be a percentage or pixel value. Percentages are relative to the outer
@@ -182,7 +182,7 @@ H.seriesType<Highcharts.ItemSeries>(
          *         Fixed row count
          * @type {number}
          */
-        rows: undefined,
+        rows: void 0,
         showInLegend: true,
         /**
          * In circular view, the start angle of the item layout, in degrees
@@ -192,7 +192,7 @@ H.seriesType<Highcharts.ItemSeries>(
          *         Parliament chart
          * @type {undefined|number}
          */
-        startAngle: undefined
+        startAngle: void 0
     },
     // Prototype members
     {
@@ -498,7 +498,7 @@ H.seriesType<Highcharts.ItemSeries>(
                             width: width,
                             height: height
                         };
-                        if (r !== undefined) {
+                        if (typeof r !== 'undefined') {
                             attr.r = r;
                         }
 

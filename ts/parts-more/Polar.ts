@@ -47,6 +47,7 @@ declare global {
             series: PolarSeries;
         }
         interface PolarSeries extends Series {
+            clipCircle: SVGElement;
             connectEnds?: boolean;
             data: Array<PolarPoint>;
             group: SVGElement;
@@ -398,13 +399,22 @@ H.addEvent(Series as any, 'afterTranslate', function (
 
                     if (chart.polar) {
                         circ = this.yAxis.center as any;
-                        this.group.clip(
-                            chart.renderer.clipCircle(
+
+                        if (!this.clipCircle) {
+                            this.clipCircle = chart.renderer.clipCircle(
                                 circ[0],
                                 circ[1],
                                 circ[2] / 2
-                            )
-                        );
+                            );
+                        } else {
+                            this.clipCircle.animate({
+                                x: circ[0],
+                                y: circ[1],
+                                r: circ[2] / 2
+                            });
+                        }
+
+                        this.group.clip(this.clipCircle);
                         this.setClip = H.noop as any;
                     }
                 })
@@ -453,8 +463,9 @@ wrap(seriesProto, 'getGraphPath', function (
          * @product   highcharts
          * @apioption plotOptions.series.connectEnds
          */
-        if (this.options.connectEnds !== false &&
-            firstValid !== undefined
+        if (
+            this.options.connectEnds !== false &&
+            typeof firstValid !== 'undefined'
         ) {
             this.connectEnds = true; // re-used in splines
             points.splice(points.length, 0, points[firstValid]);
@@ -464,7 +475,7 @@ wrap(seriesProto, 'getGraphPath', function (
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
         points.forEach(function (point: Highcharts.PolarPoint): void {
-            if (point.polarPlotY === undefined) {
+            if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
         });

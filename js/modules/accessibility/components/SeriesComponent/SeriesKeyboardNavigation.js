@@ -12,7 +12,8 @@
 
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    defined = U.defined;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../utils/EventProvider.js';
@@ -135,7 +136,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
         distance,
         i = series.points.length,
         hasUndefinedPosition = function (point) {
-            return point.plotX === undefined || point.plotY === undefined;
+            return !(defined(point.plotX) && defined(point.plotY));
         };
 
     if (hasUndefinedPosition(point)) {
@@ -160,7 +161,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
         }
     }
 
-    return minIx !== undefined && series.points[minIx];
+    return defined(minIx) ? series.points[minIx] : void 0;
 }
 
 
@@ -380,7 +381,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         minDistance = Infinity,
         bestPoint;
 
-    if (curPoint.plotX === undefined || curPoint.plotY === undefined) {
+    if (!defined(curPoint.plotX) || !defined(curPoint.plotY)) {
         return false;
     }
 
@@ -390,7 +391,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
         }
 
         series.points.forEach(function (point) {
-            if (point.plotY === undefined || point.plotX === undefined ||
+            if (!defined(point.plotY) || !defined(point.plotX) ||
                 point === curPoint) {
                 return;
             }

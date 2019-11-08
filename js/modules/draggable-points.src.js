@@ -1315,8 +1315,8 @@ function isPointMovable(point) {
  *         The normalized event.
  */
 function getNormalizedEvent(e, chart) {
-    return (e.chartX === undefined ||
-        e.chartY === undefined ?
+    return (typeof e.chartX === 'undefined' ||
+        typeof e.chartY === 'undefined' ?
         chart.pointer.normalize(e) :
         e);
 }
@@ -1750,7 +1750,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     // Find out if we only have one prop to update
     for (var key in updateProps) {
         if (Object.hasOwnProperty.call(updateProps, key)) {
-            if (updateSingleProp !== undefined) {
+            if (typeof updateSingleProp !== 'undefined') {
                 updateSingleProp = false;
                 break;
             }
@@ -1786,7 +1786,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
         if (!(updateSingleProp &&
             val.propValidate &&
             !val.propValidate(newVal, point)) &&
-            oldVal !== undefined) {
+            typeof oldVal !== 'undefined') {
             result[key] = newVal;
         }
     });

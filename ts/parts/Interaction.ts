@@ -204,7 +204,7 @@ TrackerMixin = H.TrackerMixin = {
                 var point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
-                if (point !== undefined) {
+                if (typeof point !== 'undefined') {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
@@ -1049,7 +1049,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.PointStateValue|""} [state]
      *        The new state, can be one of `''` (an empty string), `hover`,
      *        `select` or `inactive`.
      * @param {boolean} [move]
@@ -1059,7 +1059,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (
         this: Highcharts.Point,
-        state?: string,
+        state?: (Highcharts.PointStateValue|''),
         move?: boolean
     ): void {
         var point = this,
@@ -1416,14 +1416,14 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.SeriesStateValue|""} [state]
      *        Can be either `hover` or undefined to set to normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
      */
     setState: function (
         this: Highcharts.Series,
-        state?: string,
+        state?: (Highcharts.SeriesStateValue|''),
         inherit?: boolean
     ): void {
         var series = this,
@@ -1597,7 +1597,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             vis =
             series.options.visible =
             series.userOptions.visible =
-            vis === undefined ? !oldVisibility : vis; // #5618
+            typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
         showOrHide = vis ? 'show' : 'hide';
 
         // show or hide elements
@@ -1719,7 +1719,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         series.selected =
         selected =
         this.options.selected = (
-            selected === undefined ?
+            typeof selected === 'undefined' ?
                 !series.selected :
                 selected
         );

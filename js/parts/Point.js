@@ -406,6 +406,11 @@ import Highcharts from './Globals.js';
 * @type {number|undefined}
 */
 /**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+/**
  * Gets fired when the point is updated programmatically through the `.update()`
  * method.
  *
@@ -592,13 +597,13 @@ Highcharts.Point.prototype = {
         // have an x value, however the y value can be null to create a gap in
         // the series
         if ('name' in point &&
-            x === undefined &&
+            typeof x === 'undefined' &&
             series.xAxis &&
             series.xAxis.hasNames) {
             point.x = series.xAxis.nameToX(point);
         }
-        if (point.x === undefined && series) {
-            if (x === undefined) {
+        if (typeof point.x === 'undefined' && series) {
+            if (typeof x === 'undefined') {
                 point.x = series.autoIncrement(point);
             }
             else {
@@ -673,7 +678,7 @@ Highcharts.Point.prototype = {
             }
             while (j < valueCount) {
                 // Skip undefined positions for keys
-                if (!keys || options[i] !== undefined) {
+                if (!keys || typeof options[i] !== 'undefined') {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
@@ -716,8 +721,8 @@ Highcharts.Point.prototype = {
             (this.selected ? ' highcharts-point-select' : '') +
             (this.negative ? ' highcharts-negative' : '') +
             (this.isNull ? ' highcharts-null-point' : '') +
-            (this.colorIndex !== undefined ? ' highcharts-color-' +
-                this.colorIndex : '') +
+            (typeof this.colorIndex !== 'undefined' ?
+                ' highcharts-color-' + this.colorIndex : '') +
             (this.options.className ? ' ' + this.options.className : '') +
             (this.zone && this.zone.className ? ' ' +
                 this.zone.className.replace('highcharts-negative', '') : '');
@@ -727,7 +732,7 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.PlotSeriesZonesOptions}
+     * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
     getZone: function () {

@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Kacper Madej
- js_wrap: b
+name: Bullet graph
+authors:
+  - Kacper Madej
+js_wrap: b
+tags: []
+categories:
+  - Gauges
 ...

@@ -146,7 +146,8 @@ MapNavigation.prototype.updateEvents = function (options) {
     }
     // Add the mousewheel event
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
-        this.unbindMouseWheel = this.unbindMouseWheel || addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+        this.unbindMouseWheel = this.unbindMouseWheel || addEvent(chart.container, typeof doc.onmousewheel === 'undefined' ?
+            'DOMMouseScroll' : 'mousewheel', function (e) {
             chart.pointer.onContainerMouseWheel(e);
             // Issue #5011, returning false from non-jQuery event does
             // not prevent default
@@ -253,14 +254,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
         }
         // Zoom
-        if (howMuch !== undefined && !zoomOut) {
+        if (typeof howMuch !== 'undefined' && !zoomOut) {
             xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
             yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
             // Reset zoom
         }
         else {
-            xAxis.setExtremes(undefined, undefined, false);
-            yAxis.setExtremes(undefined, undefined, false);
+            xAxis.setExtremes(void 0, void 0, false);
+            yAxis.setExtremes(void 0, void 0, false);
         }
         // Prevent zooming until this one is finished animating
         /*

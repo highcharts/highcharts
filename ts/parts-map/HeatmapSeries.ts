@@ -226,20 +226,13 @@ seriesType<Highcharts.HeatmapSeries>(
         nullColor: '${palette.neutralColor3}',
 
         dataLabels: {
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (number|null) { // #2945
                 return (this.point as Highcharts.HeatmapPoint).value;
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             padding: 0 // #3837
         },
 

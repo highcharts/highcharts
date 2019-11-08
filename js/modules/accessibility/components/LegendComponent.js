@@ -26,7 +26,7 @@ function scrollLegendToItem(legend, itemIx) {
     var itemPage = legend.allItems[itemIx].pageIx,
         curPage = legend.currentPage;
 
-    if (itemPage !== undefined && itemPage + 1 !== curPage) {
+    if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
         legend.scroll(1 + itemPage - curPage);
     }
 }

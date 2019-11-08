@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var seriesType = H.seriesType, correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, isArray = U.isArray;
+var seriesType = H.seriesType;
 /**
  * The EMA series type.
  *
@@ -66,7 +66,7 @@ seriesType('ema', 'sma',
         var x = xVal[i - 1], yValue = index < 0 ?
             yVal[i - 1] :
             yVal[i - 1][index], y;
-        y = calEMA === undefined ?
+        y = typeof calEMA === 'undefined' ?
             SMA : correctFloat((yValue * EMApercent) +
             (calEMA * (1 - EMApercent)));
         return [x, y];
@@ -75,7 +75,7 @@ seriesType('ema', 'sma',
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, EMApercent = 2 / (period + 1), sum = 0, EMA = [], xData = [], yData = [], index = -1, SMA = 0, calEMA, EMAPoint, i;
         // Check period, if bigger than points length, skip
         if (yValLen < period) {
-            return false;
+            return;
         }
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {

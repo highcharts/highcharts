@@ -21,7 +21,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: RSIIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
             public options: RSIIndicatorOptions;
             public pointClass: typeof RSIIndicatorPoint;
             public points: Array<RSIIndicatorPoint>;
@@ -102,7 +102,7 @@ H.seriesType<Highcharts.RSIIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.RSIIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -128,7 +128,7 @@ H.seriesType<Highcharts.RSIIndicator>(
                 (xVal.length < period) || !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // Calculate changes for first N points

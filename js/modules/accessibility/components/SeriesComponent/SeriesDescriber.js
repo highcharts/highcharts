@@ -15,7 +15,8 @@ var numberFormat = H.numberFormat;
 
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber,
-    pick = U.pick;
+    pick = U.pick,
+    defined = U.defined;
 
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
@@ -29,7 +30,7 @@ var getAxisDescription = ChartUtilities.getAxisDescription,
 
 
 function findFirstPointWithGraphic(point) {
-    if (!point.series || !point.series.data || point.index === undefined) {
+    if (!point.series || !point.series.data || !defined(point.index)) {
         return null;
     }
 
@@ -270,7 +271,7 @@ function getPointA11yTimeDescription(point) {
 function getPointXDescription(point) {
     var timeDesc = getPointA11yTimeDescription(point),
         xAxis = point.series.xAxis || {},
-        pointCategory = xAxis.categories && point.category !== undefined &&
+        pointCategory = xAxis.categories && defined(point.category) &&
             ('' + point.category).replace('<br/>', ' '),
         canUseId = point.id && point.id.indexOf('highcharts-') < 0,
         fallback = 'x, ' + point.x;
@@ -318,7 +319,7 @@ function getPointValueDescription(point) {
             tooltipOptions.valuePrefix || '',
         valueSuffix = a11yPointOpts.valueSuffix ||
             tooltipOptions.valueSuffix || '',
-        fallbackKey = point.value !== undefined ? 'value' : 'y',
+        fallbackKey = typeof point.value !== 'undefined' ? 'value' : 'y',
         fallbackDesc = pointNumberToString(point, point[fallbackKey]);
 
     if (point.isNull) {
@@ -355,8 +356,7 @@ function defaultPointDescriptionFormatter(point) {
         ),
         xDesc = getPointXDescription(point),
         valueDesc = getPointValueDescription(point),
-        indexText = point.index !== undefined ?
-            (point.index + 1) + '. ' : '',
+        indexText = defined(point.index) ? (point.index + 1) + '. ' : '',
         xDescText = showXDescription ? xDesc + ', ' : '',
         valText = valueDesc + '.',
         userDescText = description ? ' ' + description : '',

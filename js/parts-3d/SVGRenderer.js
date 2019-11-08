@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+var animObject = U.animObject, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var animObject = H.animObject, charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -263,7 +263,7 @@ cuboidMethods = H.merge(element3dMethods, {
         if (args.shapeArgs || defined(args.x)) {
             return this.singleSetterForParts('d', null, this.renderer[this.pathType + 'Path'](args.shapeArgs || args));
         }
-        return SVGElement.prototype.attr.call(this, args, undefined, complete, continueAnimation);
+        return SVGElement.prototype.attr.call(this, args, void 0, complete, continueAnimation);
     },
     animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {

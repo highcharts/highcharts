@@ -55,23 +55,14 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     dataLabels: {
-        /** @ignore-option */
         borderColor: '${palette.neutralColor20}',
-        /** @ignore-option */
         borderRadius: 3,
-        /** @ignore-option */
         borderWidth: 1,
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'top',
-        /** @ignore-option */
         y: 15,
-        /** @ignore-option */
         zIndex: 2
     },
     /**

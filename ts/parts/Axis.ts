@@ -690,8 +690,10 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     arrayMax,
     arrayMin,
+    correctFloat,
     defined,
     destroyObjectProperties,
     extend,
@@ -709,9 +711,7 @@ import './Options.js';
 import './Tick.js';
 
 var addEvent = H.addEvent,
-    animObject = H.animObject,
     color = H.color,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
     fireEvent = H.fireEvent,
@@ -3958,7 +3958,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             chart.inverted &&
             !axis.isZAxis &&
             isXAxis &&
-            axis.reversed === undefined
+            typeof axis.reversed === 'undefined'
         ) {
             axis.reversed = true;
         }
@@ -4061,7 +4061,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
             // enable it by a parameter.
-            while (i-- && ret === undefined) {
+            while (i-- && typeof ret === 'undefined') {
                 multi = Math.pow(numSymMagnitude, i + 1);
                 if (
                     // Only accept a numeric symbol when the distance is more
@@ -4079,11 +4079,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         }
 
-        if (ret === undefined) {
+        if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // add thousands separators
                 ret = H.numberFormat(value, -1);
             } else { // small numbers
-                ret = H.numberFormat(value, -1, undefined, ''); // #2466
+                ret = H.numberFormat(value, -1, void 0, ''); // #2466
             }
         }
 
@@ -4288,7 +4288,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         0
                     )
                 ) :
-                undefined as any;
+                void 0 as any;
         }
 
         return returnValue;
@@ -4644,7 +4644,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             minRange;
 
         // Set the automatic minimum range based on the closest point distance
-        if (axis.isXAxis && axis.minRange === undefined && !axis.isLog) {
+        if (
+            axis.isXAxis &&
+            typeof axis.minRange === 'undefined' &&
+            !axis.isLog
+        ) {
 
             if (defined(options.min) || defined(options.max)) {
                 axis.minRange = null; // don't do this again
@@ -4660,7 +4664,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     for (i = loopLength; i > 0; i--) {
                         distance = xData[i] - xData[i - 1];
                         if (
-                            closestDataRange === undefined ||
+                            typeof closestDataRange === 'undefined' ||
                             distance < closestDataRange
                         ) {
                             closestDataRange = distance;
@@ -4789,7 +4793,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Write the last point's name to the names array
-        if (x !== undefined) {
+        if (typeof x !== 'undefined') {
             this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
             (this.names as any).keys[point.name as any] = x;
@@ -4848,10 +4852,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     if (
                         point &&
                         point.options &&
-                        point.name !== undefined // #9562
+                        typeof point.name !== 'undefined' // #9562
                     ) {
                         x = axis.nameToX(point);
-                        if (x !== undefined && x !== point.x) {
+                        if (typeof x !== 'undefined' && x !== point.x) {
                             point.x = x;
                             (series.xData as any)[i] = x;
                         }
@@ -5193,8 +5197,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // get tickInterval
         if (
             axis.min === axis.max ||
-            axis.min === undefined ||
-            axis.max === undefined
+            typeof axis.min === 'undefined' ||
+            typeof axis.max === 'undefined'
         ) {
             axis.tickInterval = 1;
 
@@ -5213,7 +5217,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 this.tickAmount ?
                     (((axis.max as any) - (axis.min as any)) /
                     Math.max(this.tickAmount - 1, 1)) :
-                    undefined,
+                    void 0,
                 // For categoried axis, 1 is default, for linear axis use
                 // tickPix
                 categories ?
@@ -5656,7 +5660,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         tickPositions.splice(i, 1);
                     }
                 }
-                axis.finalTickAmt = undefined;
+                axis.finalTickAmt = void 0;
             }
         }
     },
@@ -5869,14 +5873,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 // In full view, displaying the reset zoom button is not
                 // required
-                this.displayBtn = newMin !== undefined || newMax !== undefined;
+                this.displayBtn = (
+                    typeof newMin !== 'undefined' ||
+                    typeof newMax !== 'undefined'
+                );
 
                 // Do it
                 this.setExtremes(
                     newMin,
                     newMax,
                     false,
-                    undefined,
+                    void 0,
                     { trigger: 'zoom' }
                 );
             }
@@ -7003,7 +7010,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // alternate grid color
             if (alternateGridColor) {
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    to = tickPositions[i + 1] !== undefined ?
+                    to = typeof tickPositions[i + 1] !== 'undefined' ?
                         tickPositions[i + 1] + tickmarkOffset :
                         (axis.max as any) - tickmarkOffset;
 

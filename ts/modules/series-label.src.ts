@@ -103,6 +103,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     extend,
     isNumber,
     pick,
@@ -1040,7 +1041,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                             isNew ?
                                 // Default initial animation to a fraction of
                                 // the series animation (#9396)
-                                (H.animObject(
+                                (animObject(
                                     series.options.animation as any
                                 ).duration as any) * 0.2 :
                                 // On updating, default to the general chart
@@ -1087,7 +1088,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 function drawLabels(this: Highcharts.Chart, e: Event): void {
 
     var chart = this,
-        delay = H.animObject(chart.renderer.globalAnimation).duration;
+        delay = animObject(chart.renderer.globalAnimation).duration;
 
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
@@ -1126,13 +1127,13 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
             if (e.type === 'load') {
                 delay = Math.max(
                     delay as any,
-                    H.animObject(series.options.animation).duration as any
+                    animObject(series.options.animation).duration as any
                 );
             }
 
             // Keep the position updated to the axis while redrawing
             if (closest) {
-                if (closest[0].plotX !== undefined) {
+                if (typeof closest[0].plotX !== 'undefined') {
                     label.animate({
                         x: closest[0].plotX + closest[1],
                         y: closest[0].plotY + closest[2]

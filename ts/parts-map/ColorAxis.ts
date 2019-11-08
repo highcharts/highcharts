@@ -513,10 +513,10 @@ extend(ColorAxis.prototype, {
         labels: {
 
             /**
-             * How to handle overflowing labels on horizontal color axis.
-             * Can be undefined or "justify". If "justify", labels will not
-             * render outside the legend area. If there is room to move it,
-             * it will be aligned to the edge, else it will be removed.
+             * How to handle overflowing labels on horizontal color axis. If set
+             * to `"allow"`, it will not be aligned at all. By default it
+             * `"justify"` labels inside the chart area. If there is room to
+             * move it, it will be aligned to the edge, else it will be removed.
              *
              * @validvalue ["allow", "justify"]
              * @product    highcharts highstock highmaps
@@ -927,8 +927,8 @@ extend(ColorAxis.prototype, {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)
                 ) {
 
                     color = dataClass.color as any;
@@ -1165,7 +1165,7 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = cSeries.dataMax;
             }
 
-            if (cSeries.minColorValue !== undefined) {
+            if (typeof cSeries.minColorValue !== 'undefined') {
                 this.dataMin =
                     Math.min(this.dataMin, cSeries.minColorValue as any);
                 this.dataMax =
@@ -1388,19 +1388,19 @@ extend(ColorAxis.prototype, {
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
                 name = '';
-                if (from === undefined) {
+                if (typeof from === 'undefined') {
                     name = '< ';
-                } else if (to === undefined) {
+                } else if (typeof to === 'undefined') {
                     name = '> ';
                 }
-                if (from !== undefined) {
+                if (typeof from !== 'undefined') {
                     name += H.numberFormat(from, valueDecimals) +
                         valueSuffix;
                 }
-                if (from !== undefined && to !== undefined) {
+                if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
-                if (to !== undefined) {
+                if (typeof to !== 'undefined') {
                     name += H.numberFormat(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items

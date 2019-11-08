@@ -126,6 +126,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     defined,
     extend,
     isNumber,
@@ -137,8 +138,7 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var animObject = H.animObject,
-    color = H.color,
+var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -478,15 +478,8 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         dataLabels: {
-            /**
-             * @internal
-             */
             align: null,
-            /**
-             * @internal
-             */
             verticalAlign: null,
-            /** @internal */
             y: null
         },
 
@@ -658,7 +651,10 @@ seriesType<Highcharts.ColumnSeries>(
                     ) { // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
-                            if (stackGroups[stackKey as any] === undefined) {
+                            if (
+                                typeof stackGroups[stackKey as any] ===
+                                'undefined'
+                            ) {
                                 stackGroups[stackKey as any] = columnCount++;
                             }
                             columnIndex = stackGroups[stackKey as any];
@@ -1006,7 +1002,7 @@ seriesType<Highcharts.ColumnSeries>(
                 brightness = stateOptions.brightness;
                 fill =
                     stateOptions.color || (
-                        brightness !== undefined &&
+                        typeof brightness !== 'undefined' &&
                         color(fill as any)
                             .brighten(stateOptions.brightness as any)
                             .get()

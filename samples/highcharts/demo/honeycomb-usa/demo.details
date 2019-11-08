@@ -1,7 +1,12 @@
 ---
- name: Highcharts Demo
- authors:
-   - Mustapha Mekhatria
- js_wrap: b
- alt_text: Highcharts honeycomb tile map JavaScript example graph visualizes US population geographically by state with color chart.
+name: 'Tile map, honeycomb'
+authors:
+  - Mustapha Mekhatria
+js_wrap: b
+alt_text: >-
+  Highcharts honeycomb tile map JavaScript example graph visualizes US
+  population geographically by state with color chart.
+tags: []
+categories:
+  - Heat and tree maps
 ...

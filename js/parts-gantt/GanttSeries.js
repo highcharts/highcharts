@@ -41,7 +41,6 @@ seriesType('gantt', 'xrange'
     // options - default options merged with parent
     grouping: false,
     dataLabels: {
-        /** @ignore-option */
         enabled: true
     },
     tooltip: {
@@ -167,7 +166,7 @@ seriesType('gantt', 'xrange'
          * @private
          */
         function addIfExists(prop, val) {
-            if (val !== undefined) {
+            if (typeof val !== 'undefined') {
                 options[prop] = val;
             }
         }

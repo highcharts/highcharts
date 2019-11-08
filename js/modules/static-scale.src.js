@@ -52,7 +52,7 @@ Chart.prototype.adjustHeight = function () {
                 if (Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
-                    chart.setSize(undefined, chart.chartHeight + diff, animate);
+                    chart.setSize(void 0, chart.chartHeight + diff, animate);
                 }
                 // Make sure clip rects have the right height before initial
                 // animation.

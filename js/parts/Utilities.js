@@ -815,6 +815,18 @@ H.merge = function () {
     return ret;
 };
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value, min, max) {
+    return value > min ? value < max ? value : max : min;
+}
+/**
  * Shortcut for parseInt
  *
  * @private
@@ -1475,7 +1487,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
     }
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
+    retInterval = correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
     return retInterval;
 };
 /**
@@ -1616,9 +1628,9 @@ function discardElement(element) {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num, prec) {
+function correctFloat(num, prec) {
     return parseFloat(num.toPrecision(prec || 14));
-};
+}
 /**
  * Set the global animation to either a given value, or fall back to the given
  * chart's animation option.
@@ -1653,11 +1665,11 @@ function setAnimation(animation, chart) {
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (animation) {
+function animObject(animation) {
     return isObject(animation) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
-};
+}
 /**
  * The time unit lookup
  *
@@ -2504,9 +2516,12 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
+    clamp: clamp,
+    correctFloat: correctFloat,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,

@@ -1,6 +1,8 @@
 ---
- name: Gantt Chart with Multiple Projects
- js_wrap: b
- authors:
-   - Lars Cabrera
+name: Gantt Chart with Multiple Projects
+js_wrap: b
+authors:
+  - Lars Cabrera
+tags: []
+categories: []
 ...

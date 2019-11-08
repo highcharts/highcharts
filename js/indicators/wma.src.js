@@ -80,7 +80,7 @@ seriesType('wma', 'sma',
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, range = 1, xValue = xVal[0], yValue = yVal[0], WMA = [], xData = [], yData = [], index = -1, i, points, WMAPoint;
         if (xVal.length < period) {
-            return false;
+            return;
         }
         // Switch index for OHLC / Candlestick
         if (isArray(yVal[0])) {

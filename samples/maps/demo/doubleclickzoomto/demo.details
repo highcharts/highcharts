@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- requiresManualTesting: true
- js_wrap: b
+name: Zoom to area by double click
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+tags: []
+categories:
+  - Dynamic
 ...

@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Percentage area
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Area charts
 ...

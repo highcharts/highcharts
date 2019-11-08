@@ -104,6 +104,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     defined,
     isNumber,
     isObject,
@@ -113,7 +114,6 @@ const {
 var addEvent = H.addEvent,
     color = H.color,
     columnType = H.seriesTypes.column,
-    correctFloat = H.correctFloat,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -225,8 +225,6 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         colorByPoint: true,
 
         dataLabels: {
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (string|undefined) {
                 var point = this.point,
                     amount = (point as Highcharts.XRangePoint).partialFill;
@@ -238,9 +236,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                     return correctFloat(amount * 100) + '%';
                 }
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
@@ -369,10 +365,10 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 ): boolean {
                     return point.id === id;
                 });
-                pointIndex = point ? point.index : undefined;
+                pointIndex = point ? point.index : void 0;
             }
 
-            if (pointIndex === undefined) {
+            if (typeof pointIndex === 'undefined') {
                 point = H.find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
@@ -383,7 +379,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                         oldData[pointIndex as any].touched)
                     );
                 });
-                pointIndex = point ? point.index : undefined;
+                pointIndex = point ? point.index : void 0;
             }
 
             // Reduce pointIndex if data is cropped
@@ -610,7 +606,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                     (seriesOpts.states as any)[pointState || 'normal'] ||
                     {}
                 ),
-                pointStateVerb = pointState === undefined ? 'attr' : verb,
+                pointStateVerb = typeof pointState === 'undefined' ?
+                    'attr' : verb,
                 pointAttr = series.pointAttribs(point, pointState),
                 animation = pick(
                     (series.chart.options.chart as any).animation,

@@ -204,7 +204,7 @@ seriesType('ohlc', 'column'
         var series = this, points = series.points, chart = series.chart;
         points.forEach(function (point) {
             var plotOpen, plotClose, crispCorr, halfWidth, path, graphic = point.graphic, crispX, isNew = !graphic;
-            if (point.plotY !== undefined) {
+            if (typeof point.plotY !== 'undefined') {
                 // Create and/or update the graphic
                 if (!graphic) {
                     point.graphic = graphic = chart.renderer.path()

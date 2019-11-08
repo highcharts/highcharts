@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
@@ -183,21 +183,15 @@ seriesType('treemap', 'scatter'
      * @since 4.1.0
      */
     dataLabels: {
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             var point = this && this.point ?
                 this.point :
                 {}, name = isString(point.name) ? point.name : '';
             return name;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     tooltip: {
@@ -422,7 +416,7 @@ seriesType('treemap', 'scatter'
      * [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels) for
      * possible values.
      *
-     * @type      {Highcharts.DataLabelsOptionsObject}
+     * @extends   plotOptions.treemap.dataLabels
      * @since     4.1.0
      * @product   highcharts
      * @apioption plotOptions.treemap.levels.dataLabels
@@ -546,7 +540,7 @@ seriesType('treemap', 'scatter'
     getListOfParents: function (data, existingIds) {
         var arr = isArray(data) ? data : [], ids = isArray(existingIds) ? existingIds : [], listOfParents = arr.reduce(function (prev, curr, i) {
             var parent = pick(curr.parent, '');
-            if (prev[parent] === undefined) {
+            if (typeof prev[parent] === 'undefined') {
                 prev[parent] = [];
             }
             prev[parent].push(i);
@@ -847,7 +841,7 @@ seriesType('treemap', 'scatter'
                     x: pX,
                     y: pY,
                     width: pW,
-                    height: H.correctFloat(pH)
+                    height: correctFloat(pH)
                 });
                 if (group.direction === 0) {
                     plot.y = plot.y + pH;
@@ -1437,3 +1431,86 @@ seriesType('treemap', 'scatter'
     }
     /* eslint-enable no-invalid-this, valid-jsdoc */
 });
+/**
+ * A `treemap` series. If the [type](#series.treemap.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.treemap
+ * @excluding dataParser, dataURL, stack
+ * @product   highcharts
+ * @requires  modules/treemap
+ * @apioption series.treemap
+ */
+/**
+ * An array of data points for the series. For the `treemap` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
+ *
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.treemap.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *      data: [{
+ *        value: 9,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *      }, {
+ *        value: 6,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *      }]
+ *    ```
+ *
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<number|null|*>}
+ * @extends   series.heatmap.data
+ * @excluding x, y
+ * @product   highcharts
+ * @apioption series.treemap.data
+ */
+/**
+ * The value of the point, resulting in a relative area of the point
+ * in the treemap.
+ *
+ * @type      {number|null}
+ * @product   highcharts
+ * @apioption series.treemap.data.value
+ */
+/**
+ * Serves a purpose only if a `colorAxis` object is defined in the chart
+ * options. This value will decide which color the point gets from the
+ * scale of the colorAxis.
+ *
+ * @type      {number}
+ * @since     4.1.0
+ * @product   highcharts
+ * @apioption series.treemap.data.colorValue
+ */
+/**
+ * Only for treemap. Use this option to build a tree structure. The
+ * value should be the id of the point which is the parent. If no points
+ * has a matching id, or this option is undefined, then the parent will
+ * be set to the root.
+ *
+ * @sample {highcharts} highcharts/point/parent/
+ *         Point parent
+ * @sample {highcharts} highcharts/demo/treemap-with-levels/
+ *         Example where parent id is not matching
+ *
+ * @type      {string}
+ * @since     4.1.0
+ * @product   highcharts
+ * @apioption series.treemap.data.parent
+ */
+''; // adds doclets above to transpiled file

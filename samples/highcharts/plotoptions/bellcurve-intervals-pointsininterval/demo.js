@@ -74,7 +74,7 @@ Highcharts.chart('container', {
     }],
 
     series: [{
-        name: 'Bell curve asd',
+        name: 'Bell curve',
         type: 'bellcurve',
         xAxis: 1,
         yAxis: 1,

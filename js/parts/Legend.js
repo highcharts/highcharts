@@ -589,7 +589,7 @@ Highcharts.Legend.prototype = {
             var seriesOptions = series && series.options;
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
-            if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+            if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(series.legendItems ||
@@ -997,8 +997,13 @@ Highcharts.Legend.prototype = {
             currentPage = pageCount;
         }
         if (currentPage > 0) {
+<<<<<<< HEAD
             if (animation !== undefined) {
                 setAnimation(animation, chart);
+=======
+            if (typeof animation !== 'undefined') {
+                setAnimation(animation, this.chart);
+>>>>>>> master
             }
             this.nav.attr({
                 translateX: padding,

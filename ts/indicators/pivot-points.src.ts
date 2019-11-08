@@ -31,7 +31,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: PivotPointsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
             public nameBase: string;
             public options: PivotPointsIndicatorOptions;
             public plotEndPoint: number;
@@ -146,9 +146,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
         },
         enableMouseTracking: false,
         dataLabels: {
-            /** @ignore-option */
             enabled: true,
-            /** @ignore-option */
             format: '{point.pivotLine}'
         },
         dataGrouping: {
@@ -317,7 +315,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
             this: Highcharts.PivotPointsIndicator,
             series: Highcharts.Series,
             params: Highcharts.PivotPointsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -344,7 +342,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             for (i = period + 1; i <= yValLen + period; i += period) {

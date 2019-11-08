@@ -44,12 +44,16 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
      *         The file name
      * @param  {Array}  frames
      *         The image data of the GIF frames
+     * @param {number} width
+     *          Width of the created gif
+     * @param {number} height
+     *          Height of the created gif
      * @return {void}
      */
-    function createAnimatedGif(filename, frames) {
+    function createAnimatedGif(filename, frames, width, height) {
         var GIFEncoder = require('gifencoder');
 
-        var encoder = new GIFEncoder(300, 200);
+        var encoder = new GIFEncoder(width, height);
         encoder.start();
         // 0 for repeat, -1 for no-repeat
         encoder.setRepeat(0);
@@ -140,7 +144,9 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
                 fs.writeFileSync(filename, Buffer.from(data, 'base64'));
 
             } else if (/\.gif$/.test(filename)) {
-                createAnimatedGif(filename, info.frames);
+                const canvasWidth = info.canvasWidth || 600;
+                const canvasHeight = info.canvasHeight || 400;
+                createAnimatedGif(filename, info.frames, canvasWidth, canvasHeight);
             }
         } catch (err) {
             LOG.error(`Failed to write file ${filename}\n\n${err}`);

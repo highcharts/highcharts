@@ -123,7 +123,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
         grouping: false,
 
         dataLabels: {
-            /** @ignore-option */
             enabled: true
         },
         tooltip: {
@@ -307,7 +306,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
              * @private
              */
             function addIfExists(prop: string, val: unknown): void {
-                if (val !== undefined) {
+                if (typeof val !== 'undefined') {
                     (options as any)[prop] = val;
                 }
             }

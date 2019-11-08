@@ -142,16 +142,12 @@ var Axis = H.Axis,
 seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function (
             this: Highcharts.DataLabelsFormatterContextObject
         ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
 
@@ -597,7 +593,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
                 };
             } else { // below zThreshold
                 // #1691
-                point.shapeArgs = point.plotY = point.dlBox = undefined;
+                point.shapeArgs = point.plotY = point.dlBox = void 0;
             }
         }
     },
@@ -746,10 +742,10 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
         ).forEach(
             function (keys: [string, string, number]): void {
                 if (
-                    pick(
+                    typeof pick(
                         (axis.options as any)[keys[0]],
                         (axis as any)[keys[1]]
-                    ) === undefined
+                    ) === 'undefined'
                 ) {
                     (axis as any)[keys[0]] += keys[2] / transA;
                 }

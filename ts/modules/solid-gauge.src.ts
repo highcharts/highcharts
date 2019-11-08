@@ -238,8 +238,8 @@ colorAxisMethods = {
                 from = dataClass.from;
                 to = dataClass.to;
                 if (
-                    (from === undefined || value >= from) &&
-                    (to === undefined || value <= to)
+                    (typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)
                 ) {
                     color = dataClass.color;
                     if (point) {
@@ -377,7 +377,6 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
     colorByPoint: true,
 
     dataLabels: {
-        /** @ignore-option */
         y: 0
     }
 

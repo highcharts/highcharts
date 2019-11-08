@@ -207,7 +207,6 @@ seriesType<Highcharts.FunnelSeries>(
         size: true as any,
 
         dataLabels: {
-            /** @ignore-option */
             connectorWidth: 1
         },
 

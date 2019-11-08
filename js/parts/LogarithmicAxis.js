@@ -62,7 +62,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
                 // #1670, lastPos is #3113
                 if (pos > min &&
                     (!minor || lastPos <= max) &&
-                    lastPos !== undefined) {
+                    typeof lastPos !== 'undefined') {
                     positions.push(lastPos);
                 }
                 if (lastPos > max) {

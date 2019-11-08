@@ -42,20 +42,13 @@ seriesType('map', 'scatter',
 {
     animation: false,
     dataLabels: {
-        /** @ignore-option */
         crop: false,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.value;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         padding: 0,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     /**
@@ -356,10 +349,10 @@ seriesType('map', 'scatter',
             this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
             // If no minRange option is set, set the default minimum zooming
             // range to 5 times the size of the smallest element
-            if (xAxis && xAxis.options.minRange === undefined) {
+            if (xAxis && typeof xAxis.options.minRange === 'undefined') {
                 xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
             }
-            if (yAxis && yAxis.options.minRange === undefined) {
+            if (yAxis && typeof yAxis.options.minRange === 'undefined') {
                 yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
             }
         }
@@ -439,7 +432,8 @@ seriesType('map', 'scatter',
                     // Run through pointArrayMap and what's left of the
                     // point data array in parallel, copying over the values
                     for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-                        if (pointArrayMap[j] && val[ix] !== undefined) {
+                        if (pointArrayMap[j] &&
+                            typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
                                 H.Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
@@ -828,7 +822,7 @@ seriesType('map', 'scatter',
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
         if (series.mapData) {
-            mapPoint = point[joinBy[1]] !== undefined &&
+            mapPoint = typeof point[joinBy[1]] !== 'undefined' &&
                 series.mapMap[point[joinBy[1]]];
             if (mapPoint) {
                 // This applies only to bubbles

@@ -8,6 +8,7 @@ const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
 const { getFilesChanged } = require('./lib/git');
+const { uploadFiles } = require('./lib/uploadS3');
 
 const DEFAULT_COMMENT_MATCH = '## Visual test results';
 const DEFAULT_OPTIONS = {
@@ -19,6 +20,8 @@ const DEFAULT_OPTIONS = {
         'User-Agent': 'Highcharts PR Commenter'
     }
 };
+
+const PR_IMAGEDIFF_BUCKET = process.env.HIGHCHARTS_PR_IMAGEDIFF_BUCKET || 'staging-vis-dev.highcharts.com';
 
 /**
  * Executes a request with the specified options
@@ -173,23 +176,69 @@ function resolveGitFileStatus(changeCharacter) {
 /**
  * Retrieves changes from samples/ folder and returns a markdown
  * template that lists the changed files (compared with master).
- * @param {string} folder to look for changes in.
  * @return {string} markdown template with the changed files.
  */
-function createChangedDirFilesTemplate(folder) {
+function createTemplateForChangeSamples() {
     let gitChangedFiles = getFilesChanged();
-    logLib.message(`Changed files:\n ${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && line.includes(folder));
+    logLib.message(`Changed files:\n${gitChangedFiles}`);
+    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
             gitChangedFiles.map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
-            });
+            }).join('\n');
         samplesChangedTemplate += '\n\n</p>\n</details>\n';
     }
     return samplesChangedTemplate;
+}
+
+
+/* eslint-disable require-jsdoc */
+function buildImgS3Path(filename, sample, pr) {
+    return `highcharts/pr-diffs/${pr}/${sample}/${filename}`;
+}
+
+function buildImgURL(filename, sample, pr) {
+    return `http://${PR_IMAGEDIFF_BUCKET}.s3.eu-central-1.amazonaws.com/${buildImgS3Path(filename, sample, pr)}`;
+}
+
+function buildImgMarkdownLinks(sample, pr) {
+    return `[diff](${buildImgURL('diff.gif', sample, pr)}) &#124; [reference](${buildImgURL('reference.svg', sample, pr)}) &#124; [candidate](${buildImgURL('candidate.svg', sample, pr)})`;
+}
+
+/* eslint-enable require-jsdoc */
+
+/**
+ * Using a list of diffing samples (visual test differences) this
+ * function uploads the reference/candidate/diff images that are produced
+ * from a visual test run to S3 in order to make them easily available.
+ * @param {Array} diffingSamples list
+ * @param {string} pr number to upload for
+ * @return {undefined} void
+ */
+function uploadVisualTestDiffImages(diffingSamples = [], pr) {
+    if (diffingSamples.length > 0) {
+        const files = diffingSamples.reduce((resultingFiles, sample) => {
+            resultingFiles.push({
+                from: `samples/${sample[0]}/reference.svg`,
+                to: buildImgS3Path('reference.svg', sample[0], pr)
+            });
+            resultingFiles.push({
+                from: `samples/${sample[0]}/candidate.svg`,
+                to: buildImgS3Path('candidate.svg', sample[0], pr)
+            });
+            resultingFiles.push({
+                from: `samples/${sample[0]}/diff.gif`,
+                to: buildImgS3Path('diff.gif', sample[0], pr)
+            });
+            return resultingFiles;
+        }, []);
+
+        uploadFiles({ files, bucket: PR_IMAGEDIFF_BUCKET, name: `image diff on PR #${pr}` })
+            .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
+    }
 }
 
 /**
@@ -221,22 +270,23 @@ async function commentOnPR() {
         return completeTask(errMsg);
     }
 
-    const { containsText = DEFAULT_COMMENT_MATCH } = argv;
-    const existingComments = await fetchPRComments(pr, user, containsText);
-
-
     const diffs = Object.entries(testResults).filter(entry => {
         const value = entry[1];
         return typeof value === 'number' && value > 0;
     });
 
+    uploadVisualTestDiffImages(diffs, pr);
+
     let commentTemplate = diffs.length === 0 ?
         `${DEFAULT_COMMENT_MATCH} - No difference found` :
-        `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff |\n| --- | --- |\n${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' |').join('\n')}
-            ${process.env.CIRCLE_BUILD_URL ? `\n\nCompared SVGs can be found under the [CI job artifacts](${process.env.CIRCLE_BUILD_URL}#artifacts).` : ''}`;
+        `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff | Images |\n| --- | --- | --- |\n` +
+            `${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' | ' + buildImgMarkdownLinks(diff[0], pr) + ' |').join('\n')}\n`;
 
-    const changedSamplesTemplate = createChangedDirFilesTemplate('samples/');
+    const changedSamplesTemplate = createTemplateForChangeSamples();
     commentTemplate += `\n\n${changedSamplesTemplate}`;
+
+    const { containsText = DEFAULT_COMMENT_MATCH } = argv;
+    const existingComments = await fetchPRComments(pr, user, containsText);
 
     try {
         let result;

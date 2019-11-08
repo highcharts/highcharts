@@ -79,7 +79,7 @@ seriesType('sma', 'line',
      *
      * @type {string}
      */
-    name: undefined,
+    name: void 0,
     tooltip: {
         /**
          * Number of decimals in indicator series.
@@ -92,7 +92,7 @@ seriesType('sma', 'line',
      *
      * @type {string}
      */
-    linkedTo: undefined,
+    linkedTo: void 0,
     /**
      * Whether to compare indicator to the main series values
      * or indicator values.
@@ -268,7 +268,7 @@ seriesType('sma', 'line',
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal.length, range = 0, sum = 0, SMA = [], xData = [], yData = [], index = -1, i, SMAPoint;
         if (xVal.length < period) {
-            return false;
+            return;
         }
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {

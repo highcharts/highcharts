@@ -108,7 +108,7 @@ import H from '../parts/Globals.js';
 * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
 */
 import U from '../parts/Utilities.js';
-var erase = U.erase, pick = U.pick;
+var animObject = U.animObject, erase = U.erase, pick = U.pick;
 var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge;
 /**
  * Utility function to compute a hash value from an object. Modified Java
@@ -239,7 +239,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
  * @requires modules/pattern-fill
  */
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
-    var pattern, animate = pick(animation, true), animationOptions = H.animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
+    var pattern, animate = pick(animation, true), animationOptions = animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
         ren.rect(0, 0, width, height)
             .attr({ fill: fill })
             .add(pattern);
@@ -307,7 +307,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         }
     }
     // For non-animated patterns, set opacity now
-    if (!(options.image && animate) && options.opacity !== undefined) {
+    if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (child) {
             child.setAttribute('opacity', options.opacity);
         });

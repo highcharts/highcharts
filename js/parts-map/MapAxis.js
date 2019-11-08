@@ -55,7 +55,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
 addEvent(Axis, 'afterSetAxisTranslation', function () {
     var chart = this.chart, mapRatio, plotRatio = chart.plotWidth / chart.plotHeight, adjustedAxisLength, xAxis = chart.xAxis[0], padAxis, fixTo, fixDiff, preserveAspectRatio;
     // Check for map-like series
-    if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
+    if (this.coll === 'yAxis' && typeof xAxis.transA !== 'undefined') {
         this.series.forEach(function (series) {
             if (series.preserveAspectRatio) {
                 preserveAspectRatio = true;

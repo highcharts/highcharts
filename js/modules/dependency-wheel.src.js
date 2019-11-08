@@ -11,7 +11,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var animObject = U.animObject;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
@@ -212,7 +213,7 @@ H.seriesType('dependencywheel', 'sankey',
     },
     animate: function (init) {
         if (!init) {
-            var duration = H.animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
+            var duration = animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
             this.nodes.forEach(function (point, i) {
                 var graphic = point.graphic;
                 if (graphic) {

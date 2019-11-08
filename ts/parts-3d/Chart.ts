@@ -1534,7 +1534,7 @@ Chart.prototype.get3dFrame = function (): Highcharts.Chart3dFrameObject {
                 if (typeof sources[j] === 'object') {
                     var val = (sources[j] as any)[attr];
 
-                    if (val !== undefined && val !== null) {
+                    if (typeof val !== 'undefined' && val !== null) {
                         (options as any)[attr] = val;
                         break;
                     }

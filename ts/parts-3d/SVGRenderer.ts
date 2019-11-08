@@ -104,6 +104,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     defined,
     extend,
     objectEach,
@@ -117,8 +118,7 @@ var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
 
-var animObject = H.animObject,
-    charts = H.charts,
+var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
     merge = H.merge,
@@ -542,7 +542,7 @@ cuboidMethods = H.merge(element3dMethods, {
         }
 
         return SVGElement.prototype.attr.call(
-            this, args, undefined, complete, continueAnimation
+            this, args, void 0, complete, continueAnimation
         );
     },
     animate: function (

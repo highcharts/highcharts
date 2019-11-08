@@ -37,14 +37,10 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  */
 seriesType('bubble', 'scatter', {
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.z;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     /**
@@ -395,7 +391,7 @@ seriesType('bubble', 'scatter', {
             }
             else { // below zThreshold
                 // #1691
-                point.shapeArgs = point.plotY = point.dlBox = undefined;
+                point.shapeArgs = point.plotY = point.dlBox = void 0;
             }
         }
     },
@@ -478,7 +474,7 @@ Axis.prototype.beforePadding = function () {
             ['min', 'userMin', pxMin],
             ['max', 'userMax', pxMax]
         ].forEach(function (keys) {
-            if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
+            if (typeof pick(axis.options[keys[0]], axis[keys[1]]) === 'undefined') {
                 axis[keys[0]] += keys[2] / transA;
             }
         });

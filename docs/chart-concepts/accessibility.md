@@ -41,17 +41,15 @@ Loading data from a table
 
 In some cases it could be useful to load the chart data from a table, rather than generating the table from the chart data. In this case, all you need to do is make the [data.table](https://api.highcharts.com/highcharts/data.table) option point to the id of the table:
 
-    
-    $(function () {  
-        Highcharts.chart('container', {  
-            data: {  
-                table: 'datatable'  
-            },  
-            title: {  
-                text: 'Data extracted from a HTML table in the page'  
-            }  
-        });  
-    });
+
+        Highcharts.chart('container', {
+            data: {
+                table: 'datatable'
+            },
+            title: {
+                text: 'Data extracted from a HTML table in the page'
+            }
+        });
 
 View a live sample of [data fetched from a table](https://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/column-parsed/).
 

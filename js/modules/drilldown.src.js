@@ -125,13 +125,13 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, extend = U.extend, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-var animObject = H.animObject, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
+var noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -469,7 +469,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     // See if we can reuse the registered series from last run
     last = this.drilldownLevels[this.drilldownLevels.length - 1];
     if (last && last.levelNumber !== levelNumber) {
-        last = undefined;
+        last = void 0;
     }
     ddOptions = extend(extend({
         _ddSeriesId: ddSeriesId++
@@ -772,7 +772,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 newSeries.points.forEach(function (point, i) {
                     // Fade in other points
-                    var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : undefined, dataLabel = point.dataLabel;
+                    var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn', inherit = verb === 'show' ? true : void 0, dataLabel = point.dataLabel;
                     if (point.graphic) { // #3407
                         point.graphic[verb](inherit);
                     }
@@ -912,7 +912,7 @@ H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) 
         seriesOptions: seriesOptions,
         category: category,
         originalEvent: originalEvent,
-        points: (category !== undefined &&
+        points: (typeof category !== 'undefined' &&
             this.series.xAxis.getDDPoints(category).slice(0))
     }, function (e) {
         var chart = e.point.series && e.point.series.chart, seriesOptions = e.seriesOptions;
@@ -1010,7 +1010,7 @@ H.addEvent(H.Point, 'afterInit', function () {
                 series.xAxis.drilldownCategory(point.x, e);
             }
             else {
-                point.doDrilldown(undefined, undefined, e);
+                point.doDrilldown(void 0, void 0, e);
             }
         });
     }

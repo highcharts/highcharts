@@ -1315,6 +1315,19 @@ H.merge = function<T> (): T {
 };
 
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
+
+/**
  * Shortcut for parseInt
  *
  * @private
@@ -2137,7 +2150,7 @@ H.normalizeTickInterval = function (
 
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(
+    retInterval = correctFloat(
         retInterval * (magnitude as any),
         -Math.round(Math.log(0.001) / Math.LN10)
     );
@@ -2303,11 +2316,11 @@ function discardElement(element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec?: number): number {
+function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -2351,13 +2364,13 @@ function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (
+function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-};
+}
 
 /**
  * The time unit lookup
@@ -3387,9 +3400,12 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    animObject,
     arrayMax,
     arrayMin,
     attr,
+    clamp,
+    correctFloat,
     defined,
     destroyObjectProperties,
     discardElement,
