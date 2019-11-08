@@ -54,6 +54,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     pick
 } = U;
 
@@ -145,10 +146,7 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
          * @private
          */
         function safeBounds(pixelPos: number): number {
-            return Math.min(Math.max(
-                -safeDistance,
-                pixelPos
-            ), safeDistance);
+            return clamp(pixelPos, -safeDistance, safeDistance);
         }
 
 

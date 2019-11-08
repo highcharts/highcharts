@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var clamp = U.clamp;
 var pick = H.pick;
 /* eslint-disable valid-jsdoc */
 /**
@@ -373,8 +375,8 @@ function GLShader(gl) {
     function setBubbleUniforms(series, zCalcMin, zCalcMax) {
         var seriesOptions = series.options, zMin = Number.MAX_VALUE, zMax = -Number.MAX_VALUE;
         if (gl && shaderProgram && series.type === 'bubble') {
-            zMin = pick(seriesOptions.zMin, Math.min(zMin, Math.max(zCalcMin, seriesOptions.displayNegative === false ?
-                seriesOptions.zThreshold : -Number.MAX_VALUE)));
+            zMin = pick(seriesOptions.zMin, clamp(zCalcMin, seriesOptions.displayNegative === false ?
+                seriesOptions.zThreshold : -Number.MAX_VALUE, zMin));
             zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));
             gl.uniform1i(isBubbleUniform, 1);
             gl.uniform1i(isCircleUniform, 1);

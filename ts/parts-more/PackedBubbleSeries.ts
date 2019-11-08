@@ -241,6 +241,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     defined,
     extend,
     isArray,
@@ -1057,26 +1058,23 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 minParentRadius = 20;
 
             bBox = series.seriesBox();
-            series.parentNodeRadius =
-                Math.min(
+            series.parentNodeRadius = clamp(
+                Math.sqrt(
+                    2 * (series.parentNodeMass as any) / Math.PI
+                ) + parentPadding,
+                minParentRadius,
+                bBox ?
                     Math.max(
                         Math.sqrt(
-                            2 * (series.parentNodeMass as any) / Math.PI
-                        ) + parentPadding,
+                            Math.pow((bBox as any).width, 2) +
+                            Math.pow((bBox as any).height, 2)
+                        ) / 2 + parentPadding,
                         minParentRadius
-                    ),
-                    bBox ?
-                        Math.max(
-                            Math.sqrt(
-                                Math.pow((bBox as any).width, 2) +
-                                Math.pow((bBox as any).height, 2)
-                            ) / 2 + parentPadding,
-                            minParentRadius
-                        ) :
-                        Math.sqrt(
-                            2 * (series.parentNodeMass as any) / Math.PI
-                        ) + parentPadding
-                );
+                    ) :
+                    Math.sqrt(
+                        2 * (series.parentNodeMass as any) / Math.PI
+                    ) + parentPadding
+            );
 
             if (series.parentNode) {
                 (series.parentNode as any).marker.radius =
@@ -1750,9 +1748,10 @@ seriesType<Highcharts.PackedBubbleSeries>(
             ): void {
 
                 value = useSimulation ?
-                    Math.max(
-                        Math.min((point[2] as any), zExtremes[1]),
-                        zExtremes[0]
+                    clamp(
+                        point[2] as any,
+                        zExtremes[0],
+                        zExtremes[1]
                     ) :
                     (point[2] as any);
 

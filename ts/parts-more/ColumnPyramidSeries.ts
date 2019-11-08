@@ -42,6 +42,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     pick
 } = U;
 
@@ -139,8 +140,9 @@ seriesType<Highcharts.ColumnPyramidSeries>(
                         point.yBottom, translatedThreshold as any
                     ),
                     safeDistance = 999 + Math.abs(yBottom),
-                    plotY = Math.min(
-                        Math.max(-safeDistance, point.plotY as any),
+                    plotY = clamp(
+                        point.plotY as any,
+                        -safeDistance,
                         yAxis.len + safeDistance
                     ),
                     // Don't draw too far outside plot area

@@ -655,6 +655,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    clamp,
     correctFloat,
     defined,
     erase,
@@ -4754,7 +4755,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              * @private
              */
             function limitedRange(val: number): number {
-                return Math.min(Math.max(-1e5, val), 1e5);
+                return clamp(val, -1e5, 1e5);
             }
 
             // Translate each point
@@ -5947,22 +5948,19 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         (horiz ? chart.plotWidth : 0) :
                         (horiz ? 0 : (axis.toPixels(extremes.min) || 0));
 
-                    translatedFrom = Math.min(
-                        Math.max(
-                            pick(translatedTo, translatedFrom), 0
-                        ),
+                    translatedFrom = clamp(
+                        pick(translatedTo, translatedFrom),
+                        0,
                         chartSizeMax
                     );
-                    translatedTo = Math.min(
-                        Math.max(
-                            Math.round(
-                                axis.toPixels(
-                                    pick(threshold.value, extremes.max),
-                                    true
-                                ) || 0
-                            ),
-                            0
+                    translatedTo = clamp(
+                        Math.round(
+                            axis.toPixels(
+                                pick(threshold.value, extremes.max),
+                                true
+                            ) || 0
                         ),
+                        0,
                         chartSizeMax
                     );
 

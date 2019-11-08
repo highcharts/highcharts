@@ -103,6 +103,7 @@ import U from '../parts/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    clamp,
     extend,
     isNumber,
     pick,
@@ -677,14 +678,12 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                 // Find the min and max Z
                 zData = (series.zData as any).filter(isNumber);
                 if (zData.length) { // #1735
-                    zMin = pick(seriesOptions.zMin, Math.min(
-                        zMin,
-                        Math.max(
-                            arrayMin(zData),
-                            seriesOptions.displayNegative === false ?
-                                (seriesOptions.zThreshold as any) :
-                                -Number.MAX_VALUE
-                        )
+                    zMin = pick(seriesOptions.zMin, clamp(
+                        arrayMin(zData),
+                        seriesOptions.displayNegative === false ?
+                            (seriesOptions.zThreshold as any) :
+                            -Number.MAX_VALUE,
+                        zMin
                     ));
                     zMax = pick(
                         seriesOptions.zMax,

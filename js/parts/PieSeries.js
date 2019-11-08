@@ -17,7 +17,7 @@ import H from './Globals.js';
 * @type {boolean|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
+var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
@@ -651,8 +651,7 @@ seriesType('pie', 'line',
         radius = this.radii ?
             this.radii[point.index] :
             center[2] / 2, angle, x;
-        angle = Math.asin(Math.max(Math.min(((y - center[1]) /
-            (radius + point.labelDistance)), 1), -1));
+        angle = Math.asin(clamp((y - center[1]) / (radius + point.labelDistance), -1, 1));
         x = center[0] +
             (left ? -1 : 1) *
                 (Math.cos(angle) * (radius + point.labelDistance)) +

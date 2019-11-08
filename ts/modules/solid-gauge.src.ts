@@ -89,6 +89,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     isNumber,
     pick,
@@ -489,17 +490,15 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                     }
 
                     // Handle overshoot and clipping to axis max/min
-                    rotation = Math.max(
+                    rotation = clamp(
+                        rotation,
                         axisMinAngle - overshootVal,
-                        Math.min(axisMaxAngle + overshootVal, rotation)
+                        axisMaxAngle + overshootVal
                     );
 
                     // Handle the wrap option
                     if (options.wrap === false) {
-                        rotation = Math.max(
-                            axisMinAngle,
-                            Math.min(axisMaxAngle, rotation)
-                        );
+                        rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                     }
 
                     minAngle = Math.min(rotation, series.thresholdAngleRad);

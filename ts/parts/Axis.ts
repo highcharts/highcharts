@@ -693,6 +693,7 @@ const {
     animObject,
     arrayMax,
     arrayMin,
+    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -4390,7 +4391,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             between = function (x: number, a: number, b: number): number {
                 if (force !== 'pass' && x < a || x > b) {
                     if (force) {
-                        x = Math.min(Math.max(a, x), b);
+                        x = clamp(x, a, b);
                     } else {
                         skip = true;
                     }
@@ -4414,9 +4415,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = Math.min(
-                Math.max(-1e5, translatedValue as any), 1e5
-            );
+            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
@@ -5135,34 +5134,26 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (
-            isNumber(options.softMin) &&
-            !isNumber(axis.userMin) &&
-            (options.softMin as any) < (axis.min as any)
-        ) {
-            axis.min = hardMin = options.softMin as any; // #6894
+        if (!isNumber(axis.userMin)) {
+            if (
+                isNumber(options.softMin) && options.softMin < (axis.min as any)
+            ) {
+                axis.min = hardMin = options.softMin; // #6894
+            }
+            if (isNumber(options.floor)) {
+                axis.min = Math.max(axis.min as any, options.floor);
+            }
         }
-        if (
-            isNumber(options.softMax) &&
-            !isNumber(axis.userMax) &&
-            (options.softMax as any) > (axis.max as any)
-        ) {
-            axis.max = hardMax = options.softMax as any; // #6894
+        if (!isNumber(axis.userMax)) {
+            if (
+                isNumber(options.softMax) && options.softMax > (axis.max as any)
+            ) {
+                axis.max = hardMax = options.softMax; // #6894
+            }
+            if (isNumber(options.ceiling)) {
+                axis.max = Math.min(axis.max as any, options.ceiling);
+            }
         }
-
-        if (isNumber(options.floor)) {
-            axis.min = Math.min(
-                Math.max(axis.min as any, options.floor as any),
-                Number.MAX_VALUE
-            );
-        }
-        if (isNumber(options.ceiling)) {
-            axis.max = Math.max(
-                Math.min(axis.max as any, options.ceiling as any),
-                pick(axis.userMax, -Number.MAX_VALUE)
-            );
-        }
-
 
         // When the threshold is soft, adjust the extreme value only if the data
         // extreme and the padded extreme land on either side of the threshold.
