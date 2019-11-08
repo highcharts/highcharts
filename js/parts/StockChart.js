@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat;
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -342,7 +342,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                     if (force !== 'pass' &&
                         (x1 < axisLeft || x1 > axisLeft + axis.width)) {
                         if (force) {
-                            x1 = x2 = Math.min(Math.max(axisLeft, x1), axisLeft + axis.width);
+                            x1 = x2 = clamp(x1, axisLeft, axisLeft + axis.width);
                         }
                         else {
                             skip = true;
@@ -363,7 +363,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                     if (force !== 'pass' &&
                         (y1 < axisTop || y1 > axisTop + axis.height)) {
                         if (force) {
-                            y1 = y2 = Math.min(Math.max(axisTop, y1), axis.top + axis.height);
+                            y1 = y2 = clamp(y1, axisTop, axisTop + axis.height);
                         }
                         else {
                             skip = true;

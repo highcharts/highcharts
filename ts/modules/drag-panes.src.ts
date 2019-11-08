@@ -72,8 +72,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    clamp,
+    isNumber,
+    objectEach
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Pointer.js';
@@ -309,11 +312,9 @@ H.AxisResizer.prototype = {
             x = options.x,
             y = options.y,
             // Normalize control line position according to the plot area
-            pos = Math.min(
-                Math.max(
-                    axis.top + axis.height + (y as any),
-                    chart.plotTop
-                ),
+            pos = clamp(
+                axis.top + axis.height + (y as any),
+                chart.plotTop,
                 chart.plotTop + chart.plotHeight
             ),
             attr: Highcharts.SVGAttributes = {},
@@ -509,11 +510,11 @@ H.AxisResizer.prototype = {
                 min: number,
                 max: number
             ): number {
-                return Math.round(Math.min(Math.max(val, min), max));
+                return Math.round(clamp(val, min, max));
             };
 
         // Normalize chartY to plot area limits
-        chartY = Math.max(Math.min(chartY, plotBottom), plotTop);
+        chartY = clamp(chartY, plotTop, plotBottom);
 
         yDelta = chartY - resizer.lastPos;
 

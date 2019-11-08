@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -1345,17 +1346,16 @@ Navigator.prototype = {
         }
 
         // Handles are allowed to cross, but never exceed the plot area
-        navigator.zoomedMax = Math.min(
-            Math.max(pxMin as any, pxMax as any, 0),
+        navigator.zoomedMax = clamp(
+            Math.max(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
-        navigator.zoomedMin = Math.min(
-            Math.max(
-                navigator.fixedWidth ?
-                    navigator.zoomedMax - navigator.fixedWidth :
-                    Math.min(pxMin as any, pxMax as any),
-                0
-            ),
+        navigator.zoomedMin = clamp(
+            navigator.fixedWidth ?
+                navigator.zoomedMax - navigator.fixedWidth :
+                Math.min(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
 

@@ -208,7 +208,7 @@ import H from './Globals.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -3642,7 +3642,7 @@ null,
          * @private
          */
         function limitedRange(val) {
-            return Math.min(Math.max(-1e5, val), 1e5);
+            return clamp(val, -1e5, 1e5);
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
@@ -4429,8 +4429,8 @@ null,
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
                     (horiz ? 0 : (axis.toPixels(extremes.min) || 0));
-                translatedFrom = Math.min(Math.max(pick(translatedTo, translatedFrom), 0), chartSizeMax);
-                translatedTo = Math.min(Math.max(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true) || 0), 0), chartSizeMax);
+                translatedFrom = clamp(pick(translatedTo, translatedFrom), 0, chartSizeMax);
+                translatedTo = clamp(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true) || 0), 0, chartSizeMax);
                 if (ignoreZones) {
                     translatedFrom = translatedTo =
                         axis.toPixels(extremes.max);

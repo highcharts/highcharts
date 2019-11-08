@@ -58,6 +58,7 @@ import U from './Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    clamp,
     defined,
     extend,
     isNumber,
@@ -537,8 +538,9 @@ addEvent(Axis, 'getPlotLinePath', function (
                         (x1 < axisLeft || x1 > axisLeft + axis.width)
                     ) {
                         if (force) {
-                            x1 = x2 = Math.min(
-                                Math.max(axisLeft, x1),
+                            x1 = x2 = clamp(
+                                x1,
+                                axisLeft,
                                 axisLeft + axis.width
                             );
                         } else {
@@ -563,9 +565,10 @@ addEvent(Axis, 'getPlotLinePath', function (
                         (y1 < axisTop || y1 > axisTop + axis.height)
                     ) {
                         if (force) {
-                            y1 = y2 = Math.min(
-                                Math.max(axisTop, y1),
-                                axis.top + axis.height
+                            y1 = y2 = clamp(
+                                y1,
+                                axisTop,
+                                axisTop + axis.height
                             );
                         } else {
                             skip = true;

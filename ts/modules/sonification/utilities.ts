@@ -12,6 +12,8 @@
 
 'use strict';
 import musicalFrequencies from './musicalFrequencies.js';
+import U from '../../parts/Utilities.js';
+const { clamp } = U;
 
 /**
  * Internal types.
@@ -248,7 +250,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
                 lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
 
         return lenValueAxis > 0 ?
-            Math.max(Math.min(virtualAxisValue, limits.max), limits.min) :
+            clamp(virtualAxisValue, limits.min, limits.max) :
             limits.min;
     }
 };

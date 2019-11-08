@@ -20,7 +20,7 @@ import H from '../parts/Globals.js';
 * @requires modules/xrange
 */
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
 var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
 /**
  * Return color of a point based on its category.
@@ -246,7 +246,7 @@ seriesType('xrange', 'column'
             plotX2 += widthDifference / 2;
         }
         plotX = Math.max(plotX, -10);
-        plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
+        plotX2 = clamp(plotX2, -10, xAxis.len + 10);
         // Handle individual pointWidth
         if (defined(point.options.pointWidth)) {
             yOffset -= ((Math.ceil(point.options.pointWidth) - pointHeight) / 2);
@@ -269,8 +269,8 @@ seriesType('xrange', 'column'
         dlLeft = point.shapeArgs.x;
         dlRight = dlLeft + point.shapeArgs.width;
         if (dlLeft < 0 || dlRight > xAxis.len) {
-            dlLeft = Math.min(xAxis.len, Math.max(0, dlLeft));
-            dlRight = Math.max(0, Math.min(dlRight, xAxis.len));
+            dlLeft = clamp(dlLeft, 0, xAxis.len);
+            dlRight = clamp(dlRight, 0, xAxis.len);
             dlWidth = dlRight - dlLeft;
             point.dlBox = merge(point.shapeArgs, {
                 x: dlLeft,
@@ -282,22 +282,13 @@ seriesType('xrange', 'column'
             point.dlBox = null;
         }
         // Tooltip position
-        if (!inverted) {
-            point.tooltipPos[0] +=
-                length / 2 * (xAxis.reversed ? -1 : 1);
-            point.tooltipPos[1] -= metrics.width / 2;
-            // Limit position by the correct axis size (#9727)
-            point.tooltipPos[0] = Math.max(Math.min(point.tooltipPos[0], xAxis.len - 1), 0);
-            point.tooltipPos[1] = Math.max(Math.min(point.tooltipPos[1], yAxis.len - 1), 0);
-        }
-        else {
-            point.tooltipPos[1] +=
-                length / 2 * (xAxis.reversed ? 1 : -1);
-            point.tooltipPos[0] += metrics.width / 2;
-            // Limit position by the correct axis size (#9727)
-            point.tooltipPos[1] = Math.max(Math.min(point.tooltipPos[1], xAxis.len - 1), 0);
-            point.tooltipPos[0] = Math.max(Math.min(point.tooltipPos[0], yAxis.len - 1), 0);
-        }
+        var tooltipPos = point.tooltipPos;
+        var xIndex = !inverted ? 0 : 1;
+        var yIndex = !inverted ? 1 : 0;
+        // Limit position by the correct axis size (#9727)
+        tooltipPos[xIndex] = clamp(tooltipPos[xIndex] + ((!inverted ? 1 : -1) * (xAxis.reversed ? -1 : 1) *
+            (length / 2)), 0, xAxis.len - 1);
+        tooltipPos[yIndex] = clamp(tooltipPos[yIndex] + ((!inverted ? -1 : 1) * (metrics.width / 2)), 0, yAxis.len - 1);
         // Add a partShapeArgs to the point, based on the shapeArgs property
         partialFill = point.partialFill;
         if (partialFill) {
