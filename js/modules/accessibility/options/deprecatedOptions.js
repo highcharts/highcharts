@@ -20,7 +20,7 @@
  *      series.accessibility.pointDescriptionFormatter
  *  series.skipKeyboardNavigation ->
  *      series.accessibility.keyboardNavigation.enabled
- *  point.description -> point.accessibility.description
+ *  point.description -> point.accessibility.description !!!! WARNING: No longer deprecated and handled, removed for HC8.
  *  axis.description -> axis.accessibility.description
  *
  *  accessibility.pointDateFormat -> accessibility.point.dateFormat
@@ -61,7 +61,8 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var pick = U.pick;
+var pick = U.pick,
+    defined = U.defined;
 
 var error = H.error;
 
@@ -103,7 +104,7 @@ function deprecateFromOptionsMap(
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
         var val = rootOld[oldOptionKey];
-        if (val !== undefined) {
+        if (defined(val)) {
             traverseSetOption(
                 rootNew,
                 mapToNewOptions[oldOptionKey],
@@ -159,7 +160,7 @@ function copyDeprecatedSeriesOptions(chart) {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
             var optionVal = series.options[oldOption];
-            if (optionVal !== undefined) {
+            if (defined(optionVal)) {
                 // Set the new option
                 traverseSetOption(
                     series.options,
@@ -176,20 +177,6 @@ function copyDeprecatedSeriesOptions(chart) {
                 );
             }
         });
-
-        // Loop through the points and handle point.description
-        if (series.points) {
-            series.points.forEach(function (point) {
-                if (point.options && point.options.description) {
-                    point.options.accessibility =
-                        point.options.accessibility || {};
-                    point.options.accessibility.description =
-                        point.options.description;
-                    warn(chart, 'point.description',
-                        'point.accessibility.description');
-                }
-            });
-        }
     });
 }
 

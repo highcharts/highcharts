@@ -359,7 +359,7 @@ var options = {
          * reader user. If `false` is returned, the default formatter will be
          * used for that point.
          *
-         * @see [point.description](#series.line.data.description)
+         * @see [point.accessibility.description](#series.line.data.accessibility.description)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
          * @since     next

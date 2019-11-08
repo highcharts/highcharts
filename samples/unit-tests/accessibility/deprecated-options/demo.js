@@ -27,7 +27,7 @@ QUnit.test('Check that deprecated chart and series options are moved over', asse
                 exposeElementToA11y: false,
                 test: 'hello',
                 data: [
-                    1, 2, { y: 5, test: 'testStr', description: 'yo' }, 3
+                    1, 2, { y: 5, test: 'testStr' }, 3
                 ]
             }]
         }),
@@ -50,7 +50,6 @@ QUnit.test('Check that deprecated chart and series options are moved over', asse
 
     assert.strictEqual(pointOptions.test, 'testStr');
     assert.strictEqual(pointOptions.y, 5);
-    assert.strictEqual(pointOptions.accessibility.description, 'yo');
 
     unmute();
 });

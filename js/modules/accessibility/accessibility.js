@@ -25,13 +25,6 @@
  * @type {Highcharts.PointAccessibilityOptionsObject|undefined}
  * @requires modules/accessibility
  * @since 7.1.0
- *//**
- * A description of the point to add to the screen reader information about the
- * point. Requires the Accessibility module.
- * @name Highcharts.PointOptionsObject#description
- * @type {string|undefined}
- * @requires modules/accessibility
- * @since 5.0.0
  */
 
 'use strict';
