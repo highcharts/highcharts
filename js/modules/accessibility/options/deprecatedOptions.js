@@ -61,8 +61,7 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var pick = U.pick,
-    defined = U.defined;
+var pick = U.pick;
 
 var error = H.error;
 
@@ -104,7 +103,7 @@ function deprecateFromOptionsMap(
 
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
         var val = rootOld[oldOptionKey];
-        if (defined(val)) {
+        if (typeof val !== 'undefined') {
             traverseSetOption(
                 rootNew,
                 mapToNewOptions[oldOptionKey],
@@ -160,7 +159,7 @@ function copyDeprecatedSeriesOptions(chart) {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
             var optionVal = series.options[oldOption];
-            if (defined(optionVal)) {
+            if (typeof optionVal !== 'undefined') {
                 // Set the new option
                 traverseSetOption(
                     series.options,

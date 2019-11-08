@@ -12,7 +12,8 @@
 
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend,
+    defined = U.defined;
 
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var visuallyHideElement = HTMLUtilities.visuallyHideElement;
@@ -170,8 +171,8 @@ extend(NewDataAnnouncer.prototype, {
             this.dirty.hasDirty = true;
             this.dirty.allSeries[series.name + series.index] = series;
             // Add it to newSeries storage unless we already have one
-            this.dirty.newSeries = this.dirty.newSeries ===
-                undefined ? series : null;
+            this.dirty.newSeries = defined(this.dirty.newSeries) ? null :
+                series;
         }
     },
 
@@ -186,8 +187,7 @@ extend(NewDataAnnouncer.prototype, {
 
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
-            this.dirty.newPoint = this.dirty.newPoint === undefined ?
-                point : null;
+            this.dirty.newPoint = defined(this.dirty.newPoint) ? null : point;
         }
     },
 
