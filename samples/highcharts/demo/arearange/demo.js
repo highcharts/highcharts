@@ -34,9 +34,7 @@ Highcharts.getJSON(
                 crosshairs: true,
                 shared: true,
                 valueSuffix: '°C',
-                dateTimeLabelFormats: {
-                    hour: '%A, %b %e'
-                }
+                xDateFormat: '%A, %b %e'
             },
 
             legend: {
