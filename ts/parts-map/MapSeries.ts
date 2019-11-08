@@ -127,7 +127,7 @@ declare global {
             valueMin?: number;
         }
         interface SeriesOptions {
-            /** @requires highcharts/modules/map */
+            /** @requires modules/map */
             mapData?: (Array<MapPointOptions>|any);
         }
         interface SeriesTypesDictionary {
@@ -1343,7 +1343,7 @@ seriesType<Highcharts.MapSeries>(
          * @sample maps/members/point-zoomto/
          *         Zoom to points from butons
          *
-         * @requires module:modules/map
+         * @requires modules/map
          *
          * @function Highcharts.Point#zoomTo
          */

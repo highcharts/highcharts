@@ -671,13 +671,12 @@ null,
      * @apioption plotOptions.series.dashStyle
      */
     /**
-     * Requires the Accessibility module.
-     *
      * A description of the series to add to the screen reader information
      * about the series.
      *
      * @type      {string}
      * @since     5.0.0
+     * @requires  modules/accessibility
      * @apioption plotOptions.series.description
      */
     /**
@@ -1880,6 +1879,9 @@ null,
      * will be hidden when moving the mouse between series. Defaults to true
      * for line and area type series, but to false for columns, pies etc.
      *
+     * **Note:** The boost module will force this option because of
+     * technical limitations.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-stickytracking-true/
      *         True by default
      * @sample {highcharts} highcharts/plotoptions/series-stickytracking-false/
@@ -1901,8 +1903,9 @@ null,
      * @since     2.3
      * @extends   tooltip
      * @excluding animation, backgroundColor, borderColor, borderRadius,
-     *            borderWidth, crosshairs, enabled, formatter, positioner,
-     *            shadow, shape, shared, snap, style, useHTML
+     *            borderWidth, className, crosshairs, enabled, formatter,
+     *            headerShape, hideDelay, outside, padding, positioner,
+     *            shadow, shape, shared, snap, split, style, useHTML
      * @apioption plotOptions.series.tooltip
      */
     /**
@@ -4566,10 +4569,11 @@ null,
  */
 /**
  * A description of the point to add to the screen reader information
- * about the point. Requires the Accessibility module.
+ * about the point.
  *
  * @type      {string}
  * @since     5.0.0
+ * @requires  modules/accessibility
  * @apioption series.line.data.description
  */
 /**

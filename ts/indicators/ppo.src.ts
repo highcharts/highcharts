@@ -84,6 +84,9 @@ H.seriesType<Highcharts.PPOIndicator>(
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
     {
@@ -135,9 +138,15 @@ H.seriesType<Highcharts.PPOIndicator>(
                 yData: Array<number> = [],
                 periodsOffset: number,
                 // Shorter Period EMA
-                SPE: (boolean|Highcharts.IndicatorValuesObject),
+                SPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 // Longer Period EMA
-                LPE: (boolean|Highcharts.IndicatorValuesObject),
+                LPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 oscillator: number,
                 i: number;
 
@@ -199,6 +208,9 @@ H.seriesType<Highcharts.PPOIndicator>(
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/ppo
  * @apioption series.ppo
  */
 

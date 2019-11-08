@@ -577,6 +577,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                         if (chart.highlightedPoint) {
                             chart.highlightedPoint.firePointEvent('click');
                         }
+                        return this.response.success;
                     }]
             ],
 

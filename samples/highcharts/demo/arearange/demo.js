@@ -18,7 +18,10 @@ Highcharts.getJSON(
             },
 
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
+                accessibility: {
+                    rangeDescription: 'Range: Jan 1st 2017 to Dec 31 2017.'
+                }
             },
 
             yAxis: {
@@ -30,7 +33,10 @@ Highcharts.getJSON(
             tooltip: {
                 crosshairs: true,
                 shared: true,
-                valueSuffix: '°C'
+                valueSuffix: '°C',
+                dateTimeLabelFormats: {
+                    hour: '%A, %b %e'
+                }
             },
 
             legend: {

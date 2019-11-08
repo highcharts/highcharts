@@ -544,6 +544,8 @@ seriesType('pie', 'line',
      * @private
      */
     borderWidth: 1,
+    /** @ignore-options */
+    lineWidth: undefined,
     states: {
         /**
          * @extends   plotOptions.series.states.hover

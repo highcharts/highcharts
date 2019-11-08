@@ -102,8 +102,9 @@ var defaultParallelOptions: Highcharts.ChartOptions = {
      * @sample {highcharts} highcharts/parallel-coordinates/polar/
      *         Star plot, multivariate data in a polar chart
      *
-     * @since   6.0.0
-     * @product highcharts
+     * @since    6.0.0
+     * @product  highcharts
+     * @requires modules/parallel-coordinates
      */
     parallelCoordinates: false,
     /**
@@ -139,6 +140,7 @@ var defaultParallelOptions: Highcharts.ChartOptions = {
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
      *            minColor, scrollbar, stackLabels, stops
+     * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
         lineWidth: 1,
@@ -279,11 +281,10 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#setParallelInfo
-     *
      * @param {Highcharts.Options} options
-     *        User options
-     *
+     * User options
      * @return {void}
+     * @requires modules/parallel-coordinates
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
@@ -391,6 +392,8 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
      *         {@link Highcharts.Axis#options}.
      *
      * @return {void}
+     *
+     * @requires modules/parallel-coordinates
      */
     setParallelPosition: function (
         this: Highcharts.ParallelAxis,
@@ -546,6 +549,7 @@ function addFormattedValue(
              * @default   undefined
              * @since     6.0.0
              * @product   highcharts
+             * @requires  modules/parallel-coordinates
              * @apioption yAxis.tooltipValueFormat
              */
             yAxisOptions.tooltipValueFormat,

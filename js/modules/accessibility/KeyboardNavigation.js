@@ -328,12 +328,14 @@ KeyboardNavigation.prototype = {
             'focus',
             function (ev) {
                 var e = ev || win.event,
-                    curModule;
+                    curModule,
+                    focusComesFromChart = e.relatedTarget && chart.container
+                        .contains(e.relatedTarget),
+                    comingInBackwards = !(
+                        focusComesFromChart || keyboardNavigation.exiting
+                    );
 
-                // If focusing and we are exiting, do nothing once.
-                if (!keyboardNavigation.exiting) {
-
-                    // Not exiting, means we are coming in backwards
+                if (comingInBackwards) {
                     chart.renderTo.focus();
                     e.preventDefault();
 

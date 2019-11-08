@@ -118,6 +118,7 @@ var noop = H.noop,
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
@@ -610,6 +611,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  * @extends   series,plotOptions.boxplot
  * @excluding dataParser, dataURL, marker, stack, stacking, states
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.boxplot
  */
 

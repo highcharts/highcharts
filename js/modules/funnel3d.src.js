@@ -25,10 +25,11 @@ cuboidPath = RendererProto.cuboidPath, funnel3dMethods;
 /**
  * The funnel3d series type.
  *
- * Requires `highcharts-3d.js`, `cylinder.js` and `funnel3d.js` module.
- *
  * @constructor seriesTypes.funnel3d
  * @augments seriesTypes.column
+ * @requires highcharts-3d
+ * @requires modules/cylinder
+ * @requires modules/funnel3d
  */
 seriesType('funnel3d', 'column', 
 /**
@@ -46,6 +47,9 @@ seriesType('funnel3d', 'column',
  * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
  * @product      highcharts
  * @since        7.1.0
+ * @requires     highcharts-3d
+ * @requires     modules/cylinder
+ * @requires     modules/funnel3d
  * @optionparent plotOptions.funnel3d
  */
 {
@@ -314,11 +318,16 @@ seriesType('funnel3d', 'column',
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
+ * @sample {highcharts} highcharts/demo/funnel3d/
+ *         Funnel3d demo
+ *
  * @since     7.1.0
  * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
- * @sample    {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+ * @requires  highcharts-3d
+ * @requires  modules/cylinder
+ * @requires  modules/funnel3d
  * @apioption series.funnel3d
  */
 /**

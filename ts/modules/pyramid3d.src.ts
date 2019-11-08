@@ -50,20 +50,18 @@ var seriesType = H.seriesType;
 /**
  * The pyramid3d series type.
  *
- * Requires `highcharts-3d.js`, `cylinder.js`, `funnel3d.js` and
- * `pyramid3d` modules.
- *
  * @constructor seriesTypes.pyramid3d
  * @augments seriesTypes.funnel3d
+ * @requires highcharts-3d
+ * @requires modules/cylinder
+ * @requires modules/funnel3d
+ * @requires modules/pyramid3d
  */
 seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
     /**
      * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
      * a type of chart often used to visualize stages in a sales project,
      * where the top are the initial stages with the most clients.
-     *
-     * It requires that the `highcharts-3d.js`, `cylinder.js`,
-     * `funnel3d.js` and `pyramid3d` modules are loaded.
      *
      * @sample highcharts/demo/pyramid3d/
      *         Pyramid3d
@@ -72,6 +70,10 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
      * @excluding    neckHeight, neckWidth
      * @product      highcharts
      * @since        7.1.0
+     * @requires     highcharts-3d
+     * @requires     modules/cylinder
+     * @requires     modules/funnel3d
+     * @requires     modules/pyramid3d
      * @optionparent plotOptions.pyramid3d
      */
     {
@@ -100,6 +102,7 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
+ * @requires  modules/pyramid3d
  * @apioption series.pyramid3d
  */
 

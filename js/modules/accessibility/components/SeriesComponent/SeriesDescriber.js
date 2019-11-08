@@ -96,17 +96,28 @@ function addDummyPointElement(point) {
  * @param {Highcharts.Series} series
  * @return {boolean}
  */
-function shouldSetScreenReaderPropsOnPoints(series) {
+function hasMorePointsThanDescriptionThreshold(series) {
     var chartA11yOptions = series.chart.options.accessibility,
-        seriesA11yOptions = series.options.accessibility || {};
+        threshold = chartA11yOptions.series.pointDescriptionEnabledThreshold;
 
     return !!(
-        series.points && (
-            series.points.length <
-            chartA11yOptions.series.pointDescriptionEnabledThreshold ||
-            chartA11yOptions.series.pointDescriptionEnabledThreshold === false
-        ) && !seriesA11yOptions.exposeAsGroupOnly
+        threshold !== false &&
+        series.points &&
+        series.points.length >= threshold
     );
+}
+
+
+/**
+ * @private
+ * @param {Highcharts.Series} series
+ * @return {boolean}
+ */
+function shouldSetScreenReaderPropsOnPoints(series) {
+    var seriesA11yOptions = series.options.accessibility || {};
+
+    return !hasMorePointsThanDescriptionThreshold(series) &&
+        !seriesA11yOptions.exposeAsGroupOnly;
 }
 
 
@@ -126,6 +137,29 @@ function shouldSetKeyboardNavPropsOnPoints(series) {
                 seriesNavOptions.pointNavigationEnabledThreshold ||
                 seriesNavOptions.pointNavigationEnabledThreshold === false
         )
+    );
+}
+
+
+/**
+ * @private
+ * @param {Highcharts.Series} series
+ * @return {boolean}
+ */
+function shouldDescribeSeriesElement(series) {
+    var chart = series.chart,
+        chartOptions = chart.options.chart || {},
+        chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
+        hasMultipleSeries = chart.series.length > 1,
+        describeSingleSeriesOption = chart.options.accessibility.series
+            .describeSingleSeries,
+        exposeAsGroupOnlyOption = (series.options.accessibility || {})
+            .exposeAsGroupOnly,
+        noDescribe3D = chartHas3d && hasMultipleSeries;
+
+    return !noDescribe3D && (
+        hasMultipleSeries || describeSingleSeriesOption ||
+        exposeAsGroupOnlyOption || hasMorePointsThanDescriptionThreshold(series)
     );
 }
 
@@ -462,16 +496,7 @@ function describeSeriesElement(series, seriesElement) {
 function describeSeries(series) {
     var chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
-        seriesEl = getSeriesA11yElement(series),
-        chartOptions = chart.options.chart || {},
-        chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
-        hasMultipleSeries = chart.series.length > 1,
-        describeSingleSeriesOption = chart.options.accessibility.series
-            .describeSingleSeries,
-        exposeAsGroupOnlyOption = (series.options.accessibility || {})
-            .exposeAsGroupOnly,
-        shouldDescribeSeriesElement = !chartHas3d && (hasMultipleSeries ||
-            describeSingleSeriesOption || exposeAsGroupOnlyOption);
+        seriesEl = getSeriesA11yElement(series);
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
@@ -485,7 +510,7 @@ function describeSeries(series) {
 
         unhideChartElementFromAT(chart, seriesEl);
 
-        if (shouldDescribeSeriesElement) {
+        if (shouldDescribeSeriesElement(series)) {
             describeSeriesElement(series, seriesEl);
         } else {
             seriesEl.setAttribute('aria-label', '');

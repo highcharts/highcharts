@@ -128,6 +128,7 @@ seriesType<Highcharts.FunnelSeries>(
      * @extends      plotOptions.pie
      * @excluding    innerSize,size
      * @product      highcharts
+     * @requires     modules/funnel
      * @optionparent plotOptions.funnel
      */
     {
@@ -460,7 +461,7 @@ seriesType<Highcharts.FunnelSeries>(
 
         // Extend the pie data label method
         drawDataLabels: function (
-            this: Highcharts.FunnelSeries,
+            this: Highcharts.FunnelSeries
         ): void {
             var series = this,
                 data = series.data,
@@ -615,6 +616,7 @@ seriesType<Highcharts.FunnelSeries>(
  * @extends   series,plotOptions.funnel
  * @excluding dataParser, dataURL, stack, xAxis, yAxis
  * @product   highcharts
+ * @requires  modules/funnel
  * @apioption series.funnel
  */
 
@@ -678,13 +680,14 @@ seriesType<Highcharts.PyramidSeries>(
     'funnel',
     /**
      * A pyramid series is a special type of funnel, without neck and reversed
-     * by default. Requires the funnel module.
+     * by default.
      *
      * @sample highcharts/demo/pyramid/
      *         Pyramid chart
      *
      * @extends      plotOptions.funnel
      * @product      highcharts
+     * @requires     modules/funnel
      * @optionparent plotOptions.pyramid
      */
     {
@@ -721,6 +724,7 @@ seriesType<Highcharts.PyramidSeries>(
  * @extends   series,plotOptions.pyramid
  * @excluding dataParser, dataURL, stack, xAxis, yAxis
  * @product   highcharts
+ * @requires  modules/funnel
  * @apioption series.pyramid
  */
 

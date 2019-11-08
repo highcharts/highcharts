@@ -35,6 +35,8 @@ H.seriesType('stochastic', 'sma',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/stochastic
  * @optionparent plotOptions.stochastic
  */
 {
@@ -156,6 +158,8 @@ H.merge(multipleLinesMixin, {
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/stochastic
  * @apioption series.stochastic
  */
 ''; // to include the above in the js output

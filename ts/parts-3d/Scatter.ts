@@ -69,6 +69,7 @@ seriesType(
      * @extends      plotOptions.scatter
      * @excluding    dragDrop
      * @product      highcharts
+     * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
     {
@@ -126,6 +127,7 @@ seriesType(
  *
  * @extends   series,plotOptions.scatter3d
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption series.scatter3d
  */
 

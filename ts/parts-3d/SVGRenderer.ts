@@ -592,6 +592,7 @@ SVGRenderer.prototype.elements3d = {
 /**
  * return result, generalization
  * @private
+ * @requires highcharts-3d
  */
 SVGRenderer.prototype.element3d = function (
     this: Highcharts.SVGRenderer,

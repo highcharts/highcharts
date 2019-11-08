@@ -183,6 +183,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
      * @excluding    allowPointSelect, curveFactor
      * @since        7.1.0
      * @product      highcharts
+     * @requires     modules/organization
      * @optionparent plotOptions.organization
      */
     {
@@ -674,6 +675,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
  *
  * @extends   series,plotOptions.organization
  * @product   highcharts
+ * @requires  modules/organization
  * @apioption series.organization
  */
 

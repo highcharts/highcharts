@@ -47,6 +47,11 @@ declare global {
 }
 
 /**
+ * @requires  modules/boost
+ * @apioption boost
+ */
+
+/**
  * Set the series threshold for when the boost should kick in globally.
  *
  * Setting to e.g. 20 will cause the whole chart to enter boost mode
@@ -195,10 +200,9 @@ declare global {
  * `cropThreshold`, all points are rendered although outside the visible plot
  * area, and the `boostThreshold` won't take effect.
  *
- * Requires `modules/boost.js`.
- *
  * @type      {number}
  * @default   5000
+ * @requires  modules/boost
  * @apioption plotOptions.series.boostThreshold
  */
 
@@ -217,6 +221,7 @@ declare global {
  * @type       {string}
  * @default    undefined
  * @validvalue ["add", "multiply", "darken"]
+ * @requires   modules/boost
  * @apioption  plotOptions.series.boostBlending
  */
 

@@ -136,6 +136,8 @@ seriesType<Highcharts.MACDIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/macd
      * @optionparent plotOptions.macd
      */
     {
@@ -414,7 +416,7 @@ seriesType<Highcharts.MACDIndicator>(
             SMA.prototype.applyZones.call(this);
 
             // applyZones hides only main series.graph, hide macd line manually
-            if ((this.options.macdLine as any).zones.length) {
+            if (this.graphmacd && (this.options.macdLine as any).zones.length) {
                 (this.graphmacd as any).hide();
             }
 
@@ -537,6 +539,8 @@ seriesType<Highcharts.MACDIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/macd
  * @apioption series.macd
  */
 

@@ -50,6 +50,8 @@ seriesType('cci', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/cci
  * @optionparent plotOptions.cci
  */
 {
@@ -102,6 +104,8 @@ seriesType('cci', 'sma',
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cci
  * @apioption series.cci
  */
 ''; // to include the above in the js output

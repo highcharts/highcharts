@@ -11,6 +11,9 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+var doc = H.win.document,
+    format = H.format;
+
 import U from '../../../parts/Utilities.js';
 var extend = U.extend,
     pick = U.pick;
@@ -23,8 +26,10 @@ var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
     getAxisDescription = ChartUtilities.getAxisDescription;
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
-var setElAttrs = HTMLUtilities.setElAttrs,
+var addClass = HTMLUtilities.addClass,
+    setElAttrs = HTMLUtilities.setElAttrs,
     escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
+    stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString,
     getElement = HTMLUtilities.getElement,
     visuallyHideElement = HTMLUtilities.visuallyHideElement;
 
@@ -217,9 +222,50 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     onChartUpdate: function () {
         var component = this;
+
+        this.linkedDescriptionElement = this.getLinkedDescriptionElement();
+        this.setLinkedDescriptionAttrs();
+
         Object.keys(this.screenReaderSections).forEach(function (regionKey) {
             component.updateScreenReaderSection(regionKey);
         });
+    },
+
+
+    /**
+     * @private
+     */
+    getLinkedDescriptionElement: function () {
+        var chartOptions = this.chart.options,
+            linkedDescOption = chartOptions.accessibility.linkedDescription;
+
+        if (!linkedDescOption) {
+            return;
+        }
+
+        if (linkedDescOption.innerHTML) {
+            return linkedDescOption;
+        }
+
+        var query = format(linkedDescOption, this.chart),
+            queryMatch = doc.querySelectorAll(query);
+
+        if (queryMatch.length === 1) {
+            return queryMatch[0];
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    setLinkedDescriptionAttrs: function () {
+        var el = this.linkedDescriptionElement;
+
+        if (el) {
+            el.setAttribute('aria-hidden', 'true');
+            addClass(el, 'highcharts-linked-description');
+        }
     },
 
 
@@ -326,12 +372,26 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      * @return {string}
      */
+    getLinkedDescription: function () {
+        var el = this.linkedDescriptionElement,
+            content = el && el.innerHTML || '';
+
+        return stripHTMLTagsFromString(content);
+    },
+
+
+    /**
+     * @private
+     * @return {string}
+     */
     getLongdescText: function () {
         var chartOptions = this.chart.options,
             captionOptions = chartOptions.caption,
-            captionText = captionOptions && captionOptions.text;
-        return chartOptions.accessibility.description ||
-                captionText || '';
+            captionText = captionOptions && captionOptions.text,
+            linkedDescription = this.getLinkedDescription();
+
+        return chartOptions.accessibility.description || linkedDescription ||
+            captionText || '';
     },
 
 
@@ -368,7 +428,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getSubtitleText: function () {
         var subtitle = this.chart.options.subtitle;
-        return subtitle && subtitle.text || '';
+        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
     },
 
 

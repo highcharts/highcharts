@@ -40,6 +40,8 @@ seriesType('ad', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/accumulation-distribution
  * @optionparent plotOptions.ad
  */
 {
@@ -99,6 +101,8 @@ seriesType('ad', 'sma',
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/accumulation-distribution
  * @apioption series.ad
  */
 ''; // add doclet above to transpiled file

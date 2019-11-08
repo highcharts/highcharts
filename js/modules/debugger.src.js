@@ -21,12 +21,11 @@ setOptions({
          * Whether to display errors on the chart. When `false`, the errors will
          * be shown only in the console.
          *
-         * Requires `debugger.js` module.
-         *
          * @sample highcharts/chart/display-errors/
          *         Show errors on chart
          *
-         * @since 7.0.0
+         * @since    7.0.0
+         * @requires modules/debugger
          */
         displayErrors: true
     }

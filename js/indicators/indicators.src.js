@@ -68,6 +68,7 @@ seriesType('sma', 'line',
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking, useOhlcData
  * @product      highstock
+ * @requires     stock/indicators/indicators
  * @optionparent plotOptions.sma
  */
 {
@@ -310,6 +311,7 @@ seriesType('sma', 'line',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL, useOhlcData
+ * @requires  stock/indicators/indicators
  * @apioption series.sma
  */
 ''; // adds doclet above to the transpiled file

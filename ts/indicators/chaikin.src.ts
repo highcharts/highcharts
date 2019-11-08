@@ -86,6 +86,9 @@ H.seriesType<Highcharts.ChaikinIndicator>(
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
+     * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
      */
     {
@@ -145,9 +148,15 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 yData: Array<number> = [],
                 periodsOffset: number,
                 // Shorter Period EMA
-                SPE: (boolean|Highcharts.IndicatorValuesObject),
+                SPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 // Longer Period EMA
-                LPE: (boolean|Highcharts.IndicatorValuesObject),
+                LPE: (
+                    boolean|Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject
+                ),
                 oscillator: number,
                 i: number;
 
@@ -215,6 +224,9 @@ H.seriesType<Highcharts.ChaikinIndicator>(
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/chaikin
  * @apioption series.chaikin
  */
 

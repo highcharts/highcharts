@@ -73,6 +73,7 @@ seriesType('xrange', 'column'
  *               negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, softThreshold,
  *               stacking, threshold, data
+ * @requires     modules/xrange
  * @optionparent plotOptions.xrange
  */
 , {
@@ -572,6 +573,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, softThreshold, stacking, threshold
  * @product   highcharts highstock gantt
+ * @requires  modules/xrange
  * @apioption series.xrange
  */
 /**

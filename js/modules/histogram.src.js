@@ -68,6 +68,7 @@ seriesType('histogram', 'column',
  *               stacking
  * @product      highcharts
  * @since        6.0.0
+ * @requires     modules/histogram
  * @optionparent plotOptions.histogram
  */
 {
@@ -174,6 +175,7 @@ seriesType('histogram', 'column',
  * @excluding data, dataParser, dataURL
  * @product   highcharts
  * @since     6.0.0
+ * @requires  modules/histogram
  * @apioption series.histogram
  */
 /**

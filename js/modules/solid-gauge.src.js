@@ -144,6 +144,7 @@ colorAxisMethods = {
  * @extends      plotOptions.gauge
  * @excluding    dial, pivot, wrap
  * @product      highcharts
+ * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
 var solidGaugeOptions = {
@@ -341,6 +342,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/solid-gauge
  * @apioption series.solidgauge
  */
 /**

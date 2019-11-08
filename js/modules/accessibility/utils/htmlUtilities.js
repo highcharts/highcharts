@@ -17,6 +17,23 @@ var merge = H.merge,
 
 /**
  * @private
+ * @param {Highcharts.HTMLDOMElement} el
+ * @param {string} str
+ */
+function addClass(el, className) {
+    if (el.classList) {
+        el.classList.add(className);
+    } else if (el.className.indexOf(className) < 0) {
+        // Note: Dumb check for class name exists, should be fine for practical
+        // use cases, but will return false positives if the element has a class
+        // that contains the className.
+        el.className += className;
+    }
+}
+
+
+/**
+ * @private
  * @param {string} str
  * @return {string}
  */
@@ -120,6 +137,7 @@ function visuallyHideElement(element) {
 
 
 var HTMLUtilities = {
+    addClass: addClass,
     escapeStringForHTML: escapeStringForHTML,
     getElement: getElement,
     removeElement: removeElement,
