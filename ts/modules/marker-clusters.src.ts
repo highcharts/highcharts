@@ -2318,7 +2318,7 @@ addEvent(H.Point, 'drillToCluster', function (
 
 // Destroy the old tooltip after zoom.
 addEvent(H.Axis, 'setExtremes', function (
-    this: Highcharts.Axis,
+    this: Highcharts.Axis
 ): void {
     var chart = this.chart,
         animationDuration = 0,
