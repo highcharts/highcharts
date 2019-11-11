@@ -244,6 +244,7 @@ const {
     clamp,
     defined,
     extend,
+    extendClass,
     isArray,
     isNumber,
     pick
@@ -338,7 +339,7 @@ var seriesType = H.seriesType,
     getK: H.noop
 };
 
-H.layouts.packedbubble = H.extendClass(
+H.layouts.packedbubble = extendClass(
     Reingold,
     {
         beforeStep: function (this: Highcharts.PackedBubbleLayout): void {
