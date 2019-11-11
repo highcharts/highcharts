@@ -192,20 +192,13 @@ seriesType<Highcharts.MapSeries>(
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
-            /** @ignore-option */
             crop: false,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (number|null) { // #2945
                 return (this.point as Highcharts.MapPoint).value;
             },
-            /** @ignore-option */
             inside: true, // for the color
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             padding: 0,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 

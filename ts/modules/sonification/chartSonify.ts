@@ -19,26 +19,26 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface SonificationObject {
-            timeline?: Timeline;
-        }
         interface SonifyChartFunctionsObject {
-            cancel(this: SonifyChart, fadeOut?: boolean): void;
+            cancel(this: SonifyableChart, fadeOut?: boolean): void;
             chartSonify(
-                this: SonifyChart,
+                this: SonifyableChart,
                 options: SonifyChartOptionsObject
             ): void;
-            getCurrentPoints(this: SonifyChart): Array<Point>;
-            pause(this: SonifyChart, fadeOut?: boolean): void;
-            resetCursor(this: SonifyChart): void;
-            resetCursorEnd(this: SonifyChart): void;
-            resume(this: SonifyChart, onEnd: Function): void;
-            rewind(this: SonifyChart, onEnd: Function): void;
+            getCurrentPoints(this: SonifyableChart): Array<Point>;
+            pause(this: SonifyableChart, fadeOut?: boolean): void;
+            resetCursor(this: SonifyableChart): void;
+            resetCursorEnd(this: SonifyableChart): void;
+            resume(this: SonifyableChart, onEnd: Function): void;
+            rewind(this: SonifyableChart, onEnd: Function): void;
             seriesSonify(
-                this: SonifySeries,
+                this: SonifyableSeries,
                 options: SonifySeriesOptionsObject
             ): void;
-            setCursor(this: SonifyChart, points: (Point|Array<Point>)): void;
+            setCursor(
+                this: SonifyableChart,
+                points: (Point|Array<Point>)
+            ): void;
         }
         interface SonifyChartOptionsObject {
             afterSeriesWait?: number;
@@ -73,7 +73,7 @@ declare global {
             timeExtremes?: RangeObject;
         }
         interface SonifySeriesOrderObject {
-            series: SonifySeries;
+            series: SonifyableSeries;
             seriesOptions: SonifySeriesOptionsObject;
         }
     }
@@ -183,7 +183,7 @@ import utilities from './utilities.js';
  * The time value.
  */
 function getPointTimeValue(
-    point: Highcharts.SonifyPoint,
+    point: Highcharts.SonifyablePoint,
     timeProp: (string|Function)
 ): number {
     return typeof timeProp === 'function' ?
@@ -205,13 +205,13 @@ function getPointTimeValue(
  * Object with min/max extremes for the time values.
  */
 function getTimeExtremes(
-    series: Highcharts.SonifySeries,
+    series: Highcharts.SonifyableSeries,
     timeProp: (string|Function)
 ): Highcharts.RangeObject {
     // Compute the extremes from the visible points.
     return series.points.reduce(function (
         acc: Highcharts.RangeObject,
-        point: Highcharts.SonifyPoint
+        point: Highcharts.SonifyablePoint
     ): Highcharts.RangeObject {
         var value = getPointTimeValue(point, timeProp);
 
@@ -351,7 +351,7 @@ function makeInstrumentCopies(
  * A timeline path with events.
  */
 function buildTimelinePathFromSeries(
-    series: Highcharts.SonifySeries,
+    series: Highcharts.SonifyableSeries,
     options: Highcharts.SonifySeriesOptionsObject
 ): Highcharts.TimelinePath {
     // options.timeExtremes is internal and used so that the calculations from
@@ -360,7 +360,7 @@ function buildTimelinePathFromSeries(
             series, options.pointPlayTime, options.dataExtremes
         ),
         // Get time offset for a point, relative to duration
-        pointToTime = function (point: Highcharts.SonifyPoint): number {
+        pointToTime = function (point: Highcharts.SonifyablePoint): number {
             return utilities.virtualAxisTranslate(
                 getPointTimeValue(point, options.pointPlayTime),
                 timeExtremes,
@@ -377,7 +377,7 @@ function buildTimelinePathFromSeries(
         // Go through the points, convert to events, optionally add Earcons
         timelineEvents = series.points.reduce(function (
             events: Array<Highcharts.TimelineEvent>,
-            point: Highcharts.SonifyPoint
+            point: Highcharts.SonifyablePoint
         ): Array<Highcharts.TimelineEvent> {
             var earcons = getPointEarcons(point, options.earcons || []),
                 time = pointToTime(point);
@@ -479,7 +479,7 @@ function buildTimelinePathFromSeries(
  * @return {void}
  */
 function seriesSonify(
-    this: Highcharts.SonifySeries,
+    this: Highcharts.SonifyableSeries,
     options: Highcharts.SonifySeriesOptionsObject
 ): void {
     var timelinePath = buildTimelinePathFromSeries(this, options),
@@ -496,7 +496,7 @@ function seriesSonify(
         paths: [timelinePath]
     });
 
-    (chartSonification.timeline as any).play();
+    chartSonification.timeline.play();
 }
 
 
@@ -514,7 +514,7 @@ function seriesSonify(
  * Options for buildTimelinePathFromSeries.
  */
 function buildSeriesOptions(
-    series: Highcharts.SonifySeries,
+    series: Highcharts.SonifyableSeries,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>,
     chartSonifyOptions: Highcharts.SonifyChartOptionsObject
 ): Partial<Highcharts.SonifySeriesOptionsObject> {
@@ -523,11 +523,7 @@ function buildSeriesOptions(
         Array<Partial<Highcharts.SonifySeriesOptionsObject>>
     ) = chartSonifyOptions.seriesOptions || {};
 
-    return H.merge<
-    Partial<Highcharts.SonifySeriesOptionsObject>,
-    Highcharts.SeriesOptions,
-    Partial<Highcharts.SonifySeriesOptionsObject>
-    >(
+    return H.merge(
         {
             // Calculated dataExtremes for chart
             dataExtremes: dataExtremes,
@@ -578,7 +574,7 @@ function buildPathOrder(
         string|Array<(string|Highcharts.Earcon|
         Array<(string|Highcharts.Earcon)>)>
     ),
-    chart: Highcharts.SonifyChart,
+    chart: Highcharts.SonifyableChart,
     seriesOptionsCallback: Function
 ): Array<(Highcharts.SonifySeriesOrderObject|Array<(
         Highcharts.SonifySeriesOrderObject|Highcharts.TimelinePath
@@ -591,7 +587,7 @@ function buildPathOrder(
         // Just add the series from the chart
         order = chart.series.reduce(function (
             seriesList: Array<Highcharts.SonifySeriesOrderObject>,
-            series: Highcharts.SonifySeries
+            series: Highcharts.SonifyableSeries
         ): Array<Highcharts.SonifySeriesOrderObject> {
             if (series.visible) {
                 seriesList.push({
@@ -637,7 +633,7 @@ function buildPathOrder(
 
                 // Is this item a series ID?
                 if (typeof item === 'string') {
-                    var series: Highcharts.SonifySeries = (
+                    var series: Highcharts.SonifyableSeries = (
                         chart.get(item) as any
                     );
 
@@ -731,7 +727,7 @@ function addAfterSeriesWaits(
                 item: (
                     Highcharts.SonifySeriesOrderObject|Highcharts.TimelinePath
                 )
-            ): (Highcharts.SonifySeries|undefined) {
+            ): (Highcharts.SonifyableSeries|undefined) {
                 return (item as any).series;
             })
         ) {
@@ -1079,7 +1075,7 @@ function buildPathsFromOrder(
  * @return {void}
  */
 function chartSonify(
-    this: Highcharts.SonifyChart,
+    this: Highcharts.SonifyableChart,
     options: Highcharts.SonifyChartOptionsObject
 ): void {
     // Only one timeline can play at a time.
@@ -1094,7 +1090,7 @@ function chartSonify(
 
     // Figure out ordering of series and custom paths
     var order = buildPathOrder(options.order, this, function (
-        series: Highcharts.SonifySeries
+        series: Highcharts.SonifyableSeries
     ): Partial<Highcharts.SonifySeriesOptionsObject> {
         return buildSeriesOptions(series, dataExtremes, options);
     });
@@ -1133,7 +1129,7 @@ function chartSonify(
  *         The points currently under the cursor.
  */
 function getCurrentPoints(
-    this: Highcharts.SonifyChart
+    this: Highcharts.SonifyableChart
 ): Array<Highcharts.Point> {
     var cursorObj: Highcharts.Dictionary<Highcharts.TimelineEvent>;
 
@@ -1166,7 +1162,7 @@ function getCurrentPoints(
  *        being played simultaneously.
  */
 function setCursor(
-    this: Highcharts.SonifyChart,
+    this: Highcharts.SonifyableChart,
     points: (Highcharts.Point|Array<Highcharts.Point>)
 ): void {
     var timeline: Highcharts.Timeline = this.sonification.timeline as any;
@@ -1193,7 +1189,7 @@ function setCursor(
  *
  * @return {void}
  */
-function pause(this: Highcharts.SonifyChart, fadeOut?: boolean): void {
+function pause(this: Highcharts.SonifyableChart, fadeOut?: boolean): void {
     if (this.sonification.timeline) {
         this.sonification.timeline.pause(pick(fadeOut, true));
     } else if (this.sonification.currentlyPlayingPoint) {
@@ -1215,7 +1211,7 @@ function pause(this: Highcharts.SonifyChart, fadeOut?: boolean): void {
  *
  * @return {void}
  */
-function resume(this: Highcharts.SonifyChart, onEnd: Function): void {
+function resume(this: Highcharts.SonifyableChart, onEnd: Function): void {
     if (this.sonification.timeline) {
         this.sonification.timeline.play(onEnd);
     }
@@ -1235,7 +1231,7 @@ function resume(this: Highcharts.SonifyChart, onEnd: Function): void {
  *
  * @return {void}
  */
-function rewind(this: Highcharts.SonifyChart, onEnd: Function): void {
+function rewind(this: Highcharts.SonifyableChart, onEnd: Function): void {
     if (this.sonification.timeline) {
         this.sonification.timeline.rewind(onEnd);
     }
@@ -1254,7 +1250,7 @@ function rewind(this: Highcharts.SonifyChart, onEnd: Function): void {
  *
  * @return {void}
  */
-function cancel(this: Highcharts.SonifyChart, fadeOut?: boolean): void {
+function cancel(this: Highcharts.SonifyableChart, fadeOut?: boolean): void {
     this.pauseSonify(fadeOut);
     this.resetSonifyCursor();
 }
@@ -1270,7 +1266,7 @@ function cancel(this: Highcharts.SonifyChart, fadeOut?: boolean): void {
  *
  * @return {void}
  */
-function resetCursor(this: Highcharts.SonifyChart): void {
+function resetCursor(this: Highcharts.SonifyableChart): void {
     if (this.sonification.timeline) {
         this.sonification.timeline.resetCursor();
     }
@@ -1287,7 +1283,7 @@ function resetCursor(this: Highcharts.SonifyChart): void {
  *
  * @return {void}
  */
-function resetCursorEnd(this: Highcharts.SonifyChart): void {
+function resetCursorEnd(this: Highcharts.SonifyableChart): void {
     if (this.sonification.timeline) {
         this.sonification.timeline.resetCursorEnd();
     }

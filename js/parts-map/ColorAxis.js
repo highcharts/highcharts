@@ -341,10 +341,10 @@ extend(ColorAxis.prototype, {
          */
         labels: {
             /**
-             * How to handle overflowing labels on horizontal color axis.
-             * Can be undefined or "justify". If "justify", labels will not
-             * render outside the legend area. If there is room to move it,
-             * it will be aligned to the edge, else it will be removed.
+             * How to handle overflowing labels on horizontal color axis. If set
+             * to `"allow"`, it will not be aligned at all. By default it
+             * `"justify"` labels inside the chart area. If there is room to
+             * move it, it will be aligned to the edge, else it will be removed.
              *
              * @validvalue ["allow", "justify"]
              * @product    highcharts highstock highmaps

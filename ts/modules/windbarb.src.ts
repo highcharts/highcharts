@@ -576,3 +576,5 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
  * @product   highcharts highstock
  * @apioption series.windbarb.data.direction
  */
+
+''; // adds doclets above to transpiled file

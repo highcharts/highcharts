@@ -340,9 +340,7 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @internal */
                 enabled: false,
-                /** @internal */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',

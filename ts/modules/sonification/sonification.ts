@@ -23,15 +23,24 @@ var extend = U.extend;
 declare global {
     namespace Highcharts {
         interface Chart {
-            sonification?: SonifyChart['sonification'];
-            sonify?: SonifyChart['sonify'];
+            sonification?: SonifyableChart['sonification'];
+            sonify?: SonifyableChart['sonify'];
+        }
+        interface ChartSonificationStateObject {
+            currentlyPlayingPoint?: SonifyablePoint;
+            timeline?: Timeline;
         }
         interface Point {
-            cancelSonify?: SonifyPoint['cancelSonify'];
-            sonify?: SonifyPoint['sonify'];
+            cancelSonify?: SonifyablePoint['cancelSonify'];
+            sonify?: SonifyablePoint['sonify'];
+        }
+        interface PointSonificationStateObject {
+            currentlyPlayingPoint?: SonifyablePoint;
+            instrumentsPlaying?: Dictionary<Instrument>;
+            signalHandler?: SignalHandler;
         }
         interface Series {
-            sonify?: SonifySeries['sonify'];
+            sonify?: SonifyableSeries['sonify'];
         }
         interface SonificationObject {
             Earcon: typeof Earcon;
@@ -43,7 +52,7 @@ declare global {
             instruments: Dictionary<Instrument>;
             utilities: SonificationUtilitiesObject;
         }
-        interface SonifyChart extends Chart {
+        interface SonifyableChart extends Chart {
             cancelSonify: SonifyChartFunctionsObject['cancel'];
             getCurrentSonifyPoints: (
                 SonifyChartFunctionsObject['getCurrentPoints']
@@ -53,25 +62,21 @@ declare global {
             resetSonifyCursorEnd: SonifyChartFunctionsObject['resetCursorEnd'];
             resumeSonify: SonifyChartFunctionsObject['resume'];
             rewindSonify: SonifyChartFunctionsObject['rewind'];
-            series: Array<SonifySeries>;
+            series: Array<SonifyableSeries>;
             setSonifyCursor: SonifyChartFunctionsObject['setCursor'];
-            sonification: SonificationObject;
+            sonification: ChartSonificationStateObject;
             sonify: SonifyChartFunctionsObject['chartSonify'];
         }
-        interface SonifyOptions {
+        interface SonifyablePoint extends Point {
             cancelSonify: PointSonifyFunctions['pointCancelSonify'];
-            pointSonify: PointSonifyFunctions['pointSonify'];
-        }
-        interface SonifyPoint extends Point {
-            cancelSonify: PointSonifyFunctions['pointCancelSonify'];
-            series: SonifySeries;
-            sonification: SonificationObject;
+            series: SonifyableSeries;
+            sonification: PointSonificationStateObject;
             sonify: PointSonifyFunctions['pointSonify'];
         }
-        interface SonifySeries extends Series {
-            chart: SonifyChart;
-            points: Array<SonifyPoint>;
-            sonify?: SonifyChartFunctionsObject['seriesSonify'];
+        interface SonifyableSeries extends Series {
+            chart: SonifyableChart;
+            points: Array<SonifyablePoint>;
+            sonify: SonifyChartFunctionsObject['seriesSonify'];
         }
         let sonification: SonificationObject;
     }
@@ -175,5 +180,5 @@ extend(H.Chart.prototype, {
 
 // Prepare charts for sonification on init
 addEvent(H.Chart, 'init', function (): void {
-    this.sonification = {} as any;
+    this.sonification = {};
 });

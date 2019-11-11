@@ -430,7 +430,7 @@ Instrument.prototype.play = function (options) {
         instrument.stopTimeout = setTimeout(onStop, immediate ? duration :
             duration - H.sonification.fadeOutDuration);
         // Play the note
-        setOrStartTimer(options.frequency, 'setFrequency', null, {
+        setOrStartTimer(options.frequency, 'setFrequency', {
             minFrequency: options.minFrequency,
             maxFrequency: options.maxFrequency
         });

@@ -377,7 +377,6 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
     colorByPoint: true,
 
     dataLabels: {
-        /** @ignore-option */
         y: 0
     }
 

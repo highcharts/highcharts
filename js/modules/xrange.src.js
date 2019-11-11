@@ -112,8 +112,6 @@ seriesType('xrange', 'column'
      */
     colorByPoint: true,
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             var point = this.point, amount = point.partialFill;
             if (isObject(amount)) {
@@ -123,9 +121,7 @@ seriesType('xrange', 'column'
                 return correctFloat(amount * 100) + '%';
             }
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     tooltip: {

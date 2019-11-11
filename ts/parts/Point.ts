@@ -179,6 +179,7 @@ declare global {
         type PointOptionsType = (
             number|string|Array<(number|string)>|PointOptionsObject|null
         );
+        type PointStateValue = keyof PointStatesOptionsObject;
     }
 }
 
@@ -595,6 +596,12 @@ declare global {
  */
 
 /**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+
+/**
  * Gets fired when the point is updated programmatically through the `.update()`
  * method.
  *
@@ -1006,7 +1013,7 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.PlotSeriesZonesOptions}
+     * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
     getZone: function (

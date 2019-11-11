@@ -260,3 +260,28 @@ QUnit.test('Polar and pie in panes (#11897)', assert => {
 
     assert.ok(true, "No errors (#11897).");
 });
+
+QUnit.test(
+    'Polar and clipping',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        const oldLen = chart.container.querySelectorAll('defs clipPath').length;
+
+        chart.series[0].setData([4, 3, 1]);
+
+        assert.strictEqual(
+            chart.container.querySelectorAll('defs clipPath').length,
+            oldLen,
+            'On data update new clip paths should not be created (#12335)'
+        );
+
+    }
+);

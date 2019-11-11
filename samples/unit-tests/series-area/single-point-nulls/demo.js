@@ -1,6 +1,9 @@
 QUnit.test('Single point marker surrounded by null (#5099)', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces graphic for null points
+        },
         chart: {
             type: 'area'
         },
