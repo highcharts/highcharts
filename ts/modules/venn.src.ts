@@ -133,10 +133,13 @@ import NelderMeadModule from '../mixins/nelder-mead.js';
 var nelderMead = NelderMeadModule.nelderMead;
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isNumber = U.isNumber,
-    isObject = U.isObject,
-    isString = U.isString;
+const {
+    animObject,
+    isArray,
+    isNumber,
+    isObject,
+    isString
+} = U;
 
 import '../parts/Series.js';
 
@@ -449,7 +452,7 @@ var getLabelPosition = function getLabelPosition(
                 return best;
             }, best);
     }, {
-        point: undefined as any,
+        point: void 0 as any,
         margin: -Number.MAX_VALUE
     }).point;
 
@@ -830,7 +833,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(
                 return best;
             }, {
                 loss: Number.MAX_VALUE,
-                coordinates: undefined as any
+                coordinates: void 0 as any
             });
 
         // Add the set to its final position.
@@ -1073,6 +1076,7 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     modules/venn
  * @optionparent plotOptions.venn
  */
 var vennOptions: Highcharts.VennSeriesOptions = {
@@ -1083,12 +1087,8 @@ var vennOptions: Highcharts.VennSeriesOptions = {
     clip: false,
     colorByPoint: true,
     dataLabels: {
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'middle',
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function (): (string|undefined) {
             return this.point.name;
         }
@@ -1325,7 +1325,7 @@ var vennSeries = {
     animate: function (this: Highcharts.VennSeries, init?: boolean): void {
         if (!init) {
             var series = this,
-                animOptions = H.animObject(series.options.animation);
+                animOptions = animObject(series.options.animation);
 
             series.points.forEach(function (point: Highcharts.VennPoint): void {
                 var args = point.shapeArgs;
@@ -1402,6 +1402,7 @@ var vennPoint = {
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
  *            threshold, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/venn
  * @apioption series.venn
  */
 

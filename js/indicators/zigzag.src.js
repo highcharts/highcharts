@@ -32,6 +32,8 @@ seriesType('zigzag', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/zigzag
  * @optionparent plotOptions.zigzag
  */
 {
@@ -81,7 +83,7 @@ seriesType('zigzag', 'sma',
             (yValLen &&
                 (yVal[0][lowIndex] === UNDEFINED ||
                     yVal[0][highIndex] === UNDEFINED))) {
-            return false;
+            return;
         }
         // Set first zigzag point candidate
         firstZigzagLow = yVal[0][lowIndex];
@@ -173,6 +175,8 @@ seriesType('zigzag', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
  */
 ''; // adds doclets above to transpiled file

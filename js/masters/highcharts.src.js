@@ -39,10 +39,14 @@ import '../parts/Interaction.js';
 import '../parts/Responsive.js';
 
 extend(Highcharts, {
+    animObject: U.animObject,
     arrayMax: U.arrayMax,
     arrayMin: U.arrayMin,
     attr: U.attr,
+    correctFloat: U.correctFloat,
     defined: U.defined,
+    destroyObjectProperties: U.destroyObjectProperties,
+    discardElement: U.discardElement,
     erase: U.erase,
     extend: U.extend,
     isArray: U.isArray,
@@ -54,6 +58,7 @@ extend(Highcharts, {
     objectEach: U.objectEach,
     pick: U.pick,
     pInt: U.pInt,
+    setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout
 });

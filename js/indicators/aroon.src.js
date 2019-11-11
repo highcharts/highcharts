@@ -52,6 +52,8 @@ H.seriesType('aroon', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/aroon
  * @optionparent plotOptions.aroon
  */
 {
@@ -90,7 +92,7 @@ H.seriesType('aroon', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     dataGrouping: {
@@ -145,6 +147,8 @@ H.merge(multipleLinesMixin, {
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/aroon
  * @apioption series.aroon
  */
 ''; // to avoid removal of the above jsdoc

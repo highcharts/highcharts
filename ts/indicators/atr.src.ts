@@ -23,7 +23,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ATRIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
         }
 
         interface ATRIndicatorOptions extends SMAIndicatorOptions {
@@ -125,6 +125,8 @@ seriesType<Highcharts.ATRIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
      */
     {
@@ -139,7 +141,7 @@ seriesType<Highcharts.ATRIndicator>(
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.ATRIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -163,7 +165,7 @@ seriesType<Highcharts.ATRIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             for (i = 1; i <= yValLen; i++) {
@@ -214,6 +216,8 @@ seriesType<Highcharts.ATRIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @apioption series.atr
  */
 

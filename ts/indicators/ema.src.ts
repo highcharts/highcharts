@@ -29,7 +29,7 @@ declare global {
             ): number;
             public calculateEma(
                 xVal: (Array<number>|undefined),
-                yVal: Array<Array<number>>,
+                yVal: (Array<number>|Array<Array<number>>),
                 i: number,
                 EMApercent: number,
                 calEMA: (number|undefined),
@@ -39,8 +39,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: EMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
-
+            ): (IndicatorValuesObject|IndicatorNullableValuesObject|undefined);
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {
@@ -63,10 +62,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var seriesType = H.seriesType,
-    correctFloat = H.correctFloat;
+var seriesType = H.seriesType;
 
 /**
  * The EMA series type.
@@ -90,6 +91,8 @@ seriesType<Highcharts.EMAIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ema
      * @optionparent plotOptions.ema
      */
     {
@@ -130,7 +133,7 @@ seriesType<Highcharts.EMAIndicator>(
         },
         calculateEma: function (
             xVal: Array<number>,
-            yVal: Array<Array<number>>,
+            yVal: (Array<number>|Array<Array<number>>),
             i: number,
             EMApercent: number,
             calEMA: (number|undefined),
@@ -138,13 +141,13 @@ seriesType<Highcharts.EMAIndicator>(
             SMA: number
         ): [number, number] {
             var x: number = xVal[i - 1],
-                yValue: (number|Array<number>) = index < 0 ?
+                yValue: number = index < 0 ?
                     yVal[i - 1] :
-                    yVal[i - 1][index],
+                    (yVal as any)[i - 1][index],
                 y: number;
 
-            y = calEMA === undefined ?
-                SMA : correctFloat(((yValue as any) * EMApercent) +
+            y = typeof calEMA === 'undefined' ?
+                SMA : correctFloat((yValue * EMApercent) +
                 (calEMA * (1 - EMApercent)));
 
             return [x, y];
@@ -153,7 +156,7 @@ seriesType<Highcharts.EMAIndicator>(
             this: Highcharts.EMAIndicator,
             series: Highcharts.Series,
             params: Highcharts.EMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -171,7 +174,7 @@ seriesType<Highcharts.EMAIndicator>(
 
             // Check period, if bigger than points length, skip
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
@@ -223,6 +226,8 @@ seriesType<Highcharts.EMAIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
  * @apioption series.ema
  */
 

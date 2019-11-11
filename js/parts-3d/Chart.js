@@ -63,13 +63,15 @@ addEvent(Chart, 'addSeries', function (e) {
  * @function getScale
  *
  * @param {Highcharts.Chart} chart
- *        Chart object
+ * Chart object
  *
  * @param {number} depth
- *        The depth of the chart
+ * The depth of the chart
  *
  * @return {number}
- *         The scale to fit the 3D chart into the plotting area.
+ * The scale to fit the 3D chart into the plotting area.
+ *
+ * @requires highcharts-3d
  */
 function getScale(chart, depth) {
     var plotLeft = chart.plotLeft, plotRight = chart.plotWidth + plotLeft, plotTop = chart.plotTop, plotBottom = chart.plotHeight + plotTop, originX = plotLeft + chart.plotWidth / 2, originY = plotTop + chart.plotHeight / 2, bbox3d = {
@@ -150,8 +152,9 @@ var extendedOptions = {
          * `highcharts-3d.js`, found in the download package or online at
          * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-3d.js).
          *
-         * @since   4.0
-         * @product highcharts
+         * @since    4.0
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         options3d: {
             /**
@@ -213,8 +216,9 @@ var extendedOptions = {
              * Provides the option to draw a frame around the charts by defining
              * a bottom, front and back panel.
              *
-             * @since   4.0
-             * @product highcharts
+             * @since    4.0
+             * @product  highcharts
+             * @requires highcharts-3d
              */
             frame: {
                 /**
@@ -228,8 +232,9 @@ var extendedOptions = {
                 /**
                  * The bottom of the frame around a 3D chart.
                  *
-                 * @since   4.0
-                 * @product highcharts
+                 * @since    4.0
+                 * @product  highcharts
+                 * @requires highcharts-3d
                  */
                 /**
                  * The color of the panel.
@@ -1285,7 +1290,7 @@ Chart.prototype.get3dFrame = function () {
             for (var j = 0; j < sources.length; j++) {
                 if (typeof sources[j] === 'object') {
                     var val = sources[j][attr];
-                    if (val !== undefined && val !== null) {
+                    if (typeof val !== 'undefined' && val !== null) {
                         options[attr] = val;
                         break;
                     }
@@ -1536,6 +1541,7 @@ H.Fx.prototype.matrixSetter = function () {
  * @deprecated
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption chart.options3d.frame.side
  */
 /**

@@ -264,8 +264,10 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -275,6 +277,7 @@ const {
     objectEach,
     pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 } = U;
@@ -286,12 +289,10 @@ import './Pointer.js';
 
 var addEvent = H.addEvent,
     animate = H.animate,
-    animObject = H.animObject,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
     find = H.find,
@@ -459,7 +460,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     typeOptions.tooltip = (
                         userPlotOptions[type] && // override by copy:
                         merge((userPlotOptions[type] as any).tooltip)
-                    ) || undefined; // or clear
+                    ) || void 0; // or clear
                 }
             });
 
@@ -561,6 +562,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
@@ -634,7 +636,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
 
         series = new Constr();
@@ -659,6 +661,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Contains the series' index in the `Chart.series` array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number}
+                 * @readonly
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
@@ -749,7 +758,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        H.setAnimation(animation as any, chart);
+        setAnimation(animation as any, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -1091,7 +1100,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // The initial call also adds the caption. On update, chart.update will
         // relay to Chart.setCaption.
-        this.applyDescription('caption', undefined);
+        this.applyDescription('caption', void 0);
 
         this.layOutTitles(redraw);
     },
@@ -1736,7 +1745,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     // Set size, it may have been destroyed in the meantime
                     // (#1257)
                     if (chart.container) {
-                        chart.setSize(undefined, undefined, false);
+                        chart.setSize(void 0, void 0, false);
                     }
                 }, e ? 100 : 0);
             }
@@ -1835,14 +1844,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isResizing += 1;
 
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
 
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
-        if (width !== undefined) {
+        if (typeof width !== 'undefined') {
             (chart.options.chart as any).width = width;
         }
-        if (height !== undefined) {
+        if (typeof height !== 'undefined') {
             (chart.options.chart as any).height = height;
         }
         chart.getChartSize();
@@ -2163,6 +2172,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         plotHeight
                     ).add();
                 } else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
+
                     plotBGImage.animate(plotBox as Highcharts.SVGAttributes);
                 }
             }
@@ -2617,7 +2630,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.renderer.forExport) {
             erase(charts, chart); // #6569
         } else {
-            charts[chart.index] = undefined;
+            charts[chart.index] = void 0;
         }
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
@@ -2766,7 +2779,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             fn: Highcharts.ChartCallbackFunction
         ): void {
             // Chart destroyed in its own callback (#3600)
-            if (fn && this.index !== undefined) {
+            if (fn && typeof this.index !== 'undefined') {
                 fn.apply(this, [this]);
             }
         }, this);

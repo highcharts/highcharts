@@ -28,7 +28,7 @@ declare global {
             public getValues(
                 series: ZigzagIndicatorLinkedParentSeries,
                 params: ZigzagIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
         }
         class ZigzagIndicatorPoint extends SMAIndicatorPoint {
             series: ZigzagIndicator;
@@ -82,6 +82,8 @@ seriesType<Highcharts.ZigzagIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
      */
     {
@@ -125,7 +127,7 @@ seriesType<Highcharts.ZigzagIndicator>(
             this: Highcharts.ZigzagIndicator,
             series: Highcharts.ZigzagIndicatorLinkedParentSeries,
             params: Highcharts.ZigzagIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var lowIndex: number = params.lowIndex as any,
                 highIndex: number = params.highIndex as any,
                 deviation = (params.deviation as any) / 100,
@@ -160,7 +162,7 @@ seriesType<Highcharts.ZigzagIndicator>(
                     )
                 )
             ) {
-                return false;
+                return;
             }
 
             // Set first zigzag point candidate
@@ -273,6 +275,8 @@ seriesType<Highcharts.ZigzagIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
  */
 

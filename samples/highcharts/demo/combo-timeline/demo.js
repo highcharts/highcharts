@@ -240,6 +240,14 @@ var options = {
         text: 'Highcharts and Highsoft timeline'
     },
 
+    caption: {
+        text: 'An advanced demo showing a combination of various Highcharts features, including flags and plot bands. The chart shows how Highcharts and Highsoft has evolved over time, with number of employees, revenue, search popularity, office locations, and various events of interest.'
+    },
+
+    credits: {
+        enabled: false
+    },
+
     tooltip: {
         style: {
             width: '250px'
@@ -285,6 +293,16 @@ var options = {
         flags: {
             tooltip: {
                 xDateFormat: '%B %e, %Y'
+            },
+            accessibility: {
+                pointDescriptionFormatter: function (point) {
+                    var timeDesc = Highcharts.SeriesAccessibilityDescriber
+                            .getPointA11yTimeDescription(point),
+                        flagTitle = point.title,
+                        flagText = point.text;
+
+                    return timeDesc + ', ' + flagTitle + ': ' + flagText + '.';
+                }
             }
         }
     },

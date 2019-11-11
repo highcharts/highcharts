@@ -58,8 +58,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
- * stroke is applied through `lineWidth` and `lineColor` options. Requires
- * the `highcharts-more.js` file.
+ * stroke is applied through `lineWidth` and `lineColor` options.
  *
  * @sample {highcharts} highcharts/demo/polygon/
  *         Polygon
@@ -70,6 +69,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @since        4.1.0
  * @excluding    jitter, softThreshold, threshold, cluster
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
 seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
@@ -125,6 +125,7 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
  * @extends   series,plotOptions.polygon
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.polygon
  */
 

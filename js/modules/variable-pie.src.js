@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, pick = U.pick;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, pick = U.pick;
 import '../parts/Options.js';
 var fireEvent = H.fireEvent, seriesType = H.seriesType, pieProto = H.seriesTypes.pie.prototype;
 /**
@@ -32,7 +32,7 @@ seriesType('variablepie', 'pie',
  * A variable pie series is a two dimensional series type, where each point
  * renders an Y and Z value.  Each point is drawn as a pie slice where the
  * size (arc) of the slice relates to the Y value and the radius of pie
- * slice relates to the Z value. Requires `highcharts-more.js`.
+ * slice relates to the Z value.
  *
  * @sample {highcharts} highcharts/demo/variable-radius-pie/
  *         Variable-radius pie chart
@@ -41,6 +41,7 @@ seriesType('variablepie', 'pie',
  * @excluding    dragDrop
  * @since        6.0.0
  * @product      highcharts
+ * @requires     modules/variable-pie.js
  * @optionparent plotOptions.variablepie
  */
 {
@@ -81,7 +82,7 @@ seriesType('variablepie', 'pie',
      * @type  {number}
      * @since 6.0.0
      */
-    zMin: undefined,
+    zMin: void 0,
     /**
      * The maximum possible z value for the point's radius calculation. If
      * the point's Z value is bigger than zMax, the slice will be drawn
@@ -93,7 +94,7 @@ seriesType('variablepie', 'pie',
      * @type  {number}
      * @since 6.0.0
      */
-    zMax: undefined,
+    zMax: void 0,
     /**
      * Whether the pie slice's value should be represented by the area or
      * the radius of the slice. Can be either `area` or `radius`. The
@@ -145,7 +146,7 @@ seriesType('variablepie', 'pie',
                 length * 2; // Because it should be radius, not diameter.
         });
         series.minPxSize = positions[3] + extremes.minPointSize;
-        series.maxPxSize = Math.max(Math.min(positions[2], extremes.maxPointSize), positions[3] + extremes.minPointSize);
+        series.maxPxSize = clamp(positions[2], positions[3] + extremes.minPointSize, extremes.maxPointSize);
         if (zData.length) {
             zMin = pick(seriesOptions.zMin, arrayMin(zData.filter(series.zValEval)));
             zMax = pick(seriesOptions.zMax, arrayMax(zData.filter(series.zValEval)));
@@ -318,6 +319,7 @@ seriesType('variablepie', 'pie',
  * @extends   series,plotOptions.variablepie
  * @excluding dataParser, dataURL, stack, xAxis, yAxis
  * @product   highcharts
+ * @requires  modules/variable-pie.js
  * @apioption series.variablepie
  */
 /**

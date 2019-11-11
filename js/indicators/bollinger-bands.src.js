@@ -47,6 +47,8 @@ H.seriesType('bb', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/bollinger-bands
  * @optionparent plotOptions.bb
  */
 {
@@ -76,7 +78,7 @@ H.seriesType('bb', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -90,7 +92,7 @@ H.seriesType('bb', 'sma',
             /**
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     tooltip: {
@@ -134,7 +136,7 @@ H.merge(multipleLinesMixin, {
         // middle line, top line and bottom line
         ML, TL, BL, date, xData = [], yData = [], slicedX, slicedY, stdDev, isOHLC, point, i;
         if (xVal.length < period) {
-            return false;
+            return;
         }
         isOHLC = isArray(yVal[0]);
         for (i = period; i <= yValLen; i++) {
@@ -168,6 +170,8 @@ H.merge(multipleLinesMixin, {
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/bollinger-bands
  * @apioption series.bb
  */
 ''; // to include the above in the js output

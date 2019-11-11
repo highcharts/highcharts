@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Daniel Studencki
- js_wrap: b
- requiresManualTesting: true
+name: Current temperatures in capitals of Europe
+authors:
+  - Daniel Studencki
+js_wrap: b
+requiresManualTesting: true
+tags: []
+categories:
+  - Dynamic
 ...

@@ -68,12 +68,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    correctFloat,
+    isNumber
+} = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
     merge = H.merge;
 
 /* ************************************************************************** *
@@ -158,6 +160,7 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
      * @product      highcharts
      * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
      *               pointInterval, pointIntervalUnit
+     * @requires     modules/bellcurve
      * @optionparent plotOptions.bellcurve
      */
     , {
@@ -256,6 +259,7 @@ seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, data
+ * @requires  modules/bellcurve
  * @apioption series.bellcurve
  */
 

@@ -3,6 +3,7 @@
 /.pydevproject
 /.settings
 /.vscode
+/.history
 /api-docs
 /out
 /js/highcharts-3d.src.js
@@ -39,6 +40,7 @@
 /utils/samples/nightly/
 
 /tree.json
+/tree-error.json
 /tree-namespace.json
 /tree-typescript.json
 

@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- skipTest: true
+name: Click to add a point
+authors:
+  - Torstein Hønsi
+js_wrap: b
+skipTest: true
+tags: []
+categories:
+  - Dynamic charts
 ...

@@ -265,7 +265,7 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
         // SVG download. In this case, we want to use Microsoft specific Blob if
         // available
         try {
-            if (nav.msSaveOrOpenBlob) {
+            if (typeof nav.msSaveOrOpenBlob !== 'undefined') {
                 blob = new MSBlobBuilder();
                 blob.append(svg);
                 svgurl = blob.getBlob('image/svg+xml');
@@ -452,7 +452,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 /* eslint-enable valid-jsdoc */
 /**
  * Exporting and offline-exporting modules required. Export a chart to an image
- * locally in the user's browser. Requires the regular exporting module.
+ * locally in the user's browser.
  *
  * @function Highcharts.Chart#exportChartLocal
  *
@@ -466,6 +466,8 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
  *         for export only.
  *
  * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
     var chart = this, options = Highcharts.merge(chart.options.exporting, exportingOptions), fallbackToExportServer = function (err) {

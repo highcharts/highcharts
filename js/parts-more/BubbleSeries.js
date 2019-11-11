@@ -13,7 +13,7 @@ import H from '../parts/Globals.js';
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -25,7 +25,7 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position
  * along the X and Y axes mark the X and Y values, and the size of the bubble
- * relates to the Z value. Requires `highcharts-more.js`.
+ * relates to the Z value.
  *
  * @sample {highcharts} highcharts/demo/bubble/
  *         Bubble chart
@@ -33,18 +33,15 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  * @extends      plotOptions.scatter
  * @excluding    cluster
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.bubble
  */
 seriesType('bubble', 'scatter', {
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.z;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     /**
@@ -395,7 +392,7 @@ seriesType('bubble', 'scatter', {
             }
             else { // below zThreshold
                 // #1691
-                point.shapeArgs = point.plotY = point.dlBox = undefined;
+                point.shapeArgs = point.plotY = point.dlBox = void 0;
             }
         }
     },
@@ -443,9 +440,9 @@ Axis.prototype.beforePadding = function () {
                 // Find the min and max Z
                 zData = series.zData.filter(isNumber);
                 if (zData.length) { // #1735
-                    zMin = pick(seriesOptions.zMin, Math.min(zMin, Math.max(arrayMin(zData), seriesOptions.displayNegative === false ?
+                    zMin = pick(seriesOptions.zMin, clamp(arrayMin(zData), seriesOptions.displayNegative === false ?
                         seriesOptions.zThreshold :
-                        -Number.MAX_VALUE)));
+                        -Number.MAX_VALUE, zMin));
                     zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
                 }
             }
@@ -478,7 +475,7 @@ Axis.prototype.beforePadding = function () {
             ['min', 'userMin', pxMin],
             ['max', 'userMax', pxMax]
         ].forEach(function (keys) {
-            if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
+            if (typeof pick(axis.options[keys[0]], axis[keys[1]]) === 'undefined') {
                 axis[keys[0]] += keys[2] / transA;
             }
         });
@@ -492,6 +489,7 @@ Axis.prototype.beforePadding = function () {
  * @extends   series,plotOptions.bubble
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.bubble
  */
 /**
@@ -545,9 +543,14 @@ Axis.prototype.beforePadding = function () {
  *
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
- * @excluding marker
  * @product   highcharts
  * @apioption series.bubble.data
+ */
+/**
+ * @extends     series.line.data.marker
+ * @excluding   enabledThreshold, height, radius, width
+ * @product     highcharts
+ * @apioption   series.bubble.data.marker
  */
 /**
  * The size value for each bubble. The bubbles' diameters are computed

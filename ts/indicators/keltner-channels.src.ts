@@ -10,7 +10,11 @@
 
 import H from '../parts/Globals.js';
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 /**
@@ -37,7 +41,7 @@ declare global {
             public getValues(
                 series: KeltnerChannelsLinkedParentSeries,
                 params: KeltnerChannelsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject)
+            ): (IndicatorMultipleValuesObject|undefined)
         }
 
         interface KeltnerChannelsIndicatorOptions
@@ -73,8 +77,7 @@ declare global {
 var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema,
     ATR = H.seriesTypes.atr,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /**
  * The Keltner Channels series type.
@@ -103,6 +106,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
     {
@@ -135,7 +140,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                  * Color of the line. If not set, it's inherited from
                  * `plotOptions.keltnerchannels.color`
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -146,7 +151,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
         topLine: {
             styles: {
                 lineWidth: 1,
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         tooltip: {
@@ -189,7 +194,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
         getValues: function (
             series: Highcharts.KeltnerChannelsLinkedParentSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period = (params.period as any),
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
@@ -204,13 +209,16 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 TL: number,
                 BL: number,
                 date: number,
-                seriesEMA: (boolean|Highcharts.IndicatorValuesObject) =
-                    EMA.prototype.getValues(series,
-                        {
-                            period: period,
-                            index: index
-                        }),
-                seriesATR: (boolean|Highcharts.IndicatorValuesObject) =
+                seriesEMA: (
+                    Highcharts.IndicatorValuesObject|
+                    Highcharts.IndicatorNullableValuesObject|
+                    undefined
+                ) = EMA.prototype.getValues(series,
+                    {
+                        period: period,
+                        index: index
+                    }),
+                seriesATR: (Highcharts.IndicatorValuesObject|undefined) =
                     ATR.prototype.getValues(series,
                         {
                             period: periodATR
@@ -222,7 +230,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 i: number;
 
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {
@@ -257,6 +265,8 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

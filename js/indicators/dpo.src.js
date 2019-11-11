@@ -8,8 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
-var correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 // Utils
 /**
@@ -47,6 +46,8 @@ H.seriesType('dpo', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/dpo
  * @optionparent plotOptions.dpo
  */
 {
@@ -71,7 +72,7 @@ H.seriesType('dpo', 'sma',
         // 0- date, 1- Detrended Price Oscillator
         DPO = [], xData = [], yData = [], sum = 0, oscillator, periodIndex, rangeIndex, price, i, j;
         if (xVal.length <= range) {
-            return false;
+            return;
         }
         // Accumulate first N-points for SMA
         for (i = 0; i < period - 1; i++) {
@@ -109,6 +110,8 @@ H.seriesType('dpo', 'sma',
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/dpo
  * @apioption series.dpo
  */
 ''; // to include the above in the js output'

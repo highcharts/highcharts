@@ -343,23 +343,38 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *        Important note: This argument is undefined for errors that lack
  *        access to the Chart instance.
  *
+ * @param {Highcharts.Dictionary<string>} [params]
+ *        Additional parameters for the generated message.
+ *
  * @return {void}
  */
-H.error = function (code, stop, chart) {
-    var msg = isNumber(code) ?
-        'Highcharts error #' + code + ': www.highcharts.com/errors/' +
-            code :
-        code, defaultHandler = function () {
+H.error = function (code, stop, chart, params) {
+    var isCode = isNumber(code), message = isCode ?
+        "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
+        code.toString(), defaultHandler = function () {
         if (stop) {
-            throw new Error(msg);
+            throw new Error(message);
         }
         // else ...
         if (win.console) {
-            console.log(msg); // eslint-disable-line no-console
+            console.log(message); // eslint-disable-line no-console
         }
     };
+    if (typeof params !== 'undefined') {
+        var additionalMessages_1 = '';
+        if (isCode) {
+            message += '?';
+        }
+        H.objectEach(params, function (value, key) {
+            additionalMessages_1 += ('\n' + key + ': ' + value);
+            if (isCode) {
+                message += encodeURI(key) + '=' + encodeURI(value);
+            }
+        });
+        message += additionalMessages_1;
+    }
     if (chart) {
-        H.fireEvent(chart, 'displayError', { code: code, message: msg }, defaultHandler);
+        H.fireEvent(chart, 'displayError', { code: code, message: message, params: params }, defaultHandler);
     }
     else {
         defaultHandler();
@@ -411,12 +426,17 @@ H.Fx.prototype = {
         else if (i === end.length && now < 1) {
             while (i--) {
                 startVal = parseFloat(start[i]);
-                ret[i] =
-                    isNaN(startVal) ? // a letter instruction like M or L
-                        end[i] :
-                        (now *
-                            parseFloat('' + (end[i] - startVal)) +
-                            startVal);
+                ret[i] = (
+                // A letter instruction like M or L
+                isNaN(startVal) ||
+                    // Arc boolean flags:
+                    end[i - 4] === 'A' || // large-arc-flag
+                    end[i - 5] === 'A' // sweep-flag
+                ) ?
+                    end[i] :
+                    (now *
+                        parseFloat('' + (end[i] - startVal)) +
+                        startVal);
             }
             // If animation is finished or length not matching, land on right value
         }
@@ -794,6 +814,18 @@ H.merge = function () {
     }
     return ret;
 };
+/**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value, min, max) {
+    return value > min ? value < max ? value : max : min;
+}
 /**
  * Shortcut for parseInt
  *
@@ -1455,7 +1487,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
     }
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
+    retInterval = correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
     return retInterval;
 };
 /**
@@ -1570,7 +1602,7 @@ function destroyObjectProperties(obj, except) {
  *
  * @return {void}
  */
-H.discardElement = function (element) {
+function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
@@ -1581,7 +1613,7 @@ H.discardElement = function (element) {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 /**
  * Fix JS round off float errors.
  *
@@ -1596,9 +1628,9 @@ H.discardElement = function (element) {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num, prec) {
+function correctFloat(num, prec) {
     return parseFloat(num.toPrecision(prec || 14));
-};
+}
 /**
  * Set the global animation to either a given value, or fall back to the given
  * chart's animation option.
@@ -1617,9 +1649,9 @@ H.correctFloat = function (num, prec) {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (animation, chart) {
+function setAnimation(animation, chart) {
     chart.renderer.globalAnimation = pick(animation, chart.options.chart.animation, true);
-};
+}
 /**
  * Get the animation in object form, where a disabled animation is always
  * returned as `{ duration: 0 }`.
@@ -1633,11 +1665,11 @@ H.setAnimation = function (animation, chart) {
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (animation) {
+function animObject(animation) {
     return isObject(animation) ?
         H.merge(animation) :
         { duration: animation ? 500 : 0 };
-};
+}
 /**
  * The time unit lookup
  *
@@ -2484,11 +2516,15 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
+    clamp: clamp,
+    correctFloat: correctFloat,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
+    discardElement: discardElement,
     erase: erase,
     extend: extend,
     isArray: isArray,
@@ -2500,6 +2536,7 @@ var utils = {
     objectEach: objectEach,
     pick: pick,
     pInt: pInt,
+    setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout
 };

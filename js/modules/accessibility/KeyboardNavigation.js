@@ -10,12 +10,15 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-
 var merge = H.merge,
-    addEvent = H.addEvent,
     win = H.win,
     doc = win.document;
+
+import HTMLUtilities from './utils/htmlUtilities.js';
+var getElement = HTMLUtilities.getElement;
+
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import EventProvider from './utils/EventProvider.js';
 
 
 /**
@@ -46,7 +49,9 @@ KeyboardNavigation.prototype = {
      *        Map of component names to AccessibilityComponent objects.
      */
     init: function (chart, components) {
-        var keyboardNavigation = this;
+        var keyboardNavigation = this,
+            e = this.eventProvider = new EventProvider();
+
         this.chart = chart;
         this.components = components;
         this.modules = [];
@@ -57,18 +62,15 @@ KeyboardNavigation.prototype = {
             chart.container.setAttribute('tabindex', '0');
         }
 
-        // Add exit anchor for focus
-        this.addExitAnchor();
-
         // Add keydown event
-        this.unbindKeydownHandler = addEvent(
+        e.addEvent(
             chart.renderTo, 'keydown', function (e) {
                 keyboardNavigation.onKeydown(e);
             }
         );
 
         // Add mouseup event on doc
-        this.unbindMouseUpHandler = addEvent(doc, 'mouseup', function () {
+        e.addEvent(doc, 'mouseup', function () {
             keyboardNavigation.onMouseUp();
         });
 
@@ -111,10 +113,13 @@ KeyboardNavigation.prototype = {
                 // tab into the chart.
                 new KeyboardNavigationHandler(this.chart, {})
             ]);
+
+            this.updateExitAnchor();
+
         } else {
-            // Clear module list and reset
             this.modules = [];
             this.currentModuleIx = 0;
+            this.removeExitAnchor();
         }
     },
 
@@ -173,6 +178,7 @@ KeyboardNavigation.prototype = {
             }
             if (preventDefault) {
                 e.preventDefault();
+                e.stopPropagation();
             }
         }
     },
@@ -241,69 +247,95 @@ KeyboardNavigation.prototype = {
 
 
     /**
-     * Add exit anchor to the chart. We use this to move focus out of chart
-     * whenever we want, by setting focus to this div and not preventing the
-     * default tab action. We also use this when users come back into the chart
-     * by tabbing back, in order to navigate from the end of the chart.
-     *
-     * Screen reader users can also use heading-shortcuts to jump out of the
-     * chart with this.
+     * We use an exit anchor to move focus out of chart whenever we want, by
+     * setting focus to this div and not preventing the default tab action. We
+     * also use this when users come back into the chart by tabbing back, in
+     * order to navigate from the end of the chart.
+     */
+    updateExitAnchor: function () {
+        var endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+            endMarker = getElement(endMarkerId);
+
+        this.removeExitAnchor();
+
+        if (endMarker) {
+            this.makeElementAnExitAnchor(endMarker);
+            this.exitAnchor = endMarker;
+        } else {
+            this.createExitAnchor();
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    makeElementAnExitAnchor: function (el) {
+        el.setAttribute('class', 'highcharts-exit-anchor');
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('aria-hidden', false);
+
+        // Handle focus
+        this.addExitAnchorEventsToEl(el);
+    },
+
+
+    /**
+     * Add new exit anchor to the chart.
      *
      * @private
      */
-    addExitAnchor: function () {
+    createExitAnchor: function () {
         var chart = this.chart,
-            exitAnchorWrapper = this.exitAnchorWrapper =
-                doc.createElement('div'),
-            exitAnchor = this.exitAnchor = doc.createElement('h6'),
-            keyboardNavigation = this,
-            exitAnchorLabel = chart.langFormat(
-                'accessibility.svgContainerEnd', { chart: chart }
-            );
-
-        exitAnchor.innerHTML = exitAnchorLabel;
-
-        exitAnchorWrapper.setAttribute('aria-hidden', 'false');
-        exitAnchorWrapper.setAttribute(
-            'class', 'highcharts-exit-anchor-wrapper'
-        );
-        exitAnchorWrapper.style.position = 'relative';
-        exitAnchorWrapper.style.outline = 'none';
-
-        exitAnchor.setAttribute('tabindex', '0');
-        exitAnchor.setAttribute('aria-hidden', false);
+            exitAnchor = this.exitAnchor = doc.createElement('div');
 
         // Hide exit anchor
         merge(true, exitAnchor.style, {
             position: 'absolute',
             width: '1px',
             height: '1px',
-            bottom: '5px', // Avoid scrollbars (#10637)
             zIndex: 0,
             overflow: 'hidden',
             outline: 'none'
         });
 
-        exitAnchorWrapper.appendChild(exitAnchor);
-        chart.renderTo.appendChild(exitAnchorWrapper);
+        chart.renderTo.appendChild(exitAnchor);
+        this.makeElementAnExitAnchor(exitAnchor);
+    },
 
-        // Update position on render
-        this.unbindExitAnchorUpdate = addEvent(chart, 'render', function () {
-            this.renderTo.appendChild(exitAnchorWrapper);
-        });
 
-        // Handle focus
-        this.unbindExitAnchorFocus = addEvent(
-            exitAnchor,
+    /**
+     * @private
+     */
+    removeExitAnchor: function () {
+        if (this.exitAnchor && this.exitAnchor.parentNode) {
+            this.exitAnchor.parentNode
+                .removeChild(this.exitAnchor);
+            delete this.exitAnchor;
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    addExitAnchorEventsToEl: function (element) {
+        var chart = this.chart,
+            keyboardNavigation = this;
+
+        this.eventProvider.addEvent(
+            element,
             'focus',
             function (ev) {
                 var e = ev || win.event,
-                    curModule;
+                    curModule,
+                    focusComesFromChart = e.relatedTarget && chart.container
+                        .contains(e.relatedTarget),
+                    comingInBackwards = !(
+                        focusComesFromChart || keyboardNavigation.exiting
+                    );
 
-                // If focusing and we are exiting, do nothing once.
-                if (!keyboardNavigation.exiting) {
-
-                    // Not exiting, means we are coming in backwards
+                if (comingInBackwards) {
                     chart.renderTo.focus();
                     e.preventDefault();
 
@@ -345,31 +377,8 @@ KeyboardNavigation.prototype = {
      * @private
      */
     destroy: function () {
-        // Remove exit anchor
-        if (this.unbindExitAnchorFocus) {
-            this.unbindExitAnchorFocus();
-            delete this.unbindExitAnchorFocus;
-        }
-        if (this.unbindExitAnchorUpdate) {
-            this.unbindExitAnchorUpdate();
-            delete this.unbindExitAnchorUpdate;
-        }
-        if (this.exitAnchorWrapper && this.exitAnchorWrapper.parentNode) {
-            this.exitAnchorWrapper.parentNode
-                .removeChild(this.exitAnchorWrapper);
-            delete this.exitAnchor;
-            delete this.exitAnchorWrapper;
-        }
-
-        // Remove keydown handler
-        if (this.unbindKeydownHandler) {
-            this.unbindKeydownHandler();
-        }
-
-        // Remove mouseup handler
-        if (this.unbindMouseUpHandler) {
-            this.unbindMouseUpHandler();
-        }
+        this.removeExitAnchor();
+        this.eventProvider.removeAddedEvents();
     }
 };
 

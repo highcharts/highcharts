@@ -143,9 +143,11 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    clamp,
     defined,
     extend,
-    pick
+    pick,
+    setAnimation
 } = U;
 
 
@@ -755,21 +757,13 @@ extend(
 
             */
             // Limit X-coordinates:
-            node.plotX = Math.max(
-                Math.min(
-                    node.plotX as any,
-                    box.width - radius
-                ),
-                box.left + radius
+            node.plotX = clamp(
+                node.plotX as any, box.left + radius, box.width - radius
             );
 
             // Limit Y-coordinates:
-            node.plotY = Math.max(
-                Math.min(
-                    node.plotY as any,
-                    box.height - radius
-                ),
-                box.top + radius
+            node.plotY = clamp(
+                node.plotY as any, box.top + radius, box.height - radius
             );
         },
         /**
@@ -896,7 +890,7 @@ addEvent(Chart as any, 'render', function (
     }
 
     if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
+        setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {

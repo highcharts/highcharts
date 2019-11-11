@@ -11,12 +11,18 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        gridLineWidth: 1
+        gridLineWidth: 1,
+        accessibility: {
+            rangeDescription: 'Range: 0 to 100.'
+        }
     },
 
     yAxis: {
         startOnTick: false,
-        endOnTick: false
+        endOnTick: false,
+        accessibility: {
+            rangeDescription: 'Range: 0 to 100.'
+        }
     },
 
     series: [{

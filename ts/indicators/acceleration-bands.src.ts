@@ -29,7 +29,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ABandsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
         }
 
         interface ABandsIndicatorOptions extends SMAIndicatorOptions,
@@ -56,12 +56,15 @@ declare global {
 }
 
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var SMA = H.seriesTypes.sma,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -117,6 +120,8 @@ H.seriesType<Highcharts.ABandsIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking,
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/acceleration-bands
      * @optionparent plotOptions.abands
      */
     {
@@ -164,7 +169,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
             this: Highcharts.ABandsIndicator,
             series: Highcharts.Series,
             params: Highcharts.ABandsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),
                 index: number = (params.index as any),
@@ -196,7 +201,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 i: (number|undefined);
 
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             for (i = 0; i <= yValLen; i++) {
@@ -258,13 +263,15 @@ H.seriesType<Highcharts.ABandsIndicator>(
  * An Acceleration bands indicator. If the [type](#series.abands.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends      series,plotOptions.abands
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
- *               joinBy, keys, navigatorOptions, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
- *               stacking, showInNavigator,
+ * @extends   series,plotOptions.abands
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *            stacking, showInNavigator,
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/acceleration-bands
  * @apioption series.abands
  */
 

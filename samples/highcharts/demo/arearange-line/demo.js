@@ -73,7 +73,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        accessibility: {
+            rangeDescription: 'Range: Jul 1st 2009 to Jul 31st 2009.'
+        }
     },
 
     yAxis: {
@@ -86,9 +89,6 @@ Highcharts.chart('container', {
         crosshairs: true,
         shared: true,
         valueSuffix: '°C'
-    },
-
-    legend: {
     },
 
     series: [{

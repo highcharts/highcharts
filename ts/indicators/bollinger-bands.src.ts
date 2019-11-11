@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class BBIndicator extends SMAIndicator
             implements MultipleLinesIndicator {
-            public data: Array<BbIndicatorPoint>;
+            public data: Array<BBIndicatorPoint>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -26,17 +26,17 @@ declare global {
             public getValues(
                 series: Series,
                 params: BBIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorMultipleValuesObject|undefined);
             public options: BBIndicatorOptions;
-            public pointClass: typeof BbIndicatorPoint;
-            public points: Array<BbIndicatorPoint>;
+            public pointClass: typeof BBIndicatorPoint;
+            public points: Array<BBIndicatorPoint>;
         }
 
         interface BBIndicatorParamsOptions extends SMAIndicatorParamsOptions {
             standardDeviation?: number;
         }
 
-        class BbIndicatorPoint extends SMAIndicatorPoint {
+        class BBIndicatorPoint extends SMAIndicatorPoint {
             public series: BBIndicator;
         }
 
@@ -112,6 +112,8 @@ H.seriesType<Highcharts.BBIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
      */
     {
@@ -141,7 +143,7 @@ H.seriesType<Highcharts.BBIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -155,7 +157,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 /**
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         tooltip: {
@@ -197,7 +199,7 @@ H.seriesType<Highcharts.BBIndicator>(
             this: Highcharts.BBIndicator,
             series: Highcharts.Series,
             params: Highcharts.BBIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
             var period: number = (params.period as any),
                 standardDeviation: number = (params.standardDeviation as any),
                 xVal: Array<number> = (series.xData as any),
@@ -217,15 +219,18 @@ H.seriesType<Highcharts.BBIndicator>(
                 stdDev: number,
                 isOHLC: boolean,
                 point: (
-                    boolean|
                     Highcharts.IndicatorValuesObject|
                     Highcharts.IndicatorMultipleValuesObject|
-                    Highcharts.IndicatorNullableValuesObject
+                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorUndefinableValuesObject|
+                    Highcharts.IndicatorMultipleNullableValuesObject|
+                    Highcharts.IndicatorMultipleUndefinableValuesObject|
+                    undefined
                 ),
                 i: number;
 
             if (xVal.length < period) {
-                return false;
+                return;
             }
 
             isOHLC = isArray(yVal[0]);
@@ -276,6 +281,8 @@ H.seriesType<Highcharts.BBIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/bollinger-bands
  * @apioption series.bb
  */
 

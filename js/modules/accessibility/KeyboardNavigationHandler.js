@@ -51,6 +51,7 @@ function KeyboardNavigationHandler(chart, options) {
     this.validate = options.validate;
     this.init = options.init;
     this.terminate = options.terminate;
+
     // Response enum
     this.response = {
         success: 1, // Keycode was handled

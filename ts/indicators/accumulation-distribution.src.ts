@@ -25,7 +25,7 @@ declare global {
             public getValues(
                 series: Series,
                 params: ADIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject|undefined);
         }
 
         class ADIndicatorPoint extends SMAIndicatorPoint {
@@ -94,6 +94,8 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      */
     {
@@ -117,7 +119,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
         getValues: function (
             series: Highcharts.Series,
             params: Highcharts.ADIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<(number|null|undefined)> = (series.yData as any),
@@ -138,17 +140,18 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
                 yValLen &&
                 (yVal[0] as any).length !== 4
             ) {
-                return false;
+                return;
             }
 
             if (!volumeSeries) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     series.chart
-                ) as any);
+                );
+                return;
             }
 
             // i = period <-- skip first N-points
@@ -186,6 +189,8 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/accumulation-distribution
  * @apioption series.ad
  */
 

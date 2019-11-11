@@ -68,8 +68,11 @@ var chart = new Highcharts.Chart({
         enabled: false
     },
     series: [{
-        name: 'Reading',
+        name: 'Data',
         colorByPoint: true,
+        accessibility: {
+            exposeAsGroupOnly: true
+        },
         data: [
             [1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7], [6, 9, 6],
             [7, 0, 5], [2, 3, 3], [3, 9, 8], [3, 6, 5], [4, 9, 4], [2, 3, 3],

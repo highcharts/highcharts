@@ -64,46 +64,47 @@ Highcharts.setOptions({
      * Callback that fires while exporting data. This allows the modification of
      * data rows before processed into the final format.
      *
-     * Requires the `export-data` module.
-     *
      * @type      {Highcharts.ExportDataCallbackFunction}
      * @context   Highcharts.Chart
+     * @requires  modules/export-data
      * @apioption chart.events.exportData
      */
     /**
-     * Export-data module required. When set to `false` will prevent the series
-     * data from being included in any form of data export.
+     * When set to `false` will prevent the series data from being included in
+     * any form of data export.
      *
      * Since version 6.0.0 until 7.1.0 the option was existing undocumented
      * as `includeInCSVExport`.
      *
      * @type      {boolean}
      * @since     7.1.0
+     * @requires  modules/export-data
      * @apioption plotOptions.series.includeInDataExport
      */
     /**
      * @optionparent exporting
-     *
      * @private
      */
     exporting: {
         /**
-         * Export-data module required. Caption for the data table. Same as
-         * chart title by default. Set to `false` to disable.
+         * Caption for the data table. Same as chart title by default. Set to
+         * `false` to disable.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
          * @type      {boolean|string}
          * @since     6.0.4
+         * @requires  modules/export-data
          * @apioption exporting.tableCaption
          */
         /**
          * Options for exporting data to CSV or ExCel, or displaying the data
-         * in a HTML table or a JavaScript structure. Requires the
-         * `export-data.js` module. This module adds data export options to the
-         * export menu and provides functions like `Chart.getCSV`,
-         * `Chart.getTable`, `Chart.getDataRows` and `Chart.viewData`.
+         * in a HTML table or a JavaScript structure.
+         *
+         * This module adds data export options to the export menu and provides
+         * functions like `Chart.getCSV`, `Chart.getTable`, `Chart.getDataRows`
+         * and `Chart.viewData`.
          *
          * The XLS converter is limited and only creates a HTML string that is
          * passed for download, which works but creates a warning before
@@ -115,7 +116,8 @@ Highcharts.setOptions({
          * @sample  highcharts/export-data/xlsx/
          *          Using a third party XLSX converter
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         csv: {
             /**
@@ -176,8 +178,7 @@ Highcharts.setOptions({
             lineDelimiter: '\n'
         },
         /**
-         * Export-data module required. Show a HTML table below the chart with
-         * the chart's current data.
+         * Show a HTML table below the chart with the chart's current data.
          *
          * @sample highcharts/export-data/showtable/
          *         Show the table
@@ -185,29 +186,31 @@ Highcharts.setOptions({
          *         Experiment with putting the table inside the subtitle to
          *         allow exporting it.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         showTable: false,
         /**
-         * Export-data module required. Use multi level headers in data table.
-         * If [csv.columnHeaderFormatter](#exporting.csv.columnHeaderFormatter)
-         * is defined, it has to return objects in order for multi level headers
-         * to work.
+         * Use multi level headers in data table. If [csv.columnHeaderFormatter
+         * ](#exporting.csv.columnHeaderFormatter) is defined, it has to return
+         * objects in order for multi level headers to work.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @since 6.0.4
+         * @since    6.0.4
+         * @requires modules/export-data
          */
         useMultiLevelHeaders: true,
         /**
-         * Export-data module required. If using multi level table headers, use
-         * rowspans for headers that have only one level.
+         * If using multi level table headers, use rowspans for headers that
+         * have only one level.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @since 6.0.4
+         * @since    6.0.4
+         * @requires modules/export-data
          */
         useRowspanHeaders: true
     },
@@ -218,27 +221,31 @@ Highcharts.setOptions({
      */
     lang: {
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         downloadCSV: 'Download CSV',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         downloadXLS: 'Download XLS',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.1.0
+         * @since    6.1.0
+         * @requires modules/export-data
          */
         openInCloud: 'Open in Highcharts Cloud',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         viewData: 'View data table'
     }
@@ -632,7 +639,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
         if (subheaders) {
             html += '<tr>';
             for (i = 0, len = subheaders.length; i < len; ++i) {
-                if (subheaders[i] !== undefined) {
+                if (typeof subheaders[i] !== 'undefined') {
                     html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
                 }
             }

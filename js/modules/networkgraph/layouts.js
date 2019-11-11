@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, pick = U.pick;
+var clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
 var addEvent = H.addEvent, Chart = H.Chart;
@@ -395,9 +395,9 @@ H.layouts['reingold-fruchterman'].prototype, {
 
         */
         // Limit X-coordinates:
-        node.plotX = Math.max(Math.min(node.plotX, box.width - radius), box.left + radius);
+        node.plotX = clamp(node.plotX, box.left + radius, box.width - radius);
         // Limit Y-coordinates:
-        node.plotY = Math.max(Math.min(node.plotY, box.height - radius), box.top + radius);
+        node.plotY = clamp(node.plotY, box.top + radius, box.height - radius);
     },
     /**
      * From "A comparison of simulated annealing cooling strategies" by
@@ -482,7 +482,7 @@ addEvent(Chart, 'render', function () {
         }
     }
     if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
+        setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach(function (layout) {
             layout.start();

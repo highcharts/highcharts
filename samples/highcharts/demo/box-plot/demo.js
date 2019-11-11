@@ -50,7 +50,7 @@ Highcharts.chart('container', {
             headerFormat: '<em>Experiment No {point.key}</em><br/>'
         }
     }, {
-        name: 'Outlier',
+        name: 'Outliers',
         color: Highcharts.getOptions().colors[0],
         type: 'scatter',
         data: [ // x, y positions where 0 is the first category

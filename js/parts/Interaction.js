@@ -86,7 +86,7 @@ TrackerMixin = H.TrackerMixin = {
         var series = this, chart = series.chart, pointer = chart.pointer, onMouseOver = function (e) {
             var point = pointer.getPointFromEvent(e);
             // undefined on graph in scatterchart
-            if (point !== undefined) {
+            if (typeof point !== 'undefined') {
                 pointer.isDirectTouch = true;
                 point.onMouseOver(e);
             }
@@ -652,7 +652,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.PointStateValue|""} [state]
      *        The new state, can be one of `''` (an empty string), `hover`,
      *        `select` or `inactive`.
      * @param {boolean} [move]
@@ -894,7 +894,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.SeriesStateValue|""} [state]
      *        Can be either `hover` or undefined to set to normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
@@ -1013,7 +1013,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             vis =
                 series.options.visible =
                     series.userOptions.visible =
-                        vis === undefined ? !oldVisibility : vis; // #5618
+                        typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
         showOrHide = vis ? 'show' : 'hide';
         // show or hide elements
         [
@@ -1112,7 +1112,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         var series = this;
         series.selected =
             selected =
-                this.options.selected = (selected === undefined ?
+                this.options.selected = (typeof selected === 'undefined' ?
                     !series.selected :
                     selected);
         if (series.checkbox) {

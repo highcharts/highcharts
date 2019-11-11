@@ -163,37 +163,6 @@ declare global {
     }
 }
 
-/**
- * Possible rotation options for data labels in the sunburst series.
- *
- * @typedef {"auto"|"perpendicular"|"parallel"} Highcharts.SeriesSunburstDataLabelsRotationValue
- */
-
-/**
- * Options for data labels in the sunburst series.
- *
- * @interface Highcharts.SeriesSunburstDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- *//**
- * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#align
- * @type {undefined}
- *//**
- * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#allowOverlap
- * @type {undefined}
- *//**
- * Decides how the data label will be rotated relative to the perimeter
- * of the sunburst. Valid values are `auto`, `parallel` and
- * `perpendicular`. When `auto`, the best fit will be computed for the
- * point.
- *
- * The `series.rotation` option takes precedence over `rotationMode`.
- *
- * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#rotationMode
- * @type {Highcharts.SeriesSunburstDataLabelsRotationValue|undefined}
- * @since 6.0.0
- */
-
-
 import U from '../parts/Utilities.js';
 const {
     extend,
@@ -645,6 +614,7 @@ var cbSetTreeValuesBefore = function before(
  *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *               minSize, navigatorOptions, pointRange
  * @product      highcharts
+ * @requires     modules/sunburst.js
  * @optionparent plotOptions.sunburst
  * @private
  */
@@ -713,7 +683,7 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
     /**
      * Can set `dataLabels` on all points which lies on the same level.
      *
-     * @type      {Highcharts.SeriesSunburstDataLabelsOptionsObject}
+     * @extends   plotOptions.sunburst.dataLabels
      * @apioption plotOptions.sunburst.levels.dataLabels
      */
 
@@ -782,27 +752,40 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
      */
     opacity: 1,
     /**
-     * @type    {Highcharts.SeriesSunburstDataLabelsOptionsObject|Array<Highcharts.SeriesSunburstDataLabelsOptionsObject>}
-     * @default {"allowOverlap": true, "defer": true, "rotationMode": "auto", "style": {"textOverflow": "ellipsis"}}
+     * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
      */
     dataLabels: {
-        /** @ignore-option */
+
         allowOverlap: true,
-        /** @ignore-option */
+
         defer: true,
-        /** @ignore-option */
+
+        /**
+         * Decides how the data label will be rotated relative to the perimeter
+         * of the sunburst. Valid values are `auto`, `parallel` and
+         * `perpendicular`. When `auto`, the best fit will be computed for the
+         * point.
+         *
+         * The `series.rotation` option takes precedence over `rotationMode`.
+         *
+         * @type       {string}
+         * @validvalue ["auto", "perpendicular", "parallel"]
+         * @since      6.0.0
+         */
         rotationMode: 'auto',
-        /** @ignore-option */
+
         style: {
+            /** @internal */
             textOverflow: 'ellipsis'
         }
+
     },
     /**
      * Which point to use as a root in the visualization.
      *
      * @type {string}
      */
-    rootId: undefined,
+    rootId: void 0,
 
     /**
      * Used together with the levels and `allowDrillToNode` options. When
@@ -852,8 +835,8 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
     /**
      * Options for the button appearing when traversing down in a treemap.
      *
-     * @extends plotOptions.treemap.traverseUpButton
-     * @since 6.0.0
+     * @extends   plotOptions.treemap.traverseUpButton
+     * @since     6.0.0
      * @apioption plotOptions.sunburst.traverseUpButton
      */
 
@@ -1240,6 +1223,7 @@ var sunburstPoint = {
  * @extends   series,plotOptions.sunburst
  * @excluding dataParser, dataURL, stack
  * @product   highcharts
+ * @requires  modules/sunburst.js
  * @apioption series.sunburst
  */
 
@@ -1275,7 +1259,7 @@ var sunburstPoint = {
  * @type      {string}
  * @since     6.0.0
  * @product   highcharts
- * @apioption series.treemap.data.parent
+ * @apioption series.sunburst.data.parent
  */
 
 /**

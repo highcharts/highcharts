@@ -1,6 +1,8 @@
 ---
- name: TreeGrid Demo
- js_wrap: b
- authors:
-   - Jon Arild Nygård
+name: TreeGrid Demo
+js_wrap: b
+authors:
+  - Jon Arild Nygård
+tags: []
+categories: []
 ...

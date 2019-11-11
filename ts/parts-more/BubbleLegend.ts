@@ -173,10 +173,10 @@ setOptions({ // Set default bubble legend options
          * can be defined by user or calculated from series. In the case of
          * automatically calculated ranges, a 1px margin of error is
          * permitted.
-         * Requires `highcharts-more.js`.
          *
          * @since        7.0.0
          * @product      highcharts highstock highmaps
+         * @requires     highcharts-more
          * @optionparent legend.bubbleLegend
          */
         bubbleLegend: {
@@ -191,7 +191,7 @@ setOptions({ // Set default bubble legend options
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: undefined,
+            borderColor: void 0,
             /**
              * The width of the ranges borders in pixels, can be also
              * defined for an individual range.
@@ -207,7 +207,7 @@ setOptions({ // Set default bubble legend options
              *
              * @type {string}
              */
-            className: undefined,
+            className: void 0,
             /**
              * The main color of the bubble legend. Applies to ranges, if
              * individual color is not defined.
@@ -219,7 +219,7 @@ setOptions({ // Set default bubble legend options
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            color: undefined,
+            color: void 0,
             /**
              * An additional class name to apply to the bubble legend's
              * connector graphical elements. This option does not replace
@@ -230,14 +230,14 @@ setOptions({ // Set default bubble legend options
              *
              * @type {string}
              */
-            connectorClassName: undefined,
+            connectorClassName: void 0,
             /**
              * The color of the connector, can be also defined
              * for an individual range.
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            connectorColor: undefined,
+            connectorColor: void 0,
             /**
              * The length of the connectors in pixels. If labels are
              * centered, the distance is reduced to 0.
@@ -271,7 +271,7 @@ setOptions({ // Set default bubble legend options
                  *
                  * @type {string}
                  */
-                className: undefined,
+                className: void 0,
                 /**
                  * Whether to allow data labels to overlap.
                  */
@@ -298,7 +298,7 @@ setOptions({ // Set default bubble legend options
                  *
                  * @type {Highcharts.FormatterCallbackFunction<Highcharts.BubbleLegendFormatterContextObject>}
                  */
-                formatter: undefined,
+                formatter: void 0,
                 /**
                  * The alignment of the labels compared to the bubble
                  * legend. Can be one of `left`, `center` or `right`.
@@ -318,7 +318,7 @@ setOptions({ // Set default bubble legend options
                     /** @ignore-option */
                     fontSize: 10,
                     /** @ignore-option */
-                    color: undefined
+                    color: void 0
                 },
                 /**
                  * The x position offset of the label relative to the
@@ -365,22 +365,22 @@ setOptions({ // Set default bubble legend options
                  * Range size value, similar to bubble Z data.
                  * @type {number}
                  */
-                value: undefined,
+                value: void 0,
                 /**
                  * The color of the border for individual range.
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                borderColor: undefined,
+                borderColor: void 0,
                 /**
                  * The color of the bubble for individual range.
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                color: undefined,
+                color: void 0,
                 /**
                  * The color of the connector for individual range.
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                connectorColor: undefined
+                connectorColor: void 0
             } as any,
             /**
              * Whether the bubble legend range value should be represented

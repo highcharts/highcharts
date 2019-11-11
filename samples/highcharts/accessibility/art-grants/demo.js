@@ -224,8 +224,7 @@ Highcharts.chart('container', {
             accessibility: {
                 pointDescriptionFormatter: function (point) {
                     return (point.index + 1) + '. ' + point.name + ' ' +
-                        dollarFormat(point.y) + '.' +
-                        (point.description ? ' ' + point.description : '');
+                        dollarFormat(point.y) + '.';
                 }
             }
         },

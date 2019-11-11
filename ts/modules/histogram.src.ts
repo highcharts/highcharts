@@ -62,6 +62,7 @@ import U from '../parts/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    correctFloat,
     isNumber,
     objectEach
 } = U;
@@ -69,7 +70,6 @@ const {
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
     merge = H.merge;
 
 /* ************************************************************************** *
@@ -139,6 +139,7 @@ seriesType<Highcharts.HistogramSeries>(
      *               stacking
      * @product      highcharts
      * @since        6.0.0
+     * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
     {
@@ -161,7 +162,7 @@ seriesType<Highcharts.HistogramSeries>(
          *
          * @type {number}
          */
-        binWidth: undefined,
+        binWidth: void 0,
         pointPadding: 0,
         groupPadding: 0,
         grouping: false,
@@ -302,6 +303,7 @@ seriesType<Highcharts.HistogramSeries>(
  * @excluding data, dataParser, dataURL
  * @product   highcharts
  * @since     6.0.0
+ * @requires  modules/histogram
  * @apioption series.histogram
  */
 

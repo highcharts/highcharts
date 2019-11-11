@@ -149,7 +149,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
     var options = this.options.responsive, ruleIds = [], currentResponsive = this.currentResponsive, currentRuleIds, undoOptions;
     if (!reset && options && options.rules) {
         options.rules.forEach(function (rule) {
-            if (rule._id === undefined) {
+            if (typeof rule._id === 'undefined') {
                 rule._id = H.uniqueKey();
             }
             this.matchResponsiveRule(rule, ruleIds /* , redraw */);
@@ -163,7 +163,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
     }));
     mergedOptions.isResponsiveOptions = true;
     // Stringified key for the rules that currently apply.
-    ruleIds = (ruleIds.toString() || undefined);
+    ruleIds = (ruleIds.toString() || void 0);
     currentRuleIds = currentResponsive && currentResponsive.ruleIds;
     // Changes in what rules apply
     if (ruleIds !== currentRuleIds) {
@@ -184,7 +184,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
             this.update(mergedOptions, redraw, true);
         }
         else {
-            this.currentResponsive = undefined;
+            this.currentResponsive = void 0;
         }
     }
 };
@@ -245,7 +245,7 @@ Chart.prototype.currentOptions = function (options) {
                 ret[key] = isArray(val) ? [] : {};
                 getCurrent(val, curr[key] || {}, ret[key], depth + 1);
             }
-            else if (curr[key] === undefined) { // #10286
+            else if (typeof curr[key] === 'undefined') { // #10286
                 ret[key] = null;
             }
             else {

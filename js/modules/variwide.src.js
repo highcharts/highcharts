@@ -39,6 +39,7 @@ seriesType('variwide', 'column'
  * @product      highcharts
  * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
  *               groupZPadding
+ * @requires     modules/variwide
  * @optionparent plotOptions.variwide
  */
 , {
@@ -166,7 +167,7 @@ seriesType('variwide', 'column'
                 '') + series.stackKey];
             pointStack = stack[xValue];
             if (stack && pointStack && !point.isNull) {
-                pointStack.setOffset(-(pointWidth / 2) || 0, pointWidth || 0, undefined, undefined, point.plotX);
+                pointStack.setOffset(-(pointWidth / 2) || 0, pointWidth || 0, void 0, void 0, point.plotX);
             }
         });
     }
@@ -238,6 +239,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, hor
  *
  * @extends   series,plotOptions.variwide
  * @product   highcharts
+ * @requires  modules/variwide
  * @apioption series.variwide
  */
 /**

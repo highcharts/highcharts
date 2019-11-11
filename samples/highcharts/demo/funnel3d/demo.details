@@ -1,8 +1,13 @@
 ---
- name: Highcharts Demo
- authors:
-   - Kacper Madej
- js_wrap: b
- isNew: true
- alt_text: Highcharts 3D funnel chart JavaScript example graph visualizes pipeline conversion of website visits to customers downloads.
+name: 3D funnel
+authors:
+  - Kacper Madej
+js_wrap: b
+isNew: true
+alt_text: >-
+  Highcharts 3D funnel chart JavaScript example graph visualizes pipeline
+  conversion of website visits to customers downloads.
+tags: []
+categories:
+  - 3D charts
 ...

@@ -43,13 +43,14 @@ A bell curve series has two additional options:
 
 The following demo visualizes four intervals for each side of the bell curve, and five points between each Nxσ:
 
-    
-        series: [{
-            type: 'bellcurve',
-            intervals: 4,
-            pointsInInterval: 5
-            …
-        }]
+```js
+series: [{
+    type: 'bellcurve',
+    intervals: 4,
+    pointsInInterval: 5
+    ...
+}]
+```
     
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval allow="fullscreen"></iframe>

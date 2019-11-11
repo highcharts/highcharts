@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var correctFloat = U.correctFloat;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr, merge = H.merge, correctFloat = H.correctFloat;
+var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr, merge = H.merge;
 /**
  * The Keltner Channels series type.
  *
@@ -35,6 +36,8 @@ H.seriesType('keltnerchannels', 'sma',
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart,showInNavigator,
  *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/keltner-channels
  * @optionparent plotOptions.keltnerchannels
  */
 {
@@ -67,7 +70,7 @@ H.seriesType('keltnerchannels', 'sma',
              * Color of the line. If not set, it's inherited from
              * `plotOptions.keltnerchannels.color`
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -78,7 +81,7 @@ H.seriesType('keltnerchannels', 'sma',
     topLine: {
         styles: {
             lineWidth: 1,
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     tooltip: {
@@ -131,7 +134,7 @@ merge(multipleLinesMixin, {
             period: periodATR
         }), pointEMA, pointATR, xData = [], yData = [], i;
         if (yValLen < period) {
-            return false;
+            return;
         }
         for (i = period; i <= yValLen; i++) {
             pointEMA = seriesEMA.values[i - period];
@@ -162,6 +165,8 @@ merge(multipleLinesMixin, {
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 ''; // to include the above in the js output

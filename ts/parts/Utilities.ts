@@ -82,6 +82,7 @@ declare global {
         interface ErrorMessageEventObject {
             code: number;
             message: string;
+            params: Dictionary<string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (Dictionary<any>|Event)): (boolean|void);
@@ -193,7 +194,8 @@ declare global {
         function error(
             code: (number|string),
             stop?: boolean,
-            chart?: Chart
+            chart?: Chart,
+            param?: Dictionary<string>
         ): void;
         function extend<T extends object>(a: (T|undefined), b: object): T;
         function extendClass<T, TReturn = T>(
@@ -701,32 +703,50 @@ var charts = H.charts,
  *        Important note: This argument is undefined for errors that lack
  *        access to the Chart instance.
  *
+ * @param {Highcharts.Dictionary<string>} [params]
+ *        Additional parameters for the generated message.
+ *
  * @return {void}
  */
 H.error = function (
     code: (number|string),
     stop?: boolean,
-    chart?: Highcharts.Chart
+    chart?: Highcharts.Chart,
+    params?: Highcharts.Dictionary<string>
 ): void {
-    var msg = isNumber(code) ?
-            'Highcharts error #' + code + ': www.highcharts.com/errors/' +
-            code :
-            code,
+    var isCode = isNumber(code),
+        message = isCode ?
+            `Highcharts error #${code}: www.highcharts.com/errors/${code}/` :
+            code.toString(),
         defaultHandler = function (): void {
             if (stop) {
-                throw new Error(msg as any);
+                throw new Error(message);
             }
             // else ...
             if (win.console) {
-                console.log(msg); // eslint-disable-line no-console
+                console.log(message); // eslint-disable-line no-console
             }
         };
+
+    if (typeof params !== 'undefined') {
+        let additionalMessages = '';
+        if (isCode) {
+            message += '?';
+        }
+        H.objectEach(params, function (value: string, key: string): void {
+            additionalMessages += ('\n' + key + ': ' + value);
+            if (isCode) {
+                message += encodeURI(key) + '=' + encodeURI(value);
+            }
+        });
+        message += additionalMessages;
+    }
 
     if (chart) {
         H.fireEvent(
             chart,
             'displayError',
-            { code: code, message: msg } as Highcharts.ErrorMessageEventObject,
+            { code, message, params } as Highcharts.ErrorMessageEventObject,
             defaultHandler
         );
     } else {
@@ -792,14 +812,19 @@ H.Fx.prototype = {
         } else if (i === end.length && now < 1) {
             while (i--) {
                 startVal = parseFloat(start[i]);
-                ret[i] =
-                    isNaN(startVal) ? // a letter instruction like M or L
-                        end[i] :
-                        (
-                            now *
-                            parseFloat('' + (end[i] - startVal)) +
-                            startVal
-                        );
+                ret[i] = (
+                    // A letter instruction like M or L
+                    isNaN(startVal) ||
+                    // Arc boolean flags:
+                    end[i - 4] === 'A' || // large-arc-flag
+                    end[i - 5] === 'A' // sweep-flag
+                ) ?
+                    end[i] :
+                    (
+                        now *
+                        parseFloat('' + (end[i] - startVal)) +
+                        startVal
+                    );
 
             }
         // If animation is finished or length not matching, land on right value
@@ -1288,6 +1313,19 @@ H.merge = function<T> (): T {
 
     return ret;
 };
+
+/**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
 
 /**
  * Shortcut for parseInt
@@ -2112,7 +2150,7 @@ H.normalizeTickInterval = function (
 
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(
+    retInterval = correctFloat(
         retInterval * (magnitude as any),
         -Math.round(Math.log(0.001) / Math.LN10)
     );
@@ -2249,7 +2287,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *
  * @return {void}
  */
-H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
+function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2262,7 +2300,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 
 /**
  * Fix JS round off float errors.
@@ -2278,11 +2316,11 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec?: number): number {
+function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -2302,7 +2340,7 @@ H.correctFloat = function (num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (
+function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
@@ -2311,7 +2349,7 @@ H.setAnimation = function (
         (chart.options.chart as any).animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -2326,13 +2364,13 @@ H.setAnimation = function (
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (
+function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-};
+}
 
 /**
  * The time unit lookup
@@ -3362,11 +3400,15 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    animObject,
     arrayMax,
     arrayMin,
     attr,
+    clamp,
+    correctFloat,
     defined,
     destroyObjectProperties,
+    discardElement,
     erase,
     extend,
     isArray,
@@ -3378,6 +3420,7 @@ const utils = {
     objectEach,
     pick,
     pInt,
+    setAnimation,
     splat,
     syncTimeout
 };
