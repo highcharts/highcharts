@@ -37,7 +37,7 @@ declare global {
                 zonesStyles: CSSObject
             ): void;
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: VBPIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -550,7 +550,7 @@ seriesType<Highcharts.VBPIndicator>(
                 }
             }
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.VBPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VBPIndicatorParamsOptions

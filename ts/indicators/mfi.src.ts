@@ -22,7 +22,7 @@ declare global {
     namespace Highcharts {
         class MFIIndicator extends SMAIndicator {
             public data: Array<MFIIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: MFIIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -128,7 +128,7 @@ H.seriesType<Highcharts.MFIIndicator>(
      */
     {
         nameBase: 'Money Flow Index',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.MFIIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

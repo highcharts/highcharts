@@ -22,7 +22,7 @@ declare global {
             public options: ADIndicatorOptions;
             public pointClass: typeof ADIndicatorPoint;
             public points: Array<ADIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: ADIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -116,7 +116,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
     {
         nameComponents: (false as any),
         nameBase: 'Accumulation/Distribution',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.ADIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

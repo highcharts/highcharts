@@ -27,7 +27,7 @@ declare global {
                 i?: number,
                 xVal?: Array<number>
             ): [number, number];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: DEMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -37,7 +37,7 @@ declare global {
             public points: Array<DEMAIndicatorPoint>;
         }
 
-        interface DEMAIndicatorLinkedParentSeries extends LineSeries {
+        interface DEMAIndicatorLinkedParentSeries extends Series {
             EMApercent?: number;
         }
 

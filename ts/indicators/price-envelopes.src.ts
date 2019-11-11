@@ -21,7 +21,7 @@ declare global {
             public data: Array<PriceEnvelopesIndicatorPoint>;
             public drawGraph(): void;
             public init(): void;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: PriceEnvelopesIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -272,7 +272,7 @@ H.seriesType<Highcharts.PriceEnvelopesIndicator>(
             indicator.graph = middleLinePath;
             SMA.prototype.drawGraph.call(indicator);
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.PriceEnvelopesIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

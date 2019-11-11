@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class APOIndicator extends EMAIndicator {
             public data: Array<APOIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: APOIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -124,7 +124,7 @@ H.seriesType<Highcharts.APOIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.APOIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

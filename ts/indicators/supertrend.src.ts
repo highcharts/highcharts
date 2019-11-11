@@ -50,7 +50,7 @@ declare global {
         class SupertrendIndicator extends SMAIndicator {
             public data: Array<SupertrendIndicatorPoint>;
             public drawGraph(): void;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: SupertrendIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -538,7 +538,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
         //     ) THAN Current FINAL LOWERBAND
 
 
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

@@ -24,7 +24,7 @@ declare global {
     namespace Highcharts {
         class PSARIndicator extends SMAIndicator {
             public data: Array<PSARIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: PSARIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -245,7 +245,7 @@ H.seriesType<Highcharts.PSARIndicator>(
         }
     }, {
         nameComponents: (false as any),
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.PSARIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

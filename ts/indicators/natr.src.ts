@@ -19,7 +19,7 @@ declare global {
     namespace Highcharts {
         class NATRIndicator extends SMAIndicator {
             public data: Array<NATRIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: NATRIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -84,12 +84,12 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
      */
     {
         requiredIndicators: ['atr'],
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.NATRIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var atrData: (
-                    Highcharts.IndicatorValuesObject<Highcharts.LineSeries>|
+                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
                     undefined
                 ) = (
                     ATR.prototype.getValues.apply(this, arguments)

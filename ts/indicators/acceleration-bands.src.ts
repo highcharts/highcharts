@@ -26,7 +26,7 @@ declare global {
             public options: ABandsIndicatorOptions;
             public pointClass: typeof ABandsIndicatorPoint;
             public points: Array<ABandsIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: ABandsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -165,7 +165,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
         nameBase: 'Acceleration Bands',
         nameComponents: ['period', 'factor'],
         linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function <TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function <TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.ABandsIndicator,
             series: TLinkedSeries,
             params: Highcharts.ABandsIndicatorParamsOptions

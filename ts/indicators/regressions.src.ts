@@ -31,7 +31,7 @@ declare global {
                 xData: Array<number>,
                 yData: Array<number>
             ): RegressionLineParametersObject;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: LinearRegressionIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -356,7 +356,7 @@ seriesType<Highcharts.LinearRegressionIndicator>(
         },
 
         // Required to be implemented - starting point for indicator's logic
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.LinearRegressionIndicator,
             baseSeries: TLinkedSeries,
             regressionSeriesParams:

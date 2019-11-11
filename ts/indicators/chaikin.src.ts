@@ -19,7 +19,7 @@ declare global {
         class ChaikinIndicator extends EMAIndicator {
             public data: Array<ChaikinIndicatorPoint>;
             public init(): void;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: ChaikinIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined)
@@ -137,7 +137,7 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.ChaikinIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

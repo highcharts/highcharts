@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class RSIIndicator extends SMAIndicator {
             public data: Array<RSIIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: RSIIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -99,7 +99,7 @@ H.seriesType<Highcharts.RSIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.RSIIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

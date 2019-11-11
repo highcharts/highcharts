@@ -20,7 +20,7 @@ declare global {
         class AroonOscillatorIndicator extends AroonIndicator
             implements MultipleLinesMixin {
             public data: Array<AroonOscillatorIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -134,7 +134,7 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
                 }
             );
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

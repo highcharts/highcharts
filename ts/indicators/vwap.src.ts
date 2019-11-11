@@ -22,7 +22,7 @@ declare global {
     namespace Highcharts {
         class VWAPIndicator extends SMAIndicator {
             public data: Array<VWAPIndicatorPoint>;
-            public calculateVWAPValues<TLinkedSeries extends LineSeries>(
+            public calculateVWAPValues<TLinkedSeries extends Series>(
                 isOHLC: boolean,
                 xValues: Array<number>,
                 yValues: (
@@ -31,7 +31,7 @@ declare global {
                 volumeSeries: Series,
                 period: number
             ): IndicatorValuesObject<TLinkedSeries>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: VWAPIndicatorParamsOptions,
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -115,7 +115,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
          * @param {object} params - params
          * @return {object} - computed VWAP
          **/
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.VWAPIndicator,
             series: TLinkedSeries,
             params: Highcharts.VWAPIndicatorParamsOptions
@@ -171,7 +171,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
          * @return {object} - Object contains computed VWAP
          **/
         calculateVWAPValues: function <
-            TLinkedSeries extends Highcharts.LineSeries
+            TLinkedSeries extends Highcharts.Series
         > (
             isOHLC: boolean,
             xValues: Array<number>,

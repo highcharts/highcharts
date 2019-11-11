@@ -25,7 +25,7 @@ declare global {
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: MACDIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -424,7 +424,7 @@ seriesType<Highcharts.MACDIndicator>(
 
             this.zones = histogramZones;
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.MACDIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

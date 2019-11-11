@@ -23,7 +23,7 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -173,7 +173,7 @@ H.seriesType<Highcharts.AroonIndicator>(
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
         linesApiNames: ['aroonDown'],
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

@@ -36,7 +36,7 @@ declare global {
                 index: number,
                 SMA: number
             ): [number, number];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: EMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -152,7 +152,7 @@ seriesType<Highcharts.EMAIndicator>(
 
             return [x, y];
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.EMAIndicator,
             series: TLinkedSeries,
             params: Highcharts.EMAIndicatorParamsOptions

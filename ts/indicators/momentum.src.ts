@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class MomentumIndicator extends SMAIndicator {
             public data: Array<MomentumIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: MomentumIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -106,7 +106,7 @@ seriesType<Highcharts.MomentumIndicator>(
      */
     {
         nameBase: 'Momentum',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.MomentumIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

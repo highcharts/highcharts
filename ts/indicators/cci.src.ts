@@ -17,7 +17,7 @@ declare global {
     namespace Highcharts {
         class CCIIndicator extends SMAIndicator {
             public data: Array<CCIIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: CCIIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -111,7 +111,7 @@ seriesType<Highcharts.CCIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.CCIIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

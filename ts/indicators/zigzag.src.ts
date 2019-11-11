@@ -25,7 +25,7 @@ declare global {
             public options: ZigzagIndicatorOptions;
             public pointClass: typeof ZigzagIndicatorPoint;
             public points: Array<ZigzagIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: ZigzagIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -120,7 +120,7 @@ seriesType<Highcharts.ZigzagIndicator>(
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.ZigzagIndicator,
             series: TLinkedSeries,
             params: Highcharts.ZigzagIndicatorParamsOptions

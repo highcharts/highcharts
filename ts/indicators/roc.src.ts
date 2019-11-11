@@ -21,7 +21,7 @@ declare global {
 
         class ROCIndicator extends SMAIndicator {
             public data: Array<ROCIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: ROCIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -138,7 +138,7 @@ seriesType<Highcharts.ROCIndicator>(
      */
     {
         nameBase: 'Rate of Change',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.ROCIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

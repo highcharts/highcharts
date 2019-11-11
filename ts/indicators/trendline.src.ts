@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class TrendLineIndicator extends SMAIndicator {
             public data: Array<TrendLineIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: TrendLineIndicatorParamsOptions
             ): IndicatorValuesObject<TLinkedSeries>;
@@ -100,7 +100,7 @@ seriesType<Highcharts.TrendLineIndicator>(
     {
         nameBase: 'Trendline',
         nameComponents: (false as any),
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.TrendLineIndicatorParamsOptions
         ): Highcharts.IndicatorValuesObject<TLinkedSeries> {

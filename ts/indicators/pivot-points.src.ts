@@ -28,7 +28,7 @@ declare global {
             public getPivotAndHLC(
                 values: Array<Array<number>>
             ): [number, number, number, number];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: PivotPointsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -313,7 +313,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
                 );
             }
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.PivotPointsIndicator,
             series: TLinkedSeries,
             params: Highcharts.PivotPointsIndicatorParamsOptions

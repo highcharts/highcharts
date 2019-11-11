@@ -22,7 +22,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: StochasticIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -168,7 +168,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.StochasticIndicator,
             series: TLinkedSeries,
             params: Highcharts.StochasticIndicatorParamsOptions
@@ -192,7 +192,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 K: number,
                 D: number|null = null,
                 points: (
-                    Highcharts.IndicatorValuesObject<Highcharts.LineSeries>|
+                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
                     undefined
                 ),
                 extremes: [number, number],

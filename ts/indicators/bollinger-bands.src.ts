@@ -23,7 +23,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: BBIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -195,7 +195,7 @@ H.seriesType<Highcharts.BBIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.BBIndicator,
             series: TLinkedSeries,
             params: Highcharts.BBIndicatorParamsOptions

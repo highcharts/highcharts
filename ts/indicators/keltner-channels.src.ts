@@ -38,7 +38,7 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: KeltnerChannelsIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined)

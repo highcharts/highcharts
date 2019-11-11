@@ -28,9 +28,9 @@ declare global {
             public pointClass: typeof CMFIndicatorPoint;
             public points: Array<CMFIndicatorPoint>;
             public volumeSeries: Series;
-            public linkedParent: LineSeries;
+            public linkedParent: Series;
             public yData: Array<Array<number>>;
-            public getMoneyFlow<TLinkedSeries extends LineSeries>(
+            public getMoneyFlow<TLinkedSeries extends Series>(
                 xData: (Array<number>|undefined),
                 seriesYData: (
                     Array<(number|null|undefined)>|
@@ -40,7 +40,7 @@ declare global {
                 volumeSeriesYData: Array<number>,
                 period: number
             ): IndicatorValuesObject<TLinkedSeries>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: CMFIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -159,7 +159,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * indicator is not valid, otherwise returns Values object.
          */
         getValues: function<
-            TLinkedSeries extends Highcharts.LineSeries
+            TLinkedSeries extends Highcharts.Series
         > (
             this: Highcharts.CMFIndicator,
             series: TLinkedSeries,
@@ -186,7 +186,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
          * flow data
          */
-        getMoneyFlow: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getMoneyFlow: function<TLinkedSeries extends Highcharts.Series> (
             xData: Array<number>,
             seriesYData: TLinkedSeries['yData'],
             volumeSeriesYData: Array<number>,

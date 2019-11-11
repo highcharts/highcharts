@@ -16,13 +16,13 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class SMAIndicator extends LineSeries {
+        class SMAIndicator extends Series {
             public bindTo: SMAIndicatorBindToObject;
             public calculateOn: string;
             public data: Array<SMAIndicatorPoint>;
             public dataEventsToUnbind: Array<Function>;
             public hasDerivedData: boolean;
-            public linkedParent: LineSeries;
+            public linkedParent: Series;
             public nameBase?: string;
             public nameComponents: Array<string>;
             public nameSuffixes: Array<string>;
@@ -34,7 +34,7 @@ declare global {
             public useCommonDataGrouping: boolean;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: SMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -46,7 +46,7 @@ declare global {
         }
 
         interface IndicatorValuesObject<
-            TLinkedSeries extends LineSeries
+            TLinkedSeries extends Series
         > {
             values: Array<Array<(
                 ExtractArrayType<TLinkedSeries['xData']>|
@@ -324,7 +324,7 @@ seriesType<Highcharts.SMAIndicator>(
                 var oldData = indicator.points || [],
                     oldDataLength = (indicator.xData || []).length,
                     processedData: Highcharts.IndicatorValuesObject<
-                    Highcharts.LineSeries
+                    Highcharts.Series
                     > = indicator.getValues(
                         indicator.linkedParent,
                         indicator.options.params as any
@@ -481,7 +481,7 @@ seriesType<Highcharts.SMAIndicator>(
 
             return name;
         },
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.SMAIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

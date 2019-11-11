@@ -23,7 +23,7 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: WMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -151,7 +151,7 @@ seriesType<Highcharts.WMAIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.WMAIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

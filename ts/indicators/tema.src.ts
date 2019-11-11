@@ -40,7 +40,7 @@ declare global {
                 EMAlevels: EMAIndicatorLevelsObject,
                 i: number
             ): ([number, (number|null)]|undefined);
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: TEMAIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -50,7 +50,7 @@ declare global {
             public points: Array<TEMAIndicatorPoint>;
         }
 
-        interface TEMAIndicatorLinkedParentSeries extends LineSeries {
+        interface TEMAIndicatorLinkedParentSeries extends Series {
             EMApercent?: number;
         }
 

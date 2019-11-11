@@ -27,7 +27,7 @@ declare global {
             public options: DPOIndicatorOptions;
             public pointClass: typeof DPOIndicatorPoint;
             public points: Array<DPOIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: DPOIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -122,7 +122,7 @@ H.seriesType<Highcharts.DPOIndicator>(
      */
     {
         nameBase: 'DPO',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.DPOIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {

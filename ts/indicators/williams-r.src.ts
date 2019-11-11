@@ -18,7 +18,7 @@ declare global {
     namespace Highcharts {
         class WilliamsRIndicator extends SMAIndicator {
             public data: Array<WilliamsRIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
+            public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: WilliamsRIndicatorParamsOptions
             ): (IndicatorValuesObject<TLinkedSeries>|undefined);
@@ -95,7 +95,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
      */
     {
         nameBase: 'Williams %R',
-        getValues: function<TLinkedSeries extends Highcharts.LineSeries> (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.WilliamsRIndicator,
             series: TLinkedSeries,
             params: Highcharts.WilliamsRIndicatorParamsOptions
