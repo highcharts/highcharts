@@ -197,13 +197,14 @@ function formatExtendedStatement(statement, ctx) {
  * @param {Highcharts.Dictionary<*>} context
  *        Context to apply to the format string.
  *
- * @param {Highcharts.Time} time
- *        A `Time` instance for date formatting, passed on to H.format().
+ * @param {Highcharts.Chart} chart
+ *        A `Chart` instance with a time object and numberFormatter, passed on
+ *        to H.format().
  *
  * @return {string}
  *         The formatted string.
  */
-H.i18nFormat = function (formatString, context, time) {
+H.i18nFormat = function (formatString, context, chart) {
     var getFirstBracketStatement = function (sourceStr, offset) {
             var str = sourceStr.slice(offset || 0),
                 startBracket = str.indexOf('{'),
@@ -262,7 +263,7 @@ H.i18nFormat = function (formatString, context, time) {
     // statements.
     return H.format(tokens.reduce(function (acc, cur) {
         return acc + cur.value;
-    }, ''), context, time);
+    }, ''), context, chart);
 };
 
 
@@ -281,7 +282,7 @@ H.i18nFormat = function (formatString, context, time) {
  * @return {string}
  *         The formatted string.
  */
-H.Chart.prototype.langFormat = function (langKey, context, time) {
+H.Chart.prototype.langFormat = function (langKey, context) {
     var keys = langKey.split('.'),
         formatString = this.options.lang,
         i = 0;
@@ -290,6 +291,6 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
         formatString = formatString && formatString[keys[i]];
     }
     return typeof formatString === 'string' && H.i18nFormat(
-        formatString, context, time
+        formatString, context, this
     );
 };

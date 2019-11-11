@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 import U from '../parts/Utilities.js';
-var erase = U.erase, extend = U.extend, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, splat = U.splat;
+var erase = U.erase, extend = U.extend, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
@@ -970,6 +970,7 @@ extend(ColorAxis.prototype, {
         if (!legendItems.length) {
             this.dataClasses.forEach(function (dataClass, i) {
                 var vis = true, from = dataClass.from, to = dataClass.to;
+                var numberFormatter = chart.numberFormatter;
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
                 name = '';
@@ -980,13 +981,13 @@ extend(ColorAxis.prototype, {
                     name = '> ';
                 }
                 if (typeof from !== 'undefined') {
-                    name += numberFormat(from, valueDecimals) + valueSuffix;
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
                 if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
                 if (typeof to !== 'undefined') {
-                    name += numberFormat(to, valueDecimals) + valueSuffix;
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend({

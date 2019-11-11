@@ -833,6 +833,16 @@ H.defaultOptions = {
          * @apioption chart.marginTop
          */
         /**
+         * Callback function to override the default function that formats all
+         * the numbers in the chart. Returns a string with the formatted number.
+         *
+         * @sample highcharts/members/highcharts-numberformat
+         *      Arabic digits in Highcharts
+         * @type {Highcharts.NumberFormatterCallbackFunction}
+         * @since next
+         * @apioption chart.numberFormatter
+         */
+        /**
          * Allows setting a key to switch between zooming and panning. Can be
          * one of `alt`, `ctrl`, `meta` (the command key on Mac and Windows
          * key on Windows) or `shift`. The keys are mapped directly to the key

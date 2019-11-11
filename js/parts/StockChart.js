@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, numberFormat = U.numberFormat, pick = U.pick, splat = U.splat;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat;
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -497,7 +497,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         this.toValue(horiz ? e.chartX : e.chartY);
     crossLabel.attr({
         text: formatOption ?
-            format(formatOption, { value: value }, chart.time) :
+            format(formatOption, { value: value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
@@ -701,7 +701,8 @@ Axis.prototype.setCompare = function (compare, redraw) {
  */
 Point.prototype.tooltipFormatter = function (pointFormat) {
     var point = this;
-    pointFormat = pointFormat.replace('{point.change}', (point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2)));
+    var numberFormatter = point.series.chart.numberFormatter;
+    pointFormat = pointFormat.replace('{point.change}', (point.change > 0 ? '+' : '') + numberFormatter(point.change, pick(point.series.tooltipOptions.changeDecimals, 2)));
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 /* ************************************************************************** *

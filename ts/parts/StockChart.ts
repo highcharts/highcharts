@@ -62,7 +62,6 @@ const {
     extend,
     isNumber,
     isString,
-    numberFormat,
     pick,
     splat
 } = U;
@@ -745,7 +744,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     crossLabel.attr({
         text: formatOption ?
-            format(formatOption, { value: value }, chart.time) :
+            format(formatOption, { value: value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
@@ -1007,10 +1006,11 @@ Point.prototype.tooltipFormatter = function (
     pointFormat: string
 ): string {
     var point = this;
+    const { numberFormatter } = point.series.chart;
 
     pointFormat = pointFormat.replace(
         '{point.change}',
-        ((point.change as any) > 0 ? '+' : '') + numberFormat(
+        ((point.change as any) > 0 ? '+' : '') + numberFormatter(
             point.change as any,
             pick(point.series.tooltipOptions.changeDecimals, 2)
         )

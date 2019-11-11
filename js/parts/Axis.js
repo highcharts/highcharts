@@ -205,7 +205,7 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
@@ -2917,8 +2917,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * @product highcharts
              */
             formatter: function () {
+                var numberFormatter = this.axis.chart.numberFormatter;
                 /* eslint-enable valid-jsdoc */
-                return numberFormat(this.total, -1);
+                return numberFormatter(this.total, -1);
             },
             /**
              * CSS styles for the label.
@@ -3255,8 +3256,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         numericSymbolDetector = axis.isLog ?
             Math.abs(value) :
             axis.tickInterval;
+        var chart = this.chart;
+        var numberFormatter = chart.numberFormatter;
         if (formatOption) {
-            ret = format(formatOption, this, time);
+            ret = format(formatOption, this, chart);
         }
         else if (categories) {
             ret = value;
@@ -3281,16 +3284,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     (value * 10) % multi === 0 &&
                     numericSymbols[i] !== null &&
                     value !== 0) { // #5480
-                    ret = numberFormat(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // add thousands separators
-                ret = numberFormat(value, -1);
+                ret = numberFormatter(value, -1);
             }
             else { // small numbers
-                ret = numberFormat(value, -1, void 0, ''); // #2466
+                ret = numberFormatter(value, -1, void 0, ''); // #2466
             }
         }
         return ret;

@@ -1319,24 +1319,25 @@ H.datePropsToTimestamps = function (obj) {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
  */
-H.formatSingle = function (format, val, time) {
+H.formatSingle = function (format, val, chart) {
     var floatRegex = /f$/, decRegex = /\.([0-9])/, lang = H.defaultOptions.lang, decimals;
+    var time = chart && chart.time || H.time;
+    var numberFormatter = chart && chart.numberFormatter || numberFormat;
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex);
         decimals = decimals ? decimals[1] : -1;
         if (val !== null) {
-            val = numberFormat(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
+            val = numberFormatter(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
         }
     }
     else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1360,14 +1361,13 @@ H.formatSingle = function (format, val, time) {
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str, ctx, time) {
+H.format = function (str, ctx, chart) {
     var splitter = '{', isInside = false, segment, valueAndFormat, path, i, len, ret = [], val, index;
     while (str) {
         index = str.indexOf(splitter);
@@ -1389,7 +1389,7 @@ H.format = function (str, ctx, time) {
             }
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
             // Push the result and advance the cursor
             ret.push(val);

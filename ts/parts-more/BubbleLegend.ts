@@ -148,7 +148,6 @@ const {
     arrayMax,
     arrayMin,
     isNumber,
-    numberFormat,
     objectEach,
     pick
 } = U;
@@ -908,10 +907,11 @@ H.BubbleLegend.prototype = {
         var options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
+        const { numberFormatter } = this.chart;
 
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-                numberFormat(range.value, 1);
+                numberFormatter(range.value, 1);
     },
 
     /**

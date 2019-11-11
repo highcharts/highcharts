@@ -209,8 +209,8 @@ declare global {
             eventArguments?: (Dictionary<any>|Event),
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
-        function format(str: string, ctx: any, time?: Time): string;
-        function formatSingle(format: string, val: any, time?: Time): string;
+        function format(str: string, ctx: any, chart?: Chart): string;
+        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -1927,9 +1927,8 @@ H.datePropsToTimestamps = function (obj: any): void {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
@@ -1937,18 +1936,20 @@ H.datePropsToTimestamps = function (obj: any): void {
 H.formatSingle = function (
     format: string,
     val: any,
-    time?: Highcharts.Time
+    chart?: Highcharts.Chart
 ): string {
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
         lang = H.defaultOptions.lang,
         decimals: number;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex) as any;
         decimals = decimals ? (decimals as any)[1] : -1;
         if (val !== null) {
-            val = numberFormat(
+            val = numberFormatter(
                 val,
                 decimals,
                 (lang as any).decimalPoint,
@@ -1956,7 +1957,7 @@ H.formatSingle = function (
             );
         }
     } else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1981,14 +1982,13 @@ H.formatSingle = function (
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
+H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -2024,7 +2024,7 @@ H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
 
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
 
             // Push the result and advance the cursor

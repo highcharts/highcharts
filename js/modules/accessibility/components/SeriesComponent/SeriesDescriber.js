@@ -14,7 +14,6 @@ import H from '../../../../parts/Globals.js';
 
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber,
-    numberFormat = U.numberFormat,
     pick = U.pick,
     defined = U.defined;
 
@@ -173,12 +172,13 @@ function shouldDescribeSeriesElement(series) {
  */
 function pointNumberToString(point, value) {
     var chart = point.series.chart,
+        numberFormatter = chart.numberFormatter,
         a11yPointOptions = chart.options.accessibility.point || {},
         tooltipOptions = point.series.tooltipOptions || {},
         lang = chart.options.lang;
 
     if (isNumber(value)) {
-        return numberFormat(
+        return numberFormatter(
             value,
             a11yPointOptions.valueDecimals ||
                 tooltipOptions.valueDecimals || -1,

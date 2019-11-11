@@ -700,7 +700,6 @@ const {
     isArray,
     isNumber,
     isString,
-    numberFormat,
     objectEach,
     pick,
     splat,
@@ -3619,8 +3618,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @product highcharts
              */
             formatter: function (this: Highcharts.StackItemObject): string {
+                const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return numberFormat(this.total, -1);
+                return numberFormatter(this.total, -1);
             },
 
             /**
@@ -4047,9 +4047,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             numericSymbolDetector = axis.isLog ?
                 Math.abs(value) :
                 axis.tickInterval;
+        const chart = this.chart;
+        const { numberFormatter } = chart;
 
         if (formatOption) {
-            ret = format(formatOption, this, time);
+            ret = format(formatOption, this, chart);
 
         } else if (categories) {
             ret = value as any;
@@ -4075,16 +4077,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormat(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // add thousands separators
-                ret = numberFormat(value, -1);
+                ret = numberFormatter(value, -1);
             } else { // small numbers
-                ret = numberFormat(value, -1, void 0, ''); // #2466
+                ret = numberFormatter(value, -1, void 0, ''); // #2466
             }
         }
 

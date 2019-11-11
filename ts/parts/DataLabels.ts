@@ -642,7 +642,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                     );
 
                     labelText = defined(formatString) ?
-                        format(formatString, labelConfig, chart.time) :
+                        format(formatString, labelConfig, chart) :
                         (
                             (labelOptions as any)[
                                 point.formatPrefix + 'Formatter'

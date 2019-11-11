@@ -120,7 +120,7 @@ H.StackItem.prototype = {
      */
     render: function (group) {
         var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
-            format(formatOption, this, chart.time) :
+            format(formatOption, this, chart) :
             options.formatter.call(this);
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
