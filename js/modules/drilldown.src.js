@@ -131,7 +131,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-var noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
+var addEvent = H.addEvent, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -703,12 +703,12 @@ Chart.prototype.callbacks.push(function () {
     };
 });
 // Don't show the reset button if we already are displaying the drillUp button.
-H.addEvent(Chart, 'beforeShowResetZoom', function () {
+addEvent(Chart, 'beforeShowResetZoom', function () {
     if (this.drillUpButton) {
         return false;
     }
 });
-H.addEvent(Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     (this.xAxis || []).forEach(function (axis) {
         axis.ddPoints = {};
         axis.series.forEach(function (series) {
@@ -976,32 +976,31 @@ Tick.prototype.drillable = function () {
             if (!label.basicStyles && !styledMode) {
                 label.basicStyles = H.merge(label.styles);
             }
-            label
-                .addClass('highcharts-drilldown-axis-label')
-                .on('click', function (e) {
+            label.addClass('highcharts-drilldown-axis-label');
+            label.removeOnDrillableClick = addEvent(label.element, 'click', function (e) {
                 axis.drilldownCategory(pos, e);
             });
             if (!styledMode) {
                 label.css(axis.chart.options.drilldown.activeAxisLabelStyle);
             }
         }
-        else if (label && label.drillable) {
+        else if (label && label.removeOnDrillableClick) {
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
             }
-            label.on('click', null); // #3806
+            label.removeOnDrillableClick(); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
         }
     }
 };
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-H.addEvent(H.Point, 'afterInit', function () {
+addEvent(H.Point, 'afterInit', function () {
     var point = this, series = point.series;
     if (point.drilldown) {
         // Add the click event to the point
-        H.addEvent(point, 'click', function (e) {
+        addEvent(point, 'click', function (e) {
             if (series.xAxis &&
                 series.chart.options.drilldown.allowPointDrilldown ===
                     false) {
@@ -1015,7 +1014,7 @@ H.addEvent(H.Point, 'afterInit', function () {
     }
     return point;
 });
-H.addEvent(H.Series, 'afterDrawDataLabels', function () {
+addEvent(H.Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle, renderer = this.chart.renderer, styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels, pointCSS = pick(point.dlOptions, dataLabelsOptions && dataLabelsOptions.style, {});
@@ -1043,7 +1042,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     }
 };
 // Mark the trackers with a pointer
-H.addEvent(H.Series, 'afterDrawTracker', function () {
+addEvent(H.Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {
@@ -1051,7 +1050,7 @@ H.addEvent(H.Series, 'afterDrawTracker', function () {
         }
     });
 });
-H.addEvent(H.Point, 'afterSetState', function () {
+addEvent(H.Point, 'afterSetState', function () {
     var styledMode = this.series.chart.styledMode;
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
