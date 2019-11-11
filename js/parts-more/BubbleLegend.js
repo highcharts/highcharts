@@ -28,7 +28,7 @@ import H from '../parts/Globals.js';
 */
 import U from '../parts/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
-var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, wrap = H.wrap, color = H.color, numberFormat = H.numberFormat, merge = H.merge, noop = H.noop, stableSort = H.stableSort, setOptions = H.setOptions;
+var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, wrap = H.wrap, color = H.color, merge = H.merge, noop = H.noop, stableSort = H.stableSort, setOptions = H.setOptions;
 setOptions({
     legend: {
         /**
@@ -571,9 +571,10 @@ H.BubbleLegend.prototype = {
      */
     formatLabel: function (range) {
         var options = this.options, formatter = options.labels.formatter, format = options.labels.format;
+        var numberFormatter = this.chart.numberFormatter;
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-                numberFormat(range.value, 1);
+                numberFormatter(range.value, 1);
     },
     /**
      * By using default chart 'hideOverlappingLabels' method, hide or show

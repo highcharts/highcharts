@@ -1,93 +1,87 @@
 QUnit.test('Series.drawDataLabels', function (assert) {
-    var H = Highcharts,
-        Series = H.Series,
-        defaultOptions = H.getOptions(),
-        drawDataLabels = Series.prototype.drawDataLabels,
-        noop = Highcharts.noop,
-        point = {
-            getLabelConfig: H.Point.prototype.getLabelConfig,
-            options: {
-                dataLabels: {}
-            }
-        },
-        series = {
-            alignDataLabel: function (p, d) {
-                d.aligned = true;
+    const {
+        extend,
+        noop,
+        Series: { prototype: { drawDataLabels } }
+    } = Highcharts;
+
+    // Create a Point and Series to use when calling drawDataLabels
+    const {
+        renderer,
+        series: [series],
+        series: [{ points: [point] }]
+    } = Highcharts.chart('container', {
+        series: [{
+            dataLabels: { enabled: false }, // Disable data labels
+            data: [{}] // Create one null point
+        }]
+    });
+
+    // Mock SvgRenderer.label to listen for function calls and input parameters.
+    renderer.label = function () {
+        return {
+            attribs: {},
+            style: {},
+            add: function () {
+                this.added = true;
+                return this;
             },
-            chart: {
-                options: {
-                    drilldown: {}
-                },
-                renderer: {
-                    getContrast: H.Renderer.prototype.getContrast,
-                    label: function () {
-                        return {
-                            attribs: {},
-                            style: {},
-                            add: function () {
-                                this.added = true;
-                                return this;
-                            },
-                            addClass: noop,
-                            attr: function (obj) {
-                                H.extend(this.attribs, obj);
-                                return this;
-                            },
-                            css: function (obj) {
-                                H.extend(this.style, obj);
-                                return this;
-                            },
-                            setTextPath: function () {
-                                return this;
-                            },
-                            destroy: noop,
-                            shadow: noop
-                        };
-                    }
-                }
+            addClass: noop,
+            attr: function (obj) {
+                extend(this.attribs, obj);
+                return this;
             },
-            options: H.merge(defaultOptions.plotOptions.line),
-            plotGroup: function () {
-                return {
-                    attr: noop
-                };
+            css: function (obj) {
+                extend(this.style, obj);
+                return this;
             },
-            points: [point]
+            setTextPath: function () {
+                return this;
+            },
+            destroy: noop,
+            shadow: noop
         };
+    };
+
+    // Overwrite alignDataLabel to just listen for if it is called.
+    series.alignDataLabel = (_, d) => {
+        d.aligned = true;
+    };
 
     drawDataLabels.call(series);
     assert.strictEqual(
         !!point.dataLabel,
         false,
-        'dataLabel disabled'
+        'Should not create a dataLabel when series.dataLabels.enabled=false'
     );
 
     series.options.dataLabels.enabled = true;
+    point.isNull = void 0;
     drawDataLabels.call(series);
     assert.strictEqual(
         !!point.dataLabel,
         true,
-        'point.dataLabel undefined: Created dataLabel'
+        'Should create dataLabel when series.dataLabels.enabled=true'
     );
     assert.strictEqual(
         !!point.dataLabel.added,
         true,
-        'point.dataLabel undefined: Added dataLabel'
+        'Should add dataLabel when created'
     );
     assert.strictEqual(
         point.dataLabel.attribs.text,
-        undefined,
-        'point.dataLabel undefined: attr.text undefined'
+        void 0,
+        'Should have dataLabel text equal to undefined when y is undefined'
     );
     assert.strictEqual(
         point.dataLabel.style.color,
         '#000000',
-        'point.dataLabel undefined: Color set to #000000'
+        'Should have dataLabel.style.color equal to #000000 by default'
     );
     assert.strictEqual(
         point.dataLabel.aligned,
         true,
-        'point.dataLabel undefined: Label aligned'
+        'Should align dataLabel when created'
     );
 
     point.dataLabel.aligned = false;
@@ -97,25 +91,25 @@ QUnit.test('Series.drawDataLabels', function (assert) {
     assert.strictEqual(
         point.dataLabel.style.color,
         '#FFFFFF',
-        'Update label: color updated.'
+        'Should have dataLabel.style.color equal to #FFFFFF after update'
     );
     assert.strictEqual(
         point.dataLabel.attribs.text,
         '1',
-        'Update label: text is 1'
+        'Should have dataLabel text equal to "1" when y is 1'
     );
     assert.strictEqual(
         point.dataLabel.aligned,
         true,
-        'Update label: aligned'
+        'Should align dataLabel after update'
     );
 
-    point.options.dataLabels.enabled = false;
+    point.options.dataLabels = { enabled: false };
     drawDataLabels.call(series);
     assert.strictEqual(
         !!point.dataLabel,
         false,
-        'point.options.dataLabels.enabled: false'
+        'Should destroy dataLabel when point.dataLabels.enabled=false'
     );
 
     point.dataLabel = {
@@ -126,6 +120,6 @@ QUnit.test('Series.drawDataLabels', function (assert) {
     assert.strictEqual(
         !!point.dataLabel,
         false,
-        'dataLabel && !defined(str)'
+        'Should destroy dataLabel when series.formatter returns a value not of type string'
     );
 });

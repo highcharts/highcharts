@@ -1832,7 +1832,8 @@ null,
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
         formatter: function () {
-            return this.y === null ? '' : H.numberFormat(this.y, -1);
+            var numberFormatter = this.series.chart.numberFormatter;
+            return this.y === null ? '' : numberFormatter(this.y, -1);
         },
         /**
          * For points with an extent, like columns or map areas, whether to

@@ -529,7 +529,7 @@ addEvent(Point, 'update', function () {
 // Extend the original method, make the tooltip's header reflect the grouped
 // range.
 addEvent(Tooltip, 'headerFormatter', function (e) {
-    var tooltip = this, time = this.chart.time, labelConfig = e.labelConfig, series = labelConfig.series, options = series.options, tooltipOptions = series.tooltipOptions, dataGroupingOptions = options.dataGrouping, xDateFormat = tooltipOptions.xDateFormat, xDateFormatEnd, xAxis = series.xAxis, currentDataGrouping, dateTimeLabelFormats, labelFormats, formattedKey, formatString = tooltipOptions[(e.isFooter ? 'footer' : 'header') + 'Format'];
+    var tooltip = this, chart = this.chart, time = chart.time, labelConfig = e.labelConfig, series = labelConfig.series, options = series.options, tooltipOptions = series.tooltipOptions, dataGroupingOptions = options.dataGrouping, xDateFormat = tooltipOptions.xDateFormat, xDateFormatEnd, xAxis = series.xAxis, currentDataGrouping, dateTimeLabelFormats, labelFormats, formattedKey, formatString = tooltipOptions[(e.isFooter ? 'footer' : 'header') + 'Format'];
     // apply only to grouped series
     if (xAxis &&
         xAxis.options.type === 'datetime' &&
@@ -572,7 +572,7 @@ addEvent(Tooltip, 'headerFormatter', function (e) {
         e.text = format(formatString, {
             point: extend(labelConfig.point, { key: formattedKey }),
             series: series
-        }, time);
+        }, chart);
         e.preventDefault();
     }
 });

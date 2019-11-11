@@ -870,7 +870,8 @@ addEvent(Tooltip, 'headerFormatter', function (
     e: Highcharts.Dictionary<any>
 ): void {
     var tooltip = this,
-        time = this.chart.time,
+        chart = this.chart,
+        time = chart.time,
         labelConfig = e.labelConfig,
         series = labelConfig.series as Highcharts.Series,
         options = series.options,
@@ -943,7 +944,7 @@ addEvent(Tooltip, 'headerFormatter', function (
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
             },
-            time
+            chart
         );
 
         e.preventDefault();

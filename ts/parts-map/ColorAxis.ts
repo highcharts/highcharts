@@ -1384,6 +1384,7 @@ extend(ColorAxis.prototype, {
                 var vis = true,
                     from = dataClass.from,
                     to = dataClass.to;
+                const { numberFormatter } = chart;
 
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
@@ -1394,14 +1395,13 @@ extend(ColorAxis.prototype, {
                     name = '> ';
                 }
                 if (typeof from !== 'undefined') {
-                    name += H.numberFormat(from, valueDecimals) +
-                        valueSuffix;
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
                 if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
                 if (typeof to !== 'undefined') {
-                    name += H.numberFormat(to, valueDecimals) + valueSuffix;
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend(
