@@ -1812,7 +1812,7 @@ function extendClass <T, TReturn = T>(
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length?: number, padder?: string): string {
+function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1820,7 +1820,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-};
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -3420,6 +3420,7 @@ const utils = {
     isString,
     numberFormat,
     objectEach,
+    pad,
     pick,
     pInt,
     setAnimation,

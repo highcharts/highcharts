@@ -58,6 +58,7 @@ extend(Highcharts, {
     isString: U.isString,
     numberFormat: U.numberFormat,
     objectEach: U.objectEach,
+    pad: U.pad,
     pick: U.pick,
     pInt: U.pInt,
     setAnimation: U.setAnimation,

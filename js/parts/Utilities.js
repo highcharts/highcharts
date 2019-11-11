@@ -1223,13 +1223,13 @@ function extendClass(parent, members) {
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number, length, padder) {
+function pad(number, length, padder) {
     return new Array((length || 2) +
         1 -
         String(number)
             .replace('-', '')
             .length).join(padder || '0') + number;
-};
+}
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  *
@@ -2536,6 +2536,7 @@ var utils = {
     isString: isString,
     numberFormat: numberFormat,
     objectEach: objectEach,
+    pad: pad,
     pick: pick,
     pInt: pInt,
     setAnimation: setAnimation,
