@@ -1784,7 +1784,7 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T, TReturn = T> (
+function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
@@ -1793,7 +1793,7 @@ H.extendClass = function<T, TReturn = T> (
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -3297,7 +3297,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(
+    seriesTypes[type] = extendClass(
         seriesTypes[parent] || function (): void {},
         props
     );
@@ -3306,7 +3306,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
 
     return seriesTypes[type];
@@ -3411,6 +3411,7 @@ const utils = {
     discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isClass,
     isDOMElement,
