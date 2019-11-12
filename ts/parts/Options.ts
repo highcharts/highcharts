@@ -83,6 +83,7 @@ declare global {
             marginLeft?: number;
             marginRight?: number;
             marginTop?: number;
+            numberFormatter?: NumberFormatterCallbackFunction;
             panKey?: string;
             panning?: boolean;
             pinchType?: string;
@@ -258,6 +259,14 @@ declare global {
             labelStyle?: CSSObject;
             showDuration?: number;
             style?: CSSObject;
+        }
+        interface NumberFormatterCallbackFunction {
+            (
+                number: number,
+                decimals: number,
+                decimalPoint?: string,
+                thousandsSep?: string
+            ): string;
         }
         interface Options {
             chart?: ChartOptions;
@@ -1244,6 +1253,17 @@ H.defaultOptions = {
          * @type      {number}
          * @since     2.0
          * @apioption chart.marginTop
+         */
+
+        /**
+         * Callback function to override the default function that formats all
+         * the numbers in the chart. Returns a string with the formatted number.
+         *
+         * @sample highcharts/members/highcharts-numberformat
+         *      Arabic digits in Highcharts
+         * @type {Highcharts.NumberFormatterCallbackFunction}
+         * @since next
+         * @apioption chart.numberFormatter
          */
 
         /**

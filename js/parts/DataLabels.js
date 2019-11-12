@@ -310,7 +310,7 @@ Series.prototype.drawDataLabels = function () {
                     labelConfig = point.getLabelConfig();
                     formatString = pick(labelOptions[point.formatPrefix + 'Format'], labelOptions.format);
                     labelText = defined(formatString) ?
-                        format(formatString, labelConfig, chart.time) :
+                        format(formatString, labelConfig, chart) :
                         (labelOptions[point.formatPrefix + 'Formatter'] ||
                             labelOptions.formatter).call(labelConfig, labelOptions);
                     style = labelOptions.style;

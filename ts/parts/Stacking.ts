@@ -291,7 +291,7 @@ H.StackItem.prototype = {
             formatOption = options.format,
             attr = {},
             str = formatOption ? // format the text in the label
-                format(formatOption, this, chart.time) :
+                format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden

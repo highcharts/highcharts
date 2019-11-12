@@ -92,6 +92,7 @@ declare global {
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
+            public numberFormatter: NumberFormatterCallbackFunction;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
             public options: Options;
@@ -201,6 +202,29 @@ declare global {
  */
 
 /**
+ * Format a number and return a string based on input settings.
+ *
+ * @callback Highcharts.NumberFormatterCallbackFunction
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string} The formatted number.
+ */
+
+/**
  * The chart title. The title has an `update` method that allows modifying the
  * options directly or indirectly via `chart.update`.
  *
@@ -274,6 +298,7 @@ const {
     isNumber,
     isObject,
     isString,
+    numberFormat,
     objectEach,
     pick,
     pInt,
@@ -543,6 +568,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 userOptions.time && Object.keys(userOptions.time).length ?
                     new H.Time(userOptions.time) :
                     H.time;
+
+            /**
+             * Callback function to override the default function that formats
+             * all the numbers in the chart. Returns a string with the formatted
+             * number.
+             *
+             * @name Highcharts.Chart#numberFormatter
+             * @type {Highcharts.NumberFormatterCallbackFunction}
+             */
+            this.numberFormatter = optionsChart.numberFormatter || numberFormat;
 
             /**
              * Whether the chart is in styled mode, meaning all presentatinoal
