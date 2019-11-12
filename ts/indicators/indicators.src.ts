@@ -16,7 +16,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class SMAIndicator extends LineSeries {
+        class SMAIndicator extends Series {
             public bindTo: SMAIndicatorBindToObject;
             public calculateOn: string;
             public data: Array<SMAIndicatorPoint>;
@@ -34,16 +34,10 @@ declare global {
             public useCommonDataGrouping: boolean;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
             public getName(): string;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: SMAIndicatorParamsOptions
-            ): (
-                IndicatorValuesObject|IndicatorNullableValuesObject|
-                IndicatorUndefinableValuesObject|IndicatorMultipleValuesObject|
-                IndicatorMultipleNullableValuesObject|
-                IndicatorMultipleUndefinableValuesObject|undefined
-
-            );
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public requireIndicators(): SMAIndicatorRequireIndicatorsObject;
         }
 
@@ -51,41 +45,16 @@ declare global {
             public series: SMAIndicator;
         }
 
-        interface IndicatorMultipleNullableValuesObject {
-            values: IndicatorNullableValuesObject['values'];
-            xData: IndicatorNullableValuesObject['xData'];
-            yData: Array<Array<(number|null)>>;
+        interface IndicatorValuesObject<
+            TLinkedSeries extends Series
+        > {
+            values: Array<Array<(
+                ExtractArrayType<TLinkedSeries['xData']>|
+                ExtractArrayType<TLinkedSeries['yData']>
+            )>>;
+            xData: NonNullable<TLinkedSeries['xData']>;
+            yData: NonNullable<TLinkedSeries['yData']>;
         }
-
-        interface IndicatorMultipleUndefinableValuesObject {
-            values: IndicatorUndefinableValuesObject['values'];
-            xData: IndicatorUndefinableValuesObject['xData'];
-            yData: Array<Array<(number|undefined)>>;
-        }
-
-        interface IndicatorMultipleValuesObject {
-            values: IndicatorValuesObject['values'];
-            xData: IndicatorValuesObject['xData'];
-            yData: Array<Array<number>>;
-        }
-
-        interface IndicatorNullableValuesObject {
-            values: Array<Array<(number|null)>>;
-            xData: Array<(number|null)>;
-            yData: Array<(number|null)>;
-        }
-        interface IndicatorUndefinableValuesObject {
-            values: Array<Array<(number|undefined)>>;
-            xData: Array<(number|undefined)>;
-            yData: Array<(number|undefined)>;
-        }
-
-        interface IndicatorValuesObject {
-            values: Array<Array<number>>;
-            xData: Array<number>;
-            yData: Array<number>;
-        }
-
 
         interface LineSeriesOptions {
             useOhlcData?: boolean;
@@ -324,7 +293,7 @@ seriesType<Highcharts.SMAIndicator>(
             this: Highcharts.SMAIndicator,
             chart: Highcharts.Chart,
             options: Highcharts.SMAIndicatorOptions
-        ): (Highcharts.SMAIndicator|undefined) {
+        ): (Highcharts.SMAIndicator) {
             var indicator = this,
                 requiredIndicators = indicator.requireIndicators();
 
@@ -354,15 +323,16 @@ seriesType<Highcharts.SMAIndicator>(
             function recalculateValues(): void {
                 var oldData = indicator.points || [],
                     oldDataLength = (indicator.xData || []).length,
-                    processedData: Highcharts.IndicatorValuesObject =
-                        (indicator.getValues(
-                            indicator.linkedParent,
-                            indicator.options.params as any
-                        ) as any) || {
-                            values: [],
-                            xData: [],
-                            yData: []
-                        },
+                    processedData: Highcharts.IndicatorValuesObject<
+                    Highcharts.Series
+                    > = indicator.getValues(
+                        indicator.linkedParent,
+                        indicator.options.params as any
+                    ) || {
+                        values: [],
+                        xData: [],
+                        yData: []
+                    },
                     croppedDataValues = [],
                     overwriteData = true,
                     oldFirstPointIndex,
@@ -390,7 +360,7 @@ seriesType<Highcharts.SMAIndicator>(
 
                         croppedData = indicator.cropData(
                             processedData.xData,
-                            (processedData.yData as any),
+                            processedData.yData,
                             min as any,
                             max as any
                         );
@@ -431,14 +401,14 @@ seriesType<Highcharts.SMAIndicator>(
                         processedData.xData.length !== oldDataLength + 1
                     ) {
                         overwriteData = false;
-                        indicator.updateData(processedData.values);
+                        indicator.updateData(processedData.values as any);
                     }
                 }
 
                 if (overwriteData) {
                     indicator.xData = processedData.xData;
                     indicator.yData = (processedData.yData as any);
-                    indicator.options.data = processedData.values;
+                    indicator.options.data = (processedData.values as any);
                 }
 
                 // Removal of processedXData property is required because on
@@ -487,7 +457,9 @@ seriesType<Highcharts.SMAIndicator>(
 
             return indicator;
         },
-        getName: function (this: Highcharts.SMAIndicator): string {
+        getName: function (
+            this: Highcharts.SMAIndicator
+        ): string {
             var name = this.name,
                 params: Array<string> = [];
 
@@ -509,10 +481,10 @@ seriesType<Highcharts.SMAIndicator>(
 
             return name;
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.SMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<(
@@ -563,7 +535,7 @@ seriesType<Highcharts.SMAIndicator>(
                 values: SMA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         },
         destroy: function (this: Highcharts.SMAIndicator): void {
             this.dataEventsToUnbind.forEach(function (

@@ -51,6 +51,7 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
+        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
