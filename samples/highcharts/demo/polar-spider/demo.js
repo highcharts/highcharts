@@ -38,7 +38,8 @@ Highcharts.chart('container', {
 
     legend: {
         align: 'right',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        layout: 'vertical'
     },
 
     series: [{

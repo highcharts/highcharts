@@ -1,7 +1,17 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+		Datasets formatted in CSV or JSON can be fetched remotely using the
+		<code>data</code> module. This chart shows how a chart can also be
+		configured to poll against the remote source.
+    </p>
+</figure>
 
 <div class="ld-row">
 	<label class="ld-label">

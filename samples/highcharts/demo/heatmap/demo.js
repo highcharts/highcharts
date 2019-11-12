@@ -1,3 +1,10 @@
+function getPointCategoryName(point, dimension) {
+    var series = point.series,
+        isY = dimension === 'y',
+        axis = series[isY ? 'yAxis' : 'xAxis'];
+    return axis.categories[point[isY ? 'y' : 'x']];
+}
+
 Highcharts.chart('container', {
 
     chart: {
@@ -22,6 +29,18 @@ Highcharts.chart('container', {
         reversed: true
     },
 
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var ix = point.index + 1,
+                    xName = getPointCategoryName(point, 'x'),
+                    yName = getPointCategoryName(point, 'y'),
+                    val = point.value;
+                return ix + '. ' + xName + ' sales ' + yName + ', ' + val + '.';
+            }
+        }
+    },
+
     colorAxis: {
         min: 0,
         minColor: '#FFFFFF',
@@ -39,8 +58,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-                this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
+            return '<b>' + getPointCategoryName(this.point, 'x') + '</b> sold <br><b>' +
+                this.point.value + '</b> items on <br><b>' + getPointCategoryName(this.point, 'y') + '</b>';
         }
     },
 
