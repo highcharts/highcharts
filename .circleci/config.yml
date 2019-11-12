@@ -1,6 +1,13 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
+parameters:
+  run_reset_tests:
+    type: boolean
+    default: false
+  reset_tests:
+    type: string
+    default: ""
 ######### Anchors ####################
 defaults: &defaults
   executor: node_image
@@ -18,9 +25,9 @@ load_workspace: &load_workspace
 load_source_from_cache: &load_source_from_cache
   - restore_cache:
       keys:
-        - source-v1-{{ .Branch }}-{{ .Revision }}
-        - source-v1-{{ .Branch }}-
-        - source-v1-
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-
 
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
@@ -73,19 +80,19 @@ jobs:
         fi
      - checkout
      - save_cache:
-         key: source-v1-{{ .Branch }}-{{ .Revision }}
+         key: source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
          paths:
            - ".git"
      - run: node --version && npm --version
      - restore_cache:
          keys:
-           - v2-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
-           - v2-npm-deps-{{ .Branch }}
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
      - run: npm install --quiet
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/node_modules
-         key: v2-npm-deps-{{ .Branch }}-{{ checksum "package.json" }}
+         key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - <<: *persist_workspace
 
@@ -123,16 +130,6 @@ jobs:
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
-      - run: mkdir ../test-results
-      - run:
-          name: Save test results
-          command: |
-            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
-          when: always
-      - store_test_results:
-          path: ../test-results
-      - store_artifacts:
-          path: ../test-results
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -158,6 +155,18 @@ jobs:
           when: always
       - <<: *persist_workspace
 
+  reset_visual_references_job:
+    <<: *defaults
+    description: Reset reference images stored on S3 based on
+    parameters:
+      reset_tests:
+        description: "Which tests to run?"
+        type: string
+        default: ""
+    steps:
+      - <<: *load_workspace
+      - run: "npx gulp reset-visual-references --tests << parameters.reset_tests >> --reference --browsercount 2 --bucket ${HIGHCHARTS_STAGING_CODE_BUCKET}"
+
   visual_comparison_with_master:
     <<: *defaults
     description: Visual diff and compare PR with master
@@ -172,7 +181,10 @@ jobs:
           fi
       - <<: *load_workspace
       - run: sudo apt-get install -y rsync
-      - run: git checkout master && git fetch origin master && git reset --hard origin/master && git log --oneline -5 && npm i && npx gulp scripts
+      - run: > # checkout master at diverge point of current branch and install
+          git checkout master && git fetch origin master && git reset --hard origin/master &&
+          git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          npm i && npx gulp scripts
       - generate_references_command:
           browsercount: 2
       - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
@@ -331,11 +343,13 @@ jobs:
 workflows:
   version: 2
   build_and_test:
+    unless: << pipeline.parameters.run_reset_tests >>
     jobs:
       - checkout_and_install:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-common
       - lint:
           requires: [checkout_and_install]
           filters:
@@ -387,7 +401,8 @@ workflows:
           requires: ["test-Mac.Firefox", "test-Win.Chrome"]
           filters:
             branches:
-              only: [master, tools/trigger-docs-deploy]
+              only: [master]
+          context: highcharts-staging
 
   nightly:
     triggers:
@@ -398,7 +413,8 @@ workflows:
               only:
                 - master
     jobs:
-      - checkout_and_install
+      - checkout_and_install:
+          context: highcharts-common
       - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
           requires: [checkout_and_install]
@@ -434,3 +450,14 @@ workflows:
       - deploy_to_highcharts_dist:
           requires: [build_dist]
           context: highcharts-staging
+
+  reset_visual_test_references:
+    when: << pipeline.parameters.run_reset_tests >>
+    jobs:
+      - checkout_and_install:
+          filters:
+            branches:
+              only: [master, tools/reset-visual-test]
+      - reset_visual_references_job:
+          requires: [checkout_and_install]
+          reset_tests: << pipeline.parameters.reset_tests >>

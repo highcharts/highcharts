@@ -70,7 +70,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import './Series.js';
 var format = H.format, merge = H.merge, noop = H.noop, relativeLength = H.relativeLength, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
 /* eslint-disable valid-jsdoc */
@@ -136,7 +136,7 @@ H.distribute = function (boxes, len, maxDistance) {
             // Composite box, average of targets
             target = (Math.min.apply(0, box.targets) +
                 Math.max.apply(0, box.targets)) / 2;
-            box.pos = Math.min(Math.max(0, target - box.size * box.align), len - box.size);
+            box.pos = clamp(target - box.size * box.align, 0, len - box.size);
         }
         // Detect overlap and join boxes
         i = boxes.length;
@@ -310,7 +310,7 @@ Series.prototype.drawDataLabels = function () {
                     labelConfig = point.getLabelConfig();
                     formatString = pick(labelOptions[point.formatPrefix + 'Format'], labelOptions.format);
                     labelText = defined(formatString) ?
-                        format(formatString, labelConfig, chart.time) :
+                        format(formatString, labelConfig, chart) :
                         (labelOptions[point.formatPrefix + 'Formatter'] ||
                             labelOptions.formatter).call(labelConfig, labelOptions);
                     style = labelOptions.style;
@@ -1010,13 +1010,12 @@ if (seriesTypes.pie) {
             }
             // Handle vertical size and center
             if (centerOption[1] !== null) { // Fixed center
-                newSize = Math.max(Math.min(newSize, center[2] -
-                    Math.max(overflow[0], overflow[2])), minSize);
+                newSize = clamp(newSize, minSize, center[2] - Math.max(overflow[0], overflow[2]));
             }
             else { // Auto center
-                newSize = Math.max(Math.min(newSize, 
+                newSize = clamp(newSize, minSize, 
                 // vertical overflow
-                center[2] - overflow[0] - overflow[2]), minSize);
+                center[2] - overflow[0] - overflow[2]);
                 // vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;
             }

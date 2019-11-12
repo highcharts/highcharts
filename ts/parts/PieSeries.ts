@@ -130,6 +130,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
     defined,
     isNumber,
     pick,
@@ -863,16 +864,7 @@ seriesType<Highcharts.PieSeries>(
                 x;
 
             angle = Math.asin(
-                Math.max(
-                    Math.min(
-                        (
-                            (y - center[1]) /
-                        (radius + point.labelDistance)
-                        ),
-                        1
-                    ),
-                    -1
-                )
+                clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
             );
             x = center[0] +
             (left ? -1 : 1) *

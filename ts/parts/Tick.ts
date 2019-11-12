@@ -123,6 +123,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -573,7 +574,7 @@ H.Tick.prototype = {
         };
 
         // Chrome workaround for #10516
-        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+        pos.y = clamp(pos.y, -1e5, 1e5);
 
         fireEvent(this, 'afterGetPosition', { pos: pos });
 

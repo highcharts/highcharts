@@ -45,7 +45,7 @@ import H from '../parts/Globals.js';
 * @since 7.0.0
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -95,7 +95,7 @@ H.networkgraphIntegrations.packedbubble = {
     integrate: H.networkgraphIntegrations.verlet.integrate,
     getK: H.noop
 };
-H.layouts.packedbubble = H.extendClass(Reingold, {
+H.layouts.packedbubble = extendClass(Reingold, {
     beforeStep: function () {
         if (this.options.marker) {
             this.series.forEach(function (series) {
@@ -659,11 +659,10 @@ seriesType('packedbubble', 'bubble',
     calculateParentRadius: function () {
         var series = this, bBox, parentPadding = 20, minParentRadius = 20;
         bBox = series.seriesBox();
-        series.parentNodeRadius =
-            Math.min(Math.max(Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding, minParentRadius), bBox ?
-                Math.max(Math.sqrt(Math.pow(bBox.width, 2) +
-                    Math.pow(bBox.height, 2)) / 2 + parentPadding, minParentRadius) :
-                Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding);
+        series.parentNodeRadius = clamp(Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding, minParentRadius, bBox ?
+            Math.max(Math.sqrt(Math.pow(bBox.width, 2) +
+                Math.pow(bBox.height, 2)) / 2 + parentPadding, minParentRadius) :
+            Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding);
         if (series.parentNode) {
             series.parentNode.marker.radius =
                 series.parentNode.radius = series.parentNodeRadius;
@@ -1107,7 +1106,7 @@ seriesType('packedbubble', 'bubble',
             [minSize, maxSize];
         (allDataPoints || []).forEach(function (point, i) {
             value = useSimulation ?
-                Math.max(Math.min(point[2], zExtremes[1]), zExtremes[0]) :
+                clamp(point[2], zExtremes[0], zExtremes[1]) :
                 point[2];
             radius = series.getRadius(zExtremes[0], zExtremes[1], minSize, maxSize, value);
             if (radius === 0) {

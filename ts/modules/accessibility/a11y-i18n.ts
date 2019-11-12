@@ -44,7 +44,7 @@ declare global {
         function i18nFormat(
             formatString: string,
             context: Dictionary<any>,
-            time?: Time
+            chart: Chart
         ): string;
     }
 }
@@ -238,8 +238,9 @@ function formatExtendedStatement(
  * @param {Highcharts.Dictionary<*>} context
  *        Context to apply to the format string.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance for date formatting, passed on to H.format().
+ * @param {Highcharts.Chart} chart
+ *        A `Chart` instance with a time object and numberFormatter, passed on
+ *        to H.format().
  *
  * @return {string}
  *         The formatted string.
@@ -247,7 +248,7 @@ function formatExtendedStatement(
 H.i18nFormat = function (
     formatString: string,
     context: Highcharts.Dictionary<any>,
-    time?: Highcharts.Time
+    chart: Highcharts.Chart
 ): string {
     var getFirstBracketStatement = function (
             sourceStr: string,
@@ -313,7 +314,7 @@ H.i18nFormat = function (
         cur: Highcharts.A11yFormatTokenObject
     ): string {
         return acc + cur.value;
-    }, ''), context, time);
+    }, ''), context, chart);
 };
 
 
@@ -330,16 +331,12 @@ H.i18nFormat = function (
  * @param {Highcharts.Dictionary<*>} context
  *        Context to apply to the format string.
  *
- * @param {Highcharts.Time} time
- *        A `Time` instance for date formatting, passed on to H.format().
- *
  * @return {string}
  *         The formatted string.
  */
 H.Chart.prototype.langFormat = function (
     langKey: string,
-    context: Highcharts.Dictionary<any>,
-    time?: Highcharts.Time
+    context: Highcharts.Dictionary<any>
 ): string {
     var keys = langKey.split('.'),
         formatString: string = this.options.lang as any,
@@ -350,6 +347,6 @@ H.Chart.prototype.langFormat = function (
     }
     return (
         ((typeof formatString === 'string') as any) &&
-        H.i18nFormat(formatString, context, time)
+        H.i18nFormat(formatString, context, this)
     );
 };

@@ -39,7 +39,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
@@ -593,7 +593,7 @@ seriesType('column', 'line',
             var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -798,7 +798,7 @@ seriesType('column', 'line',
         if (svg) { // VML is too slow anyway
             if (init) {
                 attr.scaleY = 0.001;
-                translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
+                translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
                 if (inverted) {
                     attr.translateX = translatedThreshold - yAxis.len;
                 }

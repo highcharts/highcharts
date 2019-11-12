@@ -563,7 +563,7 @@ function addFormattedValue(
                     this,
                     { value: this.y }
                 ),
-                chart.time
+                chart
             );
         } else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(

@@ -1200,12 +1200,12 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function (parent, members) {
+function extendClass(parent, members) {
     var obj = (function () { });
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 /**
  * Left-pad a string to a given length by adding a character repetetively.
  *
@@ -1223,13 +1223,13 @@ H.extendClass = function (parent, members) {
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number, length, padder) {
+function pad(number, length, padder) {
     return new Array((length || 2) +
         1 -
         String(number)
             .replace('-', '')
             .length).join(padder || '0') + number;
-};
+}
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  *
@@ -1319,24 +1319,25 @@ H.datePropsToTimestamps = function (obj) {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
  */
-H.formatSingle = function (format, val, time) {
+H.formatSingle = function (format, val, chart) {
     var floatRegex = /f$/, decRegex = /\.([0-9])/, lang = H.defaultOptions.lang, decimals;
+    var time = chart && chart.time || H.time;
+    var numberFormatter = chart && chart.numberFormatter || numberFormat;
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex);
         decimals = decimals ? decimals[1] : -1;
         if (val !== null) {
-            val = H.numberFormat(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
+            val = numberFormatter(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
         }
     }
     else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1360,14 +1361,13 @@ H.formatSingle = function (format, val, time) {
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str, ctx, time) {
+H.format = function (str, ctx, chart) {
     var splitter = '{', isInside = false, segment, valueAndFormat, path, i, len, ret = [], val, index;
     while (str) {
         index = str.indexOf(splitter);
@@ -1389,7 +1389,7 @@ H.format = function (str, ctx, time) {
             }
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
             // Push the result and advance the cursor
             ret.push(val);
@@ -1711,7 +1711,7 @@ H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
+function numberFormat(number, decimals, decimalPoint, thousandsSep) {
     number = +number || 0;
     decimals = +decimals;
     var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length, strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits;
@@ -1775,7 +1775,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
         ret += 'e' + exponent[1];
     }
     return ret;
-};
+}
 /**
  * Easing definition
  *
@@ -2431,12 +2431,12 @@ H.seriesType = function (type, parent, options, props, pointProps) {
     // Merge the options
     defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () { }, props);
+    seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
     return seriesTypes[type];
 };
@@ -2527,13 +2527,16 @@ var utils = {
     discardElement: discardElement,
     erase: erase,
     extend: extend,
+    extendClass: extendClass,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    numberFormat: numberFormat,
     objectEach: objectEach,
+    pad: pad,
     pick: pick,
     pInt: pInt,
     setAnimation: setAnimation,

@@ -36,10 +36,10 @@ declare global {
                 index: number,
                 SMA: number
             ): [number, number];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: EMAIndicatorParamsOptions
-            ): (IndicatorValuesObject|IndicatorNullableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {
@@ -152,18 +152,18 @@ seriesType<Highcharts.EMAIndicator>(
 
             return [x, y];
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.EMAIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.EMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 EMApercent = 2 / (period + 1),
                 sum = 0,
-                EMA: Array<[number, number]> = [],
+                EMA: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index = -1,
@@ -213,7 +213,7 @@ seriesType<Highcharts.EMAIndicator>(
                 values: EMA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

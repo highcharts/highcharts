@@ -391,7 +391,7 @@ var options: Highcharts.Options = {
          * @sample highcharts/accessibility/custom-component
          *         Custom accessibility component
          *
-         * @type      {global.Object}
+         * @type      {*}
          * @since     7.1.0
          * @apioption accessibility.customComponents
          */
@@ -401,7 +401,7 @@ var options: Highcharts.Options = {
          * detected. By default, a high contrast theme matching the high
          * contrast system system colors is used.
          *
-         * @type      {global.Object}
+         * @type      {*}
          * @since     7.1.3
          * @apioption accessibility.highContrastTheme
          */
@@ -528,6 +528,7 @@ var options: Highcharts.Options = {
         /**
          * Options for keyboard navigation.
          *
+         * @declare Highcharts.KeyboardNavigationOptionsObject
          * @since   5.0.0
          */
         keyboardNavigation: {
@@ -546,6 +547,7 @@ var options: Highcharts.Options = {
              * @sample highcharts/accessibility/custom-focus
              *         Custom focus ring
              *
+             * @declare Highcharts.KeyboardNavigationFocusBorderOptionsObject
              * @since   6.0.3
              */
             focusBorder: {
@@ -615,6 +617,7 @@ var options: Highcharts.Options = {
             /**
              * Options for the keyboard navigation of data points and series.
              *
+             * @declare Highcharts.KeyboardNavigationSeriesNavigationOptionsObject
              * @since   next
              */
             seriesNavigation: {
@@ -669,6 +672,7 @@ var options: Highcharts.Options = {
          * applications, consider making snapshots of the data accessible, and
          * do the announcements in batches.
          *
+         * @declare Highcharts.AccessibilityAnnounceNewDataOptionsObject
          * @since   7.1.0
          */
         announceNewData: {

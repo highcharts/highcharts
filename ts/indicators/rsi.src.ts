@@ -18,10 +18,10 @@ declare global {
     namespace Highcharts {
         class RSIIndicator extends SMAIndicator {
             public data: Array<RSIIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: RSIIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: RSIIndicatorOptions;
             public pointClass: typeof RSIIndicatorPoint;
             public points: Array<RSIIndicatorPoint>;
@@ -99,10 +99,10 @@ H.seriesType<Highcharts.RSIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.RSIIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -111,7 +111,7 @@ H.seriesType<Highcharts.RSIIndicator>(
                 // RSI starts calculations from the second point
                 // Cause we need to calculate change between two points
                 range = 1,
-                RSI: Array<[number, number]> = [],
+                RSI: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index = 3,
@@ -195,7 +195,7 @@ H.seriesType<Highcharts.RSIIndicator>(
                 values: RSI,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

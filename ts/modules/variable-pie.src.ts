@@ -67,6 +67,7 @@ import U from '../parts/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    clamp,
     pick
 } = U;
 
@@ -228,9 +229,10 @@ seriesType<Highcharts.VariablePieSeries>(
             });
 
             series.minPxSize = positions[3] + extremes.minPointSize;
-            series.maxPxSize = Math.max(
-                Math.min(positions[2], extremes.maxPointSize),
-                positions[3] + extremes.minPointSize
+            series.maxPxSize = clamp(
+                positions[2],
+                positions[3] + extremes.minPointSize,
+                extremes.maxPointSize
             );
 
             if (zData.length) {

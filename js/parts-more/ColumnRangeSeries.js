@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var clamp = U.clamp, pick = U.pick;
 var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
@@ -74,7 +74,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
          * @private
          */
         function safeBounds(pixelPos) {
-            return Math.min(Math.max(-safeDistance, pixelPos), safeDistance);
+            return clamp(pixelPos, -safeDistance, safeDistance);
         }
         colProto.translate.apply(series);
         // Set plotLow and plotHigh

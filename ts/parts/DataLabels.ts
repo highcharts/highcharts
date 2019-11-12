@@ -231,6 +231,7 @@ import U from './Utilities.js';
 const {
     animObject,
     arrayMax,
+    clamp,
     defined,
     extend,
     isArray,
@@ -341,9 +342,8 @@ H.distribute = function (
                 Math.min.apply(0, box.targets as any) +
                 Math.max.apply(0, box.targets as any)
             ) / 2;
-            box.pos = Math.min(
-                Math.max(0, target - box.size * (box.align as any)),
-                len - box.size
+            box.pos = clamp(
+                target - box.size * (box.align as any), 0, len - box.size
             );
         }
 
@@ -642,7 +642,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                     );
 
                     labelText = defined(formatString) ?
-                        format(formatString, labelConfig, chart.time) :
+                        format(formatString, labelConfig, chart) :
                         (
                             (labelOptions as any)[
                                 point.formatPrefix + 'Formatter'
@@ -1662,17 +1662,17 @@ if (seriesTypes.pie) {
 
             // Handle vertical size and center
             if ((centerOption as any)[1] !== null) { // Fixed center
-                newSize = Math.max(Math.min(newSize, center[2] -
-                    Math.max(overflow[0], overflow[2])), minSize as any);
-
+                newSize = clamp(
+                    newSize,
+                    minSize as any,
+                    center[2] - Math.max(overflow[0], overflow[2])
+                );
             } else { // Auto center
-                newSize = Math.max(
-                    Math.min(
-                        newSize,
-                        // vertical overflow
-                        center[2] - overflow[0] - overflow[2]
-                    ),
-                    minSize as any
+                newSize = clamp(
+                    newSize,
+                    minSize as any,
+                    // vertical overflow
+                    center[2] - overflow[0] - overflow[2]
                 );
                 // vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;

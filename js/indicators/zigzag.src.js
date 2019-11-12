@@ -79,7 +79,7 @@ seriesType('zigzag', 'sma',
             'high': 1 - deviation
         }, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, zigzag = [], xData = [], yData = [], i, j, zigzagPoint, firstZigzagLow, firstZigzagHigh, directionUp, zigzagLen, exitLoop = false, yIndex = false;
         // Exit if not enught points or no low or high values
-        if (xVal.length <= 1 ||
+        if (!xVal || xVal.length <= 1 ||
             (yValLen &&
                 (yVal[0][lowIndex] === UNDEFINED ||
                     yVal[0][highIndex] === UNDEFINED))) {

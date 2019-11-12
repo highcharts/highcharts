@@ -96,6 +96,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     pick
 } = U;
@@ -305,9 +306,6 @@ seriesType<Highcharts.HeatmapSeries>(
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 seriesPointPadding = options.pointPadding || 0,
-                between = function (x: number, a: number, b: number): number {
-                    return Math.min(Math.max(a, x), b);
-                },
                 pointPlacement = series.pointPlacementToXValue(); // #7860
 
             series.generatePoints();
@@ -317,7 +315,7 @@ seriesType<Highcharts.HeatmapSeries>(
             ): void {
                 var xPad = (options.colsize || 1) / 2,
                     yPad = (options.rowsize || 1) / 2,
-                    x1 = between(
+                    x1 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -331,7 +329,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    x2 = between(
+                    x2 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(point.x + xPad,
@@ -344,7 +342,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    y1 = between(
+                    y1 = clamp(
                         Math.round(yAxis.translate(
                             point.y - yPad,
                             0 as any,
@@ -354,7 +352,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ) as any),
                         -yAxis.len, 2 * yAxis.len
                     ),
-                    y2 = between(
+                    y2 = clamp(
                         Math.round(yAxis.translate(
                             point.y + yPad,
                             0 as any,

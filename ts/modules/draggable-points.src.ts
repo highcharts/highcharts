@@ -357,6 +357,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     objectEach,
     pick
 } = U;
@@ -2341,7 +2342,7 @@ H.Point.prototype.getDropValues = function (
         if (precision) {
             res = Math.round(res / precision) * precision;
         }
-        return Math.max(min, Math.min(max, res));
+        return clamp(res, min, max);
     };
 
     // Assign new value to property. Adds dX/YValue to the old value, limiting

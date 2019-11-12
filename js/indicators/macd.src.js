@@ -309,7 +309,8 @@ seriesType('macd', 'sma',
         // Setting the MACD Histogram. In comparison to the loop with pure
         // MACD this loop uses MACD x value not xData.
         for (i = 0; i < MACD.length; i++) {
-            if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
+            // detect the first point
+            if (MACD[i][0] >= signalLine[0][0]) {
                 MACD[i][2] = signalLine[j][1];
                 yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
                 if (MACD[i][3] === null) {

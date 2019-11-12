@@ -250,8 +250,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @return {string}
      */
     defaultBeforeChartFormatter: function () {
-        var chart = this.chart, format = (chart.options.accessibility.screenReaderSection
-            .beforeChartFormat), axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
+        var chart = this.chart, format = (chart.options.accessibility
+            .screenReaderSection.beforeChartFormat), axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
             chart.index, context = {
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
@@ -261,7 +261,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             yAxisDescription: axesDesc.yAxis,
             viewTableButton: chart.getCSV ?
                 this.getDataTableButtonText(dataTableButtonId) : ''
-        }, formattedString = H.i18nFormat(format, context);
+        }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
         return stringToSimpleHTML(formattedString);
     },
@@ -270,10 +270,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @return {string}
      */
     defaultAfterChartFormatter: function () {
-        var chart = this.chart, format = (chart.options.accessibility.screenReaderSection
-            .afterChartFormat), context = {
+        var chart = this.chart, format = (chart.options.accessibility
+            .screenReaderSection.afterChartFormat), context = {
             endOfChartMarker: this.getEndOfChartMarkerText()
-        }, formattedString = H.i18nFormat(format, context);
+        }, formattedString = H.i18nFormat(format, context, chart);
         return stringToSimpleHTML(formattedString);
     },
     /**
