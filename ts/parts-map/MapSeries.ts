@@ -123,6 +123,7 @@ declare global {
             color?: ColorType;
         }
         interface Series {
+            mapTitle?: string;
             valueMax?: number;
             valueMin?: number;
         }

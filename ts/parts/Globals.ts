@@ -60,9 +60,6 @@ declare global {
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
         }
-        interface SeriesOptions {
-            accessibility?: any; // @todo
-        }
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
         }

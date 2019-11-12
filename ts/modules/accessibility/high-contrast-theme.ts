@@ -9,8 +9,25 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
-var theme = {
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface DataLabelsOptionsObject {
+            connectorColor?: ColorType;
+        }
+        interface SeriesOptions {
+            fillColor?: ColorType;
+        }
+    }
+}
+
+var theme: Highcharts.Options = {
     chart: {
         backgroundColor: 'window'
     },
@@ -27,7 +44,7 @@ var theme = {
     colorAxis: {
         minColor: 'windowText',
         maxColor: 'windowText',
-        stops: null
+        stops: null as any
     },
     colors: ['windowText'],
     xAxis: {
@@ -88,7 +105,7 @@ var theme = {
                 lineColor: 'windowText',
                 fillColor: 'windowText'
             }
-        },
+        } as any,
         pie: {
             color: 'window',
             colors: ['window'],
@@ -208,4 +225,5 @@ var theme = {
         trackBorderColor: 'windowText'
     }
 };
+
 export default theme;

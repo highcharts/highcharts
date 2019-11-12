@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 /* eslint-disable max-len */
 /*
  *  List of deprecated options:
@@ -57,12 +58,36 @@
  *
  */
 /* eslint-enable max-len */
+
 'use strict';
+
 import H from '../../../parts/Globals.js';
 var error = H.error;
+
 import U from '../../../parts/Utilities.js';
 var pick = U.pick;
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface XAxisOptions {
+            /** @deprecated */
+            description?: XAxisAccessibilityOptions['description'];
+        }
+        interface Options {
+            /** @deprecated */
+            exposeElementToA11y?: (
+                SeriesAccessibilityOptions['exposeAsGroupOnly']
+            );
+        }
+    }
+}
+
 /* eslint-disable valid-jsdoc */
+
 /**
  * Warn user that a deprecated option was used.
  * @private
@@ -71,11 +96,18 @@ var pick = U.pick;
  * @param {string} newOption
  * @return {void}
  */
-function warn(chart, oldOption, newOption) {
-    error('Highcharts: Deprecated option ' + oldOption +
+function warn(
+    chart: Highcharts.Chart,
+    oldOption: string,
+    newOption: string
+): void {
+    error(
+        'Highcharts: Deprecated option ' + oldOption +
         ' used. This will be removed from future versions of Highcharts. Use ' +
-        newOption + ' instead.', false, chart);
+        newOption + ' instead.', false, chart
+    );
 }
+
 /**
  * Set a new option on a root prop, where the option is defined as an array of
  * suboptions.
@@ -85,54 +117,88 @@ function warn(chart, oldOption, newOption) {
  * @param {*} val
  * @return {void}
  */
-function traverseSetOption(root, optionAsArray, val) {
-    var opt = root, prop, i = 0;
-    for (; i < optionAsArray.length - 1; ++i) {
+function traverseSetOption<T>(
+    root: Highcharts.Dictionary<T>,
+    optionAsArray: Array<string>,
+    val: T
+): void {
+    var opt = root,
+        prop,
+        i = 0;
+    for (;i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
-        opt = opt[prop] = pick(opt[prop], {});
+        opt = opt[prop] = pick(opt[prop], {}) as any;
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }
+
 /**
  * If we have a clear root option node for old and new options and a mapping
  * between, we can use this generic function for the copy and warn logic.
  */
-function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNewOptions) {
+function deprecateFromOptionsMap(
+    chart: Highcharts.Chart,
+    rootOldAsArray: Array<string>,
+    rootNewAsArray: Array<string>,
+    mapToNewOptions: Highcharts.Dictionary<Array<string>>
+): void {
     /**
      * @private
      */
-    function getChildProp(root, propAsArray) {
-        return propAsArray.reduce(function (acc, cur) {
-            return acc[cur];
-        }, root);
+    function getChildProp(
+        root: Highcharts.Options,
+        propAsArray: Array<string>
+    ): Highcharts.Dictionary<unknown> {
+        return propAsArray.reduce(function (
+            acc: Highcharts.Dictionary<unknown>,
+            cur: string
+        ): Highcharts.Dictionary<unknown> {
+            return acc[cur] as any;
+        }, root as any);
     }
-    var rootOld = getChildProp(chart.options, rootOldAsArray), rootNew = getChildProp(chart.options, rootNewAsArray);
-    Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
+
+    var rootOld = getChildProp(chart.options, rootOldAsArray),
+        rootNew = getChildProp(chart.options, rootNewAsArray);
+
+    Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
         var val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
-            traverseSetOption(rootNew, mapToNewOptions[oldOptionKey], val);
-            warn(chart, rootOldAsArray.join('.') + '.' + oldOptionKey, rootNewAsArray.join('.') + '.' +
-                mapToNewOptions[oldOptionKey].join('.'));
+            traverseSetOption(
+                rootNew,
+                mapToNewOptions[oldOptionKey],
+                val
+            );
+            warn(
+                chart,
+                rootOldAsArray.join('.') + '.' + oldOptionKey,
+                rootNewAsArray.join('.') + '.' +
+                mapToNewOptions[oldOptionKey].join('.')
+            );
         }
     });
 }
+
 /**
  * @private
  */
-function copyDeprecatedChartOptions(chart) {
-    var chartOptions = chart.options.chart || {}, a11yOptions = chart.options.accessibility || {};
-    ['description', 'typeDescription'].forEach(function (prop) {
-        if (chartOptions[prop]) {
-            a11yOptions[prop] = chartOptions[prop];
+function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
+    var chartOptions = chart.options.chart || {},
+        a11yOptions = chart.options.accessibility || {};
+    ['description', 'typeDescription'].forEach(function (
+        prop: string
+    ): void {
+        if ((chartOptions as any)[prop]) {
+            (a11yOptions as any)[prop] = (chartOptions as any)[prop];
             warn(chart, 'chart.' + prop, 'accessibility.' + prop);
         }
     });
 }
+
 /**
  * @private
  */
-function copyDeprecatedAxisOptions(chart) {
-    chart.axes.forEach(function (axis) {
+function copyDeprecatedAxisOptions(chart: Highcharts.Chart): void {
+    chart.axes.forEach(function (axis: Highcharts.Axis): void {
         var opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
@@ -141,10 +207,11 @@ function copyDeprecatedAxisOptions(chart) {
         }
     });
 }
+
 /**
  * @private
  */
-function copyDeprecatedSeriesOptions(chart) {
+function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
     var oldToNewSeriesOptions = {
@@ -157,82 +224,114 @@ function copyDeprecatedSeriesOptions(chart) {
             'accessibility', 'keyboardNavigation', 'enabled'
         ]
     };
-    chart.series.forEach(function (series) {
+    chart.series.forEach(function (series: Highcharts.Series): void {
         // Handle series wide options
-        Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
-            var optionVal = series.options[oldOption];
+        Object.keys(oldToNewSeriesOptions).forEach(function (
+            oldOption: string
+        ): void {
+            var optionVal = (series.options as any)[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
-                traverseSetOption(series.options, oldToNewSeriesOptions[oldOption], 
-                // Note that skipKeyboardNavigation has inverted option
-                // value, since we set enabled rather than disabled
-                oldOption === 'skipKeyboardNavigation' ?
-                    !optionVal : optionVal);
-                warn(chart, 'series.' + oldOption, 'series.' +
-                    oldToNewSeriesOptions[oldOption].join('.'));
+                traverseSetOption(
+                    series.options,
+                    (oldToNewSeriesOptions as any)[oldOption],
+                    // Note that skipKeyboardNavigation has inverted option
+                    // value, since we set enabled rather than disabled
+                    oldOption === 'skipKeyboardNavigation' ?
+                        !optionVal : optionVal
+                );
+                warn(
+                    chart,
+                    'series.' + oldOption, 'series.' +
+                    (oldToNewSeriesOptions as any)[oldOption].join('.')
+                );
             }
         });
     });
 }
+
 /**
  * @private
  */
-function copyDeprecatedTopLevelAccessibilityOptions(chart) {
-    deprecateFromOptionsMap(chart, ['accessibility'], ['accessibility'], {
-        pointDateFormat: ['point', 'dateFormat'],
-        pointDateFormatter: ['point', 'dateFormatter'],
-        pointDescriptionFormatter: ['point', 'descriptionFormatter'],
-        pointDescriptionThreshold: ['series',
-            'pointDescriptionEnabledThreshold'],
-        pointNavigationThreshold: ['keyboardNavigation', 'seriesNavigation',
-            'pointNavigationEnabledThreshold'],
-        pointValueDecimals: ['point', 'valueDecimals'],
-        pointValuePrefix: ['point', 'valuePrefix'],
-        pointValueSuffix: ['point', 'valueSuffix'],
-        screenReaderSectionFormatter: ['screenReaderSection',
-            'beforeChartFormatter'],
-        describeSingleSeries: ['series', 'describeSingleSeries'],
-        seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
-        onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
-        axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
-    });
+function copyDeprecatedTopLevelAccessibilityOptions(
+    chart: Highcharts.Chart
+): void {
+    deprecateFromOptionsMap(
+        chart,
+        ['accessibility'],
+        ['accessibility'],
+        {
+            pointDateFormat: ['point', 'dateFormat'],
+            pointDateFormatter: ['point', 'dateFormatter'],
+            pointDescriptionFormatter: ['point', 'descriptionFormatter'],
+            pointDescriptionThreshold: ['series',
+                'pointDescriptionEnabledThreshold'],
+            pointNavigationThreshold: ['keyboardNavigation', 'seriesNavigation',
+                'pointNavigationEnabledThreshold'],
+            pointValueDecimals: ['point', 'valueDecimals'],
+            pointValuePrefix: ['point', 'valuePrefix'],
+            pointValueSuffix: ['point', 'valueSuffix'],
+            screenReaderSectionFormatter: ['screenReaderSection',
+                'beforeChartFormatter'],
+            describeSingleSeries: ['series', 'describeSingleSeries'],
+            seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
+            onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
+            axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
+        }
+    );
 }
+
 /**
  * @private
  */
-function copyDeprecatedKeyboardNavigationOptions(chart) {
-    deprecateFromOptionsMap(chart, ['accessibility', 'keyboardNavigation'], ['accessibility', 'keyboardNavigation', 'seriesNavigation'], {
-        skipNullPoints: ['skipNullPoints'],
-        mode: ['mode']
-    });
+function copyDeprecatedKeyboardNavigationOptions(
+    chart: Highcharts.Chart
+): void {
+    deprecateFromOptionsMap(
+        chart,
+        ['accessibility', 'keyboardNavigation'],
+        ['accessibility', 'keyboardNavigation', 'seriesNavigation'],
+        {
+            skipNullPoints: ['skipNullPoints'],
+            mode: ['mode']
+        }
+    );
 }
+
 /**
  * @private
  */
-function copyDeprecatedLangOptions(chart) {
-    deprecateFromOptionsMap(chart, ['lang', 'accessibility'], ['lang', 'accessibility'], {
-        legendItem: ['legend', 'legendItem'],
-        legendLabel: ['legend', 'legendLabel'],
-        mapZoomIn: ['zoom', 'mapZoomIn'],
-        mapZoomOut: ['zoom', 'mapZoomOut'],
-        resetZoomButton: ['zoom', 'resetZoomButton'],
-        screenReaderRegionLabel: ['screenReaderSection',
-            'beforeRegionLabel'],
-        rangeSelectorButton: ['rangeSelector', 'buttonText'],
-        rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
-        rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
-        svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
-        viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
-        tableSummary: ['table', 'tableSummary']
-    });
+function copyDeprecatedLangOptions(chart: Highcharts.Chart): void {
+    deprecateFromOptionsMap(
+        chart,
+        ['lang', 'accessibility'],
+        ['lang', 'accessibility'],
+        {
+            legendItem: ['legend', 'legendItem'],
+            legendLabel: ['legend', 'legendLabel'],
+            mapZoomIn: ['zoom', 'mapZoomIn'],
+            mapZoomOut: ['zoom', 'mapZoomOut'],
+            resetZoomButton: ['zoom', 'resetZoomButton'],
+            screenReaderRegionLabel: ['screenReaderSection',
+                'beforeRegionLabel'],
+            rangeSelectorButton: ['rangeSelector', 'buttonText'],
+            rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
+            rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
+            svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
+            viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
+            tableSummary: ['table', 'tableSummary']
+        }
+    );
 }
+
+
 /**
  * Copy options that are deprecated over to new options. Logs warnings to
  * console if deprecated options are used.
  *
  * @private
  */
-function copyDeprecatedOptions(chart) {
+function copyDeprecatedOptions(chart: Highcharts.Chart): void {
     copyDeprecatedChartOptions(chart);
     copyDeprecatedAxisOptions(chart);
     if (chart.series) {
@@ -242,4 +341,5 @@ function copyDeprecatedOptions(chart) {
     copyDeprecatedKeyboardNavigationOptions(chart);
     copyDeprecatedLangOptions(chart);
 }
+
 export default copyDeprecatedOptions;

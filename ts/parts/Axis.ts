@@ -170,7 +170,7 @@ declare global {
             zIndex?: number;
         }
         interface XAxisOptions {
-            accessibility?: (object|XAxisAccessibilityOptions);
+            accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
             alternateGridColor?: (

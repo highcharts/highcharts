@@ -10,41 +10,79 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from '../../../parts/Globals.js';
 var doc = H.win.document;
+
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
+
 import HTMLUtilities from './htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement;
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class DOMElementProvider {
+            public constructor ();
+            public elements: Array<HTMLDOMElement>;
+            public createElement(
+                tagName: string,
+                options?: ElementCreationOptions
+            ): HTMLDOMElement;
+            public destroyCreatedElements(): void;
+        }
+    }
+}
+
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
 /**
  * @private
  * @class
  */
-var DOMElementProvider = function () {
+var DOMElementProvider: typeof Highcharts.DOMElementProvider = function (
+    this: Highcharts.DOMElementProvider
+): void {
     this.elements = [];
-};
+} as any;
 extend(DOMElementProvider.prototype, {
+
     /**
      * Create an element and keep track of it for later removal.
      * Same args as document.createElement
      * @private
      */
-    createElement: function () {
+    createElement: function (
+        this: Highcharts.DOMElementProvider
+    ): Highcharts.HTMLDOMElement {
         var el = doc.createElement.apply(doc, arguments);
         this.elements.push(el);
         return el;
     },
+
+
     /**
      * Destroy all created elements, removing them from the DOM.
      * @private
      */
-    destroyCreatedElements: function () {
-        this.elements.forEach(function (element) {
+    destroyCreatedElements: function (
+        this: Highcharts.DOMElementProvider
+    ): void {
+        this.elements.forEach(function (
+            element: Highcharts.HTMLDOMElement
+        ): void {
             removeElement(element);
         });
         this.elements = [];
     }
+
 });
+
 export default DOMElementProvider;
