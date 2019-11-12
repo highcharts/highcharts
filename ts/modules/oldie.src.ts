@@ -318,8 +318,10 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isNumber,
     isObject,
@@ -336,9 +338,7 @@ var VMLRenderer,
     createElement = H.createElement,
     css = H.css,
     deg2rad = H.deg2rad,
-    discardElement = H.discardElement,
     doc = H.doc,
-    extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
     svg = H.svg,
@@ -354,6 +354,7 @@ var VMLRenderer,
  * @type      {string}
  * @default   http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
  * @since     2.3.0
+ * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
 (H.getOptions().global as any).VMLRadialGradientURL =

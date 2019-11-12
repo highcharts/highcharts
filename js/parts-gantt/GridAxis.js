@@ -19,11 +19,7 @@ var addEvent = H.addEvent, argsToArray = function (args) {
     return U.isObject(x, true);
 }, merge = H.merge, wrap = H.wrap, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
 var applyGridOptions = function applyGridOptions(axis) {
-    var options = axis.options, gridOptions = options && isObject(options.grid) ? options.grid : {}, 
-    // TODO: Consider using cell margins defined in % of font size?
-    // 25 is optimal height for default fontSize (11px)
-    // 25 / 11 ≈ 2.28
-    fontSizeToCellHeightRatio = 25 / 11, fontSize = options.labels.style.fontSize, fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
+    var options = axis.options;
     // Center-align by default
     if (!options.labels) {
         options.labels = {};
@@ -37,12 +33,6 @@ var applyGridOptions = function applyGridOptions(axis) {
        an "extra" label would appear. */
     if (!axis.categories) {
         options.showLastLabel = false;
-    }
-    // Make tick marks taller, creating cell walls of a grid. Use cellHeight
-    // axis option if set
-    if (axis.horiz) {
-        options.tickLength = gridOptions.cellHeight ||
-            fontMetrics.h * fontSizeToCellHeightRatio;
     }
     // Prevents rotation of labels when squished, as rotating them would not
     // help.
@@ -91,8 +81,10 @@ var applyGridOptions = function applyGridOptions(axis) {
  */
 /**
  * Set cell height for grid axis labels. By default this is calculated from font
- * size.
+ * size. This option only applies to horizontal axes.
  *
+ * @sample gantt/grid-axis/cellheight
+ *         Gant chart with custom cell height
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */
@@ -167,7 +159,10 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
             if (label.textStr && !isNumber(label.textPxLength)) {
                 label.textPxLength = label.getBBox().width;
             }
-            tickWidth = isNumber(label.textPxLength) ? label.textPxLength : 0;
+            tickWidth = isNumber(label.textPxLength) ?
+                // Math.round ensures crisp lines
+                Math.round(label.textPxLength) :
+                0;
             // Update the result if width and/or height are larger
             dimensions.height = Math.max(tickHeight, dimensions.height);
             dimensions.width = Math.max(tickWidth, dimensions.width);
@@ -271,13 +266,13 @@ function (e) {
 // Draw vertical axis ticks extra long to create cell floors and roofs.
 // Overrides the tickLength for vertical axes.
 addEvent(Axis, 'afterTickSize', function (e) {
-    var axis = this, dimensions = axis.maxLabelDimensions, options = axis.options, gridOptions = (options && isObject(options.grid)) ? options.grid : {}, labelPadding, distance;
-    if (gridOptions.enabled === true) {
-        labelPadding =
-            (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-        distance = labelPadding + (axis.horiz ?
-            dimensions.height :
-            dimensions.width);
+    var _a = this, defaultLeftAxisOptions = _a.defaultLeftAxisOptions, horiz = _a.horiz, _b = _a.options.grid, gridOptions = _b === void 0 ? {} : _b;
+    var dimensions = this.maxLabelDimensions;
+    if (gridOptions.enabled) {
+        var labelPadding = (Math.abs(defaultLeftAxisOptions.labels.x) * 2);
+        var distance = horiz ?
+            gridOptions.cellHeight || labelPadding + dimensions.height :
+            labelPadding + dimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         }
@@ -593,16 +588,16 @@ function () {
                     axis.axisLineExtra = renderer
                         .path(linePath)
                         .attr({
-                        /* eslint-disable spaced-comment */
-                        /*= if (build.classic) { =*/
-                        stroke: options.lineColor,
-                        'stroke-width': lineWidth,
-                        /*= } =*/
-                        /* eslint-enable spaced-comment */
                         zIndex: 7
                     })
                         .addClass('highcharts-axis-line')
                         .add(axis.axisGroup);
+                    if (!renderer.styledMode) {
+                        axis.axisLineExtra.attr({
+                            stroke: options.lineColor,
+                            'stroke-width': lineWidth
+                        });
+                    }
                 }
                 else {
                     axis.axisLineExtra.animate({

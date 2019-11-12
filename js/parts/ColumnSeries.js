@@ -39,12 +39,12 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var animObject = H.animObject, color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
 /**
  * The column series type.
  *
@@ -350,15 +350,8 @@ seriesType('column', 'line',
         }
     },
     dataLabels: {
-        /**
-         * @internal
-         */
         align: null,
-        /**
-         * @internal
-         */
         verticalAlign: null,
-        /** @internal */
         y: null
     },
     /**
@@ -496,7 +489,8 @@ seriesType('column', 'line',
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
                     if (otherOptions.stacking) {
                         stackKey = otherSeries.stackKey;
-                        if (stackGroups[stackKey] === undefined) {
+                        if (typeof stackGroups[stackKey] ===
+                            'undefined') {
                             stackGroups[stackKey] = columnCount++;
                         }
                         columnIndex = stackGroups[stackKey];
@@ -599,7 +593,7 @@ seriesType('column', 'line',
             var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -722,7 +716,7 @@ seriesType('column', 'line',
                 {});
             brightness = stateOptions.brightness;
             fill =
-                stateOptions.color || (brightness !== undefined &&
+                stateOptions.color || (typeof brightness !== 'undefined' &&
                     color(fill)
                         .brighten(stateOptions.brightness)
                         .get()) || fill;
@@ -804,7 +798,7 @@ seriesType('column', 'line',
         if (svg) { // VML is too slow anyway
             if (init) {
                 attr.scaleY = 0.001;
-                translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
+                translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
                 if (inverted) {
                     attr.translateX = translatedThreshold - yAxis.len;
                 }

@@ -17,14 +17,13 @@ declare global {
     namespace Highcharts {
         class CCIIndicator extends SMAIndicator {
             public data: Array<CCIIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: CCIIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public pointClass: typeof CCIIndicatorPoint;
             public points: Array<CCIIndicatorPoint>;
             public options: CCIIndicatorOptions;
-            public yData: Array<Array<number>>;
         }
 
         interface CCIIndicatorOptions extends SMAIndicatorOptions {
@@ -99,6 +98,8 @@ seriesType<Highcharts.CCIIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
     {
@@ -110,13 +111,13 @@ seriesType<Highcharts.CCIIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.CCIIndicator,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.CCIIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 TP: Array<number> = [],
                 periodTP: Array<number> = [],
@@ -138,7 +139,7 @@ seriesType<Highcharts.CCIIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // accumulate first N-points
@@ -169,7 +170,7 @@ seriesType<Highcharts.CCIIndicator>(
                 values: CCI,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
@@ -182,6 +183,8 @@ seriesType<Highcharts.CCIIndicator>(
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cci
  * @apioption series.cci
  */
 

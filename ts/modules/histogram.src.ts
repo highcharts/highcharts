@@ -59,15 +59,17 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    isNumber,
+    objectEach
+} = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     merge = H.merge;
 
 /* ************************************************************************** *
@@ -137,6 +139,7 @@ seriesType<Highcharts.HistogramSeries>(
      *               stacking
      * @product      highcharts
      * @since        6.0.0
+     * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
     {
@@ -159,7 +162,7 @@ seriesType<Highcharts.HistogramSeries>(
          *
          * @type {number}
          */
-        binWidth: undefined,
+        binWidth: void 0,
         pointPadding: 0,
         groupPadding: 0,
         grouping: false,
@@ -300,6 +303,7 @@ seriesType<Highcharts.HistogramSeries>(
  * @excluding data, dataParser, dataURL
  * @product   highcharts
  * @since     6.0.0
+ * @requires  modules/histogram
  * @apioption series.histogram
  */
 

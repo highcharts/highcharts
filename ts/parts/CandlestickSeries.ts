@@ -263,7 +263,7 @@ seriesType<Highcharts.CandlestickSeries>(
                     halfWidth,
                     isNew = !graphic;
 
-                if (point.plotY !== undefined) {
+                if (typeof point.plotY !== 'undefined') {
 
                     if (!graphic) {
                         point.graphic = graphic = chart.renderer.path()

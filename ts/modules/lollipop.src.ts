@@ -60,12 +60,12 @@ var seriesType = H.seriesType,
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, startColor,
  *               stickyTracking, trackByArea
- * @since        7.2.0
+ * @since        next
  * @optionparent plotOptions.lollipop
  */
 seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
     /** @ignore-option */
-    startColor: undefined,
+    startColor: void 0,
     /** @ignore-option */
     threshold: 0,
     /** @ignore-option */

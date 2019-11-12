@@ -108,6 +108,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
  * @return {void}
+ * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (
     labels: Array<Highcharts.SVGElement>
@@ -151,10 +152,13 @@ Chart.prototype.hideOverlappingLabels = function (
                 label &&
                 (!label.alignAttr || label.placed)
             ) {
-                pos = label.alignAttr || {
-                    x: label.attr('x'),
-                    y: label.attr('y')
-                };
+                const x = label.attr('x');
+                const y = label.attr('y');
+                if (typeof x === 'number' && typeof y === 'number') {
+                    pos = { x, y };
+                } else {
+                    pos = label.alignAttr;
+                }
                 parent = label.parentGroup as any;
 
                 // Get width and height if pure text nodes (stack labels)

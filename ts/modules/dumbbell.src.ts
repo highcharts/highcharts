@@ -82,7 +82,7 @@ var pick = H.pick,
     colProto = seriesTypes.column.prototype,
     areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
- * The dumbbell series is a carteseian series with higher and lower values for
+ * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
  * Requires `highcharts-more.js` and `modules/dumbbell.js`.
  *
@@ -95,7 +95,7 @@ var pick = H.pick,
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        7.2.0
+ * @since        next
  * @optionparent plotOptions.dumbbell
  */
 seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
@@ -109,7 +109,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects dumbbell point's values.
      *
-     * @since     7.2.0
+     * @since     next
      * @product   highcharts highstock
      */
     connectorWidth: 1,
@@ -121,7 +121,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      * Color of the start markers in dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     7.2.0
+     * @since     next
      * @product   highcharts highstock
      */
     startColor: '${palette.neutralColor80}',
@@ -131,7 +131,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     7.2.0
+     * @since     next
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -141,7 +141,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @since 7.2.0
+             * @since next
              * @product   highcharts highstock
              */
             connectorWidthPlus: 1,
@@ -220,7 +220,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
                 pointOptions.color,
-                point.zone ? point.zone.color : undefined,
+                point.zone ? point.zone.color : void 0,
                 point.color as any
             ),
             connectorWidthPlus = pick(
@@ -265,7 +265,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 zone: point.zone
             };
             point.y = point.high;
-            point.zone = point.zone ? point.getZone() : undefined;
+            point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick<
             Highcharts.ColorType|undefined,
             Highcharts.ColorString|undefined,
@@ -276,7 +276,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
                 pointOptions.color,
-                point.zone ? point.zone.color : undefined,
+                point.zone ? point.zone.color : void 0,
                 point.color as any
             );
             H.extend(point, origProps);
@@ -547,11 +547,11 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                         zone: point.zone
                     };
                     point.y = point.high;
-                    point.zone = point.zone ? point.getZone() : undefined;
+                    point.zone = point.zone ? point.getZone() : void 0;
                     upperGraphicColor = pick(
-                        point.marker ? point.marker.fillColor : undefined,
+                        point.marker ? point.marker.fillColor : void 0,
                         pointOptions.color,
-                        point.zone ? point.zone.color : undefined,
+                        point.zone ? point.zone.color : void 0,
                         point.color
                     );
                     point.upperGraphic.attr({

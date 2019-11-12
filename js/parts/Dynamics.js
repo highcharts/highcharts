@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, setAnimation = U.setAnimation, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, fireEvent = H.fireEvent, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, setAnimation = H.setAnimation;
+var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, fireEvent = H.fireEvent, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -705,7 +705,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     // "null" is also a valid symbol
                     if (options &&
                         options.marker &&
-                        options.marker.symbol !== undefined) {
+                        typeof options.marker.symbol !== 'undefined') {
                         point.graphic = graphic.destroy();
                     }
                 }
@@ -1033,7 +1033,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
-            options.pointStart !== undefined ||
+            typeof options.pointStart !== 'undefined' ||
             options.pointInterval ||
             options.pointIntervalUnit ||
             options.keys), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
@@ -1070,7 +1070,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         options = merge(oldOptions, animation, {
             // When oldOptions.index is null it should't be cleared.
             // Otherwise navigator series will have wrong indexes (#10193).
-            index: oldOptions.index === undefined ?
+            index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
             // when updating from blank (#7933)
@@ -1094,13 +1094,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // #3719).
         series.remove(false, null, false, true);
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
-            series[n] = undefined;
+            series[n] = void 0;
         }
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         }
         else {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: (newType || initialType) });
         }
         // Re-register groups (#3094) and other preserved properties
         preserve.forEach(function (prop) {
@@ -1158,7 +1158,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         chart.linkSeries(); // Links are lost in series.remove (#3028)
         fireEvent(this, 'afterUpdate');
         if (pick(redraw, true)) {
-            chart.redraw(keepPoints ? undefined : false);
+            chart.redraw(keepPoints ? void 0 : false);
         }
     },
     /**
@@ -1212,7 +1212,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         // Remove old events, if no new exist (#8161)
         objectEach(chart.options[this.coll].events, function (fn, ev) {
             if (typeof newEvents[ev] === 'undefined') {
-                newEvents[ev] = undefined;
+                newEvents[ev] = void 0;
             }
         });
         this.destroy(true);

@@ -125,7 +125,7 @@ declare global {
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
         type DataGroupingApproximationValue = (
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
-            'windbarb'
+            'windbarb'|'ichimoku-averages'
         );
     }
 }
@@ -149,6 +149,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    arrayMax,
+    arrayMin,
+    correctFloat,
     defined,
     extend,
     isNumber,
@@ -160,10 +163,7 @@ import './Series.js';
 import './Tooltip.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     Axis = H.Axis,
-    correctFloat = H.correctFloat,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,
@@ -240,33 +240,33 @@ H.approximations = {
 
         // Return undefined when first elem. is undefined and let
         // sum method handle null (#7377)
-        return ret[0] === undefined ? undefined : ret;
+        return typeof ret[0] === 'undefined' ? void 0 : ret;
     },
     open: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
-        return arr.length ? arr[0] : ((arr as any).hasNulls ? null : undefined);
+        return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
     },
     high: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMax(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     low: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMin(arr) :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     close: function (
         arr: Highcharts.DataGrounpingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arr[arr.length - 1] :
-            (arr.hasNulls ? null : undefined);
+            (arr.hasNulls ? null : void 0);
     },
     // ohlc and range are special cases where a multidimensional array is
     // input and an array is output
@@ -381,7 +381,7 @@ var groupData = function (
         // the previous group
         while (
             (
-                groupPositions[pos + 1] !== undefined &&
+                typeof groupPositions[pos + 1] !== 'undefined' &&
                 xData[i] >= groupPositions[pos + 1]
             ) ||
             i === dataLength
@@ -420,7 +420,7 @@ var groupData = function (
             }
 
             // push the grouped data
-            if (groupedY !== undefined) {
+            if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
                 groupMap.push(series.dataGroupInfo);
@@ -554,6 +554,7 @@ var seriesProto = Series.prototype,
         spline: {},
         area: {},
         areaspline: {},
+        arearange: {},
         column: {
             groupPixelWidth: 10
         },
@@ -785,7 +786,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     ) ||
                     xAxis.min === xAxis.dataMin
                 ) {
-                    xAxis.min = groupedXData[0];
+                    xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
                 }
                 xAxis.dataMin = groupedXData[0];
             }
@@ -820,19 +821,24 @@ seriesProto.processData = function (this: Highcharts.Series): any {
 
 // Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
+    // Clear previous groups
+    if (this.groupedData) {
+        this.groupedData.forEach(function (
+            point: Highcharts.Point,
+            i: number
+        ): void {
+            if (point) {
+                (this.groupedData as any)[i] = point.destroy ?
+                    point.destroy() : null;
+            }
+        }, this);
 
-    var groupedData = this.groupedData;
-
-    // clear previous groups
-    (groupedData || []).forEach(function (
-        point: Highcharts.Point,
-        i: number
-    ): void {
-        if (point) {
-            (groupedData as any)[i] = point.destroy ? point.destroy() : null;
-        }
-    });
-    this.groupedData = null;
+        // Clears all:
+        // - `this.groupedData`
+        // - `this.points`
+        // - `preserve` object in series.update()
+        this.groupedData.length = 0;
+    }
 };
 
 // Override the generatePoints method by adding a reference to grouped data
@@ -864,7 +870,8 @@ addEvent(Tooltip, 'headerFormatter', function (
     e: Highcharts.Dictionary<any>
 ): void {
     var tooltip = this,
-        time = this.chart.time,
+        chart = this.chart,
+        time = chart.time,
         labelConfig = e.labelConfig,
         series = labelConfig.series as Highcharts.Series,
         options = series.options,
@@ -937,7 +944,7 @@ addEvent(Tooltip, 'headerFormatter', function (
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
             },
-            time
+            chart
         );
 
         e.preventDefault();
@@ -1050,7 +1057,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  *
  * @function Highcharts.Axis#setDataGrouping
  *
- * @param {boolean|Highcharts.PlotSeriesDataGroupingOptions} [dataGrouping]
+ * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
  *        A `dataGrouping` configuration. Use `false` to disable data grouping
  *        dynamically.
  *
@@ -1122,7 +1129,9 @@ export default dataGrouping;
  * the first point instance are copied over to the group point. This can be
  * altered through a custom `approximation` callback function.
  *
+ * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
+ * @requires  modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
  */
 

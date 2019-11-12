@@ -8,6 +8,9 @@
 
 var VERBOSE = false;
 
+var CANVAS_WIDTH = 600;
+var CANVAS_HEIGHT = 400;
+
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -24,8 +27,8 @@ demoHTML.setAttribute('id', 'demo-html');
 document.body.appendChild(demoHTML);
 
 var canvas = document.createElement('canvas');
-canvas.setAttribute('width', 300);
-canvas.setAttribute('height', 200);
+canvas.setAttribute('width', CANVAS_WIDTH);
+canvas.setAttribute('height', CANVAS_HEIGHT);
 var ctx = canvas.getContext && canvas.getContext('2d');
 
 var currentTests = [];
@@ -145,7 +148,7 @@ if (window.$) {
 function resetDefaultOptions(testName) {
 
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
-    
+
     // Before running setOptions, delete properties that are undefined by
     // default. For example, in `highcharts/members/setoptions`, properties like
     // chart.borderWidth and chart.plotBorderWidth are set. The default options
@@ -162,7 +165,7 @@ function resetDefaultOptions(testName) {
                 deleteAddedProperties(copy[key], original[key]);
             } else if (
                 // functions are not saved in defaultOptionsRaw
-                typeof value !== 'function' &&    
+                typeof value !== 'function' &&
                 !(key in original)
             ) {
                 delete copy[key];
@@ -508,9 +511,9 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                     blob = new Blob([svg], { type: 'image/svg+xml' }),
                     url = DOMURL.createObjectURL(blob);
                 img.onload = function () {
-                    ctx.clearRect(0, 0, 300, 200);
-                    ctx.drawImage(img, 0, 0, 300, 200);
-                    callback(ctx.getImageData(0, 0, 300, 200).data);
+                    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    callback(ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).data);
                 };
                 img.onerror = function () {
                     // console.log(svg)
@@ -531,6 +534,8 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 if (diff !== 0) {
                     __karma__.info({
                         filename: './samples/' + path + '/diff.gif',
+                        canvasWidth: CANVAS_WIDTH,
+                        canvasHeight: CANVAS_HEIGHT,
                         frames: [
                             referenceData,
                             candidateData

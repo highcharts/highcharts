@@ -25,14 +25,16 @@ extend(defaultOptions.lang,
  */
 {
     /**
-     * The text to display when the chart contains no data. Requires the
-     * no-data module, see [noData](#noData).
+     * The text to display when the chart contains no data.
+     *
+     * @see [noData](#noData)
      *
      * @sample highcharts/no-data-to-display/no-data-line
      *         No-data text
      *
-     * @since   3.0.8
-     * @product highcharts highstock
+     * @since    3.0.8
+     * @product  highcharts highstock
+     * @requires modules/no-data-to-display
      */
     noData: 'No data to display'
 });
@@ -48,6 +50,7 @@ extend(defaultOptions.lang,
  *         Pie chart with no-data module
  *
  * @product      highcharts highstock gantt
+ * @requires     modules/no-data-to-display
  * @optionparent noData
  */
 defaultOptions.noData = {
@@ -116,12 +119,12 @@ defaultOptions.noData = {
 };
 /**
  * Display a no-data message.
- *
  * @private
  * @function Highcharts.Chart#showNoData
  * @param {string} [str]
  * An optional message to show in place of the default one
  * @return {void}
+ * @requires modules/no-data-to-display
  */
 chartPrototype.showNoData = function (str) {
     var chart = this, options = chart.options, text = str || (options && options.lang.noData), noDataOptions = options && options.noData;
@@ -143,6 +146,7 @@ chartPrototype.showNoData = function (str) {
  * @private
  * @function Highcharts.Chart#hideNoData
  * @return {void}
+ * @requires modules/no-data-to-display
  */
 chartPrototype.hideNoData = function () {
     var chart = this;
@@ -157,6 +161,7 @@ chartPrototype.hideNoData = function () {
  * @function Highcharts.Chart#hasData
  * @return {boolean|undefined}
  * True, if there are data points.
+ * @requires modules/no-data-to-display
  */
 chartPrototype.hasData = function () {
     var chart = this, series = chart.series || [], i = series.length;

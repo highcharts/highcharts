@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Kacper Madej
- js_wrap: b
- isNew: true
+name: 3D pyramid
+authors:
+  - Kacper Madej
+js_wrap: b
+isNew: true
+tags: []
+categories:
+  - 3D charts
 ...

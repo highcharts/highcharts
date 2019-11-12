@@ -40,6 +40,8 @@ seriesType('ad', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/accumulation-distribution
  * @optionparent plotOptions.ad
  */
 {
@@ -65,12 +67,13 @@ seriesType('ad', 'sma',
         if (xVal.length <= period &&
             yValLen &&
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         if (!volumeSeries) {
-            return H.error('Series ' +
+            H.error('Series ' +
                 volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
+            return;
         }
         // i = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
@@ -99,6 +102,8 @@ seriesType('ad', 'sma',
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/accumulation-distribution
  * @apioption series.ad
  */
 ''; // add doclet above to transpiled file

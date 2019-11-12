@@ -18,61 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            labelLeft?: number;
-            labelRight?: number;
-        }
-        interface Chart {
-            colorAxis?: Array<ColorAxis>;
-        }
-        interface Series {
-            axisTypes: Array<string>;
-            colorKey: string;
-            minColorValue?: number;
-            maxColorValue?: number;
-        }
-        interface SeriesOptions {
-            colorKey?: string;
-        }
-        interface ColorAxisDataClassesOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            from?: number;
-            name?: string;
-            to?: number;
-        }
-        interface ColorAxisLegendItemObject
-            extends ColorAxisDataClassesOptions
-        {
-            chart: Chart;
-            name: string;
-            options: object;
-            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
-            visible: boolean;
-            setState: Function;
-            isDataClass: true;
-            setVisible: () => void;
-        }
-        interface ColorAxisMarkerOptions {
-            animation?: (boolean|AnimationOptionsObject);
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface ColorAxisOptions extends XAxisOptions {
-            dataClassColor?: string;
-            dataClasses?: Array<ColorAxisDataClassesOptions>;
-            layout?: string;
-            marker?: ColorAxisMarkerOptions;
-            maxColor?: (ColorString|GradientColorObject|PatternObject);
-            minColor?: (ColorString|GradientColorObject|PatternObject);
-            showInLegend?: boolean;
-            stops?: GradientColorObject['stops'];
-        }
-        interface Options {
-            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
-        }
-        interface Point {
-            dataClass?: number;
-        }
         class ColorAxis extends Axis { // eslint-disable-line no-undef
             public constructor(chart: Chart, userOptions: ColorAxisOptions);
             public added?: boolean;
@@ -124,6 +69,62 @@ declare global {
                 value: number,
                 point: Point
             ): (ColorString|GradientColorObject|PatternObject|undefined);
+        }
+        interface Axis {
+            labelLeft?: number;
+            labelRight?: number;
+        }
+        interface Chart {
+            colorAxis?: Array<ColorAxis>;
+        }
+        interface Series {
+            axisTypes: Array<string>;
+            colorAxis?: ColorAxis;
+            colorKey: string;
+            minColorValue?: number;
+            maxColorValue?: number;
+        }
+        interface SeriesOptions {
+            colorKey?: string;
+        }
+        interface ColorAxisDataClassesOptions {
+            color?: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            from?: number;
+            name?: string;
+            to?: number;
+        }
+        interface ColorAxisLegendItemObject
+            extends ColorAxisDataClassesOptions
+        {
+            chart: Chart;
+            name: string;
+            options: object;
+            drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
+            visible: boolean;
+            setState: Function;
+            isDataClass: true;
+            setVisible: () => void;
+        }
+        interface ColorAxisMarkerOptions {
+            animation?: (boolean|AnimationOptionsObject);
+            color?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface ColorAxisOptions extends XAxisOptions {
+            dataClassColor?: string;
+            dataClasses?: Array<ColorAxisDataClassesOptions>;
+            layout?: string;
+            marker?: ColorAxisMarkerOptions;
+            maxColor?: (ColorString|GradientColorObject|PatternObject);
+            minColor?: (ColorString|GradientColorObject|PatternObject);
+            showInLegend?: boolean;
+            stops?: GradientColorObject['stops'];
+        }
+        interface Options {
+            colorAxis?: (ColorAxisOptions|Array<ColorAxisOptions>);
+        }
+        interface Point {
+            dataClass?: number;
         }
     }
 }
@@ -471,6 +472,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/marker/
          *         Black marker
          *
+         * @declare Highcharts.PointMarkerOptionsObject
          * @product highcharts highstock highmaps
          */
         marker: {
@@ -480,15 +482,14 @@ extend(ColorAxis.prototype, {
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
              * @type    {boolean|Highcharts.AnimationOptionsObject}
-             * @default {"duration": 50}
              * @product highcharts highstock highmaps
              */
             animation: {
-                /** @ignore */
+                /** @internal */
                 duration: 50
             },
 
-            /** @ignore */
+            /** @internal */
             width: 0.01,
 
             /**
@@ -512,10 +513,10 @@ extend(ColorAxis.prototype, {
         labels: {
 
             /**
-             * How to handle overflowing labels on horizontal color axis.
-             * Can be undefined or "justify". If "justify", labels will not
-             * render outside the legend area. If there is room to move it,
-             * it will be aligned to the edge, else it will be removed.
+             * How to handle overflowing labels on horizontal color axis. If set
+             * to `"allow"`, it will not be aligned at all. By default it
+             * `"justify"` labels inside the chart area. If there is room to
+             * move it, it will be aligned to the edge, else it will be removed.
              *
              * @validvalue ["allow", "justify"]
              * @product    highcharts highstock highmaps
@@ -926,8 +927,8 @@ extend(ColorAxis.prototype, {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)
                 ) {
 
                     color = dataClass.color as any;
@@ -1164,7 +1165,7 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = cSeries.dataMax;
             }
 
-            if (cSeries.minColorValue !== undefined) {
+            if (typeof cSeries.minColorValue !== 'undefined') {
                 this.dataMin =
                     Math.min(this.dataMin, cSeries.minColorValue as any);
                 this.dataMax =
@@ -1172,7 +1173,7 @@ extend(ColorAxis.prototype, {
             }
 
             if (!calculatedExtremes) {
-                Highcharts.Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.getExtremes.call(cSeries);
             }
         }
     },
@@ -1383,24 +1384,24 @@ extend(ColorAxis.prototype, {
                 var vis = true,
                     from = dataClass.from,
                     to = dataClass.to;
+                const { numberFormatter } = chart;
 
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
                 name = '';
-                if (from === undefined) {
+                if (typeof from === 'undefined') {
                     name = '< ';
-                } else if (to === undefined) {
+                } else if (typeof to === 'undefined') {
                     name = '> ';
                 }
-                if (from !== undefined) {
-                    name += H.numberFormat(from, valueDecimals) +
-                        valueSuffix;
+                if (typeof from !== 'undefined') {
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
-                if (from !== undefined && to !== undefined) {
+                if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
-                if (to !== undefined) {
-                    name += H.numberFormat(to, valueDecimals) + valueSuffix;
+                if (typeof to !== 'undefined') {
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend(

@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Sebastian Bochan
- requiresManualTesting: true
- js_wrap: b
+name: Stock chart with GUI
+authors:
+  - Sebastian Bochan
+requiresManualTesting: true
+js_wrap: b
+tags: []
+categories:
+  - General
 ...

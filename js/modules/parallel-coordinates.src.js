@@ -12,13 +12,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 // Extensions for parallel coordinates plot.
 var Axis = H.Axis, Chart = H.Chart, ChartProto = Chart.prototype, AxisProto = H.Axis.prototype;
-var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge, arrayMin = H.arrayMin, arrayMax = H.arrayMax;
+var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge;
 var defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
@@ -40,8 +40,9 @@ var defaultParallelOptions = {
      * @sample {highcharts} highcharts/parallel-coordinates/polar/
      *         Star plot, multivariate data in a polar chart
      *
-     * @since   6.0.0
-     * @product highcharts
+     * @since    6.0.0
+     * @product  highcharts
+     * @requires modules/parallel-coordinates
      */
     parallelCoordinates: false,
     /**
@@ -77,6 +78,7 @@ var defaultParallelOptions = {
      *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
      *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
      *            minColor, scrollbar, stackLabels, stops
+     * @requires  modules/parallel-coordinates
      */
     parallelAxes: {
         lineWidth: 1,
@@ -129,7 +131,7 @@ addEvent(Chart, 'init', function (e) {
         if (!options.legend) {
             options.legend = {};
         }
-        if (options.legend.enabled === undefined) {
+        if (typeof options.legend.enabled === 'undefined') {
             options.legend.enabled = false;
         }
         merge(true, options, 
@@ -183,11 +185,10 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#setParallelInfo
-     *
      * @param {Highcharts.Options} options
-     *        User options
-     *
+     * User options
      * @return {void}
+     * @requires modules/parallel-coordinates
      */
     setParallelInfo: function (options) {
         var chart = this, seriesOptions = options.series;
@@ -253,6 +254,8 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
      *         {@link Highcharts.Axis#options}.
      *
      * @return {void}
+     *
+     * @requires modules/parallel-coordinates
      */
     setParallelPosition: function (axisPosition, options) {
         var fraction = (this.parallelPosition + 0.5) /
@@ -307,7 +310,7 @@ addEvent(H.Series, 'afterTranslate', function () {
                 point.clientX = point.plotX;
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, null, true);
-                if (lastPlotX !== undefined) {
+                if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(closestPointRangePx, Math.abs(point.plotX - lastPlotX));
                 }
                 lastPlotX = point.plotX;
@@ -367,11 +370,12 @@ function addFormattedValue(proceed) {
          * @default   undefined
          * @since     6.0.0
          * @product   highcharts
+         * @requires  modules/parallel-coordinates
          * @apioption yAxis.tooltipValueFormat
          */
         yAxisOptions.tooltipValueFormat, yAxisOptions.labels.format);
         if (labelFormat) {
-            formattedValue = H.format(labelFormat, extend(this, { value: this.y }), chart.time);
+            formattedValue = H.format(labelFormat, extend(this, { value: this.y }), chart);
         }
         else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName]).main, this.y);

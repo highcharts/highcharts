@@ -18,7 +18,7 @@ if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, thisArg) {
         var i = 0, len = this.length;
         for (; i < len; i++) {
-            if (this[i] !== undefined && // added check
+            if (typeof this[i] !== 'undefined' && // added check
                 fn.call(thisArg, this[i], i, this) === false) {
                 return i;
             }

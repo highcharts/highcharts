@@ -305,6 +305,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/marker/
          *         Black marker
          *
+         * @declare Highcharts.PointMarkerOptionsObject
          * @product highcharts highstock highmaps
          */
         marker: {
@@ -313,14 +314,13 @@ extend(ColorAxis.prototype, {
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
              * @type    {boolean|Highcharts.AnimationOptionsObject}
-             * @default {"duration": 50}
              * @product highcharts highstock highmaps
              */
             animation: {
-                /** @ignore */
+                /** @internal */
                 duration: 50
             },
-            /** @ignore */
+            /** @internal */
             width: 0.01,
             /**
              * The color of the marker.
@@ -341,10 +341,10 @@ extend(ColorAxis.prototype, {
          */
         labels: {
             /**
-             * How to handle overflowing labels on horizontal color axis.
-             * Can be undefined or "justify". If "justify", labels will not
-             * render outside the legend area. If there is room to move it,
-             * it will be aligned to the edge, else it will be removed.
+             * How to handle overflowing labels on horizontal color axis. If set
+             * to `"allow"`, it will not be aligned at all. By default it
+             * `"justify"` labels inside the chart area. If there is room to
+             * move it, it will be aligned to the edge, else it will be removed.
              *
              * @validvalue ["allow", "justify"]
              * @product    highcharts highstock highmaps
@@ -653,8 +653,8 @@ extend(ColorAxis.prototype, {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)) {
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)) {
                     color = dataClass.color;
                     if (point) {
                         point.dataClass = i;
@@ -804,14 +804,14 @@ extend(ColorAxis.prototype, {
                 cSeries.minColorValue = cSeries.dataMin;
                 cSeries.maxColorValue = cSeries.dataMax;
             }
-            if (cSeries.minColorValue !== undefined) {
+            if (typeof cSeries.minColorValue !== 'undefined') {
                 this.dataMin =
                     Math.min(this.dataMin, cSeries.minColorValue);
                 this.dataMax =
                     Math.max(this.dataMax, cSeries.maxColorValue);
             }
             if (!calculatedExtremes) {
-                Highcharts.Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.getExtremes.call(cSeries);
             }
         }
     },
@@ -970,24 +970,24 @@ extend(ColorAxis.prototype, {
         if (!legendItems.length) {
             this.dataClasses.forEach(function (dataClass, i) {
                 var vis = true, from = dataClass.from, to = dataClass.to;
+                var numberFormatter = chart.numberFormatter;
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
                 name = '';
-                if (from === undefined) {
+                if (typeof from === 'undefined') {
                     name = '< ';
                 }
-                else if (to === undefined) {
+                else if (typeof to === 'undefined') {
                     name = '> ';
                 }
-                if (from !== undefined) {
-                    name += H.numberFormat(from, valueDecimals) +
-                        valueSuffix;
+                if (typeof from !== 'undefined') {
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
-                if (from !== undefined && to !== undefined) {
+                if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
-                if (to !== undefined) {
-                    name += H.numberFormat(to, valueDecimals) + valueSuffix;
+                if (typeof to !== 'undefined') {
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend({

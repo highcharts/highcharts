@@ -68,6 +68,7 @@ var noop = H.noop,
  *
  * @extends      plotOptions.boxplot
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
  */
 seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
@@ -161,6 +162,7 @@ seriesType<Highcharts.ErrorBarSeries>('errorbar', 'boxplot', {
  * @extends   series,plotOptions.errorbar
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.errorbar
  */
 

@@ -18,49 +18,50 @@ Here are the steps to create a parallel coordinates chart:
 
 1. set `chart.parallelCoordinates` to `true`:
 
-    
-    chart: {
-    	parallelCoordinates: true
-    }
+```js
+chart: {
+  parallelCoordinates: true
+}
+```
     
 
 2. Highcharts generates all necessary yAxes according to the dataset, and `xAxis.categories` includes the yAxes’ titles:
 
-    
-    xAxis: {
-      categories: [‘Title 1’, ‘Title 2’, ‘Title 3’, … , ‘Title N’],
-      labels: {
-        styles: {
-          color: ‘#DFDFDF’ // changes titles colors
-        }
-      }
+```js
+xAxis: {
+  categories: ['Title 1', 'Title 2', 'Title 3', ... , 'Title N'],
+  labels: {
+    styles: {
+      color: '#DFDFDF' // changes titles colors
     }
-    
+  }
+}
+```
 
 3. Each yAxis can be customized separately:
 
-    
-     yAxis: [{
-         lineWidth: 2
-         }, {
-          tickInterval: 10
-        }, 
-        … 
-    ]
-    
+```js
+yAxis: [{
+  lineWidth: 2
+}, {
+  tickInterval: 10
+},
+  ...
+]
+```
 
-4. Use “chart.parallelAxes” to set general configurations to all yAxis such as lineWidth, lineColor, etc.
+4. Use `chart.parallelAxes` to set general configurations to all yAxis such as `lineWidth`, `lineColor`, etc.
 
     
-     
-    chart: {
-      parallelAxes: {
-        tickAmount: 10 // all non-categorized axes will have exactly ten ticks
-      }
-    }
-    
+```js
+chart: {
+  parallelAxes: {
+    tickAmount: 10 // all non-categorized axes will have exactly ten ticks
+  }
+}
+```
 
-Keep in mind that `yAxis: [ … ]` options have higher priority than `chart.parallelAxes`.
+Keep in mind that `yAxis: [ ... ]` options have higher priority than `chart.parallelAxes`.
 
 Parallel coordinates chart specific options
 -------------------------------------------

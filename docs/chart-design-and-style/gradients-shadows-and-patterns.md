@@ -3,7 +3,7 @@ Gradients, shadows, and pattern fills in styled mode
 
 In Highcharts classic mode, gradients are set as configuration objects to colors, shadows are generally available as API options, and patterns require [the pattern module](https://www.highcharts.com/blog/tutorials/pattern-fills/). 
 
-In [styled mode](docs/chart-design-and-style/style-by-css) however, we have removed all presentational API options, so color options or shadow options are not available. The idea here is that all presentational properties should be set via CSS. But while HTML supports CSS properties for gradients, shadows and patterns, SVG doesn't. We need to define them in the SVG structure first, before applying them from the CSS.
+In [styled mode](https://highcharts.com/docs/chart-design-and-style/style-by-css) however, we have removed all presentational API options, so color options or shadow options are not available. The idea here is that all presentational properties should be set via CSS. But while HTML supports CSS properties for gradients, shadows and patterns, SVG doesn't. We need to define them in the SVG structure first, before applying them from the CSS.
 
 1. Define the SVG structure
 ----------------------------

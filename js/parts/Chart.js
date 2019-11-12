@@ -18,6 +18,28 @@ import H from './Globals.js';
  *        Created chart.
  */
 /**
+ * Format a number and return a string based on input settings.
+ *
+ * @callback Highcharts.NumberFormatterCallbackFunction
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string} The formatted number.
+ */
+/**
  * The chart title. The title has an `update` method that allows modifying the
  * options directly or indirectly via `chart.update`.
  *
@@ -77,13 +99,13 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-var addEvent = H.addEvent, animate = H.animate, animObject = H.animObject, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, discardElement = H.discardElement, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
+var addEvent = H.addEvent, animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
+createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
 removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -211,7 +233,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             objectEach(options.plotOptions, function (typeOptions, type) {
                 if (isObject(typeOptions)) { // #8766
                     typeOptions.tooltip = (userPlotOptions[type] && // override by copy:
-                        merge(userPlotOptions[type].tooltip)) || undefined; // or clear
+                        merge(userPlotOptions[type].tooltip)) || void 0; // or clear
                 }
             });
             // User options have higher priority than default options
@@ -280,6 +302,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     new H.Time(userOptions.time) :
                     H.time;
             /**
+             * Callback function to override the default function that formats
+             * all the numbers in the chart. Returns a string with the formatted
+             * number.
+             *
+             * @name Highcharts.Chart#numberFormatter
+             * @type {Highcharts.NumberFormatterCallbackFunction}
+             */
+            this.numberFormatter = optionsChart.numberFormatter || numberFormat;
+            /**
              * Whether the chart is in styled mode, meaning all presentatinoal
              * attributes are avoided.
              *
@@ -295,6 +326,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
             charts.push(chart);
@@ -347,7 +379,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             optionsChart.defaultSeriesType), series, Constr = seriesTypes[type];
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
         series = new Constr();
         series.init(this, options);
@@ -368,6 +400,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var series = this.series, i = fromIndex || 0;
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Contains the series' index in the `Chart.series` array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number}
+                 * @readonly
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
@@ -427,7 +466,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive(false);
         }
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
@@ -688,7 +727,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this.applyDescription('subtitle', subtitleOptions);
         // The initial call also adds the caption. On update, chart.update will
         // relay to Chart.setCaption.
-        this.applyDescription('caption', undefined);
+        this.applyDescription('caption', void 0);
         this.layOutTitles(redraw);
     },
     /**
@@ -796,8 +835,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     width: (titleOptions.width ||
                         spacingBox.width + (titleOptions.widthAdjust || 0)) + 'px'
                 });
-                // Skip the cache for HTML (#3481)
-                height = title.getBBox(titleOptions.useHTML).height;
+                // Skip the cache for HTML (#3481, #11666)
+                height = Math.round(title.getBBox(titleOptions.useHTML).height);
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
                         titleSize :
@@ -1163,7 +1202,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     // Set size, it may have been destroyed in the meantime
                     // (#1257)
                     if (chart.container) {
-                        chart.setSize(undefined, undefined, false);
+                        chart.setSize(void 0, void 0, false);
                     }
                 }, e ? 100 : 0);
             }
@@ -1246,13 +1285,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Handle the isResizing counter
         chart.isResizing += 1;
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
-        if (width !== undefined) {
+        if (typeof width !== 'undefined') {
             chart.options.chart.width = width;
         }
-        if (height !== undefined) {
+        if (typeof height !== 'undefined') {
             chart.options.chart.height = height;
         }
         chart.getChartSize();
@@ -1464,6 +1503,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight).add();
                 }
                 else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
                     plotBGImage.animate(plotBox);
                 }
             }
@@ -1812,7 +1854,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             erase(charts, chart); // #6569
         }
         else {
-            charts[chart.index] = undefined;
+            charts[chart.index] = void 0;
         }
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
@@ -1930,7 +1972,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Run callbacks, first the ones registered by modules, then user's one
         this.callbacks.concat([this.callback]).forEach(function (fn) {
             // Chart destroyed in its own callback (#3600)
-            if (fn && this.index !== undefined) {
+            if (fn && typeof this.index !== 'undefined') {
                 fn.apply(this, [this]);
             }
         }, this);

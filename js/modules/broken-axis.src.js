@@ -368,6 +368,7 @@ H.Series.prototype.gappedPath = function () {
      * @type      {number}
      * @default   0
      * @product   highstock
+     * @requires  modules/broken-axis
      * @apioption plotOptions.series.gapSize
      */
     /**
@@ -389,6 +390,7 @@ H.Series.prototype.gappedPath = function () {
      * @since      5.0.13
      * @product    highstock
      * @validvalue ["relative", "value"]
+     * @requires   modules/broken-axis
      * @apioption  plotOptions.series.gapUnit
      */
     if (gapSize && i > 0) { // #5008

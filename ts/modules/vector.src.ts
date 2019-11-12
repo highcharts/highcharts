@@ -14,6 +14,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    animObject,
+    arrayMax,
     pick
 } = U;
 
@@ -88,6 +90,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
      *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
      *               dataGrouping, linecap, shadow, stacking, step, jitter
      * @product      highcharts highstock
+     * @requires     modules/vector
      * @optionparent plotOptions.vector
      */
     , {
@@ -243,7 +246,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
         translate: function (this: Highcharts.VectorSeries): void {
             H.Series.prototype.translate.call(this);
 
-            this.lengthMax = H.arrayMax(this.lengthData as any);
+            this.lengthMax = arrayMax(this.lengthData as any);
         },
 
         /**
@@ -351,7 +354,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
             } else {
                 (this.markerGroup as any).animate({
                     opacity: 1
-                }, H.animObject(this.options.animation));
+                }, animObject(this.options.animation));
 
                 this.animate = null as any;
             }
@@ -369,6 +372,7 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
  * @extends   series,plotOptions.vector
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
+ * @requires  modules/vector
  * @apioption series.vector
  */
 

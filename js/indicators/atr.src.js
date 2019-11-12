@@ -55,6 +55,8 @@ seriesType('atr', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/atr
  * @optionparent plotOptions.atr
  */
 {
@@ -72,7 +74,7 @@ seriesType('atr', 'sma',
         if ((xVal.length <= period) ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         for (i = 1; i <= yValLen; i++) {
             accumulateAverage(points, xVal, yVal, i);
@@ -110,6 +112,8 @@ seriesType('atr', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @apioption series.atr
  */
 ''; // to include the above in the js output

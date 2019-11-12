@@ -69,7 +69,7 @@ var draw = function draw(
             .attr(params.attribs)
             .animate(
                 animatableAttribs,
-                params.isNew ? false : undefined,
+                params.isNew ? false : void 0,
                 onComplete
             );
     } else if (graphic) {
@@ -82,7 +82,7 @@ var draw = function draw(
 
         // animate only runs complete callback if something was animated.
         if (Object.keys(animatableAttribs).length) {
-            graphic.animate(animatableAttribs, undefined, function (): void {
+            graphic.animate(animatableAttribs, void 0, function (): void {
                 destroy();
             });
         } else {

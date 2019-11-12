@@ -72,8 +72,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objectEach = U.objectEach;
+const {
+    clamp,
+    isNumber,
+    objectEach
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Pointer.js';
@@ -92,12 +95,12 @@ var hasTouch = H.hasTouch,
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
          *
-         * This feature requires the `drag-panes.js` module.
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
          *
          * @type      {number|string}
          * @product   highstock
-         * @sample    {highstock} stock/yaxis/resize-min-max-length
-         *            minLength and maxLength
+         * @requires  modules/drag-panes
          * @apioption yAxis.minLength
          */
         minLength: '10%',
@@ -106,25 +109,25 @@ var hasTouch = H.hasTouch,
          * Maximal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
          *
-         * This feature requires the `drag-panes.js` module.
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
          *
          * @type      {number|string}
          * @product   highstock
-         * @sample    {highstock} stock/yaxis/resize-min-max-length
-         *            minLength and maxLength
+         * @requires  modules/drag-panes
          * @apioption yAxis.maxLength
          */
         maxLength: '100%',
 
         /**
-         * Options for axis resizing. This feature requires the
-         * [drag-panes.js](http://code.highcharts.com/stock/modules/drag-panes.js)
-         * module. It adds a thick line between panes which the user can drag
-         * in order to resize the panes.
+         * Options for axis resizing. It adds a thick line between panes which
+         * the user can drag in order to resize the panes.
          *
-         * @product highstock
-         * @sample    {highstock} stock/demo/candlestick-and-volume
-         *          Axis resizing enabled
+         * @sample {highstock} stock/demo/candlestick-and-volume
+         *         Axis resizing enabled
+         *
+         * @product      highstock
+         * @requires     modules/drag-panes
          * @optionparent yAxis.resize
          */
         resize: {
@@ -133,7 +136,7 @@ var hasTouch = H.hasTouch,
              * Contains two arrays of axes that are controlled by control line
              * of the axis.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @requires modules/drag-panes
              */
             controlledAxis: {
 
@@ -142,14 +145,14 @@ var hasTouch = H.hasTouch,
                  * being done for the current axis. If not set, the next axis
                  * will be used.
                  *
-                 * This feature requires the `drag-panes.js` module.
+                 * @sample {highstock} stock/yaxis/multiple-resizers
+                 *         Three panes with resizers
+                 * @sample {highstock} stock/yaxis/resize-multiple-axes
+                 *         One resizer controlling multiple axes
                  *
-                 * @type    {Array<number|string>}
-                 * @default []
-                 * @sample  {highstock} stock/yaxis/multiple-resizers
-                 *          Three panes with resizers
-                 * @sample  {highstock} stock/yaxis/resize-multiple-axes
-                 *          One resizer controlling multiple axes
+                 * @type     {Array<number|string>}
+                 * @default  []
+                 * @requires modules/drag-panes
                  */
                 next: [],
 
@@ -157,13 +160,14 @@ var hasTouch = H.hasTouch,
                  * Array of axes that should move with the current axis
                  * while resizing.
                  *
-                 * This feature requires the `drag-panes.js` module.
+                 * @sample {highstock} stock/yaxis/multiple-resizers
+                 *         Three panes with resizers
+                 * @sample {highstock} stock/yaxis/resize-multiple-axes
+                 *         One resizer controlling multiple axes
                  *
-                 * @type    {Array<number|string>}
-                 * @sample  {highstock} stock/yaxis/multiple-resizers
-                 *          Three panes with resizers
-                 * @sample  {highstock} stock/yaxis/resize-multiple-axes
-                 *          One resizer controlling multiple axes
+                 * @type     {Array<number|string>}
+                 * @default  []
+                 * @requires modules/drag-panes
                  */
                 prev: []
             },
@@ -171,10 +175,10 @@ var hasTouch = H.hasTouch,
             /**
              * Enable or disable resize by drag for the axis.
              *
-             * This feature requires the `drag-panes.js` module.
-             *
              * @sample {highstock} stock/demo/candlestick-and-volume
              *         Enabled resizer
+             *
+             * @requires modules/drag-panes
              */
             enabled: false,
 
@@ -183,7 +187,7 @@ var hasTouch = H.hasTouch,
              *
              * In styled mode use class `highcharts-axis-resizer` instead.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @requires modules/drag-panes
              */
             cursor: 'ns-resize',
 
@@ -192,10 +196,11 @@ var hasTouch = H.hasTouch,
              *
              * In styled mode use class `highcharts-axis-resizer` instead.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @sample {highstock} stock/yaxis/styled-resizer
+             *         Styled resizer
              *
-             * @type   {Color}
-             * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
+             * @type     {Highcharts.ColorString}
+             * @requires modules/drag-panes
              */
             lineColor: '${palette.neutralColor20}',
 
@@ -204,11 +209,12 @@ var hasTouch = H.hasTouch,
              *
              * In styled mode use class `highcharts-axis-resizer` instead.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @see For supported options check [dashStyle](#plotOptions.series.dashStyle)
              *
-             * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
-             * @see    For supported options check
-             *         [dashStyle](#plotOptions.series.dashStyle)
+             * @sample {highstock} stock/yaxis/styled-resizer
+             *         Styled resizer
+             *
+             * @requires modules/drag-panes
              */
             lineDashStyle: 'Solid',
 
@@ -217,27 +223,30 @@ var hasTouch = H.hasTouch,
              *
              * In styled mode use class `highcharts-axis-resizer` instead.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @sample {highstock} stock/yaxis/styled-resizer
+             *         Styled resizer
              *
-             * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
+             * @requires modules/drag-panes
              */
             lineWidth: 4,
 
             /**
              * Horizontal offset of the control line.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @sample {highstock} stock/yaxis/styled-resizer
+             *         Styled resizer
              *
-             * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
+             * @requires modules/drag-panes
              */
             x: 0,
 
             /**
              * Vertical offset of the control line.
              *
-             * This feature requires the `drag-panes.js` module.
+             * @sample {highstock} stock/yaxis/styled-resizer
+             *         Styled resizer
              *
-             * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
+             * @requires modules/drag-panes
              */
             y: 0
         }
@@ -303,11 +312,9 @@ H.AxisResizer.prototype = {
             x = options.x,
             y = options.y,
             // Normalize control line position according to the plot area
-            pos = Math.min(
-                Math.max(
-                    axis.top + axis.height + (y as any),
-                    chart.plotTop
-                ),
+            pos = clamp(
+                axis.top + axis.height + (y as any),
+                chart.plotTop,
                 chart.plotTop + chart.plotHeight
             ),
             attr: Highcharts.SVGAttributes = {},
@@ -503,11 +510,11 @@ H.AxisResizer.prototype = {
                 min: number,
                 max: number
             ): number {
-                return Math.round(Math.min(Math.max(val, min), max));
+                return Math.round(clamp(val, min, max));
             };
 
         // Normalize chartY to plot area limits
-        chartY = Math.max(Math.min(chartY, plotBottom), plotTop);
+        chartY = clamp(chartY, plotTop, plotBottom);
 
         yDelta = chartY - resizer.lastPos;
 

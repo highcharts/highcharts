@@ -22,7 +22,7 @@ var requiredIndicatorMixin = {
      *        Required indicator type.
      * @param {string} type
      *        Type of indicator where function was called (parent).
-     * @param {Highcharts.IndicatorConstructorFunction} callback
+     * @param {Highcharts.IndicatorCallbackFunction} callback
      *        Callback which is triggered if the given indicator is loaded.
      *        Takes indicator as an argument.
      * @param {string} errMessage

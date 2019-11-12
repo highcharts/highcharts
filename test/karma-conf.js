@@ -411,12 +411,19 @@ module.exports = function (config) {
                 }
             );
 
-            ret = s.replace(
-                /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan;
-                }
-            );
+            // Insert link to utils
+            let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
+            let match = s.match(regex);
+
+            if (match) {
+                // Insert the utils link before the first line with mixed indent
+                ret = s.replace(
+                    '\t    ',
+                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                );
+
+                ret = ret.replace(regex, a => a.cyan);
+            }
 
             // Skip the call stack, it's internal QUnit stuff
             ret = ret.split('<<<splitter>>>')[0];
@@ -572,6 +579,8 @@ module.exports = function (config) {
         options.imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json',
         };
+        options.browserDisconnectTolerance = 1; // default 0
+        options.browserDisconnectTimeout = 30000; // default 2000
     }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
@@ -603,11 +612,12 @@ module.exports = function (config) {
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
-        options.concurrency = 1;
+        options.concurrency = 2;
         options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
+        options.captureTimeout = 120000;
 
         options.plugins = [
             'karma-browserstack-launcher',

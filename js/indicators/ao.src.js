@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var correctFloat = H.correctFloat, noop = H.noop;
+var correctFloat = U.correctFloat, isArray = U.isArray;
+var noop = H.noop;
 /**
  * The AO series type
  *
@@ -33,6 +33,8 @@ H.seriesType('ao', 'sma',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               params, pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ao
  * @optionparent plotOptions.ao
  */
 {
@@ -108,7 +110,7 @@ H.seriesType('ao', 'sma',
         if (xVal.length <= longPeriod ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         for (i = 0; i < longPeriod - 1; i++) {
             price = (yVal[i][high] + yVal[i][low]) / 2;
@@ -153,6 +155,8 @@ H.seriesType('ao', 'sma',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ao
  * @apioption series.ao
  */
 ''; // for including the above in the doclets

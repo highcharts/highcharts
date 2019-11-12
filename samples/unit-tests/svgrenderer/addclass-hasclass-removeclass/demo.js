@@ -6,7 +6,21 @@
             key + ': Has class when empty'
         );
 
-        elem.addClass('touched');
+        elem.addClass('  string       with       excessive       spaces  ');
+        assert.strictEqual(
+            node.getAttribute('class'),
+            'string with excessive spaces',
+            key + ': Add class, excessive spaces, no replace'
+        );
+
+        elem.addClass('  string       with       excessive       spaces  ', true);
+        assert.strictEqual(
+            node.getAttribute('class'),
+            'string with excessive spaces',
+            key + ': Add class, excessive spaces, replacing text'
+        );
+
+        elem.addClass('touched', true);
 
         assert.strictEqual(
             node.getAttribute('class'),
@@ -31,7 +45,7 @@
         elem.removeClass('touched');
 
         assert.strictEqual(
-            node.getAttribute('class').trim(),
+            node.getAttribute('class'),
             'touched-again',
             key + ': Removed class'
         );

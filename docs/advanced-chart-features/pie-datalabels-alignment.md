@@ -1,4 +1,4 @@
-Introduction
+Pie dataLabels alignment
 ===
 
 Highcharts 7 introduces 3 new options for working with data labels: `dataLabels.alignTo`, `dataLabels.connectorShape` and `dataLabels.crookDistance`.
@@ -26,8 +26,8 @@ Alignment method for data labels. Possible values are:
 
     
     dataLabels: {
-          alignTo: 'connectors',
-      }
+        alignTo: 'connectors'
+    }
     
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors allow="fullscreen"></iframe>
@@ -35,9 +35,9 @@ Alignment method for data labels. Possible values are:
 **Demo with plotEdges**
 
     
-        dataLabels: {
-          alignTo: 'plotEdges',
-      }
+    dataLabels: {
+        alignTo: 'plotEdges'
+    }
     
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges allow="fullscreen"></iframe>
@@ -50,8 +50,8 @@ Specifies the method that is used to generate the connector path. Highcharts pro
 
     
     dataLabels: {
-        connectorShape: 'fixedOffset',
-      }
+        connectorShape: 'fixedOffset'
+    }
     
 
 <iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/ allow="fullscreen"></iframe>
@@ -61,8 +61,8 @@ Specifies the method that is used to generate the connector path. Highcharts pro
     
     dataLabels: {
         connectorShape: ‘straight’,
-        crookDistance: '70%',
-      }
+        crookDistance: '70%'
+    }
     
 
 **crookedLine**
@@ -73,7 +73,7 @@ This option can be used with crookDistance parameter. It defines how far from th
     dataLabels: {
         connectorShape: 'crookedLine',
         crookDistance: '70%'
-      }
+    }
     
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance allow="fullscreen"></iframe>
@@ -84,32 +84,33 @@ Users can provide their own method by passing a callback function instead of a S
 2.  **An object** that holds the connector’s position. Its `touchingSliceAt` property holds the position of where the connector touches the slice.
 3.  **Data label options**: the function has to return an SVG path definition in array form.
 
-    
-    connectorShape: function(labelPosition, connectorPosition, options) {
-        var connectorPadding = options.connectorPadding,
-          touchingSliceAt = connectorPosition.touchingSliceAt,
-          series = this.series,
-          plotWidth = series.chart.plotWidth,
-          plotLeft = series.chart.plotLeft,
-          alignment = labelPosition.alignment,
-          stepDistance = 150, // in px - distance between the step and vertical border of the plot area
-          stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
-        return ['M',
-          labelPosition.x + (alignment === 'left' ? 1 : -1) *
-          connectorPadding,
-          labelPosition.y,
-          'L',
-          stepX,
-          labelPosition.y,
-          'L',
-          stepX,
-          touchingSliceAt.y,
-          'L',
-          touchingSliceAt.x,
-          touchingSliceAt.y
-        ];
-      }
-    
+```js
+connectorShape: function(labelPosition, connectorPosition, options) {
+  var connectorPadding = options.connectorPadding,
+    touchingSliceAt = connectorPosition.touchingSliceAt,
+    series = this.series,
+    plotWidth = series.chart.plotWidth,
+    plotLeft = series.chart.plotLeft,
+    alignment = labelPosition.alignment,
+    stepDistance = 150, // in px - distance between the step and vertical border of the plot area
+    stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
+
+  return ['M',
+    labelPosition.x + (alignment === 'left' ? 1 : -1) *
+    connectorPadding,
+    labelPosition.y,
+    'L',
+    stepX,
+    labelPosition.y,
+    'L',
+    stepX,
+    touchingSliceAt.y,
+    'L',
+    touchingSliceAt.x,
+    touchingSliceAt.y
+  ];
+}
+```
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function allow="fullscreen"></iframe>
 

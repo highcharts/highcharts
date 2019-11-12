@@ -23,6 +23,10 @@ declare global {
         class AroonIndicator
             extends SMAIndicator implements MultipleLinesIndicator {
             public data: Array<AroonIndicatorPoint>;
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
+                params: AroonIndicatorParamsOptions
+            ): IndicatorValuesObject<TLinkedSeries>;
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public options: AroonIndicatorOptions;
@@ -30,7 +34,6 @@ declare global {
             public pointClass: typeof AroonIndicatorPoint;
             public points: Array<AroonIndicatorPoint>;
             public pointValKey: MultipleLinesMixin['pointValKey'];
-            public yData: Array<Array<number>>;
             public drawGraph: MultipleLinesMixin['drawGraph'];
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
@@ -115,6 +118,8 @@ H.seriesType<Highcharts.AroonIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
     {
@@ -153,7 +158,7 @@ H.seriesType<Highcharts.AroonIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         dataGrouping: {
@@ -168,13 +173,13 @@ H.seriesType<Highcharts.AroonIndicator>(
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
         linesApiNames: ['aroonDown'],
-        getValues: function (
-            series: Highcharts.AroonIndicator,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
-        ): Highcharts.IndicatorMultipleValuesObject {
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             var period = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 // 0- date, 1- Aroon Up, 2- Aroon Down
                 AR: Array<Array<number>> = [],
@@ -219,7 +224,7 @@ H.seriesType<Highcharts.AroonIndicator>(
                 values: AR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );
@@ -234,6 +239,8 @@ H.seriesType<Highcharts.AroonIndicator>(
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/aroon
  * @apioption series.aroon
  */
 

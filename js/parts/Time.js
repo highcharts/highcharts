@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat;
 /**
  * Normalized interval.
  *
@@ -165,7 +165,7 @@ Highcharts.Time.prototype = {
          * @since     4.0.4
          * @product   highcharts highstock gantt
          */
-        Date: undefined,
+        Date: void 0,
         /**
          * A callback to return the time zone offset for a given datetime. It
          * takes the timestamp in terms of milliseconds since January 1 1970,
@@ -181,7 +181,7 @@ Highcharts.Time.prototype = {
          * @since     4.1.0
          * @product   highcharts highstock gantt
          */
-        getTimezoneOffset: undefined,
+        getTimezoneOffset: void 0,
         /**
          * Requires [moment.js](http://momentjs.com/). If the timezone option
          * is specified, it creates a default
@@ -199,7 +199,7 @@ Highcharts.Time.prototype = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: undefined,
+        timezone: void 0,
         /**
          * The timezone offset in minutes. Positive values are west, negative
          * values are east of UTC, as in the ECMAScript
@@ -421,10 +421,35 @@ Highcharts.Time.prototype = {
     },
     /**
      * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
-     * into a human readable date string. The format is a subset of the formats
-     * for PHP's [strftime](http://www.php.net/manual/en/function.strftime.php)
-     * function. Additional formats can be given in the
+     * into a human readable date string. The available format keys are listed
+     * below. Additional formats can be given in the
      * {@link Highcharts.dateFormats} hook.
+     *
+     * Supported format keys:
+     * - `%a`: Short weekday, like 'Mon'
+     * - `%A`: Long weekday, like 'Monday'
+     * - `%d`: Two digit day of the month, 01 to 31
+     * - `%e`: Day of the month, 1 through 31
+     * - `%w`: Day of the week, 0 through 6
+     * - `%b`: Short month, like 'Jan'
+     * - `%B`: Long month, like 'January'
+     * - `%m`: Two digit month number, 01 through 12
+     * - `%y`: Two digits year, like 09 for 2009
+     * - `%Y`: Four digits year, like 2009
+     * - `%H`: Two digits hours in 24h format, 00 through 23
+     * - `%k`: Hours in 24h format, 0 through 23
+     * - `%I`: Two digits hours in 12h format, 00 through 11
+     * - `%l`: Hours in 12h format, 1 through 12
+     * - `%M`: Two digits minutes, 00 through 59
+     * - `%p`: Upper case AM or PM
+     * - `%P`: Lower case AM or PM
+     * - `%S`: Two digits seconds, 00 through 59
+     * - `%L`: Milliseconds (naming from Ruby)
+     *
+     * @example
+     * const time = new Highcharts.Time();
+     * const s = time.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2020, 0, 1));
+     * console.log(s); // => 2020-01-01 00:00:00
      *
      * @function Highcharts.Time#dateFormat
      *
@@ -448,7 +473,7 @@ Highcharts.Time.prototype = {
         format = pick(format, '%Y-%m-%d %H:%M:%S');
         var time = this, date = new this.Date(timestamp), 
         // get the basic time values
-        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang.weekdays, shortWeekdays = lang.shortWeekdays, pad = H.pad, 
+        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang.weekdays, shortWeekdays = lang.shortWeekdays, 
         // List all format keys. Custom formats can be added from the
         // outside.
         replacements = extend({
@@ -463,6 +488,7 @@ Highcharts.Time.prototype = {
             d: pad(dayOfMonth),
             // Day of the month, 1 through 31
             e: pad(dayOfMonth, 2, ' '),
+            // Day of the week, 0 through 6
             w: day,
             // Week (none implemented)
             // 'W': weekNumber(),

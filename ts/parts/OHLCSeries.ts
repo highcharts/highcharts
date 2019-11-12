@@ -52,6 +52,7 @@ declare global {
             public pointAttrToOptions: Dictionary<string>;
             public pointClass: typeof OHLCPoint;
             public points: Array<OHLCPoint>;
+            public yData: Array<Array<number>>;
             public init(): void;
             public toYData(point: OHLCPoint): OHLCYData;
         }
@@ -320,7 +321,7 @@ seriesType<Highcharts.OHLCSeries>(
                     crispX,
                     isNew = !graphic;
 
-                if (point.plotY !== undefined) {
+                if (typeof point.plotY !== 'undefined') {
 
                     // Create and/or update the graphic
                     if (!graphic) {

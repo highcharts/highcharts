@@ -145,7 +145,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    correctFloat,
     defined,
+    destroyObjectProperties,
     pick
 } = U;
 
@@ -154,9 +156,7 @@ import './Options.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -240,7 +240,7 @@ var defaultScrollbarOptions = {
      * @type  {boolean}
      * @since 1.3
      */
-    liveRedraw: undefined,
+    liveRedraw: void 0,
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is

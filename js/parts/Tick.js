@@ -26,8 +26,8 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
-var correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, fireEvent = H.fireEvent, merge = H.merge, deg2rad = H.deg2rad;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var fireEvent = H.fireEvent, merge = H.merge, deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Tick class.
@@ -297,7 +297,7 @@ H.Tick.prototype = {
         var axis = this.axis, chart = axis.chart, cHeight = (old && chart.oldChartHeight) || chart.chartHeight, pos;
         pos = {
             x: horiz ?
-                H.correctFloat(axis.translate(tickPos + tickmarkOffset, null, null, old) +
+                correctFloat(axis.translate(tickPos + tickmarkOffset, null, null, old) +
                     axis.transB) :
                 (axis.left +
                     axis.offset +
@@ -312,12 +312,12 @@ H.Tick.prototype = {
                     axis.bottom +
                     axis.offset -
                     (axis.opposite ? axis.height : 0)) :
-                H.correctFloat(cHeight -
+                correctFloat(cHeight -
                     axis.translate(tickPos + tickmarkOffset, null, null, old) -
                     axis.transB)
         };
         // Chrome workaround for #10516
-        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+        pos.y = clamp(pos.y, -1e5, 1e5);
         fireEvent(this, 'afterGetPosition', { pos: pos });
         return pos;
     },

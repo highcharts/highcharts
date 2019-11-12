@@ -26,11 +26,10 @@ declare global {
             public options: ABandsIndicatorOptions;
             public pointClass: typeof ABandsIndicatorPoint;
             public points: Array<ABandsIndicatorPoint>;
-            public yData: Array<Array<number>>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ABandsIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface ABandsIndicatorOptions extends SMAIndicatorOptions,
@@ -57,12 +56,15 @@ declare global {
 }
 
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var SMA = H.seriesTypes.sma,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -118,6 +120,8 @@ H.seriesType<Highcharts.ABandsIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking,
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/acceleration-bands
      * @optionparent plotOptions.abands
      */
     {
@@ -161,11 +165,11 @@ H.seriesType<Highcharts.ABandsIndicator>(
         nameBase: 'Acceleration Bands',
         nameComponents: ['period', 'factor'],
         linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function (
+        getValues: function <TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.ABandsIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.ABandsIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 factor: number = (params.factor as any),
                 index: number = (params.index as any),
@@ -178,16 +182,16 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 LB: Array<number> = [],
                 // ABANDS array structure:
                 // 0-date, 1-top line, 2-middle line, 3-bottom line
-                ABANDS: Array<Array<number>> = [],
+                ABANDS: Array<Array<(number|null|undefined)>> = [],
                 // middle line, top line and bottom line
-                ML: (number|undefined),
-                TL: (number|undefined),
-                BL: (number|undefined),
+                ML: number,
+                TL: number,
+                BL: number,
                 date: number,
                 bandBase: (number|undefined),
-                pointSMA: Highcharts.IndicatorValuesObject,
-                ubSMA: Highcharts.IndicatorValuesObject,
-                lbSMA: Highcharts.IndicatorValuesObject,
+                pointSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
+                ubSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
+                lbSMA: Highcharts.IndicatorValuesObject<TLinkedSeries>,
                 low = 2,
                 high = 1,
                 xData: Array<number> = [],
@@ -197,7 +201,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 i: (number|undefined);
 
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             for (i = 0; i <= yValLen; i++) {
@@ -217,29 +221,29 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 if (i >= period) {
                     slicedX = xVal.slice(i - period, i);
                     slicedY = yVal.slice(i - period, i);
-                    ubSMA = (SMA.prototype.getValues.call(this, ({
+                    ubSMA = SMA.prototype.getValues.call(this, ({
                         xData: slicedX,
                         yData: UB.slice(i - period, i)
                     } as any), {
                         period: period
-                    }) as any);
-                    lbSMA = (SMA.prototype.getValues.call(this, ({
+                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
+                    lbSMA = SMA.prototype.getValues.call(this, ({
                         xData: slicedX,
                         yData: LB.slice(i - period, i)
                     } as any), {
                         period: period
-                    }) as any);
+                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
                     pointSMA = (SMA.prototype.getValues.call(this, ({
                         xData: slicedX,
                         yData: slicedY
                     } as any), {
                         period: period,
                         index: index
-                    }) as any);
+                    }) as Highcharts.IndicatorValuesObject<TLinkedSeries>);
                     date = pointSMA.xData[0];
-                    TL = ubSMA.yData[0];
-                    BL = lbSMA.yData[0];
-                    ML = pointSMA.yData[0];
+                    TL = (ubSMA.yData[0] as any);
+                    BL = (lbSMA.yData[0] as any);
+                    ML = (pointSMA.yData[0] as any);
                     ABANDS.push([date, TL, ML, BL]);
                     xData.push(date);
                     yData.push([TL, ML, BL]);
@@ -250,7 +254,7 @@ H.seriesType<Highcharts.ABandsIndicator>(
                 values: ABANDS,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );
@@ -259,13 +263,15 @@ H.seriesType<Highcharts.ABandsIndicator>(
  * An Acceleration bands indicator. If the [type](#series.abands.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends      series,plotOptions.abands
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
- *               joinBy, keys, navigatorOptions, pointInterval,
- *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
- *               stacking, showInNavigator,
+ * @extends   series,plotOptions.abands
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *            stacking, showInNavigator,
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/acceleration-bands
  * @apioption series.abands
  */
 

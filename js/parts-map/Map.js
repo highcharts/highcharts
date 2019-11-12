@@ -250,7 +250,7 @@ defaultOptions.mapNavigation = {
 /**
  * Utility for reading SVG paths directly.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @function Highcharts.splitPath
  *
@@ -278,7 +278,7 @@ H.splitPath = function (path) {
 /**
  * Contains all loaded map data for Highmaps.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @name Highcharts.maps
  * @type {Highcharts.Dictionary<*>}
@@ -338,7 +338,7 @@ if (Renderer === VMLRenderer) {
  * Highcharts.Chart|Chart} object with different default options than the basic
  * Chart.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @function Highcharts.mapChart
  *

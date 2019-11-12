@@ -55,12 +55,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var correctFloat = H.correctFloat,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     merge = H.merge;
 
 
@@ -94,6 +96,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
      *               pointPadding, pointPlacement, pointRange, pointStart,
      *               pointWidth, shadow, step, softThreshold, stacking,
      *               threshold, zoneAxis, zones
+     * @requires     modules/pareto
      * @optionparent plotOptions.pareto
      */
     , {
@@ -111,6 +114,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
          *
          * @private
          * @function Highcharts.Series#setDerivedData
+         * @requires modules/pareto
          */
         setDerivedData: (function (this: Highcharts.ParetoSeries): void {
             var xValues = (this.baseSeries as any).xData,
@@ -147,6 +151,8 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
          *
          * @return {number|Array<number,number>}
          * Returns sum of points or array of points [x,sum]
+         *
+         * @requires modules/pareto
          */
         sumPointsPercents: function<T extends (boolean|undefined)> (
             this: Highcharts.ParetoSeries,
@@ -192,6 +198,7 @@ seriesType<Highcharts.ParetoSeries>('pareto', 'line'
  * @since     6.0.0
  * @product   highcharts
  * @excluding data, dataParser, dataURL
+ * @requires  modules/pareto
  * @apioption series.pareto
  */
 

@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: With data labels
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Line charts
 ...

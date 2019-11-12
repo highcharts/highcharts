@@ -11,7 +11,7 @@
 import H from '../parts/Globals.js';
 var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
- * The dumbbell series is a carteseian series with higher and lower values for
+ * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
  * Requires `highcharts-more.js` and `modules/dumbbell.js`.
  *
@@ -24,7 +24,7 @@ var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, serie
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        7.2.0
+ * @since        next
  * @optionparent plotOptions.dumbbell
  */
 seriesType('dumbbell', 'arearange', {
@@ -38,7 +38,7 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects dumbbell point's values.
      *
-     * @since     7.2.0
+     * @since     next
      * @product   highcharts highstock
      */
     connectorWidth: 1,
@@ -50,7 +50,7 @@ seriesType('dumbbell', 'arearange', {
      * Color of the start markers in dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     7.2.0
+     * @since     next
      * @product   highcharts highstock
      */
     startColor: '${palette.neutralColor80}',
@@ -60,7 +60,7 @@ seriesType('dumbbell', 'arearange', {
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     7.2.0
+     * @since     next
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -70,7 +70,7 @@ seriesType('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @since 7.2.0
+             * @since next
              * @product   highcharts highstock
              */
             connectorWidthPlus: 1,
@@ -123,7 +123,7 @@ seriesType('dumbbell', 'arearange', {
      * @return {Highcharts.SVGAttributes} attribs The path and styles.
      */
     getConnectorAttribs: function (point) {
-        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color), connectorWidthPlus = pick(seriesOptions.states &&
+        var series = this, chart = series.chart, pointOptions = point.options, seriesOptions = series.options, xAxis = series.xAxis, yAxis = series.yAxis, connectorWidth = pick(pointOptions.connectorWidth, seriesOptions.connectorWidth), connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : void 0, point.color), connectorWidthPlus = pick(seriesOptions.states &&
             seriesOptions.states.hover &&
             seriesOptions.states.hover.connectorWidthPlus, 1), dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle), pointTop = pick(point.plotLow, point.plotY), pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true), pointHeight = chart.inverted ?
             yAxis.len - pxThreshold : pxThreshold, pointBottom = pick(point.plotHigh, pointHeight), attribs, origProps;
@@ -152,8 +152,8 @@ seriesType('dumbbell', 'arearange', {
                 zone: point.zone
             };
             point.y = point.high;
-            point.zone = point.zone ? point.getZone() : undefined;
-            connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : undefined, point.color);
+            point.zone = point.zone ? point.getZone() : void 0;
+            connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
             H.extend(point, origProps);
         }
         attribs = {
@@ -350,8 +350,8 @@ seriesType('dumbbell', 'arearange', {
                         zone: point.zone
                     };
                     point.y = point.high;
-                    point.zone = point.zone ? point.getZone() : undefined;
-                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : undefined, pointOptions.color, point.zone ? point.zone.color : undefined, point.color);
+                    point.zone = point.zone ? point.getZone() : void 0;
+                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : void 0, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });

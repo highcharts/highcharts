@@ -13,37 +13,39 @@ LOADING CSV
 
 CSV can be loaded in two ways. Either [data.csv](https://api.highcharts.com/highcharts/data.csv), that holds a CSV string to be read into the chart, or, since v6.1, [data.csvURL](https://api.highcharts.com/highcharts/data.csvURL) that points to a file location. By default, the first row of the CSV data is interpreted as series names, the first column signifies category names or X values/dates, and subsequent columns hold data values.
 
-Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](studies/data-module-csv.htm).
+Here's how to load the data using data.csvURL and apply the csv inside a common options structure. The sample can be seen live at [data-module.csv.htm](https://highcharts.com/studies/data-module-csv.htm).
 
 1. **Contents of the CSV file**
 
-    
+```
     Categories,Apples,Pears,Oranges,Bananas
     John,8,4,6,5
     Jane,3,4,2,3
     Joe,86,76,79,77
     Janet,3,16,13,15
+```
 
 2. **The chart initialization**
 
-    
-    Highcharts.chart('container', {  
-        chart: {  
-            type: 'column'  
-        },  
-        data: {  
-            // enablePolling: true,  
-            csvURL: window.location.origin + '/studies/data.csv'  
-        },  
-        title: {  
-            text: 'Fruit Consumption'  
-        },  
-        yAxis: {  
-            title: {  
-                text: 'Units'  
-            }  
-        }  
-    });
+```js
+Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    data: {
+        // enablePolling: true,
+        csvURL: window.location.origin + '/studies/data.csv'
+    },
+    title: {
+        text: 'Fruit Consumption'
+    },
+    yAxis: {
+        title: {
+            text: 'Units'
+        }
+    }
+});
+```
 
 Additional options relevant to CSV parsing are [itemDelimiter](https://api.highcharts.com/highcharts/data.itemDelimiter) and [lineDelimiter](https://api.highcharts.com/highcharts/data.lineDelimiter).
 
@@ -54,15 +56,16 @@ Loading data from a table
 
 In some cases it could be useful to load the chart data from a table, rather than generating the table from the chart data. In this case, all you need to do is make the [data.table](https://api.highcharts.com/highcharts/data.table) option point to the id of the table:
 
-    
-    Highcharts.chart('container', {  
-        data: {  
-            table: 'datatable'  
-        },  
-        title: {  
-            text: 'Data extracted from a HTML table in the page'  
-        }  
-    });
+```js
+Highcharts.chart('container', {
+    data: {
+        table: 'datatable'
+    },
+    title: {
+        text: 'Data extracted from a HTML table in the page'
+    }
+});
+```
 
 View a live sample of [data fetched from a table](https://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/column-parsed/).
 
