@@ -1629,7 +1629,6 @@ null,
          * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
          *         Data labels inside the bar
          *
-         * @name Highcharts.DataLabelsOptionsObject#align
          * @type {Highcharts.AlignValue|null}
          */
         align: 'center',
