@@ -230,12 +230,16 @@ var clusterDefaultOptions = {
      * Options for the cluster marker.
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
-     * @type    {Highcharts.PointMarkerOptionsObject}
+     * @type      {Highcharts.PointMarkerOptionsObject}
      */
     marker: {
+        /** @internal */
         symbol: 'cluster',
+        /** @internal */
         radius: 15,
+        /** @internal */
         lineWidth: 0,
+        /** @internal */
         lineColor: '${palette.backgroundColor}'
     },
     /**
@@ -308,16 +312,15 @@ var clusterDefaultOptions = {
     /**
      * Options for the cluster data labels.
      * @type    {Highcharts.DataLabelsOptionsObject}
-     * @default { "enabled": true, "format": "{point.clusterPointsAmoun}", "verticalAlign": "middle", "align": "center" }
      */
     dataLabels: {
-        /** @ignore-option */
+        /** @internal */
         enabled: true,
-        /** @ignore-option */
+        /** @internal */
         format: '{point.clusterPointsAmount}',
-        /** @ignore-option */
+        /** @internal */
         verticalAlign: 'middle',
-        /** @ignore-option */
+        /** @internal */
         align: 'center'
     }
 };
