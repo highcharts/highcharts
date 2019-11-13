@@ -427,6 +427,7 @@ workflows:
           name: "test-Win.Chrome"
           browsercount: 2
           requires: ["test-Mac.Safari"]
+          browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Firefox"
           browsercount: 2
