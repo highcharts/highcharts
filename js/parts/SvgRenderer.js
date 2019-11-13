@@ -2034,6 +2034,15 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 textAnchor: 'middle'
             }
         }, textPathOptions);
+        if (textPathWrapper && textPathWrapper.element.parentNode === null) {
+            textPathWrapper.destroy();
+            firstTime = true;
+            textPathWrapper = void 0;
+        }
+        else if (textPathWrapper &&
+            textPathWrapper.element.parentNode !== null) {
+            this.removeTextOutline.call(textPathWrapper.parentGroup, [].slice.call(elem.getElementsByTagName('tspan')));
+        }
         attrs = textPathOptions.attributes;
         if (path && textPathOptions && textPathOptions.enabled) {
             // label() has padding, text() doesn't
@@ -3826,6 +3835,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 longArc, // long or short arc
                 0, // clockwise
                 x + innerRadius * cosStart, y + innerRadius * sinStart);
+            }
+            if (defined(options.longArc)) {
+                arc[7] = options.longArc;
             }
             arc.push(open ? '' : 'Z'); // close
             return arc;
