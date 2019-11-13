@@ -14,7 +14,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, splat = U.splat;
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -152,12 +152,44 @@ var getDlOptions = function getDlOptions(params) {
     // Set options to new object to avoid problems with scope
     var point = params.point, shape = isObject(params.shapeArgs) ? params.shapeArgs : {}, optionsPoint = (isObject(params.optionsPoint) ?
         params.optionsPoint.dataLabels :
-        {}), optionsLevel = (isObject(params.level) ?
+        {}), optionsLevel = splat(isObject(params.level) ?
         params.level.dataLabels :
-        {}), options = merge({
+        {})[0], options = merge({
         style: {}
     }, optionsLevel, optionsPoint), rotationRad, rotation, rotationMode = options.rotationMode;
-    if (!isNumber(options.rotation)) {
+    if (options.textPath) {
+        // center dataLabel - disable textPath
+        if (point.shapeExisting.innerR === 0 && optionsLevel.textPath &&
+            optionsLevel.textPath.enabled) {
+            if (point.dataLabel && point.dataLabels) {
+                point.dataLabel.destroy();
+                point.dataLabels.length = 0;
+                point.dataLabel = void 0;
+            }
+            options.textPath.enabled = false;
+            // bring dataLabel back if was a center dataLabel
+        }
+        else if (point.dlOptions && point.dlOptions.textPath &&
+            !point.dlOptions.textPath.enabled && optionsLevel.textPath.enabled) {
+            if (point.dataLabel && point.dataLabels) {
+                point.dataLabel.destroy();
+                point.dataLabels.length = 0;
+                point.dataLabel = void 0;
+            }
+            options.textPath.enabled = true;
+        }
+        if (options.textPath.enabled && options.style &&
+            point.outerArcLength && point.innerArcLength) {
+            // width for dataLabel
+            options.style.width = (point.outerArcLength +
+                point.innerArcLength) / 2;
+            // padding
+            options.style.width = Math.max(options.style.width - 2 *
+                (options.padding || 0), 1);
+            return options;
+        }
+    }
+    else if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto') {
             if (point.innerArcLength < 1 &&
                 point.outerArcLength > shape.radius) {
@@ -608,6 +640,43 @@ var sunburstSeries = {
                 shapeType: 'arc',
                 shapeArgs: shape
             });
+            point.getDataLabelPath = function (label) {
+                var renderer = this.series.chart.renderer, shapeArgs = this.shapeExisting, start = shapeArgs.start, end = shapeArgs.end, angle = start + (end - start) / 2, // arc middle point
+                upperHalf = angle < 0 && angle >
+                    -Math.PI || angle > Math.PI, r = (shapeArgs.r + (label.options.distance || 0)), moreThanHalf;
+                if (start === -Math.PI / 2 && Math.round(end *
+                    1000000) / 1000000 === Math.round((Math.PI +
+                    Math.PI / 2) * 1000000) / 1000000) {
+                    start = -Math.PI + Math.PI / 360;
+                    end = -Math.PI / 360;
+                    upperHalf = true;
+                }
+                if (start <= 0 && start * (-1) + end > Math.PI) {
+                    upperHalf = false;
+                    moreThanHalf = true;
+                }
+                else if (start >= 0 && end - start > Math.PI) {
+                    upperHalf = false;
+                    moreThanHalf = true;
+                }
+                this.dataLabelPath = renderer
+                    .arc({
+                    open: true,
+                    longArc: moreThanHalf ? 1 : 0
+                })
+                    // Add it inside the data label group so it gets destroyed
+                    // with the label
+                    .add(label);
+                this.dataLabelPath.attr({
+                    start: (upperHalf ? start : end),
+                    end: (upperHalf ? end : start),
+                    clockwise: +upperHalf,
+                    x: shapeArgs.x,
+                    y: shapeArgs.y,
+                    r: (r + shapeArgs.innerR) / 2
+                });
+                return this.dataLabelPath;
+            };
         });
         // Draw data labels after points
         // TODO draw labels one by one to avoid addtional looping
