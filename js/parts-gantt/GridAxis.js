@@ -421,15 +421,17 @@ function (e) {
                                 break;
                             }
                         }
-                        // Spanning multiple years, go default
-                        if (!units[unitIdx][1]) {
-                            return;
-                        }
                         // Get the first allowed count on the next unit.
                         if (units[unitIdx + 1]) {
                             unitName = units[unitIdx + 1][0];
                             count =
                                 (units[unitIdx + 1][1] || [1])[0];
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
+                        }
+                        else if (parentInfo.unitName === 'year') {
+                            unitName = 'year';
+                            count = parentInfo.count * 10;
                         }
                         unitRange = H.timeUnits[unitName];
                         this.tickInterval = unitRange * count;
