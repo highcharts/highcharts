@@ -15,7 +15,7 @@ In the `nodes` array of the series, each node is identified by an `id` refering 
 Data labels
 -----------
 
-Each person or position is represented by a card or label. This card is actually the node's data label, and is subject to the [dataLabel options](https://api.highcharts.com/highcharts/plotOptions.organization.dataLabel) of the series. In org charts, the dataLabel's `useHTML` option is set to true by default, because we want to leverage layout capabilities that are more complicated to achieve using SVG alone.
+Each person or position is represented by a card or label. This card is actually the node's data label, and is subject to the [dataLabel options](https://api.highcharts.com/highcharts/plotOptions.organization.dataLabels) of the series. In org charts, the dataLabel's `useHTML` option is set to true by default, because we want to leverage layout capabilities that are more complicated to achieve using SVG alone.
 
 The actual HTML rendered inside the chart is determined by `dataLabels.nodeFormat` or `dataLabels.nodeFormatter`. The default `nodeFormatter` output depends on whether there is an `image` setting on the node, and produces a layout based on flex boxes in order to get positioning and alignment right. See the [example of overriding the nodeFormatter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-organization/datalabels-nodeformatter/).
 
