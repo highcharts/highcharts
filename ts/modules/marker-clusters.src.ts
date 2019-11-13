@@ -923,6 +923,8 @@ Scatter.prototype.animateClusterPoint = function (
                     x: newX - newPointObj.point.graphic.radius,
                     y: newY - newPointObj.point.graphic.radius
                 }, animation, function (): void {
+                    isCbHandled = true;
+
                     // Destroy old point.
                     if (oldPointObj.point && oldPointObj.point.destroy) {
                         oldPointObj.point.destroy();
@@ -935,6 +937,17 @@ Scatter.prototype.animateClusterPoint = function (
                         }, false, true
                     );
                 });
+
+                // Make sure new point data label is faded in.
+                syncTimeout(function (): void {
+                    if (!isCbHandled) {
+                        fadeInStatePoint(
+                            newPointObj, 0.7, {
+                                duration: animDuration / 2
+                            }, false, true
+                        );
+                    }
+                }, animDuration);
             }
         } else if (newPointObj.parentsId.length === 0) {
             // Point has no ancestors - new point.
