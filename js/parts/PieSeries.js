@@ -9,13 +9,6 @@
  * */
 'use strict';
 import H from './Globals.js';
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* Pie series only. Whether to display a slice offset from the center.
-* @name Highcharts.PointOptionsObject#sliced
-* @type {boolean|undefined}
-*/
 import U from './Utilities.js';
 var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
 import './ColumnSeries.js';

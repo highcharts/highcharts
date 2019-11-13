@@ -23,21 +23,6 @@ import H from './Globals.js';
 * @name Highcharts.ColumnMetricsObject#offset
 * @type {number}
 */
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* A name for the dash style to use for the column or bar. Overrides dashStyle
-* on the series. In styled mode, the stroke dash-array can be set with the same
-* classes as listed under {@link Highcharts.PointOptionsObject#color}.
-* @name Highcharts.PointOptionsObject#dashStyle
-* @type {Highcharts.DashStyleValue|undefined}
-*/ /**
-
-* A pixel value specifying a fixed width for the column or bar. Overrides
-* pointWidth on the series.
-* @name Highcharts.PointOptionsObject#pointWidth
-* @type {number|undefined}
-*/
 import U from './Utilities.js';
 var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Color.js';

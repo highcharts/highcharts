@@ -98,6 +98,20 @@ import Highcharts from './Globals.js';
  *        Event that occured.
  */
 /**
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
+ */
+/**
  * Possible option types for a data point.
  *
  * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
