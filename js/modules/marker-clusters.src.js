@@ -591,10 +591,9 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                         duration: animDuration / 2
                     }, false, true);
                 });
-                // Make sure point is faded in.
+                // Make sure new point data label is faded in.
                 syncTimeout(function () {
                     if (!isCbHandled) {
-                        // Fade in new point data label.
                         fadeInStatePoint(newPointObj, 0.7, {
                             duration: animDuration / 2
                         }, false, true);
