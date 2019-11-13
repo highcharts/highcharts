@@ -8,8 +8,16 @@ Highcharts.chart('container', {
         enabled: false
     },
 
+    subtitle: {
+        text: '2018'
+    },
+
     title: {
-        text: 'Top 10 Countries by Population (2018)'
+        text: 'Top 10 Countries by Population'
+    },
+
+    tooltip: {
+        shared: true
     },
 
     xAxis: {

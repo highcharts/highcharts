@@ -11,7 +11,7 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
             data: [
                 [0, 10],
                 [10, 20],
-                { low: 30, high: 35, startColor: '#ff69b4', connectorColor: '#000000' },
+                { low: 30, high: 35, lowColor: '#ff69b4', connectorColor: '#000000' },
                 [30, 31]
             ],
             zones: [{
@@ -27,7 +27,7 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
                 enabled: true
             },
             color: '#0000ff',
-            startColor: '#00ff00'
+            lowColor: '#00ff00'
         }]
     });
 
@@ -75,8 +75,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[1].lowerGraphic.attr('fill'),
-        chart.series[0].startColor,
-        'The lower marker should have a correct color (startColor) on hover.'
+        chart.series[0].lowColor,
+        'The lower marker should have a correct color (lowColor) on hover.'
     );
 
     chart.series[0].points[1].setState('');
@@ -89,8 +89,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[1].lowerGraphic.attr('fill'),
-        chart.series[0].startColor,
-        'The lower marker should have a correct color (startColor) without any state.'
+        chart.series[0].lowColor,
+        'The lower marker should have a correct color (lowColor) without any state.'
     );
 
 });
@@ -144,14 +144,14 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
     );
 
     chart.series[0].update({
-        startColor: '#000000'
+        lowColor: '#000000'
     });
 
     chart.series[0].points.forEach(function (point) {
         assert.strictEqual(
             point.lowerGraphic.attr('fill'),
             '#000000',
-            'After series.startColor update, all the lowerGraphics should have a correct color.'
+            'After series.lowColor update, all the lowerGraphics should have a correct color.'
         );
     });
 

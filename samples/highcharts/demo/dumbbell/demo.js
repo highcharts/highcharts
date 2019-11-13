@@ -123,8 +123,16 @@ Highcharts.chart('container', {
         enabled: false
     },
 
+    subtitle: {
+        text: '1960 vs 2018'
+    },
+
     title: {
-        text: 'Change in Life Expectancy (1960 vs 2018)'
+        text: 'Change in Life Expectancy'
+    },
+
+    tooltip: {
+        shared: true
     },
 
     xAxis: {
@@ -138,6 +146,7 @@ Highcharts.chart('container', {
     },
 
     series: [{
+        name: 'Life expectancy change',
         data: data
     }]
 

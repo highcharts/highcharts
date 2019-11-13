@@ -22,7 +22,7 @@ declare global {
             connectorColor?: ColorType;
             connectorWidth?: number;
             dashStyle?: string;
-            startColor?: ColorType;
+            lowColor?: ColorType;
         }
         interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
             states?: SeriesStatesOptionsObject<DumbbellSeries>;
@@ -30,7 +30,7 @@ declare global {
             connectorWidth?: number;
             groupPadding?: number;
             pointPadding?: number;
-            startColor?: ColorType;
+            lowColor?: ColorType;
         }
         interface SeriesStatesHoverOptionsObject {
             connectorWidthPlus?: number;
@@ -46,7 +46,7 @@ declare global {
             public pointSetState: AreaRangePoint['setState'];
         }
         class DumbbellSeries extends AreaRangeSeries {
-            public startColor?: ColorType;
+            public lowColor?: ColorType;
             public data: Array<DumbbellPoint>;
             public options: DumbbellSeriesOptions;
             public pointClass: typeof DumbbellPoint;
@@ -58,7 +58,10 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
-            public crispConnector(points: SVGPathArray): SVGPathArray;
+            public crispConnector(
+                points: SVGPathArray,
+                width: number
+            ): SVGPathArray;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
             public getColumnMetrics(): ColumnMetricsObject;
@@ -107,7 +110,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     lineWidth: 0,
     pointRange: 1,
     /**
-     * Pixel width of the line that connects dumbbell point's values.
+     * Pixel width of the line that connects the dumbbell point's values.
      *
      * @since     next
      * @product   highcharts highstock
@@ -118,16 +121,16 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     groupPadding: 0.2,
     pointPadding: 0.1,
     /**
-     * Color of the start markers in dumbbell graph.
+     * Color of the start markers in a dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     next
      * @product   highcharts highstock
      */
-    startColor: '${palette.neutralColor80}',
+    lowColor: '${palette.neutralColor80}',
     /**
-     * Color of the line that connects dumbbell point's values.
-     * By default it is a series' color.
+     * Color of the line that connects the dumbbell point's values.
+     * By default it is the series' color.
      *
      * @type      {string}
      * @product   highcharts highstock
@@ -165,6 +168,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      *        Highcharts Renderer.
      * @param {Highcharts.SVGPathArray} points
      *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
+     * @param {number} width
+     *        Connector's width.
      *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
@@ -173,15 +178,17 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      */
     crispConnector: function (
         this: Highcharts.SVGRenderer,
-        points: Highcharts.SVGPathArray
+        points: Highcharts.SVGPathArray,
+        width: number
     ): Highcharts.SVGPathArray {
         if (points[1] === points[4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] = Math.floor(points[1] as any) - 0.5;
+            points[1] = points[4] = Math.floor(points[1] as any);
         }
         if (points[2] === points[5]) {
-            points[2] = points[5] = Math.floor(points[2] as any) + 0.5;
+            points[2] = points[5] =
+                Math.floor(points[2] as any) + (width % 2 / 2);
         }
         return points;
     },
@@ -290,7 +297,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 'L',
                 point.plotX,
                 pointBottom
-            ])
+            ], connectorWidth)
         };
 
         if (!chart.styledMode) {
@@ -405,7 +412,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         var series = this,
             chart = series.chart,
             pointLength = series.points.length,
-            seriesStartColor = series.startColor = series.options.startColor,
+            seriesLowColor = series.lowColor = series.options.lowColor,
             i = 0,
             lowerGraphicColor,
             point,
@@ -428,8 +435,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             if (point.lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
                 lowerGraphicColor = pick(
-                    point.options.startColor,
-                    seriesStartColor,
+                    point.options.lowColor,
+                    seriesLowColor,
                     point.options.color,
                     zoneColor,
                     point.color,
@@ -517,13 +524,13 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         var point = this,
             series = point.series,
             chart = series.chart,
-            seriesStartColor = series.options.startColor,
+            seriesLowColor = series.options.lowColor,
             pointOptions = point.options,
-            pointStartColor = pointOptions.startColor,
+            pointLowColor = pointOptions.lowColor,
             zoneColor = point.zone && point.zone.color,
             lowerGraphicColor = pick(
-                pointStartColor,
-                seriesStartColor,
+                pointLowColor,
+                seriesLowColor,
                 pointOptions.color,
                 zoneColor,
                 point.color,

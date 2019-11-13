@@ -21,7 +21,7 @@ declare global {
         interface LollipopPointOptions extends DumbbellPointOptions {
         }
         interface LollipopSeriesOptions extends DumbbellSeriesOptions {
-            startColor?: undefined;
+            lowColor?: undefined;
             states?: SeriesStatesOptionsObject<LollipopSeries>;
         }
         class LollipopPoint extends DumbbellPoint {
@@ -58,14 +58,14 @@ var seriesType = H.seriesType,
  *
  * @extends      plotOptions.dumbbell
  * @product      highcharts highstock
- * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, startColor,
+ * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, lowColor,
  *               stickyTracking, trackByArea
  * @since        next
  * @optionparent plotOptions.lollipop
  */
 seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
     /** @ignore-option */
-    startColor: void 0,
+    lowColor: void 0,
     /** @ignore-option */
     threshold: 0,
     /** @ignore-option */
