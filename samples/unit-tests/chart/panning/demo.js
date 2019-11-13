@@ -108,7 +108,6 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
 
 });
 
-/* global TestController */
 QUnit.test('Zoom and pan key', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -81,23 +81,17 @@ seriesType<Highcharts.MapPointSeries>(
      */
     {
         dataLabels: {
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             defer: false,
-            /** @ignore-option */
             enabled: true,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): (string|undefined) { // #2945
                 return this.point.name;
             },
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             style: {
+                /** @internal */
                 color: '${palette.neutralColor100}'
             }
         }
@@ -115,8 +109,8 @@ seriesType<Highcharts.MapPointSeries>(
             x?: number
         ): Highcharts.MapPointPoint {
             var mergedOptions = (
-                options.lat !== undefined &&
-                options.lon !== undefined ?
+                typeof options.lat !== 'undefined' &&
+                typeof options.lon !== 'undefined' ?
                     merge(
                         options, this.series.chart.fromLatLonToPoint(options)
                     ) :

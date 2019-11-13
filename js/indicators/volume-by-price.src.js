@@ -130,19 +130,14 @@ seriesType('vbp', 'sma',
         enabled: false
     },
     dataLabels: {
-        /** @ignore-option */
         allowOverlap: true,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
-        /** @ignore-option */
         padding: 0,
-        /** @ignore-option */
         style: {
+            /** @internal */
             fontSize: '7px'
         },
-        /** @ignore-option */
         verticalAlign: 'top'
     }
 }, 

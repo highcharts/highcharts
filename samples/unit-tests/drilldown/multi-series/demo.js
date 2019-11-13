@@ -1,5 +1,5 @@
 QUnit.test('Drill down on points and categories', function (assert) {
-
+    const { fireEvent } = Highcharts;
     var chart = Highcharts
         .chart('container', {
             chart: {
@@ -121,7 +121,7 @@ QUnit.test('Drill down on points and categories', function (assert) {
     );
 
     // Click first point
-    Highcharts.fireEvent(chart.series[0].points[0], 'click');
+    fireEvent(chart.series[0].points[0], 'click');
     assert.equal(
         chart.series.length,
         1,
@@ -142,7 +142,7 @@ QUnit.test('Drill down on points and categories', function (assert) {
     );
 
     // Click the category
-    chart.xAxis[0].ticks[0].label.element.onclick();
+    fireEvent(chart.xAxis[0].ticks[0].label.element, 'click');
     assert.equal(
         chart.series.length,
         2,

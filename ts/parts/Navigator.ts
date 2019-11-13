@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -235,7 +236,7 @@ var addEvent = H.addEvent,
         }
     };
 
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 
@@ -572,9 +573,7 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @internal */
                 enabled: false,
-                /** @internal */
                 zIndex: 2 // #1839
             },
 
@@ -843,7 +842,7 @@ Axis.prototype.toFixedRange = function (
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined as any;
+        newMin = newMax = void 0 as any;
     }
 
     return {
@@ -1347,17 +1346,16 @@ Navigator.prototype = {
         }
 
         // Handles are allowed to cross, but never exceed the plot area
-        navigator.zoomedMax = Math.min(
-            Math.max(pxMin as any, pxMax as any, 0),
+        navigator.zoomedMax = clamp(
+            Math.max(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
-        navigator.zoomedMin = Math.min(
-            Math.max(
-                navigator.fixedWidth ?
-                    navigator.zoomedMax - navigator.fixedWidth :
-                    Math.min(pxMin as any, pxMax as any),
-                0
-            ),
+        navigator.zoomedMin = clamp(
+            navigator.fixedWidth ?
+                navigator.zoomedMax - navigator.fixedWidth :
+                Math.min(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
 
@@ -1837,7 +1835,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind: Function): void {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -2733,7 +2731,7 @@ if (!H.Navigator) {
             }
 
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

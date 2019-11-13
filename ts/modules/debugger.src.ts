@@ -116,10 +116,10 @@ addEvent(H.Chart, 'displayError', function (
             0,
             0,
             'rect',
-            undefined,
-            undefined,
-            undefined,
-            undefined,
+            void 0,
+            void 0,
+            void 0,
+            void 0,
             'debugger'
         ).css({
             color: '#ffffff',

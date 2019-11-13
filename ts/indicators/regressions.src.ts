@@ -31,10 +31,10 @@ declare global {
                 xData: Array<number>,
                 yData: Array<number>
             ): RegressionLineParametersObject;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: LinearRegressionIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): IndicatorValuesObject<TLinkedSeries>;
             public nameBase: string;
             public options: LinearRegressionIndicatorOptions;
             public pointClass: typeof LinearRegressionIndicatorPoint;
@@ -218,7 +218,7 @@ seriesType<Highcharts.LinearRegressionIndicator>(
              * @type    {number}
              * @product highstock
              */
-            xAxisUnit: undefined
+            xAxisUnit: void 0
         },
         tooltip: {
             valueDecimals: 4
@@ -341,8 +341,13 @@ seriesType<Highcharts.LinearRegressionIndicator>(
 
             for (i = 1; i < xData.length - 1; i++) {
                 distance = xData[i] - xData[i - 1];
-                if (distance > 0 && (closestDistance === undefined ||
-                  distance < closestDistance)) {
+                if (
+                    distance > 0 &&
+                    (
+                        typeof closestDistance === 'undefined' ||
+                        distance < closestDistance
+                    )
+                ) {
                     closestDistance = distance;
                 }
             }
@@ -351,12 +356,12 @@ seriesType<Highcharts.LinearRegressionIndicator>(
         },
 
         // Required to be implemented - starting point for indicator's logic
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.LinearRegressionIndicator,
-            baseSeries: Highcharts.Series,
+            baseSeries: TLinkedSeries,
             regressionSeriesParams:
             Highcharts.LinearRegressionIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             var xData: Array<number> = (baseSeries.xData as any),
                 yData: Array<number> = (baseSeries.yData as any),
                 period: number = (regressionSeriesParams.period as any),
@@ -365,11 +370,13 @@ seriesType<Highcharts.LinearRegressionIndicator>(
                 periodStart: number,
                 periodEnd: number,
                 // format required to be returned
-                indicatorData: Highcharts.IndicatorValuesObject = {
+                indicatorData: Highcharts.IndicatorValuesObject<
+                TLinkedSeries
+                > = {
                     xData: [], // by getValues() method
                     yData: [],
                     values: []
-                },
+                } as any,
                 endPointX: number,
                 endPointY: number,
                 periodXData: Array<number>,
@@ -406,7 +413,7 @@ seriesType<Highcharts.LinearRegressionIndicator>(
                 } as any);
 
                 indicatorData.xData.push(endPointX);
-                indicatorData.yData.push(endPointY);
+                indicatorData.yData.push(endPointY as any);
             }
 
             return indicatorData;

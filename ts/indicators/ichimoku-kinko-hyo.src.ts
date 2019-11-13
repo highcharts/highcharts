@@ -22,10 +22,10 @@ declare global {
         class IKHIndicator
             extends SMAIndicator {
             public data: Array<IKHIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: IKHIndicatorParamsOptions
-            ): (IndicatorMultipleUndefinableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public graphCollection: Array<string>;
             public graphsenkouSpan: (SVGElement | undefined)
             public ikhMap: Dictionary<Array<IKHIndicatorPoint>>;
@@ -234,12 +234,12 @@ H.approximations['ichimoku-averages'] = function ():
 
     [].forEach.call(arguments, function (arr, i): void {
         ret.push(H.approximations.average(arr));
-        isEmptyRange = !isEmptyRange && ret[i] === undefined;
+        isEmptyRange = !isEmptyRange && typeof ret[i] === 'undefined';
     });
 
     // Return undefined when first elem. is undefined and let
     // sum method handle null (#7377)
-    return isEmptyRange ? undefined : ret;
+    return isEmptyRange ? void 0 : ret;
 };
 
 /* eslint-enable require-jsdoc */
@@ -311,7 +311,7 @@ seriesType<Highcharts.IKHIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -328,7 +328,7 @@ seriesType<Highcharts.IKHIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -345,7 +345,7 @@ seriesType<Highcharts.IKHIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -362,7 +362,7 @@ seriesType<Highcharts.IKHIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -379,7 +379,7 @@ seriesType<Highcharts.IKHIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -887,10 +887,10 @@ seriesType<Highcharts.IKHIndicator>(
 
             return path;
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.IKHIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleUndefinableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
 
             var period: number = (params.period as any),
                 periodTenkan: number = (params.periodTenkan as any),
@@ -1011,7 +1011,7 @@ seriesType<Highcharts.IKHIndicator>(
                 values: IKH,
                 xData: xData,
                 yData: IKH
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

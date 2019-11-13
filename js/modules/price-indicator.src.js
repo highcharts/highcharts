@@ -18,6 +18,7 @@ var addEvent = H.addEvent, merge = H.merge;
  * @sample {highstock} stock/indicators/last-visible-price
  *         Last visible price
  *
+ * @declare   Highcharts.SeriesLastVisiblePriceOptionsObject
  * @product   highstock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastVisiblePrice
@@ -29,6 +30,10 @@ var addEvent = H.addEvent, merge = H.merge;
  * @product   highstock
  * @default   true
  * @apioption plotOptions.series.lastVisiblePrice.enabled
+ */
+/**
+ * @declare   Highcharts.SeriesLastVisiblePriceLabelOptionsObject
+ * @apioption plotOptions.series.lastVisiblePrice.label
  */
 /**
  * Enable or disable the label.
@@ -45,6 +50,7 @@ var addEvent = H.addEvent, merge = H.merge;
  * @sample {highstock} stock/indicators/last-price
  *         Last price
  *
+ * @declare   Highcharts.SeriesLastPriceOptionsObject
  * @product   highstock
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastPrice

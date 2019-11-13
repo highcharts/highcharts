@@ -85,7 +85,7 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
+var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout;
 var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -428,7 +428,7 @@ Highcharts.Legend.prototype = {
         var options = this.options;
         item.legendItem.attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart.time) :
+                H.format(options.labelFormat, item, this.chart) :
                 options.labelFormatter.call(item)
         });
     },
@@ -589,7 +589,7 @@ Highcharts.Legend.prototype = {
             var seriesOptions = series && series.options;
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
-            if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+            if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(series.legendItems ||
@@ -990,14 +990,15 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     scroll: function (scrollBy, animation) {
-        var pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
+        var _this = this;
+        var chart = this.chart, pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
         // When resizing while looking at the last page
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
         if (currentPage > 0) {
-            if (animation !== undefined) {
-                setAnimation(animation, this.chart);
+            if (typeof animation !== 'undefined') {
+                setAnimation(animation, chart);
             }
             this.nav.attr({
                 translateX: padding,
@@ -1023,7 +1024,7 @@ Highcharts.Legend.prototype = {
                         'highcharts-legend-nav-active'
                 });
             }, this);
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 this.up
                     .attr({
                     fill: currentPage === 1 ?
@@ -1053,6 +1054,11 @@ Highcharts.Legend.prototype = {
             });
             this.currentPage = currentPage;
             this.positionCheckboxes();
+            // Fire event after scroll animation is complete
+            var animOptions = H.animObject(pick(animation, chart.renderer.globalAnimation, true));
+            syncTimeout(function () {
+                fireEvent(_this, 'afterScroll', { currentPage: currentPage });
+            }, animOptions.duration || 0);
         }
     }
 };

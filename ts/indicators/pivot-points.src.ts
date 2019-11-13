@@ -28,10 +28,10 @@ declare global {
             public getPivotAndHLC(
                 values: Array<Array<number>>
             ): [number, number, number, number];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: PivotPointsIndicatorParamsOptions
-            ): (IndicatorMultipleValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: PivotPointsIndicatorOptions;
             public plotEndPoint: number;
@@ -146,9 +146,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
         },
         enableMouseTracking: false,
         dataLabels: {
-            /** @ignore-option */
             enabled: true,
-            /** @ignore-option */
             format: '{point.pivotLine}'
         },
         dataGrouping: {
@@ -313,11 +311,11 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
                 );
             }
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.PivotPointsIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.PivotPointsIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -380,7 +378,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
                 values: PP,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         },
         getPivotAndHLC: function (
             values: Array<Array<number>>

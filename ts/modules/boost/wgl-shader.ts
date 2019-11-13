@@ -12,6 +12,10 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    clamp
+} = U;
 
 /**
  * Internal types
@@ -483,13 +487,11 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             zMax = -Number.MAX_VALUE;
 
         if (gl && shaderProgram && series.type === 'bubble') {
-            zMin = pick(seriesOptions.zMin, Math.min(
-                zMin,
-                Math.max(
-                    zCalcMin,
-                    seriesOptions.displayNegative === false ?
-                        (seriesOptions.zThreshold as any) : -Number.MAX_VALUE
-                )
+            zMin = pick(seriesOptions.zMin, clamp(
+                zCalcMin,
+                seriesOptions.displayNegative === false ?
+                    (seriesOptions.zThreshold as any) : -Number.MAX_VALUE,
+                zMin
             ));
 
             zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));

@@ -89,6 +89,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     isNumber,
     pick,
@@ -238,8 +239,8 @@ colorAxisMethods = {
                 from = dataClass.from;
                 to = dataClass.to;
                 if (
-                    (from === undefined || value >= from) &&
-                    (to === undefined || value <= to)
+                    (typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)
                 ) {
                     color = dataClass.color;
                     if (point) {
@@ -377,7 +378,6 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
     colorByPoint: true,
 
     dataLabels: {
-        /** @ignore-option */
         y: 0
     }
 
@@ -490,17 +490,15 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                     }
 
                     // Handle overshoot and clipping to axis max/min
-                    rotation = Math.max(
+                    rotation = clamp(
+                        rotation,
                         axisMinAngle - overshootVal,
-                        Math.min(axisMaxAngle + overshootVal, rotation)
+                        axisMaxAngle + overshootVal
                     );
 
                     // Handle the wrap option
                     if (options.wrap === false) {
-                        rotation = Math.max(
-                            axisMinAngle,
-                            Math.min(axisMaxAngle, rotation)
-                        );
+                        rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                     }
 
                     minAngle = Math.min(rotation, series.thresholdAngleRad);

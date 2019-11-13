@@ -539,3 +539,72 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Sankey and node.level option',
+    assert => {
+        const chart = Highcharts.chart('container', {
+
+            title: {
+                text: 'Highcharts Sankey Diagram'
+            },
+            series: [{
+                keys: ['from', 'to', 'weight', 'color'],
+                data: [
+                    ["Primary Oil", "Oil Refineries", 34762592],
+                    ["Oil Refineries", "Oil: Supplied", 34549489],
+                    ["Coal", "Coal: Supplied", 13741144]
+                ],
+                type: 'sankey',
+                nodes: [{
+                    id: 'Oil: Supplied',
+                    level: 2,
+                    color: '#121212'
+                },
+                {
+                    id: 'Coal: Supplied',
+                    level: 2,
+                    color: '#E59400'
+                },
+                {
+                    id: 'Oil Refineries',
+                    level: 1,
+                    color: '#121212'
+                },
+                {
+                    id: 'Primary Oil',
+                    level: 0,
+                    color: '#121212'
+                }],
+                name: 'Sankey demo series'
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[0].nodes.map(n => n.name),
+            [
+                "Primary Oil",
+                "Coal",
+                "Oil Refineries",
+                "Oil: Supplied",
+                "Coal: Supplied"
+            ],
+            'The level option should apply initially'
+        );
+
+        // Trigger redraw
+        chart.setSize(undefined, 401);
+
+        assert.deepEqual(
+            chart.series[0].nodes.map(n => n.name),
+            [
+                "Primary Oil",
+                "Coal",
+                "Oil Refineries",
+                "Oil: Supplied",
+                "Coal: Supplied"
+            ],
+            'The level option should apply after redraw (#12374)'
+        );
+    }
+);

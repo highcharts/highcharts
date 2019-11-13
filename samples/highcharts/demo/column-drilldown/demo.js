@@ -9,6 +9,11 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
+    accessibility: {
+        announceNewData: {
+            enabled: true
+        }
+    },
     xAxis: {
         type: 'category'
     },

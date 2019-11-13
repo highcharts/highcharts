@@ -392,6 +392,8 @@ merge(true, defaultOptions.navigation, {
 
     /**
      * @optionparent navigation.buttonOptions
+     *
+     * @private
      */
     buttonOptions: {
 
@@ -1461,10 +1463,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (
                 axisCopy &&
-                (
-                    (userMin !== undefined && userMin !== axisCopy.min) ||
-                    (userMax !== undefined && userMax !== axisCopy.max)
-                )
+                ((
+                    typeof userMin !== 'undefined' &&
+                    userMin !== axisCopy.min) || (
+                    typeof userMax !== 'undefined' &&
+                    userMax !== axisCopy.max
+                ))
             ) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
@@ -1671,10 +1675,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (handleMaxWidth) {
             resetParams = [
                 (chart.options.chart as any).width,
-                undefined,
+                void 0,
                 false
             ];
-            chart.setSize(printMaxWidth, undefined, false);
+            chart.setSize(printMaxWidth, void 0, false);
         }
 
         // hide all body content
@@ -1788,9 +1792,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 ) as Highcharts.ExportingDivElement;
 
             innerMenu = createElement(
-                'div',
+                'ul',
                 { className: 'highcharts-menu' },
-                null as any,
+                {
+                    listStyle: 'none',
+                    margin: 0,
+                    padding: 0
+                },
                 menu
             );
 
@@ -1861,7 +1869,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         );
 
                     } else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e: PointerEvent): void {
                                 if (e) { // IE7

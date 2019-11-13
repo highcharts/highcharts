@@ -186,7 +186,7 @@ H.extendAnnotation(Measure, null,
         addBackground: function () {
             var shapePoints = this.shapePointsOptions();
 
-            if (shapePoints[0].x === undefined) {
+            if (typeof shapePoints[0].x === 'undefined') {
                 return;
             }
 
@@ -718,7 +718,7 @@ H.extendAnnotation(Measure, null,
                 /**
                  * The color of border.
                  */
-                stroke: undefined
+                stroke: void 0
             },
             /**
              * Configure a crosshair that is horizontally placed in middle of
@@ -855,7 +855,7 @@ H.extendAnnotation(Measure, null,
                  * @type      {function}
                  *
                  */
-                formatter: undefined
+                formatter: void 0
             }
         },
         controlPointOptions: {

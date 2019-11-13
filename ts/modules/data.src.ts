@@ -714,7 +714,7 @@ extend(Data.prototype, {
         }
 
         if (decimalPoint !== '.' && decimalPoint !== ',') {
-            decimalPoint = undefined;
+            decimalPoint = void 0;
         }
 
         this.options = options;
@@ -897,7 +897,7 @@ extend(Data.prototype, {
                 if (!builder.hasReader(pointArrayMap[i])) {
                     // Create and add a column reader for the next free column
                     // index
-                    builder.addColumnReader(undefined, pointArrayMap[i]);
+                    builder.addColumnReader(void 0, pointArrayMap[i]);
                 }
             }
 
@@ -907,7 +907,7 @@ extend(Data.prototype, {
 
         var globalPointArrayMap = getPointArrayMap(globalType);
 
-        if (globalPointArrayMap === undefined) {
+        if (typeof globalPointArrayMap === 'undefined') {
             globalPointArrayMap = ['y'];
         }
 
@@ -1842,7 +1842,7 @@ extend(Data.prototype, {
                     column: Array<Highcharts.DataValueType>
                 ): void {
                     for (i = 0; i < column.length; i++) {
-                        if (column[i] === undefined) {
+                        if (typeof column[i] === 'undefined') {
                             column[i] = null as any;
                         }
                     }
@@ -1963,7 +1963,7 @@ extend(Data.prototype, {
             floatVal = parseFloat(trimInsideVal);
 
             // Set it the first time
-            if (rawColumns[col][row] === undefined) {
+            if (typeof rawColumns[col][row] === 'undefined') {
                 rawColumns[col][row] = trimVal;
             }
 
@@ -1987,7 +1987,7 @@ extend(Data.prototype, {
                     (column as any).isNumeric = true;
                 }
 
-                if (column[row + 1] !== undefined) {
+                if (typeof column[row + 1] !== 'undefined') {
                     descending = floatVal > (column[row + 1] as any);
                 }
 
@@ -2007,9 +2007,12 @@ extend(Data.prototype, {
                     // Check if the dates are uniformly descending or ascending.
                     // If they are not, chances are that they are a different
                     // time format, so check for alternative.
-                    if (column[row + 1] !== undefined) {
+                    if (typeof column[row + 1] !== 'undefined') {
                         diff = dateVal > (column[row + 1] as any);
-                        if (diff !== descending && descending !== undefined) {
+                        if (
+                            diff !== descending &&
+                            typeof descending !== 'undefined'
+                        ) {
                             if (this.alternativeFormat) {
                                 this.dateFormat = this.alternativeFormat;
                                 row = column.length;
@@ -2370,7 +2373,7 @@ extend(Data.prototype, {
                     // Create and add a column reader for the next free column
                     // index
                     builder.addColumnReader(
-                        undefined,
+                        void 0,
                         (this.valueCount as any).globalPointArrayMap[i]
                     );
                 }
@@ -2390,7 +2393,7 @@ extend(Data.prototype, {
                 typeCol = (columns as any)[
                     allSeriesBuilders[0].readers[0].columnIndex as any
                 ];
-                if (typeCol !== undefined) {
+                if (typeof typeCol !== 'undefined') {
                     if (typeCol.isDatetime) {
                         type = 'datetime';
                     } else if (!typeCol.isNumeric) {
@@ -2656,7 +2659,7 @@ SeriesBuilder.prototype.populateColumns = function (
     builder.readers.forEach(function (
         reader: Highcharts.SeriesBuilderReaderObject
     ): void {
-        if (reader.columnIndex === undefined) {
+        if (typeof reader.columnIndex === 'undefined') {
             reader.columnIndex = freeIndexes.shift() as any;
         }
     });
@@ -2667,7 +2670,7 @@ SeriesBuilder.prototype.populateColumns = function (
     builder.readers.forEach(function (
         reader: Highcharts.SeriesBuilderReaderObject
     ): void {
-        if (reader.columnIndex === undefined) {
+        if (typeof reader.columnIndex === 'undefined') {
             enoughColumns = false;
         }
     });
@@ -2720,7 +2723,7 @@ SeriesBuilder.prototype.read = function <T> (
     });
 
     // The name comes from the first column (excluding the x column)
-    if (this.name === undefined && builder.readers.length >= 2) {
+    if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
         columnIndexes = builder.getReferencedColumnIndexes();
         if (columnIndexes.length >= 2) {
             // remove the first one (x col)
@@ -2760,9 +2763,11 @@ SeriesBuilder.prototype.addColumnReader = function (
         configName: configName
     });
 
-    if (
-        !(configName === 'x' || configName === 'y' || configName === undefined)
-    ) {
+    if (!(
+        configName === 'x' ||
+        configName === 'y' ||
+        typeof configName === 'undefined'
+    )) {
         this.pointIsArray = false;
     }
 };
@@ -2784,7 +2789,7 @@ SeriesBuilder.prototype.getReferencedColumnIndexes = function (
 
     for (i = 0; i < this.readers.length; i = i + 1) {
         columnReader = this.readers[i];
-        if (columnReader.columnIndex !== undefined) {
+        if (typeof columnReader.columnIndex !== 'undefined') {
             referencedColumnIndexes.push(columnReader.columnIndex);
         }
     }

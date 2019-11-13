@@ -542,7 +542,7 @@ cuboidMethods = H.merge(element3dMethods, {
         }
 
         return SVGElement.prototype.attr.call(
-            this, args, undefined, complete, continueAnimation
+            this, args, void 0, complete, continueAnimation
         );
     },
     animate: function (

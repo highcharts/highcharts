@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
@@ -31,7 +31,7 @@ numExt = function (extreme) {
         return Math[extreme].apply(0, numbers);
     }
 };
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 extend(defaultOptions, {
@@ -340,9 +340,7 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @internal */
                 enabled: false,
-                /** @internal */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',
@@ -547,7 +545,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined;
+        newMin = newMax = void 0;
     }
     return {
         min: newMin,
@@ -917,10 +915,10 @@ Navigator.prototype = {
             }
         }
         // Handles are allowed to cross, but never exceed the plot area
-        navigator.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), zoomedMax);
-        navigator.zoomedMin = Math.min(Math.max(navigator.fixedWidth ?
+        navigator.zoomedMax = clamp(Math.max(pxMin, pxMax), 0, zoomedMax);
+        navigator.zoomedMin = clamp(navigator.fixedWidth ?
             navigator.zoomedMax - navigator.fixedWidth :
-            Math.min(pxMin, pxMax), 0), zoomedMax);
+            Math.min(pxMin, pxMax), 0, zoomedMax);
         navigator.range = navigator.zoomedMax - navigator.zoomedMin;
         zoomedMax = Math.round(navigator.zoomedMax);
         zoomedMin = Math.round(navigator.zoomedMin);
@@ -1242,7 +1240,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -1851,7 +1849,7 @@ if (!H.Navigator) {
                 }
             }
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

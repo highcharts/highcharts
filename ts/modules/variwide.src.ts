@@ -320,8 +320,8 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                     pointStack.setOffset(
                         -(pointWidth / 2) || 0,
                         pointWidth || 0,
-                        undefined,
-                        undefined,
+                        void 0,
+                        void 0,
                         point.plotX
                     );
                 }

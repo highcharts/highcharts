@@ -318,7 +318,7 @@ H.merge(
                     H.format(
                         text,
                         point.getLabelConfig(),
-                        this.annotation.chart.time
+                        this.annotation.chart
                     ) :
                     options.formatter.call(point, this)
             });

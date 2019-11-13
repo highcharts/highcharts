@@ -204,7 +204,7 @@ Axis.prototype.renderWaterfallStackTotals = function (
             yAxis.options.stackLabels as any,
             false,
             0,
-            undefined
+            void 0
         );
 
     yAxis.dummyStackItem = dummyStackItem;
@@ -273,7 +273,6 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
      */
 
     dataLabels: {
-        /** @ignore-option */
         inside: true
     },
 
@@ -945,7 +944,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                             (changed &&
                             (actualStack as any)[x]) ?
                                 (actualStack as any)[x].label :
-                                undefined
+                                void 0
                         )
                     };
                 }

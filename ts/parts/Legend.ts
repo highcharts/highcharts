@@ -221,7 +221,8 @@ const {
     discardElement,
     isNumber,
     pick,
-    setAnimation
+    setAnimation,
+    syncTimeout
 } = U;
 
 var H = Highcharts,
@@ -710,7 +711,7 @@ Highcharts.Legend.prototype = {
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart.time) :
+                H.format(options.labelFormat, item, this.chart) :
                 (options.labelFormatter as any).call(item)
         });
     },
@@ -971,7 +972,7 @@ Highcharts.Legend.prototype = {
             // defaults to false.
             if (series && pick(
                 seriesOptions.showInLegend,
-                !defined(seriesOptions.linkedTo) ? undefined : false, true
+                !defined(seriesOptions.linkedTo) ? void 0 : false, true
             )) {
 
                 // Use points or series for the legend item depending on
@@ -1542,7 +1543,8 @@ Highcharts.Legend.prototype = {
         scrollBy: number,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
-        var pages = this.pages,
+        var chart = this.chart,
+            pages = this.pages,
             pageCount = pages.length,
             currentPage = (this.currentPage as any) + scrollBy,
             clipHeight = this.clipHeight,
@@ -1557,8 +1559,8 @@ Highcharts.Legend.prototype = {
 
         if (currentPage > 0) {
 
-            if (animation !== undefined) {
-                setAnimation(animation, this.chart);
+            if (typeof animation !== 'undefined') {
+                setAnimation(animation, chart);
             }
 
             (this.nav as any).attr({
@@ -1589,7 +1591,7 @@ Highcharts.Legend.prototype = {
                 });
             }, this);
 
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 (this.up as any)
                     .attr({
                         fill: currentPage === 1 ?
@@ -1622,8 +1624,15 @@ Highcharts.Legend.prototype = {
 
             this.currentPage = currentPage;
             this.positionCheckboxes();
-        }
 
+            // Fire event after scroll animation is complete
+            const animOptions = H.animObject(
+                pick(animation, chart.renderer.globalAnimation, true)
+            );
+            syncTimeout((): void => {
+                fireEvent(this, 'afterScroll', { currentPage });
+            }, animOptions.duration || 0);
+        }
     }
 
 } as any;

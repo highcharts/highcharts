@@ -171,6 +171,8 @@ if (!defaultOptions.navigation) {
 merge(true, defaultOptions.navigation, {
     /**
      * @optionparent navigation.buttonOptions
+     *
+     * @private
      */
     buttonOptions: {
         theme: {},
@@ -1102,8 +1104,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     axis.userOptions.internalKey;
             }), extremes = axis.getExtremes(), userMin = extremes.userMin, userMax = extremes.userMax;
             if (axisCopy &&
-                ((userMin !== undefined && userMin !== axisCopy.min) ||
-                    (userMax !== undefined && userMax !== axisCopy.max))) {
+                ((typeof userMin !== 'undefined' &&
+                    userMin !== axisCopy.min) || (typeof userMax !== 'undefined' &&
+                    userMax !== axisCopy.max))) {
                 axisCopy.setExtremes(userMin, userMax, true, false);
             }
         });
@@ -1254,10 +1257,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (handleMaxWidth) {
             resetParams = [
                 chart.options.chart.width,
-                undefined,
+                void 0,
                 false
             ];
-            chart.setSize(printMaxWidth, undefined, false);
+            chart.setSize(printMaxWidth, void 0, false);
         }
         // hide all body content
         [].forEach.call(childNodes, function (node, i) {
@@ -1327,7 +1330,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     padding: menuPadding + 'px',
                     pointerEvents: 'auto'
                 }, chart.fixedDiv || chart.container);
-            innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+            innerMenu = createElement('ul', { className: 'highcharts-menu' }, {
+                listStyle: 'none',
+                margin: 0,
+                padding: 0
+            }, menu);
             // Presentational CSS
             if (!chart.styledMode) {
                 css(innerMenu, extend({
@@ -1376,7 +1383,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         element = createElement('hr', null, null, innerMenu);
                     }
                     else {
-                        element = createElement('div', {
+                        element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e) {
                                 if (e) { // IE7

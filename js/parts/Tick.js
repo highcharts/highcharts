@@ -26,7 +26,7 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 var fireEvent = H.fireEvent, merge = H.merge, deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -261,7 +261,7 @@ H.Tick.prototype = {
             y = inverted ?
                 (reversed ? axis.width + axis.top : axis.top) :
                 label.xy.y;
-            label.animate({ x: x, y: y, opacity: 0 }, undefined, label.destroy);
+            label.animate({ x: x, y: y, opacity: 0 }, void 0, label.destroy);
             delete tick.label;
         }
         axis.isDirty = true;
@@ -397,7 +397,7 @@ H.Tick.prototype = {
                     axis.transB)
         };
         // Chrome workaround for #10516
-        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+        pos.y = clamp(pos.y, -1e5, 1e5);
         fireEvent(this, 'afterGetPosition', { pos: pos });
         return pos;
     },

@@ -33,6 +33,7 @@ declare global {
         }
         interface NodesPointOptions extends PointOptionsObject {
             id?: string;
+            level?: number;
             mass?: number;
             outgoing?: boolean;
             weight?: (number|null);
@@ -220,7 +221,7 @@ H.NodesMixin = {
         this.nodes.forEach(function (node: Highcharts.NodesPoint): void {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
-            node.level = undefined;
+            node.level = node.options.level;
         });
 
         // Create the node list and set up links

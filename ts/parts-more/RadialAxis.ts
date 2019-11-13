@@ -293,7 +293,7 @@ radialAxisMixin = {
             r = pick(radius, center[2] / 2 - this.offset),
             path: Highcharts.RadialAxisPath;
 
-        if (this.isCircular || radius !== undefined) {
+        if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(
                 this.left + center[0],
                 this.top + center[1],
@@ -374,7 +374,7 @@ radialAxisMixin = {
         // point from overlapping the first.
         this.autoConnect = (
             this.isCircular &&
-            pick(this.userMax, this.options.max) === undefined &&
+            typeof pick(this.userMax, this.options.max) === 'undefined' &&
             correctFloat(this.endAngleRad - this.startAngleRad) ===
             correctFloat(2 * Math.PI)
         );
@@ -844,7 +844,7 @@ addEvent(Axis as any, 'autoLabelAlign', function (
     e: (Event & { align?: string })
 ): void {
     if (this.isRadial) {
-        e.align = undefined;
+        e.align = void 0;
         e.preventDefault();
     }
 });

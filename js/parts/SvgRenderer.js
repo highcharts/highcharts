@@ -480,7 +480,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             animate(this, params, animOptions);
         }
         else {
-            this.attr(params, undefined, complete);
+            this.attr(params, void 0, complete);
             // Call the end step synchronously
             objectEach(params, function (val, prop) {
                 if (animOptions.step) {
@@ -774,7 +774,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     attr: function (hash, val, complete, continueAnimation) {
         var key, element = this.element, hasSetSymbolSize, ret = this, skipAttr, setter, symbolCustomAttribs = this.symbolCustomAttribs;
         // single key-value pair
-        if (typeof hash === 'string' && val !== undefined) {
+        if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
             hash[key] = val;
@@ -1640,7 +1640,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         // mark as inverted
         this.parentInverted = parent && parent.inverted;
         // build formatted text
-        if (this.textStr !== undefined) {
+        if (typeof this.textStr !== 'undefined') {
             renderer.buildText(this);
         }
         // Mark as added
@@ -1743,7 +1743,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Delete all properties
             delete wrapper[key];
         });
-        return undefined;
+        return;
     },
     /**
      * Add a shadow to the element. Must be called after the element is added to
@@ -1828,7 +1828,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         (this.shadows || []).forEach(function (shadow) {
             this.safeRemoveChild(shadow);
         }, this);
-        this.shadows = undefined;
+        this.shadows = void 0;
     },
     /**
      * @private
@@ -2710,7 +2710,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
             var end = concatenatedEnd || charEnd;
-            if (lengths[end] === undefined) {
+            if (typeof lengths[end] === 'undefined') {
                 // Modern browsers
                 if (tspan.getSubStringLength) {
                     // Fails with DOM exception on unit-tests/legend/members
@@ -2976,7 +2976,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                     lineNo ||
                                     words.length > 1), wrapLineNo = 0, dy = getLineHeight(tspan);
                                 if (ellipsis) {
-                                    truncated = renderer.truncate(wrapper, tspan, span, undefined, 0, 
+                                    truncated = renderer.truncate(wrapper, tspan, span, void 0, 0, 
                                     // Target width
                                     Math.max(0, 
                                     // Substract the font face to make
@@ -3308,7 +3308,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     circle: function (x, y, r) {
         var attribs = (isObject(x) ?
             x :
-            x === undefined ? {} : { x: x, y: y, r: r }), wrapper = this.createElement('circle');
+            typeof x === 'undefined' ? {} : { x: x, y: y, r: r }), wrapper = this.createElement('circle');
         // Setting x or y translates to cx and cy
         wrapper.xSetter = wrapper.ySetter = function (value, key, element) {
             element.setAttribute('c' + key, value);
@@ -3425,7 +3425,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         r = isObject(x) ? x.r : r;
         var wrapper = this.createElement('rect'), attribs = isObject(x) ?
             x :
-            x === undefined ?
+            typeof x === 'undefined' ?
                 {} :
                 {
                     x: x,
@@ -3434,7 +3434,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     height: Math.max(height, 0)
                 };
         if (!this.styledMode) {
-            if (strokeWidth !== undefined) {
+            if (typeof strokeWidth !== 'undefined') {
                 attribs.strokeWidth = strokeWidth;
                 attribs = wrapper.crisp(attribs);
             }
@@ -3489,7 +3489,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         this.attr('height')
                 });
             },
-            duration: pick(animate, true) ? undefined : 0
+            duration: pick(animate, true) ? void 0 : 0
         });
         while (i--) {
             alignedObjects[i].align();
@@ -4129,7 +4129,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((width === undefined || height === undefined || textAlign) &&
+            bBox = ((typeof width === 'undefined' ||
+                typeof height === 'undefined' ||
+                textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()); // #3295 && 3514 box failure when string equals 0
             wrapper.width = ((width || bBox.width || 0) +
@@ -4188,7 +4190,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     bBox = text.getBBox(true);
                     updateBoxSize();
                 }
-                if (textY !== undefined) {
+                if (typeof textY !== 'undefined') {
                     text.attr('y', textY);
                 }
             }
@@ -4270,7 +4272,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         };
         // apply these to the box and the text alike
         wrapper.textSetter = function (value) {
-            if (value !== undefined) {
+            if (typeof value !== 'undefined') {
                 // Must use .attr to ensure transforms are done (#10009)
                 text.attr({
                     text: value
@@ -4343,7 +4345,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     // (#537)
                     styles = merge(styles);
                     wrapper.textProps.forEach(function (prop) {
-                        if (styles[prop] !== undefined) {
+                        if (typeof styles[prop] !== 'undefined') {
                             textStyles[prop] = styles[prop];
                             delete styles[prop];
                         }
