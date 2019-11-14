@@ -832,7 +832,9 @@ null,
      */
     /**
      * The color for the parts of the graph or points that are below the
-     * [threshold](#plotOptions.series.threshold).
+     * [threshold](#plotOptions.series.threshold). Note that `zones` takes
+     * precedence over the negative color. Using `negativeColor` is
+     * equivalent to applying a zone with value of 0.
      *
      * @see In styled mode, a negative color is applied by setting this option
      *      to `true` combined with the `.highcharts-negative` class name.
