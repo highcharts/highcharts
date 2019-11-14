@@ -1,4 +1,4 @@
-Highcharts.getJSON('http://utils.highcharts.local/samples/data/european-train-stations-near-airports.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json', function (data) {
     Highcharts.mapChart('container', {
         chart: {
             map: 'custom/europe'
