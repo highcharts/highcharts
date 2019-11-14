@@ -5425,7 +5425,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair: function (e, point) {
-        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross;
+        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
@@ -5456,13 +5456,25 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     this.len - point.plotY);
             }
             if (defined(pos)) {
-                path = this.getPlotLinePath({
+                crossOptions = {
                     // value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
                         pick(point.stackY, point.y)),
                     translatedValue: pos
-                }) || null; // #3189
+                };
+                if (this.chart.polar) {
+                    // Additional information required for crosshairs in
+                    // polar chart
+                    extend(crossOptions, {
+                        isCrosshair: true,
+                        chartX: e.chartX,
+                        chartY: e.chartY,
+                        point: point
+                    });
+                }
+                path = this.getPlotLinePath(crossOptions) ||
+                    null; // #3189
             }
             if (!defined(path)) {
                 this.hideCrosshair();

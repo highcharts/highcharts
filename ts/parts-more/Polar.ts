@@ -56,6 +56,7 @@ declare global {
             points: Array<PolarPoint>;
             preventPostTranslate?: boolean;
             thresholdAngleRad: number;
+            translatedThreshold?: number;
             animate(init?: boolean): void;
             searchPoint: (
                 PolarSeries['kdByAngle'] extends true ?
@@ -515,7 +516,7 @@ var polarAnimate = function (
         if (this.isRadialBar) {
             if (!init) {
                 // Run the pie animation for radial bars
-                this.startAngleRad = pick(this.thresholdAngleRad,
+                this.startAngleRad = pick(this.translatedThreshold,
                     this.xAxis.startAngleRad);
                 H.seriesTypes.pie.prototype.animate.call(this, init);
             }
@@ -623,10 +624,12 @@ if (seriesTypes.column) {
             chart = series.chart,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
+            reversed = yAxis.reversed,
             center = xAxis.center,
             startAngleRad = xAxis.startAngleRad,
+            endAngleRad = xAxis.endAngleRad,
+            visibleRange = endAngleRad - startAngleRad,
             thresholdAngleRad = startAngleRad,
-            fullCircle = 2 * Math.PI,
             start: (number|undefined),
             points: Array<Highcharts.ColumnPoint>,
             point: Highcharts.ColumnPoint,
@@ -654,6 +657,25 @@ if (seriesTypes.column) {
         if (xAxis.isRadial) {
             points = series.points;
             i = points.length;
+            yMin = yAxis.translate(yAxis.min as any);
+            yMax = yAxis.translate(yAxis.max as any);
+
+            // Finding a correct threshold
+            if (chart.inverted && H.isNumber(threshold)) {
+                (thresholdAngleRad as any) = yAxis.translate(threshold);
+
+                // Checks if threshold is outside the visible range
+                if (thresholdAngleRad < 0) {
+                    thresholdAngleRad = 0;
+                } else if (thresholdAngleRad > visibleRange) {
+                    thresholdAngleRad = visibleRange;
+                }
+
+                // Adding start angle offset
+                series.translatedThreshold =
+                    thresholdAngleRad + startAngleRad;
+            }
+
             while (i--) {
                 point = points[i];
                 point.shapeType = 'path';
@@ -685,80 +707,51 @@ if (seriesTypes.column) {
                                 // range, set it to 0
                                 if ((start as any) < 0) {
                                     start = 0;
+                                } else if ((start as any) > visibleRange) {
+                                    start = visibleRange;
                                 }
                             }
                         }
                     } else {
-                        // Calculating starting and ending angles for
-                        // inverted polar bars
-                        start = 0;
+                        // Initial start and end angles for radial bar
+                        start = thresholdAngleRad;
                         end = point.plotY;
                     }
 
-                    // Prevent from rendering point outside acceptable
-                    // circle range
                     if ((start as any) > (end as any)) {
-                        yMin = yAxis.translate((yAxis.min as any));
-                        yMax = yAxis.translate((yAxis.max as any));
+                        [start, end] = [end, start];
+                    }
 
-                        if (!yAxis.reversed) {
-                            if ((start as any) < (yMin as any)) {
-                                start = end = 0;
-                            } else if ((end as any) < (yMin as any)) {
-                                end = yMin;
-                            }
-                        } else {
-                            if ((start as any) < (yMax as any)) {
-                                start = end = 0;
-                            } else if ((end as any) < (yMax as any)) {
-                                end = yMax;
-                            }
+                    // Prevent from rendering point outside the
+                    // acceptable circular range
+                    if (!reversed) {
+                        if ((start as any) < (yMin as any)) {
+                            start = yMin;
+                        } else if ((end as any) > (yMax as any)) {
+                            end = yMax;
+                        } else if ((end as any) < (yMin as any) ||
+                            (start as any) > (yMax as any)) {
+                            start = end = 0;
+                        }
+                    } else {
+                        if ((end as any) > (yMin as any)) {
+                            end = yMin;
+                        } else if ((start as any) < (yMax as any)) {
+                            start = yMax;
+                        } else if ((start as any) > (yMin as any) ||
+                            (end as any) < (yMax as any)) {
+                            start = end = visibleRange;
                         }
                     }
 
-                    // Including threshold
-                    if (H.isNumber(threshold)) {
-                        (thresholdAngleRad as any) =
-                            yAxis.translate(threshold);
-
-                        // Checks if threshold is outside the visible
-                        // range (whether yAxis is reversed or not
-                        if (thresholdAngleRad < 0) {
-                            thresholdAngleRad = 0;
-                        } else if (thresholdAngleRad > fullCircle) {
-                            thresholdAngleRad = fullCircle;
-                        }
-
-                        // Calculates offset for point's start angle
-                        series.translatedThreshold =
-                            series.thresholdAngleRad =
-                            (thresholdAngleRad += xAxis.startAngleRad);
-                    }
-
-                    // Don't allow to be higher than the 360 degrees
-                    start = ((start as any) > (fullCircle as any) ?
-                        (fullCircle as any) : start) + (stacking ?
-                        startAngleRad : thresholdAngleRad);
-                    end = ((end as any) > (fullCircle as any) ?
-                        (fullCircle as any) : end) + startAngleRad;
+                    (start as any) += startAngleRad;
+                    (end as any) += startAngleRad;
 
                     // In case when radius, inner radius or both are
                     // negative, a point is rendered but partially or as
                     // a center point
                     innerR = Math.max(barX, 0);
                     r = Math.max(barX + point.pointWidth, 0);
-
-                    // If points are out of the visible range or start
-                    // and end angles are the same, do not render them
-                    if ((yAxis.min as any) > series.dataMax ||
-                        (yAxis.min as any) > (yAxis.max as any) ||
-                        start === end) {
-                        start = end = series.translatedThreshold;
-                    } else if ((start as any) > end) {
-                        // Swap start and end in case of negatives values or
-                        // reversed axis
-                        [start, end] = [end, start];
-                    }
 
                     // Required for the pie animation
                     point.startR = r;
@@ -770,6 +763,12 @@ if (seriesTypes.column) {
                         start: start,
                         end: end
                     };
+
+                    // A correct value for stacked or not fully visible
+                    // point
+                    point.plotY = ((start as any) <
+                        (series.translatedThreshold as any) ?
+                        start : (end as any)) - startAngleRad;
 
                     if (!point.graphic) {
                         // The graphic cannot be added to a group here
@@ -816,10 +815,9 @@ if (seriesTypes.column) {
                 series.toXY(point);
 
                 if (chart.inverted) {
-                    tooltipPos = xAxis.postTranslate(
-                        (pointY > 0 ? end : start) - startAngleRad,
-                        point.barX + point.pointWidth / 2
-                    );
+                    tooltipPos = xAxis.postTranslate((point as any).rectPlotY,
+                        point.barX + point.pointWidth / 2);
+
                     point.tooltipPos = [
                         tooltipPos.x - chart.plotLeft,
                         tooltipPos.y - chart.plotTop
@@ -846,32 +844,73 @@ if (seriesTypes.column) {
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
     ): void {
+        var chart = this.chart,
+            inside = pick(options.inside, !!this.options.stacking),
+            angle,
+            align: Highcharts.AlignValue,
+            verticalAlign: Highcharts.VerticalAlignValue,
+            shapeArgs,
+            labelPos;
 
-        if (this.chart.polar) {
-            var angle = (point.rectPlotX as any) / Math.PI * 180,
-                align: Highcharts.AlignValue,
-                verticalAlign: Highcharts.VerticalAlignValue;
+        if (chart.polar) {
+            angle = (point as any).rectPlotX / Math.PI * 180;
 
-            // Align nicely outside the perimeter of the columns
-            if (options.align === null) {
-                if (angle > 20 && angle < 160) {
-                    align = 'left'; // right hemisphere
-                } else if (angle > 200 && angle < 340) {
-                    align = 'right'; // left hemisphere
-                } else {
-                    align = 'center'; // top or bottom
+            if (!chart.inverted) {
+                // Align nicely outside the perimeter of the columns
+                if (options.align === null) {
+                    if (angle > 20 && angle < 160) {
+                        align = 'left'; // right hemisphere
+                    } else if (angle > 200 && angle < 340) {
+                        align = 'right'; // left hemisphere
+                    } else {
+                        align = 'center'; // top or bottom
+                    }
+                    options.align = align;
                 }
-                options.align = align;
-            }
-            if (options.verticalAlign === null) {
-                if (angle < 45 || angle > 315) {
-                    verticalAlign = 'bottom'; // top part
-                } else if (angle > 135 && angle < 225) {
-                    verticalAlign = 'top'; // bottom part
-                } else {
-                    verticalAlign = 'middle'; // left or right
+                if (options.verticalAlign === null) {
+                    if (angle < 45 || angle > 315) {
+                        verticalAlign = 'bottom'; // top part
+                    } else if (angle > 135 && angle < 225) {
+                        verticalAlign = 'top'; // bottom part
+                    } else {
+                        verticalAlign = 'middle'; // left or right
+                    }
+                    options.verticalAlign = verticalAlign;
                 }
-                options.verticalAlign = verticalAlign;
+            } else { // Required corrections for data labels of inverted bars
+                // The plotX and plotY are correctly set therefore they
+                // don't need to be swapped (inverted argument is false)
+                this.forceDL = chart.isInsidePlot((point as any).plotX,
+                    Math.round((point as any).plotY), false);
+
+                // Checks if labels should be positioned inside
+                if (inside) {
+                    shapeArgs = point.shapeArgs;
+                    // Calculates pixel positions for a data label to be
+                    // inside
+                    labelPos = (this as any).xAxis.postTranslate(
+                        // angle
+                        ((shapeArgs as any).start +
+                        (shapeArgs as any).end) / 2 -
+                        (this as any).xAxis.startAngleRad,
+                        // radius
+                        point.barX + point.pointWidth / 2
+                    );
+
+                    (alignTo as any) = {
+                        x: labelPos.x - chart.plotLeft,
+                        y: labelPos.y - chart.plotTop
+                    };
+                } else {
+                    (alignTo as any) = {
+                        x: (point as any).tooltipPos[0],
+                        y: (point as any).tooltipPos[1]
+                    };
+                }
+
+                options.align = pick(options.align, 'center');
+                options.verticalAlign =
+                    pick(options.verticalAlign, 'middle');
             }
 
             seriesProto.alignDataLabel.call(
@@ -882,6 +921,14 @@ if (seriesTypes.column) {
                 alignTo,
                 isNew
             );
+
+            // Hide label of a point (only inverted) that is outside the
+            // visible y range
+            if (this.isRadialBar &&
+                (point as any).shapeArgs.start ===
+                (point as any).shapeArgs.end) {
+                dataLabel.hide(true);
+            }
         } else {
             proceed.call(this, point, dataLabel, options, alignTo, isNew);
         }

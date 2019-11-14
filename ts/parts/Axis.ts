@@ -7230,7 +7230,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             snap = pick((options as any).snap, true),
             pos,
             categorized,
-            graphic = this.cross;
+            graphic = this.cross,
+            crossOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7270,16 +7271,27 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
 
             if (defined(pos)) {
-                path = this.getPlotLinePath(
-                    {
-                        // value, only used on radial
-                        value: point && (this.isXAxis ?
-                            point.x :
-                            pick(point.stackY, point.y)
-                        ) as any,
-                        translatedValue: pos
-                    }
-                ) || null; // #3189
+                crossOptions = {
+                    // value, only used on radial
+                    value: point && (this.isXAxis ?
+                        point.x :
+                        pick(point.stackY, point.y)),
+                    translatedValue: pos
+                };
+
+                if (this.chart.polar) {
+                    // Additional information required for crosshairs in
+                    // polar chart
+                    extend(crossOptions, {
+                        isCrosshair: true,
+                        chartX: (e as any).chartX,
+                        chartY: (e as any).chartY,
+                        point: point
+                    });
+                }
+
+                path = this.getPlotLinePath(crossOptions as any) ||
+                    null; // #3189
             }
 
             if (!defined(path)) {

@@ -37,6 +37,10 @@ declare global {
         }
         interface AxisPlotLinesOptions {
             reverse?: boolean;
+            isCrosshair?: boolean;
+            chartX?: number;
+            chartY?: number;
+            point?: object;
         }
         interface Chart {
             inverted?: boolean;
@@ -631,7 +635,46 @@ radialAxisMixin = {
             otherAxis: (Highcharts.RadialAxis|undefined),
             xy,
             tickPositions,
-            ret: Highcharts.SVGPathArray;
+            ret: Highcharts.SVGPathArray,
+            shapeArgs;
+
+        // Crosshair logic
+        if (options.isCrosshair) {
+            if (axis.isCircular) {
+                if (!H.defined(value)) {
+                    // When the snap is set to false
+                    (x2 as any) = options.chartX;
+                    (y2 as any) = options.chartY;
+                    value = axis.translate(
+                        Math.atan2(y2 - y1, x2 - x1) -
+                        axis.startAngleRad, true);
+                } else {
+                    // When the snap is set to true
+                    shapeArgs = (options as any).point.shapeArgs;
+                    if (shapeArgs.start) {
+                        // Find a true value of the point based on the
+                        // angle
+                        value = axis.translate(
+                            (options as any).point.rectPlotY, true);
+                    }
+                }
+                end = axis.getPosition(value as any);
+                x2 = end.x;
+                y2 = end.y;
+            } else {
+                if (!H.defined(value)) {
+                    (x2 as any) = options.chartX;
+                    (y2 as any) = options.chartY;
+                }
+
+                // Calculate radius of non-circular axis' crosshair
+                value = axis.translate(Math.min(
+                    Math.sqrt(
+                        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
+                    ), axis.len
+                ), true);
+            }
+        }
 
         // Spokes
         if (axis.isCircular) {
@@ -655,48 +698,57 @@ radialAxisMixin = {
                 x2 - (1 - b) * (x2 - x1),
                 y2 + (1 - b) * (y1 - y2)
             ];
-
-        // Concentric circles
-        } else if (axis.options.gridLineInterpolation === 'circle') {
+            // Concentric circles
+        } else {
+            // Pick the right values depending if it is grid line or
+            // crosshair
             value = axis.translate(value as any);
 
             // This is required in case when xAxis is non-circular to
-            // prevent grid lines from rendering above the center after
-            // they supposed to be displayed below the center point
-            if (((value as any) < 0 || (value as any) > axis.height) &&
-                inverted) {
+            // prevent grid lines (or crosshair if enabled) from
+            // rendering above the center after they supposed to be
+            // displayed below the center point
+            if (!options.isCrosshair &&
+                (value as any < 0 || value as any > axis.height) && inverted) {
                 value = 0;
             }
 
-            // a value of 0 is in the center, so it won't be visible,
-            // but draw it anyway for update and animation (#2366)
-            ret = axis.getLinePath(0, value);
-        // Concentric polygons
-        } else {
-            // Find the other axis (the circular one) in the same pane
-            chart[inverted ? 'yAxis' : 'xAxis'].forEach(
-                function (a: Highcharts.Axis): void {
-                    if (a.pane === axis.pane) {
-                        otherAxis = a as Highcharts.RadialAxis;
-                    }
+            if (axis.options.gridLineInterpolation === 'circle') {
+                // A value of 0 is in the center, so it won't be
+                // visible, but draw it anyway for update and animation
+                // (#2366)
+                ret = axis.getLinePath(0, value);
+                // Concentric polygons
+            } else {
+                // Find the other axis (a circular one) in the same pane
+                chart[inverted ? 'yAxis' : 'xAxis'].forEach(
+                    function (a): void {
+                        if (a.pane === axis.pane) {
+                            otherAxis = a as Highcharts.RadialAxis;
+                        }
+                    });
+
+                ret = [];
+                tickPositions =
+                    (otherAxis as any).tickPositions;
+
+                if ((otherAxis as any).autoConnect) {
+                    tickPositions =
+                        tickPositions.concat([tickPositions[0]]);
+                }
+
+                // Reverse the positions for concatenation of polygonal
+                // plot bands
+                if (reverse) {
+                    tickPositions = [].concat(tickPositions).reverse();
+                }
+
+                tickPositions.forEach(function (pos: number, i: number): void {
+                    xy = (otherAxis as Highcharts.RadialAxis)
+                        .getPosition(pos, value);
+                    ret.push(i ? 'L' : 'M', xy.x, xy.y);
                 });
-
-            ret = [];
-            value = axis.translate(value as any);
-            tickPositions = (otherAxis as any).tickPositions;
-
-            if ((otherAxis as any).autoConnect) {
-                tickPositions = tickPositions.concat([tickPositions[0]]);
             }
-            // Reverse the positions for concatenation of polygonal plot
-            // bands
-            if (reverse) {
-                tickPositions = [].concat(tickPositions).reverse();
-            }
-            tickPositions.forEach(function (pos: number, i: number): void {
-                xy = (otherAxis as any).getPosition(pos, value);
-                ret.push(i ? 'L' : 'M', xy.x, xy.y);
-            });
         }
 
         return ret;
@@ -821,6 +873,11 @@ addEvent(Axis as any, 'init', function (
         // and label
         if (!isCircular) {
             this.defaultRadialOptions.minPadding = 0;
+        }
+
+        if (inverted && coll === 'yAxis') {
+            this.defaultRadialOptions.stackLabels =
+                this.defaultYAxisOptions.stackLabels;
         }
     }
 

@@ -341,7 +341,39 @@ radialAxisMixin = {
         var axis = this, center = axis.center, chart = axis.chart, inverted = chart.inverted, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
             (axis.pane.options.background[0] ||
                 axis.pane.options.background) :
-            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, otherAxis, xy, tickPositions, ret;
+            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, otherAxis, xy, tickPositions, ret, shapeArgs;
+        // Crosshair logic
+        if (options.isCrosshair) {
+            if (axis.isCircular) {
+                if (!H.defined(value)) {
+                    // When the snap is set to false
+                    x2 = options.chartX;
+                    y2 = options.chartY;
+                    value = axis.translate(Math.atan2(y2 - y1, x2 - x1) -
+                        axis.startAngleRad, true);
+                }
+                else {
+                    // When the snap is set to true
+                    shapeArgs = options.point.shapeArgs;
+                    if (shapeArgs.start) {
+                        // Find a true value of the point based on the
+                        // angle
+                        value = axis.translate(options.point.rectPlotY, true);
+                    }
+                }
+                end = axis.getPosition(value);
+                x2 = end.x;
+                y2 = end.y;
+            }
+            else {
+                if (!H.defined(value)) {
+                    x2 = options.chartX;
+                    y2 = options.chartY;
+                }
+                // Calculate radius of non-circular axis' crosshair
+                value = axis.translate(Math.min(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)), axis.len), true);
+            }
+        }
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
@@ -360,42 +392,50 @@ radialAxisMixin = {
             ];
             // Concentric circles
         }
-        else if (axis.options.gridLineInterpolation === 'circle') {
+        else {
+            // Pick the right values depending if it is grid line or
+            // crosshair
             value = axis.translate(value);
             // This is required in case when xAxis is non-circular to
-            // prevent grid lines from rendering above the center after
-            // they supposed to be displayed below the center point
-            if ((value < 0 || value > axis.height) &&
-                inverted) {
+            // prevent grid lines (or crosshair if enabled) from
+            // rendering above the center after they supposed to be
+            // displayed below the center point
+            if (!options.isCrosshair &&
+                (value < 0 || value > axis.height) && inverted) {
                 value = 0;
             }
-            // a value of 0 is in the center, so it won't be visible,
-            // but draw it anyway for update and animation (#2366)
-            ret = axis.getLinePath(0, value);
-            // Concentric polygons
-        }
-        else {
-            // Find the other axis (the circular one) in the same pane
-            chart[inverted ? 'yAxis' : 'xAxis'].forEach(function (a) {
-                if (a.pane === axis.pane) {
-                    otherAxis = a;
+            if (axis.options.gridLineInterpolation === 'circle') {
+                // A value of 0 is in the center, so it won't be
+                // visible, but draw it anyway for update and animation
+                // (#2366)
+                ret = axis.getLinePath(0, value);
+                // Concentric polygons
+            }
+            else {
+                // Find the other axis (a circular one) in the same pane
+                chart[inverted ? 'yAxis' : 'xAxis'].forEach(function (a) {
+                    if (a.pane === axis.pane) {
+                        otherAxis = a;
+                    }
+                });
+                ret = [];
+                tickPositions =
+                    otherAxis.tickPositions;
+                if (otherAxis.autoConnect) {
+                    tickPositions =
+                        tickPositions.concat([tickPositions[0]]);
                 }
-            });
-            ret = [];
-            value = axis.translate(value);
-            tickPositions = otherAxis.tickPositions;
-            if (otherAxis.autoConnect) {
-                tickPositions = tickPositions.concat([tickPositions[0]]);
+                // Reverse the positions for concatenation of polygonal
+                // plot bands
+                if (reverse) {
+                    tickPositions = [].concat(tickPositions).reverse();
+                }
+                tickPositions.forEach(function (pos, i) {
+                    xy = otherAxis
+                        .getPosition(pos, value);
+                    ret.push(i ? 'L' : 'M', xy.x, xy.y);
+                });
             }
-            // Reverse the positions for concatenation of polygonal plot
-            // bands
-            if (reverse) {
-                tickPositions = [].concat(tickPositions).reverse();
-            }
-            tickPositions.forEach(function (pos, i) {
-                xy = otherAxis.getPosition(pos, value);
-                ret.push(i ? 'L' : 'M', xy.x, xy.y);
-            });
         }
         return ret;
     },
@@ -471,6 +511,10 @@ addEvent(Axis, 'init', function (e) {
         // and label
         if (!isCircular) {
             this.defaultRadialOptions.minPadding = 0;
+        }
+        if (inverted && coll === 'yAxis') {
+            this.defaultRadialOptions.stackLabels =
+                this.defaultYAxisOptions.stackLabels;
         }
     }
     // Disable certain features on angular and polar axes
