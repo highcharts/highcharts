@@ -10,6 +10,7 @@ const argv = require('yargs').argv;
 const { getFilesChanged } = require('./lib/git');
 const { uploadFiles } = require('./lib/uploadS3');
 
+const DEFAULT_PR_ASSET_S3_BASEPATH = 'visualtests/diffs/pullrequests';
 const DEFAULT_COMMENT_MATCH = '## Visual test results';
 const DEFAULT_OPTIONS = {
     method: 'GET',
@@ -197,7 +198,7 @@ function createTemplateForChangeSamples() {
 
 /* eslint-disable require-jsdoc */
 function buildImgS3Path(filename, sample, pr) {
-    return `highcharts/pr-diffs/${pr}/${sample}/${filename}`;
+    return `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${sample}/${filename}`;
 }
 
 function buildImgURL(filename, sample, pr) {
@@ -211,8 +212,8 @@ function buildImgMarkdownLinks(sample, pr) {
 /* eslint-enable require-jsdoc */
 
 /**
- * Using a list of diffing samples (visual test differences) this
- * function uploads the reference/candidate/diff images that are produced
+ * Based on a list of diffing samples (that contain visual test differences compared to a baseline/reference)
+ * this function uploads the reference/candidate/diff images + JSON report that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
  * @param {string} pr number to upload for
@@ -235,6 +236,11 @@ function uploadVisualTestDiffImages(diffingSamples = [], pr) {
             });
             return resultingFiles;
         }, []);
+
+        files.push({
+            from: 'test/visual-test-results.json',
+            to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/visual-test-results.json`
+        });
 
         uploadFiles({ files, bucket: PR_IMAGEDIFF_BUCKET, name: `image diff on PR #${pr}` })
             .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
