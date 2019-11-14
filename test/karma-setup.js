@@ -565,7 +565,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {
-            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/test/visualtests/reference/latest/' + path + '/reference.svg';
+            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/visualtests/reference/latest/' + path + '/reference.svg';
         }
         xhrLoad(url, function onXHRDone(xhr) {
             if (xhr.status == 200) {
