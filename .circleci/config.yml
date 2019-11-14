@@ -147,11 +147,11 @@ jobs:
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing latest references in S3 location
+          to: 's3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/' # delete existing latest references in S3 location
           overwrite: true
       - run:
           name: "Upload test results"
-          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
           when: always
       - <<: *persist_workspace
 
@@ -194,7 +194,7 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
       - run:
-          name: Comment on PR
+          name: Comment on PR and upload visual test images if any produced
           command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
           when: always
       - run:
@@ -223,14 +223,14 @@ jobs:
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
       - generate_references_command
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
-          from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          from: "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/"
           to: "samples/"
           arguments: |
             --exclude "*" \
             --include "*/reference.svg"
       - run:
           name: "Upload old and any new reference images"
-          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
@@ -264,7 +264,7 @@ jobs:
             find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
       - run:
           name: "Upload visual test candidates and diff assets"
-          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
           when: always
 
   build_dist:
