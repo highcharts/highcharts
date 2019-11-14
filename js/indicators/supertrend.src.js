@@ -162,16 +162,16 @@ H.seriesType('supertrend', 'sma',
             top: {
                 styles: {
                     lineWidth: indicOptions.lineWidth,
-                    lineColor: (indicOptions.color ||
-                        indicOptions.fallingTrendColor),
+                    lineColor: (indicOptions.fallingTrendColor ||
+                        indicOptions.color),
                     dashStyle: indicOptions.dashStyle
                 }
             },
             bottom: {
                 styles: {
                     lineWidth: indicOptions.lineWidth,
-                    lineColor: (indicOptions.color ||
-                        indicOptions.risingTrendColor),
+                    lineColor: (indicOptions.risingTrendColor ||
+                        indicOptions.color),
                     dashStyle: indicOptions.dashStyle
                 }
             },
@@ -257,14 +257,14 @@ H.seriesType('supertrend', 'sma',
                 };
                 if (point.y >= mainPoint.close &&
                     nextPoint.y >= nextMainPoint.close) {
-                    point.color = (pointColor || indicOptions.color ||
-                        indicOptions.fallingTrendColor);
+                    point.color = (pointColor || indicOptions.fallingTrendColor ||
+                        indicOptions.color);
                     groupedPoitns.top.push(newPoint);
                 }
                 else if (point.y < mainPoint.close &&
                     nextPoint.y < nextMainPoint.close) {
-                    point.color = (pointColor || indicOptions.color ||
-                        indicOptions.risingTrendColor);
+                    point.color = (pointColor || indicOptions.risingTrendColor ||
+                        indicOptions.color);
                     groupedPoitns.bottom.push(newPoint);
                 }
                 else {
@@ -276,10 +276,10 @@ H.seriesType('supertrend', 'sma',
                     }));
                     if (point.y >= mainPoint.close &&
                         nextPoint.y < nextMainPoint.close) {
-                        point.color = (pointColor || indicOptions.color ||
-                            indicOptions.fallingTrendColor);
-                        nextPoint.color = (pointColor || indicOptions.color ||
-                            indicOptions.risingTrendColor);
+                        point.color = (pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color);
+                        nextPoint.color = (pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color);
                         groupedPoitns.top.push(newPoint);
                         groupedPoitns.top.push(merge(newNextPoint, {
                             isNull: true
@@ -287,10 +287,10 @@ H.seriesType('supertrend', 'sma',
                     }
                     else if (point.y < mainPoint.close &&
                         nextPoint.y >= nextMainPoint.close) {
-                        point.color = (pointColor || indicOptions.color ||
-                            indicOptions.risingTrendColor);
-                        nextPoint.color = (pointColor || indicOptions.color ||
-                            indicOptions.fallingTrendColor);
+                        point.color = (pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color);
+                        nextPoint.color = (pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color);
                         groupedPoitns.bottom.push(newPoint);
                         groupedPoitns.bottom.push(merge(newNextPoint, {
                             isNull: true
@@ -300,13 +300,13 @@ H.seriesType('supertrend', 'sma',
             }
             else if (mainPoint) {
                 if (point.y >= mainPoint.close) {
-                    point.color = (pointColor || indicOptions.color ||
-                        indicOptions.fallingTrendColor);
+                    point.color = (pointColor || indicOptions.fallingTrendColor ||
+                        indicOptions.color);
                     groupedPoitns.top.push(newPoint);
                 }
                 else {
-                    point.color = (pointColor || indicOptions.color ||
-                        indicOptions.risingTrendColor);
+                    point.color = (pointColor || indicOptions.risingTrendColor ||
+                        indicOptions.color);
                     groupedPoitns.bottom.push(newPoint);
                 }
             }
