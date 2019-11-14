@@ -282,8 +282,8 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                         styles: {
                             lineWidth: indicOptions.lineWidth,
                             lineColor: (
-                                indicOptions.color ||
-                                indicOptions.fallingTrendColor
+                                indicOptions.fallingTrendColor ||
+                                indicOptions.color
                             ),
                             dashStyle: indicOptions.dashStyle
                         }
@@ -292,8 +292,8 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                         styles: {
                             lineWidth: indicOptions.lineWidth,
                             lineColor: (
-                                indicOptions.color ||
-                                indicOptions.risingTrendColor
+                                indicOptions.risingTrendColor ||
+                                indicOptions.color
                             ),
                             dashStyle: indicOptions.dashStyle
                         }
@@ -418,8 +418,8 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                         nextPoint.y >= nextMainPoint.close
                     ) {
                         point.color = (
-                            pointColor || indicOptions.color ||
-                            indicOptions.fallingTrendColor
+                            pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color
                         );
                         groupedPoitns.top.push(newPoint);
 
@@ -428,8 +428,8 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                         nextPoint.y < nextMainPoint.close
                     ) {
                         point.color = (
-                            pointColor || indicOptions.color ||
-                            indicOptions.risingTrendColor
+                            pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color
                         );
                         groupedPoitns.bottom.push(newPoint);
 
@@ -447,12 +447,12 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                             nextPoint.y < nextMainPoint.close
                         ) {
                             point.color = (
-                                pointColor || indicOptions.color ||
-                                indicOptions.fallingTrendColor
+                                pointColor || indicOptions.fallingTrendColor ||
+                                indicOptions.color
                             );
                             nextPoint.color = (
-                                pointColor || indicOptions.color ||
-                                indicOptions.risingTrendColor
+                                pointColor || indicOptions.risingTrendColor ||
+                                indicOptions.color
                             );
                             groupedPoitns.top.push(newPoint);
                             groupedPoitns.top.push(merge(newNextPoint, {
@@ -463,12 +463,12 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                             nextPoint.y >= nextMainPoint.close
                         ) {
                             point.color = (
-                                pointColor || indicOptions.color ||
-                                indicOptions.risingTrendColor
+                                pointColor || indicOptions.risingTrendColor ||
+                                indicOptions.color
                             );
                             nextPoint.color = (
-                                pointColor || indicOptions.color ||
-                                indicOptions.fallingTrendColor
+                                pointColor || indicOptions.fallingTrendColor ||
+                                indicOptions.color
                             );
                             groupedPoitns.bottom.push(newPoint);
                             groupedPoitns.bottom.push(merge(newNextPoint, {
@@ -479,14 +479,14 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                 } else if (mainPoint) {
                     if (point.y >= mainPoint.close) {
                         point.color = (
-                            pointColor || indicOptions.color ||
-                            indicOptions.fallingTrendColor
+                            pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color
                         );
                         groupedPoitns.top.push(newPoint);
                     } else {
                         point.color = (
-                            pointColor || indicOptions.color ||
-                            indicOptions.risingTrendColor
+                            pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color
                         );
                         groupedPoitns.bottom.push(newPoint);
                     }
