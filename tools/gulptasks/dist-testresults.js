@@ -10,7 +10,8 @@ const SAMPLES_SRC_DIR = 'samples/**';
 const DESTINATION_DIR = 'test/visualtests';
 
 /**
- * Upload visual test results and assets to S3.
+ * Upload baseline/reference images and
+ * visual test results and assets to S3.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
@@ -27,13 +28,14 @@ function uploadVisualTestResults() {
     }
 
     if (argv.tag || argv.saveresetdate) {
+        // upload of baseline a.k.a reference images
         const latestReferenceImages = glob.sync(`${SAMPLES_SRC_DIR}/reference.svg`).map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/reference/latest/${[...file.split('/')].slice(1).join('/')}`
         }));
 
         if (!argv.saveresetdate) {
-            // upload reference images to folder named after tag
+            // upload baseline reference images to folder named after tag
             const referenceImages = glob.sync(`${SAMPLES_SRC_DIR}/reference.svg`).map(file => ({
                 from: file,
                 to: `${DESTINATION_DIR}/reference/${argv.tag}/${[...file.split('/')].slice(1).join('/')}`
@@ -53,7 +55,7 @@ function uploadVisualTestResults() {
         const latestReferences = Object.assign({}, defaultParams, { files: [...latestReferenceImages], name: 'Reference SVGs' });
         promises.push(uploadFiles(latestReferences));
     } else {
-        // upload to latest/ folder + date folder
+        // upload of nightly snapshots a.k.a candidates to latest/ folder + date folder
         const resultsJson = glob.sync('test/visual-test-results.json').map(file => ({
             from: file,
             to: `${DESTINATION_DIR}/diffs/latest/${[...file.split('/')].pop()}`
