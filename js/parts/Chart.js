@@ -522,6 +522,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Fire an event before redrawing series, used by the boost module to
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
+        if (chart.minColumnWidth) {
+            delete chart.minColumnWidth;
+        }
+        chart.series.forEach(function (series) {
+            var ignoreNulls = series.options.ignoreNulls;
+            if (series instanceof H.seriesTypes.column &&
+                ignoreNulls === 'evenlySpaced') {
+                series.findMinColumnWidth();
+            }
+        });
         // redraw affected series
         series.forEach(function (serie) {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
@@ -1591,9 +1601,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     renderSeries: function () {
-        this.series.forEach(function (serie) {
-            serie.translate();
-            serie.render();
+        this.series.forEach(function (series) {
+            var ignoreNulls = series.options.ignoreNulls;
+            if (series instanceof H.seriesTypes.column &&
+                ignoreNulls === 'evenlySpaced') {
+                series.findMinColumnWidth();
+            }
+        });
+        this.series.forEach(function (series) {
+            series.translate();
+            series.render();
         });
     },
     /**

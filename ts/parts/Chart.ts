@@ -92,6 +92,7 @@ declare global {
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
+            public minColumnWidth?: number;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
             public options: Options;
@@ -870,6 +871,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Fire an event before redrawing series, used by the boost module to
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
+
+        if (chart.minColumnWidth) {
+            delete chart.minColumnWidth;
+        }
+
+        chart.series.forEach(function (series: Highcharts.Series): void {
+            const ignoreNulls =
+                (series as Highcharts.ColumnSeries).options.ignoreNulls;
+
+            if (
+                series instanceof H.seriesTypes.column &&
+                ignoreNulls === 'evenlySpaced'
+            ) {
+                series.findMinColumnWidth();
+            }
+        });
 
         // redraw affected series
         series.forEach(function (serie: Highcharts.Series): void {
@@ -2318,9 +2335,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     renderSeries: function (this: Highcharts.Chart): void {
-        this.series.forEach(function (serie: Highcharts.Series): void {
-            serie.translate();
-            serie.render();
+        this.series.forEach(function (series: Highcharts.Series): void {
+            const ignoreNulls =
+                (series as Highcharts.ColumnSeries).options.ignoreNulls;
+
+            if (
+                series instanceof H.seriesTypes.column &&
+                ignoreNulls === 'evenlySpaced'
+            ) {
+                series.findMinColumnWidth();
+            }
+        });
+        this.series.forEach(function (series: Highcharts.Series): void {
+            series.translate();
+            series.render();
         });
     },
 

@@ -36,7 +36,7 @@ declare global {
             pointPadding?: number;
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
-            ignoreNulls?: boolean;
+            ignoreNulls?: boolean|string|undefined;
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -82,6 +82,7 @@ declare global {
             public points: Array<ColumnPoint>;
             public pointXOffset: number;
             public translatedThreshold?: number;
+            public findMinColumnWidth(): void;
             public crispCol(
                 x: number,
                 y: number,
@@ -618,7 +619,6 @@ seriesType<Highcharts.ColumnSeries>(
                 });
             }
         },
-
         /**
          * Return the width and x offset of the columns adjusted for grouping,
          * groupPadding, pointPadding, pointWidth etc.
@@ -641,11 +641,12 @@ seriesType<Highcharts.ColumnSeries>(
         },
         addPoint: function (this: Highcharts.ColumnSeries): void {
             const series = this,
+                ignoreNulls = series.options.ignoreNulls,
                 point = Highcharts.Point.prototype.optionsToObject.call(
                     { series: series }, arguments[0]
                 );
 
-            if (series.options.ignoreNulls) {
+            if (ignoreNulls) {
                 H.seriesTypes.column.prototype.dirtyTheSeries.call(
                     series, series, point
                 );
@@ -806,7 +807,28 @@ seriesType<Highcharts.ColumnSeries>(
             return series.columnMetrics;
 
         },
+        findMinColumnWidth: function (this: Highcharts.ColumnSeries): void {
+            const series = this,
+                chart = series.chart;
+            let colWidth;
 
+            Series.prototype.translate.apply(series);
+
+            if (series.index === series.chart.series.length - 1) {
+                series.chart.series.forEach((series): void => {
+                    series.points.forEach((point): void => {
+                        colWidth = (series as Highcharts.ColumnSeries)
+                            .getColumnMetrics(point).width;
+                        if (
+                            chart.minColumnWidth === void 0 ||
+                            colWidth < chart.minColumnWidth
+                        ) {
+                            chart.minColumnWidth = colWidth;
+                        }
+                    });
+                });
+            }
+        },
         /**
          * Make the columns crisp. The edges are rounded to the nearest full
          * pixel.
@@ -909,6 +931,7 @@ seriesType<Highcharts.ColumnSeries>(
             }
             series.pointXOffset = metrics.offset;
             Series.prototype.translate.apply(series);
+
             // Record the new values
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
@@ -921,6 +944,7 @@ seriesType<Highcharts.ColumnSeries>(
                     yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
+                    ignoreNulls = series.options.ignoreNulls,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = Math.min(
@@ -973,6 +997,14 @@ seriesType<Highcharts.ColumnSeries>(
                 if (defined(point.options.pointWidth)) {
                     pointWidth = barW =
                         Math.ceil(point.options.pointWidth as any);
+                    barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+                }
+
+                if (
+                    ignoreNulls === 'evenlySpaced' &&
+                    chart.minColumnWidth
+                ) {
+                    pointWidth = barW = Math.ceil(chart.minColumnWidth);
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 
@@ -1299,9 +1331,10 @@ seriesType<Highcharts.ColumnSeries>(
     }, {
         remove: function (this: Highcharts.ColumnPoint): void {
             var point = this,
-                series = point.series;
+                series = point.series,
+                ignoreNulls = series.options.ignoreNulls;
 
-            if (series.options.ignoreNulls) {
+            if (ignoreNulls) {
                 H.seriesTypes.column.prototype.dirtyTheSeries.call(
                     point, series, point
                 );
@@ -1311,9 +1344,10 @@ seriesType<Highcharts.ColumnSeries>(
         },
         update: function (this: Highcharts.ColumnPoint): void {
             var point = this,
-                series = point.series;
+                series = point.series,
+                ignoreNulls = series.options.ignoreNulls;
 
-            if (series.options.ignoreNulls) {
+            if (ignoreNulls) {
                 H.seriesTypes.column.prototype.dirtyTheSeries.call(
                     point, series, point
                 );

@@ -482,8 +482,8 @@ seriesType('column', 'line',
         });
     },
     addPoint: function () {
-        var series = this, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
-        if (series.options.ignoreNulls) {
+        var series = this, ignoreNulls = series.options.ignoreNulls, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
+        if (ignoreNulls) {
             H.seriesTypes.column.prototype.dirtyTheSeries.call(series, series, point);
         }
         Series.prototype.addPoint.apply(series, arguments);
@@ -577,6 +577,23 @@ seriesType('column', 'line',
         };
         return series.columnMetrics;
     },
+    findMinColumnWidth: function () {
+        var series = this, chart = series.chart;
+        var colWidth;
+        Series.prototype.translate.apply(series);
+        if (series.index === series.chart.series.length - 1) {
+            series.chart.series.forEach(function (series) {
+                series.points.forEach(function (point) {
+                    colWidth = series
+                        .getColumnMetrics(point).width;
+                    if (chart.minColumnWidth === void 0 ||
+                        colWidth < chart.minColumnWidth) {
+                        chart.minColumnWidth = colWidth;
+                    }
+                });
+            });
+        }
+    },
     /**
      * Make the columns crisp. The edges are rounded to the nearest full
      * pixel.
@@ -649,7 +666,7 @@ seriesType('column', 'line',
         series.points.forEach(function (point) {
             var metrics = defined(point.x) ?
                 series.getColumnMetrics(point) :
-                series.getColumnMetrics(), seriesPointWidth = metrics.width, seriesXOffset = series.pointXOffset = metrics.offset, yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
+                series.getColumnMetrics(), seriesPointWidth = metrics.width, seriesXOffset = series.pointXOffset = metrics.offset, yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, ignoreNulls = series.options.ignoreNulls, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
             plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW = Math.max(seriesPointWidth, 1 + 2 * borderWidth), barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
@@ -682,6 +699,11 @@ seriesType('column', 'line',
             if (defined(point.options.pointWidth)) {
                 pointWidth = barW =
                     Math.ceil(point.options.pointWidth);
+                barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+            }
+            if (ignoreNulls === 'evenlySpaced' &&
+                chart.minColumnWidth) {
+                pointWidth = barW = Math.ceil(chart.minColumnWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
             // Cache for access in polar
@@ -909,15 +931,15 @@ seriesType('column', 'line',
     }
 }, {
     remove: function () {
-        var point = this, series = point.series;
-        if (series.options.ignoreNulls) {
+        var point = this, series = point.series, ignoreNulls = series.options.ignoreNulls;
+        if (ignoreNulls) {
             H.seriesTypes.column.prototype.dirtyTheSeries.call(point, series, point);
         }
         pointProto.remove.apply(this, arguments);
     },
     update: function () {
-        var point = this, series = point.series;
-        if (series.options.ignoreNulls) {
+        var point = this, series = point.series, ignoreNulls = series.options.ignoreNulls;
+        if (ignoreNulls) {
             H.seriesTypes.column.prototype.dirtyTheSeries.call(point, series, point);
         }
         pointProto.update.apply(this, arguments);
