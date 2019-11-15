@@ -36,7 +36,7 @@ seriesType('dumbbell', 'arearange', {
     lineWidth: 0,
     pointRange: 1,
     /**
-     * Pixel width of the line that connects dumbbell point's values.
+     * Pixel width of the line that connects the dumbbell point's values.
      *
      * @since     next
      * @product   highcharts highstock
@@ -47,16 +47,16 @@ seriesType('dumbbell', 'arearange', {
     groupPadding: 0.2,
     pointPadding: 0.1,
     /**
-     * Color of the start markers in dumbbell graph.
+     * Color of the start markers in a dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     next
      * @product   highcharts highstock
      */
-    startColor: '${palette.neutralColor80}',
+    lowColor: '${palette.neutralColor80}',
     /**
-     * Color of the line that connects dumbbell point's values.
-     * By default it is a series' color.
+     * Color of the line that connects the dumbbell point's values.
+     * By default it is the series' color.
      *
      * @type      {string}
      * @product   highcharts highstock
@@ -94,20 +94,23 @@ seriesType('dumbbell', 'arearange', {
      *        Highcharts Renderer.
      * @param {Highcharts.SVGPathArray} points
      *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
+     * @param {number} width
+     *        Connector's width.
      *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      *
      *
      */
-    crispConnector: function (points) {
+    crispConnector: function (points, width) {
         if (points[1] === points[4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] = Math.floor(points[1]) - 0.5;
+            points[1] = points[4] = Math.floor(points[1]);
         }
         if (points[2] === points[5]) {
-            points[2] = points[5] = Math.floor(points[2]) + 0.5;
+            points[2] = points[5] =
+                Math.floor(points[2]) + (width % 2 / 2);
         }
         return points;
     },
@@ -164,7 +167,7 @@ seriesType('dumbbell', 'arearange', {
                 'L',
                 point.plotX,
                 pointBottom
-            ])
+            ], connectorWidth)
         };
         if (!chart.styledMode) {
             attribs.stroke = connectorColor;
@@ -255,7 +258,7 @@ seriesType('dumbbell', 'arearange', {
      * @return {void}
      */
     drawPoints: function () {
-        var series = this, chart = series.chart, pointLength = series.points.length, seriesStartColor = series.startColor = series.options.startColor, i = 0, lowerGraphicColor, point, zoneColor;
+        var series = this, chart = series.chart, pointLength = series.points.length, seriesLowColor = series.lowColor = series.options.lowColor, i = 0, lowerGraphicColor, point, zoneColor;
         this.seriesDrawPoints.apply(series, arguments);
         // Draw connectors and color upper markers
         while (i < pointLength) {
@@ -268,7 +271,7 @@ seriesType('dumbbell', 'arearange', {
             point.connector.element.point = point;
             if (point.lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
-                lowerGraphicColor = pick(point.options.startColor, seriesStartColor, point.options.color, zoneColor, point.color, series.color);
+                lowerGraphicColor = pick(point.options.lowColor, seriesLowColor, point.options.color, zoneColor, point.color, series.color);
                 if (!chart.styledMode) {
                     point.lowerGraphic.attr({
                         fill: lowerGraphicColor
@@ -336,7 +339,7 @@ seriesType('dumbbell', 'arearange', {
      * @return {void}
      */
     setState: function () {
-        var point = this, series = point.series, chart = series.chart, seriesStartColor = series.options.startColor, pointOptions = point.options, pointStartColor = pointOptions.startColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointStartColor, seriesStartColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
+        var point = this, series = point.series, chart = series.chart, seriesLowColor = series.options.lowColor, pointOptions = point.options, pointLowColor = pointOptions.lowColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointLowColor, seriesLowColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
         this.pointSetState.apply(this, arguments);
         if (!this.state) {
             verb = 'animate';
