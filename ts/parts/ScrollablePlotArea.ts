@@ -370,11 +370,8 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: H.color(
-                    (this.options.chart as any).backgroundColor || '#fff'
-                ).setOpacity(
-                    pick(scrollableOptions.opacity, 0.85)
-                ).get(),
+                fill: (this.options.chart as any).backgroundColor || '#fff',
+                'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             } as Highcharts.SVGAttributes)
             .addClass('highcharts-scrollable-mask')

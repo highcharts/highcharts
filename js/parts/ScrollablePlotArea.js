@@ -260,7 +260,8 @@ Chart.prototype.applyFixed = function () {
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-            fill: H.color(this.options.chart.backgroundColor || '#fff').setOpacity(pick(scrollableOptions.opacity, 0.85)).get(),
+            fill: this.options.chart.backgroundColor || '#fff',
+            'fill-opacity': pick(scrollableOptions.opacity, 0.85),
             zIndex: -1
         })
             .addClass('highcharts-scrollable-mask')
