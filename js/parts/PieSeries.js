@@ -593,26 +593,19 @@ seriesType('pie', 'line',
         if (!init) {
             points.forEach(function (point) {
                 var graphic = point.graphic, args = point.shapeArgs;
-                if (graphic) {
+                if (graphic && args) {
                     // start values
                     graphic.attr({
                         // animate from inner radius (#779)
-                        // If chart is inverted polar and series is column,
-                        // allow 0 as radius
-                        r: series.isRadialBar ?
-                            (args).start === (args).end ?
-                                0 : point.startR :
-                            point.startR || (series.center[3] / 2),
+                        r: pick(point.startR, (series.center && series.center[3] / 2)),
                         start: startAngleRad,
                         end: startAngleRad
                     });
                     // animate
                     graphic.animate({
-                        r: series.isRadialBar &&
-                            (args).start === (args).end ?
-                            0 : (args).r,
-                        start: (args).start,
-                        end: (args).end
+                        r: args.r,
+                        start: args.start,
+                        end: args.end
                     }, series.options.animation);
                 }
             });

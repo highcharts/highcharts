@@ -268,7 +268,6 @@ declare global {
             y?: number;
         }
         interface YAxisOptions extends XAxisOptions {
-            angle?: number;
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
@@ -2877,21 +2876,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      */
     defaultYAxisOptions: {
-
-        /**
-         * In a polar chart, this is the angle of the Y axis in degrees, where
-         * 0 is up and 90 is right. The angle determines the position of the
-         * axis line and the labels, though the coordinate system is unaffected.
-         *
-         * @sample {highcharts} highcharts/yaxis/angle/
-         *         Dual axis polar chart
-         *
-         * @type      {number}
-         * @default   0
-         * @since     4.2.7
-         * @product   highcharts
-         * @apioption yAxis.angle
-         */
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -7275,7 +7259,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     // value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
-                        pick(point.stackY, point.y)),
+                        pick(point.stackY, point.y)) as any,
                     translatedValue: pos
                 };
 
@@ -7284,13 +7268,13 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     // polar chart
                     extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: (e as any).chartX,
-                        chartY: (e as any).chartY,
+                        chartX: e && e.chartX,
+                        chartY: e && e.chartY,
                         point: point
                     });
                 }
 
-                path = this.getPlotLinePath(crossOptions as any) ||
+                path = this.getPlotLinePath(crossOptions) ||
                     null; // #3189
             }
 

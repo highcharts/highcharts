@@ -2232,20 +2232,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     defaultYAxisOptions: {
         /**
-         * In a polar chart, this is the angle of the Y axis in degrees, where
-         * 0 is up and 90 is right. The angle determines the position of the
-         * axis line and the labels, though the coordinate system is unaffected.
-         *
-         * @sample {highcharts} highcharts/yaxis/angle/
-         *         Dual axis polar chart
-         *
-         * @type      {number}
-         * @default   0
-         * @since     4.2.7
-         * @product   highcharts
-         * @apioption yAxis.angle
-         */
-        /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
          * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
          * `linear` for other chart types.
@@ -5468,8 +5454,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     // polar chart
                     extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: e.chartX,
-                        chartY: e.chartY,
+                        chartX: e && e.chartX,
+                        chartY: e && e.chartY,
                         point: point
                     });
                 }

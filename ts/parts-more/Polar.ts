@@ -26,6 +26,7 @@ declare global {
         }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
+            rectPlotY?: PolarPoint['rectPlotY'];
             ttBelow?: boolean;
         }
         interface PolarConnector {
@@ -260,14 +261,14 @@ seriesProto.toXY = function (
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
-        plotY = point.plotY as any,
+        plotY = point.plotY,
         series = point.series,
         inverted = chart.inverted,
         clientX;
 
     // Corrected y position of inverted series other than column
     if (inverted && series && !series.isRadialBar) {
-        plotY = (point.plotY as any) = yAxis.translate(point.y as any);
+        plotY = point.plotY = yAxis.translate(point.y as any) || 0;
     }
 
     // Save rectangular plotX, plotY for later computation
@@ -630,20 +631,20 @@ if (seriesTypes.column) {
             endAngleRad = xAxis.endAngleRad,
             visibleRange = endAngleRad - startAngleRad,
             thresholdAngleRad = startAngleRad,
-            start: (number|undefined),
             points: Array<Highcharts.ColumnPoint>,
             point: Highcharts.ColumnPoint,
             i: number,
+            yMin: any,
+            yMax: any,
+            start: any,
+            end: any,
             tooltipPos,
-            yMin,
-            yMax,
             pointX,
             pointY,
             stackValues,
             stack,
             graphic,
             barX,
-            end,
             shapeArgs,
             innerR,
             r;
@@ -659,6 +660,10 @@ if (seriesTypes.column) {
             i = points.length;
             yMin = yAxis.translate(yAxis.min as any);
             yMax = yAxis.translate(yAxis.max as any);
+
+            if (threshold === null) {
+                threshold = 0;
+            }
 
             // Finding a correct threshold
             if (chart.inverted && H.isNumber(threshold)) {
@@ -705,9 +710,9 @@ if (seriesTypes.column) {
 
                                 // If starting point is beyond the
                                 // range, set it to 0
-                                if ((start as any) < 0) {
+                                if (start < 0) {
                                     start = 0;
-                                } else if ((start as any) > visibleRange) {
+                                } else if (start > visibleRange) {
                                     start = visibleRange;
                                 }
                             }
@@ -718,34 +723,32 @@ if (seriesTypes.column) {
                         end = point.plotY;
                     }
 
-                    if ((start as any) > (end as any)) {
+                    if (start > end) {
                         [start, end] = [end, start];
                     }
 
                     // Prevent from rendering point outside the
                     // acceptable circular range
                     if (!reversed) {
-                        if ((start as any) < (yMin as any)) {
+                        if (start < yMin) {
                             start = yMin;
-                        } else if ((end as any) > (yMax as any)) {
+                        } else if (end > yMax) {
                             end = yMax;
-                        } else if ((end as any) < (yMin as any) ||
-                            (start as any) > (yMax as any)) {
+                        } else if (end < yMin || start > yMax) {
                             start = end = 0;
                         }
                     } else {
-                        if ((end as any) > (yMin as any)) {
+                        if (end > yMin) {
                             end = yMin;
-                        } else if ((start as any) < (yMax as any)) {
+                        } else if (start < yMax) {
                             start = yMax;
-                        } else if ((start as any) > (yMin as any) ||
-                            (end as any) < (yMax as any)) {
+                        } else if (start > yMin || end < yMax) {
                             start = end = visibleRange;
                         }
                     }
 
-                    (start as any) += startAngleRad;
-                    (end as any) += startAngleRad;
+                    start += startAngleRad;
+                    end += startAngleRad;
 
                     // In case when radius, inner radius or both are
                     // negative, a point is rendered but partially or as
@@ -754,7 +757,7 @@ if (seriesTypes.column) {
                     r = Math.max(barX + point.pointWidth, 0);
 
                     // Required for the pie animation
-                    point.startR = r;
+                    point.startR = start === end ? 0 : r;
                     point.shapeArgs = shapeArgs = {
                         x: center[0],
                         y: center[1],
@@ -766,9 +769,9 @@ if (seriesTypes.column) {
 
                     // A correct value for stacked or not fully visible
                     // point
-                    point.plotY = ((start as any) <
+                    point.plotY = (start <
                         (series.translatedThreshold as any) ?
-                        start : (end as any)) - startAngleRad;
+                        start : end) - startAngleRad;
 
                     if (!point.graphic) {
                         // The graphic cannot be added to a group here
@@ -836,9 +839,9 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(colProto, 'alignDataLabel', function (
-        this: Highcharts.ColumnSeries,
+        this: (Highcharts.ColumnSeries | Highcharts.PolarSeries),
         proceed: Function,
-        point: Highcharts.ColumnPoint,
+        point: (Highcharts.ColumnPoint | Highcharts.PolarPoint),
         dataLabel: Highcharts.SVGElement,
         options: Highcharts.DataLabelsOptionsObject,
         alignTo: Highcharts.BBoxObject,
@@ -853,7 +856,7 @@ if (seriesTypes.column) {
             labelPos;
 
         if (chart.polar) {
-            angle = (point as any).rectPlotX / Math.PI * 180;
+            angle = (point as Highcharts.PolarPoint).rectPlotX / Math.PI * 180;
 
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
@@ -880,31 +883,34 @@ if (seriesTypes.column) {
             } else { // Required corrections for data labels of inverted bars
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
-                this.forceDL = chart.isInsidePlot((point as any).plotX,
-                    Math.round((point as any).plotY), false);
+                this.forceDL = chart.isInsidePlot(
+                    (point as Highcharts.PolarPoint).plotX,
+                    Math.round((point as Highcharts.PolarPoint).plotY), false);
 
                 // Checks if labels should be positioned inside
-                if (inside) {
+                if (inside && point.shapeArgs) {
                     shapeArgs = point.shapeArgs;
                     // Calculates pixel positions for a data label to be
                     // inside
-                    labelPos = (this as any).xAxis.postTranslate(
+                    labelPos =
+                        (this as Highcharts.PolarSeries).xAxis.postTranslate(
                         // angle
-                        ((shapeArgs as any).start +
-                        (shapeArgs as any).end) / 2 -
-                        (this as any).xAxis.startAngleRad,
-                        // radius
-                        point.barX + point.pointWidth / 2
-                    );
+                            (shapeArgs.start + shapeArgs.end) / 2 -
+                            (this as Highcharts.PolarSeries)
+                                .xAxis.startAngleRad,
+                            // radius
+                            (point as Highcharts.ColumnPoint).barX +
+                            (point as Highcharts.ColumnPoint).pointWidth / 2
+                        );
 
                     (alignTo as any) = {
                         x: labelPos.x - chart.plotLeft,
                         y: labelPos.y - chart.plotTop
                     };
-                } else {
+                } else if (point.tooltipPos) {
                     (alignTo as any) = {
-                        x: (point as any).tooltipPos[0],
-                        y: (point as any).tooltipPos[1]
+                        x: point.tooltipPos[0],
+                        y: point.tooltipPos[1]
                     };
                 }
 
@@ -924,9 +930,8 @@ if (seriesTypes.column) {
 
             // Hide label of a point (only inverted) that is outside the
             // visible y range
-            if (this.isRadialBar &&
-                (point as any).shapeArgs.start ===
-                (point as any).shapeArgs.end) {
+            if (this.isRadialBar && point.shapeArgs &&
+                point.shapeArgs.start === point.shapeArgs.end) {
                 dataLabel.hide(true);
             }
         } else {
@@ -1034,10 +1039,10 @@ H.addEvent(H.Chart, 'afterDrawChartBox', function (
 H.addEvent(H.Point, 'afterPointAnimate', function (
     this: Highcharts.Point
 ): void {
-    var shapeArgs = (this.shapeArgs as any);
+    var shapeArgs = (this.shapeArgs);
 
     // Do not update when the point already is placed in the center
-    if (this.series.isRadialBar && shapeArgs.innerR &&
+    if (this.series.isRadialBar && shapeArgs && shapeArgs.innerR &&
         shapeArgs.start === shapeArgs.end) {
         (this.graphic as any).attr({
             r: 0,

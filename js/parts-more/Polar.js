@@ -125,7 +125,7 @@ seriesProto.toXY = function (point) {
     var xy, chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY, series = point.series, inverted = chart.inverted, clientX;
     // Corrected y position of inverted series other than column
     if (inverted && series && !series.isRadialBar) {
-        plotY = point.plotY = yAxis.translate(point.y);
+        plotY = point.plotY = yAxis.translate(point.y) || 0;
     }
     // Save rectangular plotX, plotY for later computation
     point.rectPlotX = plotX;
@@ -367,7 +367,7 @@ if (seriesTypes.column) {
      */
     wrap(colProto, 'translate', function (proceed) {
         var _a;
-        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad = startAngleRad, start, points, point, i, tooltipPos, yMin, yMax, pointX, pointY, stackValues, stack, graphic, barX, end, shapeArgs, innerR, r;
+        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad = startAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, graphic, barX, shapeArgs, innerR, r;
         series.preventPostTranslate = true;
         // Run uber method
         proceed.call(series);
@@ -377,6 +377,9 @@ if (seriesTypes.column) {
             i = points.length;
             yMin = yAxis.translate(yAxis.min);
             yMax = yAxis.translate(yAxis.max);
+            if (threshold === null) {
+                threshold = 0;
+            }
             // Finding a correct threshold
             if (chart.inverted && H.isNumber(threshold)) {
                 thresholdAngleRad = yAxis.translate(threshold);
@@ -436,8 +439,7 @@ if (seriesTypes.column) {
                         else if (end > yMax) {
                             end = yMax;
                         }
-                        else if (end < yMin ||
-                            start > yMax) {
+                        else if (end < yMin || start > yMax) {
                             start = end = 0;
                         }
                     }
@@ -448,8 +450,7 @@ if (seriesTypes.column) {
                         else if (start < yMax) {
                             start = yMax;
                         }
-                        else if (start > yMin ||
-                            end < yMax) {
+                        else if (start > yMin || end < yMax) {
                             start = end = visibleRange;
                         }
                     }
@@ -461,7 +462,7 @@ if (seriesTypes.column) {
                     innerR = Math.max(barX, 0);
                     r = Math.max(barX + point.pointWidth, 0);
                     // Required for the pie animation
-                    point.startR = r;
+                    point.startR = start === end ? 0 : r;
                     point.shapeArgs = shapeArgs = {
                         x: center[0],
                         y: center[1],
@@ -567,23 +568,25 @@ if (seriesTypes.column) {
                 // don't need to be swapped (inverted argument is false)
                 this.forceDL = chart.isInsidePlot(point.plotX, Math.round(point.plotY), false);
                 // Checks if labels should be positioned inside
-                if (inside) {
+                if (inside && point.shapeArgs) {
                     shapeArgs = point.shapeArgs;
                     // Calculates pixel positions for a data label to be
                     // inside
-                    labelPos = this.xAxis.postTranslate(
-                    // angle
-                    (shapeArgs.start +
-                        shapeArgs.end) / 2 -
-                        this.xAxis.startAngleRad, 
-                    // radius
-                    point.barX + point.pointWidth / 2);
+                    labelPos =
+                        this.xAxis.postTranslate(
+                        // angle
+                        (shapeArgs.start + shapeArgs.end) / 2 -
+                            this
+                                .xAxis.startAngleRad, 
+                        // radius
+                        point.barX +
+                            point.pointWidth / 2);
                     alignTo = {
                         x: labelPos.x - chart.plotLeft,
                         y: labelPos.y - chart.plotTop
                     };
                 }
-                else {
+                else if (point.tooltipPos) {
                     alignTo = {
                         x: point.tooltipPos[0],
                         y: point.tooltipPos[1]
@@ -596,9 +599,8 @@ if (seriesTypes.column) {
             seriesProto.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
             // Hide label of a point (only inverted) that is outside the
             // visible y range
-            if (this.isRadialBar &&
-                point.shapeArgs.start ===
-                    point.shapeArgs.end) {
+            if (this.isRadialBar && point.shapeArgs &&
+                point.shapeArgs.start === point.shapeArgs.end) {
                 dataLabel.hide(true);
             }
         }
@@ -665,9 +667,9 @@ H.addEvent(H.Chart, 'afterDrawChartBox', function () {
 // Event responsible for correctly hiding points that are outside the
 // range and preserve the right animation sequence
 H.addEvent(H.Point, 'afterPointAnimate', function () {
-    var shapeArgs = this.shapeArgs;
+    var shapeArgs = (this.shapeArgs);
     // Do not update when the point already is placed in the center
-    if (this.series.isRadialBar && shapeArgs.innerR &&
+    if (this.series.isRadialBar && shapeArgs && shapeArgs.innerR &&
         shapeArgs.start === shapeArgs.end) {
         this.graphic.attr({
             r: 0,

@@ -78,12 +78,33 @@ radialAxisMixin = {
     // Radial axis, like a spoke in a polar chart
     defaultNonCircularRadialOptions: {
         /**
+         * In a polar chart, this is the angle of the Y axis in degrees, where
+         * 0 is up and 90 is right. The angle determines the position of the
+         * axis line and the labels, though the coordinate system is unaffected.
+         * Since v8.0.0 this option is also applicable for X axis (inverted
+         * polar).
+         *
+         * @sample {highcharts} highcharts/xaxis/angle/
+         *         Different X axis' angle on inverted polar chart
+         * @sample {highcharts} highcharts/yaxis/angle/
+         *         Dual axis polar chart
+         *
+         * @type      {number}
+         * @default   0
+         * @since     4.2.7
+         * @product   highcharts
+         * @apioption xAxis.angle
+         */
+        /**
          * Polar charts only. Whether the grid lines should draw as a polygon
          * with straight lines between categories, or as circles. Can be either
-         * `circle` or `polygon`.
+         * `circle` or `polygon`. Since v8.0.0 this option is also applicable
+         * for X axis (inverted polar).
          *
          * @sample {highcharts} highcharts/demo/polar-spider/
          *         Polygon grid lines
+         * @sample {highcharts} highcharts/xaxis/gridlineinterpolation/
+         *         Circle and polygon on inverted polar
          * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
          *         Circle and polygon
          *
@@ -245,8 +266,9 @@ radialAxisMixin = {
         // In case when translatedVal is negative, the 0 value must be
         // used instead, in order to deal with lines and labels that
         // fall out of the visible range near the center of a pane
-        pick(this.isCircular ? length :
-            translatedVal < 0 ? 0 : translatedVal, this.center[2] / 2) - this.offset);
+        pick(this.isCircular ?
+            length :
+            (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2) - this.offset);
     },
     /**
      * Translate from intermediate plotX (angle), plotY (axis.len - radius)
@@ -352,9 +374,9 @@ radialAxisMixin = {
                     value = axis.translate(Math.atan2(y2 - y1, x2 - x1) -
                         axis.startAngleRad, true);
                 }
-                else {
+                else if (options.point) {
                     // When the snap is set to true
-                    shapeArgs = options.point.shapeArgs;
+                    shapeArgs = options.point.shapeArgs || {};
                     if (shapeArgs.start) {
                         // Find a true value of the point based on the
                         // angle
@@ -397,7 +419,7 @@ radialAxisMixin = {
             // crosshair
             value = axis.translate(value);
             // This is required in case when xAxis is non-circular to
-            // prevent grid lines (or crosshair if enabled) from
+            // prevent grid lines (or crosshairs, if enabled) from
             // rendering above the center after they supposed to be
             // displayed below the center point
             if (!options.isCrosshair &&
@@ -419,8 +441,7 @@ radialAxisMixin = {
                     }
                 });
                 ret = [];
-                tickPositions =
-                    otherAxis.tickPositions;
+                tickPositions = otherAxis.tickPositions;
                 if (otherAxis.autoConnect) {
                     tickPositions =
                         tickPositions.concat([tickPositions[0]]);
@@ -431,8 +452,7 @@ radialAxisMixin = {
                     tickPositions = [].concat(tickPositions).reverse();
                 }
                 tickPositions.forEach(function (pos, i) {
-                    xy = otherAxis
-                        .getPosition(pos, value);
+                    xy = otherAxis.getPosition(pos, value);
                     ret.push(i ? 'L' : 'M', xy.x, xy.y);
                 });
             }
