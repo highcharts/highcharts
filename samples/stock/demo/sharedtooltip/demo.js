@@ -8,6 +8,7 @@ var seriesOptions = [],
  */
 function createChart() {
 
+
     Highcharts.stockChart('container', {
 
         rangeSelector: {
@@ -48,7 +49,7 @@ function createChart() {
 function success(data) {
     var name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
     var i = names.indexOf(name);
-    if(name == "MSFT"){
+    if(name == "AAPL"){
         var quarter = data.length / 4;
         data.splice(quarter, quarter);
     }
