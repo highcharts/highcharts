@@ -1765,8 +1765,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The left position as the horizontal axis. If it's a number, it is
          * interpreted as pixel position relative to the chart.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the plot width, offset from plot area left.
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the plot width, offset from plot area
+         * left.
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -1777,7 +1778,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The top position as the vertical axis. If it's a number, it is
          * interpreted as pixel position relative to the chart.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the plot height, offset from plot area top.
          *
          * @type      {number|string}
@@ -2895,7 +2896,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The height as the vertical axis. If it's a number, it is
          * interpreted as pixels.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the total plot height.
          *
          * @type      {number|string}
@@ -2907,8 +2908,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The width as the horizontal axis. If it's a number, it is interpreted
          * as pixels.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the total plot width.
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the total plot width.
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -3014,8 +3015,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The height of the Y axis. If it's a number, it is interpreted as
          * pixels.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the total plot height.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the total plot height.
          *
          * @see [yAxis.top](#yAxis.top)
          *
@@ -3589,8 +3590,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The top position of the Y axis. If it's a number, it is interpreted
          * as pixel position relative to the chart.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the plot height, offset from plot area top.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the plot height, offset from plot area top.
          *
          * @see [yAxis.height](#yAxis.height)
          *
