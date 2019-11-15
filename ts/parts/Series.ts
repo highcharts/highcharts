@@ -6126,7 +6126,12 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             }
 
             return pointPlacement as any;
-        }
+        },
+
+        // Rendering of series' and point's as legend items is very similar.
+
+        renderAsLegendItem: H.Point.prototype.renderAsLegendItem
+
     }
 ) as any; // end Series prototype
 

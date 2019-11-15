@@ -85,6 +85,7 @@
         <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
         <property name="serieslabel.src.name" value="series-label.src.js"/>
+        <property name="advanced-legend.src.name" value="advanced-legend.src.js"/>
         <property name="solidgauge.src.name" value="solid-gauge.src.js"/>
         <property name="nodata.src.name" value="no-data-to-display.src.js"/>
         <property name="map.src.name" value="map.src.js"/>
@@ -102,6 +103,7 @@
         <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
         <property name="serieslabel.minified.name" value="series-label.js"/>
+        <property name="advanced-legend.minified.name" value="advanced-legend.js"/>
         <property name="solidgauge.minified.name" value="solid-gauge.js"/>
         <property name="nodata.minified.name" value="no-data-to-display.js"/>
         <property name="map.minified.name" value="map.js"/>
@@ -120,6 +122,7 @@
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
         <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
         <property name="serieslabel.src.file" value="${basedir}/js/modules/${serieslabel.src.name}"/>
+        <property name="advanced-legend.src.file" value="${basedir}/js/modules/${advanced-legend.src.name}"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>

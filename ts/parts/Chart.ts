@@ -161,6 +161,7 @@ declare global {
             public reflow(e?: Event): void;
             public render(): void;
             public renderLabels(): void;
+            public renderLegend(): void;
             public renderSeries(): void;
             public resetMargins(): void;
             public setChartSize(skipAxes?: boolean): void;
@@ -2373,7 +2374,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            options = chart.options,
             correction = 0, // correction for X axis labels
             tempWidth,
             tempHeight,
@@ -2390,13 +2390,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Title
         chart.setTitle();
 
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend as any);
+        chart.renderLegend();
 
         // Get stacks
         if (chart.getStacks) {
@@ -2783,6 +2777,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Don't run again
         this.onload = null as any;
+    },
+
+    /**
+     * This method provides the logic for rendering the legend.
+     * In its basic form it's simple new Legend() call. It is
+     * redefined in Advanced Legend Module.
+     *
+     * @private
+     * @function Highcharts.Chart#renderLegend
+     * @return {void}
+     */
+    renderLegend: function (this: Highcharts.Chart): void {
+        /**
+         * The overview of the chart's series.
+         *
+         * @name Highcharts.Chart#legend
+         * @type {Highcharts.Legend}
+         */
+        this.legend = new Legend(this, this.options.legend as any);
     }
 
 }); // end Chart

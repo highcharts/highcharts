@@ -73,6 +73,7 @@ declare global {
         }
         interface Chart {
             getVisibleBubbleSeriesIndex(): number;
+            getLegendForBubbleLegend(): Legend;
         }
         interface Legend {
             bubbleLegend?: BubbleLegend;
@@ -1029,7 +1030,7 @@ H.BubbleLegend.prototype = {
     ): [number, number] {
         var chart = this.chart,
             fontMetrics = this.fontMetrics,
-            legendOptions = chart.legend.options,
+            legendOptions = this.legend.options,
             floating = legendOptions.floating,
             horizontal = legendOptions.layout === 'horizontal',
             lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
@@ -1118,7 +1119,31 @@ H.BubbleLegend.prototype = {
             );
             legend.render();
         }
+    },
+
+    renderAsLegendItem: function (): void {
+
+        this.legendGroup = this.chart.renderer
+            .g('legend-item')
+            .addClass('highcharts-bubble-legend ')
+            .attr({
+                zIndex: 1
+            })
+            .add(this.legend.scrollGroup);
+
+        this.legend.baseline = this.legend.padding;
+
+        this.drawLegendSymbol(this.legend);
+
+        // TODO: comment about bubble legend lifecycle
+        this.itemWidth = 0;
+        this.itemHeight = 0;
+        if (this.legendItem) {
+            this.itemWidth = this.legend.maxItemWidth = this.legendItemWidth;
+            this.itemHeight = this.legendItemHeight + this.legend.padding;
+        }
     }
+
 } as any;
 
 // Start the bubble legend creation process.
@@ -1303,6 +1328,19 @@ addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
     }
 });
 
+/**
+ * Get the legend in which the bubble legend shoud be renderd in.
+ * Created to be overwritten by other modules (e.g. Advanced Legend)
+ *
+ * @private
+ * @function Highcharts.Legend#getLegendForBubbleLegend
+ * @return {void}
+ */
+H.Chart.prototype.getLegendForBubbleLegend = function (): Highcharts.Legend {
+    // there's only one legend without advanced legend module
+    return this.legend;
+};
+
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (
@@ -1312,7 +1350,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
     callback: Highcharts.ChartCallbackFunction
 ): void {
     var chart = this,
-        legend = chart.legend,
+        legend = chart.getLegendForBubbleLegend(),
         bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
         bubbleLegendOptions: Highcharts.BubbleLegendOptions,
         bubbleSizes;
