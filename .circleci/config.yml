@@ -182,8 +182,8 @@ jobs:
       - <<: *load_workspace
       - run: sudo apt-get install -y rsync
       - run: > # checkout master at diverge point of current branch and install
-          git checkout master && git fetch origin master && git reset --hard origin/master &&
-          git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          git checkout -f master && git fetch origin master && git reset --hard origin/master &&
+          git checkout -f $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
           npm i && npx gulp scripts
       - generate_references_command:
           browsercount: 2
