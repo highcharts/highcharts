@@ -3663,7 +3663,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             extend(this, {
                 requireSorting: false,
                 sorted: false,
-                forceDL: true,
                 enabledDataSorting: true,
                 allowDG: false
             });

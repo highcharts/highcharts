@@ -447,14 +447,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted), 
     // Math.round for rounding errors (#2683), alignTo to allow column
     // labels (#2700)
-    visible = this.visible &&
+    alignAttr, // the final position;
+    justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
         (point.series.forceDL ||
+            (enabledDataSorting && !justify) ||
             isInsidePlot ||
             (alignTo && chart.isInsidePlot(plotX, inverted ?
                 alignTo.x + 1 :
-                alignTo.y + alignTo.height - 1, inverted))), alignAttr, // the final position;
-    justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', setStartPos = function (alignOptions) {
-        if (enabledDataSorting && series.xAxis) {
+                alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
+        if (enabledDataSorting && series.xAxis && !justify) {
             series.setDataLabelStartPos(point, dataLabel, isNew, isInsidePlot, alignOptions);
         }
     };
@@ -537,8 +538,12 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             });
         }
     }
+    // To use alignAttr property in hideOverlappingLabels
+    if (isNew && enabledDataSorting) {
+        dataLabel.placed = false;
+    }
     // Show or hide based on the final aligned position
-    if (!visible && !enabledDataSorting) {
+    if (!visible && (!enabledDataSorting || justify)) {
         dataLabel.hide(true);
         dataLabel.placed = false; // don't animate back in
     }
@@ -569,10 +574,6 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
             -labelCenter - halfWidth) : alignOptions.y;
     dataLabel.startXPos = startXPos;
     dataLabel.startYPos = startYPos;
-    // Save start position on first render, but do not animate
-    if (!chart.hasRendered) {
-        return;
-    }
     // We need to handle visibility in case of sorting point outside plot area
     if (!isInside) {
         dataLabel
@@ -584,6 +585,10 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
         dataLabel
             .attr({ opacity: 0 })
             .animate({ opacity: 1 });
+    }
+    // Save start position on first render, but do not change position
+    if (!chart.hasRendered) {
+        return;
     }
     // Set start position
     if (isNew) {
