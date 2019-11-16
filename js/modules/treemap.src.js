@@ -1076,9 +1076,6 @@ seriesType('treemap', 'scatter'
                 width: style.width += 'px'
             });
         }
-        if (labelOptions.textPath && labelOptions.textPath.enabled) {
-            return;
-        }
         seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
             // point.node.zIndex could be undefined (#6956)

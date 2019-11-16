@@ -57,6 +57,11 @@ declare global {
                 mapOptionsToLevel: Dictionary<SunburstSeriesOptions>
             ): void;
             public translate(): void;
+            public alignDataLabel(
+                point: SunburstPoint,
+                dataLabel: SVGElement,
+                labelOptions: DataLabelsOptionsObject
+            ): void;
         }
         interface SeriesTypesDictionary {
             sunburst: typeof SunburstSeries;
@@ -167,6 +172,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     extend,
     isNumber,
     isObject,
@@ -393,6 +399,8 @@ var getDlOptions = function getDlOptions(
                 params.optionsPoint.dataLabels :
                 {}
         ),
+        // the splat was used because levels dataLabels
+        // options doesn't work as an array
         optionsLevel = splat(
             isObject(params.level) ?
                 params.level.dataLabels :
@@ -407,32 +415,36 @@ var getDlOptions = function getDlOptions(
 
     if (options.textPath) {
         // center dataLabel - disable textPath
-        if (point.shapeExisting.innerR === 0 && optionsLevel.textPath &&
-            optionsLevel.textPath.enabled) {
+        if (
+            point.shapeExisting.innerR === 0 &&
+            optionsLevel.textPath &&
+            optionsLevel.textPath.enabled
+        ) {
             if (point.dataLabel && point.dataLabels) {
-                point.dataLabel.destroy();
+                point.dataLabel = point.dataLabel.destroy();
                 point.dataLabels.length = 0;
-                point.dataLabel = void 0;
             }
             options.textPath.enabled = false;
         // bring dataLabel back if was a center dataLabel
-        } else if (point.dlOptions && point.dlOptions.textPath &&
-        !point.dlOptions.textPath.enabled && optionsLevel.textPath.enabled) {
+        } else if (
+            point.dlOptions &&
+            point.dlOptions.textPath &&
+            !point.dlOptions.textPath.enabled &&
+            optionsLevel.textPath.enabled
+        ) {
             if (point.dataLabel && point.dataLabels) {
-                point.dataLabel.destroy();
+                point.dataLabel = point.dataLabel.destroy();
                 point.dataLabels.length = 0;
-                point.dataLabel = void 0;
             }
             options.textPath.enabled = true;
         }
-        if (options.textPath.enabled && options.style &&
-            point.outerArcLength && point.innerArcLength) {
-            // width for dataLabel
-            options.style.width = (point.outerArcLength +
-                point.innerArcLength) / 2;
-            // padding
-            options.style.width = Math.max(options.style.width - 2 *
-                (options.padding || 0), 1);
+        // rest of the dataLabels
+        if (options.textPath.enabled) {
+            // setting width and padding
+            (options.style as any).width = Math.max(
+                (((point.outerArcLength as any) +
+                (point.innerArcLength as any)) / 2) -
+                 2 * (options.padding || 0), 1);
             return options;
         }
     } else if (!isNumber(options.rotation)) {
@@ -1005,55 +1017,6 @@ var sunburstSeries = {
                 shapeType: 'arc',
                 shapeArgs: shape
             });
-            point.getDataLabelPath = function (
-                this: Highcharts.SunburstPoint,
-                label: Highcharts.SVGElement
-            ): Highcharts.SVGElement {
-                var renderer = this.series.chart.renderer,
-                    shapeArgs = this.shapeExisting,
-                    start = shapeArgs.start,
-                    end = shapeArgs.end,
-                    angle = start + (end - start) / 2, // arc middle point
-                    upperHalf = angle < 0 && angle >
-                     -Math.PI || angle > Math.PI,
-                    r = (shapeArgs.r + (label.options.distance || 0)),
-                    moreThanHalf;
-
-                if (start === -Math.PI / 2 && Math.round(end *
-                    1000000) / 1000000 === Math.round((Math.PI +
-                    Math.PI / 2) * 1000000) / 1000000) {
-                    start = -Math.PI + Math.PI / 360;
-                    end = -Math.PI / 360;
-                    upperHalf = true;
-                }
-
-                if (start <= 0 && start * (-1) + end > Math.PI) {
-                    upperHalf = false;
-                    moreThanHalf = true;
-                } else if (start >= 0 && end - start > Math.PI) {
-                    upperHalf = false;
-                    moreThanHalf = true;
-                }
-
-                this.dataLabelPath = renderer
-                    .arc({
-                        open: true,
-                        longArc: moreThanHalf ? 1 : 0
-                    })
-                    // Add it inside the data label group so it gets destroyed
-                    // with the label
-                    .add(label);
-
-                this.dataLabelPath.attr({
-                    start: (upperHalf ? start : end),
-                    end: (upperHalf ? end : start),
-                    clockwise: +upperHalf,
-                    x: shapeArgs.x,
-                    y: shapeArgs.y,
-                    r: (r + shapeArgs.innerR) / 2
-                });
-                return this.dataLabelPath;
-            };
         });
         // Draw data labels after points
         // TODO draw labels one by one to avoid addtional looping
@@ -1238,6 +1201,19 @@ var sunburstSeries = {
         nodeIds = {};
     },
 
+    alignDataLabel: function (
+        this: Highcharts.SunburstSeries,
+        point: Highcharts.SunburstPoint,
+        dataLabel: Highcharts.SVGElement,
+        labelOptions: Highcharts.DataLabelsOptionsObject): void {
+
+        if (labelOptions.textPath && labelOptions.textPath.enabled) {
+            return;
+        }
+        return seriesTypes.treemap.prototype.alignDataLabel
+            .apply(this, arguments);
+    },
+
     // Animate the slices in. Similar to the animation of polar charts.
     animate: function (this: Highcharts.SunburstSeries, init?: boolean): void {
         var chart = this.chart,
@@ -1295,6 +1271,63 @@ var sunburstPoint = {
     },
     isValid: function isValid(this: Highcharts.SunburstPoint): boolean {
         return true;
+    },
+    getDataLabelPath: function (
+        this: Highcharts.SunburstPoint,
+        label: Highcharts.SVGElement
+    ): Highcharts.SVGElement {
+        var renderer = this.series.chart.renderer,
+            shapeArgs = this.shapeExisting,
+            start = shapeArgs.start,
+            end = shapeArgs.end,
+            angle = start + (end - start) / 2, // arc middle point
+            upperHalf = angle < 0 &&
+                angle > -Math.PI ||
+                angle > Math.PI,
+            r = (shapeArgs.r + (label.options.distance || 0)),
+            moreThanHalf;
+
+        // check if point is a full circle
+        if (
+            start === -Math.PI / 2 &&
+            correctFloat(end) === correctFloat(Math.PI + Math.PI / 2)
+        ) {
+            start = -Math.PI + Math.PI / 360;
+            end = -Math.PI / 360;
+            upperHalf = true;
+        }
+        // check if dataLabels should be render in the
+        // upper half of the circle
+        if (start <= 0 && start * (-1) + end > Math.PI) {
+            upperHalf = false;
+            moreThanHalf = true;
+        } else if (start >= 0 && end - start > Math.PI) {
+            upperHalf = false;
+            moreThanHalf = true;
+        }
+
+        if (this.dataLabelPath) {
+            this.dataLabelPath = this.dataLabelPath.destroy();
+        }
+
+        this.dataLabelPath = renderer
+            .arc({
+                open: true,
+                longArc: moreThanHalf ? 1 : 0
+            })
+            // Add it inside the data label group so it gets destroyed
+            // with the label
+            .add(label);
+
+        this.dataLabelPath.attr({
+            start: (upperHalf ? start : end),
+            end: (upperHalf ? end : start),
+            clockwise: +upperHalf,
+            x: shapeArgs.x,
+            y: shapeArgs.y,
+            r: (r + shapeArgs.innerR) / 2
+        });
+        return this.dataLabelPath;
     }
 };
 
