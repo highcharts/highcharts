@@ -2034,13 +2034,18 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 textAnchor: 'middle'
             }
         }, textPathOptions);
-        if (textPathWrapper && textPathWrapper.element.parentNode === null) {
-            textPathWrapper.destroy();
+        // In case of fixed width for a text, string is rebuilt
+        // (e.g. ellipsis is applied), so we need to rebuild textPath too
+        if (textPathWrapper &&
+            textPathWrapper.element.parentNode === null) {
+            // case when buildText functionality was triggered again
+            // and deletes textPathWrapper parentNode
             firstTime = true;
-            textPathWrapper = void 0;
+            textPathWrapper = textPathWrapper.destroy();
         }
-        else if (textPathWrapper &&
-            textPathWrapper.element.parentNode !== null) {
+        else if (textPathWrapper) {
+            // case after drillup when spans were added into
+            // the DOM outside the textPathWrapper parentGroup
             this.removeTextOutline.call(textPathWrapper.parentGroup, [].slice.call(elem.getElementsByTagName('tspan')));
         }
         attrs = textPathOptions.attributes;
@@ -2125,18 +2130,25 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         return this;
     },
     destroyTextPath: function (elem, path) {
-        var tspans;
+        var tspans, textElement = elem.getElementsByTagName('text')[0], pos = this.getBBox();
+        // back to previous attributes
+        textElement.removeAttribute('dx');
+        textElement.removeAttribute('dy');
+        textElement.setAttribute('y', (-pos.y).toString());
+        textElement.setAttribute('x', (-pos.x).toString());
         // Remove ID's:
         path.element.setAttribute('id', '');
         // Move nodes to <text>
         tspans = this.textPathWrapper.element.childNodes;
         // Now move all <tspan>'s to the <textPath> node
         while (tspans.length) {
-            elem.firstChild.appendChild(tspans[0]);
+            tspans[0].setAttribute('y', -pos.y);
+            tspans[0].setAttribute('x', -pos.x);
+            textElement.appendChild(tspans[0]);
         }
         // Remove <textPath>
-        elem.firstChild.removeChild(this.textPathWrapper.element);
-        delete path.textPathWrapper;
+        textElement.removeChild(this.textPathWrapper.element);
+        this.textPathWrapper = this.textPathWrapper.destroy();
     },
     /**
      * @private
