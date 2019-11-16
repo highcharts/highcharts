@@ -429,6 +429,11 @@ Series.prototype.drawDataLabels = function () {
                     if (labelOptions.textPath && !labelOptions.useHTML) {
                         dataLabel.setTextPath((point.getDataLabelPath &&
                             point.getDataLabelPath(dataLabel)) || point.graphic, labelOptions.textPath);
+                        if (point.dataLabelPath &&
+                            !labelOptions.textPath.enabled) {
+                            // clean the DOM
+                            point.dataLabelPath = point.dataLabelPath.destroy();
+                        }
                     }
                     // Now the data label is created and placed at 0,0, so we
                     // need to align it
