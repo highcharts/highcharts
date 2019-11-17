@@ -878,8 +878,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.getSeriesOrderByLinks().forEach(function (
                 series: Highcharts.Series
             ): void {
-                series.update({}, false);
-            });
+                // Avoid removed navigator series
+                if (series.chart) {
+                    series.update({}, false);
+                }
+            }, this);
         }
 
         // For loading, just update the options, do not redraw

@@ -575,8 +575,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // and rebuilt
         if (updateAllSeries) {
             chart.getSeriesOrderByLinks().forEach(function (series) {
-                series.update({}, false);
-            });
+                // Avoid removed navigator series
+                if (series.chart) {
+                    series.update({}, false);
+                }
+            }, this);
         }
         // For loading, just update the options, do not redraw
         if (options.loading) {

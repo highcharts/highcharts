@@ -723,7 +723,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             if (a.linkedSeries.length || b.linkedSeries.length) {
                 return b.linkedSeries.length - a.linkedSeries.length;
             }
-            return -1;
+            return 0;
         });
     },
 
