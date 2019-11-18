@@ -155,7 +155,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     setOptions: function (options) {
-        var padding = pick(options.padding, 8);
+        var padding = pick(options.padding, 8), spacingBox = this.chart.spacingBox;
         /**
          * Legend options.
          *
@@ -175,6 +175,13 @@ Highcharts.Legend.prototype = {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
+        // Below options represend translated user input
+        // TODO: these values can be NaN's - handle them better.
+        this.widthOption = H.relativeLength(options.width, spacingBox.width - padding);
+        this.heightOption = H.relativeLength(options.height, spacingBox.height - padding);
+        this.xOption = H.relativeLength(options.x, spacingBox.width - padding);
+        this.yOption = H.relativeLength(options.y, spacingBox.height - padding);
+        fireEvent(this, 'afterSetOptions');
     },
     /**
      * Update the legend with new options. Equivalent to running `chart.update`
@@ -644,13 +651,13 @@ Highcharts.Legend.prototype = {
                 if (alignments.test(alignment) && !defined(margin[side])) {
                     // Now we have detected on which side of the chart we should
                     // reserve space for the legend
-                    chart[marginNames[side]] = Math.max(chart[marginNames[side]], (chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] +
-                        [1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] +
+                    chart[marginNames[side]] = Math.max(chart[marginNames[side]], (this[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] +
+                        [1, -1, -1, 1][side] * this[(side % 2) ? 'xOption' : 'yOption'] +
                         pick(options.margin, 12) +
                         spacing[side] +
                         (chart.titleOffset[side] || 0)));
                 }
-            });
+            }, this);
         }
     },
     /**
@@ -698,6 +705,199 @@ Highcharts.Legend.prototype = {
         });
     },
     /**
+     * Sort legend items using thier `index` and `legend.reversed` option.
+     *
+     * @private
+     * @function Highcharts.sortItems
+     * @return {void}
+     */
+    sortItems: function () {
+        // sort by legendIndex
+        stableSort(this.allItems, function (a, b) {
+            return ((a.options && a.options.legendIndex) || 0) -
+                ((b.options && b.options.legendIndex) || 0);
+        });
+        // reversed legend
+        if (this.options.reversed) {
+            this.allItems.reverse();
+        }
+    },
+    /**
+     * Create main SVG groups which legend is comprised of.
+     *
+     * @private
+     * @function Highcharts.renderLegendGroup
+     * @return {void}
+     */
+    renderLegendGroup: function () {
+        var renderer = this.chart.renderer;
+        if (!this.group) {
+            /**
+             * SVG group of the legend.
+             *
+             * @readonly
+             * @name Highcharts.Legend#group
+             * @type {Highcharts.SVGElement}
+             */
+            this.group = renderer.g('legend')
+                .attr({ zIndex: 7 })
+                .add();
+            this.contentGroup = renderer.g()
+                .attr({ zIndex: 1 }) // above background
+                .add(this.group);
+            this.scrollGroup = renderer.g()
+                .add(this.contentGroup);
+        }
+    },
+    /**
+     * Compute `legendWidth` & `legendHeight` properties which are
+     * legend's dimensions and handle overflow (height only).
+     *
+     * @private
+     * @function Highcharts.findLegendSize
+     * @return {void}
+     */
+    findLegendSize: function () {
+        // Get the box
+        this.legendWidth = (this.widthOption || this.offsetWidth) +
+            this.padding;
+        this.legendHeight = this.lastItemY + this.lastLineHeight +
+            this.titleHeight;
+        this.legendHeight = this.handleOverflow(this.legendHeight);
+        this.legendHeight += this.padding;
+    },
+    /**
+     * Create a border and background for the legend.
+     *
+     * @private
+     * @function Highcharts.renderBox
+     * @return {void}
+     */
+    renderBox: function () {
+        var box = this.box, options = this.options;
+        // Draw the border and/or background
+        if (!box) {
+            /**
+             * SVG element of the legend box.
+             *
+             * @readonly
+             * @name Highcharts.Legend#box
+             * @type {Highcharts.SVGElement}
+             */
+            this.box = box = this.chart.renderer.rect()
+                .addClass('highcharts-legend-box')
+                .attr({
+                r: this.options.borderRadius
+            })
+                .add(this.group);
+            box.isNew = true;
+        }
+        // Presentational
+        if (!this.chart.styledMode) {
+            box
+                .attr({
+                stroke: options.borderColor,
+                'stroke-width': options.borderWidth || 0,
+                fill: options.backgroundColor || 'none'
+            })
+                .shadow(options.shadow);
+        }
+        if (this.legendWidth > 0 && this.legendHeight > 0) {
+            box[box.isNew ? 'attr' : 'animate'](box.crisp.call({}, {
+                x: 0,
+                y: 0,
+                width: this.legendWidth,
+                height: this.legendHeight
+            }, box.strokeWidth()));
+            box.isNew = false;
+        }
+        // hide the border if no items
+        box[this.display ? 'show' : 'hide']();
+        // Open for responsiveness
+        if (this.chart.styledMode &&
+            this.group.getStyle('display') === 'none') {
+            this.legendWidth = this.legendHeight = 0;
+        }
+    },
+    /**
+     * Align the legend to chart's box.
+     *
+     * @private
+     * @function Highcharts.align
+     * @return {void}
+     */
+    align: function () {
+        var chart = this.chart, options = this.options;
+        // If aligning to the top and the layout is horizontal, adjust for
+        // the title (#7428)
+        var alignTo = chart.spacingBox;
+        var y = alignTo.y;
+        if (/(lth|ct|rth)/.test(this.getAlignment()) &&
+            chart.titleOffset[0] > 0) {
+            y += chart.titleOffset[0];
+        }
+        else if (/(lbh|cb|rbh)/.test(this.getAlignment()) &&
+            chart.titleOffset[2] > 0) {
+            y -= chart.titleOffset[2];
+        }
+        if (y !== alignTo.y) {
+            alignTo = merge(alignTo, { y: y });
+        }
+        this.group.align(merge(options, {
+            width: this.legendWidth,
+            height: this.legendHeight,
+            x: this.xOption,
+            y: this.yOption,
+            verticalAlign: this.proximate ? 'top' : options.verticalAlign
+        }), true, alignTo);
+    },
+    /**
+     * Compute how wide the legend is allowed to be.
+     *
+     * @private
+     * @function Highcharts.getAllowedWidth
+     * @return {number}
+     */
+    getAllowedWidth: function () {
+        var allowedWidth;
+        allowedWidth = this.chart.spacingBox.width -
+            2 * this.padding - this.options.x;
+        // Decrease the width for right-middle & left-middle
+        // positions of the legend.
+        if (['rm', 'lm'].indexOf(this.getAlignment().substring(0, 2)) > -1) {
+            allowedWidth /= 2;
+        }
+        return allowedWidth;
+    },
+    /**
+     * Compute how wide the legend is allowed to be.
+     *
+     * @private
+     * @function Highcharts.renderBox
+     * @return {number}
+     */
+    renderItems: function () {
+        // TODO: use Legend item interface
+        this.allItems.forEach(function (item) {
+            // TODO: Advanced legend hook
+            item.legend = this;
+            item.renderAsLegendItem();
+        }, this);
+    },
+    /**
+     * Layout all items.
+     *
+     * @private
+     * @function Highcharts.layoutItems
+     * @return {void}
+     */
+    layoutItems: function () {
+        // TODO: use legend item interface
+        this.allItems.forEach(function (item) {
+            this.layoutItem(item);
+        }, this);
+    },
+    /**
      * Render the legend. This method can be called both before and after
      * `chart.render`. If called after, it will only rearrange items instead
      * of creating new ones. Called internally on initial render and after
@@ -708,48 +908,19 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     render: function () {
-        var legend = this, chart = legend.chart, renderer = chart.renderer, legendGroup = legend.group, allItems, display, legendWidth, legendHeight, box = legend.box, options = legend.options, padding = legend.padding, allowedWidth;
+        var legend = this, allItems, padding = legend.padding, allowedWidth;
+        fireEvent(this, 'beforeRender');
         legend.itemX = padding;
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(options.width, chart.spacingBox.width - padding);
-        // Compute how wide the legend is allowed to be
-        allowedWidth =
-            chart.spacingBox.width - 2 * padding - options.x;
-        if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
-            allowedWidth /= 2;
-        }
+        allowedWidth = this.getAllowedWidth();
         legend.maxLegendWidth = legend.widthOption || allowedWidth;
-        if (!legendGroup) {
-            /**
-             * SVG group of the legend.
-             *
-             * @readonly
-             * @name Highcharts.Legend#group
-             * @type {Highcharts.SVGElement}
-             */
-            legend.group = legendGroup = renderer.g('legend')
-                .attr({ zIndex: 7 })
-                .add();
-            legend.contentGroup = renderer.g()
-                .attr({ zIndex: 1 }) // above background
-                .add(legendGroup);
-            legend.scrollGroup = renderer.g()
-                .add(legend.contentGroup);
-        }
+        legend.renderLegendGroup();
         legend.renderTitle();
         // add each series or point
-        allItems = legend.getAllItems();
-        // sort by legendIndex
-        stableSort(allItems, function (a, b) {
-            return ((a.options && a.options.legendIndex) || 0) -
-                ((b.options && b.options.legendIndex) || 0);
-        });
-        // reversed legend
-        if (options.reversed) {
-            allItems.reverse();
-        }
+        this.allItems = allItems = legend.getAllItems();
+        this.sortItems();
         /**
          * All items for the legend, which is an array of series for most series
          * and an array of points for pie series and its derivatives.
@@ -759,87 +930,21 @@ Highcharts.Legend.prototype = {
          * @type {Array<(Highcharts.Point|Highcharts.Series)>}
          */
         legend.allItems = allItems;
-        legend.display = display = !!allItems.length;
-        // Render the items. First we run a loop to set the text and properties
-        // and read all the bounding boxes. The next loop computes the item
+        // Don't display legend without items
+        legend.display = !!allItems.length;
+        // Render the items. renderItems() sets the text and properties
+        // and read all the bounding boxes. layoutItems() computes the item
         // positions based on the bounding boxes.
         legend.lastLineHeight = 0;
         legend.maxItemWidth = 0;
         legend.totalItemWidth = 0;
         legend.itemHeight = 0;
-        allItems.forEach(legend.renderItem, legend);
-        allItems.forEach(legend.layoutItem, legend);
-        // Get the box
-        legendWidth = (legend.widthOption || legend.offsetWidth) + padding;
-        legendHeight = legend.lastItemY + legend.lastLineHeight +
-            legend.titleHeight;
-        legendHeight = legend.handleOverflow(legendHeight);
-        legendHeight += padding;
-        // Draw the border and/or background
-        if (!box) {
-            /**
-             * SVG element of the legend box.
-             *
-             * @readonly
-             * @name Highcharts.Legend#box
-             * @type {Highcharts.SVGElement}
-             */
-            legend.box = box = renderer.rect()
-                .addClass('highcharts-legend-box')
-                .attr({
-                r: options.borderRadius
-            })
-                .add(legendGroup);
-            box.isNew = true;
-        }
-        // Presentational
-        if (!chart.styledMode) {
-            box
-                .attr({
-                stroke: options.borderColor,
-                'stroke-width': options.borderWidth || 0,
-                fill: options.backgroundColor || 'none'
-            })
-                .shadow(options.shadow);
-        }
-        if (legendWidth > 0 && legendHeight > 0) {
-            box[box.isNew ? 'attr' : 'animate'](box.crisp.call({}, {
-                x: 0,
-                y: 0,
-                width: legendWidth,
-                height: legendHeight
-            }, box.strokeWidth()));
-            box.isNew = false;
-        }
-        // hide the border if no items
-        box[display ? 'show' : 'hide']();
-        // Open for responsiveness
-        if (chart.styledMode && legendGroup.getStyle('display') === 'none') {
-            legendWidth = legendHeight = 0;
-        }
-        legend.legendWidth = legendWidth;
-        legend.legendHeight = legendHeight;
-        if (display) {
-            // If aligning to the top and the layout is horizontal, adjust for
-            // the title (#7428)
-            var alignTo = chart.spacingBox;
-            var y = alignTo.y;
-            if (/(lth|ct|rth)/.test(legend.getAlignment()) &&
-                chart.titleOffset[0] > 0) {
-                y += chart.titleOffset[0];
-            }
-            else if (/(lbh|cb|rbh)/.test(legend.getAlignment()) &&
-                chart.titleOffset[2] > 0) {
-                y -= chart.titleOffset[2];
-            }
-            if (y !== alignTo.y) {
-                alignTo = merge(alignTo, { y: y });
-            }
-            legendGroup.align(merge(options, {
-                width: legendWidth,
-                height: legendHeight,
-                verticalAlign: this.proximate ? 'top' : options.verticalAlign
-            }), true, alignTo);
+        this.renderItems();
+        this.layoutItems();
+        this.findLegendSize();
+        this.renderBox();
+        if (this.display) {
+            this.align();
         }
         if (!this.proximate) {
             this.positionItems();
@@ -856,8 +961,7 @@ Highcharts.Legend.prototype = {
      * @return {number}
      */
     handleOverflow: function (legendHeight) {
-        var legend = this, chart = this.chart, renderer = chart.renderer, options = this.options, optionsY = options.y, alignTop = options.verticalAlign === 'top', padding = this.padding, spaceHeight = (chart.spacingBox.height +
-            (alignTop ? -optionsY : optionsY) - padding), maxHeight = options.maxHeight, clipHeight, clipRect = this.clipRect, navOptions = options.navigation, animation = pick(navOptions.animation, true), arrowSize = navOptions.arrowSize || 12, nav = this.nav, pages = this.pages, lastY, allItems = this.allItems, clipToHeight = function (height) {
+        var legend = this, chart = this.chart, renderer = chart.renderer, options = this.options, padding = this.padding, spaceHeight = legend.getSpaceHeight(), maxHeight = options.maxHeight, clipHeight, clipRect = this.clipRect, navOptions = options.navigation, animation = pick(navOptions.animation, true), arrowSize = navOptions.arrowSize || 12, nav = this.nav, pages = this.pages, lastY, allItems = this.allItems, clipToHeight = function (height) {
             if (typeof height === 'number') {
                 clipRect.attr({
                     height: height
@@ -887,7 +991,7 @@ Highcharts.Legend.prototype = {
         // Adjust the height
         if (options.layout === 'horizontal' &&
             options.verticalAlign !== 'middle' &&
-            !options.floating) {
+            !options.floating && !isNumber(legend.heightOption)) {
             spaceHeight /= 2;
         }
         if (maxHeight) {
@@ -904,7 +1008,9 @@ Highcharts.Legend.prototype = {
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
             allItems.forEach(function (item, i) {
-                var y = item._legendItemPos[1], h = Math.round(item.legendItem.getBBox().height), len = pages.length;
+                var y = item._legendItemPos[1], h = item.legendItem ?
+                    Math.round(item.legendItem.getBBox().height) :
+                    0, len = pages.length;
                 if (!len || (y - pages[len - 1] > clipHeight &&
                     (lastY || y) !== pages[len - 1])) {
                     pages.push(lastY || y);
@@ -973,7 +1079,21 @@ Highcharts.Legend.prototype = {
             });
             this.clipHeight = 0; // #1379
         }
-        return legendHeight;
+        return this.heightOption || legendHeight;
+    },
+    /**
+     * Return the maximum potential height that legend can occupy.
+     * Used by `handleOverflow()` method.
+     *
+     * @private
+     * @function Highcharts.getSpaceHeight
+     * @return {number}
+     */
+    getSpaceHeight: function () {
+        var options = this.options;
+        return this.heightOption || (this.chart.spacingBox.height +
+            (options.verticalAlign === 'top' ?
+                -options.y : options.y) - this.padding);
     },
     /**
      * Scroll the legend by a number of pages.

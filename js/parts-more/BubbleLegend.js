@@ -653,7 +653,7 @@ H.BubbleLegend.prototype = {
      *         Calculated min and max bubble sizes
      */
     predictBubbleSizes: function () {
-        var chart = this.chart, fontMetrics = this.fontMetrics, legendOptions = chart.legend.options, floating = legendOptions.floating, horizontal = legendOptions.layout === 'horizontal', lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0, plotSizeX = chart.plotSizeX, plotSizeY = chart.plotSizeY, bubbleSeries = chart.series[this.options.seriesIndex], minSize = Math.ceil(bubbleSeries.minPxSize), maxPxSize = Math.ceil(bubbleSeries.maxPxSize), maxSize = bubbleSeries.options.maxSize, plotSize = Math.min(plotSizeY, plotSizeX), calculatedSize;
+        var chart = this.chart, fontMetrics = this.fontMetrics, legendOptions = this.legend.options, floating = legendOptions.floating, horizontal = legendOptions.layout === 'horizontal', lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0, plotSizeX = chart.plotSizeX, plotSizeY = chart.plotSizeY, bubbleSeries = chart.series[this.options.seriesIndex], minSize = Math.ceil(bubbleSeries.minPxSize), maxPxSize = Math.ceil(bubbleSeries.maxPxSize), maxSize = bubbleSeries.options.maxSize, plotSize = Math.min(plotSizeY, plotSizeX), calculatedSize;
         // Calculate prediceted max size of bubble
         if (floating || !(/%$/.test(maxSize))) {
             calculatedSize = maxPxSize;
@@ -702,6 +702,24 @@ H.BubbleLegend.prototype = {
             1) {
             this.updateRanges(this.options.minSize, bubbleSeries.maxPxSize);
             legend.render();
+        }
+    },
+    renderAsLegendItem: function () {
+        this.legendGroup = this.chart.renderer
+            .g('legend-item')
+            .addClass('highcharts-bubble-legend ')
+            .attr({
+            zIndex: 1
+        })
+            .add(this.legend.scrollGroup);
+        this.legend.baseline = this.legend.padding;
+        this.drawLegendSymbol(this.legend);
+        // TODO: comment about bubble legend lifecycle
+        this.itemWidth = 0;
+        this.itemHeight = 0;
+        if (this.legendItem) {
+            this.itemWidth = this.legend.maxItemWidth = this.legendItemWidth;
+            this.itemHeight = this.legendItemHeight + this.legend.padding;
         }
     }
 };
@@ -833,10 +851,22 @@ addEvent(Series, 'legendItemClick', function () {
         series.visible = visible;
     }
 });
+/**
+ * Get the legend in which the bubble legend shoud be renderd in.
+ * Created to be overwritten by other modules (e.g. Advanced Legend)
+ *
+ * @private
+ * @function Highcharts.Legend#getLegendForBubbleLegend
+ * @return {void}
+ */
+H.Chart.prototype.getLegendForBubbleLegend = function () {
+    // there's only one legend without advanced legend module
+    return this.legend;
+};
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
-    var chart = this, legend = chart.legend, bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0, bubbleLegendOptions, bubbleSizes;
+    var chart = this, legend = chart.getLegendForBubbleLegend(), bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0, bubbleLegendOptions, bubbleSizes;
     if (legend && legend.options.enabled && legend.bubbleLegend &&
         legend.options.bubbleLegend.autoRanges && bubbleSeries) {
         bubbleLegendOptions = legend.bubbleLegend.options;

@@ -1626,7 +1626,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     render: function () {
-        var chart = this, axes = chart.axes, colorAxis = chart.colorAxis, renderer = chart.renderer, options = chart.options, correction = 0, // correction for X axis labels
+        var chart = this, axes = chart.axes, colorAxis = chart.colorAxis, renderer = chart.renderer, correction = 0, // correction for X axis labels
         tempWidth, tempHeight, redoHorizontal, redoVertical, renderAxes = function (axes) {
             axes.forEach(function (axis) {
                 if (axis.visible) {
@@ -1636,13 +1636,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         };
         // Title
         chart.setTitle();
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend);
+        chart.renderLegend();
         // Get stacks
         if (chart.getStacks) {
             chart.getStacks();
@@ -1942,5 +1936,23 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Don't run again
         this.onload = null;
+    },
+    /**
+     * This method provides the logic for rendering the legend.
+     * In its basic form it's simple new Legend() call. It is
+     * redefined in Advanced Legend Module.
+     *
+     * @private
+     * @function Highcharts.Chart#renderLegend
+     * @return {void}
+     */
+    renderLegend: function () {
+        /**
+         * The overview of the chart's series.
+         *
+         * @name Highcharts.Chart#legend
+         * @type {Highcharts.Legend}
+         */
+        this.legend = new Legend(this, this.options.legend);
     }
 }); // end Chart

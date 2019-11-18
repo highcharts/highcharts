@@ -4428,7 +4428,9 @@ null,
                 pick(series.options.pointRange || axis.pointRange);
         }
         return pointPlacement;
-    }
+    },
+    // Rendering of series' and point's as legend items is very similar.
+    renderAsLegendItem: H.Point.prototype.renderAsLegendItem
 }); // end Series prototype
 /**
  * A line series displays information as a series of data points connected by

@@ -21,7 +21,7 @@ import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge, fireEvent = H.fireEvent;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -482,8 +482,11 @@ extend(ColorAxis.prototype, {
     init: function (chart, userOptions) {
         var options;
         this.coll = 'colorAxis';
+        this.userOptions = userOptions;
+        this.chart = chart;
+        fireEvent(this, 'beforeBuildOptions');
         // Build the options
-        options = this.buildOptions.call(chart, this.defaultColorAxisOptions, userOptions);
+        options = this.buildOptions(chart, userOptions);
         Axis.prototype.init.call(this, chart, options);
         // Base init() pushes it to the xAxis array, now pop it again
         // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -575,18 +578,19 @@ extend(ColorAxis.prototype, {
      * @param {Highcharts.ColorAxisOptions} [userOptions]
      * @return {Highcharts.ColorAxisOptions}
      */
-    buildOptions: function (options, userOptions) {
-        var legend = this.options.legend, horiz = userOptions.layout ?
+    buildOptions: function (chart, userOptions) {
+        var legend = this.legendOptions ||
+            this.chart.options.legend, horiz = userOptions.layout ?
             userOptions.layout !== 'vertical' :
-            legend.layout !== 'vertical';
-        return merge(options, {
+            (legend && legend.layout !== 'vertical');
+        return merge(this.defaultColorAxisOptions, {
             side: horiz ? 2 : 1,
             reversed: !horiz
         }, userOptions, {
             opposite: !horiz,
             showEmpty: false,
             title: null,
-            visible: legend.enabled &&
+            visible: legend && (legend.enabled !== false) &&
                 (userOptions ? userOptions.visible !== false : true)
         });
     },
@@ -607,8 +611,10 @@ extend(ColorAxis.prototype, {
      * @private
      */
     setAxisSize: function () {
-        var symbol = this.legendSymbol, chart = this.chart, legendOptions = chart.options.legend || {}, x, y, width, height;
-        if (symbol) {
+        var symbol = this.legendSymbol, chart = this.chart, 
+        // TODO: advanced legend hook
+        legendOptions = chart.options.legend || {}, x, y, width, height;
+        if (symbol && symbol.element) {
             this.left = x = symbol.attr('x');
             this.top = y = symbol.attr('y');
             this.width = width = symbol.attr('width');
@@ -736,7 +742,13 @@ extend(ColorAxis.prototype, {
      * @return {void}
      */
     drawLegendSymbol: function (legend, item) {
-        var padding = legend.padding, legendOptions = legend.options, horiz = this.horiz, width = pick(legendOptions.symbolWidth, horiz ? this.defaultLegendLength : 12), height = pick(legendOptions.symbolHeight, horiz ? 12 : this.defaultLegendLength), labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30), itemDistance = pick(legendOptions.itemDistance, 10);
+        var padding = legend.padding, legendOptions = legend.options, horiz = this.horiz, 
+        // TODO: Replace these numbers with variables:
+        // (why 12, 16, 40? etc...)
+        width = pick(legendOptions.symbolWidth, horiz ? (legend.widthOption || this.defaultLegendLength) -
+            legend.padding : 12), height = pick(legendOptions.symbolHeight, horiz ? 12 :
+            ((legend.heightOption || this.defaultLegendLength) -
+                legend.titleHeight - 40)), labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30), itemDistance = pick(legendOptions.itemDistance, 10);
         this.setLegendColor();
         // Create the gradient
         item.legendSymbol = this.chart.renderer.rect(0, legend.baseline - 11, width, height).attr({
@@ -905,7 +917,7 @@ extend(ColorAxis.prototype, {
      * @return {void}
      */
     update: function (newOptions, redraw) {
-        var chart = this.chart, legend = chart.legend, updatedOptions = this.buildOptions.call(chart, {}, newOptions);
+        var chart = this.chart, legend = chart.legend, updatedOptions = this.buildOptions(chart, newOptions);
         this.series.forEach(function (series) {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
@@ -917,6 +929,7 @@ extend(ColorAxis.prototype, {
         }
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
+        // TODO: there can be multipe color axes since v8.
         chart.options[this.coll] =
             merge(this.userOptions, updatedOptions);
         Axis.prototype.update.call(this, updatedOptions, redraw);
@@ -989,12 +1002,16 @@ extend(ColorAxis.prototype, {
                 if (to !== undefined) {
                     name += H.numberFormat(to, valueDecimals) + valueSuffix;
                 }
-                // Add a mock object to the legend items
+                // Create item renderable in legend
                 legendItems.push(extend({
                     chart: chart,
                     name: name,
                     options: {},
                     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+                    renderAsLegendItem: function () {
+                        // Same logic as for points and series.
+                        H.Point.prototype.renderAsLegendItem.call(this);
+                    },
                     visible: true,
                     setState: noop,
                     isDataClass: true,
@@ -1013,6 +1030,18 @@ extend(ColorAxis.prototype, {
             });
         }
         return legendItems;
+    },
+    /**
+    * Decide if color axis should be rendered or not. This code
+    * is isolated to be overridden by the Advanced Legend module.
+    * @private
+    * @function Highcharts.ColorAxis#shouldBeRendered
+    * @param {Highcharts.AdvancedLegend} [redraw=true]
+    *        Target (parent) legend
+    * @return {boolean}
+    */
+    shouldBeRendered: function (legend) {
+        return !!(this.options && this.options.showInLegend);
     },
     beforePadding: false,
     name: '' // Prevents 'undefined' in legend in IE8
@@ -1061,7 +1090,7 @@ addEvent(Legend, 'afterGetAllItems', function (e) {
     var colorAxisItems = [], colorAxes = this.chart.colorAxis || [], options, i;
     colorAxes.forEach(function (colorAxis) {
         options = colorAxis.options;
-        if (options && options.showInLegend) {
+        if (colorAxis.shouldBeRendered(this)) {
             // Data classes
             if (options.dataClasses && options.visible) {
                 colorAxisItems = colorAxisItems.concat(colorAxis.getDataClassLegendSymbols());
@@ -1085,12 +1114,12 @@ addEvent(Legend, 'afterGetAllItems', function (e) {
                     }
                 }
             });
+            for (i = 0; i < colorAxisItems.length; i++) {
+                e.allItems.push(colorAxisItems[i]);
+            }
+            colorAxisItems = [];
         }
-    });
-    i = colorAxisItems.length;
-    while (i--) {
-        e.allItems.unshift(colorAxisItems[i]);
-    }
+    }, this);
 });
 addEvent(Legend, 'afterColorizeItem', function (e) {
     if (e.visible && e.item.legendColor) {
@@ -1116,3 +1145,33 @@ addEvent(Series, 'afterTranslate', function () {
         this.translateColors();
     }
 });
+// TODO: refactor ts and make color axis compatible
+// with legendItemObject interface
+H.ColorAxis.prototype.renderAsLegendItem = function () {
+    if (!this.legendGroup) {
+        this.legendGroup = this.chart.renderer
+            .g('legend-item')
+            .addClass('highcharts-coloraxis')
+            .attr({
+            zIndex: 1
+        })
+            .add(this.legend.scrollGroup);
+    }
+    this.legend.baseline = 20;
+    this.drawLegendSymbol(this.legend, this);
+    this.itemWidth = this.legendItemWidth;
+    this.itemHeight = this.legendItemHeight;
+    this.legend.maxItemWidth =
+        Math.max(this.legend.maxItemWidth, this.itemWidth);
+    this.legend.totalItemWidth += this.itemWidth;
+    this.legend.itemHeight = this.itemHeight;
+    this.marginTop = 10;
+    // Fake legend item is required for now -
+    // for color axis only legend symbol is used.
+    this.legendItem = this.chart.renderer.text('', 0, 0);
+    if (this.visible && this.legendColor) {
+        this.legendSymbol.attr({
+            fill: this.legendColor
+        });
+    }
+};
