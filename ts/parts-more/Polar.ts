@@ -352,37 +352,37 @@ if (seriesTypes.spline) {
 H.addEvent(Series as any, 'afterTranslate', function (
     this: Highcharts.PolarSeries
 ): void {
-    var chart = this.chart,
-        points,
-        i;
+    const series = this;
+    const chart = series.chart;
 
-    if (chart.polar && this.xAxis) {
+    if (chart.polar && series.xAxis) {
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
-        this.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (this.kdByAngle) {
-            this.searchPoint = this.searchPointByAngle;
+        series.kdByAngle = chart.tooltip && chart.tooltip.shared;
+        if (series.kdByAngle) {
+            series.searchPoint = series.searchPointByAngle;
         } else {
-            this.options.findNearestPointBy = 'xy';
+            series.options.findNearestPointBy = 'xy';
         }
 
         // Postprocess plot coordinates
-        if (!this.preventPostTranslate) {
-            points = this.points;
-            i = points.length;
+        if (!series.preventPostTranslate) {
+            const points = series.points;
+
+            let i = points.length;
 
             while (i--) {
                 // Translate plotX, plotY from angle and radius to true plot
                 // coordinates
-                this.toXY(points[i]);
+                series.toXY(points[i]);
 
                 // Treat points below Y axis min as null (#10082)
                 if (
                     !chart.hasParallelCoordinates &&
-                    !this.yAxis.reversed &&
-                    (points[i].y as any) < (this.yAxis.min as any)
+                    !series.yAxis.reversed &&
+                    (points[i].y as any) < (series.yAxis.min as any)
                 ) {
                     points[i].isNull = true;
                 }
@@ -390,36 +390,32 @@ H.addEvent(Series as any, 'afterTranslate', function (
         }
 
         // Perform clip after render
-        if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = Boolean(
-                H.addEvent(this, 'afterRender', function (
-                    this: Highcharts.PolarSeries
-                ): void {
-                    var circ: Array<number>;
+        series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function (
+            this: Highcharts.PolarSeries
+        ): void {
+            var circ: Array<number>;
 
-                    if (chart.polar) {
-                        circ = this.yAxis.center as any;
+            if (chart.polar) {
+                circ = this.yAxis.center as any;
 
-                        if (!this.clipCircle) {
-                            this.clipCircle = chart.renderer.clipCircle(
-                                circ[0],
-                                circ[1],
-                                circ[2] / 2
-                            );
-                        } else {
-                            this.clipCircle.animate({
-                                x: circ[0],
-                                y: circ[1],
-                                r: circ[2] / 2
-                            });
-                        }
+                if (!this.clipCircle) {
+                    this.clipCircle = chart.renderer.clipCircle(
+                        circ[0],
+                        circ[1],
+                        circ[2] / 2
+                    );
+                } else {
+                    this.clipCircle.animate({
+                        x: circ[0],
+                        y: circ[1],
+                        r: circ[2] / 2
+                    });
+                }
 
-                        this.group.clip(this.clipCircle);
-                        this.setClip = H.noop as any;
-                    }
-                })
-            );
-        }
+                this.group.clip(this.clipCircle);
+                this.setClip = H.noop as any;
+            }
+        }));
     }
 }, { order: 2 }); // Run after translation of ||-coords
 

@@ -173,55 +173,54 @@ if (seriesTypes.spline) {
  * @private
  */
 H.addEvent(Series, 'afterTranslate', function () {
-    var chart = this.chart, points, i;
-    if (chart.polar && this.xAxis) {
+    var series = this;
+    var chart = series.chart;
+    if (chart.polar && series.xAxis) {
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
-        this.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (this.kdByAngle) {
-            this.searchPoint = this.searchPointByAngle;
+        series.kdByAngle = chart.tooltip && chart.tooltip.shared;
+        if (series.kdByAngle) {
+            series.searchPoint = series.searchPointByAngle;
         }
         else {
-            this.options.findNearestPointBy = 'xy';
+            series.options.findNearestPointBy = 'xy';
         }
         // Postprocess plot coordinates
-        if (!this.preventPostTranslate) {
-            points = this.points;
-            i = points.length;
+        if (!series.preventPostTranslate) {
+            var points = series.points;
+            var i = points.length;
             while (i--) {
                 // Translate plotX, plotY from angle and radius to true plot
                 // coordinates
-                this.toXY(points[i]);
+                series.toXY(points[i]);
                 // Treat points below Y axis min as null (#10082)
                 if (!chart.hasParallelCoordinates &&
-                    !this.yAxis.reversed &&
-                    points[i].y < this.yAxis.min) {
+                    !series.yAxis.reversed &&
+                    points[i].y < series.yAxis.min) {
                     points[i].isNull = true;
                 }
             }
         }
         // Perform clip after render
-        if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = Boolean(H.addEvent(this, 'afterRender', function () {
-                var circ;
-                if (chart.polar) {
-                    circ = this.yAxis.center;
-                    if (!this.clipCircle) {
-                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
-                    }
-                    else {
-                        this.clipCircle.animate({
-                            x: circ[0],
-                            y: circ[1],
-                            r: circ[2] / 2
-                        });
-                    }
-                    this.group.clip(this.clipCircle);
-                    this.setClip = H.noop;
+        series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
+            var circ;
+            if (chart.polar) {
+                circ = this.yAxis.center;
+                if (!this.clipCircle) {
+                    this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
                 }
-            }));
-        }
+                else {
+                    this.clipCircle.animate({
+                        x: circ[0],
+                        y: circ[1],
+                        r: circ[2] / 2
+                    });
+                }
+                this.group.clip(this.clipCircle);
+                this.setClip = H.noop;
+            }
+        }));
     }
 }, { order: 2 }); // Run after translation of ||-coords
 /**
