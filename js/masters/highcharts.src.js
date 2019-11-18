@@ -50,6 +50,7 @@ extend(Highcharts, {
     erase: U.erase,
     extend: U.extend,
     extendClass: U.extendClass,
+    getMagnitude: U.getMagnitude,
     isArray: U.isArray,
     isClass: U.isClass,
     isDOMElement: U.isDOMElement,

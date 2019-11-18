@@ -205,11 +205,11 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, getMagnitude = U.getMagnitude, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
+var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or

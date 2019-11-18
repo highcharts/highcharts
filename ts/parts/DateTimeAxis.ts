@@ -53,10 +53,12 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    getMagnitude
+} = U;
 
 var Axis = H.Axis,
-    getMagnitude = H.getMagnitude,
     normalizeTickInterval = H.normalizeTickInterval,
     timeUnits = H.timeUnits;
 

@@ -2054,9 +2054,9 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num: number): number {
+function getMagnitude(num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-};
+}
 
 /**
  * Take an interval and normalize it to multiples of round numbers.
@@ -3413,6 +3413,7 @@ const utils = {
     erase,
     extend,
     extendClass,
+    getMagnitude,
     isArray,
     isClass,
     isDOMElement,

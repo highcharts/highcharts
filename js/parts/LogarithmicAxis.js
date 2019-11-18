@@ -10,8 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var pick = U.pick;
-var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval;
+var getMagnitude = U.getMagnitude, pick = U.pick;
+var Axis = H.Axis, normalizeTickInterval = H.normalizeTickInterval;
 /* ************************************************************************** *
  * Methods defined on the Axis prototype
  * ************************************************************************** */

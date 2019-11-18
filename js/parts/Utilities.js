@@ -1415,9 +1415,9 @@ H.format = function (str, ctx, chart) {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num) {
+function getMagnitude(num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-};
+}
 /**
  * Take an interval and normalize it to multiples of round numbers.
  *
@@ -2528,6 +2528,7 @@ var utils = {
     erase: erase,
     extend: extend,
     extendClass: extendClass,
+    getMagnitude: getMagnitude,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
