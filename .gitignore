@@ -33,6 +33,7 @@
 /highcharts.com.site-error.log
 /test/last-run.json
 /test/visual-test-results.json
+/test/pr-review-*.json
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
