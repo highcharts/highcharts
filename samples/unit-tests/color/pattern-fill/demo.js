@@ -18,7 +18,8 @@ QUnit.test('SVGRenderer used directly', function (assert) {
                     width: 12,
                     height: 12,
                     color: '#ff0000',
-                    opacity: 0.5
+                    opacity: 0.5,
+                    backgroundColor: '#00ffff'
                 }
             },
             x: 40,
@@ -36,13 +37,18 @@ QUnit.test('SVGRenderer used directly', function (assert) {
     assert.strictEqual(
         pattern.getElementsByTagName('path')[0].getAttribute('stroke'),
         '#ff0000',
-        'Pattern has path with correct color'
+        'Pattern has path with correct stroke'
+    );
+    assert.strictEqual(
+        pattern.getElementsByTagName('path')[0].getAttribute('fill'),
+        '#00ff00',
+        'Pattern has path with correct fill'
     );
 
     assert.strictEqual(
         pattern.getElementsByTagName('rect')[0].getAttribute('fill'),
-        '#00ff00',
-        'Pattern has rect with correct color'
+        '#00ffff',
+        'Pattern has background rect with correct fill'
     );
 
     assert.strictEqual(
@@ -62,13 +68,13 @@ QUnit.test('Pattern fill set on series', function (assert) {
                     pattern: {
                         id: 'custom-id',
                         path: {
-                            d: 'M 3 3 L 8 3 L 8 8 Z',
-                            fill: '#000000'
+                            d: 'M 3 3 L 8 3 L 8 8 Z'
                         },
                         width: 12,
                         height: 12,
                         color: '#ff0000',
-                        opacity: 0.5
+                        opacity: 0.5,
+                        backgroundColor: '#000000'
                     }
                 },
                 data: [

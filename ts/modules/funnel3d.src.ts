@@ -116,10 +116,11 @@ var charts = H.charts,
 /**
  * The funnel3d series type.
  *
- * Requires `highcharts-3d.js`, `cylinder.js` and `funnel3d.js` module.
- *
  * @constructor seriesTypes.funnel3d
  * @augments seriesTypes.column
+ * @requires highcharts-3d
+ * @requires modules/cylinder
+ * @requires modules/funnel3d
  */
 seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
     /**
@@ -137,6 +138,9 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
      * @product      highcharts
      * @since        7.1.0
+     * @requires     highcharts-3d
+     * @requires     modules/cylinder
+     * @requires     modules/funnel3d
      * @optionparent plotOptions.funnel3d
      */
     {
@@ -206,17 +210,10 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
         edgeWidth: 0,
         colorByPoint: true,
         showInLegend: false,
-        /**
-         * @default {"align": "right", "crop": false, "inside": false, "overflow": "allow"}
-         */
         dataLabels: {
-            /** @ignore-option */
             align: 'right',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             inside: false,
-            /** @ignore-option */
             overflow: 'allow'
         }
     }, {
@@ -489,11 +486,16 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
+ * @sample {highcharts} highcharts/demo/funnel3d/
+ *         Funnel3d demo
+ *
  * @since     7.1.0
  * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
- * @sample    {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+ * @requires  highcharts-3d
+ * @requires  modules/cylinder
+ * @requires  modules/funnel3d
  * @apioption series.funnel3d
  */
 

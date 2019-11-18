@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
@@ -31,7 +31,7 @@ numExt = function (extreme) {
         return Math[extreme].apply(0, numbers);
     }
 };
-defaultSeriesType = seriesTypes.areaspline === undefined ?
+defaultSeriesType = typeof seriesTypes.areaspline === 'undefined' ?
     'line' :
     'areaspline';
 extend(defaultOptions, {
@@ -280,6 +280,13 @@ extend(defaultOptions, {
              * The type of the navigator series. Defaults to `areaspline` if
              * defined, otherwise `line`.
              *
+             * Heads up:
+             * In column-type navigator, zooming is limited to at least one
+             * point with its `pointRange`.
+             *
+             * @sample {highstock} stock/navigator/column/
+             *         Column type navigator
+             *
              * @type    {string}
              * @default areaspline
              */
@@ -333,9 +340,7 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
-                /** @internal */
                 enabled: false,
-                /** @internal */
                 zIndex: 2 // #1839
             },
             id: 'highcharts-navigator-series',
@@ -356,7 +361,17 @@ extend(defaultOptions, {
             marker: {
                 enabled: false
             },
-            pointRange: 0,
+            /**
+             * Since Highstock v8, default value is the same as default
+             * `pointRange` defined for a specific type (e.g. `null` for
+             * column type).
+             *
+             * In Highstock version < 8, defaults to 0.
+             *
+             * @extends plotOptions.series.pointRange
+             * @type {number|null}
+             * @apioption navigator.series.pointRange
+             */
             /**
              * The threshold option. Setting it to 0 will make the default
              * navigator area series draw its area from the 0 value and up.
@@ -510,7 +525,14 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options
  * @return {*}
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
-    var fixedRange = this.chart && this.chart.fixedRange, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+    var fixedRange = this.chart && this.chart.fixedRange, halfPointRange = (this.pointRange || 0) / 2, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+    // Add/remove half point range to/from the extremes (#1172)
+    if (!defined(fixedMin)) {
+        newMin = correctFloat(newMin + halfPointRange);
+    }
+    if (!defined(fixedMax)) {
+        newMax = correctFloat(newMax - halfPointRange);
+    }
     // If the difference between the fixed range and the actual requested range
     // is too great, the user is dragging across an ordinal gap, and we need to
     // release the range selector button.
@@ -523,7 +545,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
         }
     }
     if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = undefined;
+        newMin = newMax = void 0;
     }
     return {
         min: newMin,
@@ -832,11 +854,13 @@ Navigator.prototype = {
      * @return {void}
      */
     render: function (min, max, pxMin, pxMax) {
-        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
+        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
         // Don't redraw while moving the handles (#4703).
         if (this.hasDragged && !defined(pxMin)) {
             return;
         }
+        min = correctFloat(min - pointRange / 2);
+        max = correctFloat(max + pointRange / 2);
         // Don't render the navigator until we have data (#486, #4202, #5172).
         if (!isNumber(min) || !isNumber(max)) {
             // However, if navigator was already rendered, we may need to resize
@@ -872,28 +896,29 @@ Navigator.prototype = {
         // Are we below the minRange? (#2618, #6191)
         newMin = xAxis.toValue(pxMin, true);
         newMax = xAxis.toValue(pxMax, true);
-        currentRange = Math.abs(H.correctFloat(newMax - newMin));
+        currentRange = Math.abs(correctFloat(newMax - newMin));
         if (currentRange < minRange) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - minRange, true);
+                pxMin = xAxis.toPixels(newMax - minRange - pointRange, true);
             }
             else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + minRange, true);
+                pxMax = xAxis.toPixels(newMin + minRange + pointRange, true);
             }
         }
-        else if (defined(maxRange) && currentRange > maxRange) {
+        else if (defined(maxRange) &&
+            correctFloat(currentRange - pointRange) > maxRange) {
             if (this.grabbedLeft) {
-                pxMin = xAxis.toPixels(newMax - maxRange, true);
+                pxMin = xAxis.toPixels(newMax - maxRange - pointRange, true);
             }
             else if (this.grabbedRight) {
-                pxMax = xAxis.toPixels(newMin + maxRange, true);
+                pxMax = xAxis.toPixels(newMin + maxRange + pointRange, true);
             }
         }
         // Handles are allowed to cross, but never exceed the plot area
-        navigator.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), zoomedMax);
-        navigator.zoomedMin = Math.min(Math.max(navigator.fixedWidth ?
+        navigator.zoomedMax = clamp(Math.max(pxMin, pxMax), 0, zoomedMax);
+        navigator.zoomedMin = clamp(navigator.fixedWidth ?
             navigator.zoomedMax - navigator.fixedWidth :
-            Math.min(pxMin, pxMax), 0), zoomedMax);
+            Math.min(pxMin, pxMax), 0, zoomedMax);
         navigator.range = navigator.zoomedMax - navigator.zoomedMin;
         zoomedMax = Math.round(navigator.zoomedMax);
         zoomedMin = Math.round(navigator.zoomedMin);
@@ -1215,7 +1240,7 @@ Navigator.prototype = {
             this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
-            this.eventsToUnbind = undefined;
+            this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
     },
@@ -1503,6 +1528,12 @@ Navigator.prototype = {
                 baseOptions = base.options || {};
                 baseNavigatorOptions = baseOptions.navigatorOptions || {};
                 mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, userNavOptions, baseNavigatorOptions);
+                // Once nav series type is resolved, pick correct pointRange
+                mergedNavSeriesOptions.pointRange = pick(
+                // Stricte set pointRange in options
+                userNavOptions.pointRange, baseNavigatorOptions.pointRange, 
+                // Fallback to default values, e.g. `null` for column
+                defaultOptions.plotOptions[mergedNavSeriesOptions.type || 'line'].pointRange);
                 // Merge data separately. Do a slice to avoid mutating the
                 // navigator options from base series (#4923).
                 var navigatorSeriesData = baseNavigatorOptions.data || userNavOptions.data;
@@ -1818,7 +1849,7 @@ if (!H.Navigator) {
                 }
             }
         }
-        if (e.zoomed !== undefined) {
+        if (typeof e.zoomed !== 'undefined') {
             e.preventDefault();
         }
     });

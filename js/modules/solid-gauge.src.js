@@ -21,7 +21,7 @@ import H from '../parts/Globals.js';
 * @type {boolean|undefined}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 var wrap = H.wrap, Renderer = H.Renderer, colorAxisMethods;
@@ -103,8 +103,8 @@ colorAxisMethods = {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((from === undefined || value >= from) &&
-                    (to === undefined || value <= to)) {
+                if ((typeof from === 'undefined' || value >= from) &&
+                    (typeof to === 'undefined' || value <= to)) {
                     color = dataClass.color;
                     if (point) {
                         point.dataClass = i;
@@ -144,6 +144,7 @@ colorAxisMethods = {
  * @extends      plotOptions.gauge
  * @excluding    dial, pivot, wrap
  * @product      highcharts
+ * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
 var solidGaugeOptions = {
@@ -226,7 +227,6 @@ var solidGaugeOptions = {
      */
     colorByPoint: true,
     dataLabels: {
-        /** @ignore-option */
         y: 0
     }
 };
@@ -268,10 +268,10 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                     point.color = toColor;
                 }
                 // Handle overshoot and clipping to axis max/min
-                rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
+                rotation = clamp(rotation, axisMinAngle - overshootVal, axisMaxAngle + overshootVal);
                 // Handle the wrap option
                 if (options.wrap === false) {
-                    rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
+                    rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                 }
                 minAngle = Math.min(rotation, series.thresholdAngleRad);
                 maxAngle = Math.max(rotation, series.thresholdAngleRad);
@@ -341,6 +341,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/solid-gauge
  * @apioption series.solidgauge
  */
 /**

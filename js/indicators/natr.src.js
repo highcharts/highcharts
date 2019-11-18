@@ -30,6 +30,8 @@ H.seriesType('natr', 'sma',
  * @extends      plotOptions.atr
  * @since        7.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/natr
  * @optionparent plotOptions.natr
  */
 {
@@ -43,9 +45,12 @@ H.seriesType('natr', 'sma',
 {
     requiredIndicators: ['atr'],
     getValues: function (series, params) {
-        var atrData = ATR.prototype.getValues.apply(this, arguments), atrLength = atrData.values.length, period = params.period - 1, yVal = series.yData, i = 0;
+        var atrData = (ATR.prototype.getValues.apply(this, arguments)), atrLength = atrData.values.length, period = params.period - 1, yVal = series.yData, i = 0;
+        if (!atrData) {
+            return;
+        }
         for (; i < atrLength; i++) {
-            atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;
+            atrData.yData[i] = (atrData.values[i][1] / yVal[period][3] * 100);
             atrData.values[i][1] = atrData.yData[i];
             period++;
         }
@@ -60,6 +65,8 @@ H.seriesType('natr', 'sma',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/natr
  * @apioption series.natr
  */
 ''; // to include the above in the js output'

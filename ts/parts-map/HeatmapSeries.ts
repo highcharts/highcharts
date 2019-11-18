@@ -96,6 +96,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     pick
 } = U;
@@ -130,6 +131,9 @@ seriesType<Highcharts.HeatmapSeries>(
     /**
      * A heatmap is a graphical representation of data where the individual
      * values contained in a matrix are represented as colors.
+     *
+     * @productdesc {highcharts}
+     * Requires `modules/heatmap`.
      *
      * @sample highcharts/demo/heatmap/
      *         Simple heatmap
@@ -223,20 +227,13 @@ seriesType<Highcharts.HeatmapSeries>(
         nullColor: '${palette.neutralColor3}',
 
         dataLabels: {
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (number|null) { // #2945
                 return (this.point as Highcharts.HeatmapPoint).value;
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             padding: 0 // #3837
         },
 
@@ -309,9 +306,6 @@ seriesType<Highcharts.HeatmapSeries>(
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 seriesPointPadding = options.pointPadding || 0,
-                between = function (x: number, a: number, b: number): number {
-                    return Math.min(Math.max(a, x), b);
-                },
                 pointPlacement = series.pointPlacementToXValue(); // #7860
 
             series.generatePoints();
@@ -321,7 +315,7 @@ seriesType<Highcharts.HeatmapSeries>(
             ): void {
                 var xPad = (options.colsize || 1) / 2,
                     yPad = (options.rowsize || 1) / 2,
-                    x1 = between(
+                    x1 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -335,7 +329,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    x2 = between(
+                    x2 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(point.x + xPad,
@@ -348,7 +342,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    y1 = between(
+                    y1 = clamp(
                         Math.round(yAxis.translate(
                             point.y - yPad,
                             0 as any,
@@ -358,7 +352,7 @@ seriesType<Highcharts.HeatmapSeries>(
                         ) as any),
                         -yAxis.len, 2 * yAxis.len
                     ),
-                    y2 = between(
+                    y2 = clamp(
                         Math.round(yAxis.translate(
                             point.y + yPad,
                             0 as any,
@@ -525,6 +519,9 @@ seriesType<Highcharts.HeatmapSeries>(
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
  * @excluding dataParser, dataURL, marker, pointRange, stack

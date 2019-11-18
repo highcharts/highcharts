@@ -88,11 +88,11 @@ H.approximations['ichimoku-averages'] = function () {
     var ret = [], isEmptyRange;
     [].forEach.call(arguments, function (arr, i) {
         ret.push(H.approximations.average(arr));
-        isEmptyRange = !isEmptyRange && ret[i] === undefined;
+        isEmptyRange = !isEmptyRange && typeof ret[i] === 'undefined';
     });
     // Return undefined when first elem. is undefined and let
     // sum method handle null (#7377)
-    return isEmptyRange ? undefined : ret;
+    return isEmptyRange ? void 0 : ret;
 };
 /* eslint-enable require-jsdoc */
 /**
@@ -119,6 +119,8 @@ seriesType('ikh', 'sma',
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ichimoku-kinko-hyo
  * @optionparent plotOptions.ikh
  */
 {
@@ -158,7 +160,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -175,7 +177,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -192,7 +194,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -209,7 +211,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -226,7 +228,7 @@ seriesType('ikh', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -563,7 +565,7 @@ seriesType('ikh', 'sma',
         if (xVal.length <= period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         // Add timestamps at the beginning
         dateStart = xVal[0] - (period * closestPointRange);
@@ -630,6 +632,8 @@ seriesType('ikh', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ichimoku-kinko-hyo
  * @apioption series.ikh
  */
 ''; // add doclet above to transpiled file

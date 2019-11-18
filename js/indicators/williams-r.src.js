@@ -34,6 +34,8 @@ H.seriesType('williamsr', 'sma',
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/williams-r
  * @optionparent plotOptions.williamsr
  */
 {
@@ -63,7 +65,7 @@ H.seriesType('williamsr', 'sma',
         if (xVal.length < period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4) {
-            return false;
+            return;
         }
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list
@@ -98,6 +100,8 @@ H.seriesType('williamsr', 'sma',
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/williams-r
  * @apioption series.williamsr
  */
 ''; // adds doclets above to the transpiled file

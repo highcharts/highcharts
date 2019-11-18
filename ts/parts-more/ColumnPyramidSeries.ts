@@ -42,6 +42,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     pick
 } = U;
 
@@ -65,8 +66,8 @@ seriesType<Highcharts.ColumnPyramidSeries>(
 
     /**
      * Column pyramid series display one pyramid per value along an X axis.
-     * Requires `highcharts-more.js`. To display horizontal pyramids,
-     * set [chart.inverted](#chart.inverted) to `true`.
+     * To display horizontal pyramids, set [chart.inverted](#chart.inverted) to
+     * `true`.
      *
      * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
      *         Column pyramid
@@ -81,6 +82,7 @@ seriesType<Highcharts.ColumnPyramidSeries>(
      * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
      *               edgeWidth, groupZPadding, negativeColor, softThreshold,
      *               threshold, zoneAxis, zones
+     * @requires     highcharts-more
      * @optionparent plotOptions.columnpyramid
      */
     {
@@ -138,8 +140,9 @@ seriesType<Highcharts.ColumnPyramidSeries>(
                         point.yBottom, translatedThreshold as any
                     ),
                     safeDistance = 999 + Math.abs(yBottom),
-                    plotY = Math.min(
-                        Math.max(-safeDistance, point.plotY as any),
+                    plotY = clamp(
+                        point.plotY as any,
+                        -safeDistance,
                         yAxis.len + safeDistance
                     ),
                     // Don't draw too far outside plot area
@@ -277,6 +280,7 @@ seriesType<Highcharts.ColumnPyramidSeries>(
  * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
  *            gapSize, gapUnit, linecap, lineWidth, marker, step
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnpyramid
  */
 

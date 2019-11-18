@@ -34,6 +34,7 @@ var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 seriesType('boxplot', 'column', {
@@ -269,7 +270,7 @@ seriesType('boxplot', 'column', {
         doQuartiles = series.doQuartiles !== false, pointWiskerLength, whiskerLength = series.options.whiskerLength;
         points.forEach(function (point) {
             var graphic = point.graphic, verb = graphic ? 'animate' : 'attr', shapeArgs = point.shapeArgs, boxAttr = {}, stemAttr = {}, whiskersAttr = {}, medianAttr = {}, color = point.color || series.color;
-            if (point.plotY !== undefined) {
+            if (typeof point.plotY !== 'undefined') {
                 // crisp vector coordinates
                 width = shapeArgs.width;
                 left = Math.floor(shapeArgs.x);
@@ -423,6 +424,7 @@ seriesType('boxplot', 'column', {
  * @extends   series,plotOptions.boxplot
  * @excluding dataParser, dataURL, marker, stack, stacking, states
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.boxplot
  */
 /**

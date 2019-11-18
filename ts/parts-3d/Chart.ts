@@ -159,13 +159,15 @@ addEvent(Chart, 'addSeries', function (
  * @function getScale
  *
  * @param {Highcharts.Chart} chart
- *        Chart object
+ * Chart object
  *
  * @param {number} depth
- *        The depth of the chart
+ * The depth of the chart
  *
  * @return {number}
- *         The scale to fit the 3D chart into the plotting area.
+ * The scale to fit the 3D chart into the plotting area.
+ *
+ * @requires highcharts-3d
  */
 function getScale(chart: Highcharts.Chart, depth: number): number {
     var plotLeft = chart.plotLeft,
@@ -287,8 +289,9 @@ var extendedOptions: Highcharts.Options = {
          * `highcharts-3d.js`, found in the download package or online at
          * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-3d.js).
          *
-         * @since   4.0
-         * @product highcharts
+         * @since    4.0
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         options3d: {
 
@@ -358,8 +361,9 @@ var extendedOptions: Highcharts.Options = {
              * Provides the option to draw a frame around the charts by defining
              * a bottom, front and back panel.
              *
-             * @since   4.0
-             * @product highcharts
+             * @since    4.0
+             * @product  highcharts
+             * @requires highcharts-3d
              */
             frame: {
 
@@ -376,8 +380,9 @@ var extendedOptions: Highcharts.Options = {
                 /**
                  * The bottom of the frame around a 3D chart.
                  *
-                 * @since   4.0
-                 * @product highcharts
+                 * @since    4.0
+                 * @product  highcharts
+                 * @requires highcharts-3d
                  */
 
                 /**
@@ -1529,7 +1534,7 @@ Chart.prototype.get3dFrame = function (): Highcharts.Chart3dFrameObject {
                 if (typeof sources[j] === 'object') {
                     var val = (sources[j] as any)[attr];
 
-                    if (val !== undefined && val !== null) {
+                    if (typeof val !== 'undefined' && val !== null) {
                         (options as any)[attr] = val;
                         break;
                     }
@@ -1847,6 +1852,7 @@ H.Fx.prototype.matrixSetter = function (): void {
  * @deprecated
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption chart.options3d.frame.side
  */
 

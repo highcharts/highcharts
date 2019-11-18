@@ -11,6 +11,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     pick
 } = U;
 
@@ -26,10 +27,10 @@ declare global {
             public options: DPOIndicatorOptions;
             public pointClass: typeof DPOIndicatorPoint;
             public points: Array<DPOIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: DPOIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface DPOIndicatorOptions extends SMAIndicatorOptions {
@@ -50,8 +51,6 @@ declare global {
 
     }
 }
-
-var correctFloat = H.correctFloat;
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -102,6 +101,8 @@ H.seriesType<Highcharts.DPOIndicator>(
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
      */
     {
@@ -121,10 +122,10 @@ H.seriesType<Highcharts.DPOIndicator>(
      */
     {
         nameBase: 'DPO',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.DPOIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 index: number = (params.index as any),
                 offset: number = Math.floor(period / 2 + 1),
@@ -134,7 +135,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                     (series.yData as any) || [],
                 yValLen: number = yVal.length,
                 // 0- date, 1- Detrended Price Oscillator
-                DPO: Array<[number, number]> = [],
+                DPO: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 sum = 0,
@@ -146,7 +147,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 j: number;
 
             if (xVal.length <= range) {
-                return false;
+                return;
             }
 
             // Accumulate first N-points for SMA
@@ -181,7 +182,7 @@ H.seriesType<Highcharts.DPOIndicator>(
                 values: DPO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
@@ -196,6 +197,8 @@ H.seriesType<Highcharts.DPOIndicator>(
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/dpo
  * @apioption series.dpo
  */
 

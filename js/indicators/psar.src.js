@@ -105,6 +105,8 @@ H.seriesType('psar', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/psar
  * @optionparent plotOptions.psar
  */
 {
@@ -166,7 +168,7 @@ H.seriesType('psar', 'sma',
         // Set initial acc factor (for every new trend!)
         initialAccelerationFactor = params.initialAccelerationFactor, PSAR = yVal[0][2], decimals = params.decimals, index = params.index, PSARArr = [], xData = [], yData = [], previousDirection = 1, direction, EPMinusPSAR, accelerationFactorMultiply, newDirection, prevLow, prevPrevLow, prevHigh, prevPrevHigh, newExtremePoint, high, low, ind;
         if (index >= yVal.length) {
-            return false;
+            return;
         }
         for (ind = 0; ind < index; ind++) {
             extremePoint = Math.max(yVal[ind][1], extremePoint);
@@ -222,6 +224,8 @@ H.seriesType('psar', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/psar
  * @apioption series.psar
  */
 ''; // to include the above in the js output

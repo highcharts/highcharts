@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Grzegorz Blachliński
- js_wrap: b
+name: Variable radius pie
+authors:
+  - Grzegorz Blachliński
+js_wrap: b
+tags: []
+categories:
+  - Pie charts
 ...

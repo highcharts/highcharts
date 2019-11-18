@@ -164,7 +164,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
         var series = this, points = series.points, chart = series.chart, reversedYAxis = series.yAxis.reversed;
         points.forEach(function (point) {
             var graphic = point.graphic, plotOpen, plotClose, topBox, bottomBox, hasTopWhisker, hasBottomWhisker, crispCorr, crispX, path, halfWidth, isNew = !graphic;
-            if (point.plotY !== undefined) {
+            if (typeof point.plotY !== 'undefined') {
                 if (!graphic) {
                     point.graphic = graphic = chart.renderer.path()
                         .add(series.group);

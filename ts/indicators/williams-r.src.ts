@@ -17,10 +17,14 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class WilliamsRIndicator extends SMAIndicator {
-            data: Array<WilliamsRIndicatorPoint>;
-            options: WilliamsRIndicatorOptions;
-            pointClass: typeof WilliamsRIndicatorPoint;
-            points: Array<WilliamsRIndicatorPoint>;
+            public data: Array<WilliamsRIndicatorPoint>;
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
+                params: WilliamsRIndicatorParamsOptions
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+            public options: WilliamsRIndicatorOptions;
+            public pointClass: typeof WilliamsRIndicatorPoint;
+            public points: Array<WilliamsRIndicatorPoint>;
         }
         class WilliamsRIndicatorPoint extends SMAIndicatorPoint {
             series: WilliamsRIndicator;
@@ -70,6 +74,8 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/williams-r
      * @optionparent plotOptions.williamsr
      */
     {
@@ -89,11 +95,11 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
      */
     {
         nameBase: 'Williams %R',
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.WilliamsRIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.WilliamsRIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<Array<number>> = series.yData as any,
@@ -118,7 +124,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // For a N-period, we start from N-1 point, to calculate Nth point
@@ -145,7 +151,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
                 values: WR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
@@ -160,6 +166,8 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/williams-r
  * @apioption series.williamsr
  */
 

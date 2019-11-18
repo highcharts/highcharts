@@ -130,6 +130,7 @@ const {
     isString,
     objectEach,
     pick,
+    setAnimation,
     splat
 } = U;
 
@@ -148,8 +149,7 @@ var addEvent = H.addEvent,
     merge = H.merge,
     Point = H.Point,
     Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    setAnimation = H.setAnimation;
+    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -1043,7 +1043,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     if (
                         options &&
                         (options as any).marker &&
-                        (options as any).marker.symbol !== undefined
+                        typeof (options as any).marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
@@ -1465,7 +1465,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
                 // New options affecting how the data points are built
-                options.pointStart !== undefined ||
+                typeof options.pointStart !== 'undefined' ||
                 options.pointInterval ||
                 options.pointIntervalUnit ||
                 options.keys
@@ -1527,7 +1527,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         options = merge(oldOptions, animation as any, {
             // When oldOptions.index is null it should't be cleared.
             // Otherwise navigator series will have wrong indexes (#10193).
-            index: oldOptions.index === undefined ?
+            index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
@@ -1555,12 +1555,17 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // #3719).
         series.remove(false, null as any, false, true);
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
-            (series as any)[n] = undefined;
+            (series as any)[n] = void 0;
         }
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         } else {
-            H.error(17, true, chart);
+            H.error(
+                17,
+                true,
+                chart,
+                { missingModuleFor: (newType || initialType) }
+            );
         }
 
         // Re-register groups (#3094) and other preserved properties
@@ -1633,7 +1638,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         fireEvent(this, 'afterUpdate');
 
         if (pick(redraw, true)) {
-            chart.redraw(keepPoints ? undefined : false);
+            chart.redraw(keepPoints ? void 0 : false);
         }
     },
 
@@ -1702,7 +1707,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             (chart.options as any)[this.coll].events,
             function (fn: Function, ev: string): void {
                 if (typeof (newEvents as any)[ev] === 'undefined') {
-                    (newEvents as any)[ev] = undefined;
+                    (newEvents as any)[ev] = void 0;
                 }
             }
         );

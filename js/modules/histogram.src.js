@@ -11,9 +11,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach;
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, correctFloat = H.correctFloat, merge = H.merge;
+var seriesType = H.seriesType, merge = H.merge;
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */
@@ -68,6 +68,7 @@ seriesType('histogram', 'column',
  *               stacking
  * @product      highcharts
  * @since        6.0.0
+ * @requires     modules/histogram
  * @optionparent plotOptions.histogram
  */
 {
@@ -89,7 +90,7 @@ seriesType('histogram', 'column',
      *
      * @type {number}
      */
-    binWidth: undefined,
+    binWidth: void 0,
     pointPadding: 0,
     groupPadding: 0,
     grouping: false,
@@ -174,6 +175,7 @@ seriesType('histogram', 'column',
  * @excluding data, dataParser, dataURL
  * @product   highcharts
  * @since     6.0.0
+ * @requires  modules/histogram
  * @apioption series.histogram
  */
 /**

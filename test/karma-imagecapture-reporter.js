@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const version = require('../package.json').version;
 
 /* eslint-disable require-jsdoc */
 function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
@@ -17,7 +18,8 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     const {
         imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json'
-        }
+        },
+        referenceRun = false
     } = config;
 
     /**
@@ -44,12 +46,16 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
      *         The file name
      * @param  {Array}  frames
      *         The image data of the GIF frames
+     * @param {number} width
+     *          Width of the created gif
+     * @param {number} height
+     *          Height of the created gif
      * @return {void}
      */
-    function createAnimatedGif(filename, frames) {
+    function createAnimatedGif(filename, frames, width, height) {
         var GIFEncoder = require('gifencoder');
 
-        var encoder = new GIFEncoder(300, 200);
+        var encoder = new GIFEncoder(width, height);
         encoder.start();
         // 0 for repeat, -1 for no-repeat
         encoder.setRepeat(0);
@@ -89,12 +95,13 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         LOG.info('Starting visual tests. Results stored in ' + filename);
         const today = new Date().toISOString().slice(0, 10);
         const testResults = readExistingResult(filename);
-        testResults.meta = {
+        testResults.meta = Object.assign(testResults.meta || {}, {
             browser: browser.name,
             runId: browser.id,
             runDate: today,
-            gitSha: gitSha || 'unknown'
-        };
+            gitSha: gitSha || 'unknown',
+            version: version
+        });
         fs.writeFileSync(filename, JSON.stringify(testResults, null, ' '));
     };
 
@@ -105,6 +112,10 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
      * @return {void}
      */
     this.specSuccess = this.specSkipped = this.specFailure = function (browser, testResult) {
+        if (referenceRun) {
+            // no need to log results test results if the test run is for references/baselines
+            return;
+        }
         const { log = [], skipped, success } = testResult;
         const filename = imageCapture.resultsOutputPath;
         const diffResults = readExistingResult(filename);
@@ -140,7 +151,9 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
                 fs.writeFileSync(filename, Buffer.from(data, 'base64'));
 
             } else if (/\.gif$/.test(filename)) {
-                createAnimatedGif(filename, info.frames);
+                const canvasWidth = info.canvasWidth || 600;
+                const canvasHeight = info.canvasHeight || 400;
+                createAnimatedGif(filename, info.frames, canvasWidth, canvasHeight);
             }
         } catch (err) {
             LOG.error(`Failed to write file ${filename}\n\n${err}`);

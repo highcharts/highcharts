@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge',
         plotBorderWidth: 1,
@@ -32,6 +31,10 @@ Highcharts.chart('container', {
         center: ['75%', '145%'],
         size: 300
     }],
+
+    exporting: {
+        enabled: false
+    },
 
     tooltip: {
         enabled: false
@@ -91,7 +94,6 @@ Highcharts.chart('container', {
             }
         }
     },
-
 
     series: [{
         name: 'Channel A',

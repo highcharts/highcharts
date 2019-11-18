@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, pick = U.pick;
+var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick;
 var seriesType = H.seriesType;
 /**
  * The vector series class.
@@ -37,6 +37,7 @@ seriesType('vector', 'scatter'
  *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
  *               dataGrouping, linecap, shadow, stacking, step, jitter
  * @product      highcharts highstock
+ * @requires     modules/vector
  * @optionparent plotOptions.vector
  */
 , {
@@ -243,7 +244,7 @@ seriesType('vector', 'scatter'
         else {
             this.markerGroup.animate({
                 opacity: 1
-            }, H.animObject(this.options.animation));
+            }, animObject(this.options.animation));
             this.animate = null;
         }
     }
@@ -256,6 +257,7 @@ seriesType('vector', 'scatter'
  * @extends   series,plotOptions.vector
  * @excluding dataParser, dataURL
  * @product   highcharts highstock
+ * @requires  modules/vector
  * @apioption series.vector
  */
 /**

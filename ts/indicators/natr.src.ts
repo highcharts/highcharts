@@ -19,10 +19,10 @@ declare global {
     namespace Highcharts {
         class NATRIndicator extends SMAIndicator {
             public data: Array<NATRIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: NATRIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: NATRIndicatorOptions;
             public pointClass: typeof NATRIndicatorPoint;
             public points: Array<NATRIndicatorPoint>;
@@ -70,6 +70,8 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
      * @extends      plotOptions.atr
      * @since        7.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
      */
     {
@@ -82,25 +84,34 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
      */
     {
         requiredIndicators: ['atr'],
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.NATRIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
-            var atrData: Highcharts.IndicatorValuesObject = (
-                    (ATR.prototype.getValues.apply(this, arguments) as any)
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+            var atrData: (
+                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
+                    undefined
+                ) = (
+                    ATR.prototype.getValues.apply(this, arguments)
                 ),
-                atrLength: number = atrData.values.length,
+                atrLength: number = (atrData as any).values.length,
                 period: number = (params.period as any) - 1,
                 yVal: Array<Array<number>> = (series.yData as any),
                 i = 0;
 
+            if (!atrData) {
+                return;
+            }
+
             for (; i < atrLength; i++) {
-                atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;
+                atrData.yData[i] = (
+                    (atrData.values as any)[i][1] / yVal[period][3] * 100
+                );
                 atrData.values[i][1] = atrData.yData[i];
                 period++;
             }
 
-            return atrData;
+            return atrData as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
 
     });
@@ -113,6 +124,8 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/natr
  * @apioption series.natr
  */
 

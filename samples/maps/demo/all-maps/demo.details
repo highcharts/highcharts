@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- requiresManualTesting: true
+name: Overview
+authors:
+  - Torstein Hønsi
+js_wrap: b
+requiresManualTesting: true
+tags: []
+categories:
+  - General
 ...

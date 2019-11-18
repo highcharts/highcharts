@@ -230,6 +230,7 @@ extend(H.defaultOptions, {
      * @sample gantt/pathfinder/demo
      *         Pathfinder connections
      *
+     * @declare      Highcharts.ConnectorsOptions
      * @product      gantt
      * @optionparent connectors
      */
@@ -327,7 +328,8 @@ extend(H.defaultOptions, {
          * this option is overridden by the `startMarker` and `endMarker`
          * options.
          *
-         * @since 6.2.0
+         * @declare Highcharts.ConnectorsMarkerOptions
+         * @since   6.2.0
          */
         marker: {
             /**
@@ -412,6 +414,7 @@ extend(H.defaultOptions, {
          * Marker options specific to the start markers for this chart's
          * Pathfinder connectors. Overrides the generic marker options.
          *
+         * @declare Highcharts.ConnectorsStartMarkerOptions
          * @extends connectors.marker
          * @since   6.2.0
          */
@@ -426,6 +429,7 @@ extend(H.defaultOptions, {
          * Marker options specific to the end markers for this chart's
          * Pathfinder connectors. Overrides the generic marker options.
          *
+         * @declare Highcharts.ConnectorsEndMarkerOptions
          * @extends connectors.marker
          * @since   6.2.0
          */
@@ -442,6 +446,7 @@ extend(H.defaultOptions, {
  * Override Pathfinder connector options for a series. Requires Highcharts Gantt
  * to be loaded.
  *
+ * @declare   Highcharts.SeriesConnectorsOptionsObject
  * @extends   connectors
  * @since     6.2.0
  * @excluding enabled, algorithmMargin
@@ -450,19 +455,20 @@ extend(H.defaultOptions, {
  */
 
 /**
- * Connect to a point. Requires Highcharts Gantt to be loaded. This option can
- * be either a string, referring to the ID of another point, or an object, or an
- * array of either. If the option is an array, each element defines a
- * connection.
+ * Connect to a point. This option can be either a string, referring to the ID
+ * of another point, or an object, or an array of either. If the option is an
+ * array, each element defines a connection.
  *
  * @sample gantt/pathfinder/demo
  *         Different connection types
  *
+ * @declare   Highcharts.XrangePointConnectorsOptionsObject
  * @type      {string|Array<string|*>|*}
  * @extends   plotOptions.series.connectors
  * @since     6.2.0
  * @excluding enabled
  * @product   gantt
+ * @requires  highcharts-gantt
  * @apioption series.xrange.data.connect
  */
 

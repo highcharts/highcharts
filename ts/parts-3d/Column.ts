@@ -62,21 +62,23 @@ var addEvent = H.addEvent,
     wrap = H.wrap;
 
 /**
- * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
+ * Depth of the columns in a 3D column chart.
  *
  * @type      {number}
  * @default   25
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.depth
  */
 
 /**
- * 3D columns only. The color of the edges. Similar to `borderColor`,
- *  except it defaults to the same color as the column.
+ * 3D columns only. The color of the edges. Similar to `borderColor`, except it
+ * defaults to the same color as the column.
  *
  * @type      {Highcharts.ColorString}
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeColor
  */
 
@@ -86,17 +88,18 @@ var addEvent = H.addEvent,
  * @type      {number}
  * @default   1
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeWidth
  */
 
 /**
- * The spacing between columns on the Z Axis in a 3D chart. Requires
- * `highcharts-3d.js`.
+ * The spacing between columns on the Z Axis in a 3D chart.
  *
  * @type      {number}
  * @default   1
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.groupZPadding
  */
 
@@ -359,7 +362,7 @@ wrap(
         if (series.chart.is3d()) {
             series.data.forEach(function (point: Highcharts.ColumnPoint): void {
                 point.visible = point.options.visible = vis =
-                    vis === undefined ?
+                    typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
                 pointVis = vis ? 'visible' : 'hidden';
                 (series.options.data as any)[series.data.indexOf(point)] =
@@ -388,7 +391,8 @@ addEvent(Series, 'afterInit', function (): void {
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
             z = 0;
 
-        if (!(grouping !== undefined && !grouping)) {
+        // @todo grouping === true ?
+        if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack
@@ -460,7 +464,6 @@ function setState(
 /**
  * In 3D mode, simple checking for a new shape to animate is not enough.
  * Additionally check if graphic is a group of elements
- *
  * @private
  */
 function hasNewShapeType(

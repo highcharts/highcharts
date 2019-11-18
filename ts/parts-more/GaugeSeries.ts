@@ -87,6 +87,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     isNumber,
     pick,
     pInt
@@ -117,6 +118,7 @@ var merge = H.merge,
  *               pointPlacement, shadow, softThreshold, stacking, states, step,
  *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
 seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
@@ -143,23 +145,14 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
      * @product highcharts
      */
     dataLabels: {
-        /** @ignore-option */
         borderColor: '${palette.neutralColor20}',
-        /** @ignore-option */
         borderRadius: 3,
-        /** @ignore-option */
         borderWidth: 1,
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'top',
-        /** @ignore-option */
         y: 15,
-        /** @ignore-option */
         zIndex: 2
     },
 
@@ -301,7 +294,6 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
      *         Allow 5 degrees overshoot
      *
      * @type      {number}
-     * @default   0
      * @since     3.0.10
      * @product   highcharts
      * @apioption plotOptions.gauge.overshoot
@@ -440,17 +432,13 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
                 ) as any);
 
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot)) {
-                overshoot = overshoot / 180 * Math.PI;
-                rotation = Math.max(
+            if (isNumber(overshoot) || options.wrap === false) {
+                overshoot = isNumber(overshoot) ?
+                    (overshoot / 180 * Math.PI) : 0;
+                rotation = clamp(
+                    rotation,
                     yAxis.startAngleRad - overshoot,
-                    Math.min(yAxis.endAngleRad + overshoot, rotation)
-                );
-
-            } else if (options.wrap === false) {
-                rotation = Math.max(
-                    yAxis.startAngleRad,
-                    Math.min(yAxis.endAngleRad, rotation)
+                    yAxis.endAngleRad + overshoot
                 );
             }
 
@@ -662,6 +650,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.gauge
  */
 

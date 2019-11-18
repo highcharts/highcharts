@@ -245,7 +245,7 @@ QUnit.test('Chart lang can be configured', function (assert) {
         'Container label configured');
 
     assert.ok(
-        chart.accessibility.components.infoRegion.screenReaderRegion
-            .innerHTML.indexOf('<h5>testing3</h5>') > -1
+        chart.accessibility.components.infoRegions.screenReaderSections.before
+            .element.innerHTML.indexOf('<div>testing3</div>') > -1
     );
 });

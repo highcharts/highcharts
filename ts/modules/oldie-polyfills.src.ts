@@ -65,7 +65,8 @@ if (!Array.prototype.forEach) {
             len = this.length;
 
         for (; i < len; i++) {
-            if (this[i] !== undefined && // added check
+            if (
+                typeof this[i] !== 'undefined' && // added check
                 fn.call(thisArg, this[i], i, this) as any === false
             ) {
                 return i as any;

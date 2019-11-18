@@ -44,10 +44,13 @@ var addEvent = H.addEvent,
 /**
  * The line marks the last price from visible range of points.
  *
- * @product   highstock
  * @sample {highstock} stock/indicators/last-visible-price
  *         Last visible price
- * @apioption   plotOptions.series.lastVisiblePrice
+ *
+ * @declare   Highcharts.SeriesLastVisiblePriceOptionsObject
+ * @product   highstock
+ * @requires  modules/price-indicator
+ * @apioption plotOptions.series.lastVisiblePrice
  */
 
 /**
@@ -55,8 +58,13 @@ var addEvent = H.addEvent,
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastVisiblePrice.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastVisiblePrice.enabled
+ */
+
+/**
+ * @declare   Highcharts.SeriesLastVisiblePriceLabelOptionsObject
+ * @apioption plotOptions.series.lastVisiblePrice.label
  */
 
 /**
@@ -64,18 +72,21 @@ var addEvent = H.addEvent,
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastVisiblePrice.label.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  *
  */
 
 /**
  * The line marks the last price from all points.
  *
- * @product   highstock
  * @sample {highstock} stock/indicators/last-price
  *         Last price
- * @apioption   plotOptions.series.lastPrice
+ *
+ * @declare   Highcharts.SeriesLastPriceOptionsObject
+ * @product   highstock
+ * @requires  modules/price-indicator
+ * @apioption plotOptions.series.lastPrice
  */
 
 /**
@@ -83,8 +94,8 @@ var addEvent = H.addEvent,
  *
  * @type      {boolean}
  * @product   highstock
- * @default true
- * @apioption   plotOptions.series.lastPrice.enabled
+ * @default   true
+ * @apioption plotOptions.series.lastPrice.enabled
  */
 
 /**
@@ -92,8 +103,8 @@ var addEvent = H.addEvent,
  *
  * @type      {string}
  * @product   highstock
- * @default red
- * @apioption   plotOptions.series.lastPrice.color
+ * @default   red
+ * @apioption plotOptions.series.lastPrice.color
  *
  */
 

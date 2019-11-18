@@ -44,8 +44,14 @@ QUnit.test('Too many points for markers', function (assert) {
 QUnit.test('Too many points for a11y', function (assert) {
     const chart = Highcharts.chart('container', {
             accessibility: {
-                pointDescriptionThreshold: 1,
-                pointNavigationThreshold: 1
+                series: {
+                    pointDescriptionEnabledThreshold: 1
+                },
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        pointNavigationEnabledThreshold: 1
+                    }
+                }
             },
             series: [{
                 marker: {

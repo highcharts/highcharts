@@ -24,10 +24,10 @@ declare global {
     namespace Highcharts {
         class PSARIndicator extends SMAIndicator {
             public data: Array<PSARIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: PSARIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: PSARIndicatorOptions;
             public pointClass: typeof PSARIndicatorPoint;
             public points: Array<PSARIndicatorPoint>;
@@ -190,6 +190,8 @@ H.seriesType<Highcharts.PSARIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/psar
      * @optionparent plotOptions.psar
      */
     {
@@ -243,10 +245,10 @@ H.seriesType<Highcharts.PSARIndicator>(
         }
     }, {
         nameComponents: (false as any),
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.PSARIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 // Extreme point is the lowest low for falling and highest high
@@ -266,7 +268,7 @@ H.seriesType<Highcharts.PSARIndicator>(
                 PSAR: number = yVal[0][2],
                 decimals: number = (params.decimals as any),
                 index: number = (params.index as any),
-                PSARArr: Array<[number, number]> = [],
+                PSARArr: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 previousDirection = 1,
@@ -284,7 +286,7 @@ H.seriesType<Highcharts.PSARIndicator>(
                 ind: number;
 
             if (index >= yVal.length) {
-                return false;
+                return;
             }
 
             for (ind = 0; ind < index; ind++) {
@@ -376,7 +378,7 @@ H.seriesType<Highcharts.PSARIndicator>(
                 values: PSARArr,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );
@@ -389,6 +391,8 @@ H.seriesType<Highcharts.PSARIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/psar
  * @apioption series.psar
  */
 

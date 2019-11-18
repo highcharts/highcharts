@@ -123,6 +123,8 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
+    correctFloat,
     defined,
     destroyObjectProperties,
     extend,
@@ -130,8 +132,7 @@ const {
     pick
 } = U;
 
-var correctFloat = H.correctFloat,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     merge = H.merge,
     deg2rad = H.deg2rad;
 
@@ -533,7 +534,7 @@ H.Tick.prototype = {
 
         pos = {
             x: horiz ?
-                H.correctFloat(
+                correctFloat(
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old
                     ) as any) +
@@ -563,7 +564,7 @@ H.Tick.prototype = {
                     axis.offset -
                     (axis.opposite ? axis.height : 0)
                 ) :
-                H.correctFloat(
+                correctFloat(
                     (cHeight as any) -
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old
@@ -573,7 +574,7 @@ H.Tick.prototype = {
         };
 
         // Chrome workaround for #10516
-        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+        pos.y = clamp(pos.y, -1e5, 1e5);
 
         fireEvent(this, 'afterGetPosition', { pos: pos });
 

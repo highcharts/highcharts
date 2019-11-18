@@ -20,10 +20,10 @@ declare global {
             public data: Array<ATRIndicatorPoint>
             public pointClass: typeof ATRIndicatorPoint;
             public points: Array<ATRIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ATRIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface ATRIndicatorOptions extends SMAIndicatorOptions {
@@ -125,6 +125,8 @@ seriesType<Highcharts.ATRIndicator>(
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
      */
     {
@@ -136,10 +138,10 @@ seriesType<Highcharts.ATRIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.ATRIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -163,7 +165,7 @@ seriesType<Highcharts.ATRIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             for (i = 1; i <= yValLen; i++) {
@@ -200,7 +202,7 @@ seriesType<Highcharts.ATRIndicator>(
                 values: ATR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
 
     }
@@ -214,6 +216,8 @@ seriesType<Highcharts.ATRIndicator>(
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/atr
  * @apioption series.atr
  */
 

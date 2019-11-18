@@ -252,46 +252,6 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.SeriesSankeyDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- *//**
- * The
- * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
- * specifying what to show for _nodes_ in the sankey diagram. By default the
- * `nodeFormatter` returns `{point.name}`.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-link-datalabels|Highcharts-Demo:}
- *      Node and link data labels
- *
- * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormat
- * @type {string|undefined}
- *//**
- * Callback to format data labels for _nodes_ in the sankey diagram. The
- * `nodeFormat` option takes precedence over the `nodeFormatter`.
- *
- * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormatter
- * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction|undefined}
- * @default function () { return this.point.name; }
- * @since 6.0.2
- */
-
-
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -369,6 +329,7 @@ seriesType<Highcharts.SankeySeries>(
      *               pointPlacement, pointRange, pointStart, pointWidth,
      *               shadow, softThreshold, stacking, threshold, zoneAxis,
      *               zones, minPointLength
+     * @requires     modules/sankey
      * @optionparent plotOptions.sankey
      */
     {
@@ -389,25 +350,40 @@ seriesType<Highcharts.SankeySeries>(
          * `nodeFormat`, and the `format` that applies to links and is an empty
          * string by default.
          *
-         * @type    {Highcharts.SeriesSankeyDataLabelsOptionsObject|Array<Highcharts.SeriesSankeyDataLabelsOptionsObject>}
-         * @default {"enabled": true, "backgroundColor": "none", "crop": false, "nodeFormatter": function () { return this.point.name; }, "inside": true}
+         * @declare Highcharts.SeriesSankeyDataLabelsOptionsObject
          *
          * @private
          */
         dataLabels: {
-            /** @ignore-option */
+
             enabled: true,
-            /**
-             * enable padding
-             * @ignore-option
-             */
-            backgroundColor: 'none',
-            /** @ignore-option */
+
+            backgroundColor: 'none', // enable padding
+
             crop: false,
-            /** @ignore-option */
-            nodeFormat: undefined,
+
+            /**
+             * The
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * specifying what to show for _nodes_ in the sankey diagram. By
+             * default the `nodeFormatter` returns `{point.name}`.
+             *
+             * @sample highcharts/plotoptions/sankey-link-datalabels/
+             *         Node and link data labels
+             *
+             * @type {string}
+             */
+            nodeFormat: void 0,
+
             // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
+            /**
+             * Callback to format data labels for _nodes_ in the sankey diagram.
+             * The `nodeFormat` option takes precedence over the
+             * `nodeFormatter`.
+             *
+             * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             * @since 6.0.2
+             */
             nodeFormatter: function (
                 this: (
                     Highcharts.SankeyDataLabelsFormatterContextObject|
@@ -416,15 +392,19 @@ seriesType<Highcharts.SankeySeries>(
             ): (string|undefined) {
                 return this.point.name;
             },
-            /** @ignore-option */
-            format: undefined,
+
+            format: void 0,
+
             // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
+            /**
+             * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             */
             formatter: function (): undefined {
                 return;
             },
-            /** @ignore-option */
+
             inside: true
+
         },
 
         /**
@@ -478,7 +458,7 @@ seriesType<Highcharts.SankeySeries>(
         /**
          * Can set `dataLabels` on all points which lay on the same level.
          *
-         * @type      {Highcharts.SeriesSankeyDataLabelsOptionsObject}
+         * @extends   plotOptions.sankey.dataLabels
          * @apioption plotOptions.sankey.levels.dataLabels
          */
 
@@ -501,7 +481,7 @@ seriesType<Highcharts.SankeySeries>(
         /**
          * Can set `states` on all nodes and points which lay on the same level.
          *
-         * @type      {Highcharts.PointStatesOptionsObject}
+         * @extends   plotOptions.sankey.states
          * @apioption plotOptions.sankey.levels.states
          */
 
@@ -556,6 +536,8 @@ seriesType<Highcharts.SankeySeries>(
             },
             /**
              * The opposite state of a hover for a single point node/link.
+             *
+             * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
                 /**
@@ -563,21 +545,23 @@ seriesType<Highcharts.SankeySeries>(
                  * inactive mode.
                  */
                 linkOpacity: 0.1,
+
                 /**
                  * Opacity of inactive markers.
                  *
                  * @type      {number}
-                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @apioption plotOptions.series.states.inactive.opacity
                  */
                 opacity: 0.1,
 
                 /**
                  * Animation when not hovering over the marker.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
-                 * @apioption plotOptions.series.marker.states.inactive.animation
+                 * @type      {boolean|Highcharts.AnimationOptionsObject}
+                 * @apioption plotOptions.series.states.inactive.animation
                  */
                 animation: {
+                    /** @internal */
                     duration: 50
                 }
             }
@@ -764,7 +748,7 @@ seriesType<Highcharts.SankeySeries>(
 
             // Fill in empty columns (#8865)
             for (var i = 0; i < columns.length; i++) {
-                if (columns[i] === undefined) {
+                if (typeof columns[i] === 'undefined') {
                     columns[i] = this.createNodeColumn();
                 }
             }
@@ -848,7 +832,8 @@ seriesType<Highcharts.SankeySeries>(
              * @private
              */
             function order(node: Highcharts.SankeyPoint, level: number): void {
-                if (node.level === undefined) { // Prevents circular recursion
+                // Prevents circular recursion:
+                if (typeof node.level === 'undefined') {
                     node.level = level;
                     node.linksFrom.forEach(function (
                         link: Highcharts.SankeyPoint
@@ -1250,6 +1235,7 @@ seriesType<Highcharts.SankeySeries>(
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
  *            threshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  modules/sankey
  * @apioption series.sankey
  */
 
@@ -1262,6 +1248,7 @@ seriesType<Highcharts.SankeySeries>(
  * @sample highcharts/css/sankey/
  *         Sankey diagram with node options
  *
+ * @declare   Highcharts.SeriesSankeyNodesOptionsObject
  * @type      {Array<*>}
  * @product   highcharts
  * @apioption series.sankey.nodes
@@ -1312,8 +1299,7 @@ seriesType<Highcharts.SankeySeries>(
  * Individual data label for each node. The options are the same as
  * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
  *
- * @type    {Highcharts.SeriesSankeyDataLabelsOptionsObject|Array<Highcharts.SeriesSankeyDataLabelsOptionsObject>}
- *
+ * @extends   plotOptions.sankey.dataLabels
  * @apioption series.sankey.nodes.dataLabels
  */
 
@@ -1383,6 +1369,7 @@ seriesType<Highcharts.SankeySeries>(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.SeriesSankeyPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding dragDrop, drilldown, marker, x, y

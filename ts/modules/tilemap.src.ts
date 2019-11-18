@@ -16,6 +16,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     pick
 } = U;
@@ -97,10 +98,6 @@ declare global {
 import '../parts-map/HeatmapSeries.js';
 
 var seriesType = H.seriesType,
-    // Utility func to get the middle number of 3
-    between = function (x: number, a: number, b: number): number {
-        return Math.min(Math.max(a, x), b);
-    },
     // Utility func to get padding definition from tile size division
     tilePaddingFromTileSize = function (
         series: Highcharts.TilemapSeries,
@@ -160,7 +157,7 @@ H.tileShapeTypes = {
             series.points.forEach(function (
                 point: Highcharts.TilemapPoint
             ): void {
-                var x1 = between(
+                var x1 = clamp(
                         Math.floor(
                             xAxis.len -
                             (xAxis.translate(
@@ -172,7 +169,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    x2 = between(
+                    x2 = clamp(
                         Math.floor(
                             xAxis.len -
                             (xAxis.translate(
@@ -184,7 +181,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    x3 = between(
+                    x3 = clamp(
                         Math.floor(
                             xAxis.len -
                             (xAxis.translate(
@@ -196,7 +193,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    x4 = between(
+                    x4 = clamp(
                         Math.floor(
                             xAxis.len -
                             (xAxis.translate(
@@ -208,7 +205,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    y1 = between(
+                    y1 = clamp(
                         Math.floor(yAxis.translate(
                             point.y - yPad,
                             0 as any,
@@ -219,7 +216,7 @@ H.tileShapeTypes = {
                         -yAxis.len,
                         2 * yAxis.len
                     ),
-                    y2 = between(
+                    y2 = clamp(
                         Math.floor(yAxis.translate(
                             point.y,
                             0 as any,
@@ -230,7 +227,7 @@ H.tileShapeTypes = {
                         -yAxis.len,
                         2 * yAxis.len
                     ),
-                    y3 = between(
+                    y3 = clamp(
                         Math.floor(yAxis.translate(
                             point.y + yPad,
                             0 as any,
@@ -340,7 +337,7 @@ H.tileShapeTypes = {
             series.points.forEach(function (
                 point: Highcharts.TilemapPoint
             ): void {
-                var x1 = between(
+                var x1 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -352,7 +349,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    x2 = between(
+                    x2 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -364,7 +361,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    x3 = between(
+                    x3 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -376,7 +373,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    y1 = between(
+                    y1 = clamp(
                         Math.round(yAxis.translate(
                             point.y - yPad,
                             0 as any,
@@ -387,7 +384,7 @@ H.tileShapeTypes = {
                         -yAxis.len,
                         2 * yAxis.len
                     ),
-                    y2 = between(
+                    y2 = clamp(
                         Math.round(yAxis.translate(
                             point.y,
                             0 as any,
@@ -398,7 +395,7 @@ H.tileShapeTypes = {
                         -yAxis.len,
                         2 * yAxis.len
                     ),
-                    y3 = between(
+                    y3 = clamp(
                         Math.round(yAxis.translate(
                             point.y + yPad,
                             0 as any,
@@ -502,7 +499,7 @@ H.tileShapeTypes = {
             series.points.forEach(function (
                 point: Highcharts.TilemapPoint
             ): void {
-                var x = between(
+                var x = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -514,7 +511,7 @@ H.tileShapeTypes = {
                             ) as any)
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    y = between(
+                    y = clamp(
                         Math.round(yAxis.translate(
                             point.y,
                             0 as any,
@@ -529,7 +526,7 @@ H.tileShapeTypes = {
                     hasPerPointPadding = false;
 
                 // If there is point padding defined on a single point, add it
-                if (point.pointPadding !== undefined) {
+                if (typeof point.pointPadding !== 'undefined') {
                     pointPadding = point.pointPadding;
                     hasPerPointPadding = true;
                     forceNextRadiusCompute = true;
@@ -555,7 +552,7 @@ H.tileShapeTypes = {
                 */
                 if (!radius || forceNextRadiusCompute) {
                     colsizePx = Math.abs(
-                        between(
+                        clamp(
                             Math.floor(
                                 xAxis.len -
                                 (xAxis.translate(
@@ -569,7 +566,7 @@ H.tileShapeTypes = {
                         ) - x
                     );
                     yRadiusPx = Math.abs(
-                        between(
+                        clamp(
                             Math.floor(
                                 yAxis.translate(
                                     point.y + yRadius,
@@ -645,7 +642,7 @@ H.tileShapeTypes = {
 // defined, we add nothing.
 H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
 
-    if (this.recomputingForTilemap) {
+    if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }
 
@@ -665,7 +662,7 @@ H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
                 return (a && (a.padding as any)) > (b && (b.padding as any)) ?
                     a :
                     b;
-            }, undefined) ||
+            }, void 0) ||
             {
                 padding: 0,
                 axisLengthFactor: 1
@@ -716,6 +713,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
      * @since        6.0.0
      * @excluding    jitter, joinBy, shadow, allAreas, mapData, data
      * @product      highcharts highmaps
+     * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
      */
     , { // Default options
@@ -913,6 +911,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
  * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
  *            pointRange, shadow, stack
  * @product   highcharts highmaps
+ * @requires  modules/tilemap.js
  * @apioption series.tilemap
  */
 

@@ -518,6 +518,7 @@ function updateFieldBoundaries(field, rectangle) {
  *               softThreshold, stacking, threshold, zoneAxis, zones
  * @product      highcharts
  * @since        6.0.0
+ * @requires     modules/wordcloud
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
@@ -533,6 +534,7 @@ var wordCloudOptions = {
      */
     allowExtendPlayingField: true,
     animation: {
+        /** @internal */
         duration: 500
     },
     borderWidth: 0,
@@ -766,7 +768,7 @@ var wordCloudSeries = {
                 css: css,
                 group: group,
                 renderer: renderer,
-                shapeArgs: undefined,
+                shapeArgs: void 0,
                 shapeType: 'text'
             });
         });
@@ -853,6 +855,7 @@ var wordCloudPoint = {
  *
  * @extends   series,plotOptions.wordcloud
  * @product   highcharts
+ * @requires  modules/wordcloud
  * @apioption series.wordcloud
  */
 /**

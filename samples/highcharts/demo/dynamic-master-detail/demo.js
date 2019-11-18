@@ -140,6 +140,9 @@ Highcharts.getJSON(
                 title: {
                     text: null
                 },
+                accessibility: {
+                    enabled: false
+                },
                 xAxis: {
                     type: 'datetime',
                     showLastTickLabel: true,

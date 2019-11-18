@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Øystein Moseng
-   - Torstein Hønsi
- js_wrap: b
+name: Advanced lat/long
+authors:
+  - Øystein Moseng
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Input formats
 ...

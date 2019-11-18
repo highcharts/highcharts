@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- js_wrap: b
- authors:
-   - Torstein Hønsi
+name: Stacked and grouped column
+js_wrap: b
+authors:
+  - Torstein Hønsi
+tags: []
+categories:
+  - Column and bar charts
 ...

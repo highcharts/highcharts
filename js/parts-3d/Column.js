@@ -14,20 +14,22 @@ var pick = U.pick;
 import '../parts/Series.js';
 var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, wrap = H.wrap;
 /**
- * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
+ * Depth of the columns in a 3D column chart.
  *
  * @type      {number}
  * @default   25
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.depth
  */
 /**
- * 3D columns only. The color of the edges. Similar to `borderColor`,
- *  except it defaults to the same color as the column.
+ * 3D columns only. The color of the edges. Similar to `borderColor`, except it
+ * defaults to the same color as the column.
  *
  * @type      {Highcharts.ColorString}
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeColor
  */
 /**
@@ -36,16 +38,17 @@ var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, serie
  * @type      {number}
  * @default   1
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeWidth
  */
 /**
- * The spacing between columns on the Z Axis in a 3D chart. Requires
- * `highcharts-3d.js`.
+ * The spacing between columns on the Z Axis in a 3D chart.
  *
  * @type      {number}
  * @default   1
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.groupZPadding
  */
 /* eslint-disable no-invalid-this */
@@ -226,7 +229,7 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
     if (series.chart.is3d()) {
         series.data.forEach(function (point) {
             point.visible = point.options.visible = vis =
-                vis === undefined ?
+                typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;
             pointVis = vis ? 'visible' : 'hidden';
             series.options.data[series.data.indexOf(point)] =
@@ -246,7 +249,8 @@ addEvent(Series, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
         var seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
-        if (!(grouping !== undefined && !grouping)) {
+        // @todo grouping === true ?
+        if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking), stack = seriesOptions.stack || 0, i; // position within the stack
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {
@@ -297,7 +301,6 @@ function setState(proceed, state, inherit) {
 /**
  * In 3D mode, simple checking for a new shape to animate is not enough.
  * Additionally check if graphic is a group of elements
- *
  * @private
  */
 function hasNewShapeType(proceed) {

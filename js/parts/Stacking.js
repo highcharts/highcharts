@@ -49,11 +49,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, objectEach = U.objectEach, pick = U.pick;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, format = H.format, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, format = H.format, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -120,7 +120,7 @@ H.StackItem.prototype = {
      */
     render: function (group) {
         var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
-            format(formatOption, this, chart.time) :
+            format(formatOption, this, chart) :
             options.formatter.call(this);
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
@@ -303,6 +303,7 @@ Axis.prototype.buildStacks = function () {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
+        H.fireEvent(this, 'afterBuildStacks');
     }
 };
 /**

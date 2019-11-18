@@ -228,7 +228,17 @@ H.addEvent(Series, 'afterTranslate', function () {
                 var circ;
                 if (chart.polar) {
                     circ = this.yAxis.center;
-                    this.group.clip(chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2));
+                    if (!this.clipCircle) {
+                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
+                    }
+                    else {
+                        this.clipCircle.animate({
+                            x: circ[0],
+                            y: circ[1],
+                            r: circ[2] / 2
+                        });
+                    }
+                    this.group.clip(this.clipCircle);
                     this.setClip = H.noop;
                 }
             }));
@@ -265,7 +275,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
          * @apioption plotOptions.series.connectEnds
          */
         if (this.options.connectEnds !== false &&
-            firstValid !== undefined) {
+            typeof firstValid !== 'undefined') {
             this.connectEnds = true; // re-used in splines
             points.splice(points.length, 0, points[firstValid]);
             popLastPoint = true;
@@ -273,7 +283,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
         points.forEach(function (point) {
-            if (point.polarPlotY === undefined) {
+            if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
         });
@@ -407,7 +417,7 @@ if (seriesTypes.column) {
                             series.stackKey];
                         if (series.visible && stack && stack[pointX]) {
                             if (!point.isNull) {
-                                stackValues = stack[pointX].points[series.getStackIndicator(undefined, pointX, series.index).key];
+                                stackValues = stack[pointX].points[series.getStackIndicator(void 0, pointX, series.index).key];
                                 // Translating to radial values
                                 start = yAxis.translate(stackValues[0]);
                                 end = yAxis.translate(stackValues[1]);

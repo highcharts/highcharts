@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- skipTest: true
+name: Pie with drilldown
+authors:
+  - Torstein Hønsi
+js_wrap: b
+skipTest: true
+tags: []
+categories:
+  - Pie charts
 ...

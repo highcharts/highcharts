@@ -172,7 +172,7 @@ seriesType('area', 'line',
         if (this.options.stacking) {
             for (i = 0; i < points.length; i++) {
                 // Reset after point update (#7326)
-                points[i].leftNull = points[i].rightNull = undefined;
+                points[i].leftNull = points[i].rightNull = void 0;
                 // Create a map where we can quickly look up the points by
                 // their X values.
                 pointMap[points[i].x] = points[i];
@@ -302,7 +302,7 @@ seriesType('area', 'line',
                 top = bottom = threshold;
             }
             // Add to the top and bottom line of the area
-            if (top !== undefined) {
+            if (typeof top !== 'undefined') {
                 graphPoints.push({
                     plotX: plotX,
                     plotY: top === null ?
@@ -330,7 +330,7 @@ seriesType('area', 'line',
             // Reset after series.update of stacking property (#12033)
             if (!stacking) {
                 points[i].leftCliff = points[i].rightCliff =
-                    points[i].leftNull = points[i].rightNull = undefined;
+                    points[i].leftNull = points[i].rightNull = void 0;
             }
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);

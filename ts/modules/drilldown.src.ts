@@ -294,6 +294,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     extend,
     objectEach,
     pick,
@@ -306,7 +307,7 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-var animObject = H.animObject,
+var addEvent = H.addEvent,
     noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
@@ -331,8 +332,9 @@ extend(
          * to the parent series. The parent series' name is inserted for
          * `{series.name}`.
          *
-         * @since   3.0.8
-         * @product highcharts highmaps
+         * @since    3.0.8
+         * @product  highcharts highmaps
+         * @requires modules/drilldown
          *
          * @private
          */
@@ -350,6 +352,7 @@ extend(
  * ](code.highcharts.com/modules/drilldown.js).
  *
  * @product      highcharts highmaps
+ * @requires     modules/drilldown
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {
@@ -450,12 +453,11 @@ defaultOptions.drilldown = {
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
      * @type    {boolean|Highcharts.AnimationOptionsObject}
-     * @default { "duration": 500 }
      * @since   3.0.8
      * @product highcharts highmaps
      */
     animation: {
-        /** @ignore-option */
+        /** @internal */
         duration: 500
     },
 
@@ -573,6 +575,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drilldown
  */
 
@@ -583,6 +586,7 @@ defaultOptions.drilldown = {
  * @since     3.0.8
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillup
  */
 
@@ -594,6 +598,7 @@ defaultOptions.drilldown = {
  * @since     4.2.4
  * @product   highcharts highmaps
  * @context   Highcharts.Chart
+ * @requires  modules/drilldown
  * @apioption chart.events.drillupall
  */
 
@@ -607,6 +612,7 @@ defaultOptions.drilldown = {
  * @type      {string}
  * @since     3.0.8
  * @product   highcharts
+ * @requires  modules/drilldown
  * @apioption series.line.data.drilldown
  */
 
@@ -695,7 +701,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     // See if we can reuse the registered series from last run
     last = this.drilldownLevels[this.drilldownLevels.length - 1];
     if (last && last.levelNumber !== levelNumber) {
-        last = undefined;
+        last = void 0;
     }
 
     ddOptions = extend(extend<Highcharts.SeriesOptions>({
@@ -871,11 +877,13 @@ Chart.prototype.showDrillUpButton = function (): void {
 
 /**
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
- * will drill up to the parent series. Requires the drilldown module.
+ * will drill up to the parent series.
  *
  * @function Highcharts.Chart#drillUp
  *
  * @return {void}
+ *
+ * @requires  modules/drilldown
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -1016,12 +1024,12 @@ Chart.prototype.callbacks.push(function (): void {
 });
 
 // Don't show the reset button if we already are displaying the drillUp button.
-H.addEvent(Chart, 'beforeShowResetZoom', function (): (boolean|undefined) {
+addEvent(Chart, 'beforeShowResetZoom', function (): (boolean|undefined) {
     if (this.drillUpButton) {
         return false;
     }
 });
-H.addEvent(Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis: Highcharts.Axis): void {
         axis.ddPoints = {};
         axis.series.forEach(function (series: Highcharts.Series): void {
@@ -1108,7 +1116,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                     // Fade in other points
                     var verb =
                         i === (level && level.pointIndex) ? 'show' : 'fadeIn',
-                        inherit = verb === 'show' ? true : undefined,
+                        inherit = verb === 'show' ? true : void 0,
                         dataLabel = point.dataLabel;
 
 
@@ -1336,7 +1344,7 @@ H.Point.prototype.doDrilldown = function (
         category: category,
         originalEvent: originalEvent,
         points: (
-            category !== undefined &&
+            typeof category !== 'undefined' &&
             (this.series.xAxis.getDDPoints(category) as any).slice(0)
         )
     } as Highcharts.DrilldownEventObject, function (
@@ -1424,11 +1432,14 @@ Tick.prototype.drillable = function (): void {
                 label.basicStyles = H.merge(label.styles);
             }
 
-            label
-                .addClass('highcharts-drilldown-axis-label')
-                .on('click', function (e: MouseEvent): void {
+            label.addClass('highcharts-drilldown-axis-label');
+            label.removeOnDrillableClick = addEvent(
+                label.element,
+                'click',
+                function (e: MouseEvent): void {
                     axis.drilldownCategory(pos, e);
-                });
+                }
+            );
 
             if (!styledMode) {
                 label.css(
@@ -1436,14 +1447,13 @@ Tick.prototype.drillable = function (): void {
                 );
             }
 
-        } else if (label && label.drillable) {
+        } else if (label && label.removeOnDrillableClick) {
 
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
             }
-
-            label.on('click', null as any); // #3806
+            label.removeOnDrillableClick(); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
         }
     }
@@ -1452,14 +1462,14 @@ Tick.prototype.drillable = function (): void {
 
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-H.addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
+addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
     var point = this,
         series = point.series;
 
     if (point.drilldown) {
 
         // Add the click event to the point
-        H.addEvent(point, 'click', function (
+        addEvent(point, 'click', function (
             e: Highcharts.PointerEventObject
         ): void {
             if (
@@ -1470,7 +1480,7 @@ H.addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
                 // #5822, x changed
                 series.xAxis.drilldownCategory(point.x as any, e);
             } else {
-                point.doDrilldown(undefined, undefined, e);
+                point.doDrilldown(void 0, void 0, e);
             }
         });
 
@@ -1479,7 +1489,7 @@ H.addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
     return point;
 });
 
-H.addEvent(H.Series, 'afterDrawDataLabels', function (): void {
+addEvent(H.Series, 'afterDrawDataLabels', function (): void {
     var css = (this.chart.options.drilldown as any).activeDataLabelStyle,
         renderer = this.chart.renderer,
         styledMode = this.chart.styledMode;
@@ -1532,7 +1542,7 @@ var applyCursorCSS = function (
 };
 
 // Mark the trackers with a pointer
-H.addEvent(H.Series, 'afterDrawTracker', function (): void {
+addEvent(H.Series, 'afterDrawTracker', function (): void {
     var styledMode = this.chart.styledMode;
 
     this.points.forEach(function (point: Highcharts.Point): void {
@@ -1543,7 +1553,7 @@ H.addEvent(H.Series, 'afterDrawTracker', function (): void {
 });
 
 
-H.addEvent(H.Point, 'afterSetState', function (): void {
+addEvent(H.Point, 'afterSetState', function (): void {
     var styledMode = this.series.chart.styledMode;
 
     if (this.drilldown && this.series.halo && this.state === 'hover') {

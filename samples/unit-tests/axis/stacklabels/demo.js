@@ -211,3 +211,30 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         'Stack label should be inside plot area right'
     );
 });
+
+QUnit.test('Stack labels overlapping issue #11982', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            width: 200
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        series: [{
+            stacking: 'normal',
+            data: [25.2, 24, 25, 26, 25, 25, 23, 27, 25, 25, 25, 25, 25, 25]
+        }]
+    });
+
+
+    assert.strictEqual(
+        chart.yAxis[0].stacks['column,,,'][2].label.y,
+        -9999,
+        'This stack-label should be hidden'
+    );
+});

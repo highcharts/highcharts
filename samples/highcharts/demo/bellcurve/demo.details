@@ -1,4 +1,7 @@
 ---
- name: Highcharts Bell Curve
- js_wrap: b
+name: Bell curve
+js_wrap: b
+tags: []
+categories:
+  - More chart types
 ...

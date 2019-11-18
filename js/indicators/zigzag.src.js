@@ -32,6 +32,8 @@ seriesType('zigzag', 'sma',
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/zigzag
  * @optionparent plotOptions.zigzag
  */
 {
@@ -77,11 +79,11 @@ seriesType('zigzag', 'sma',
             'high': 1 - deviation
         }, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, zigzag = [], xData = [], yData = [], i, j, zigzagPoint, firstZigzagLow, firstZigzagHigh, directionUp, zigzagLen, exitLoop = false, yIndex = false;
         // Exit if not enught points or no low or high values
-        if (xVal.length <= 1 ||
+        if (!xVal || xVal.length <= 1 ||
             (yValLen &&
                 (yVal[0][lowIndex] === UNDEFINED ||
                     yVal[0][highIndex] === UNDEFINED))) {
-            return false;
+            return;
         }
         // Set first zigzag point candidate
         firstZigzagLow = yVal[0][lowIndex];
@@ -173,6 +175,8 @@ seriesType('zigzag', 'sma',
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
  */
 ''; // adds doclets above to transpiled file

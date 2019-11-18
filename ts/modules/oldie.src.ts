@@ -321,6 +321,7 @@ const {
     discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isNumber,
     isObject,
@@ -338,7 +339,6 @@ var VMLRenderer,
     css = H.css,
     deg2rad = H.deg2rad,
     doc = H.doc,
-    extendClass = H.extendClass,
     merge = H.merge,
     noop = H.noop,
     svg = H.svg,
@@ -354,6 +354,7 @@ var VMLRenderer,
  * @type      {string}
  * @default   http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
  * @since     2.3.0
+ * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
 (H.getOptions().global as any).VMLRadialGradientURL =

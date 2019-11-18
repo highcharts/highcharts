@@ -1,4 +1,5 @@
 Highcharts.chart('container', {
+
     chart: {
         type: 'bar',
         margin: 75,

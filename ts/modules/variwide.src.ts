@@ -107,6 +107,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
      * @product      highcharts
      * @excluding    boostThreshold, crisp, depth, edgeColor, edgeWidth,
      *               groupZPadding
+     * @requires     modules/variwide
      * @optionparent plotOptions.variwide
      */
     , {
@@ -319,8 +320,8 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                     pointStack.setOffset(
                         -(pointWidth / 2) || 0,
                         pointWidth || 0,
-                        undefined,
-                        undefined,
+                        void 0,
+                        void 0,
                         point.plotX
                     );
                 }
@@ -449,6 +450,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  *
  * @extends   series,plotOptions.variwide
  * @product   highcharts
+ * @requires  modules/variwide
  * @apioption series.variwide
  */
 

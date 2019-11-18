@@ -1,6 +1,9 @@
 ---
- name: GridAxis with Navigator
- js_wrap: b
- authors:
-   - Torstein Hønsi
+name: With navigation
+js_wrap: b
+authors:
+  - Torstein Hønsi
+tags: []
+categories:
+  - Highcharts Gantt
 ...

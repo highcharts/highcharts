@@ -102,7 +102,7 @@ H.NodesMixin = {
         this.nodes.forEach(function (node) {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
-            node.level = undefined;
+            node.level = node.options.level;
         });
         // Create the node list and set up links
         this.points.forEach(function (point) {

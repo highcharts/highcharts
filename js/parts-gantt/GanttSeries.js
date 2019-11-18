@@ -34,13 +34,13 @@ seriesType('gantt', 'xrange'
  *
  * @extends      plotOptions.xrange
  * @product      gantt
+ * @requires     highcharts-gantt
  * @optionparent plotOptions.gantt
  */
 , {
     // options - default options merged with parent
     grouping: false,
     dataLabels: {
-        /** @ignore-option */
         enabled: true
     },
     tooltip: {
@@ -69,6 +69,9 @@ seriesType('gantt', 'xrange'
     },
     connectors: {
         type: 'simpleConnect',
+        /**
+         * @declare Highcharts.ConnectorsAnimationOptionsObject
+         */
         animation: {
             reversed: true // Dependencies go from child to parent
         },
@@ -113,7 +116,7 @@ seriesType('gantt', 'xrange'
      * This override draws the point as a diamond if point.options.milestone
      * is true, and uses the original drawPoint() if it is false or not set.
      *
-     * @requires module:highcharts-gantt
+     * @requires highcharts-gantt
      *
      * @private
      * @function Highcharts.seriesTypes.gantt#drawPoint
@@ -166,7 +169,7 @@ seriesType('gantt', 'xrange'
          * @private
          */
         function addIfExists(prop, val) {
-            if (val !== undefined) {
+            if (typeof val !== 'undefined') {
                 options[prop] = val;
             }
         }
@@ -219,11 +222,13 @@ seriesType('gantt', 'xrange'
  *            getExtremesFromAll, marker, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart
  * @product   gantt
+ * @requires  highcharts-gantt
  * @apioption series.gantt
  */
 /**
  * Data for a Gantt series.
  *
+ * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
  * @excluding className, color, colorIndex, connect, dataLabels, events, id,

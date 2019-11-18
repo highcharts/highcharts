@@ -92,6 +92,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @requires     modules/bullet
      * @optionparent plotOptions.bullet
      */
     , {
@@ -245,7 +246,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
                         if (isNumber(pointVal) && pointVal !== null) {
                             (targetGraphic.element as any).point = point;
                         } else {
-                            (targetGraphic.element as any).point = undefined;
+                            (targetGraphic.element as any).point = void 0;
                         }
                     } else {
                         point.targetGraphic = targetGraphic = chart.renderer
@@ -265,7 +266,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
                                     x: point.x,
                                     y: targetVal,
                                     options: {}
-                                }).color || series.color)) || undefined,
+                                }).color || series.color)) || void 0,
                                 point.color,
                                 series.color
                             ),
@@ -352,6 +353,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, marker
+ * @requires  modules/bullet
  * @apioption series.bullet
  */
 

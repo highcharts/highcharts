@@ -466,23 +466,24 @@ seriesType<Highcharts.FlagsSeries>(
                 shape = point.options.shape || options.shape;
                 plotY = point.plotY;
 
-                if (plotY !== undefined) {
+                if (typeof plotY !== 'undefined') {
                     plotY = (point.plotY as any) + (optionsY as any) -
                     (
-                        stackIndex !== undefined &&
+                        typeof stackIndex !== 'undefined' &&
                         (stackIndex * (options.stackDistance as any)) as any
                     );
                 }
                 // skip connectors for higher level stacked points
-                point.anchorX = stackIndex ? undefined : point.plotX;
-                anchorY = stackIndex ? undefined : point.plotY;
+                point.anchorX = stackIndex ? void 0 : point.plotX;
+                anchorY = stackIndex ? void 0 : point.plotY;
                 centered = shape !== 'flag';
 
                 graphic = point.graphic;
 
                 // Only draw the point if y is defined and the flag is within
                 // the visible area
-                if (plotY !== undefined &&
+                if (
+                    typeof plotY !== 'undefined' &&
                     (plotX as any) >= 0 &&
                     !outsideRight
                 ) {
@@ -734,7 +735,7 @@ seriesType<Highcharts.FlagsSeries>(
         isValid: function (this: Highcharts.FlagsPoint): boolean {
             // #9233 - Prevent from treating flags as null points (even if
             // they have no y values defined).
-            return isNumber(this.y) || this.y === undefined;
+            return isNumber(this.y) || typeof this.y === 'undefined';
         }
     }
 
