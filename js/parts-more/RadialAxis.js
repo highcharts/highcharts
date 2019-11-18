@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, extend = U.extend, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength;
+var correctFloat = U.correctFloat, extend = U.extend, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
-var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, wrap = H.wrap, 
+var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, 
 // @todo Extract this to a new file:
 hiddenAxisMixin, 
 // @todo Extract this to a new file

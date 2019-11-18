@@ -1272,7 +1272,7 @@ function relativeLength(value, base, offset) {
  *
  * @return {void}
  */
-H.wrap = function (obj, method, func) {
+function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
@@ -1284,7 +1284,7 @@ H.wrap = function (obj, method, func) {
         ctx.proceed = null;
         return ret;
     };
-};
+}
 /**
  * Recursively converts all Date properties to timestamps.
  *
@@ -2542,6 +2542,7 @@ var utils = {
     relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
-    syncTimeout: syncTimeout
+    syncTimeout: syncTimeout,
+    wrap: wrap
 };
 export default utils;

@@ -93,14 +93,14 @@ const {
     extend,
     isNumber,
     pick,
-    pInt
+    pInt,
+    wrap
 } = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var wrap = H.wrap,
-    Renderer = H.Renderer,
+var Renderer = H.Renderer,
     colorAxisMethods: Partial<Highcharts.SolidGaugeAxis>;
 
 /**

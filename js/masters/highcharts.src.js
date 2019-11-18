@@ -64,7 +64,8 @@ extend(Highcharts, {
     relativeLength: U.relativeLength,
     setAnimation: U.setAnimation,
     splat: U.splat,
-    syncTimeout: U.syncTimeout
+    syncTimeout: U.syncTimeout,
+    wrap: U.wrap
 });
 
 export default Highcharts;

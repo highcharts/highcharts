@@ -1870,7 +1870,7 @@ function relativeLength(
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1891,7 +1891,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -3427,7 +3427,8 @@ const utils = {
     relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

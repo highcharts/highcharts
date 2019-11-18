@@ -76,7 +76,8 @@ const {
     clamp,
     isNumber,
     objectEach,
-    relativeLength
+    relativeLength,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -84,7 +85,6 @@ import '../parts/Pointer.js';
 
 var hasTouch = H.hasTouch,
     merge = H.merge,
-    wrap = H.wrap,
     addEvent = H.addEvent,
     Axis = H.Axis,
     Pointer = H.Pointer,
