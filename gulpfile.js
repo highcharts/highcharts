@@ -27,6 +27,7 @@ Gulp.registry(new GulpForwardReference());
     'common-webpack',
     'dist',
     'dist-ant',
+    'dist-api',
     'dist-upload',
     'dist-testresults',
     'dist-clean',
