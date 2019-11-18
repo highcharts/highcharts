@@ -152,14 +152,14 @@ Chart.prototype.hideOverlappingLabels = function (
             if (
                 label &&
                 (!label.alignAttr || label.placed)
-            ) {
-                if (isNumber(+label.attr('x')) && isNumber(+label.attr('y'))) {
+            ) { 
+                if(isNumber(+label.attr('x')) && isNumber(+label.attr('y'))){
                     pos = {
                         x: +label.attr('x'),
                         y: +label.attr('y')
-                    };
+                    }
                 } else {
-                    pos = label.alignAttr;
+                    pos = label.alignAttr
                 }
                 parent = label.parentGroup as any;
 
