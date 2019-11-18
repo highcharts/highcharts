@@ -399,7 +399,7 @@ var getDlOptions = function getDlOptions(
                 params.optionsPoint.dataLabels :
                 {}
         ),
-        // the splat was used because levels dataLabels
+        // The splat was used because levels dataLabels
         // options doesn't work as an array
         optionsLevel = splat(
             isObject(params.level) ?
@@ -414,38 +414,33 @@ var getDlOptions = function getDlOptions(
         rotationMode = options.rotationMode;
 
     if (options.textPath) {
-        // center dataLabel - disable textPath
         if (
             point.shapeExisting.innerR === 0 &&
             optionsLevel.textPath &&
             optionsLevel.textPath.enabled
         ) {
-            if (point.dataLabel && point.dataLabels) {
-                point.dataLabel = point.dataLabel.destroy();
-                point.dataLabels.length = 0;
-            }
+            // Center dataLabel - disable textPath
             options.textPath.enabled = false;
-        // bring dataLabel back if was a center dataLabel
+            // Setting width and padding
+            (options.style as any).width = Math.max(
+                ((point.shapeExisting.r * 2)) -
+                2 * (options.padding || 0), 1);
         } else if (
             point.dlOptions &&
             point.dlOptions.textPath &&
             !point.dlOptions.textPath.enabled &&
             optionsLevel.textPath.enabled
         ) {
-            if (point.dataLabel && point.dataLabels) {
-                point.dataLabel = point.dataLabel.destroy();
-                point.dataLabels.length = 0;
-            }
+            // Bring dataLabel back if was a center dataLabel
             options.textPath.enabled = true;
         }
-        // rest of the dataLabels
+        // Rest of the dataLabels
         if (options.textPath.enabled) {
-            // setting width and padding
+            // Setting width and padding
             (options.style as any).width = Math.max(
                 (((point.outerArcLength as any) +
                 (point.innerArcLength as any)) / 2) -
                  2 * (options.padding || 0), 1);
-            return options;
         }
     } else if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto') {
