@@ -18,8 +18,7 @@ import U from '../parts/Utilities.js';
 const {
     isArray,
     objectEach,
-    pick,
-    isNumber
+    pick
 } = U;
 
 import '../parts/Chart.js';
@@ -152,15 +151,11 @@ Chart.prototype.hideOverlappingLabels = function (
             if (
                 label &&
                 (!label.alignAttr || label.placed)
-            ) { 
-                if(isNumber(+label.attr('x')) && isNumber(+label.attr('y'))){
-                    pos = {
-                        x: +label.attr('x'),
-                        y: +label.attr('y')
-                    }
-                } else {
-                    pos = label.alignAttr
-                }
+            ) {
+                pos = label.alignAttr || {
+                    x: label.attr('x'),
+                    y: label.attr('y')
+                };
                 parent = label.parentGroup as any;
 
                 // Get width and height if pure text nodes (stack labels)
