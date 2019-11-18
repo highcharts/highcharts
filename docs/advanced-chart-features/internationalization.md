@@ -20,7 +20,7 @@ In Firefox < 4 there is a bug that completely breaks bidi text in SVG. As a conv
         useHTML: Highcharts.hasBidiBug
     }
 
-Reversing the geometry of the chart
+Reversing the geometry of the chart hii
 -----------------------------------
 
 In RTL languages you may want to put the Y axis on the right side and reverse the X axis so that it flows from right to left. 
