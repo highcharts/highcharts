@@ -770,13 +770,12 @@ addEvent(Chart, 'update', function (e) {
 // (#11315).
 addEvent(Axis, 'afterSetScale', function () {
     var axis = this, panning = axis.chart.options.chart &&
-        axis.chart.options.chart.panning, options = axis.options;
+        axis.chart.options.chart.panning;
     if (panning &&
         (panning.type === 'y' ||
             panning.type === 'xy') &&
         !axis.isXAxis &&
-        !defined(options.startMin) &&
-        !defined(options.startMax)) {
+        !defined(axis.panningState)) {
         var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
         axis.series.forEach(function (series) {
             min = Math.min(H.arrayMin(series.yData), min) -
@@ -784,7 +783,9 @@ addEvent(Axis, 'afterSetScale', function () {
             max = Math.max(H.arrayMax(series.yData), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
-        options.startMin = min;
-        options.startMax = max;
+        axis.panningState = {
+            startMin: min,
+            startMax: max
+        };
     }
 });

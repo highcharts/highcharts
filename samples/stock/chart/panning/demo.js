@@ -9,6 +9,14 @@ Highcharts.stockChart('container', {
         zoomType: 'xy'
     },
 
+    title: {
+        text: 'Zooming and panning'
+    },
+
+    subtitle: {
+        text: 'Click and drag to zoom in. Hold down alt key to pan in both direction.'
+    },
+
     rangeSelector: {
         selected: 1
     },

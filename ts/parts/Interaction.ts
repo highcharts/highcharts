@@ -872,10 +872,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMin !== extremes.min &&
                             newMax !== extremes.max &&
                             isX ? true : (
-                                newMin >= (axisOpt as Highcharts.PanAxisOptions)
+                                axis.panningState &&
+                                newMin >= axis.panningState
                                     .startMin &&
-                                newMax <= (axisOpt as Highcharts.PanAxisOptions)
-                                    .startMax)
+                                newMax <= axis.panningState
+                                    .startMax //
+                            )
                     ) {
                         axis.setExtremes(
                             newMin,

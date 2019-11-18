@@ -21,6 +21,7 @@ declare global {
         interface Axis {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
+            panningState?: AxisPanningState;
         }
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
@@ -48,7 +49,7 @@ declare global {
         interface VMLRenderer {
             crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
         }
-        interface PanAxisOptions extends XAxisOptions {
+        interface AxisPanningState {
             startMin: number;
             startMax: number;
         }
@@ -1110,16 +1111,14 @@ addEvent(Axis, 'afterSetScale', function (
 ): void {
     var axis = this,
         panning = axis.chart.options.chart &&
-            axis.chart.options.chart.panning,
-        options = axis.options as Highcharts.PanAxisOptions;
+            axis.chart.options.chart.panning;
 
     if (
         panning &&
         (panning.type === 'y' ||
         panning.type === 'xy') &&
         !axis.isXAxis &&
-        !defined(options.startMin) &&
-        !defined(options.startMax)
+        !defined(axis.panningState)
     ) {
 
         var min = Number.MAX_VALUE,
@@ -1132,7 +1131,9 @@ addEvent(Axis, 'afterSetScale', function (
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
 
-        options.startMin = min;
-        options.startMax = max;
+        axis.panningState = {
+            startMin: min,
+            startMax: max
+        };
     }
 });

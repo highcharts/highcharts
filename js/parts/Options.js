@@ -869,7 +869,7 @@ H.defaultOptions = {
          * @apioption chart.panning.enabled
          */
         /**
-         * Decides in what dimensions the user can pan the chart. Cane be
+         * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
          * @type    {string}

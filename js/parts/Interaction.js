@@ -529,10 +529,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     if (axis.series.length &&
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
-                        isX ? true : (newMin >= axisOpt
-                        .startMin &&
-                        newMax <= axisOpt
-                            .startMax)) {
+                        isX ? true : (axis.panningState &&
+                        newMin >= axis.panningState
+                            .startMin &&
+                        newMax <= axis.panningState
+                            .startMax //
+                    )) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         doRedraw = true;
                     }
