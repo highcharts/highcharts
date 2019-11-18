@@ -137,7 +137,8 @@ const {
     correctFloat,
     extend,
     pick,
-    pInt
+    pInt,
+    relativeLength
 } = U;
 
 import '../parts/Axis.js';
@@ -612,13 +613,13 @@ radialAxisMixin = {
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
-                H.relativeLength(innerRadius, 1) : (
+                relativeLength(innerRadius, 1) : (
                     innerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
 
             b = (typeof outerRadius === 'string') ?
-                H.relativeLength(outerRadius, 1) : (
+                relativeLength(outerRadius, 1) : (
                     outerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
@@ -907,7 +908,7 @@ addEvent(Tick as any, 'afterGetLabelPosition', function (
         ret = axis.getPosition(
             this.pos,
             (axis.center[2] / 2) +
-                H.relativeLength(
+                relativeLength(
                     pick((labelOptions as any).distance, -25),
                     axis.center[2] / 2,
                     -axis.center[2] / 2

@@ -302,6 +302,7 @@ const {
     objectEach,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
     syncTimeout
@@ -1390,7 +1391,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          */
         chart.chartHeight = Math.max(
             0,
-            H.relativeLength(
+            relativeLength(
                 heightOption as any,
                 chart.chartWidth
             ) ||

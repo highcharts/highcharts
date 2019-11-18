@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, setAnimation = U.setAnimation, splat = U.splat;
+var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
@@ -582,7 +582,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
         if (isString(newHeight)) {
-            newHeight = H.relativeLength(newHeight, newWidth || chart.chartWidth);
+            newHeight = relativeLength(newHeight, newWidth || chart.chartWidth);
         }
         if (
         // In this case, run chart.setSize with newWidth and newHeight which

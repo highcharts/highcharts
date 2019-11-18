@@ -1841,7 +1841,7 @@ function pad(number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1849,7 +1849,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -3424,6 +3424,7 @@ const utils = {
     pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
     syncTimeout

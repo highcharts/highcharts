@@ -1248,11 +1248,11 @@ function pad(number, length, padder) {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (value, base, offset) {
+function relativeLength(value, base, offset) {
     return (/%$/).test(value) ?
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
-};
+}
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -2539,6 +2539,7 @@ var utils = {
     pad: pad,
     pick: pick,
     pInt: pInt,
+    relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout

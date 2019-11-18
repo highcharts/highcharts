@@ -237,6 +237,7 @@ const {
     isArray,
     objectEach,
     pick,
+    relativeLength,
     splat
 } = U;
 
@@ -245,7 +246,6 @@ import './Series.js';
 var format = H.format,
     merge = H.merge,
     noop = H.noop,
-    relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;

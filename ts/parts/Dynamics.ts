@@ -130,6 +130,7 @@ const {
     isString,
     objectEach,
     pick,
+    relativeLength,
     setAnimation,
     splat
 } = U;
@@ -884,7 +885,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
         if (isString(newHeight)) {
-            newHeight = H.relativeLength(
+            newHeight = relativeLength(
                 newHeight as string,
                 (newWidth as string) || (chart.chartWidth as any)
             );
