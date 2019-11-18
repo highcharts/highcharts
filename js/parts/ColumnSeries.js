@@ -465,14 +465,54 @@ seriesType('column', 'line',
             });
         }
     },
+    addPoint: function () {
+        var series = this, ignoreNulls = series.options.ignoreNulls, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
+        if (ignoreNulls) {
+            H.seriesTypes.column.prototype.dirtyTheSeries.call(series, series, point);
+        }
+        Series.prototype.addPoint.apply(series, arguments);
+    },
     /**
-     * Return the width and x offset of the columns adjusted for grouping,
-     * groupPadding, pointPadding, pointWidth etc.
+     * Make the columns crisp. The edges are rounded to the nearest full
+     * pixel.
      *
      * @private
-     * @function Highcharts.seriesTypes.column#getColumnMetrics
-     * @return {Highcharts.ColumnMetricsObject}
+     * @function Highcharts.seriesTypes.column#crispCol
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     * @return {Highcharts.BBoxObject}
      */
+    crispCol: function (x, y, w, h) {
+        var chart = this.chart, borderWidth = this.borderWidth, xCrisp = -(borderWidth % 2 ? 0.5 : 0), yCrisp = borderWidth % 2 ? 0.5 : 1, right, bottom, fromTop;
+        if (chart.inverted && chart.renderer.isVML) {
+            yCrisp += 1;
+        }
+        // Horizontal. We need to first compute the exact right edge, then
+        // round it and compute the width from there.
+        if (this.options.crisp) {
+            right = Math.round(x + w) + xCrisp;
+            x = Math.round(x) + xCrisp;
+            w = right - x;
+        }
+        // Vertical
+        bottom = Math.round(y + h) + yCrisp;
+        fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+        y = Math.round(y) + yCrisp;
+        h = bottom - y;
+        // Top edges are exceptions
+        if (fromTop && h) { // #5146
+            y -= 1;
+            h += 1;
+        }
+        return {
+            x: x,
+            y: y,
+            width: w,
+            height: h
+        };
+    },
     dirtyTheSeries: function (series, point) {
         series.xAxis.series.forEach(function (otherSeries) {
             if (otherSeries.type === series.type &&
@@ -481,35 +521,26 @@ seriesType('column', 'line',
             }
         });
     },
-    addPoint: function () {
-        var series = this, ignoreNulls = series.options.ignoreNulls, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
-        if (ignoreNulls) {
-            H.seriesTypes.column.prototype.dirtyTheSeries.call(series, series, point);
-        }
-        Series.prototype.addPoint.apply(series, arguments);
-    },
-    hasPointInX: function (point, otherSeries) {
-        var series = this, xData = otherSeries.processedXData, yData = otherSeries.processedYData;
-        var hasPointInX = false;
-        xData.forEach(function (x) {
-            if (point && point.x === x &&
-                series.xAxis === otherSeries.xAxis) {
-                var index = xData.indexOf(x), pointY_1;
-                var indices = [];
-                while (index !== -1) {
-                    indices.push(index);
-                    index = xData.indexOf(x, index + 1);
+    findMinColumnWidth: function () {
+        var series = this, chart = series.chart;
+        var colWidth;
+        Series.prototype.translate.apply(series);
+        if (series.index === series.chart.series.length - 1) {
+            chart.series.forEach(function (series) {
+                if (series.type === 'column' ||
+                    series.type === 'columnrange' ||
+                    series.type === 'bar') {
+                    series.points.forEach(function (point) {
+                        colWidth = series
+                            .getColumnMetrics(point).width;
+                        if (chart.minColumnWidth === void 0 ||
+                            colWidth < chart.minColumnWidth) {
+                            chart.minColumnWidth = colWidth;
+                        }
+                    });
                 }
-                indices.forEach(function (index) {
-                    pointY_1 = yData[index];
-                    if (H.isArray(pointY_1) ?
-                        pointY_1[0] !== null : pointY_1 !== null) {
-                        hasPointInX = true;
-                    }
-                });
-            }
-        });
-        return hasPointInX;
+            });
+        }
     },
     getColumnCount: function (point) {
         var series = this, options = series.options, yAxis = series.yAxis, stackKey, stackGroups = {}, columnCount = 0, ignoreNulls = options.ignoreNulls;
@@ -553,8 +584,16 @@ seriesType('column', 'line',
         }
         return columnCount;
     },
+    /**
+     * Return the width and x offset of the columns adjusted for grouping,
+     * groupPadding, pointPadding, pointWidth etc.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#getColumnMetrics
+     * @return {Highcharts.ColumnMetricsObject}
+     */
     getColumnMetrics: function (point) {
-        var series = this, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, 
+        var series = this, chart = series.chart, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, 
         // Keep backward compatibility: reversed xAxis had reversed
         // stacks
         reverseStacks = (xAxis.reversed && !reversedStacks) ||
@@ -564,12 +603,20 @@ seriesType('column', 'line',
             xAxis.tickInterval ||
             1), // #2610
         xAxis.len // #1535
-        ), groupPadding = categoryWidth * options.groupPadding, groupWidth = categoryWidth - 2 * groupPadding, pointOffsetWidth = groupWidth / (columnCount || 1), pointWidth = Math.min(options.maxPointWidth || xAxis.len, pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))), pointPadding = (pointOffsetWidth - pointWidth) / 2, 
+        ), groupPadding = categoryWidth * options.groupPadding, groupWidth = categoryWidth - 2 * groupPadding, pointOffsetWidth = groupWidth / pick(chart.maxColumnCount, columnCount, 1), pointWidth = Math.min(options.maxPointWidth || xAxis.len, pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))), pointPadding = (pointOffsetWidth - pointWidth) / 2, 
         // #1251, #3737
         colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0), pointXOffset = pointPadding +
             (groupPadding +
                 colIndex * pointOffsetWidth -
                 (categoryWidth / 2)) * (reverseStacks ? -1 : 1);
+        if (chart.maxColumnCount &&
+            series.options.ignoreNulls === 'centered') {
+            pointXOffset = pointPadding +
+                (groupPadding +
+                    colIndex * pointOffsetWidth - categoryWidth / 2 +
+                    (chart.maxColumnCount - columnCount) *
+                        (pointWidth / 2 + pointPadding)) * (reverseStacks ? -1 : 1);
+        }
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
             width: pointWidth,
@@ -577,63 +624,28 @@ seriesType('column', 'line',
         };
         return series.columnMetrics;
     },
-    findMinColumnWidth: function () {
-        var series = this, chart = series.chart;
-        var colWidth;
-        Series.prototype.translate.apply(series);
-        if (series.index === series.chart.series.length - 1) {
-            series.chart.series.forEach(function (series) {
-                series.points.forEach(function (point) {
-                    colWidth = series
-                        .getColumnMetrics(point).width;
-                    if (chart.minColumnWidth === void 0 ||
-                        colWidth < chart.minColumnWidth) {
-                        chart.minColumnWidth = colWidth;
+    hasPointInX: function (point, otherSeries) {
+        var series = this, xData = otherSeries.processedXData, yData = otherSeries.processedYData;
+        var hasPointInX = false;
+        xData.forEach(function (x) {
+            if (point && point.x === x &&
+                series.xAxis === otherSeries.xAxis) {
+                var index = xData.indexOf(x), pointY_1;
+                var indices = [];
+                while (index !== -1) {
+                    indices.push(index);
+                    index = xData.indexOf(x, index + 1);
+                }
+                indices.forEach(function (index) {
+                    pointY_1 = yData[index];
+                    if (H.isArray(pointY_1) ?
+                        pointY_1[0] !== null : pointY_1 !== null) {
+                        hasPointInX = true;
                     }
                 });
-            });
-        }
-    },
-    /**
-     * Make the columns crisp. The edges are rounded to the nearest full
-     * pixel.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.column#crispCol
-     * @param {number} x
-     * @param {number} y
-     * @param {number} w
-     * @param {number} h
-     * @return {Highcharts.BBoxObject}
-     */
-    crispCol: function (x, y, w, h) {
-        var chart = this.chart, borderWidth = this.borderWidth, xCrisp = -(borderWidth % 2 ? 0.5 : 0), yCrisp = borderWidth % 2 ? 0.5 : 1, right, bottom, fromTop;
-        if (chart.inverted && chart.renderer.isVML) {
-            yCrisp += 1;
-        }
-        // Horizontal. We need to first compute the exact right edge, then
-        // round it and compute the width from there.
-        if (this.options.crisp) {
-            right = Math.round(x + w) + xCrisp;
-            x = Math.round(x) + xCrisp;
-            w = right - x;
-        }
-        // Vertical
-        bottom = Math.round(y + h) + yCrisp;
-        fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-        y = Math.round(y) + yCrisp;
-        h = bottom - y;
-        // Top edges are exceptions
-        if (fromTop && h) { // #5146
-            y -= 1;
-            h += 1;
-        }
-        return {
-            x: x,
-            y: y,
-            width: w,
-            height: h
-        };
+            }
+        });
+        return hasPointInX;
     },
     /**
      * Translate each point to the plot area coordinate system and find
@@ -701,9 +713,9 @@ seriesType('column', 'line',
                     Math.ceil(point.options.pointWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
-            if (ignoreNulls === 'evenlySpaced' &&
-                chart.minColumnWidth) {
-                pointWidth = barW = Math.ceil(chart.minColumnWidth);
+            if ((ignoreNulls === 'evenlySpaced' ||
+                ignoreNulls === 'centered') && chart.minColumnWidth) {
+                pointWidth = barW = chart.minColumnWidth;
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
             // Cache for access in polar

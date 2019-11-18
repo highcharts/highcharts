@@ -619,26 +619,6 @@ seriesType<Highcharts.ColumnSeries>(
                 });
             }
         },
-        /**
-         * Return the width and x offset of the columns adjusted for grouping,
-         * groupPadding, pointPadding, pointWidth etc.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#getColumnMetrics
-         * @return {Highcharts.ColumnMetricsObject}
-         */
-        dirtyTheSeries: function (series, point): void {
-            series.xAxis.series.forEach(function (
-                otherSeries: Highcharts.Series
-            ): void {
-                if (
-                    otherSeries.type === series.type &&
-                    (otherSeries as any).hasPointInX(point, otherSeries)
-                ) {
-                    otherSeries.isDirty = true;
-                }
-            });
-        },
         addPoint: function (this: Highcharts.ColumnSeries): void {
             const series = this,
                 ignoreNulls = series.options.ignoreNulls,
@@ -654,39 +634,103 @@ seriesType<Highcharts.ColumnSeries>(
 
             Series.prototype.addPoint.apply(series, arguments as any);
         },
-        hasPointInX: function (
+        /**
+         * Make the columns crisp. The edges are rounded to the nearest full
+         * pixel.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.column#crispCol
+         * @param {number} x
+         * @param {number} y
+         * @param {number} w
+         * @param {number} h
+         * @return {Highcharts.BBoxObject}
+         */
+        crispCol: function (
             this: Highcharts.ColumnSeries,
-            point,
-            otherSeries
-        ): boolean {
-            const series = this,
-                xData = otherSeries.processedXData,
-                yData = otherSeries.processedYData;
-            let hasPointInX = false;
+            x: number,
+            y: number,
+            w: number,
+            h: number
+        ): Highcharts.BBoxObject {
+            var chart = this.chart,
+                borderWidth = this.borderWidth,
+                xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
+                yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
+                right,
+                bottom,
+                fromTop;
 
-            xData.forEach(function (x): void {
+            if (chart.inverted && chart.renderer.isVML) {
+                yCrisp += 1;
+            }
+
+            // Horizontal. We need to first compute the exact right edge, then
+            // round it and compute the width from there.
+            if (this.options.crisp) {
+                right = Math.round(x + w) + xCrisp;
+                x = Math.round(x) + xCrisp;
+                w = right - x;
+            }
+
+            // Vertical
+            bottom = Math.round(y + h) + yCrisp;
+            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+            y = Math.round(y) + yCrisp;
+            h = bottom - y;
+
+            // Top edges are exceptions
+            if (fromTop && h) { // #5146
+                y -= 1;
+                h += 1;
+            }
+
+            return {
+                x: x,
+                y: y,
+                width: w,
+                height: h
+            };
+        },
+        dirtyTheSeries: function (series, point): void {
+            series.xAxis.series.forEach(function (
+                otherSeries: Highcharts.Series
+            ): void {
                 if (
-                    point && point.x === x &&
-                    series.xAxis === otherSeries.xAxis
+                    otherSeries.type === series.type &&
+                    (otherSeries as any).hasPointInX(point, otherSeries)
                 ) {
-                    let index = xData.indexOf(x),
-                        pointY;
-                    const indices = [];
-
-                    while (index !== -1) {
-                        indices.push(index);
-                        index = xData.indexOf(x, index + 1);
-                    }
-                    indices.forEach(function (index): void {
-                        pointY = yData[index];
-                        if (H.isArray(pointY) ?
-                            pointY[0] !== null : pointY !== null) {
-                            hasPointInX = true;
-                        }
-                    });
+                    otherSeries.isDirty = true;
                 }
             });
-            return hasPointInX;
+        },
+        findMinColumnWidth: function (this: Highcharts.ColumnSeries): void {
+            const series = this,
+                chart = series.chart;
+            let colWidth;
+
+            Series.prototype.translate.apply(series);
+
+            if (series.index === series.chart.series.length - 1) {
+                chart.series.forEach((series): void => {
+                    if (
+                        series.type === 'column' ||
+                        series.type === 'columnrange' ||
+                        series.type === 'bar'
+                    ) {
+                        series.points.forEach((point): void => {
+                            colWidth = (series as Highcharts.ColumnSeries)
+                                .getColumnMetrics(point).width;
+                            if (
+                                chart.minColumnWidth === void 0 ||
+                                colWidth < chart.minColumnWidth
+                            ) {
+                                chart.minColumnWidth = colWidth;
+                            }
+                        });
+                    }
+                });
+            }
         },
         getColumnCount: function (
             this: Highcharts.ColumnSeries,
@@ -750,11 +794,20 @@ seriesType<Highcharts.ColumnSeries>(
 
             return columnCount;
         },
+        /**
+         * Return the width and x offset of the columns adjusted for grouping,
+         * groupPadding, pointPadding, pointWidth etc.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.column#getColumnMetrics
+         * @return {Highcharts.ColumnMetricsObject}
+         */
         getColumnMetrics: function (
             this: Highcharts.ColumnSeries,
             point
         ): Highcharts.ColumnMetricsObject {
             var series = this,
+                chart = series.chart,
                 options = series.options,
                 xAxis = series.xAxis,
                 reversedStacks = xAxis.options.reversedStacks,
@@ -778,7 +831,8 @@ seriesType<Highcharts.ColumnSeries>(
                 ),
                 groupPadding = categoryWidth * (options.groupPadding as any),
                 groupWidth = categoryWidth - 2 * groupPadding,
-                pointOffsetWidth = groupWidth / (columnCount || 1),
+                pointOffsetWidth =
+                    groupWidth / pick(chart.maxColumnCount, columnCount, 1),
                 pointWidth = Math.min(
                     options.maxPointWidth || xAxis.len,
                     pick(
@@ -799,95 +853,59 @@ seriesType<Highcharts.ColumnSeries>(
                         (categoryWidth / 2)
                     ) * (reverseStacks ? -1 : 1);
 
+            if (
+                chart.maxColumnCount &&
+                series.options.ignoreNulls === 'centered'
+            ) {
+                pointXOffset = pointPadding +
+                (
+                    groupPadding +
+                    colIndex * pointOffsetWidth - categoryWidth / 2 +
+                    (chart.maxColumnCount - columnCount) *
+                    (pointWidth / 2 + pointPadding)
+                ) * (reverseStacks ? -1 : 1);
+            }
             // Save it for reading in linked series (Error bars particularly)
             series.columnMetrics = {
                 width: pointWidth,
                 offset: pointXOffset
             };
             return series.columnMetrics;
-
         },
-        findMinColumnWidth: function (this: Highcharts.ColumnSeries): void {
+        hasPointInX: function (
+            this: Highcharts.ColumnSeries,
+            point,
+            otherSeries
+        ): boolean {
             const series = this,
-                chart = series.chart;
-            let colWidth;
+                xData = otherSeries.processedXData,
+                yData = otherSeries.processedYData;
+            let hasPointInX = false;
 
-            Series.prototype.translate.apply(series);
+            xData.forEach(function (x): void {
+                if (
+                    point && point.x === x &&
+                    series.xAxis === otherSeries.xAxis
+                ) {
+                    let index = xData.indexOf(x),
+                        pointY;
+                    const indices = [];
 
-            if (series.index === series.chart.series.length - 1) {
-                series.chart.series.forEach((series): void => {
-                    series.points.forEach((point): void => {
-                        colWidth = (series as Highcharts.ColumnSeries)
-                            .getColumnMetrics(point).width;
-                        if (
-                            chart.minColumnWidth === void 0 ||
-                            colWidth < chart.minColumnWidth
-                        ) {
-                            chart.minColumnWidth = colWidth;
+                    while (index !== -1) {
+                        indices.push(index);
+                        index = xData.indexOf(x, index + 1);
+                    }
+                    indices.forEach(function (index): void {
+                        pointY = yData[index];
+                        if (H.isArray(pointY) ?
+                            pointY[0] !== null : pointY !== null) {
+                            hasPointInX = true;
                         }
                     });
-                });
-            }
+                }
+            });
+            return hasPointInX;
         },
-        /**
-         * Make the columns crisp. The edges are rounded to the nearest full
-         * pixel.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#crispCol
-         * @param {number} x
-         * @param {number} y
-         * @param {number} w
-         * @param {number} h
-         * @return {Highcharts.BBoxObject}
-         */
-        crispCol: function (
-            this: Highcharts.ColumnSeries,
-            x: number,
-            y: number,
-            w: number,
-            h: number
-        ): Highcharts.BBoxObject {
-            var chart = this.chart,
-                borderWidth = this.borderWidth,
-                xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
-                yCrisp = (borderWidth as any) % 2 ? 0.5 : 1,
-                right,
-                bottom,
-                fromTop;
-
-            if (chart.inverted && chart.renderer.isVML) {
-                yCrisp += 1;
-            }
-
-            // Horizontal. We need to first compute the exact right edge, then
-            // round it and compute the width from there.
-            if (this.options.crisp) {
-                right = Math.round(x + w) + xCrisp;
-                x = Math.round(x) + xCrisp;
-                w = right - x;
-            }
-
-            // Vertical
-            bottom = Math.round(y + h) + yCrisp;
-            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-            y = Math.round(y) + yCrisp;
-            h = bottom - y;
-
-            // Top edges are exceptions
-            if (fromTop && h) { // #5146
-                y -= 1;
-                h += 1;
-            }
-
-            return {
-                x: x,
-                y: y,
-                width: w,
-                height: h
-            };
-        },
-
         /**
          * Translate each point to the plot area coordinate system and find
          * shape positions
@@ -1000,11 +1018,11 @@ seriesType<Highcharts.ColumnSeries>(
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 
-                if (
-                    ignoreNulls === 'evenlySpaced' &&
-                    chart.minColumnWidth
-                ) {
-                    pointWidth = barW = Math.ceil(chart.minColumnWidth);
+                if ((
+                    ignoreNulls === 'evenlySpaced' ||
+                    ignoreNulls === 'centered'
+                ) && chart.minColumnWidth) {
+                    pointWidth = barW = chart.minColumnWidth;
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 

@@ -27,14 +27,16 @@ declare global {
             public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
+            public addPoint: ColumnSeries['addPoint'];
             public animate: ColumnSeries['animate'];
             public crispCol: ColumnSeries['crispCol'];
             public data: Array<ColumnRangePoint>;
             public drawPoints: ColumnSeries['drawPoints'];
             public drawTracker: ColumnSeries['drawTracker'];
-            public hasPointInX: ColumnSeries['hasPointInX'];
+            public findMinColumnWidth: ColumnSeries['findMinColumnWidth'];
             public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
+            public hasPointInX: ColumnSeries['hasPointInX'];
             public options: ColumnRangeSeriesOptions;
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
@@ -227,6 +229,11 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     getSymbol: noop as any,
 
     // Overrides from modules that may be loaded after this module
+    addPoint: function (
+        this: Highcharts.ColumnRangeSeries
+    ): void {
+        return colProto.addPoint.apply(this, arguments as any);
+    },
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.BBoxObject {
@@ -238,12 +245,8 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.drawTracker.apply(this, arguments as any);
     },
-    hasPointInX: function (
-        this: Highcharts.ColumnRangeSeries,
-        point: Highcharts.Point,
-        otherSeries: Highcharts.Series
-    ): boolean {
-        return colProto.hasPointInX.apply(this, arguments as any);
+    findMinColumnWidth: function (this: Highcharts.ColumnRangeSeries): void {
+        return colProto.findMinColumnWidth.apply(this, arguments as any);
     },
     getColumnCount: function (
         this: Highcharts.ColumnRangeSeries,
@@ -255,6 +258,13 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.ColumnMetricsObject {
         return colProto.getColumnMetrics.apply(this, arguments as any);
+    },
+    hasPointInX: function (
+        this: Highcharts.ColumnRangeSeries,
+        point: Highcharts.Point,
+        otherSeries: Highcharts.Series
+    ): boolean {
+        return colProto.hasPointInX.apply(this, arguments as any);
     },
     pointAttribs: function (
         this: Highcharts.ColumnRangeSeries

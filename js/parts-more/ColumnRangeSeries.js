@@ -126,6 +126,9 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     drawGraph: noop,
     getSymbol: noop,
     // Overrides from modules that may be loaded after this module
+    addPoint: function () {
+        return colProto.addPoint.apply(this, arguments);
+    },
     crispCol: function () {
         return colProto.crispCol.apply(this, arguments);
     },
@@ -135,14 +138,17 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     drawTracker: function () {
         return colProto.drawTracker.apply(this, arguments);
     },
-    hasPointInX: function (point, otherSeries) {
-        return colProto.hasPointInX.apply(this, arguments);
+    findMinColumnWidth: function () {
+        return colProto.findMinColumnWidth.apply(this, arguments);
     },
     getColumnCount: function (point) {
         return colProto.getColumnCount.apply(this, arguments);
     },
     getColumnMetrics: function () {
         return colProto.getColumnMetrics.apply(this, arguments);
+    },
+    hasPointInX: function (point, otherSeries) {
+        return colProto.hasPointInX.apply(this, arguments);
     },
     pointAttribs: function () {
         return colProto.pointAttribs.apply(this, arguments);

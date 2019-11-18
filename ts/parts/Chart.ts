@@ -92,6 +92,7 @@ declare global {
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
+            public maxColumnCount?: number;
             public minColumnWidth?: number;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
@@ -876,15 +877,34 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             delete chart.minColumnWidth;
         }
 
+        if (chart.maxColumnCount) {
+            delete chart.maxColumnCount;
+        }
+
         chart.series.forEach(function (series: Highcharts.Series): void {
             const ignoreNulls =
                 (series as Highcharts.ColumnSeries).options.ignoreNulls;
 
             if (
-                series instanceof H.seriesTypes.column &&
-                ignoreNulls === 'evenlySpaced'
+                (series.type === 'column' ||
+                series.type === 'columnrange' ||
+                series.type === 'bar') &&
+                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')
             ) {
-                series.findMinColumnWidth();
+                (series as Highcharts.ColumnSeries).findMinColumnWidth();
+                if (ignoreNulls === 'centered') {
+                    series.points.forEach((point): void => {
+                        if (
+                            !chart.maxColumnCount ||
+                            (series as Highcharts.ColumnSeries)
+                                .getColumnCount(point) > chart.maxColumnCount
+                        ) {
+                            chart.maxColumnCount =
+                                (series as Highcharts.ColumnSeries)
+                                    .getColumnCount(point);
+                        }
+                    });
+                }
             }
         });
 
@@ -2335,15 +2355,31 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     renderSeries: function (this: Highcharts.Chart): void {
-        this.series.forEach(function (series: Highcharts.Series): void {
+        const chart = this;
+        chart.series.forEach(function (series: Highcharts.Series): void {
             const ignoreNulls =
                 (series as Highcharts.ColumnSeries).options.ignoreNulls;
 
             if (
-                series instanceof H.seriesTypes.column &&
-                ignoreNulls === 'evenlySpaced'
+                (series.type === 'column' ||
+                series.type === 'columnrange' ||
+                series.type === 'bar') &&
+                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')
             ) {
-                series.findMinColumnWidth();
+                (series as Highcharts.ColumnSeries).findMinColumnWidth();
+                if (ignoreNulls === 'centered') {
+                    series.points.forEach((point): void => {
+                        if (
+                            !chart.maxColumnCount ||
+                            (series as Highcharts.ColumnSeries)
+                                .getColumnCount(point) > chart.maxColumnCount
+                        ) {
+                            chart.maxColumnCount =
+                                (series as Highcharts.ColumnSeries)
+                                    .getColumnCount(point);
+                        }
+                    });
+                }
             }
         });
         this.series.forEach(function (series: Highcharts.Series): void {
