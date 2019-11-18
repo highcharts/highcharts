@@ -33,6 +33,7 @@ declare global {
             public requiredIndicators: Array<string>;
             public useCommonDataGrouping: boolean;
             public init(chart: Chart, options: SMAIndicatorOptions): void;
+            public destroy(keepEvents?: boolean): void;
             public getName(): string;
             public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
@@ -537,13 +538,16 @@ seriesType<Highcharts.SMAIndicator>(
                 yData: yData
             } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         },
-        destroy: function (this: Highcharts.SMAIndicator): void {
+        destroy: function (
+            this: Highcharts.SMAIndicator,
+            keepEvents?: boolean
+        ): void {
             this.dataEventsToUnbind.forEach(function (
                 unbinder: Function
             ): void {
                 unbinder();
             });
-            Series.prototype.destroy.call(this);
+            Series.prototype.destroy.call(this, keepEvents);
         }
     }
 );

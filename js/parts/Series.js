@@ -2521,6 +2521,7 @@ null,
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
+    eventsToUnbind: [],
     isCartesian: true,
     // each point's x and y values are stored in this.xData and this.yData
     parallelArrays: ['x', 'y'],
@@ -4134,6 +4135,9 @@ null,
         if (!keepEvents) {
             removeEvent(series);
         }
+        else {
+            series.removeEvents();
+        }
         // erase from axes
         (series.axisTypes || []).forEach(function (AXIS) {
             axis = series[AXIS];
@@ -4533,7 +4537,7 @@ null,
      * @return {void}
      */
     invertGroups: function (inverted) {
-        var series = this, chart = series.chart, remover;
+        var series = this, chart = series.chart;
         /**
          * @private
          */
@@ -4558,8 +4562,7 @@ null,
             return;
         }
         // A fixed size is needed for inversion to work
-        remover = addEvent(chart, 'resize', setInvert);
-        addEvent(series, 'destroy', remover);
+        series.eventsToUnbind.push(addEvent(chart, 'resize', setInvert));
         // Do it now
         setInvert(inverted); // do it now
         // On subsequent render and redraw, just do setInvert without
@@ -4627,6 +4630,23 @@ null,
             scaleX: 1,
             scaleY: 1
         };
+    },
+    /**
+     * Removes the event handlers attached previously with addEvents.
+     *
+     * @private
+     * @function Highcharts.Series#removeEvents
+     * @return {void}
+     */
+    removeEvents: function () {
+        var series = this;
+        if (series.eventsToUnbind.length) {
+            // #12355 - solves problem with multiple destroy events
+            series.eventsToUnbind.forEach(function (unbind) {
+                unbind();
+            });
+            series.eventsToUnbind.length = 0;
+        }
     },
     /**
      * Render the graph and markers. Called internally when first rendering

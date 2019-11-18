@@ -1456,10 +1456,6 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 oldOptions.type ||
                 (chart.options.chart as any).type
             ),
-            keepEvents = ( // #12355 - multiple destroy events on series
-                typeof options.events === 'undefined' &&
-                typeof oldOptions.events !== 'undefined'
-            ),
             keepPoints = !(
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
@@ -1557,7 +1553,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // Destroy the series and delete all properties. Reinsert all
         // methods and properties from the new type prototype (#2270,
         // #3719).
-        series.remove(false, null as any, false, keepEvents);
+        series.remove(false, null as any, false, true);
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
             (series as any)[n] = void 0;
         }

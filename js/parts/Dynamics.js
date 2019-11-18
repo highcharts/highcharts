@@ -1024,9 +1024,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // is merged in with type specific plotOptions
         oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, newType = (options.type ||
             oldOptions.type ||
-            chart.options.chart.type), keepEvents = ( // #12355 - multiple destroy events on series
-        typeof options.events === 'undefined' &&
-            typeof oldOptions.events !== 'undefined'), keepPoints = !(
+            chart.options.chart.type), keepPoints = !(
         // Indicators, histograms etc recalculate the data. It should be
         // possible to omit this.
         this.hasDerivedData ||
@@ -1094,7 +1092,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // Destroy the series and delete all properties. Reinsert all
         // methods and properties from the new type prototype (#2270,
         // #3719).
-        series.remove(false, null, false, keepEvents);
+        series.remove(false, null, false, true);
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
             series[n] = void 0;
         }
