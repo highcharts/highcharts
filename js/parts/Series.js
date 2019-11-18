@@ -3538,7 +3538,7 @@ null,
      * Get current X extremes for the visible data.
      *
      * @private
-     * @function Highcharts.Series#getExtremes
+     * @function Highcharts.Series#getXExtremes
      *
      * @param {Array<number>} xData
      *        The data to inspect. Defaults to the current data within the
@@ -3603,7 +3603,19 @@ null,
                 }
             }
         }
+        /**
+         * Contains the minimum value of the series' data point.
+         * @name Highcharts.Series#dataMin
+         * @type {number}
+         * @readonly
+         */
         this.dataMin = arrayMin(activeYData);
+        /**
+         * Contains the maximum value of the series' data point.
+         * @name Highcharts.Series#dataMax
+         * @type {number}
+         * @readonly
+         */
         this.dataMax = arrayMax(activeYData);
         fireEvent(this, 'afterGetExtremes');
     },
