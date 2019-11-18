@@ -51,7 +51,6 @@ declare global {
             connectEnds?: boolean;
             data: Array<PolarPoint>;
             group: SVGElement;
-            hasClipCircleSetter?: boolean;
             kdByAngle?: boolean;
             points: Array<PolarPoint>;
             preventPostTranslate?: boolean;
