@@ -13,10 +13,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, wrap = U.wrap;
 import './data.src.js';
 /* eslint-disable no-invalid-this */
-H.wrap(H.Data.prototype, 'init', function (proceed, options) {
+wrap(H.Data.prototype, 'init', function (proceed, options) {
     proceed.call(this, options);
     if (options.svg) {
         this.loadSVG();

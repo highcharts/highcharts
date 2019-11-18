@@ -63,7 +63,8 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     pick,
-    splat
+    splat,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -79,8 +80,7 @@ var ZAxis: typeof Highcharts.Axis,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
     shapeArea = H.shapeArea,
-    Tick = H.Tick,
-    wrap = H.wrap;
+    Tick = H.Tick;
 
 /**
  * @optionparent xAxis

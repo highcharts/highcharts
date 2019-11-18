@@ -90,7 +90,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     pick,
-    splat
+    splat,
+    wrap
 } = U;
 
 import '../parts/Pointer.js';
@@ -103,7 +104,6 @@ import '../parts/Pointer.js';
 var Pointer = H.Pointer,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    wrap = H.wrap,
 
     seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,

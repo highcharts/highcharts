@@ -73,7 +73,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/AreaSeries.js';
@@ -411,7 +412,7 @@ addEvent(H.Tick, 'afterGetPosition', function (
     }
 });
 
-H.wrap(H.Tick.prototype, 'getLabelPosition', function (
+wrap(H.Tick.prototype, 'getLabelPosition', function (
     this: Highcharts.Tick,
     proceed: Function,
     x: number,

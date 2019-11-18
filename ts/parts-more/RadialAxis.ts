@@ -138,7 +138,8 @@ const {
     extend,
     pick,
     pInt,
-    relativeLength
+    relativeLength,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -150,7 +151,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
     Tick = H.Tick,
-    wrap = H.wrap,
 
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,

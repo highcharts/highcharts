@@ -85,8 +85,8 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout;
-var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
+var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated

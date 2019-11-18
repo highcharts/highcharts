@@ -223,7 +223,8 @@ const {
     pick,
     relativeLength,
     setAnimation,
-    syncTimeout
+    syncTimeout,
+    wrap
 } = U;
 
 var H = Highcharts,
@@ -234,8 +235,7 @@ var H = Highcharts,
     marginNames = H.marginNames,
     merge = H.merge,
     stableSort = H.stableSort,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
