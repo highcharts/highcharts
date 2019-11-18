@@ -35,25 +35,25 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
                     zones: [{
                         from: 1,
                         to: 4,
-                        style: {
+                        marker: {
                             radius: 13
                         }
                     }, {
                         from: 5,
                         to: 9,
-                        style: {
+                        marker: {
                             radius: 15
                         }
                     }, {
                         from: 10,
                         to: 25,
-                        style: {
+                        marker: {
                             radius: 17
                         }
                     }, {
                         from: 16,
                         to: 20,
-                        style: {
+                        marker: {
                             radius: 19
                         }
                     }]

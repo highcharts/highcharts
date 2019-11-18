@@ -1,6 +1,7 @@
 Highcharts.mapChart('container', {
     chart: {
-        map: 'countries/gb/gb-all'
+        map: 'countries/gb/gb-all',
+        animation: true
     },
     title: {
         text: 'Marker clusters demo'

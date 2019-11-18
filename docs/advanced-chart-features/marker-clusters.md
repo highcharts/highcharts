@@ -24,32 +24,42 @@ Configuration Options
 
 The main marker clusters configuration is set in the `cluster property in the series options.`
 
-|Option|Description|
-|--- |--- |
-|cluster.enabled|If set to true, marker clusters are enabled for the series. Defaults to false.|
-|cluster.allowOverlap|When set to `false` prevent cluster overlapping - this option works only when `layoutAlgorithm.type = "grid"`.|
-|cluster.animation|Options for clusters marker animation. See: https://api.highcharts.com/class-reference/Highcharts.AnimationOptionsObject|
-|cluster.drillToCluster|Zoom the plot area to the cluster points range when a cluster is clicked.|
-|cluster.minimumClusterSize|The minimum amount of points to be combined into a cluster.|
-|cluster.layoutAlgorithm|An object containing options like a type of the algorithm, gridSize, distance or iterations.|
-|cluster.layoutAlgorithm.type|Type of the algorithm used to combine points into a cluster. There are three available algorithms: `grid`, `kmeans`, `optimizedKmeans`. Type can be also set to a user custom clustering algorithm function.|
-|cluster.layoutAlgorithm.gridSize|When `type` is set to the `grid`, `gridSize` is a size of a grid square element either as a number defining pixels, or a percentage defining a percentage of the plot area width.|
-|cluster.layoutAlgorithm.iterations|When `type` is set to `kmeans`, `iterations` are the number of iterations that this algorithm will be repeated to find clusters positions.|
-|cluster.layoutAlgorithm.distance|When `type` is set to `kmeans`, `distance` is a maximum distance between point and cluster center so that this point will be inside the cluster. The distance is either a number defining pixels or a percentage defining a percentage of the plot area width.|
-|cluster.layoutAlgorithm.kmeansThreshold|When `type` is `undefined` and there are more visible points than the kmeansThreshold the `grid` algorithm is used to find clusters, otherwise `kmeans`. It ensures good performance on large datasets and better clusters arrangement after the zoom.|
-|cluster.marker|Options for clusters marker. The options are the same as the default series.marker, see: https://api.highcharts.com/highcharts/plotOptions.series.marker|
-|cluster.events.drillToCluster|Callback function set by a user which fires when the cluster point is clicked and `drillToCluster` is enabled.|
-|cluster.zones|An array defining zones within marker clusters.|
-|cluster.zones.className|Styled mode only. A custom class name for the zone.|
-|cluster.zones.marker|Settings for the cluster marker belonging to the zone.|
-|cluster.zones.from|The value where the zone starts.|
-|cluster.zones.to|The value where the zone ends.|
-|cluster.states.hover.fillColor|The fill color of the cluster marker in hover state. When `undefined`, the series' or point's fillColor for normal state is used.|
-|cluster.dataLabels|Options for the cluster data labels. The options are the same as the default series.dataLabels, see: https://api.highcharts.com/highcharts/plotOptions.series.dataLabels|
+The clustering algorithm options can be set in the `cluster.layoutAlgorithm` object. There are three available algorithms that can be set in the `cluster.layoutAlgorithm.type`:
+
+1) `grid` - grid-based clustering technique. Points are assigned to squares of set size depending on their position on the plot area. Points inside the grid square are combined into a cluster. The grid size can be controlled by `gridSize` property (grid size changes at certain zoom levels).
+
+2) `kmeans` - based on K-Means clustering technique. In the first step, points are divided using the grid method (distance property is a grid size) to find the initial amount of clusters. Next, each point is classified by computing the distance between each cluster center and that point. When the closest cluster distance is lower than distance property set by a user the point is added to this cluster otherwise is classified as `noise`. The algorithm is repeated until each cluster center not change its previous position more than one pixel. This technique is more accurate but also more time consuming than the `grid` algorithm, especially for big datasets.
+
+3) `optimizedKmeans` - based on K-Means clustering technique. This algorithm uses k-means algorithm only on the chart initialization or when chart extremes have greater range than on initialization. When a chart is redrawn the algorithm checks only clustered points distance from the cluster center and rebuild it when the point is spaced enough to be outside the cluster. It provides performance improvement and more stable clusters position yet can be used rather on small and sparse datasets.
+
+By default, the algorithm depends on visible quantity of points and `kmeansThreshold`. When there are more visible points than the `kmeansThreshold` the `grid` algorithm is used, otherwise `kmeans`.
+
+The custom clustering algorithm can be added by assigning a callback function as the type property. This function takes an array of visible points `X data`, `Y data`, `X data` indexes (in the whole data array) and `layoutAlgorithm` options as arguments and should return an object with grouped data.
+
+The custom algorithm should return an object like that:
+
+<pre>
+{
+  clusterId1: [{
+      x: 573,
+      y: 285,
+      index: 1 // point index in the data array
+  }, {
+      x: 521,
+      y: 197,
+      index: 2
+  }],
+  clusterId2: [{
+      ...
+  }]
+  ...
+}
+</pre>
 
 Use Cases
 ---------
 
+<pre>
   series: [{
     type: 'scatter',
     color: 'red',
@@ -110,6 +120,7 @@ Use Cases
       [7.37, 43.98]
     ]
   }]
+</pre>
 
 API document
 ------------

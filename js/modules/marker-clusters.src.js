@@ -321,7 +321,13 @@ var clusterDefaultOptions = {
         /** @internal */
         verticalAlign: 'middle',
         /** @internal */
-        align: 'center'
+        align: 'center',
+        /** @internal */
+        style: {
+            color: 'contrast'
+        },
+        /** @internal */
+        inside: true
     }
 };
 (H.defaultOptions.plotOptions || {}).series = merge((H.defaultOptions.plotOptions || {}).series, {
@@ -575,8 +581,6 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                     x: oldPointObj.point.plotX - offset,
                     y: oldPointObj.point.plotY - offset
                 });
-                // Hide new point data label.
-                hideStatePoint(newPointObj, false, true);
                 newPointObj.point.graphic.animate({
                     x: newX - newPointObj.point.graphic.radius,
                     y: newY - newPointObj.point.graphic.radius
@@ -586,19 +590,21 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                     if (oldPointObj.point && oldPointObj.point.destroy) {
                         oldPointObj.point.destroy();
                     }
-                    // Fade in new point data label.
-                    fadeInStatePoint(newPointObj, 0.7, {
-                        duration: animDuration / 2
-                    }, false, true);
                 });
-                // Make sure new point data label is faded in.
-                syncTimeout(function () {
-                    if (!isCbHandled) {
-                        fadeInStatePoint(newPointObj, 0.7, {
-                            duration: animDuration / 2
-                        }, false, true);
-                    }
-                }, animDuration);
+                // Data label animation.
+                if (newPointObj.point.dataLabel &&
+                    newPointObj.point.dataLabel.alignAttr &&
+                    oldPointObj.point.dataLabel &&
+                    oldPointObj.point.dataLabel.alignAttr) {
+                    newPointObj.point.dataLabel.attr({
+                        x: oldPointObj.point.dataLabel.alignAttr.x,
+                        y: oldPointObj.point.dataLabel.alignAttr.y
+                    });
+                    newPointObj.point.dataLabel.animate({
+                        x: newPointObj.point.dataLabel.alignAttr.x,
+                        y: newPointObj.point.dataLabel.alignAttr.y
+                    }, animation);
+                }
             }
         }
         else if (newPointObj.parentsId.length === 0) {
@@ -630,6 +636,18 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                             isCbHandled = true;
                             fadeInNewPointAndDestoryOld(newPointObj, oldPoints, animation, 0.7);
                         });
+                        if (oldPointObj.point.dataLabel &&
+                            oldPointObj.point.dataLabel.y !== -9999 &&
+                            newPointObj.point &&
+                            newPointObj.point.dataLabel &&
+                            newPointObj.point.dataLabel.alignAttr) {
+                            oldPointObj.point.dataLabel.show();
+                            oldPointObj.point.dataLabel.animate({
+                                x: newPointObj.point.dataLabel.alignAttr.x,
+                                y: newPointObj.point.dataLabel.alignAttr.y,
+                                opacity: 0.4
+                            }, animation);
+                        }
                     }
                 }
             });
@@ -1397,21 +1415,26 @@ Scatter.prototype.generatePoints = function () {
     }
 };
 // Handle animation.
-addEvent(Series, 'afterRender', function () {
-    var series = this, options = series.options.cluster, pointsState = (series.markerClusterInfo || {}).pointsState, oldState = (pointsState || {}).oldState;
-    if ((options || {}).animation &&
-        series.markerClusterInfo &&
-        series.chart.pointer.pinchDown.length === 0 &&
-        (series.xAxis.eventArgs || {}).trigger !== 'pan' &&
-        oldState &&
-        Object.keys(oldState).length) {
-        series.markerClusterInfo.clusters.forEach(function (cluster) {
-            series.animateClusterPoint(cluster);
-        });
-        series.markerClusterInfo.noise.forEach(function (noise) {
-            series.animateClusterPoint(noise);
-        });
-    }
+addEvent(H.Chart, 'render', function () {
+    var chart = this;
+    (chart.series || []).forEach(function (series) {
+        if (series.markerClusterInfo) {
+            var options = series.options.cluster, pointsState = (series.markerClusterInfo || {}).pointsState, oldState = (pointsState || {}).oldState;
+            if ((options || {}).animation &&
+                series.markerClusterInfo &&
+                series.chart.pointer.pinchDown.length === 0 &&
+                (series.xAxis.eventArgs || {}).trigger !== 'pan' &&
+                oldState &&
+                Object.keys(oldState).length) {
+                series.markerClusterInfo.clusters.forEach(function (cluster) {
+                    series.animateClusterPoint(cluster);
+                });
+                series.markerClusterInfo.noise.forEach(function (noise) {
+                    series.animateClusterPoint(noise);
+                });
+            }
+        }
+    });
 });
 // Override point prototype to throw a warning when trying to update
 // clustered point.
