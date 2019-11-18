@@ -2855,10 +2855,10 @@ H.defaultOptions = {
          *
          * A subset of HTML is supported. Unless `useHTML` is true, the HTML of
          * the tooltip is parsed and converted to SVG, therefore this isn't a
-         * complete HTML renderer. The following tags are supported: `<b>`,
-         * `<strong>`, `<i>`, `<em>`, `<br/>`, `<span>`. Spans can be styled
-         * with a `style` attribute, but only text-related CSS that is shared
-         * with SVG is handled.
+         * complete HTML renderer. The following HTML tags are supported: `b`,
+         * `br`, `em`, `i`, `span`, `strong`. Spans can be styled with a `style`
+         * attribute, but only text-related CSS, that is shared with SVG, is
+         * handled.
          *
          * The available data in the formatter differ a bit depending on whether
          * the tooltip is shared or split, or belongs to a single point. In a
