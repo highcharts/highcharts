@@ -1,4 +1,5 @@
 const log = require('./log');
+const AWSS3 = require('aws-sdk').S3;
 
 /**
  * Adds number of days to the given date.
@@ -26,6 +27,33 @@ const HTTP_EXPIRES = {
     month: addDays(TODAY, 30),
     fiveYears: addDays(TODAY, 365 * 5)
 };
+
+/**
+ * Fetch an object from S3.
+ *
+ * @param {string} bucket to fetch from
+ * @param {string} key or path to fetch
+ *
+ * @return {Promise<unknown>} result which is assumed to be parsable to string.
+ */
+async function getS3Object(bucket, key) {
+    const S3 = new AWSS3({
+        region: process.env.AWS_REGION || 'eu-central-1'
+    });
+
+    return new Promise((resolve, reject) => {
+        S3.getObject({
+            Bucket: bucket,
+            Key: key
+        }, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.Body.toString('utf-8'));
+            }
+        });
+    });
+}
 
 /**
  * Returns the s3 bucket to use. Either defined
@@ -251,5 +279,6 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
 
 module.exports = {
     uploadFiles,
-    uploadProductPackage
+    uploadProductPackage,
+    getS3Object
 };

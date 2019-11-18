@@ -8,7 +8,7 @@ const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
 const { getFilesChanged } = require('./lib/git');
-const { uploadFiles } = require('./lib/uploadS3');
+const { uploadFiles, getS3Object } = require('./lib/uploadS3');
 
 const DEFAULT_PR_ASSET_S3_BASEPATH = 'visualtests/diffs/pullrequests';
 const DEFAULT_COMMENT_MATCH = '## Visual test results';
@@ -52,6 +52,9 @@ function doRequest(options = {}) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 async function fetchPRComments(pr, user, filterText) {
+    if (argv.dryrun) {
+        return Promise.resolve('Dryrun (skipping fetch of PR comments)..');
+    }
     return new Promise((resolve, reject) => {
         doRequest({
             ...DEFAULT_OPTIONS,
@@ -80,6 +83,12 @@ async function fetchPRComments(pr, user, filterText) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 async function updatePRComment(commentId, newComment) {
+    if (argv.dryrun) {
+        logLib.message('Dryrun (skipping update of PR comment)..');
+        // eslint-disable-next-line camelcase
+        return Promise.resolve({ html_url: 'No where' });
+    }
+
     logLib.message('Updating existing comment with id ' + commentId);
     return new Promise((resolve, reject) => {
         doRequest({
@@ -106,6 +115,12 @@ async function updatePRComment(commentId, newComment) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 async function createPRComment(pr, comment) {
+    if (argv.dryrun) {
+        logLib.message('(Dryrun) Skipping creation of pr comment..');
+        // eslint-disable-next-line camelcase
+        return Promise.resolve({ html_url: 'No where' });
+    }
+
     return new Promise((resolve, reject) => {
         doRequest({
             ...DEFAULT_OPTIONS,
@@ -179,7 +194,7 @@ function resolveGitFileStatus(changeCharacter) {
  * template that lists the changed files (compared with master).
  * @return {string} markdown template with the changed files.
  */
-function createTemplateForChangeSamples() {
+function createTemplateForChangedSamples() {
     let gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
     gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
@@ -196,30 +211,83 @@ function createTemplateForChangeSamples() {
 }
 
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable require-jsdoc,valid-jsdoc */
 function buildImgS3Path(filename, sample, pr) {
     return `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${sample}/${filename}`;
 }
 
-function buildImgURL(filename, sample, pr) {
-    return `http://${VISUAL_TESTS_BUCKET}.s3.eu-central-1.amazonaws.com/${buildImgS3Path(filename, sample, pr)}`;
+function createMarkdownLink(link, message = 'link') {
+    return `[${message}](${link})`;
 }
 
-function buildImgMarkdownLinks(sample, pr) {
-    return `[diff](${buildImgURL('diff.gif', sample, pr)}) &#124; [reference](${buildImgURL('reference.svg', sample, pr)}) &#124; [candidate](${buildImgURL('candidate.svg', sample, pr)})`;
+/**
+ * Fetches an existing review file for a PR. Example of this is when CI already has created an
+ * review file in a previous build.
+ *
+ * @param {string} pr to approve
+ * @return {Promise<*>} with the result or undefined if none found.
+ */
+async function fetchExistingReview(pr) {
+    let existingReview;
+    try {
+        // if we have and existing review we want to keep certains parts of it.
+        existingReview = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/review-pr-${pr}.json`));
+        logLib.message('Found existing review for pr: ' + existingReview.meta.pr);
+    } catch (err) {
+        logLib.message('No existing review found or error occured: ' + err);
+    }
+    return existingReview;
 }
 
-/* eslint-enable require-jsdoc */
+/**
+ * Creates and saves a review file for a PR in order to be used by
+ * the visual review tool application.
+ */
+async function createPRReviewFile(testResults, pr) {
+    const samplesWithDiffs = Object.entries(testResults).filter(
+        entry => entry[0] !== 'meta' && !isNaN(entry[1]) && entry[1] > 0
+    ) || [];
+
+    let existingApprovedSamples = [];
+    const existingReview = await fetchExistingReview(pr);
+    if (existingReview && existingReview.samples) {
+        // this is not first run, so get whisch samples are already approved
+        existingApprovedSamples = existingReview.samples.filter(sample => sample.approved);
+    }
+
+    const samples = samplesWithDiffs.map(([key, value]) => {
+        const alreadyApprovedSample = existingApprovedSamples.find(s => s.name === key && s.diff === value);
+        return alreadyApprovedSample || {
+            name: key,
+            comment: '',
+            diff: value
+        };
+    }) || [];
+
+    const review = {
+        meta: {
+            ...testResults.meta,
+            pr
+        },
+        samples
+    };
+
+    fs.writeFileSync(`test/review-pr-${pr}.json`, JSON.stringify(review, null, ' '));
+    return review;
+}
+
+/* eslint-enable require-jsdoc,valid-jsdoc */
 
 /**
  * Based on a list of diffing samples (that contain visual test differences compared to a baseline/reference)
- * this function uploads the reference/candidate/diff images + JSON report that are produced
+ * this function uploads the reference/candidate/diff images + JSON report + review file that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
  * @param {string} pr number to upload for
+ * @param {boolean} includeReview file
  * @return {undefined} void
  */
-function uploadVisualTestDiffImages(diffingSamples = [], pr) {
+function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
     if (diffingSamples.length > 0) {
         const files = diffingSamples.reduce((resultingFiles, sample) => {
             resultingFiles.push({
@@ -242,8 +310,18 @@ function uploadVisualTestDiffImages(diffingSamples = [], pr) {
             to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/visual-test-results.json`
         });
 
-        uploadFiles({ files, bucket: VISUAL_TESTS_BUCKET, name: `image diff on PR #${pr}` })
-            .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
+        if (includeReview) {
+            const reviewFilename = `review-pr-${pr}.json`;
+            files.push({
+                from: `test/${reviewFilename}`,
+                to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${reviewFilename}`
+            });
+        }
+
+        if (!argv.dryrun) {
+            uploadFiles({ files, bucket: VISUAL_TESTS_BUCKET, name: `image diff on PR #${pr}` })
+                .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
+        }
     }
 }
 
@@ -276,19 +354,23 @@ async function commentOnPR() {
         return completeTask(errMsg);
     }
 
-    const diffs = Object.entries(testResults).filter(entry => {
+    const diffingSamples = Object.entries(testResults).filter(entry => {
         const value = entry[1];
         return typeof value === 'number' && value > 0;
     });
 
-    uploadVisualTestDiffImages(diffs, pr);
+    const newReview = await createPRReviewFile(testResults, pr);
+    uploadVisualTestFiles(diffingSamples, pr, newReview.samples.length > 0);
 
-    let commentTemplate = diffs.length === 0 ?
-        `${DEFAULT_COMMENT_MATCH} - No difference found` :
-        `${DEFAULT_COMMENT_MATCH} - diffs found\n| Test name | Pixels diff | Images |\n| --- | --- | --- |\n` +
-            `${diffs.map(diff => '| `' + diff[0] + '` | ' + diff[1] + ' | ' + buildImgMarkdownLinks(diff[0], pr) + ' |').join('\n')}\n`;
+    let commentTemplate = diffingSamples.length === 0 ?
+        `${DEFAULT_COMMENT_MATCH}\nNo difference found` :
+        `${DEFAULT_COMMENT_MATCH}\nDifferences found\n` +
+            `Found ${newReview.samples.length} diffing samples. Please ${createMarkdownLink(
+                'https://vrevs.highsoft.com/pr/' + pr + '/review',
+                ' review the differences.'
+            )}\n`;
 
-    const changedSamplesTemplate = createTemplateForChangeSamples();
+    const changedSamplesTemplate = createTemplateForChangedSamples();
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
     const { containsText = DEFAULT_COMMENT_MATCH } = argv;
@@ -317,8 +399,9 @@ commentOnPR.flags = {
     '--user': 'Github user',
     '--token': 'Github token (can also be specified with GITHUB_TOKEN env var)',
     '--contains-text': 'Filter text used to find PR comment to overwrite',
-    '--always-add': 'If present any old test results comment won\'t be deleted',
-    '--fail-silently': 'Will always return exitCode 0 (success)'
+    '--always-add': 'If present any old test results comment won\'t be overwritten',
+    '--fail-silently': 'Will always return exitCode 0 (success)',
+    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. '
 };
 
 gulp.task('update-pr-testresults', commentOnPR);
