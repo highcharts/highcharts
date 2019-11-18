@@ -56,6 +56,7 @@ declare global {
             );
             public enabledDataSorting?: boolean;
             public eventOptions: Dictionary<EventCallbackFunction<Series>>;
+            public eventsToUnbind: Array<Function>;
             public fillColor?: (ColorString|GradientColorObject|PatternObject);
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
@@ -177,6 +178,7 @@ declare global {
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
             public redrawPoints(): void;
+            public removeEvents(): void;
             public render(): void;
             public searchKDTree(
                 point: KDPointSearchObject,
@@ -3249,6 +3251,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         colorCounter: 0,
         cropShoulder: 1,
         directTouch: false,
+        eventsToUnbind: [],
         isCartesian: true,
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
@@ -5802,6 +5805,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             this: Highcharts.Series,
             keepEvents?: boolean
         ): void {
+
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
@@ -5817,6 +5821,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // remove all events
             if (!keepEvents) {
                 removeEvent(series);
+            } else {
+                series.removeEvents();
             }
 
             // erase from axes
@@ -6358,8 +6364,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             inverted?: boolean
         ): void {
             var series = this,
-                chart = series.chart,
-                remover;
+                chart = series.chart;
 
             /**
              * @private
@@ -6391,8 +6396,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             }
 
             // A fixed size is needed for inversion to work
-            remover = addEvent(chart, 'resize', setInvert);
-            addEvent(series, 'destroy', remover);
+            series.eventsToUnbind.push(addEvent(chart, 'resize', setInvert));
 
             // Do it now
             (setInvert as any)(inverted); // do it now
@@ -6493,6 +6497,27 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 scaleX: 1, // #1623
                 scaleY: 1
             };
+        },
+
+        /**
+         * Removes the event handlers attached previously with addEvents.
+         *
+         * @private
+         * @function Highcharts.Series#removeEvents
+         * @return {void}
+         */
+        removeEvents: function (this: Highcharts.Series): void {
+            const series = this;
+
+            if (series.eventsToUnbind.length) {
+                // #12355 - solves problem with multiple destroy events
+                series.eventsToUnbind.forEach(function (
+                    unbind: Function
+                ): void {
+                    unbind();
+                });
+                series.eventsToUnbind.length = 0;
+            }
         },
 
         /**
