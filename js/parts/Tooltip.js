@@ -190,7 +190,7 @@ H.Tooltip.prototype = {
          * @name Highcharts.Tooltip#split
          * @type {boolean|undefined}
          */
-        this.split = options.split && !chart.inverted;
+        this.split = options.split && !chart.inverted && !chart.polar;
         /**
          * When the tooltip is shared, the entire plot area will capture mouse
          * movement or touch events.
