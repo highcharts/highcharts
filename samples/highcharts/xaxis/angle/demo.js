@@ -1,15 +1,12 @@
 Highcharts.chart('container', {
     chart: {
-        polar: true,
+        type: 'column',
         inverted: true,
-        type: 'column'
+        polar: true,
+        marginTop: 25
     },
     title: {
-        text: 'Different xAxis\' angle on inverted polar chart'
-    },
-    yAxis: {
-        min: 0,
-        max: 10
+        text: 'Custom xAxis\' angle on inverted polar chart'
     },
     xAxis: {
         angle: 324,
@@ -18,12 +15,16 @@ Highcharts.chart('container', {
         lineColor: Highcharts.getOptions().colors[0],
         labels: {
             zIndex: 10,
-            x: 6,
+            x: 5,
             y: -5,
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
         }
+    },
+    yAxis: {
+        min: 0,
+        max: 10
     },
     series: [{
         borderWidth: 0,

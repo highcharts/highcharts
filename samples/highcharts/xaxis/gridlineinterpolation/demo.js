@@ -1,42 +1,24 @@
 Highcharts.chart('container', {
     chart: {
         type: 'column',
+        inverted: true,
         polar: true,
-        inverted: true
+        marginTop: 50
     },
     title: {
-        text: 'Highcharts Inverted Polar Chart'
+        text: 'Inverted Polar Chart'
     },
     subtitle: {
         text: 'Showing <em>circle</em> and <em>polygon</em> grid line interpolation'
     },
     pane: [{
-        startAngle: 0,
-        endAngle: 360,
-        center: ['25%', '50%'],
-        size: '70%'
+        size: '60%',
+        center: ['25%', '50%']
     }, {
-        startAngle: 0,
-        endAngle: 360,
-        center: ['75%', '50%'],
-        size: '70%'
-    }],
-    yAxis: [{
-        pane: 0,
-        min: 0,
-        max: 10,
-        lineWidth: 0,
-        tickInterval: 1
-    }, {
-        pane: 1,
-        min: 0,
-        max: 10,
-        lineWidth: 0,
-        tickInterval: 1,
-        reversed: true
+        size: '60%',
+        center: ['75%', '50%']
     }],
     xAxis: [{
-        pane: 0,
         tickInterval: 2,
         gridLineInterpolation: 'circle'
     }, {
@@ -48,16 +30,26 @@ Highcharts.chart('container', {
             align: 'left'
         }
     }],
+    yAxis: [{
+        pane: 0,
+        min: 0,
+        max: 10,
+        lineWidth: 0
+    }, {
+        pane: 1,
+        min: 0,
+        max: 10,
+        lineWidth: 0,
+        reversed: true
+    }],
     plotOptions: {
         column: {
-            pointPlacement: 'between',
             grouping: false,
-            groupPadding: 0
+            groupPadding: 0,
+            pointPlacement: 'between'
         }
     },
     series: [{
-        yAxis: 0,
-        xAxis: 0,
         data: [8, 7, 6, 5, 4, 3, 2, 1]
     }, {
         yAxis: 1,

@@ -454,6 +454,9 @@ if (seriesTypes.column) {
                             start = end = visibleRange;
                         }
                     }
+                    if (yAxis.min > yAxis.max) {
+                        start = end = reversed ? visibleRange : 0;
+                    }
                     start += startAngleRad;
                     end += startAngleRad;
                     // In case when radius, inner radius or both are

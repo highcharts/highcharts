@@ -747,6 +747,10 @@ if (seriesTypes.column) {
                         }
                     }
 
+                    if ((yAxis.min as any) > (yAxis.max as any)) {
+                        start = end = reversed ? visibleRange : 0;
+                    }
+
                     start += startAngleRad;
                     end += startAngleRad;
 
