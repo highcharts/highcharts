@@ -3043,28 +3043,28 @@ extend((
                 textAnchor: 'middle'
             }
         }, textPathOptions);
-        // In case of fixed width for a text, string is rebuilt
-        // (e.g. ellipsis is applied), so we need to rebuild textPath too
-        if (
-            textPathWrapper &&
-            textPathWrapper.element.parentNode === null
-        ) {
-            // case when buildText functionality was triggered again
-            // and deletes textPathWrapper parentNode
-            firstTime = true;
-            textPathWrapper = textPathWrapper.destroy();
-        } else if (textPathWrapper) {
-            // case after drillup when spans were added into
-            // the DOM outside the textPathWrapper parentGroup
-            this.removeTextOutline.call(
-                textPathWrapper.parentGroup,
-                [].slice.call(elem.getElementsByTagName('tspan'))
-            );
-        }
 
         attrs = textPathOptions.attributes;
 
         if (path && textPathOptions && textPathOptions.enabled) {
+            // In case of fixed width for a text, string is rebuilt
+            // (e.g. ellipsis is applied), so we need to rebuild textPath too
+            if (
+                textPathWrapper &&
+                textPathWrapper.element.parentNode === null
+            ) {
+                // case when buildText functionality was triggered again
+                // and deletes textPathWrapper parentNode
+                firstTime = true;
+                textPathWrapper = textPathWrapper.destroy();
+            } else if (textPathWrapper) {
+                // case after drillup when spans were added into
+                // the DOM outside the textPathWrapper parentGroup
+                this.removeTextOutline.call(
+                    textPathWrapper.parentGroup,
+                    [].slice.call(elem.getElementsByTagName('tspan'))
+                );
+            }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
                 attrs.dx = -this.options.padding;
@@ -3177,29 +3177,25 @@ extend((
         path: Highcharts.SVGElement
     ): void {
         var tspans,
-            textElement = elem.getElementsByTagName('text')[0],
-            pos = this.getBBox();
-
-        // back to previous attributes
+            textElement = elem.getElementsByTagName('text')[0];
+        // Remove textPath attributes
         textElement.removeAttribute('dx');
         textElement.removeAttribute('dy');
-        textElement.setAttribute('y', (-pos.y).toString());
-        textElement.setAttribute('x', (-pos.x).toString());
 
         // Remove ID's:
         path.element.setAttribute('id', '');
-
-        // Move nodes to <text>
-        tspans = this.textPathWrapper.element.childNodes;
-
-        // Now move all <tspan>'s to the <textPath> node
-        while (tspans.length) {
-            tspans[0].setAttribute('y', -pos.y);
-            tspans[0].setAttribute('x', -pos.x);
-            textElement.appendChild(tspans[0]);
+        // Check if textElement includes textPath,
+        if (textElement.getElementsByTagName('textPath').length) {
+            // Move nodes to <text>
+            tspans = this.textPathWrapper.element.childNodes;
+            // Now move all <tspan>'s to the <textPath> node
+            while (tspans.length) {
+                textElement.appendChild(tspans[0]);
+            }
+            // Remove <textPath> from the DOM
+            textElement.removeChild(this.textPathWrapper.element);
         }
-        // Remove <textPath>
-        textElement.removeChild(this.textPathWrapper.element);
+        // Set textPathWrapper to undefined and destroy it
         this.textPathWrapper = this.textPathWrapper.destroy();
     },
     /**
