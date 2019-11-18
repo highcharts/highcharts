@@ -61,6 +61,7 @@ extend(Highcharts, {
     pad: U.pad,
     pick: U.pick,
     pInt: U.pInt,
+    relativeLength: U.relativeLength,
     setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout

@@ -85,7 +85,7 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout;
+var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout;
 var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -713,7 +713,7 @@ Highcharts.Legend.prototype = {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(options.width, chart.spacingBox.width - padding);
+        legend.widthOption = relativeLength(options.width, chart.spacingBox.width - padding);
         // Compute how wide the legend is allowed to be
         allowedWidth =
             chart.spacingBox.width - 2 * padding - options.x;

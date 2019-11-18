@@ -703,6 +703,7 @@ const {
     isString,
     objectEach,
     pick,
+    relativeLength,
     splat,
     syncTimeout
 } = U;
@@ -5913,26 +5914,26 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Check for percentage based input values. Rounding fixes problems
             // with column overflow and plot line filtering (#4898, #4899)
-            width = this.width = Math.round(H.relativeLength(
+            width = this.width = Math.round(relativeLength(
                 pick(
                     options.width,
                     chart.plotWidth - offsets[3] + offsets[1]
                 ),
                 chart.plotWidth
             )),
-            height = this.height = Math.round(H.relativeLength(
+            height = this.height = Math.round(relativeLength(
                 pick(
                     options.height,
                     chart.plotHeight - offsets[0] + offsets[2]
                 ),
                 chart.plotHeight
             )),
-            top = this.top = Math.round(H.relativeLength(
+            top = this.top = Math.round(relativeLength(
                 pick(options.top, chart.plotTop + offsets[0]),
                 chart.plotHeight,
                 chart.plotTop
             )),
-            left = this.left = Math.round(H.relativeLength(
+            left = this.left = Math.round(relativeLength(
                 pick(options.left, chart.plotLeft + offsets[3]),
                 chart.plotWidth,
                 chart.plotLeft

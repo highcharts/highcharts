@@ -134,6 +134,7 @@ const {
     defined,
     isNumber,
     pick,
+    relativeLength,
     setAnimation
 } = U;
 
@@ -961,7 +962,7 @@ seriesType<Highcharts.PieSeries>(
 
                 // Compute point.labelDistance if it's defined as percentage
                 // of slice radius (#8854)
-                point.labelDistance = H.relativeLength(
+                point.labelDistance = relativeLength(
                     point.labelDistance as any,
                     point.shapeArgs.r
                 );
@@ -1542,7 +1543,7 @@ seriesType<Highcharts.PieSeries>(
                     plotLeft = series.chart.plotLeft,
                     alignment = labelPosition.alignment,
                     radius = (this.shapeArgs as any).r,
-                    crookDistance = H.relativeLength( // % to fraction
+                    crookDistance = relativeLength( // % to fraction
                         options.crookDistance as any, 1
                     ),
                     crookX = alignment === 'left' ?

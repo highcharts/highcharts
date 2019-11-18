@@ -221,6 +221,7 @@ const {
     discardElement,
     isNumber,
     pick,
+    relativeLength,
     setAnimation,
     syncTimeout
 } = U;
@@ -1160,7 +1161,7 @@ Highcharts.Legend.prototype = {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(
+        legend.widthOption = relativeLength(
             options.width as any,
             (chart.spacingBox as any).width - padding
         );
