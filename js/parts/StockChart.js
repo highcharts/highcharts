@@ -50,7 +50,8 @@ var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, me
  */
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point <b>before</b> the range.
+ * range or should start from the first point **before** the range.
+ *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
  * according to the previous point (`compareStart=false`).

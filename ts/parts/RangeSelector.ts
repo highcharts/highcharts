@@ -232,9 +232,9 @@ extend(defaultOptions, {
         /**
          * An array of configuration objects for the buttons.
          *
-         * Defaults to
-         *
-         * <pre>buttons: [{
+         * Defaults to:
+         * ```js
+         * buttons: [{
          *     type: 'month',
          *     count: 1,
          *     text: '1m'
@@ -256,7 +256,8 @@ extend(defaultOptions, {
          * }, {
          *     type: 'all',
          *     text: 'All'
-         * }]</pre>
+         * }]
+         * ```
          *
          * @sample {highstock} stock/rangeselector/datagrouping/
          *         Data grouping by buttons
@@ -279,11 +280,11 @@ extend(defaultOptions, {
          * event, is passed to the function, containing common event
          * information.
          *
-         * <pre>
+         * ```js
          * click: function(e) {
          *   console.log(this);
          * }
-         * </pre>
+         * ```
          *
          * Return false to stop default button's click action.
          *
@@ -671,7 +672,8 @@ defaultOptions.lang = merge(
      * on each chart initialization. Instead, use `Highcharts.setOptions` to
      * set it before any chart is initialized.
      *
-     * <pre>Highcharts.setOptions({
+     * ```js
+     * Highcharts.setOptions({
      *     lang: {
      *         months: [
      *             'Janvier', 'Février', 'Mars', 'Avril',
@@ -683,7 +685,8 @@ defaultOptions.lang = merge(
      *             'Jeudi', 'Vendredi', 'Samedi'
      *         ]
      *     }
-     * });</pre>
+     * });
+     * ```
      *
      * @optionparent lang
      */
