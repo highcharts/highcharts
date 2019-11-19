@@ -23,6 +23,7 @@ declare global {
         }
         interface ColumnSeries {
             polarArc: PolarSeries['polarArc'];
+            findAlignments: PolarSeries['findAlignments'];
         }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
@@ -57,7 +58,7 @@ declare global {
             kdByAngle?: boolean;
             points: Array<PolarPoint>;
             preventPostTranslate?: boolean;
-            thresholdAngleRad: number;
+            thresholdAngleRad: number | undefined;
             translatedThreshold?: number;
             animate(init?: boolean): void;
             searchPoint: (
@@ -78,6 +79,10 @@ declare global {
                 start: number,
                 end: number
             ): SVGPathArray;
+            findAlignments(
+                angle: number,
+                options: DataLabelsOptionsObject,
+            ): DataLabelsOptionsObject;
             searchPointByAngle(e: PointerEventObject): (Point|undefined);
             translate(): void;
             toXY(point: Point): void;
@@ -108,6 +113,7 @@ var Pointer = H.Pointer,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     wrap = H.wrap,
+    defined = H.defined,
 
     seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
@@ -265,11 +271,13 @@ seriesProto.toXY = function (
         plotY = point.plotY,
         series = point.series,
         inverted = chart.inverted,
+        pointY = point.y,
         clientX;
 
     // Corrected y position of inverted series other than column
     if (inverted && series && !series.isRadialBar) {
-        plotY = point.plotY = yAxis.translate(point.y as any) || 0;
+        point.plotY = plotY =
+            typeof pointY === 'number' ? (yAxis.translate(pointY) || 0) : 0;
     }
 
     // Save rectangular plotX, plotY for later computation
@@ -641,14 +649,14 @@ if (seriesTypes.column) {
             startAngleRad = xAxis.startAngleRad,
             endAngleRad = xAxis.endAngleRad,
             visibleRange = endAngleRad - startAngleRad,
-            thresholdAngleRad = startAngleRad,
+            thresholdAngleRad,
             points: Array<Highcharts.ColumnPoint>,
             point: Highcharts.ColumnPoint,
             i: number,
             yMin: any,
             yMax: any,
-            start: any,
-            end: any,
+            start,
+            end,
             tooltipPos,
             pointX,
             pointY,
@@ -678,18 +686,20 @@ if (seriesTypes.column) {
 
             // Finding a correct threshold
             if (chart.inverted && H.isNumber(threshold)) {
-                (thresholdAngleRad as any) = yAxis.translate(threshold);
+                thresholdAngleRad = yAxis.translate(threshold);
 
                 // Checks if threshold is outside the visible range
-                if (thresholdAngleRad < 0) {
-                    thresholdAngleRad = 0;
-                } else if (thresholdAngleRad > visibleRange) {
-                    thresholdAngleRad = visibleRange;
-                }
+                if (defined(thresholdAngleRad)) {
+                    if (thresholdAngleRad < 0) {
+                        thresholdAngleRad = 0;
+                    } else if (thresholdAngleRad > visibleRange) {
+                        thresholdAngleRad = visibleRange;
+                    }
 
-                // Adding start angle offset
-                series.translatedThreshold =
-                    thresholdAngleRad + startAngleRad;
+                    // Adding start angle offset
+                    series.translatedThreshold =
+                        thresholdAngleRad + startAngleRad;
+                }
             }
 
             while (i--) {
@@ -721,10 +731,8 @@ if (seriesTypes.column) {
 
                                 // If starting point is beyond the
                                 // range, set it to 0
-                                if (start < 0) {
-                                    start = 0;
-                                } else if (start > visibleRange) {
-                                    start = visibleRange;
+                                if (defined(start)) {
+                                    start = U.clamp(start, 0, visibleRange);
                                 }
                             }
                         }
@@ -735,6 +743,7 @@ if (seriesTypes.column) {
                     }
 
                     if (start > end) {
+                        // Swapping start and end
                         [start, end] = [end, start];
                     }
 
@@ -784,11 +793,24 @@ if (seriesTypes.column) {
 
                     // A correct value for stacked or not fully visible
                     // point
-                    point.plotY = (start <
-                        (series.translatedThreshold as any) ?
-                        start : end) - startAngleRad;
+                    point.plotY = (defined(series.translatedThreshold) &&
+                        (start < series.translatedThreshold ? start : end)) -
+                            startAngleRad;
 
-                    if (!point.graphic) {
+                    if (!point.graphic || point.shapeType !==
+                        point.graphic.element.tagName) {
+
+                        // (TEMPORARY) This is only a temporary solution for an
+                        // issue when points aren't visible in case of updating
+                        // chart.polar to false and then to true again. I'll get
+                        // rid of it/move it out of here along with the logic
+                        // for creating a graphic in the future commit.
+
+                        // Destroy graphic when the element isn't a path
+                        if (point.graphic) {
+                            point.graphic.destroy();
+                        }
+
                         // The graphic cannot be added to a group here
                         // as the group doesn't exist yet, it is added
                         // later on the afterDrawPoints event
@@ -848,6 +870,42 @@ if (seriesTypes.column) {
         }
     });
 
+    /**
+     * Find correct align and vertical align based on an angle in polar chart
+     * @private
+     */
+    colProto.findAlignments = function (
+        this: Highcharts.PolarSeries,
+        angle: number,
+        options: Highcharts.DataLabelsOptionsObject
+    ): Highcharts.DataLabelsOptionsObject {
+        var align: Highcharts.AlignValue,
+            verticalAlign: Highcharts.VerticalAlignValue;
+
+        if (options.align === null) {
+            if (angle > 20 && angle < 160) {
+                align = 'left'; // right hemisphere
+            } else if (angle > 200 && angle < 340) {
+                align = 'right'; // left hemisphere
+            } else {
+                align = 'center'; // top or bottom
+            }
+            options.align = align;
+        }
+
+        if (options.verticalAlign === null) {
+            if (angle < 45 || angle > 315) {
+                verticalAlign = 'bottom'; // top part
+            } else if (angle > 135 && angle < 225) {
+                verticalAlign = 'top'; // bottom part
+            } else {
+                verticalAlign = 'middle'; // left or right
+            }
+            options.verticalAlign = verticalAlign;
+        }
+
+        return options;
+    };
 
     /**
      * Align column data labels outside the columns. #1199.
@@ -865,36 +923,16 @@ if (seriesTypes.column) {
         var chart = this.chart,
             inside = pick(options.inside, !!this.options.stacking),
             angle,
-            align: Highcharts.AlignValue,
-            verticalAlign: Highcharts.VerticalAlignValue,
+            // align: Highcharts.AlignValue,
+            // verticalAlign: Highcharts.VerticalAlignValue,
             shapeArgs,
             labelPos;
 
         if (chart.polar) {
             angle = (point as Highcharts.PolarPoint).rectPlotX / Math.PI * 180;
-
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
-                if (options.align === null) {
-                    if (angle > 20 && angle < 160) {
-                        align = 'left'; // right hemisphere
-                    } else if (angle > 200 && angle < 340) {
-                        align = 'right'; // left hemisphere
-                    } else {
-                        align = 'center'; // top or bottom
-                    }
-                    options.align = align;
-                }
-                if (options.verticalAlign === null) {
-                    if (angle < 45 || angle > 315) {
-                        verticalAlign = 'bottom'; // top part
-                    } else if (angle > 135 && angle < 225) {
-                        verticalAlign = 'top'; // bottom part
-                    } else {
-                        verticalAlign = 'middle'; // left or right
-                    }
-                    options.verticalAlign = verticalAlign;
-                }
+                options = this.findAlignments(angle, options);
             } else { // Required corrections for data labels of inverted bars
                 // The plotX and plotY are correctly set therefore they
                 // don't need to be swapped (inverted argument is false)
@@ -1076,7 +1114,7 @@ H.addEvent(H.Series, 'afterInit', function (
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {
         this.isRadialSeries = true;
-        if (!(['column', 'bar'].indexOf(this.type) < 0)) {
+        if (this instanceof seriesTypes.column) {
             this.isRadialBar = true;
         }
     }

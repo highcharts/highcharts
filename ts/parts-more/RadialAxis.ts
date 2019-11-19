@@ -74,6 +74,7 @@ declare global {
             defaultNonCircularRadialOptions:
             RadialAxisMixin['defaultNonCircularRadialOptions'];
             endAngleRad: number;
+            getCrosshairPosition: RadialAxisMixin['getCrosshairPosition'];
             getLinePath: RadialAxisMixin['getLinePath'];
             getOffset: RadialAxisMixin['getOffset'];
             getPlotBandPath: RadialAxisMixin['getPlotBandPath'];
@@ -102,6 +103,12 @@ declare global {
             defaultCircularRadialOptions: RadialAxisXOptions;
             defaultNonCircularRadialOptions: RadialAxisYOptions;
             beforeSetTickPositions(this: RadialAxis): void;
+            getCrosshairPosition(
+                this: RadialAxis,
+                options: AxisPlotLinesOptions,
+                x1: number,
+                y1: number
+            ): [(number | undefined), number, number];
             getLinePath(
                 this: RadialAxis,
                 lineWidth: number,
@@ -161,6 +168,7 @@ var addEvent = H.addEvent,
     noop = H.noop,
     Tick = H.Tick,
     wrap = H.wrap,
+    defined = H.defined,
 
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
@@ -240,7 +248,7 @@ radialAxisMixin = {
          * polar).
          *
          * @sample {highcharts} highcharts/xaxis/angle/
-         *         Different X axis' angle on inverted polar chart
+         *         Custom X axis' angle on inverted polar chart
          * @sample {highcharts} highcharts/yaxis/angle/
          *         Dual axis polar chart
          *
@@ -632,6 +640,64 @@ radialAxisMixin = {
     },
 
     /* *
+     * Find the correct end values of crosshair in polar.
+     */
+    getCrosshairPosition: function (
+        this: Highcharts.RadialAxis,
+        options: Highcharts.AxisPlotLinesOptions,
+        x1: number,
+        y1: number
+    ): [(number | undefined), number, number] {
+        var axis = this,
+            value = options.value,
+            shapeArgs,
+            end,
+            x2,
+            y2;
+
+        if (axis.isCircular) {
+            if (!defined(value)) {
+                // When the snap is set to false
+                x2 = options.chartX || 0;
+                y2 = options.chartY || 0;
+
+                value = axis.translate(
+                    Math.atan2(y2 - y1, x2 - x1) - axis.startAngleRad,
+                    true
+                );
+            } else if (options.point) {
+                // When the snap is set to true
+                shapeArgs = options.point.shapeArgs || {};
+                if (shapeArgs.start) {
+                    // Find a true value of the point based on the
+                    // angle
+                    value = axis.translate(
+                        (options.point.rectPlotY as any), true);
+                }
+            }
+            end = axis.getPosition(value as any);
+            x2 = end.x;
+            y2 = end.y;
+        } else {
+            if (!defined(value)) {
+                x2 = options.chartX;
+                y2 = options.chartY;
+            }
+
+            if (defined(x2) && defined(y2)) {
+                // Calculate radius of non-circular axis' crosshair
+                value = axis.translate(Math.min(
+                    Math.sqrt(
+                        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
+                    ), axis.len
+                ), true);
+            }
+        }
+
+        return [value, x2 || 0, y2 || 0];
+    },
+
+    /* *
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (
@@ -660,45 +726,12 @@ radialAxisMixin = {
             otherAxis: (Highcharts.RadialAxis|undefined),
             xy,
             tickPositions,
-            ret: Highcharts.SVGPathArray,
-            shapeArgs;
+            ret: Highcharts.SVGPathArray;
 
         // Crosshair logic
         if (options.isCrosshair) {
-            if (axis.isCircular) {
-                if (!H.defined(value)) {
-                    // When the snap is set to false
-                    (x2 as any) = options.chartX;
-                    (y2 as any) = options.chartY;
-                    value = axis.translate(
-                        Math.atan2(y2 - y1, x2 - x1) -
-                        axis.startAngleRad, true);
-                } else if (options.point) {
-                    // When the snap is set to true
-                    shapeArgs = options.point.shapeArgs || {};
-                    if (shapeArgs.start) {
-                        // Find a true value of the point based on the
-                        // angle
-                        value = axis.translate(
-                            (options.point.rectPlotY as any), true);
-                    }
-                }
-                end = axis.getPosition(value as any);
-                x2 = end.x;
-                y2 = end.y;
-            } else {
-                if (!H.defined(value)) {
-                    (x2 as any) = options.chartX;
-                    (y2 as any) = options.chartY;
-                }
-
-                // Calculate radius of non-circular axis' crosshair
-                value = axis.translate(Math.min(
-                    Math.sqrt(
-                        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
-                    ), axis.len
-                ), true);
-            }
+            // Find crosshair's position and perform destructuring assignment
+            [value, x2, y2] = this.getCrosshairPosition(options, x1, y1);
         }
 
         // Spokes
@@ -884,23 +917,21 @@ addEvent(Axis as any, 'init', function (
         extend(this, radialAxisMixin);
 
         // Check which axis is circular
-        isCircular = !inverted && coll === 'xAxis' ||
-            inverted && coll === 'yAxis';
+        isCircular = this.horiz;
 
         this.defaultRadialOptions = isCircular ?
             this.defaultCircularRadialOptions :
             merge(this.defaultYAxisOptions,
                 this.defaultNonCircularRadialOptions);
 
-        // Prevents from rendering an additional undesirable grid line
-        // and label
-        if (!isCircular) {
-            this.defaultRadialOptions.minPadding = 0;
-        }
-
-        if (inverted && coll === 'yAxis') {
-            this.defaultRadialOptions.stackLabels =
-                this.defaultYAxisOptions.stackLabels;
+        // Apply options only for inverted polar
+        if (inverted) {
+            if (coll === 'xAxis') {
+                this.defaultRadialOptions.minPadding = 0;
+            } else {
+                this.defaultRadialOptions.stackLabels =
+                    this.defaultYAxisOptions.stackLabels;
+            }
         }
     }
 
