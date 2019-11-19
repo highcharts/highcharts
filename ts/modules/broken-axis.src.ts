@@ -47,13 +47,13 @@ declare global {
             len: number;
             to: number;
         }
-        interface PlotSeriesOptions {
-            gapSize?: number;
-            gapUnit?: string;
-        }
         interface Series {
             /** @requires modules/broken-axis */
             drawBreaks(axis: Axis, keys: Array<string>): void;
+        }
+        interface SeriesOptions {
+            gapSize?: number;
+            gapUnit?: string;
         }
         interface XAxisBreaksOptions {
             inclusive?: boolean;
@@ -62,14 +62,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    extend,
+    isArray,
+    pick
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
-    pick = H.pick,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     Axis = H.Axis,
@@ -267,6 +269,11 @@ Axis.prototype.setBreaks = function (
     axis.options.breaks = axis.userOptions.breaks = breaks;
     axis.forceRedraw = true; // Force recalculation in setScale
 
+    // Recalculate series related to the axis.
+    axis.series.forEach(function (series): void {
+        series.isDirty = true;
+    });
+
     if (!isBroken && axis.val2lin === breakVal2Lin) {
         // Revert to prototype functions
         delete axis.val2lin;
@@ -445,38 +452,37 @@ Axis.prototype.setBreaks = function (
 };
 
 addEvent(Series, 'afterGeneratePoints', function (): void {
+    const {
+        isDirty,
+        options: { connectNulls },
+        points,
+        xAxis,
+        yAxis
+    } = this;
 
-    var series = this,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
-        points = series.points,
-        point,
-        i = points.length,
-        connectNulls = series.options.connectNulls,
-        nullGap;
-
-    if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
+    /* Set, or reset visibility of the points. Axis.setBreaks marks the series
+    as isDirty */
+    if (isDirty) {
+        let i = points.length;
         while (i--) {
-            point = points[i];
+            const point = points[i];
 
             // Respect nulls inside the break (#4275)
-            nullGap = point.y === null && connectNulls === false;
-            if (
+            const nullGap = point.y === null && connectNulls === false;
+            const isPointInBreak = (
                 !nullGap &&
                 (
-                    xAxis.isInAnyBreak(point.x, true) ||
-                    yAxis.isInAnyBreak(point.y, true)
+                    xAxis && xAxis.isInAnyBreak(point.x, true) ||
+                    yAxis && yAxis.isInAnyBreak(point.y, true)
                 )
-            ) {
-                points.splice(i, 1);
-                if (this.data[i]) {
-                    // Removes the graphics for this point if they exist
-                    this.data[i].destroyElements();
-                }
-            }
+            );
+            // Set point.visible if in any break.
+            // If not in break, reset visible to original value.
+            point.visible = isPointInBreak ?
+                false :
+                point.options.visible !== false;
         }
     }
-
 });
 
 addEvent(Series, 'afterRender', function drawPointsWrapped(): void {
@@ -493,7 +499,7 @@ H.Series.prototype.drawBreaks = function (
     var series = this,
         points = series.points,
         breaks: Array<Highcharts.AxisBreakObject>,
-        threshold: (number|null),
+        threshold: (number|null|undefined),
         eventName: string,
         y: (number|null|undefined);
 
@@ -567,7 +573,6 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
         points = this.points.slice(),
         i = points.length - 1,
         yAxis = this.yAxis,
-        xRange: number,
         stack: Highcharts.StackItem;
 
     /**
@@ -595,6 +600,7 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
      * @type      {number}
      * @default   0
      * @product   highstock
+     * @requires  modules/broken-axis
      * @apioption plotOptions.series.gapSize
      */
 
@@ -617,6 +623,7 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
      * @since      5.0.13
      * @product    highstock
      * @validvalue ["relative", "value"]
+     * @requires   modules/broken-axis
      * @apioption  plotOptions.series.gapUnit
      */
 
@@ -639,9 +646,20 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
         }
 
         // extension for ordinal breaks
+        let current, next;
         while (i--) {
-            if ((points[i + 1].x as any) - (points[i].x as any) > gapSize) {
-                xRange = ((points[i].x as any) + (points[i + 1].x as any)) / 2;
+            // Reassign next if it is not visible
+            if (!(next && next.visible !== false)) {
+                next = points[i + 1];
+            }
+            current = points[i];
+            // Skip iteration if one of the points is not visible
+            if (next.visible === false || current.visible === false) {
+                continue;
+            }
+
+            if ((next.x as any) - (current.x as any) > gapSize) {
+                const xRange = ((current.x as any) + (next.x as any)) / 2;
 
                 points.splice( // insert after this one
                     i + 1,
@@ -668,6 +686,8 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
                     stack.total = 0;
                 }
             }
+            // Assign current to next for the upcoming iteration
+            next = current;
         }
     }
 

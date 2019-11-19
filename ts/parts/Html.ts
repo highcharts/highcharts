@@ -56,6 +56,8 @@ import U from './Utilities.js';
 const {
     attr,
     defined,
+    extend,
+    pick,
     pInt
 } = U;
 
@@ -63,11 +65,9 @@ import './SvgRenderer.js';
 
 var createElement = H.createElement,
     css = H.css,
-    extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     win = H.win;
@@ -103,7 +103,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             ),
             textWidth = pick(
                 isSettingWidth && styles.width,
-                undefined
+                void 0
             ),
             doTransform;
 
@@ -434,9 +434,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                     };
                 });
                 gWrapper.addedSetters = true;
-            },
-            chart = H.charts[renderer.chartIndex],
-            styledMode = chart && chart.styledMode;
+            };
 
         // Text setter
         wrapper.textSetter = function (value: string): void {
@@ -492,7 +490,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 position: 'absolute'
             });
 
-        if (!styledMode) {
+        if (!renderer.styledMode) {
             wrapper.css({
                 fontFamily: this.style.fontFamily,
                 fontSize: this.style.fontSize
@@ -576,7 +574,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                             parentGroup.div =
                             (parentGroup.div as any) || createElement(
                                 'div',
-                                cls ? { className: cls } : undefined,
+                                cls ? { className: cls } : void 0,
                                 {
                                     position: 'absolute',
                                     left: (parentGroup.translateX || 0) + 'px',

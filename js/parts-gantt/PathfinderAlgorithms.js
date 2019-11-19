@@ -9,9 +9,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var min = Math.min, max = Math.max, abs = Math.abs, pick = H.pick;
+import U from '../parts/Utilities.js';
+var extend = U.extend, pick = U.pick;
+var min = Math.min, max = Math.max, abs = Math.abs;
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and
  * thus requires that obstacles are sorted by xMin value.
@@ -194,7 +194,7 @@ var algorithms = {
      *         renderer, as well as an array of new obstacles making up this
      *         path.
      */
-    simpleConnect: H.extend(function (start, end, options) {
+    simpleConnect: extend(function (start, end, options) {
         var segments = [], endSegment, dir = pick(options.startDirectionX, abs(end.x - start.x) > abs(end.y - start.y)) ? 'x' : 'y', chartObstacles = options.chartObstacles, startObstacleIx = findObstacleFromPoint(chartObstacles, start), endObstacleIx = findObstacleFromPoint(chartObstacles, end), startObstacle, endObstacle, prevWaypoint, waypoint, waypoint2, useMax, endPoint;
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -315,7 +315,7 @@ var algorithms = {
      *         renderer, as well as an array of new obstacles making up this
      *         path.
      */
-    fastAvoid: H.extend(function (start, end, options) {
+    fastAvoid: extend(function (start, end, options) {
         /*
             Algorithm rules/description
             - Find initial direction

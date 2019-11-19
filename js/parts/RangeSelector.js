@@ -38,10 +38,10 @@ import H from './Globals.js';
  *         Parsed JavaScript time value.
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pInt = U.pInt, splat = U.splat;
+var defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, destroyObjectProperties = H.destroyObjectProperties, discardElement = H.discardElement, extend = H.extend, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, createElement = H.createElement, defaultOptions = H.defaultOptions, fireEvent = H.fireEvent, merge = H.merge;
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
  * ************************************************************************** */
@@ -288,7 +288,7 @@ extend(defaultOptions, {
          * @type  {number|undefined}
          * @since 2.1.9
          */
-        height: undefined,
+        height: void 0,
         /**
          * The border color of the date input boxes.
          *
@@ -585,7 +585,7 @@ RangeSelector.prototype = {
                 // event (below). When the series are initialized, but before
                 // the chart is rendered, we have access to the xData array
                 // (#942).
-                if (dataMax === undefined) {
+                if (typeof dataMax === 'undefined') {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
                     chart.series.forEach(function (series) {
@@ -705,7 +705,8 @@ RangeSelector.prototype = {
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
         // zoomed range based on a pre-selected button index
-        if (selectedOption !== undefined && buttonOptions[selectedOption]) {
+        if (typeof selectedOption !== 'undefined' &&
+            buttonOptions[selectedOption]) {
             this.clickButton(selectedOption, false);
         }
         addEvent(chart, 'load', function () {
@@ -920,7 +921,7 @@ RangeSelector.prototype = {
                     // max, use the actual data extreme (#2438).
                     if (isMin) {
                         if (value > rangeSelector.maxInput.HCTime) {
-                            value = undefined;
+                            value = void 0;
                         }
                         else if (value < dataMin) {
                             value = dataMin;
@@ -928,15 +929,15 @@ RangeSelector.prototype = {
                     }
                     else {
                         if (value < rangeSelector.minInput.HCTime) {
-                            value = undefined;
+                            value = void 0;
                         }
                         else if (value > dataMax) {
                             value = dataMax;
                         }
                     }
                     // Set the extremes
-                    if (value !== undefined) { // @todo typof undefined
-                        chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, undefined, undefined, { trigger: 'rangeSelectorInput' });
+                    if (typeof value !== 'undefined') { // @todo typof undefined
+                        chartAxis.setExtremes(isMin ? value : chartAxis.min, isMin ? chartAxis.max : value, void 0, void 0, { trigger: 'rangeSelectorInput' });
                     }
                 }
             }
@@ -1273,6 +1274,7 @@ RangeSelector.prototype = {
             translateY = (alignTranslateY -
                 groupHeight -
                 (floating ? 0 : options.y) -
+                (chart.titleOffset ? chart.titleOffset[2] : 0) -
                 10 // 10 spacing
             );
         }
@@ -1281,8 +1283,7 @@ RangeSelector.prototype = {
                 translateY = 0;
             }
             if (chart.titleOffset && chart.titleOffset[0]) {
-                translateY =
-                    chart.titleOffset[0] + chart.options.title.margin;
+                translateY = chart.titleOffset[0];
             }
             translateY += ((chart.margin[0] - chart.spacing[0]) || 0);
         }
@@ -1450,13 +1451,13 @@ Axis.prototype.minFromRange = function () {
     }
     if (min <= dataMin) {
         min = dataMin;
-        if (range === undefined) { // #4501
+        if (typeof range === 'undefined') { // #4501
             range = getTrueRange(min, rangeOptions.count);
         }
         this.newMax = Math.min(min + range, this.dataMax);
     }
     if (!isNumber(max)) {
-        min = undefined;
+        min = void 0;
     }
     return min;
 };

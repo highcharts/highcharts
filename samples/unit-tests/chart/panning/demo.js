@@ -184,6 +184,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
     // Pan
+    delete chart.pointer.chartPosition; // delete cache, QUnit header is moving chart
     controller.mouseDown(100, 200, { shiftKey: true });
     for (var x = 110; x < 400; x += 10) {
         controller.mouseMove(x, 100, { shiftKey: true });

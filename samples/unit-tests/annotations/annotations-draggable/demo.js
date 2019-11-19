@@ -1,9 +1,32 @@
 QUnit.test('Draggable annotation - exporting', function (assert) {
-    var chart = Highcharts.chart('container', {
+    var firedEvents = {
+            add: false,
+            afterUpdate: false,
+            drag: false,
+            remove: false
+        },
+        chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'xy'
+            },
+            plotOptions: {
+                series: {
+                    dragDrop: {
+                        draggableY: true
+                    }
+                }
+            },
+            xAxis: {
+                minRange: 0.1
+            },
+            yAxis: {
+                minRange: 0.1
+            },
             series: [{
                 data: [3, 6]
             }],
             annotations: [{
+                id: 'first',
                 labels: [{
                     point: {
                         xAxis: 0,
@@ -13,7 +36,21 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
                     },
                     y: 0,
                     text: 'Annotation'
-                }]
+                }],
+                events: {
+                    add: () => {
+                        firedEvents.add = true;
+                    },
+                    afterUpdate: () => {
+                        firedEvents.afterUpdate = true;
+                    },
+                    drag: () => {
+                        firedEvents.drag = true;
+                    },
+                    remove: () => {
+                        firedEvents.remove = true;
+                    }
+                }
             }, {
                 shapes: [{
                     point: {
@@ -31,6 +68,10 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
             }]
         }),
         annoattionOptions = chart.options.annotations,
+        oldExtremes = [
+            chart.xAxis[0].getExtremes(),
+            chart.yAxis[0].getExtremes()
+        ],
         controller = new TestController(chart);
 
     // Label tests:
@@ -58,7 +99,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         chart.yAxis[0].toPixels(5)
     );
     controller.mouseMove(
-        chart.xAxis[0].toPixels(0.75) - 5,
+        chart.xAxis[0].toPixels(0.75),
         chart.yAxis[0].toPixels(3)
     );
     controller.mouseUp();
@@ -68,5 +109,44 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         3,
         0.5,
         'Correctly updated options for annotation\'s shape (#10605).'
+    );
+
+    [chart.xAxis[0], chart.yAxis[0]].forEach(
+        (axis, i) => {
+            assert.strictEqual(
+                axis.min,
+                oldExtremes[i].min,
+                axis.coll + '.min unchanged after drag&drop (#11801)'
+            );
+            assert.strictEqual(
+                axis.max,
+                oldExtremes[i].max,
+                axis.coll + '.max unchanged after drag&drop (#11801)'
+            );
+        }
+    );
+
+    chart.removeAnnotation('first');
+
+    ['add', 'afterUpdate', 'drag', 'remove'].forEach(
+        eventName => {
+            assert.strictEqual(
+                firedEvents[eventName],
+                true,
+                eventName + ' should be fired (#11970)'
+            );
+        }
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        'Dragging an annotation should not drag point too (#12073)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].y,
+        6,
+        'Dragging an annotation should not drag point too (#12073)'
     );
 });

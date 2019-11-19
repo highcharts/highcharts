@@ -346,6 +346,65 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         [4, 5, 5],
         'Data is set correctly when oldData has null values and the same length (#10187)'
     );
+
+    // #12333
+    // Some points with ID's, others without
+    chart.series[0].setData([
+        {
+            y: 10,
+            id: 'main1'
+        }, {
+            y: 20,
+            id: 'main2'
+        }, {
+            y: 10
+        }
+    ]);
+
+    chart.series[0].setData([
+        {
+            y: 20,
+            id: 'main1'
+        }, {
+            y: 20
+        }
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        2,
+        'Two points should be rendered (#12333).'
+    );
+
+    // Auto incremented X should match current max X after update
+    chart.series[0].setData(
+        [{
+            id: 'one',
+            y: 10
+        }, {
+            id: 'two',
+            y: 10
+        }, {
+            y: 20
+        }]
+    );
+
+    chart.series[0].setData(
+        [{
+            id: 'one',
+            y: 20
+        }]
+    );
+    chart.series[0].addPoint({
+        y: 100
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[1].x,
+        1,
+        'Auto incremented X should not overlap first point.'
+    );
+
 });
 
 QUnit.test('Boosted series with updatePoints', function (assert) {
@@ -353,18 +412,11 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
         series: [{
             boostThreshold: 1,
             type: 'scatter',
-            data: [{
-                x: 0,
-                y: 0
-            },
-            {
-                x: 1,
-                y: 1
-            },
-            {
-                x: 2,
-                y: 2
-            }]
+            data: [
+                [0, 0],
+                [1, 1],
+                [2, 2]
+            ]
         }]
     });
 
@@ -376,18 +428,11 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
         'Initial data'
     );
 
-    chart.series[0].setData([{
-        x: 3,
-        y: 3
-    },
-    {
-        x: 4,
-        y: 4
-    },
-    {
-        x: 5,
-        y: 5
-    }]);
+    chart.series[0].setData([
+        [3, 3],
+        [4, 4],
+        [5, 5]
+    ]);
 
     assert.strictEqual(
         chart.series[0].points.map(function (p) {

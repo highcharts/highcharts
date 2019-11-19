@@ -145,7 +145,10 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    defined
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    pick
 } = U;
 
 import './Axis.js';
@@ -153,14 +156,11 @@ import './Options.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
-    destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     swapXY: (
         path: Highcharts.SVGPathArray,
@@ -240,7 +240,7 @@ var defaultScrollbarOptions = {
      * @type  {boolean}
      * @since 1.3
      */
-    liveRedraw: undefined,
+    liveRedraw: void 0,
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
@@ -470,7 +470,7 @@ Scrollbar.prototype = {
         this.chart = chart;
 
         // backward compatibility
-        this.size = pick(this.options.size, this.options.height);
+        this.size = pick(this.options.size, this.options.height as any);
 
         // Init
         if (options.enabled) {
@@ -1187,12 +1187,12 @@ if (!H.Scrollbar) {
                 e: Highcharts.ScrollbarChangedEventObject
             ): void {
                 var unitedMin = Math.min(
-                        pick(axis.options.min, axis.min),
+                        pick(axis.options.min, axis.min as any),
                         axis.min as any,
                         axis.dataMin as any
                     ),
                     unitedMax = Math.max(
-                        pick(axis.options.max, axis.max),
+                        pick(axis.options.max, axis.max as any),
                         axis.max as any,
                         axis.dataMax as any
                     ),
@@ -1245,14 +1245,14 @@ if (!H.Scrollbar) {
     addEvent(Axis, 'afterRender', function (this: Highcharts.Axis): void {
         var axis = this,
             scrollMin = Math.min(
-                pick(axis.options.min, axis.min),
+                pick(axis.options.min, axis.min as any),
                 axis.min as any,
-                pick(axis.dataMin, axis.min) // #6930
+                pick(axis.dataMin, axis.min as any) // #6930
             ),
             scrollMax = Math.max(
-                pick(axis.options.max, axis.max),
+                pick(axis.options.max, axis.max as any),
                 axis.max as any,
-                pick(axis.dataMax, axis.max) // #6930
+                pick(axis.dataMax, axis.max as any) // #6930
             ),
             scrollbar = axis.scrollbar,
             offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),

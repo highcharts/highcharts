@@ -123,15 +123,17 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
+    correctFloat,
     defined,
-    isNumber
+    destroyObjectProperties,
+    extend,
+    isNumber,
+    pick
 } = U;
 
-var correctFloat = H.correctFloat,
-    destroyObjectProperties = H.destroyObjectProperties,
-    fireEvent = H.fireEvent,
+var fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
     deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -139,23 +141,23 @@ var correctFloat = H.correctFloat,
 /**
  * The Tick class.
  *
- * @private
  * @class
  * @name Highcharts.Tick
  *
  * @param {Highcharts.Axis} axis
+ * The axis of the tick.
  *
  * @param {number} pos
- *        The position of the tick on the axis.
+ * The position of the tick on the axis in terms of axis values.
  *
  * @param {string} [type]
- *        The type of tick.
+ * The type of tick, either 'minor' or an empty string
  *
  * @param {boolean} [noLabel=false]
- *        Wether to disable the label or not. Defaults to false.
+ * Whether to disable the label or not. Defaults to false.
  *
- * @param {Highcharts.TickParametersObject} [parameters]
- *        Optional parameters for the tick.
+ * @param {object} [parameters]
+ * Optional parameters for the tick.
  */
 H.Tick = function (
     this: Highcharts.Tick,
@@ -165,13 +167,33 @@ H.Tick = function (
     noLabel?: boolean,
     parameters?: Highcharts.TickParametersObject
 ): any {
+    /**
+     * The related axis of the tick.
+     * @name Highcharts.Tick#axis
+     * @type {Highcharts.Axis}
+     */
     this.axis = axis;
+    /**
+     * The logical position of the tick on the axis in terms of axis values.
+     * @name Highcharts.Tick#pos
+     * @type {number}
+     */
     this.pos = pos;
+    /**
+     * The tick type, which can be `"minor"`, or an empty string.
+     * @name Highcharts.Tick#type
+     * @type {string}
+     */
     this.type = type || '';
     this.isNew = true;
     this.isNewLabel = true;
     this.parameters = parameters || {};
-    // Usually undefined, numeric for grid axes
+    /**
+     * The mark offset of the tick on the axis. Usually `undefined`, numeric for
+     * grid axes.
+     * @name Highcharts.Tick#tickmarkOffset
+     * @type {number|undefined}
+     */
     this.tickmarkOffset = this.parameters.tickmarkOffset;
 
     this.options = this.parameters.options;
@@ -234,7 +256,19 @@ H.Tick.prototype = {
         }
 
         // set properties for access in render method
+        /**
+         * True if the tick is the first one on the axis.
+         * @name Highcharts.Tick#isFirst
+         * @readonly
+         * @type {boolean|undefined}
+         */
         tick.isFirst = isFirst;
+        /**
+         * True if the tick is the last one on the axis.
+         * @name Highcharts.Tick#isLast
+         * @readonly
+         * @type {boolean|undefined}
+         */
         tick.isLast = isLast;
 
         // Get the string
@@ -256,7 +290,7 @@ H.Tick.prototype = {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
                     (label as any).attr({
-                        text: axis.labelFormatter.call(H.extend(
+                        text: axis.labelFormatter.call(extend(
                             tick.formatCtx,
                             { dateTimeLabelFormat: list[i] }
                         ))
@@ -278,6 +312,11 @@ H.Tick.prototype = {
         // first call
         if (!defined(label)) {
 
+            /**
+             * The rendered label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label =
                 defined(str) && labelOptions.enabled ?
                     chart.renderer
@@ -459,15 +498,26 @@ H.Tick.prototype = {
     },
 
     /**
-     * Get the x and y position for ticks and labels
+     * Gets the x and y positions for ticks in terms of pixels.
      *
      * @private
      * @function Highcharts.Tick#getPosition
+     *
      * @param {boolean} horiz
+     * Whether the tick is on an horizontal axis or not.
+     *
      * @param {number} tickPos
+     * Position of the tick.
+     *
      * @param {number} tickmarkOffset
+     * Tickmark offset for all ticks.
+     *
      * @param {boolean} [old]
+     * Whether the axis has changed or not.
+     *
      * @return {Highcharts.PositionObject}
+     * The tick position.
+     *
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     getPosition: function (
@@ -484,7 +534,7 @@ H.Tick.prototype = {
 
         pos = {
             x: horiz ?
-                H.correctFloat(
+                correctFloat(
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old
                     ) as any) +
@@ -514,7 +564,7 @@ H.Tick.prototype = {
                     axis.offset -
                     (axis.opposite ? axis.height : 0)
                 ) :
-                H.correctFloat(
+                correctFloat(
                     (cHeight as any) -
                     (axis.translate(
                         tickPos + tickmarkOffset, null, null, old
@@ -524,7 +574,7 @@ H.Tick.prototype = {
         };
 
         // Chrome workaround for #10516
-        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+        pos.y = clamp(pos.y, -1e5, 1e5);
 
         fireEvent(this, 'afterGetPosition', { pos: pos });
 
@@ -552,7 +602,11 @@ H.Tick.prototype = {
 
         var axis = this.axis,
             transA = axis.transA,
-            reversed = axis.reversed,
+            reversed = ( // #7911
+                axis.isLinked && axis.linkedParent ?
+                    axis.linkedParent.reversed :
+                    axis.reversed
+            ),
             staggerLines = axis.staggerLines,
             rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
             yOffset = labelOptions.y,
@@ -682,6 +736,11 @@ H.Tick.prototype = {
             if (old) {
                 opacity = 0;
             }
+            /**
+             * The rendered grid line of the tick.
+             * @name Highcharts.Tick#gridLine
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.gridLine = gridLine = renderer.path()
                 .attr(attribs)
                 .addClass(
@@ -753,6 +812,11 @@ H.Tick.prototype = {
 
             // First time, create it
             if (isNewMark) {
+                /**
+                 * The rendered mark of the tick.
+                 * @name Highcharts.Tick#mark
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
                 tick.mark = mark = renderer.path()
                     .addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
                     .add(axis.axisGroup);
@@ -821,7 +885,6 @@ H.Tick.prototype = {
                 index,
                 step
             );
-
             // Apply show first and show last. If the tick is both first and
             // last, it is a single centered tick, in which case we show the
             // label anyway (#2100).

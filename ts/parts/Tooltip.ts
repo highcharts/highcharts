@@ -14,10 +14,15 @@ import H from './Globals.js';
 
 import U from './Utilities.js';
 const {
+    clamp,
     defined,
+    discardElement,
+    extend,
     isNumber,
     isString,
-    splat
+    pick,
+    splat,
+    syncTimeout
 } = U;
 
 /**
@@ -26,51 +31,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type TooltipShapeValue = ('callout'|'circle'|'square');
-        interface PlotSeriesOptions {
-            tooltip?: TooltipOptions;
-        }
-        interface Point {
-            tooltipPos?: Array<number>;
-        }
-        interface Series {
-            noSharedTooltip?: boolean;
-            tt?: SVGElement;
-        }
-        interface TooltipFormatterCallbackFunction {
-            (
-                this: TooltipFormatterContextObject,
-                tooltip: Tooltip
-            ): (false|string|Array<string>);
-        }
-        interface TooltipFormatterContextObject {
-            color: (ColorString|GradientColorObject|PatternObject);
-            colorIndex?: number;
-            key: number;
-            percentage?: number;
-            point: Point;
-            points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: Series;
-            total?: number;
-            x: number;
-            y: number;
-        }
-        interface TooltipOptions {
-            distance?: number;
-        }
-        interface TooltipPositionerCallbackFunction {
-            (
-                labelWidth: number,
-                labelHeight: number,
-                point: TooltipPositionerPointObject
-            ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: boolean;
-            negative: boolean;
-            plotX: number;
-            plotY: number;
-        }
         class Tooltip {
             public constructor(chart: Chart, options: TooltipOptions);
             public chart: Chart;
@@ -143,6 +103,51 @@ declare global {
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
         }
+        interface Point {
+            tooltipPos?: Array<number>;
+        }
+        interface Series {
+            noSharedTooltip?: boolean;
+            tt?: SVGElement;
+        }
+        interface SeriesOptions {
+            tooltip?: TooltipOptions;
+        }
+        interface TooltipFormatterCallbackFunction {
+            (
+                this: TooltipFormatterContextObject,
+                tooltip: Tooltip
+            ): (false|string|Array<string>);
+        }
+        interface TooltipFormatterContextObject {
+            color: (ColorString|GradientColorObject|PatternObject);
+            colorIndex?: number;
+            key: number;
+            percentage?: number;
+            point: Point;
+            points?: Array<Highcharts.TooltipFormatterContextObject>;
+            series: Series;
+            total?: number;
+            x: number;
+            y: number;
+        }
+        interface TooltipOptions {
+            distance?: number;
+        }
+        interface TooltipPositionerCallbackFunction {
+            (
+                labelWidth: number,
+                labelHeight: number,
+                point: TooltipPositionerPointObject
+            ): PositionObject;
+        }
+        interface TooltipPositionerPointObject {
+            isHeader: boolean;
+            negative: boolean;
+            plotX: number;
+            plotY: number;
+        }
+        type TooltipShapeValue = ('callout'|'circle'|'square');
     }
 }
 
@@ -250,11 +255,8 @@ declare global {
 ''; // separates doclets above from variables below
 
 var doc = H.doc,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
-    syncTimeout = H.syncTimeout,
     timeUnits = H.timeUnits;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -377,12 +379,9 @@ H.Tooltip.prototype = {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = (
-            pick(
-                options.outside,
-                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-            ) &&
-            !this.split
+        this.outside = pick(
+            options.outside,
+            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
     },
 
@@ -511,7 +510,15 @@ H.Tooltip.prototype = {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0);
+                this.renderer = renderer = new H.Renderer(
+                    container,
+                    0,
+                    0,
+                    {},
+                    void 0,
+                    void 0,
+                    renderer.styledMode
+                );
             }
 
 
@@ -554,7 +561,9 @@ H.Tooltip.prototype = {
                 this.label.addClass('highcharts-tooltip-' + this.chart.index);
             }
 
-            if (this.outside) {
+            // Split tooltip use updateTooltipContainer to position the tooltip
+            // container.
+            if (tooltip.outside && !tooltip.split) {
                 set = {
                     x: this.label.xSetter as any,
                     y: this.label.ySetter as any
@@ -621,7 +630,7 @@ H.Tooltip.prototype = {
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            H.discardElement(this.container as any);
+            discardElement(this.container as any);
         }
         H.clearTimeout(this.hideTimer as any);
         H.clearTimeout(this.tooltipTimeout as any);
@@ -664,10 +673,10 @@ H.Tooltip.prototype = {
             x: animate ? (2 * now.x + x) / 3 : x,
             y: animate ? (now.y + y) / 2 : y,
             anchorX: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
             anchorY: skipAnchor ?
-                undefined :
+                void 0 :
                 animate ? (now.anchorY + anchorY) / 2 : anchorY
         });
 
@@ -752,7 +761,7 @@ H.Tooltip.prototype = {
 
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
-            if (mouseEvent.chartX === undefined) {
+            if (typeof mouseEvent.chartX === 'undefined') {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
@@ -833,7 +842,7 @@ H.Tooltip.prototype = {
                     doc.documentElement.clientHeight
                 ) :
                 chart.chartHeight,
-            chartPosition = chart.pointer.chartPosition,
+            chartPosition = chart.pointer.getChartPosition(),
             containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
                 containerScaling ? val * containerScaling.scaleX : val
@@ -1041,7 +1050,6 @@ H.Tooltip.prototype = {
     ): void {
         var tooltip = this,
             chart = this.chart,
-            label,
             options = tooltip.options,
             x,
             y,
@@ -1103,20 +1111,11 @@ H.Tooltip.prototype = {
         if (text === false) {
             this.hide();
         } else {
-
-            label = tooltip.getLabel();
-
-            // show it
-            if (tooltip.isHidden) {
-                label.attr({
-                    opacity: 1
-                }).show();
-            }
-
             // update text
             if (tooltip.split) {
                 this.renderSplit(text as any, splat(pointOrPoints));
             } else {
+                const label = tooltip.getLabel();
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
@@ -1161,7 +1160,13 @@ H.Tooltip.prototype = {
                 } as any);
             }
 
-            this.isHidden = false;
+            // show it
+            if (tooltip.isHidden && tooltip.label) {
+                tooltip.label.attr({
+                    opacity: 1
+                }).show();
+            }
+            tooltip.isHidden = false;
         }
 
         H.fireEvent(this, 'refresh');
@@ -1184,199 +1189,336 @@ H.Tooltip.prototype = {
         labels: (string|Array<(boolean|string)>),
         points: Array<Highcharts.Point>
     ): void {
-        var tooltip = this,
-            boxes = [] as Array<Highcharts.Dictionary<any>>,
-            chart = this.chart,
-            ren = chart.renderer,
-            rightAligned = true,
-            options = this.options,
-            headerHeight = 0,
-            headerTop: boolean,
-            tooltipLabel = this.getLabel(),
-            distributionBoxTop = chart.plotTop;
+        const tooltip = this;
+        const {
+            chart,
+            chart: {
+                chartWidth,
+                chartHeight,
+                plotHeight,
+                plotLeft,
+                plotTop,
+                plotWidth,
+                pointer,
+                renderer: ren,
+                scrollablePixelsX = 0,
+                scrollablePixelsY = 0,
+                scrollingContainer: {
+                    scrollLeft,
+                    scrollTop
+                } = { scrollLeft: 0, scrollTop: 0 },
+                styledMode
+            },
+            distance,
+            options,
+            options: {
+                positioner
+            }
+        } = tooltip;
+
+        // The area which the tooltip should be limited to. Limit to scrollable
+        // plot area if enabled, otherwise limit to the chart container.
+        const boundaries = {
+            left: scrollablePixelsX ? plotLeft : 0,
+            right: scrollablePixelsX ?
+                plotLeft + plotWidth - scrollablePixelsX : chartWidth,
+            top: scrollablePixelsY ? plotTop : 0,
+            bottom: scrollablePixelsY ?
+                plotTop + plotHeight - scrollablePixelsY : chartHeight
+        };
+
+        const tooltipLabel = tooltip.getLabel();
+        const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+
+        let distributionBoxTop = plotTop;
+        let headerHeight = 0;
+        let maxLength = plotHeight - scrollablePixelsY;
+
+        /**
+         * Calculates the anchor position for the partial tooltip
+         *
+         * @private
+         * @param {Highcharts.Point} point The point related to the tooltip
+         * @return {object} Returns an object with anchorX and anchorY
+         */
+        function getAnchor(
+            point: Highcharts.Point & { isHeader?: boolean }
+        ): ({ anchorX: number; anchorY: number }) {
+            const { isHeader, plotX = 0, plotY = 0, series } = point;
+
+            let anchorX;
+            let anchorY;
+            if (isHeader) {
+                // Set anchorX to plotX
+                anchorX = plotLeft + plotX - scrollLeft;
+                // Set anchorY to center of visible plot area.
+                anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
+            } else {
+                const { xAxis, yAxis } = series;
+                // Set anchorX to plotX. Limit to within xAxis.
+                anchorX = xAxis.pos +
+                    clamp(plotX, -distance, xAxis.len + distance) - scrollLeft;
+                // Set anchorY to plotY. Limit to within yAxis.
+                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len) - scrollTop;
+            }
+
+            // Limit values to plot area
+            anchorX = clamp(
+                anchorX,
+                boundaries.left - distance,
+                boundaries.right + distance
+            );
+            anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
+            return { anchorX, anchorY };
+        }
+
+        /**
+         * Calculates the position of the partial tooltip
+         *
+         * @private
+         * @param {number} anchorX The partial tooltip anchor x position
+         * @param {number} anchorY The partial tooltip anchor y position
+         * @param {boolean} isHeader Wether the partial tooltip is a header
+         * @param {number} boxWidth Width of the partial tooltip
+         * @return {Highcharts.PositionObject} Returns the partial tooltip x and
+         * y position
+         */
+        function defaultPositioner(
+            anchorX: number,
+            anchorY: number,
+            isHeader: boolean,
+            boxWidth: number,
+            alignedLeft = true
+        ): Highcharts.PositionObject {
+            let y;
+            let x;
+            if (isHeader) {
+                y = headerTop ? 0 : maxLength;
+                x = clamp(
+                    anchorX - (boxWidth / 2),
+                    boundaries.left,
+                    boundaries.right - boxWidth
+                );
+            } else {
+                y = anchorY - distributionBoxTop;
+                x = alignedLeft ?
+                    anchorX - boxWidth - distance :
+                    anchorX + distance;
+                x = clamp(
+                    x, alignedLeft ? x : boundaries.left, boundaries.right
+                );
+            }
+
+            // NOTE: y is relative to distributionBoxTop
+            return { x, y };
+        }
+
+        /**
+         * Updates the attributes and styling of the partial tooltip. Creates a
+         * new partial tooltip if it does not exists.
+         *
+         * @private
+         * @param {Highcharts.SVGElement|undefined} partialTooltip
+         *  The partial tooltip to update
+         * @param {Highcharts.Point} point
+         *  The point related to the partial tooltip
+         * @param {boolean|string} str The text for the partial tooltip
+         * @return {Highcharts.SVGElement} Returns the updated partial tooltip
+         */
+        function updatePartialTooltip(
+            partialTooltip: (Highcharts.SVGElement|undefined),
+            point: (Highcharts.Point & { isHeader?: boolean }),
+            str: (boolean|string)
+        ): Highcharts.SVGElement {
+            let tt = partialTooltip;
+            const { isHeader, series } = point;
+            const colorClass = 'highcharts-color-' + pick(
+                point.colorIndex, series.colorIndex, 'none'
+            );
+            if (!tt) {
+
+                const attribs: Highcharts.SVGAttributes = {
+                    padding: options.padding,
+                    r: options.borderRadius
+                };
+
+                if (!styledMode) {
+                    attribs.fill = options.backgroundColor;
+                    attribs['stroke-width'] = options.borderWidth;
+                }
+
+                tt = ren
+                    .label(
+                        null as any,
+                        null as any,
+                        null as any,
+                        (options[isHeader ? 'headerShape' : 'shape']) ||
+                        'callout',
+                        null as any,
+                        null as any,
+                        options.useHTML
+                    )
+                    .addClass(
+                        isHeader ? 'highcharts-tooltip-header ' : '' +
+                        'highcharts-tooltip-box ' +
+                        colorClass
+                    )
+                    .attr(attribs)
+                    .add(tooltipLabel);
+            }
+
+            tt.isActive = true;
+            tt.attr({
+                text: str
+            });
+            if (!styledMode) {
+                tt.css(options.style as any)
+                    .shadow(options.shadow)
+                    .attr({
+                        stroke: (
+                            options.borderColor ||
+                            point.color ||
+                            series.color ||
+                            '${palette.neutralColor80}'
+                        )
+                    });
+            }
+            return tt;
+        }
 
         // Graceful degradation for legacy formatters
         if (isString(labels)) {
-            labels = [false, labels as any];
+            labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
-        (labels as any).slice(0, points.length + 1).forEach(function (
+        let boxes = labels.slice(0, points.length + 1).reduce(function (
+            boxes: Array<Highcharts.Dictionary<any>>,
             str: (boolean|string),
             i: number
-        ): void {
+        ): Array<Highcharts.Dictionary<any>> {
             if (str !== false && str !== '') {
-                var point = points[i - 1] ||
-                    {
-                        // Item 0 is the header. Instead of this, we could also
-                        // use the crosshair label
-                        isHeader: true,
-                        plotX: points[0].plotX,
-                        plotY: chart.plotHeight
-                    },
-                    owner = point.series || tooltip,
-                    tt = owner.tt,
-                    series = point.series || {},
-                    colorClass = 'highcharts-color-' + pick<(number|string)>(
-                        point.colorIndex, series.colorIndex, 'none'
-                    ),
-                    target,
-                    x,
-                    bBox,
-                    boxWidth,
-                    attribs: Highcharts.SVGAttributes;
+                const point = points[i - 1] || {
+                    // Item 0 is the header. Instead of this, we could also
+                    // use the crosshair label
+                    isHeader: true,
+                    plotX: points[0].plotX,
+                    plotY: plotHeight,
+                    series: {}
+                };
+                const isHeader: boolean = (point as any).isHeader;
 
-                // Store the tooltip referance on the series
-                if (!tt) {
-
-                    attribs = {
-                        padding: options.padding,
-                        r: options.borderRadius
-                    };
-
-                    if (!chart.styledMode) {
-                        attribs.fill = options.backgroundColor;
-                        attribs['stroke-width'] = options.borderWidth;
-                    }
-
-                    owner.tt = tt = ren
-                        .label(
-                            null as any,
-                            null as any,
-                            null as any,
-                            (
-                                (point as any).isHeader ?
-                                    options.headerShape :
-                                    options.shape
-                            ) || 'callout',
-                            null as any,
-                            null as any,
-                            options.useHTML
-                        )
-                        .addClass('highcharts-tooltip-box ' + colorClass)
-                        .attr(attribs)
-                        .add(tooltipLabel);
-                }
-
-                tt.isActive = true;
-                tt.attr({
-                    text: str
-                });
-                if (!chart.styledMode) {
-                    tt.css(options.style as any)
-                        .shadow(options.shadow)
-                        .attr({
-                            stroke: (
-                                options.borderColor ||
-                                point.color ||
-                                series.color ||
-                                '${palette.neutralColor80}'
-                            )
-                        });
-                }
+                // Store the tooltip label referance on the series
+                const owner = isHeader ? tooltip : point.series;
+                const tt = owner.tt = updatePartialTooltip(
+                    owner.tt, point, str
+                );
 
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
-                bBox = tt.getBBox();
-                boxWidth = bBox.width + tt.strokeWidth();
-                if ((point as any).isHeader) {
+                const bBox = tt.getBBox();
+                const boxWidth = bBox.width + tt.strokeWidth();
+                if (isHeader) {
                     headerHeight = bBox.height;
-                    if (chart.xAxis[0].opposite) {
-                        headerTop = true;
+                    maxLength += headerHeight;
+                    if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
-                    x = Math.max(
-                        0, // No left overflow
-                        Math.min(
-                            (point.plotX as any) +
-                            chart.plotLeft -
-                            boxWidth / 2,
-                            // No right overflow (#5794)
-                            (chart.chartWidth as any) +
-                            (
-                                // Scrollable plot area
-                                chart.scrollablePixelsX ?
-                                    chart.scrollablePixelsX -
-                                        (chart.marginRight as any) :
-                                    0
-                            ) -
-                            boxWidth
-                        )
-                    );
-                } else {
-                    x = (point.plotX as any) + chart.plotLeft -
-                        pick(options.distance, 16) - boxWidth;
                 }
 
-
-                // If overflow left, we don't use this x in the next loop
-                if (x < 0) {
-                    rightAligned = false;
-                }
-
-                // Prepare for distribution
-                if ((point as any).isHeader) {
-                    target = headerTop ?
-                        -headerHeight :
-                        chart.plotHeight + headerHeight;
-                } else {
-                    const yAxis = (series.yAxis as any);
-                    target = yAxis.pos - distributionBoxTop + Math.max(
-                        0,
-                        Math.min((point.plotY || 0), yAxis.len)
-                    ); // Limit target position to within yAxis
-                }
-                boxes.push({
-                    target: target,
-                    rank: (point as any).isHeader ? 1 : 0,
-                    size: (owner.tt as any).getBBox().height + 1,
-                    point: point,
-                    x: x,
-                    tt: tt
-                });
-            }
-        });
-
-        // Clean previous run (for missing points)
-        this.cleanSplit();
-
-        if (options.positioner) {
-            boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-                var boxPosition = (options.positioner as any).call(
+                const { anchorX, anchorY } = getAnchor(point);
+                const size = bBox.height + 1;
+                const boxPosition = positioner ? positioner.call(
                     tooltip,
-                    box.tt.getBBox().width,
-                    box.size,
-                    box.point
+                    boxWidth,
+                    size,
+                    point as any
+                ) : defaultPositioner(
+                    anchorX,
+                    anchorY,
+                    isHeader,
+                    boxWidth
                 );
 
-                box.x = boxPosition.x;
-                box.align = 0; // 0-align to the top, 1-align to the bottom
-                box.target = boxPosition.y;
-                box.rank = pick(boxPosition.rank, box.rank);
+                boxes.push({
+                    // 0-align to the top, 1-align to the bottom
+                    align: positioner ? 0 : void 0,
+                    anchorX,
+                    anchorY,
+                    boxWidth,
+                    point: point as any,
+                    rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
+                    size,
+                    target: boxPosition.y,
+                    tt,
+                    x: boxPosition.x
+                });
+            }
+            return boxes;
+        }, []);
+
+        // If overflow left then align all labels to the right
+        if (!positioner && boxes.some((box): boolean => box.x < 0)) {
+            boxes = boxes.map((box): Highcharts.Dictionary<any> => {
+                const { x, y } = defaultPositioner(
+                    box.anchorX,
+                    box.anchorY,
+                    box.point.isHeader,
+                    box.boxWidth,
+                    false
+                );
+                return extend(box, {
+                    target: y,
+                    x
+                });
             });
         }
 
-        // Distribute and put in place
-        (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
-        boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
-            var point = box.point,
-                series = point.series,
-                yAxis = series && series.yAxis;
+        // Clean previous run (for missing points)
+        tooltip.cleanSplit();
 
+        // Distribute and put in place
+        H.distribute(boxes as any, maxLength, void 0 as any);
+        boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
+            const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
-                visibility: box.pos === undefined ? 'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader || options.positioner ?
-                    box.x :
-                    point.plotX + chart.plotLeft + tooltip.distance),
-                y: box.pos + distributionBoxTop,
-                anchorX: point.isHeader ?
-                    point.plotX + chart.plotLeft :
-                    point.plotX + series.xAxis.pos,
-                anchorY: point.isHeader ?
-                    chart.plotTop + chart.plotHeight / 2 :
-                    yAxis.pos + Math.max(0, Math.min(point.plotY, yAxis.len))
+                visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
+                x,
+                /* NOTE: y should equal pos to be consistent with !split
+                 * tooltip, but is currently relative to plotTop. Is left as is
+                 * to avoid breaking change. Remove distributionBoxTop to make
+                 * it consistent.
+                 */
+                y: pos + distributionBoxTop,
+                anchorX,
+                anchorY
             });
         });
+
+        /* If we have a seperate tooltip container, then update the necessary
+         * container properties.
+         * Test that tooltip has its own container and renderer before executing
+         * the operation.
+         */
+        const {
+            container,
+            outside,
+            renderer
+        } = tooltip;
+        if (outside && container && renderer) {
+            // Set container size to fit the tooltip
+            const { width, height, x, y } = tooltipLabel.getBBox();
+            renderer.setSize(
+                width + x,
+                height + y,
+                false
+            );
+
+            // Position the tooltip container to the chart container
+            const chartPosition = pointer.getChartPosition();
+            container.style.left = chartPosition.left + 'px';
+            container.style.top = chartPosition.top + 'px';
+        }
     },
 
     /**
@@ -1400,9 +1542,8 @@ H.Tooltip.prototype = {
             pad;
 
         // Needed for outside: true (#11688)
-        if (!pointer.chartPosition) {
-            pointer.chartPosition = H.offset(chart.container);
-        }
+        const chartPosition = pointer.getChartPosition();
+
         pos = ((this.options.positioner as any) || this.getPosition).call(
             this,
             label.width,
@@ -1434,8 +1575,8 @@ H.Tooltip.prototype = {
                 anchorY *= containerScaling.scaleY;
             }
 
-            anchorX += pointer.chartPosition.left - pos.x;
-            anchorY += pointer.chartPosition.top - pos.y;
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
         }
 
         // do the move
@@ -1637,7 +1778,7 @@ H.Tooltip.prototype = {
             (e as any).text = format(formatString, {
                 point: labelConfig,
                 series: series
-            }, this.chart.time);
+            }, this.chart);
 
         });
         return evt.text;

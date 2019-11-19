@@ -39,6 +39,7 @@ declare global {
             edgeColor?: ColorString;
             edgeWidth?: number;
             groupZPadding?: number;
+            inactiveOtherPoints?: boolean;
         }
         interface Series {
             translate3dShapes(): void;
@@ -46,33 +47,38 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick,
+    wrap
+} = U;
+
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     perspective = H.perspective,
-    pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    wrap = H.wrap;
+    svg = H.svg;
 
 /**
- * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
+ * Depth of the columns in a 3D column chart.
  *
  * @type      {number}
  * @default   25
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.depth
  */
 
 /**
- * 3D columns only. The color of the edges. Similar to `borderColor`,
- *  except it defaults to the same color as the column.
+ * 3D columns only. The color of the edges. Similar to `borderColor`, except it
+ * defaults to the same color as the column.
  *
  * @type      {Highcharts.ColorString}
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeColor
  */
 
@@ -82,17 +88,18 @@ var addEvent = H.addEvent,
  * @type      {number}
  * @default   1
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.edgeWidth
  */
 
 /**
- * The spacing between columns on the Z Axis in a 3D chart. Requires
- * `highcharts-3d.js`.
+ * The spacing between columns on the Z Axis in a 3D chart.
  *
  * @type      {number}
  * @default   1
  * @since     4.0
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption plotOptions.column.groupZPadding
  */
 
@@ -315,21 +322,23 @@ wrap(
         zIndex?: number,
         parent?: Highcharts.SVGElement
     ): void {
-        if (this.chart.is3d()) {
-            if ((this as any)[prop]) {
-                delete (this as any)[prop];
-            }
-            if (parent) {
-                if (!this.chart.columnGroup) {
-                    this.chart.columnGroup =
-                        this.chart.renderer.g('columnGroup').add(parent);
+        if (prop !== 'dataLabelsGroup') {
+            if (this.chart.is3d()) {
+                if ((this as any)[prop]) {
+                    delete (this as any)[prop];
                 }
-                (this as any)[prop] = this.chart.columnGroup;
-                this.chart.columnGroup.attr(this.getPlotBox());
-                (this as any)[prop].survive = true;
-                if (prop === 'group' || prop === 'markerGroup') {
-                    arguments[3] = 'visible';
-                    // For 3D column group and markerGroup should be visible
+                if (parent) {
+                    if (!this.chart.columnGroup) {
+                        this.chart.columnGroup =
+                            this.chart.renderer.g('columnGroup').add(parent);
+                    }
+                    (this as any)[prop] = this.chart.columnGroup;
+                    this.chart.columnGroup.attr(this.getPlotBox());
+                    (this as any)[prop].survive = true;
+                    if (prop === 'group' || prop === 'markerGroup') {
+                        arguments[3] = 'visible';
+                        // For 3D column group and markerGroup should be visible
+                    }
                 }
             }
         }
@@ -353,7 +362,7 @@ wrap(
         if (series.chart.is3d()) {
             series.data.forEach(function (point: Highcharts.ColumnPoint): void {
                 point.visible = point.options.visible = vis =
-                    vis === undefined ?
+                    typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
                 pointVis = vis ? 'visible' : 'hidden';
                 (series.options.data as any)[series.data.indexOf(point)] =
@@ -382,7 +391,8 @@ addEvent(Series, 'afterInit', function (): void {
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
             z = 0;
 
-        if (!(grouping !== undefined && !grouping)) {
+        // @todo grouping === true ?
+        if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack
@@ -450,11 +460,38 @@ function setState(
     }
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * In 3D mode, simple checking for a new shape to animate is not enough.
+ * Additionally check if graphic is a group of elements
+ * @private
+ */
+function hasNewShapeType(
+    this: Highcharts.ColumnPoint,
+    proceed: Highcharts.ColumnPoint['hasNewShapeType'],
+    ...args: []
+): boolean|undefined {
+    return this.series.chart.is3d() ?
+        this.graphic && this.graphic.element.nodeName !== 'g' :
+        proceed.apply(this, args);
+}
+
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 wrap(seriesTypes.column.prototype, 'setState', setState);
+wrap(
+    seriesTypes.column.prototype.pointClass.prototype,
+    'hasNewShapeType',
+    hasNewShapeType
+);
+
 if (seriesTypes.columnrange) {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
     wrap(seriesTypes.columnrange.prototype, 'setState', setState);
+    wrap(
+        seriesTypes.columnrange.prototype.pointClass.prototype,
+        'hasNewShapeType',
+        hasNewShapeType
+    );
     seriesTypes.columnrange.prototype.plotGroup =
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =

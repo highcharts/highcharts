@@ -1,3 +1,66 @@
+QUnit.test("Data module with decimapPoint and negative numbers (#4749)", function (assert) {
+    document.body.innerHTML += `<table id="datatable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Jane</th>
+            <th>John</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Apples</th>
+            <td>-3,4</td>
+            <td>-4,24</td>
+        </tr>
+        <tr>
+            <th>Pears</th>
+            <td>-1,2</td>
+            <td>-1,5</td>
+        </tr>
+        <tr>
+            <th>Plums</th>
+            <td>5,1</td>
+            <td>11,1</td>
+        </tr>
+        <tr>
+            <th>Bananas</th>
+            <td>-1,1</td>
+            <td>-1,1</td>
+        </tr>
+        <tr>
+            <th>Oranges</th>
+            <td>-3,12</td>
+            <td>-2,9</td>
+        </tr>
+    </tbody>
+</table>`;
+    var chart = $("#container").highcharts({
+        data: {
+            table: 'datatable',
+            decimalPoint: ','
+        },
+        chart: {
+            type: 'column'
+        }
+    }).highcharts();
+
+    assert.equal(
+        chart.series[0].points.map(function (point) {
+            return point.y;
+        }).join(','),
+        '-3.4,-1.2,5.1,-1.1,-3.12',
+        'Series 1 correct data'
+    );
+    assert.equal(
+        chart.series[1].points.map(function (point) {
+            return point.y;
+        }).join(','),
+        '-4.24,-1.5,11.1,-1.1,-2.9',
+        'Series 2 correct data'
+    );
+});
+
 QUnit.test('Empty data config', function (assert) {
 
     var chart = Highcharts.chart('container', {

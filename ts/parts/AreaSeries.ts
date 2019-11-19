@@ -18,33 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface AreaPathObject extends SVGPathArray {
-            xMap?: number;
-        }
-        interface AreaPointOptions extends LinePointOptions {
-        }
-        interface AreaSeriesOptions extends LineSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            fillOpacity?: number;
-            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: AreaSeriesStatesOptions;
-        }
-        interface AreaSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            fillOpacity?: number;
-            negativeFillColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface AreaSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: AreaSeriesStatesHoverOptions;
-        }
-        interface PlotSeriesOptions {
-            negativeFillColor?: AreaSeriesOptions['negativeFillColor'];
-        }
-        interface SeriesTypesDictionary {
-            area: typeof AreaSeries;
-        }
         class AreaPoint extends LinePoint {
             public isCliff?: boolean;
             public leftNull?: boolean;
@@ -60,12 +33,27 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
+        interface AreaPathObject extends SVGPathArray {
+            xMap?: number;
+        }
+        interface AreaPointOptions extends LinePointOptions {
+        }
+        interface AreaSeriesOptions extends LineSeriesOptions {
+            fillColor?: ColorType;
+            fillOpacity?: number;
+            negativeFillColor?: ColorType;
+            states?: SeriesStatesOptionsObject<AreaSeries>;
+        }
+        interface SeriesTypesDictionary {
+            area: typeof AreaSeries;
+        }
     }
 }
 
 import U from './Utilities.js';
 const {
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Color.js';
@@ -75,7 +63,6 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
 
@@ -88,7 +75,7 @@ var color = H.color,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.AreaSeriesOptions>(
+seriesType<Highcharts.AreaSeries>(
     'area',
     'line',
 
@@ -270,7 +257,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
 
                 for (i = 0; i < points.length; i++) {
                     // Reset after point update (#7326)
-                    points[i].leftNull = points[i].rightNull = null as any;
+                    points[i].leftNull = points[i].rightNull = void 0;
 
                     // Create a map where we can quickly look up the points by
                     // their X values.
@@ -419,7 +406,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                 seriesIndex = this.index,
                 i,
                 areaPath: Highcharts.AreaPathObject,
-                plotX: number,
+                plotX: number|undefined,
                 stacks = yAxis.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
@@ -427,7 +414,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                 ),
                 isNull,
                 yBottom,
-                connectNulls = H.pick( // #10574
+                connectNulls = pick( // #10574
                     options.connectNulls,
                     stacking === 'percent'
                 ),
@@ -467,7 +454,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                     }
 
                     // Add to the top and bottom line of the area
-                    if (top !== undefined) {
+                    if (typeof top !== 'undefined') {
                         graphPoints.push({
                             plotX: plotX,
                             plotY: top === null ?
@@ -495,6 +482,13 @@ seriesType<Highcharts.AreaSeriesOptions>(
             }
 
             for (i = 0; i < points.length; i++) {
+
+                // Reset after series.update of stacking property (#12033)
+                if (!stacking) {
+                    points[i].leftCliff = points[i].rightCliff =
+                        points[i].leftNull = points[i].rightNull = void 0;
+                }
+
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
                 yBottom = pick(points[i].yBottom, translatedThreshold);
@@ -566,7 +560,7 @@ seriesType<Highcharts.AreaSeriesOptions>(
                 ]]; // area name, main color, fill color
 
             zones.forEach(function (
-                zone: Highcharts.PlotSeriesZonesOptions,
+                zone: Highcharts.SeriesZonesOptions,
                 i: number
             ): void {
                 props.push([

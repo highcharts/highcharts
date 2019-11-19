@@ -18,36 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
-            angular?: boolean;
-        }
-        interface GaugePointOptions extends LinePointOptions {
-            dial?: GaugeSeriesOptions['dial'];
-            pivot?: GaugeSeriesOptions['pivot'];
-        }
-        interface GaugeSeriesOptions extends LineSeriesOptions {
-            dial?: CSSObject;
-            overshoot?: number;
-            pivot?: CSSObject;
-            states?: GaugeSeriesStatesOptions;
-            wrap?: boolean;
-        }
-        interface GaugeSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions
-        {
-            dial?: CSSObject;
-            pivot?: CSSObject;
-        }
-        interface GaugeSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: GaugeSeriesStatesHoverOptions;
-        }
-        interface Series {
-            fixedBox?: boolean;
-            forceDL?: boolean;
-        }
-        interface SeriesTypesDictionary {
-            gauge: typeof GaugeSeries;
-        }
         class GaugePoint extends LinePoint {
             public dial?: SVGElement;
             public option: GaugePointOptions;
@@ -56,6 +26,7 @@ declare global {
             public setState(state?: string): void;
         }
         class GaugeSeries extends LineSeries {
+            public angular: boolean;
             public data: Array<GaugePoint>;
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public fixedBox: boolean;
@@ -75,12 +46,52 @@ declare global {
             ): void;
             public translate(): void;
         }
+        interface Chart {
+            angular?: boolean;
+        }
+        interface GaugePointOptions extends LinePointOptions {
+        }
+        interface GaugeSeriesDialOptions {
+            backgroundColor?: ColorType;
+            baseLength?: string;
+            baseWidth?: number;
+            borderColor?: ColorType;
+            borderWidth?: number;
+            path?: SVGPathArray;
+            radius?: string;
+            rearLength?: string;
+            topWidth?: number;
+        }
+        interface GaugeSeriesOptions extends LineSeriesOptions {
+            dial?: GaugeSeriesDialOptions;
+            overshoot?: number;
+            pivot?: GaugeSeriesPivotOptions;
+            states?: SeriesStatesOptionsObject<GaugeSeries>;
+            wrap?: boolean;
+        }
+        interface GaugeSeriesPivotOptions {
+            backgroundColor?: ColorType;
+            borderColor?: ColorType;
+            borderWidth?: number;
+            radius?: number;
+        }
+        interface Series {
+            fixedBox?: boolean;
+            forceDL?: boolean;
+        }
+        interface SeriesTypesDictionary {
+            gauge: typeof GaugeSeries;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber,
-    pInt = U.pInt;
+const {
+    clamp,
+    isNumber,
+    pick,
+    pInt
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Point.js';
@@ -89,7 +100,6 @@ import '../parts/Interaction.js';
 
 var merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;
@@ -102,15 +112,16 @@ var merge = H.merge,
  *         Gauge chart
  *
  * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
- *               getExtremesFromAll, marker, negativeColor, pointPlacement,
- *               shadow, softThreshold, stacking, states, step, threshold,
- *               turboThreshold, xAxis, zoneAxis, zones
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+ *               pointPlacement, shadow, softThreshold, stacking, states, step,
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
-seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
+seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
 
     /**
      * When this option is `true`, the dial will wrap around the axes. For
@@ -134,23 +145,14 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      * @product highcharts
      */
     dataLabels: {
-        /** @ignore-option */
         borderColor: '${palette.neutralColor20}',
-        /** @ignore-option */
         borderRadius: 3,
-        /** @ignore-option */
         borderWidth: 1,
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'top',
-        /** @ignore-option */
         y: 15,
-        /** @ignore-option */
         zIndex: 2
     },
 
@@ -163,7 +165,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -292,7 +294,6 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      *         Allow 5 degrees overshoot
      *
      * @type      {number}
-     * @default   0
      * @since     3.0.10
      * @product   highcharts
      * @apioption plotOptions.gauge.overshoot
@@ -307,7 +308,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -386,7 +387,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
     // and this will be used on the axes
     angular: true,
     directTouch: true, // #5063
-    drawGraph: noop,
+    drawGraph: noop as any,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,
@@ -409,14 +410,20 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
 
         series.points.forEach(function (point: Highcharts.GaugePoint): void {
 
-            var dialOptions =
-                    merge(options.dial, point.dial) as Highcharts.CSSObject,
-                radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
-                    200,
-                baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
-                    100,
-                rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
-                    100,
+            var dialOptions: Highcharts.GaugeSeriesDialOptions =
+                    merge(options.dial, point.dial) as any,
+                radius = (
+                    (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
+                    200
+                ),
+                baseLength = (
+                    (pInt(pick(dialOptions.baseLength, '70%')) * radius) /
+                    100
+                ),
+                rearLength = (
+                    (pInt(pick(dialOptions.rearLength, '10%')) * radius) /
+                    100
+                ),
                 baseWidth = dialOptions.baseWidth || 3,
                 topWidth = dialOptions.topWidth || 1,
                 overshoot = options.overshoot,
@@ -425,17 +432,13 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
                 ) as any);
 
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot)) {
-                overshoot = overshoot / 180 * Math.PI;
-                rotation = Math.max(
+            if (isNumber(overshoot) || options.wrap === false) {
+                overshoot = isNumber(overshoot) ?
+                    (overshoot / 180 * Math.PI) : 0;
+                rotation = clamp(
+                    rotation,
                     yAxis.startAngleRad - overshoot,
-                    Math.min(yAxis.endAngleRad + overshoot, rotation)
-                );
-
-            } else if (options.wrap === false) {
-                rotation = Math.max(
-                    yAxis.startAngleRad,
-                    Math.min(yAxis.endAngleRad, rotation)
+                    yAxis.endAngleRad + overshoot
                 );
             }
 
@@ -647,6 +650,7 @@ seriesType<Highcharts.GaugeSeriesOptions>('gauge', 'line', {
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.gauge
  */
 

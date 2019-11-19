@@ -25,6 +25,9 @@ declare global {
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
         }
+        interface ChartLabelCollectorFunction {
+            (): (Array<(SVGElement|undefined)>|undefined);
+        }
         interface ChartOptions {
             renderer?: string;
             skipClone?: boolean;
@@ -32,6 +35,9 @@ declare global {
         interface ChartRenderer extends SVGRenderer {
             plotBox: BBoxObject;
             spacingBox: BBoxObject;
+        }
+        interface CaptionObject extends SVGElement {
+            update(titleOptions: CaptionOptions, redraw?: boolean): void;
         }
         interface Options {
             series?: Array<SeriesOptionsType>;
@@ -75,16 +81,18 @@ declare global {
             public containerScaling?: { scaleX: number; scaleY: number };
             public containerWidth?: string;
             public credits?: SVGElement;
+            public caption?: SVGElement;
             public hasCartesianSeries?: boolean;
             public hasRendered?: boolean;
             public index: number;
             public isDirtyBox?: boolean;
             public isDirtyLegend?: boolean;
             public isResizing: number;
-            public labelCollectors: Array<Function>;
+            public labelCollectors: Array<ChartLabelCollectorFunction>;
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
+            public numberFormatter: NumberFormatterCallbackFunction;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
             public options: Options;
@@ -119,6 +127,10 @@ declare global {
             public xAxis: Array<Axis>;
             public yAxis: Array<Axis>;
             public addCredits(credits?: CreditsOptions): void;
+            public applyDescription(
+                name: ('title'|'subtitle'|'caption'),
+                options?: DescriptionOptionsType
+            ): void;
             public destroy(): void;
             public drawChartBox(): void;
             public firstRender(): void;
@@ -190,6 +202,29 @@ declare global {
  */
 
 /**
+ * Format a number and return a string based on input settings.
+ *
+ * @callback Highcharts.NumberFormatterCallbackFunction
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string} The formatted number.
+ */
+
+/**
  * The chart title. The title has an `update` method that allows modifying the
  * options directly or indirectly via `chart.update`.
  *
@@ -230,18 +265,47 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
+/**
+ * The chart caption. The caption has an `update` method that
+ * allows modifying the options directly or indirectly via
+ * `chart.update`.
+ *
+ * @interface Highcharts.CaptionObject
+ * @extends Highcharts.SVGElement
+ *//**
+ * Modify options for the caption.
+ *
+ * @function Highcharts.CaptionObject#update
+ *
+ * @param {Highcharts.CaptionOptions} captionOptions
+ *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the caption is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
+ */
+
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
+    discardElement,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
     isString,
+    numberFormat,
     objectEach,
+    pick,
     pInt,
-    splat
+    relativeLength,
+    setAnimation,
+    splat,
+    syncTimeout
 } = U;
 
 import './Axis.js';
@@ -251,25 +315,20 @@ import './Pointer.js';
 
 var addEvent = H.addEvent,
     animate = H.animate,
-    animObject = H.animObject,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
-    discardElement = H.discardElement,
     charts = H.charts,
     css = H.css,
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
     Pointer = H.Pointer, // @todo add as requirement
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -425,9 +484,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
                 if (isObject(typeOptions)) { // #8766
                     typeOptions.tooltip = (
-                        userPlotOptions[type] &&
-                        merge(userPlotOptions[type].tooltip) // override by copy
-                    ) || undefined; // or clear
+                        userPlotOptions[type] && // override by copy:
+                        merge((userPlotOptions[type] as any).tooltip)
+                    ) || void 0; // or clear
                 }
             });
 
@@ -512,6 +571,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     H.time;
 
             /**
+             * Callback function to override the default function that formats
+             * all the numbers in the chart. Returns a string with the formatted
+             * number.
+             *
+             * @name Highcharts.Chart#numberFormatter
+             * @type {Highcharts.NumberFormatterCallbackFunction}
+             */
+            this.numberFormatter = optionsChart.numberFormatter || numberFormat;
+
+            /**
              * Whether the chart is in styled mode, meaning all presentatinoal
              * attributes are avoided.
              *
@@ -529,6 +598,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              *
              * @name Highcharts.Chart#index
              * @type {number}
+             * @readonly
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
@@ -602,7 +672,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart);
+            H.error(17, true, chart, { missingModuleFor: type });
         }
 
         series = new Constr();
@@ -627,6 +697,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         for (; i < series.length; i++) {
             if (series[i]) {
+                /**
+                 * Contains the series' index in the `Chart.series` array.
+                 *
+                 * @name Highcharts.Series#index
+                 * @type {number}
+                 * @readonly
+                 */
                 series[i].index = i;
                 series[i].name = series[i].getName();
             }
@@ -717,7 +794,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        H.setAnimation(animation as any, chart);
+        setAnimation(animation as any, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -991,7 +1068,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             points = points.concat(
                 (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
                     function (point: Highcharts.Point): boolean {
-                        return pick(point.selectedStaging, point.selected);
+                        return pick(
+                            point.selectedStaging, point.selected as any
+                        );
                     }
                 )
             );
@@ -1051,119 +1130,121 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         subtitleOptions?: Highcharts.SubtitleOptions,
         redraw?: boolean
     ): void {
-        var chart = this,
-            options = chart.options,
-            styledMode = chart.styledMode,
-            chartTitleOptions: Highcharts.TitleOptions,
-            chartSubtitleOptions: Highcharts.SubtitleOptions;
 
-        chartTitleOptions = options.title = merge(
-            // Default styles
-            (!styledMode && {
-                style: {
-                    color: '${palette.neutralColor80}',
-                    fontSize: options.isStock ? '16px' : '18px' // #2944
-                }
-            }) as Highcharts.TitleOptions,
-            options.title as Highcharts.TitleOptions,
-            titleOptions as Highcharts.TitleOptions
-        );
-        chartSubtitleOptions = options.subtitle = merge(
-            // Default styles
-            (!styledMode && {
-                style: {
-                    color: '${palette.neutralColor60}'
-                }
-            }) as Highcharts.SubtitleOptions,
-            options.subtitle as Highcharts.SubtitleOptions,
-            subtitleOptions as Highcharts.SubtitleOptions
-        );
+        this.applyDescription('title', titleOptions);
+        this.applyDescription('subtitle', subtitleOptions);
 
+        // The initial call also adds the caption. On update, chart.update will
+        // relay to Chart.setCaption.
+        this.applyDescription('caption', void 0);
 
-        // add title and subtitle
-
-        /**
-         * The chart title. The title has an `update` method that allows
-         * modifying the options directly or indirectly via
-         * `chart.update`.
-         *
-         * @sample highcharts/members/title-update/
-         *         Updating titles
-         *
-         * @name Highcharts.Chart#title
-         * @type {Highcharts.TitleObject}
-         */
-
-        /**
-         * The chart subtitle. The subtitle has an `update` method that
-         * allows modifying the options directly or indirectly via
-         * `chart.update`.
-         *
-         * @name Highcharts.Chart#subtitle
-         * @type {Highcharts.SubtitleObject}
-         */
-
-        [
-            ['title', titleOptions, chartTitleOptions],
-            ['subtitle', subtitleOptions, chartSubtitleOptions]
-        ].forEach(function (
-            arr: Array<(
-                string|
-                Highcharts.TitleOptions|
-                Highcharts.SubtitleOptions|
-                undefined
-            )>,
-            i: number
-        ): void {
-            var name = arr[0] as string,
-                title = (chart as any)[name],
-                titleOptions = arr[1],
-                chartTitleOptions = arr[2] as (
-                    Highcharts.TitleOptions|Highcharts.SubtitleOptions
-                );
-
-            if (title && titleOptions) {
-                (chart as any)[name] = title = title.destroy(); // remove old
-            }
-
-            if (chartTitleOptions && !title) {
-                (chart as any)[name] = chart.renderer.text(
-                    chartTitleOptions.text as any,
-                    0,
-                    0,
-                    chartTitleOptions.useHTML
-                )
-                    .attr({
-                        align: chartTitleOptions.align,
-                        'class': 'highcharts-' + name,
-                        zIndex: (chartTitleOptions as any).zIndex || 4
-                    })
-                    .add();
-
-                // Update methods, shortcut to Chart.setTitle
-                (chart as any)[name].update = function (
-                    o: (Highcharts.TitleOptions|Highcharts.SubtitleOptions)
-                ): void {
-                    chart.setTitle(
-                        (!i && o) as (Highcharts.TitleOptions|undefined),
-                        (i && o) as (Highcharts.SubtitleOptions|undefined)
-                    );
-                };
-
-                // Presentational
-                if (!styledMode) {
-                    (chart as any)[name].css(chartTitleOptions.style);
-                }
-
-            }
-        });
-        chart.layOutTitles(redraw);
+        this.layOutTitles(redraw);
     },
 
     /**
-     * Internal function to lay out the chart titles and cache the full offset
-     * height for use in `getMargins`. The result is stored in
-     * `this.titleOffset`.
+     * Apply a title, subtitle or caption for the chart
+     *
+     * @private
+     * @function Highcharts.Chart#applyDescription
+     *
+     * @param name {string}
+     *        Either title, subtitle or caption
+     * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
+     *        The options to set, will be merged with default options.
+     *
+     * @return {void}
+     */
+    applyDescription: function (
+        this: Highcharts.Chart,
+        name: ('title'|'subtitle'|'caption'),
+        explicitOptions?: Highcharts.DescriptionOptionsType
+    ): void {
+        const chart = this;
+
+        // Default style
+        const style = name === 'title' ? {
+            color: '${palette.neutralColor80}',
+            fontSize: this.options.isStock ? '16px' : '18px' // #2944
+        } : {
+            color: '${palette.neutralColor60}'
+        };
+
+        // Merge default options with explicit options
+        const options = this.options[name] = merge(
+            // Default styles
+            (!this.styledMode && { style }) as
+                Highcharts.DescriptionOptionsType,
+            this.options[name],
+            explicitOptions
+        );
+
+        let elem = this[name];
+
+        if (elem && explicitOptions) {
+            this[name] = elem = (elem as any).destroy(); // remove old
+        }
+
+        if (options && !elem) {
+            elem = this.renderer.text(
+                options.text as any,
+                0,
+                0,
+                options.useHTML
+            )
+                .attr({
+                    align: options.align,
+                    'class': 'highcharts-' + name,
+                    zIndex: (options as any).zIndex || 4
+                })
+                .add();
+
+            // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
+            // Chart.setCaption
+            elem.update = function (
+                updateOptions: (Highcharts.DescriptionOptionsType)
+            ): void {
+                const fn = {
+                    title: 'setTitle',
+                    subtitle: 'setSubtitle',
+                    caption: 'setCaption'
+                }[name];
+                (chart as any)[fn](updateOptions);
+            };
+
+            // Presentational
+            if (!this.styledMode) {
+                elem.css((options as any).style);
+            }
+
+            /**
+             * The chart title. The title has an `update` method that allows
+             * modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @sample highcharts/members/title-update/
+             *         Updating titles
+             *
+             * @name Highcharts.Chart#title
+             * @type {Highcharts.TitleObject}
+             */
+
+            /**
+             * The chart subtitle. The subtitle has an `update` method that
+             * allows modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @name Highcharts.Chart#subtitle
+             * @type {Highcharts.SubtitleObject}
+             */
+            this[name] = elem;
+        }
+
+    },
+
+    /**
+     * Internal function to lay out the chart title, subtitle and caption, and
+     * cache the full offset height for use in `getMargins`. The result is
+     * stored in `this.titleOffset`.
      *
      * @private
      * @function Highcharts.Chart#layOutTitles
@@ -1171,6 +1252,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw=true]
      *
      * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterLayOutTitles
      */
     layOutTitles: function (
         this: Highcharts.Chart,
@@ -1182,16 +1265,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
 
         // Lay out the title and the subtitle respectively
-        ['title', 'subtitle'].forEach(function (key: string): void {
+        ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
             var title = (this as any)[key],
                 titleOptions = (this as any).options[key],
+                verticalAlign = titleOptions.verticalAlign || 'top',
                 offset = key === 'title' ? -3 :
                     // Floating subtitle (#6574)
-                    titleOptions.verticalAlign ? 0 : titleOffset[0] + 2,
-                bottomAlign = (
-                    key === 'subtitle' &&
-                    titleOptions.verticalAlign === 'bottom'
-                ),
+                    verticalAlign === 'top' ? titleOffset[0] + 2 : 0,
                 titleSize,
                 height;
 
@@ -1203,30 +1283,51 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
                     .css({
-                        width: (titleOptions.width ||
-                            spacingBox.width + titleOptions.widthAdjust) + 'px'
+                        width: (
+                            titleOptions.width ||
+                            spacingBox.width + (titleOptions.widthAdjust || 0)
+                        ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481)
-                height = title.getBBox(titleOptions.useHTML).height;
+                // Skip the cache for HTML (#3481, #11666)
+                height = Math.round(title.getBBox(titleOptions.useHTML).height);
 
                 title.align(extend({
-                    y: bottomAlign ? titleSize : offset + titleSize,
+                    y: verticalAlign === 'bottom' ?
+                        titleSize :
+                        offset + titleSize,
                     height
                 }, titleOptions), false, 'spacingBox');
 
                 if (!titleOptions.floating) {
-                    if (!titleOptions.verticalAlign) {
+                    if (verticalAlign === 'top') {
                         titleOffset[0] = Math.ceil(
                             titleOffset[0] +
                             height
                         );
-                    } else if (bottomAlign) {
-                        titleOffset[2] = height;
+                    } else if (verticalAlign === 'bottom') {
+                        titleOffset[2] = Math.ceil(
+                            titleOffset[2] +
+                            height
+                        );
                     }
                 }
             }
         }, this);
+
+        // Handle title.margin and caption.margin
+        if (
+            titleOffset[0] &&
+            ((this.options.title as any).verticalAlign || 'top') === 'top'
+        ) {
+            titleOffset[0] += (this.options.title as any).margin;
+        }
+        if (
+            titleOffset[2] &&
+            (this.options.caption as any).verticalAlign === 'bottom'
+        ) {
+            titleOffset[2] += (this.options.caption as any).margin;
+        }
 
         requiresDirtyBox = (
             !this.titleOffset ||
@@ -1235,6 +1336,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Used in getMargins
         this.titleOffset = titleOffset;
+
+        fireEvent(this, 'afterLayOutTitles');
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1288,7 +1391,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          */
         chart.chartHeight = Math.max(
             0,
-            H.relativeLength(
+            relativeLength(
                 heightOption as any,
                 chart.chartWidth
             ) ||
@@ -1565,14 +1668,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (titleOffset[0] && !defined(margin[0])) {
             this.plotTop = Math.max(
                 this.plotTop,
-                titleOffset[0] + (this.options.title as any).margin + spacing[0]
+                titleOffset[0] + spacing[0]
             );
         }
 
         if (titleOffset[2] && !defined(margin[2])) {
             this.marginBottom = Math.max(
                 this.marginBottom as any,
-                titleOffset[2] + (this.options.title as any).margin + spacing[2]
+                titleOffset[2] + spacing[2]
             );
         }
 
@@ -1598,15 +1701,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             // [top, right, bottom, left]
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
-            margin = chart.margin;
+            colorAxis = chart.colorAxis,
+            margin = chart.margin,
+            getOffset = function (axes: Array<Highcharts.Axis>): void {
+                axes.forEach(function (axis: Highcharts.Axis): void {
+                    if (axis.visible) {
+                        axis.getOffset();
+                    }
+                });
+            };
 
         // pre-render axes to get labels offset width
         if (chart.hasCartesianSeries) {
-            chart.axes.forEach(function (axis: Highcharts.Axis): void {
-                if (axis.visible) {
-                    axis.getOffset();
-                }
-            });
+            getOffset(chart.axes);
+
+        } else if (colorAxis && colorAxis.length) {
+            getOffset(colorAxis);
         }
 
         // Add the axis offsets
@@ -1671,7 +1781,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     // Set size, it may have been destroyed in the meantime
                     // (#1257)
                     if (chart.container) {
-                        chart.setSize(undefined, undefined, false);
+                        chart.setSize(void 0, void 0, false);
                     }
                 }, e ? 100 : 0);
             }
@@ -1770,14 +1880,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isResizing += 1;
 
         // set the animation for the current process
-        H.setAnimation(animation, chart);
+        setAnimation(animation, chart);
 
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
-        if (width !== undefined) {
+        if (typeof width !== 'undefined') {
             (chart.options.chart as any).width = width;
         }
-        if (height !== undefined) {
+        if (typeof height !== 'undefined') {
             (chart.options.chart as any).height = height;
         }
         chart.getChartSize();
@@ -1825,7 +1935,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration);
+        }, animObject(globalAnimation).duration || 0);
     },
 
     /**
@@ -2098,6 +2208,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         plotHeight
                     ).add();
                 } else {
+                    if (plotBackgroundImage !== plotBGImage.attr('href')) {
+                        plotBGImage.attr('href', plotBackgroundImage);
+                    }
+
                     plotBGImage.animate(plotBox as Highcharts.SVGAttributes);
                 }
             }
@@ -2305,13 +2419,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     render: function (this: Highcharts.Chart): void {
         var chart = this,
             axes = chart.axes,
+            colorAxis = chart.colorAxis,
             renderer = chart.renderer,
             options = chart.options,
             correction = 0, // correction for X axis labels
             tempWidth,
             tempHeight,
             redoHorizontal: boolean,
-            redoVertical: boolean;
+            redoVertical: boolean,
+            renderAxes = function (axes: Array<Highcharts.Axis>): void {
+                axes.forEach(function (axis: Highcharts.Axis): void {
+                    if (axis.visible) {
+                        axis.render();
+                    }
+                });
+            };
 
         // Title
         chart.setTitle();
@@ -2385,11 +2507,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Axes
         if (chart.hasCartesianSeries) {
-            axes.forEach(function (axis: Highcharts.Axis): void {
-                if (axis.visible) {
-                    axis.render();
-                }
-            });
+            renderAxes(axes);
+
+        } else if (colorAxis && colorAxis.length) {
+            renderAxes(colorAxis);
         }
 
         // The series
@@ -2545,7 +2666,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.renderer.forExport) {
             erase(charts, chart); // #6569
         } else {
-            charts[chart.index] = undefined;
+            charts[chart.index] = void 0;
         }
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
@@ -2694,7 +2815,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             fn: Highcharts.ChartCallbackFunction
         ): void {
             // Chart destroyed in its own callback (#3600)
-            if (fn && this.index !== undefined) {
+            if (fn && typeof this.index !== 'undefined') {
                 fn.apply(this, [this]);
             }
         }, this);

@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+var extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Tick.js';
-var ZAxis, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, extend = H.extend, merge = H.merge, perspective = H.perspective, perspective3D = H.perspective3D, pick = H.pick, shapeArea = H.shapeArea, Tick = H.Tick, wrap = H.wrap;
+var ZAxis, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea, Tick = H.Tick;
 /**
  * @optionparent xAxis
  */
@@ -49,6 +49,7 @@ var extendedOptions = {
          * @since      5.0.15
          * @validvalue ['offset', 'chart', 'flap', 'ortho']
          * @product    highcharts
+         * @requires   highcharts-3d
          */
         position3d: 'offset',
         /**
@@ -62,8 +63,9 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @since   5.0.15
-         * @product highcharts
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: false
     },
@@ -93,9 +95,10 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type       {"offset"|"chart"|"flap"|"ortho"|null}
-         * @since      5.0.15
-         * @product    highcharts
+         * @type     {"offset"|"chart"|"flap"|"ortho"|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         position3d: null,
         /**
@@ -111,9 +114,10 @@ var extendedOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type    {boolean|null}
-         * @since   5.0.15
-         * @product highcharts
+         * @type     {boolean|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: null
     }

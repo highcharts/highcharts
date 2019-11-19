@@ -18,29 +18,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface CandlestickPointOptions extends OHLCPointOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface CandlestickSeriesOptions extends OHLCSeriesOptions {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            states?: CandlestickSeriesStatesOptions;
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface CandlestickSeriesStatesOptions
-            extends OHLCSeriesStatesOptions
-        {
-            hover?: CandlestickSeriesStatesHoverOptions;
-        }
-        interface CandlestickSeriesStatesHoverOptions
-            extends OHLCSeriesStatesHoverOptions
-        {
-            lineColor?: (ColorString|GradientColorObject|PatternObject);
-            upLineColor?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface SeriesTypesDictionary {
-            candlestick: typeof CandlestickSeries;
-        }
         class CandlestickPoint extends OHLCPoint {
             public close: number;
             public open: number;
@@ -52,6 +29,18 @@ declare global {
             public options: CandlestickSeriesOptions;
             public pointClass: typeof CandlestickPoint;
             public points: Array<CandlestickPoint>;
+        }
+        interface CandlestickPointOptions extends OHLCPointOptions {
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface CandlestickSeriesOptions extends OHLCSeriesOptions {
+            lineColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<CandlestickSeries>;
+            upLineColor?: (ColorString|GradientColorObject|PatternObject);
+        }
+        interface SeriesTypesDictionary {
+            candlestick: typeof CandlestickSeries;
         }
     }
 }
@@ -117,7 +106,7 @@ var candlestickOptions = {
     /**
      * @extends plotOptions.ohlc.tooltip
      */
-    tooltip: defaultPlotOptions.ohlc.tooltip,
+    tooltip: (defaultPlotOptions.ohlc as any).tooltip,
 
     /**
      * @type    {number|null}
@@ -186,7 +175,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType(
+seriesType<Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(
@@ -274,7 +263,7 @@ seriesType(
                     halfWidth,
                     isNew = !graphic;
 
-                if (point.plotY !== undefined) {
+                if (typeof point.plotY !== 'undefined') {
 
                     if (!graphic) {
                         point.graphic = graphic = chart.renderer.path()

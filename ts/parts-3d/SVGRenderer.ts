@@ -48,10 +48,7 @@ declare global {
                 complete?: any,
                 continueAnimation?: any
             ): SVGElement;
-            fillSetter(
-                this: SVGElement,
-                fill: (ColorString|GradientColorObject|PatternObject)
-            ): SVGElement;
+            fillSetter(this: SVGElement, fill: ColorType): SVGElement;
         }
         interface CuboidPathsObject extends SVGPath3dObject {
             front: SVGPathArray;
@@ -69,7 +66,7 @@ declare global {
         }
         interface Elements3dObject {
             base: Element3dMethodsObject;
-            cuboid: (CuboidMethodsObject&Element3dMethodsObject);
+            cuboid: CuboidMethodsObject;
         }
         interface SVGPath3dObject {
             back?: SVGPathArray;
@@ -107,8 +104,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     defined,
-    objectEach
+    extend,
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Color.js';
@@ -118,14 +118,11 @@ var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
 
-var animObject = H.animObject,
-    charts = H.charts,
+var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
-    extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
-    pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     // internal:
@@ -493,7 +490,7 @@ element3dMethods = {
         (elem3d.parts as any).forEach(function (part: string): void {
             // if different props for different parts
             if (partsProps) {
-                props = H.pick(partsProps[part], false);
+                props = pick(partsProps[part], false);
             }
 
             // only if something to set, but allow undefined
@@ -545,7 +542,7 @@ cuboidMethods = H.merge(element3dMethods, {
         }
 
         return SVGElement.prototype.attr.call(
-            this, args, undefined, complete, continueAnimation
+            this, args, void 0, complete, continueAnimation
         );
     },
     animate: function (
@@ -571,11 +568,7 @@ cuboidMethods = H.merge(element3dMethods, {
     },
     fillSetter: function (
         this: Highcharts.SVGElement,
-        fill: (
-            Highcharts.ColorString|
-            Highcharts.GradientColorObject|
-            Highcharts.PatternObject
-        )
+        fill: Highcharts.ColorType
     ): Highcharts.SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
@@ -599,6 +592,7 @@ SVGRenderer.prototype.elements3d = {
 /**
  * return result, generalization
  * @private
+ * @requires highcharts-3d
  */
 SVGRenderer.prototype.element3d = function (
     this: Highcharts.SVGRenderer,
@@ -609,7 +603,7 @@ SVGRenderer.prototype.element3d = function (
     var ret = this.g();
 
     // extend
-    H.extend(ret, (this.elements3d as any)[type]);
+    extend(ret, (this.elements3d as any)[type]);
 
     // init
     ret.initArgs(shapeArgs);
@@ -909,11 +903,7 @@ H.SVGRenderer.prototype.arc3d = function (
      */
     wrapper.fillSetter = function (
         this: Highcharts.SVGElement,
-        value: (
-            Highcharts.ColorString|
-            Highcharts.GradientColorObject|
-            Highcharts.PatternObject
-        )
+        value: Highcharts.ColorType
     ): Highcharts.SVGElement {
         var darker = color(value).brighten(-0.1).get();
 

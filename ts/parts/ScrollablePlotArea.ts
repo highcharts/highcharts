@@ -21,6 +21,10 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 
 import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    pick
+} = U;
 
 /**
  * Internal types
@@ -280,10 +284,15 @@ Chart.prototype.moveFixedElements = function (this: Highcharts.Chart): void {
             '.highcharts-contextbutton',
             '.highcharts-credits',
             '.highcharts-legend',
+            '.highcharts-legend-checkbox',
+            '.highcharts-navigator-series',
+            '.highcharts-navigator-xaxis',
+            '.highcharts-navigator-yaxis',
+            '.highcharts-navigator',
             '.highcharts-reset-zoom',
+            '.highcharts-scrollbar',
             '.highcharts-subtitle',
-            '.highcharts-title',
-            '.highcharts-legend-checkbox'
+            '.highcharts-title'
         ],
         axisClass;
 
@@ -361,11 +370,8 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: H.color(
-                    (this.options.chart as any).backgroundColor || '#fff'
-                ).setOpacity(
-                    H.pick(scrollableOptions.opacity, 0.85)
-                ).get(),
+                fill: (this.options.chart as any).backgroundColor || '#fff',
+                'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             } as Highcharts.SVGAttributes)
             .addClass('highcharts-scrollable-mask')
@@ -374,6 +380,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         this.moveFixedElements();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {
 

@@ -35,10 +35,11 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var Chart = H.Chart, extend = H.extend, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
+var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
@@ -63,7 +64,7 @@ function pointInPolygon(point, polygon) {
  * Highmaps only. Get point from latitude and longitude using specified
  * transform definition.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-transform/
  *         Use specific transformation for lat/lon
@@ -81,7 +82,7 @@ function pointInPolygon(point, polygon) {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return {
             x: 0,
@@ -107,7 +108,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  * Highmaps only. Get latLon from point using specified transform definition.
  * The method returns an object with the numeric properties `lat` and `lon`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-transform/
  *         Use specific transformation for lat/lon
@@ -126,7 +127,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return;
     }
@@ -152,7 +153,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
  * Highmaps only. Calculate latitude/longitude values for a point. Returns an
  * object with the numeric properties `lat` and `lon`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/demo/latlon-advanced/
  *         Advanced lat/lon demo
@@ -186,7 +187,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
  * Highmaps only. Get chart coordinates from latitude/longitude. Returns an
  * object with x and y values corresponding to the `xAxis` and `yAxis`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-to-point/
  *         Find a point from lat/lon
@@ -228,7 +229,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  * either `map`, `mapline` or `mappoint`. Meta data in GeoJSON's properties
  * object will be copied directly over to {@link Point.properties} in Highmaps.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/demo/geojson/
  *         Simple areas
@@ -306,7 +307,7 @@ H.geojson = function (geojson, hType, series) {
                  * In Highmaps, when data is loaded from GeoJSON, the GeoJSON
                  * item's properies are copied over here.
                  *
-                 * @requires module:modules/map
+                 * @requires modules/map
                  * @name Highcharts.Point#properties
                  * @type {*}
                  */

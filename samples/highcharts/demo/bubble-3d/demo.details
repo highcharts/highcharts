@@ -1,7 +1,12 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- alt_text: Highcharts 3D Bubbles chart JavaScript example graph compares series values as radial gradient fill bubble diagram.
+name: 3D bubbles
+authors:
+  - Torstein Hønsi
+js_wrap: b
+alt_text: >-
+  Highcharts 3D Bubbles chart JavaScript example graph compares series values as
+  radial gradient fill bubble diagram.
+tags: []
+categories:
+  - Scatter and bubble charts
 ...

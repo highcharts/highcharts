@@ -31,7 +31,7 @@ var draw = function draw(params) {
         graphic
             .css(css)
             .attr(params.attribs)
-            .animate(animatableAttribs, params.isNew ? false : undefined, onComplete);
+            .animate(animatableAttribs, params.isNew ? false : void 0, onComplete);
     }
     else if (graphic) {
         var destroy = function () {
@@ -42,7 +42,7 @@ var draw = function draw(params) {
         };
         // animate only runs complete callback if something was animated.
         if (Object.keys(animatableAttribs).length) {
-            graphic.animate(animatableAttribs, undefined, function () {
+            graphic.animate(animatableAttribs, void 0, function () {
                 destroy();
             });
         }
@@ -54,7 +54,7 @@ var draw = function draw(params) {
 /**
  * An extended version of draw customized for points.
  * It calls additional methods that is expected when rendering a point.
- *
+ * @private
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
 var drawPoint = function drawPoint(params) {

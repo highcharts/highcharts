@@ -6,10 +6,13 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var animObject = U.animObject;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
@@ -31,6 +34,7 @@ H.seriesType('dependencywheel', 'sankey',
  * @extends      plotOptions.sankey
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/dependencywheel
  * @optionparent plotOptions.dependencywheel
  */
 {
@@ -209,7 +213,7 @@ H.seriesType('dependencywheel', 'sankey',
     },
     animate: function (init) {
         if (!init) {
-            var duration = H.animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
+            var duration = animObject(this.options.animation).duration, step = (duration / 2) / this.nodes.length;
             this.nodes.forEach(function (point, i) {
                 var graphic = point.graphic;
                 if (graphic) {
@@ -273,6 +277,7 @@ H.seriesType('dependencywheel', 'sankey',
  *
  * @extends   series,plotOptions.dependencywheel
  * @product   highcharts
+ * @requires  modules/dependencywheel
  * @apioption series.dependencywheel
  */
 /**

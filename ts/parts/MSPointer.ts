@@ -35,7 +35,9 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    objectEach
+    extend,
+    objectEach,
+    wrap
 } = U;
 
 import './Pointer.js';
@@ -44,13 +46,11 @@ var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
     doc = H.doc,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     noop = H.noop,
     Pointer = H.Pointer,
     removeEvent = H.removeEvent,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
 

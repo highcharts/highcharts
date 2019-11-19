@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Simple flight routes
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - General
 ...

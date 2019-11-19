@@ -1,4 +1,6 @@
-var data = usdeur.splice(0, 500);
+var cursor = 500;
+var chunk = 100;
+var data = usdeur.slice(0, cursor);
 
 var chart = Highcharts.stockChart('container', {
 
@@ -15,14 +17,15 @@ var chart = Highcharts.stockChart('container', {
 $('#button').click(function () {
     var i = 0,
         series = chart.series[0];
-    data = usdeur.splice(0, 100);
+    data = usdeur.slice(cursor, cursor + chunk);
+    cursor += chunk;
 
     for (i; i < data.length; i += 1) {
         series.addPoint(data[i], false, true);
     }
     chart.redraw();
 
-    if (!usdeur.length) {
+    if (!data.length) {
         this.disabled = true;
     }
 });

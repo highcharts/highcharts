@@ -10,12 +10,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
+var clamp = U.clamp, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, TrackerMixin = H.TrackerMixin;
+var merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, TrackerMixin = H.TrackerMixin;
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
  * to values along the perimeter.
@@ -24,12 +24,13 @@ var merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType
  *         Gauge chart
  *
  * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, findNearestPointBy,
- *               getExtremesFromAll, marker, negativeColor, pointPlacement,
- *               shadow, softThreshold, stacking, states, step, threshold,
- *               turboThreshold, xAxis, zoneAxis, zones
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
+ *               pointPlacement, shadow, softThreshold, stacking, states, step,
+ *               threshold, turboThreshold, xAxis, zoneAxis, zones
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.gauge
  */
 seriesType('gauge', 'line', {
@@ -54,23 +55,14 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     dataLabels: {
-        /** @ignore-option */
         borderColor: '${palette.neutralColor20}',
-        /** @ignore-option */
         borderRadius: 3,
-        /** @ignore-option */
         borderWidth: 1,
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         defer: false,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'top',
-        /** @ignore-option */
         y: 15,
-        /** @ignore-option */
         zIndex: 2
     },
     /**
@@ -82,7 +74,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -202,7 +194,6 @@ seriesType('gauge', 'line', {
      *         Allow 5 degrees overshoot
      *
      * @type      {number}
-     * @default   0
      * @since     3.0.10
      * @product   highcharts
      * @apioption plotOptions.gauge.overshoot
@@ -216,7 +207,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/css/gauge/
      *         Styled mode
      *
-     * @type    {Highcharts.CSSObject}
+     * @type    {*}
      * @since   2.3.0
      * @product highcharts
      */
@@ -302,17 +293,15 @@ seriesType('gauge', 'line', {
         var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var dialOptions = merge(options.dial, point.dial), radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
-                200, baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) /
-                100, rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) /
-                100, baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
+                200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
+                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
+                100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot)) {
-                overshoot = overshoot / 180 * Math.PI;
-                rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
-            }
-            else if (options.wrap === false) {
-                rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+            if (isNumber(overshoot) || options.wrap === false) {
+                overshoot = isNumber(overshoot) ?
+                    (overshoot / 180 * Math.PI) : 0;
+                rotation = clamp(rotation, yAxis.startAngleRad - overshoot, yAxis.endAngleRad + overshoot);
             }
             rotation = rotation * 180 / Math.PI;
             point.shapeType = 'path';
@@ -477,6 +466,7 @@ seriesType('gauge', 'line', {
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.gauge
  */
 /**

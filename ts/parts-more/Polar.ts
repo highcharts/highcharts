@@ -24,9 +24,6 @@ declare global {
         interface ColumnSeries {
             polarArc: PolarSeries['polarArc'];
         }
-        interface PlotSeriesOptions {
-            connectEnds?: boolean;
-        }
         interface Point {
             rectPlotX?: PolarPoint['rectPlotX'];
             ttBelow?: boolean;
@@ -50,6 +47,7 @@ declare global {
             series: PolarSeries;
         }
         interface PolarSeries extends Series {
+            clipCircle: SVGElement;
             connectEnds?: boolean;
             data: Array<PolarPoint>;
             group: SVGElement;
@@ -80,6 +78,9 @@ declare global {
             translate(): void;
             toXY(point: Point): void;
         }
+        interface SeriesOptions {
+            connectEnds?: boolean;
+        }
         interface SVGRenderer {
             clipCircle(x: number, y: number, r: number): SVGElement;
         }
@@ -87,7 +88,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    pick,
+    splat,
+    wrap
+} = U;
 
 import '../parts/Pointer.js';
 import '../parts/Series.js';
@@ -96,11 +101,9 @@ import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var pick = H.pick,
-    Pointer = H.Pointer,
+var Pointer = H.Pointer,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    wrap = H.wrap,
 
     seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
@@ -353,7 +356,7 @@ H.addEvent(Series as any, 'afterTranslate', function (
         points,
         i;
 
-    if (chart.polar) {
+    if (chart.polar && this.xAxis) {
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
@@ -396,13 +399,22 @@ H.addEvent(Series as any, 'afterTranslate', function (
 
                     if (chart.polar) {
                         circ = this.yAxis.center as any;
-                        this.group.clip(
-                            chart.renderer.clipCircle(
+
+                        if (!this.clipCircle) {
+                            this.clipCircle = chart.renderer.clipCircle(
                                 circ[0],
                                 circ[1],
                                 circ[2] / 2
-                            )
-                        );
+                            );
+                        } else {
+                            this.clipCircle.animate({
+                                x: circ[0],
+                                y: circ[1],
+                                r: circ[2] / 2
+                            });
+                        }
+
+                        this.group.clip(this.clipCircle);
                         this.setClip = H.noop as any;
                     }
                 })
@@ -451,8 +463,9 @@ wrap(seriesProto, 'getGraphPath', function (
          * @product   highcharts
          * @apioption plotOptions.series.connectEnds
          */
-        if (this.options.connectEnds !== false &&
-            firstValid !== undefined
+        if (
+            this.options.connectEnds !== false &&
+            typeof firstValid !== 'undefined'
         ) {
             this.connectEnds = true; // re-used in splines
             points.splice(points.length, 0, points[firstValid]);
@@ -462,7 +475,7 @@ wrap(seriesProto, 'getGraphPath', function (
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
         points.forEach(function (point: Highcharts.PolarPoint): void {
-            if (point.polarPlotY === undefined) {
+            if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
         });
@@ -707,8 +720,16 @@ wrap(pointerProto, 'getCoordinates', function (
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
             var isXAxis = axis.isXAxis,
                 center = axis.center,
-                x = e.chartX - (center as any)[0] - chart.plotLeft,
-                y = e.chartY - (center as any)[1] - chart.plotTop;
+                x,
+                y;
+
+            // Skip colorAxis
+            if (axis.coll === 'colorAxis') {
+                return;
+            }
+
+            x = e.chartX - (center as any)[0] - chart.plotLeft;
+            y = e.chartY - (center as any)[1] - chart.plotTop;
 
             ret[isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,

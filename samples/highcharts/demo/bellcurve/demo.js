@@ -46,6 +46,9 @@ Highcharts.chart('container', {
         name: 'Data',
         type: 'scatter',
         data: data,
+        accessibility: {
+            exposeAsGroupOnly: true
+        },
         marker: {
             radius: 1.5
         }

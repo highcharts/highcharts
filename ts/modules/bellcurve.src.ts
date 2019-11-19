@@ -20,19 +20,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface BellcurvePointOptions extends AreaSplinePointOptions {
-        }
-        interface BellcurveSeriesOptions
-            extends AreaSplineSeriesOptions, DerivedSeriesOptions
-        {
-            baseSeries?: (number|string);
-            data?: undefined;
-            intervals?: number;
-            pointsInInterval?: number;
-        }
-        interface SeriesTypesDictionary {
-            bellcurve: typeof BellcurveSeries;
-        }
         class BellcurvePoint extends AreaSplinePoint {
             public option: BellcurvePointOptions;
             public series: BellcurveSeries;
@@ -63,16 +50,32 @@ declare global {
             public setMean(): void;
             public setStandardDeviation(): void;
         }
+        interface BellcurvePointOptions extends AreaSplinePointOptions {
+        }
+        interface BellcurveSeriesOptions
+            extends AreaSplineSeriesOptions, DerivedSeriesOptions
+        {
+            baseSeries?: (number|string);
+            data?: undefined;
+            intervals?: number;
+            pointsInInterval?: number;
+            states?: SeriesStatesOptionsObject<BellcurveSeries>;
+        }
+        interface SeriesTypesDictionary {
+            bellcurve: typeof BellcurveSeries;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    correctFloat,
+    isNumber
+} = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
     merge = H.merge;
 
 /* ************************************************************************** *
@@ -141,7 +144,7 @@ function normalDensity(
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
+seriesType<Highcharts.BellcurveSeries>('bellcurve', 'areaspline'
 
     /**
      * A bell curve is an areaspline series which represents the probability
@@ -155,8 +158,9 @@ seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
      * @extends      plotOptions.areaspline
      * @since        6.0.0
      * @product      highcharts
-     * @excluding    boostThreshold, connectNulls, stacking, pointInterval,
-     *               pointIntervalUnit
+     * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
+     *               pointInterval, pointIntervalUnit
+     * @requires     modules/bellcurve
      * @optionparent plotOptions.bellcurve
      */
     , {
@@ -255,6 +259,7 @@ seriesType<Highcharts.BellcurveSeriesOptions>('bellcurve', 'areaspline'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, data
+ * @requires  modules/bellcurve
  * @apioption series.bellcurve
  */
 

@@ -27,6 +27,7 @@ type IsObjectConditionalType<TObject, TStrict> = (
         ) :
         false
 );
+type Nullable = null|undefined;
 
 /**
  * Internal types
@@ -50,6 +51,7 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
+        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
@@ -81,6 +83,7 @@ declare global {
         interface ErrorMessageEventObject {
             code: number;
             message: string;
+            params: Dictionary<string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (Dictionary<any>|Event)): (boolean|void);
@@ -192,7 +195,8 @@ declare global {
         function error(
             code: (number|string),
             stop?: boolean,
-            chart?: Chart
+            chart?: Chart,
+            param?: Dictionary<string>
         ): void;
         function extend<T extends object>(a: (T|undefined), b: object): T;
         function extendClass<T, TReturn = T>(
@@ -206,8 +210,8 @@ declare global {
             eventArguments?: (Dictionary<any>|Event),
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
-        function format(str: string, ctx: any, time?: Time): string;
-        function formatSingle(format: string, val: any, time?: Time): string;
+        function format(str: string, ctx: any, chart?: Chart): string;
+        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -281,7 +285,26 @@ declare global {
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
-        function pick<T>(...args: Array<T|null|undefined>): T;
+        function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ?
+                        T5 extends Nullable ?
+                            undefined : T5 : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ?
+                    T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+        function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+        T1 extends Nullable ?
+            T2 extends Nullable ?
+                T3 extends Nullable ? undefined : T3 : T2 : T1;
+        function pick<T1, T2>(...args: [T1, T2]):
+        T1 extends Nullable ? T2 extends Nullable ? undefined : T2 : T1;
+        function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
+        function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
         function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
@@ -295,12 +318,12 @@ declare global {
             type?: string,
             fn?: (EventCallbackFunction<T>|Function)
         ): void
-        function seriesType<TOptions extends SeriesOptions>(
+        function seriesType<TSeries extends Series>(
             type: string,
             parent: string,
-            options: TOptions,
-            props: Dictionary<any>,
-            pointProps?: Dictionary<any>
+            options: TSeries['options'],
+            props?: Partial<TSeries>,
+            pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
             animation: (boolean|AnimationOptionsObject|undefined),
@@ -313,9 +336,9 @@ declare global {
         function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
-            delay?: number,
-            context?: any
-        ): (number|undefined);
+            delay: number,
+            context?: unknown
+        ): number;
         function uniqueKey(): string;
         function wrap(
             obj: any,
@@ -681,32 +704,50 @@ var charts = H.charts,
  *        Important note: This argument is undefined for errors that lack
  *        access to the Chart instance.
  *
+ * @param {Highcharts.Dictionary<string>} [params]
+ *        Additional parameters for the generated message.
+ *
  * @return {void}
  */
 H.error = function (
     code: (number|string),
     stop?: boolean,
-    chart?: Highcharts.Chart
+    chart?: Highcharts.Chart,
+    params?: Highcharts.Dictionary<string>
 ): void {
-    var msg = isNumber(code) ?
-            'Highcharts error #' + code + ': www.highcharts.com/errors/' +
-            code :
-            code,
+    var isCode = isNumber(code),
+        message = isCode ?
+            `Highcharts error #${code}: www.highcharts.com/errors/${code}/` :
+            code.toString(),
         defaultHandler = function (): void {
             if (stop) {
-                throw new Error(msg as any);
+                throw new Error(message);
             }
             // else ...
             if (win.console) {
-                console.log(msg); // eslint-disable-line no-console
+                console.log(message); // eslint-disable-line no-console
             }
         };
+
+    if (typeof params !== 'undefined') {
+        let additionalMessages = '';
+        if (isCode) {
+            message += '?';
+        }
+        H.objectEach(params, function (value: string, key: string): void {
+            additionalMessages += ('\n' + key + ': ' + value);
+            if (isCode) {
+                message += encodeURI(key) + '=' + encodeURI(value);
+            }
+        });
+        message += additionalMessages;
+    }
 
     if (chart) {
         H.fireEvent(
             chart,
             'displayError',
-            { code: code, message: msg } as Highcharts.ErrorMessageEventObject,
+            { code, message, params } as Highcharts.ErrorMessageEventObject,
             defaultHandler
         );
     } else {
@@ -772,14 +813,19 @@ H.Fx.prototype = {
         } else if (i === end.length && now < 1) {
             while (i--) {
                 startVal = parseFloat(start[i]);
-                ret[i] =
-                    isNaN(startVal) ? // a letter instruction like M or L
-                        end[i] :
-                        (
-                            now *
-                            parseFloat('' + (end[i] - startVal)) +
-                            startVal
-                        );
+                ret[i] = (
+                    // A letter instruction like M or L
+                    isNaN(startVal) ||
+                    // Arc boolean flags:
+                    end[i - 4] === 'A' || // large-arc-flag
+                    end[i - 5] === 'A' // sweep-flag
+                ) ?
+                    end[i] :
+                    (
+                        now *
+                        parseFloat('' + (end[i] - startVal)) +
+                        startVal
+                    );
 
             }
         // If animation is finished or length not matching, land on right value
@@ -1270,6 +1316,19 @@ H.merge = function<T> (): T {
 };
 
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
+
+/**
  * Shortcut for parseInt
  *
  * @private
@@ -1525,26 +1584,27 @@ function splat(obj: any): Array<any> {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} [delay]
+ * @param {number} delay
  *        Delay in milliseconds.
  *
  * @param {*} [context]
  *        An optional context to send to the function callback.
  *
- * @return {number|undefined}
+ * @return {number}
  *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout.
+ *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-H.syncTimeout = function (
+function syncTimeout(
     fn: Function,
-    delay?: number,
-    context?: any
-): (number|undefined) {
-    if (delay) {
+    delay: number,
+    context?: unknown
+): number {
+    if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
-};
+    return -1;
+}
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -1579,7 +1639,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-H.extend = function<T extends object> (a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1590,9 +1650,28 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
-};
+}
 
-
+function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ?
+                T5 extends Nullable ? undefined : T5 : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ?
+            T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+T1 extends Nullable ?
+    T2 extends Nullable ?
+        T3 extends Nullable ? undefined : T3 : T2 : T1;
+function pick<T1, T2>(...args: [T1, T2]):
+T1 extends Nullable ?
+    T2 extends Nullable ? undefined : T2 : T1;
+function pick<T1>(...args: [T1]):
+T1 extends Nullable ? undefined : T1;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1605,20 +1684,16 @@ H.extend = function<T extends object> (a: (T|undefined), b: object): T {
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-H.pick = function (): any {
-    /* eslint-enable valid-jsdoc */
-    var args = arguments,
-        i,
-        arg,
-        length = args.length;
-
-    for (i = 0; i < length; i++) {
-        arg = args[i];
+function pick<T>(): T|undefined {
+    const args = arguments;
+    const length = args.length;
+    for (let i = 0; i < length; i++) {
+        const arg = args[i];
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
-};
+}
 
 /**
  * Set CSS on a given element.
@@ -1643,7 +1718,7 @@ H.css = function (
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    H.extend(el.style, styles);
+    extend(el.style, styles);
 };
 
 /**
@@ -1680,7 +1755,7 @@ H.createElement = function (
         css = H.css;
 
     if (attribs) {
-        H.extend(el, attribs);
+        extend(el, attribs);
     }
     if (nopad) {
         css(el, { padding: '0', border: 'none', margin: '0' });
@@ -1710,16 +1785,16 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T, TReturn = T> (
+function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
     var obj: Highcharts.Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
-    H.extend(obj.prototype, members);
+    extend(obj.prototype, members);
     return obj;
-};
+}
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1738,7 +1813,7 @@ H.extendClass = function<T, TReturn = T> (
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length?: number, padder?: string): string {
+function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1746,7 +1821,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-};
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -1766,7 +1841,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1774,7 +1849,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1795,7 +1870,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1816,7 +1891,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -1853,9 +1928,8 @@ H.datePropsToTimestamps = function (obj: any): void {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
@@ -1863,18 +1937,20 @@ H.datePropsToTimestamps = function (obj: any): void {
 H.formatSingle = function (
     format: string,
     val: any,
-    time?: Highcharts.Time
+    chart?: Highcharts.Chart
 ): string {
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
         lang = H.defaultOptions.lang,
         decimals: number;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex) as any;
         decimals = decimals ? (decimals as any)[1] : -1;
         if (val !== null) {
-            val = H.numberFormat(
+            val = numberFormatter(
                 val,
                 decimals,
                 (lang as any).decimalPoint,
@@ -1882,7 +1958,7 @@ H.formatSingle = function (
             );
         }
     } else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1907,14 +1983,13 @@ H.formatSingle = function (
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
+H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -1950,7 +2025,7 @@ H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
 
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
 
             // Push the result and advance the cursor
@@ -2024,7 +2099,7 @@ H.normalizeTickInterval = function (
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = H.pick(magnitude, 1);
+    magnitude = pick(magnitude, 1);
     normalized = interval / (magnitude as any);
 
     // multiples for a linear scale
@@ -2076,7 +2151,7 @@ H.normalizeTickInterval = function (
 
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(
+    retInterval = correctFloat(
         retInterval * (magnitude as any),
         -Math.round(Math.log(0.001) / Math.LN10)
     );
@@ -2137,7 +2212,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
  * @return {number}
  *         The lowest number.
  */
-H.arrayMin = function (data: Array<any>): number {
+function arrayMin(data: Array<any>): number {
     var i = data.length,
         min = data[0];
 
@@ -2147,7 +2222,7 @@ H.arrayMin = function (data: Array<any>): number {
         }
     }
     return min;
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
@@ -2162,7 +2237,7 @@ H.arrayMin = function (data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-H.arrayMax = function (data: Array<any>): number {
+function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2172,7 +2247,7 @@ H.arrayMax = function (data: Array<any>): number {
         }
     }
     return max;
-};
+}
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -2189,7 +2264,7 @@ H.arrayMax = function (data: Array<any>): number {
  *
  * @return {void}
  */
-H.destroyObjectProperties = function (obj: any, except?: any): void {
+function destroyObjectProperties(obj: any, except?: any): void {
     objectEach(obj, function (val: any, n: string): void {
         // If the object is non-null and destroy is defined
         if (val && val !== except && val.destroy) {
@@ -2200,7 +2275,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
-};
+}
 
 
 /**
@@ -2213,7 +2288,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
  *
  * @return {void}
  */
-H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
+function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2226,7 +2301,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
 
 /**
  * Fix JS round off float errors.
@@ -2242,11 +2317,11 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec?: number): number {
+function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -2266,16 +2341,16 @@ H.correctFloat = function (num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-H.setAnimation = function (
+function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
-    chart.renderer.globalAnimation = H.pick(
+    chart.renderer.globalAnimation = pick(
         animation,
         (chart.options.chart as any).animation,
         true
     );
-};
+}
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -2290,13 +2365,13 @@ H.setAnimation = function (
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (
+function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-};
+}
 
 /**
  * The time unit lookup
@@ -2340,7 +2415,7 @@ H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-H.numberFormat = function (
+function numberFormat(
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -2401,8 +2476,8 @@ H.numberFormat = function (
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = H.pick(decimalPoint, (lang as any).decimalPoint);
-    thousandsSep = H.pick(thousandsSep, (lang as any).thousandsSep);
+    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
+    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';
@@ -2427,7 +2502,7 @@ H.numberFormat = function (
     }
 
     return ret;
-};
+}
 
 /**
  * Easing definition
@@ -2519,7 +2594,7 @@ H.getStyle = function (
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
     if (style) {
         style = style.getPropertyValue(prop);
-        if (H.pick(toInt, prop !== 'opacity')) {
+        if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
@@ -2957,8 +3032,9 @@ H.removeEvent = function<T> (
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
-        var eventCollection = (el as any)[coll];
+    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
+        const eventElem = i ? el : (el as any).prototype;
+        const eventCollection = eventElem && eventElem[coll];
 
         if (eventCollection) {
             if (type) {
@@ -2980,7 +3056,7 @@ H.removeEvent = function<T> (
                 }
             } else {
                 removeAllEvents(eventCollection);
-                (el as any)[coll] = {};
+                eventElem[coll] = {};
             }
         }
     });
@@ -3027,7 +3103,7 @@ H.fireEvent = function<T> (
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        H.extend(e, eventArguments);
+        extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
             (el as any).dispatchEvent(e);
@@ -3040,7 +3116,7 @@ H.fireEvent = function<T> (
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
-            H.extend(eventArguments as any, {
+            extend(eventArguments as any, {
                 // Attach a simple preventDefault function to skip
                 // default handler if called. The built-in
                 // defaultPrevented property is not overwritable (#5112)
@@ -3188,15 +3264,15 @@ H.animate = function (
  *        The parent series type name. Use `line` to inherit from the basic
  *        {@link Series} object.
  *
- * @param {*} options
- *        The additional default options that is merged with the parent's
+ * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
+ *        The additional default options that are merged with the parent's
  *        options.
  *
- * @param {*} props
+ * @param {Highcharts.Dictionary<*>} [props]
  *        The properties (functions and primitives) to set on the new
  *        prototype.
  *
- * @param {*} [pointProps]
+ * @param {Highcharts.Dictionary<*>} [pointProps]
  *        Members for a series-specific extension of the {@link Point}
  *        prototype if needed.
  *
@@ -3205,12 +3281,12 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (
+H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
-    options: Highcharts.SeriesOptionsType,
-    props: Highcharts.Dictionary<any>,
-    pointProps?: Highcharts.Dictionary<any>
+    options: TSeries['options'],
+    props?: Partial<TSeries>,
+    pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
     var defaultOptions = H.getOptions(),
         seriesTypes = H.seriesTypes;
@@ -3222,7 +3298,7 @@ H.seriesType = function (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(
+    seriesTypes[type] = extendClass(
         seriesTypes[parent] || function (): void {},
         props
     );
@@ -3231,7 +3307,7 @@ H.seriesType = function (
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
 
     return seriesTypes[type];
@@ -3325,18 +3401,34 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    animObject,
+    arrayMax,
+    arrayMin,
     attr,
+    clamp,
+    correctFloat,
     defined,
+    destroyObjectProperties,
+    discardElement,
     erase,
+    extend,
+    extendClass,
     isArray,
     isClass,
     isDOMElement,
     isNumber,
     isObject,
     isString,
+    numberFormat,
     objectEach,
+    pad,
+    pick,
     pInt,
-    splat
+    relativeLength,
+    setAnimation,
+    splat,
+    syncTimeout,
+    wrap
 };
 
 export default utils;

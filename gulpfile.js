@@ -42,6 +42,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-options',
     'jsdoc-server',
     'jsdoc-watch',
+    'jsdoc-websearch',
     'lint',
     'lint-dts',
     'lint-js',
@@ -56,6 +57,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-vendor',
     'scripts-watch',
     'test',
+    'reset-visual-references',
     'tsdoc',
     'tsdoc-watch',
     'update',
@@ -67,7 +69,8 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/nightly',
     'unsorted/update-vendor',
     'unsorted/upload-api',
-    'unsorted/upload-files'
+    'unsorted/upload-files',
+    'update-pr-testresults'
 ]));
 
 /* *

@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
 * Heatmap series only. Point padding for a single point.
 * @name Highcharts.PointOptionsObject#pointPadding
@@ -21,13 +21,14 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var clamp = U.clamp, extend = U.extend, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
-import './ColorSeriesMixin.js';
-var colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import './ColorMapSeriesMixin.js';
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -39,6 +40,9 @@ seriesType('heatmap', 'scatter',
 /**
  * A heatmap is a graphical representation of data where the individual
  * values contained in a matrix are represented as colors.
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
  *
  * @sample highcharts/demo/heatmap/
  *         Simple heatmap
@@ -70,6 +74,10 @@ seriesType('heatmap', 'scatter',
      * @default   0
      * @since     6.0
      * @apioption plotOptions.heatmap.pointPadding
+     */
+    /**
+     * @default   value
+     * @apioption plotOptions.heatmap.colorKey
      */
     /**
      * The main color of the series. In heat maps this color is rarely used,
@@ -119,20 +127,13 @@ seriesType('heatmap', 'scatter',
      */
     nullColor: '${palette.neutralColor3}',
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.value;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle',
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         padding: 0 // #3837
     },
     /** @ignore-option */
@@ -157,7 +158,7 @@ seriesType('heatmap', 'scatter',
             brightness: 0.2
         }
     }
-}, merge(colorSeriesMixin, {
+}, merge(colorMapSeriesMixin, {
     pointArrayMap: ['y', 'value'],
     hasPointSpecificOptions: true,
     getExtremesFromAll: true,
@@ -185,14 +186,12 @@ seriesType('heatmap', 'scatter',
      * @return {void}
      */
     translate: function () {
-        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, between = function (x, a, b) {
-            return Math.min(Math.max(a, x), b);
-        }, pointPlacement = series.pointPlacementToXValue(); // #7860
+        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, pointPlacement = series.pointPlacementToXValue(); // #7860
         series.generatePoints();
         series.points.forEach(function (point) {
-            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = between(Math.round(xAxis.len -
-                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = between(Math.round(xAxis.len -
-                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
+            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = clamp(Math.round(xAxis.len -
+                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = clamp(Math.round(xAxis.len -
+                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = clamp(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = clamp(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
             // Set plotX and plotY for use in K-D-Tree and more
             point.plotX = point.clientX = (x1 + x2) / 2;
             point.plotY = (y1 + y2) / 2;
@@ -204,7 +203,7 @@ seriesType('heatmap', 'scatter',
                 height: Math.max(Math.abs(y2 - y1) - pointPadding * 2, 0)
             };
         });
-        series.translateColors();
+        fireEvent(series, 'afterTranslate');
     },
     /**
      * @private
@@ -266,7 +265,7 @@ seriesType('heatmap', 'scatter',
         Series.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
-}), H.extend({
+}), extend({
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding
@@ -305,10 +304,13 @@ seriesType('heatmap', 'scatter',
         ];
     }
     /* eslint-enable valid-jsdoc */
-}, colorPointMixin));
+}, colorMapPointMixin));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
  * @excluding dataParser, dataURL, marker, pointRange, stack

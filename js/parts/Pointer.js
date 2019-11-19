@@ -94,10 +94,10 @@ import Highcharts from './Globals.js';
 * @type {Array<Highcharts.SelectDataObject>}
 */
 import U from './Utilities.js';
-var attr = U.attr, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, splat = U.splat;
+var attr = U.attr, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import './Tooltip.js';
 import './Color.js';
-var H = Highcharts, addEvent = H.addEvent, charts = H.charts, color = H.color, css = H.css, extend = H.extend, find = H.find, fireEvent = H.fireEvent, offset = H.offset, pick = H.pick, Tooltip = H.Tooltip;
+var H = Highcharts, addEvent = H.addEvent, charts = H.charts, color = H.color, css = H.css, find = H.find, fireEvent = H.fireEvent, offset = H.offset, Tooltip = H.Tooltip;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -180,6 +180,22 @@ Highcharts.Pointer.prototype = {
         this.hasZoom = zoomX || zoomY;
     },
     /**
+     * Return the cached chartPosition if it is available on the Pointer,
+     * otherwise find it. Running offset is quite expensive, so it should be
+     * avoided when we know the chart hasn't moved.
+     *
+     * @function Highcharts.Pointer#getChartPosition
+     *
+     * @return {Highcharts.OffsetObject}
+     *         The offset of the chart container within the page
+     */
+    getChartPosition: function () {
+        var chart = this.chart;
+        var container = chart.scrollingContainer || chart.container;
+        return (this.chartPosition ||
+            (this.chartPosition = offset(container)));
+    },
+    /**
      * Takes a browser event object and extends it with custom Highcharts
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
@@ -205,7 +221,7 @@ Highcharts.Pointer.prototype = {
             e;
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            chartPosition = this.getChartPosition();
         }
         var chartX = ePos.pageX - chartPosition.left, chartY = ePos.pageY - chartPosition.top;
         // #11329 - when there is scaling on a parent element, we need to take
@@ -444,7 +460,7 @@ Highcharts.Pointer.prototype = {
     runPointActions: function (e, p) {
         var pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip && chart.tooltip.options.enabled ?
             chart.tooltip :
-            undefined), shared = (tooltip ?
+            void 0), shared = (tooltip ?
             tooltip.shared :
             false), hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries, 
         // onMouseOver or already hovering a series with directTouch
@@ -523,7 +539,7 @@ Highcharts.Pointer.prototype = {
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
             var snap = pick(axis.crosshair.snap, true), point = !snap ?
-                undefined :
+                void 0 :
                 H.find(points, function (p) {
                     return p.series[axis.coll] === axis;
                 });
@@ -605,7 +621,8 @@ Highcharts.Pointer.prototype = {
         // #5101)
         if (allowMove && tooltipPoints) {
             splat(tooltipPoints).forEach(function (point) {
-                if (point.series.isCartesian && point.plotX === undefined) {
+                if (point.series.isCartesian &&
+                    typeof point.plotX === 'undefined') {
                     allowMove = false;
                 }
             });
@@ -632,7 +649,8 @@ Highcharts.Pointer.prototype = {
                 else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis) {
-                        if (axis.crosshair) {
+                        if (axis.crosshair &&
+                            hoverPoint.series[axis.coll] === axis) {
                             axis.drawCrosshair(null, hoverPoint);
                         }
                     });
@@ -949,7 +967,7 @@ Highcharts.Pointer.prototype = {
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
-            chart.pointer.chartPosition = null;
+            chart.pointer.chartPosition = void 0;
         }
     },
     /**

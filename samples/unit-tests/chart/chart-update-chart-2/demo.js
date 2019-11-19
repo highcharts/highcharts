@@ -56,6 +56,19 @@ QUnit.test('Option chart plot border and background update', function (assert) {
         testimage,
         'Image attempted loaded'
     );
+
+    // Change plot background image
+    testimage = `${testimage}?updated`;
+    chart.update({
+        chart: {
+            plotBackgroundImage: testimage
+        }
+    });
+    assert.strictEqual(
+        chart.plotBGImage.element.getAttribute('href'),
+        testimage,
+        'Plot background image should change (#12296)'
+    );
 });
 
 QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {

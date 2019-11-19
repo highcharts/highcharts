@@ -18,15 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface PolygonPointOptions extends ScatterPointOptions {
-        }
-        interface PolygonSeriesOptions extends ScatterSeriesOptions {
-            fillColor?: (ColorString|GradientColorObject|PatternObject);
-            trackByArea?: boolean;
-        }
-        interface SeriesTypesDictionary {
-            polygon: typeof PolygonSeries;
-        }
         class PolygonPoint extends ScatterPoint {
             public options: PolygonPointOptions;
             public series: PolygonSeries;
@@ -38,6 +29,16 @@ declare global {
             public pointClass: typeof PolygonPoint;
             public points: Array<PolygonPoint>;
             public type: string;
+        }
+        interface PolygonPointOptions extends ScatterPointOptions {
+        }
+        interface PolygonSeriesOptions extends ScatterSeriesOptions {
+            fillColor?: (ColorString|GradientColorObject|PatternObject);
+            states?: SeriesStatesOptionsObject<PolygonSeries>;
+            trackByArea?: boolean;
+        }
+        interface SeriesTypesDictionary {
+            polygon: typeof PolygonSeries;
         }
     }
 }
@@ -57,8 +58,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
- * stroke is applied through `lineWidth` and `lineColor` options. Requires
- * the `highcharts-more.js` file.
+ * stroke is applied through `lineWidth` and `lineColor` options.
  *
  * @sample {highcharts} highcharts/demo/polygon/
  *         Polygon
@@ -69,9 +69,10 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * @since        4.1.0
  * @excluding    jitter, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
+seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
     marker: {
         enabled: false,
         states: {
@@ -113,7 +114,7 @@ seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
-    setStackedPoints: noop // No stacking points on polygons (#5310)
+    setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
 
 
@@ -124,6 +125,7 @@ seriesType<Highcharts.PolygonSeriesOptions>('polygon', 'scatter', {
  * @extends   series,plotOptions.polygon
  * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.polygon
  */
 

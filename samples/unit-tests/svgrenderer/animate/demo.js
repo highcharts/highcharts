@@ -1,3 +1,45 @@
+QUnit.test('Animation of stroke-width (#4721)', function (assert) {
+    var renderer =
+        new Highcharts.Renderer(
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        rect = renderer.rect(100, 100, 100, 100, 5)
+            .attr({
+                'stroke-width': 2,
+                stroke: 'gray',
+                fill: 'silver',
+                zIndex: 3
+            })
+            .add(),
+        done = assert.async();
+
+    assert.strictEqual(
+        rect.element.getAttribute('stroke-width'),
+        '2',
+        'Starting'
+    );
+
+    // Run animation and check
+    rect.animate({
+        'stroke-width': 10
+    }, {
+        duration: 100
+    });
+
+    setTimeout(function () {
+        assert.strictEqual(
+            rect.element.getAttribute('stroke-width'),
+            '10',
+            'Stopped at 10'
+        );
+        done();
+    }, 150);
+
+
+});
+
 QUnit.test('Animation x-y', function (assert) {
 
     // Hijack animation
@@ -68,17 +110,39 @@ QUnit.test('Path animation', function (assert) {
         document.body.appendChild(div);
 
         var ren = new Highcharts.Renderer(
-            div,
-            600,
-            400
-        );
-
-        var path = ren.path(['M', 10, 30, 'L', 10, 100])
-            .attr({
+                div,
+                600,
+                400
+            ),
+            attrs = {
                 'stroke-width': 2,
                 stroke: 'blue'
-            })
+            };
+
+        var path = ren.path(['M', 10, 30, 'L', 10, 100])
+            .attr(attrs)
             .add();
+
+        var arc = ren
+            .path([
+                'M', 144, 5,
+                'A', 145, 145, 0, 1, 1, 144, 5,
+                'M', 144, 16,
+                'A', 134, 134, 0, 1, 0, 144, 16,
+                'Z'
+            ])
+            .attr(attrs)
+            .add();
+
+        arc.animate({
+            d: [
+                'M', 30, 79,
+                'A', 135, 135, 0, 0, 1, 144, 15,
+                'L', 144, 16,
+                'A', 134, 134, 0, 0, 0, 31, 79,
+                'Z'
+            ]
+        });
 
         path.animate({
             d: ['M', 300, 330, 'L', 300, 400]
@@ -124,6 +188,12 @@ QUnit.test('Path animation', function (assert) {
                 'M 200 120 L 700 120',
                 'Path is animating, not changing immediately (#10696).'
             );
+
+            assert.ok(
+                true,
+                'No errors when animatin arc (#12223)'
+            );
+
             document.body.removeChild(div);
         }, 1900);
 

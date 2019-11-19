@@ -169,7 +169,8 @@ function task() {
         } else {
 
             logLib.message(
-                'Hint: Run the `scripts-watch` task to watch the js directory.'
+                'Hint: Run the `scripts-watch` task to watch the js ' +
+                'and ts directories.'
             );
 
             resolve();

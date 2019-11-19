@@ -4,13 +4,14 @@
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
- *
  *  Simple polyfills for array functions in old IE browsers (6, 7 and 8) in
  *  Highcharts v7+. These polyfills are sufficient for Highcharts to work, but
  *  for fully compatible polyfills, see MDN.
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
+
 /* global document */
 
 'use strict';
@@ -64,7 +65,8 @@ if (!Array.prototype.forEach) {
             len = this.length;
 
         for (; i < len; i++) {
-            if (this[i] !== undefined && // added check
+            if (
+                typeof this[i] !== 'undefined' && // added check
                 fn.call(thisArg, this[i], i, this) as any === false
             ) {
                 return i as any;

@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Øystein Moseng
- js_wrap: b
+name: Map with overlaid pie charts
+authors:
+  - Øystein Moseng
+js_wrap: b
+tags: []
+categories:
+  - General
 ...

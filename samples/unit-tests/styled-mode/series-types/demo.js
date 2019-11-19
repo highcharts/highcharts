@@ -20,6 +20,9 @@ QUnit.module('Styled mode for series types', function () {
             blacklist.forEach(function (attr) {
                 container.querySelectorAll('*[' + attr + ']').forEach(
                     function (elem) {
+                        if (elem.className === 'highcharts-a11y-proxy-button') {
+                            return;
+                        }
                         var key = [attr, elem.nodeName, elem.getAttribute('class')].join(',');
                         if (!notified[key]) {
                             console.log(
@@ -61,6 +64,9 @@ QUnit.module('Styled mode for series types', function () {
                     chart: {
                         type: type,
                         styledMode: true
+                    },
+                    accessibility: {
+                        enabled: false // A11y forces graphic for null points
                     },
                     series: [{
                         id: 'primary',

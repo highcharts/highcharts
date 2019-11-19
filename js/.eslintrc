@@ -22,7 +22,7 @@
         "max-len": [
             "error", {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "newline-after-var": 0,
@@ -33,7 +33,6 @@
         "no-invalid-this": 0,
         "no-prototype-builtins": 1,                 /*@todo: as error*/
         "no-shadow": 0,                             /*Same variable names in nested scopes. @todo: Fix this, it is useful*/
-        "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "node/no-unsupported-features": 0,
         "node/no-unsupported-features/es-syntax": 0,

@@ -32,12 +32,14 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    pick
+} = U;
 
 var Axis = H.Axis,
     getMagnitude = H.getMagnitude,
-    normalizeTickInterval = H.normalizeTickInterval,
-    pick = H.pick;
+    normalizeTickInterval = H.normalizeTickInterval;
 
 /* ************************************************************************** *
  * Methods defined on the Axis prototype
@@ -110,7 +112,7 @@ Axis.prototype.getLogTickPositions = function (
                 if (
                     pos > min &&
                     (!minor || (lastPos as any) <= max) &&
-                    lastPos !== undefined
+                    typeof lastPos !== 'undefined'
                 ) {
                     positions.push(lastPos);
                 }

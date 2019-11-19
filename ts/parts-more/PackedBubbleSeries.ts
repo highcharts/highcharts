@@ -18,14 +18,83 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type PackedBubbleData = [
-            (number|null),
-            (number|null),
-            (number|null),
-            number,
-            number,
-            PackedBubblePointOptions
-        ];
+        class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
+            public collisionNmb?: number;
+            public dataLabelOnNull?: boolean;
+            public degree: number;
+            public dispX?: number;
+            public dispY?: number;
+            public fixedPosition: DragNodesPoint['fixedPosition'];
+            public isParentNode?: boolean;
+            public mass: number;
+            public neighbours?: number;
+            public options: PackedBubblePointOptions;
+            public prevX?: number;
+            public prevY?: number;
+            public radius: number;
+            public removed?: any; // @todo
+            public series: PackedBubbleSeries;
+            public seriesIndex?: number;
+            public value: (number|null);
+        }
+        class PackedBubbleSeries extends BubbleSeries
+            implements DragNodesSeries {
+            public chart: PackedBubbleChart;
+            public data: Array<PackedBubblePoint>;
+            public forces: Array<string>;
+            public hasDraggableNodes: boolean;
+            public hoverPoint: PackedBubblePoint;
+            public index: number;
+            public isCartesian: boolean;
+            public layout: PackedBubbleLayout;
+            public noSharedTooltip: boolean;
+            public onMouseDown: DragNodesMixin['onMouseDown'];
+            public onMouseMove: DragNodesMixin['onMouseMove'];
+            public options: PackedBubbleSeriesOptions;
+            public parentNode?: PackedBubblePoint;
+            public parentNodesGroup?: SVGElement;
+            public parentNodeLayout: PackedBubbleLayout;
+            public parentNodeMass?: number;
+            public parentNodeRadius?: number;
+            public pointArrayMap: Array<string>;
+            public pointClass: typeof PackedBubblePoint;
+            public points: Array<PackedBubblePoint>;
+            public pointValKey: string;
+            public redrawHalo: DragNodesMixin['redrawHalo'];
+            public xData: Array<number>;
+            public checkOverlap(
+                bubble1: Array<number>,
+                bubble2: Array<number>
+            ): boolean;
+            public accumulateAllPoints(
+                series: PackedBubbleSeries
+            ): Array<PackedBubbleData>;
+            public addLayout(): void;
+            public addSeriesLayout(): void;
+            public calculateParentRadius(): void;
+            public calculateZExtremes(): Array<number>;
+            public createParentNodes(): void;
+            public deferLayout(): void;
+            public destroy(): void;
+            public drawDataLabels(): void;
+            public drawGraph(): void;
+            public getPointRadius(): void;
+            public init(): PackedBubbleSeries;
+            public onMouseUp(point: DragNodesPoint): void;
+            public placeBubbles(
+                allDataPoints: Array<PackedBubbleData>
+            ): Array<PackedBubbleData>;
+            public positionBubble(
+                lastBubble: Array<number>,
+                newOrigin: Array<number>,
+                nextBubble: Array<number>
+            ): Array<number>;
+            public render(): void;
+            public resizeRadius(): void;
+            public seriesBox(): (Array<number>|null);
+            public setVisible(): void;
+            public translate(): void;
+        }
         interface NetworkgraphLayout {
             beforeStep?(): void;
         }
@@ -113,6 +182,7 @@ declare global {
             dataLabels?: PackedBubbleDataLabelsOptionsObject;
             draggable?: boolean;
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
+            minSize?: (number|string);
             useSimulation?: boolean;
         }
         interface Point {
@@ -121,83 +191,14 @@ declare global {
         interface SeriesTypesDictionary {
             packedbubble: typeof PackedBubbleSeries;
         }
-        class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
-            public collisionNmb?: number;
-            public dataLabelOnNull?: boolean;
-            public degree: number;
-            public dispX?: number;
-            public dispY?: number;
-            public fixedPosition: DragNodesPoint['fixedPosition'];
-            public isParentNode?: boolean;
-            public mass: number;
-            public neighbours?: number;
-            public options: PackedBubblePointOptions;
-            public prevX?: number;
-            public prevY?: number;
-            public radius: number;
-            public removed?: any; // @todo
-            public series: PackedBubbleSeries;
-            public seriesIndex?: number;
-            public value: (number|null);
-        }
-        class PackedBubbleSeries extends BubbleSeries
-            implements DragNodesSeries {
-            public chart: PackedBubbleChart;
-            public data: Array<PackedBubblePoint>;
-            public forces: Array<string>;
-            public hasDraggableNodes: boolean;
-            public hoverPoint: PackedBubblePoint;
-            public index: number;
-            public isCartesian: boolean;
-            public layout: PackedBubbleLayout;
-            public noSharedTooltip: boolean;
-            public onMouseDown: DragNodesMixin['onMouseDown'];
-            public onMouseMove: DragNodesMixin['onMouseMove'];
-            public options: PackedBubbleSeriesOptions;
-            public parentNode?: PackedBubblePoint;
-            public parentNodesGroup?: SVGElement;
-            public parentNodeLayout: PackedBubbleLayout;
-            public parentNodeMass?: number;
-            public parentNodeRadius?: number;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof PackedBubblePoint;
-            public points: Array<PackedBubblePoint>;
-            public pointValKey: string;
-            public redrawHalo: DragNodesMixin['redrawHalo'];
-            public xData: Array<number>;
-            public checkOverlap(
-                bubble1: Array<number>,
-                bubble2: Array<number>
-            ): boolean;
-            public accumulateAllPoints(
-                series: PackedBubbleSeries
-            ): Array<PackedBubbleData>;
-            public addLayout(): void;
-            public addSeriesLayout(): void;
-            public calculateParentRadius(): void;
-            public calculateZExtremes(): Array<number>;
-            public createParentNodes(): void;
-            public deferLayout(): void;
-            public destroy(): void;
-            public drawDataLabels(): void;
-            public drawGraph(): void;
-            public getPointRadius(): void;
-            public init(): PackedBubbleSeries;
-            public onMouseUp(point: DragNodesPoint): void;
-            public placeBubbles(
-                allDataPoints: Array<PackedBubbleData>
-            ): Array<PackedBubbleData>;
-            public positionBubble(
-                lastBubble: Array<number>,
-                newOrigin: Array<number>,
-                nextBubble: Array<number>
-            ): Array<number>;
-            public render(): void;
-            public resizeRadius(): void;
-            public seriesBox(): (Array<number>|null);
-            public setVisible(): void;
-            public translate(): void;
-        }
+        type PackedBubbleData = [
+            (number|null),
+            (number|null),
+            (number|null),
+            number,
+            number,
+            PackedBubblePointOptions
+        ];
     }
 }
 
@@ -206,7 +207,7 @@ declare global {
  *
  * @callback Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -238,77 +239,16 @@ declare global {
  * @since 7.0.0
  */
 
-/**
- * Data labels options
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- * @since 7.0.0
- *//**
- * The
- * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
- * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
- * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#format
- * @type {string|undefined}
- * @since 7.0.0
- *//**
- * Callback JavaScript function to format the data label for a node. Note that
- * if a `format` is defined, the format takes precedence and the formatter is
- * ignored.
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#formatter
- * @type {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
- * @since 7.0.0
- *//**
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeFormat
- * @type {string|undefined}
- * @since 7.1.0
- *//**
- * Callback to format data labels for _parentNodes_. The `parentNodeFormat`
- * option takes precedence over the `parentNodeFormatter`.
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeFormatter
- * @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>|undefined}
- * @since 7.1.0
- *//**
- * Options for a _parentNode_ label text.
- * @sample highcharts/series-packedbubble/packed-dashboard
- *         Dashboard with dataLabels on parentNodes
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeTextPath
- * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
- * @since 7.1.0
- *//**
- * Options for a _node_ label text which should follow marker's shape.
- * **Note:** Only SVG-based renderer supports this option.
- * @see {@link Highcharts.SeriesPackedBubbleDataLabelsTextPath#linkTextPath}
- * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#textPath
- * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
- * @since 7.1.0
- */
-
-/**
- * **Note:** Only SVG-based renderer supports this option.
- *
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
- * @since 7.1.0
- *//**
- * Presentation attributes for the text path.
- * @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#attributes
- * @type {Highcharts.SVGAttributes|undefined}
- * @since 7.1.0
- *//**
- * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#enabled
- * @type {boolean|undefined}
- * @since 7.1.0
- */
-
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    clamp,
+    defined,
+    extend,
+    extendClass,
+    isArray,
+    isNumber,
+    pick
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -321,8 +261,8 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    pick = H.pick,
     addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     Chart = H.Chart,
     color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
@@ -399,7 +339,7 @@ var seriesType = H.seriesType,
     getK: H.noop
 };
 
-H.layouts.packedbubble = H.extendClass(
+H.layouts.packedbubble = extendClass(
     Reingold,
     {
         beforeStep: function (this: Highcharts.PackedBubbleLayout): void {
@@ -578,7 +518,7 @@ H.layouts.packedbubble = H.extendClass(
  *
  * @extends Highcharts.Series
  */
-seriesType<Highcharts.PackedBubbleSeriesOptions>(
+seriesType<Highcharts.PackedBubbleSeries>(
     'packedbubble',
     'bubble',
     /**
@@ -586,7 +526,6 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
      * renders a value in X, Y position. Each point is drawn as a bubble
      * where the bubbles don't overlap with each other and the radius
      * of the bubble relates to the value.
-     * Requires `highcharts-more.js`.
      *
      * @sample highcharts/demo/packed-bubble/
      *         Packed bubble chart
@@ -594,10 +533,12 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
      *         Split packed bubble chart
 
      * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, jitter, keys, pointPlacement,
-     *               sizeByAbsoluteValue, step, xAxis, yAxis, zMax, zMin
+     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
+     *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
+     *               zMax, zMin
      * @product      highcharts
      * @since        7.0.0
+     * @requires     highcharts-more
      * @optionparent plotOptions.packedbubble
      */
     {
@@ -662,14 +603,33 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
          */
         useSimulation: true,
         /**
-         * @type    {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
-         * @default {"formatter": function () { return this.point.value; }, "parentNodeFormatter": function () { return this.name; }, "parentNodeTextPath": {"enabled: true}, "padding": 0}
+         * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
          *
          * @private
          */
         dataLabels: {
+
+            /**
+             * The
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * specifying what to show for _node_ in the networkgraph. In v7.0
+             * defaults to `{key}`, since v7.1 defaults to `undefined` and
+             * `formatter` is used instead.
+             *
+             * @type      {string}
+             * @since     7.0.0
+             * @apioption plotOptions.packedBubble.dataLabels.format
+             */
+
             // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
+            /**
+             * Callback JavaScript function to format the data label for a node.
+             * Note that if a `format` is defined, the format takes precedence
+             * and the formatter is ignored.
+             *
+             * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
+             * @since 7.0.0
+             */
             formatter: function (
                 this: (
                     Highcharts.DataLabelsFormatterContextObject|
@@ -678,8 +638,22 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             ): (number|null) {
                 return (this.point as any).value;
             },
+
+            /**
+             * @type      {string}
+             * @since     7.1.0
+             * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+             */
+
             // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
+            /**
+             * Callback to format data labels for _parentNodes_. The
+             * `parentNodeFormat` option takes precedence over the
+             * `parentNodeFormatter`.
+             *
+             * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
+             * @since 7.1.0
+             */
             parentNodeFormatter: function (
                 this: (
                     Highcharts.DataLabelsFormatterContextObject|
@@ -688,12 +662,50 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             ): string {
                 return (this as any).name;
             },
-            /** @ignore-option */
+
+            /**
+             * Options for a _parentNode_ label text.
+             *
+             * **Note:** Only SVG-based renderer supports this option.
+             *
+             * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
+             *         Dashboard with dataLabels on parentNodes
+             *
+             * @declare Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
+             * @since   7.1.0
+             */
             parentNodeTextPath: {
+
+                /**
+                 * Presentation attributes for the text path.
+                 *
+                 * @type      {Highcharts.SVGAttributes}
+                 * @since     7.1.0
+                 * @apioption plotOptions.packedBubble.dataLabels.attributes
+                 */
+
+                /**
+                 * Enable or disable `textPath` option for link's or marker's
+                 * data labels.
+                 *
+                 * @since 7.1.0
+                 */
                 enabled: true
+
             },
-            /** @ignore-option */
+
+            /**
+             * Options for a _node_ label text which should follow marker's
+             * shape.
+             *
+             * **Note:** Only SVG-based renderer supports this option.
+             *
+             * @extends   plotOptions.series.dataLabels.textPath
+             * @apioption plotOptions.packedBubble.dataLabels.textPath
+             */
+
             padding: 0
+
         },
         /**
          * Options for layout algorithm when simulation is enabled. Inside there
@@ -840,8 +852,12 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
         pointArrayMap: ['value'],
         pointValKey: 'value',
         isCartesian: false,
+        requireSorting: false,
+        directTouch: true,
         axisTypes: [],
         noSharedTooltip: true,
+        // solving #12287
+        searchPoint: H.noop as any,
 
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -1043,26 +1059,23 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 minParentRadius = 20;
 
             bBox = series.seriesBox();
-            series.parentNodeRadius =
-                Math.min(
+            series.parentNodeRadius = clamp(
+                Math.sqrt(
+                    2 * (series.parentNodeMass as any) / Math.PI
+                ) + parentPadding,
+                minParentRadius,
+                bBox ?
                     Math.max(
                         Math.sqrt(
-                            2 * (series.parentNodeMass as any) / Math.PI
-                        ) + parentPadding,
+                            Math.pow((bBox as any).width, 2) +
+                            Math.pow((bBox as any).height, 2)
+                        ) / 2 + parentPadding,
                         minParentRadius
-                    ),
-                    bBox ?
-                        Math.max(
-                            Math.sqrt(
-                                Math.pow((bBox as any).width, 2) +
-                                Math.pow((bBox as any).height, 2)
-                            ) / 2 + parentPadding,
-                            minParentRadius
-                        ) :
-                        Math.sqrt(
-                            2 * (series.parentNodeMass as any) / Math.PI
-                        ) + parentPadding
-                );
+                    ) :
+                    Math.sqrt(
+                        2 * (series.parentNodeMass as any) / Math.PI
+                    ) + parentPadding
+            );
 
             if (series.parentNode) {
                 (series.parentNode as any).marker.radius =
@@ -1346,7 +1359,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                             chart.diffY
                         );
                     }
-                    point.marker = H.extend(point.marker, {
+                    point.marker = extend(point.marker, {
                         radius: radius,
                         width: 2 * (radius as any),
                         height: 2 * (radius as any)
@@ -1358,6 +1371,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             if (useSimulation) {
                 series.deferLayout();
             }
+
+            fireEvent(series, 'afterTranslate');
         },
         /**
          * Check if two bubbles overlaps.
@@ -1457,7 +1472,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
         placeBubbles: function (
             this: Highcharts.PackedBubbleSeries,
             allDataPoints: Array<Highcharts.PackedBubbleData>
-        ): Array<Array<number>> {
+        ): Array<Highcharts.PackedBubbleData> {
 
             var series = this,
                 checkOverlap = series.checkOverlap,
@@ -1468,8 +1483,8 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 k = 0,
                 calculatedBubble,
                 sortedArr: Array<Highcharts.PackedBubbleData>,
-                arr = [] as Array<Array<number>>,
-                i;
+                arr = [] as Array<Highcharts.PackedBubbleData>,
+                i: number;
 
             // sort all points
             sortedArr = allDataPoints.sort(function (
@@ -1582,7 +1597,7 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
                 // bubble positions merged into one array
 
                 series.resizeRadius();
-                arr = series.chart.rawPositions;
+                arr = series.chart.rawPositions as any;
             }
             return arr;
         },
@@ -1734,9 +1749,10 @@ seriesType<Highcharts.PackedBubbleSeriesOptions>(
             ): void {
 
                 value = useSimulation ?
-                    Math.max(
-                        Math.min((point[2] as any), zExtremes[1]),
-                        zExtremes[0]
+                    clamp(
+                        point[2] as any,
+                        zExtremes[0],
+                        zExtremes[1]
                     ) :
                     (point[2] as any);
 
@@ -1881,6 +1897,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser,dataURL,stack
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.packedbubble
  */
 

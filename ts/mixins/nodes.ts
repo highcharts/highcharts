@@ -33,6 +33,7 @@ declare global {
         }
         interface NodesPointOptions extends PointOptionsObject {
             id?: string;
+            level?: number;
             mass?: number;
             outgoing?: boolean;
             weight?: (number|null);
@@ -79,10 +80,13 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    extend,
+    pick
+} = U;
 
-var pick = H.pick,
-    Point = H.Point;
+var Point = H.Point;
 
 H.NodesMixin = {
 
@@ -115,7 +119,7 @@ H.NodesMixin = {
             options = this.options.nodes && findById(this.options.nodes, id);
             node = (new PointClass()).init(
                 this,
-                H.extend({
+                extend({
                     className: 'highcharts-node',
                     isNode: true,
                     id: id,
@@ -217,7 +221,7 @@ H.NodesMixin = {
         this.nodes.forEach(function (node: Highcharts.NodesPoint): void {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
-            node.level = undefined;
+            node.level = node.options.level;
         });
 
         // Create the node list and set up links

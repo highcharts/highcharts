@@ -60,7 +60,9 @@ import './Axis.js';
 
 import U from './Utilities.js';
 const {
-    defined
+    defined,
+    extend,
+    pick
 } = U;
 
 import './Chart.js';
@@ -72,9 +74,7 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
-    extend = H.extend,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     timeUnits = H.timeUnits;
 
@@ -134,7 +134,7 @@ Axis.prototype.getTimeTicks = function (
         (!this.options.ordinal && !this.options.breaks) ||
         !positions ||
         positions.length < 3 ||
-        min === undefined
+        typeof min === 'undefined'
     ) {
         return time.getTimeTicks.apply(time, arguments as any);
     }
@@ -259,7 +259,7 @@ Axis.prototype.getTimeTicks = function (
 
         // Now loop over again and remove ticks where needed
         i = groupPositions[length - 1] > max ? length - 1 : length; // #817
-        lastTranslated = undefined;
+        lastTranslated = void 0;
         while (i--) {
             translated = translatedArr[i];
             distance = Math.abs((lastTranslated as any) - (translated as any));
@@ -502,7 +502,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     axis.overscrollPointsRange
                 );
                 axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset =
-                    undefined;
+                    void 0;
             }
         }
 
@@ -651,7 +651,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             // the associated or interpolated value. If not, just return the
             // value
             return (
-                distance !== undefined && ordinalPositions[i] !== undefined ?
+                typeof distance !== 'undefined' &&
+                typeof ordinalPositions[i] !== 'undefined' ?
                     ordinalPositions[i] + (
                         distance ?
                             distance *

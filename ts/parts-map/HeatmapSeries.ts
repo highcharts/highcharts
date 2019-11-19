@@ -18,61 +18,29 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface HeatmapPointOptions extends ScatterPointOptions {
-            pointPadding?: HeatmapPoint['pointPadding'];
-            value?: HeatmapPoint['value'];
-        }
-        interface HeatmapSeriesOptions
-            extends ColorSeriesOptions, ScatterSeriesOptions
-        {
-            colsize?: number;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
-            pointPadding?: HeatmapPoint['pointPadding'];
-            rowsize?: number;
-            states?: HeatmapSeriesStatesOptions;
-        }
-        interface HeatmapSeriesStatesHoverOptions
-            extends ScatterSeriesStatesHoverOptions
-        {
-            brightness?: number;
-        }
-        interface HeatmapSeriesStatesOptions
-            extends ScatterSeriesStatesOptions
-        {
-            hover?: HeatmapSeriesStatesHoverOptions;
-        }
-        interface Series {
-            valueMax?: number;
-            valueMin?: number;
-        }
-        interface SeriesTypesDictionary {
-            heatmap: typeof HeatmapSeries;
-        }
-        class HeatmapPoint extends ScatterPoint implements ColorPointMixin {
-            public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];
-            public isValid: ColorPointMixin['isValid'];
+        class HeatmapPoint extends ScatterPoint implements ColorMapPointMixin {
+            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
+            public isValid: ColorMapPointMixin['isValid'];
             public options: HeatmapPointOptions;
             public pointPadding?: number;
             public series: HeatmapSeries;
-            public setVisible: ColorPointMixin['setVisible'];
             public value: (number|null);
             public x: number;
             public y: number;
         }
-        class HeatmapSeries extends ScatterSeries implements ColorSeriesMixin {
+        class HeatmapSeries
+            extends ScatterSeries
+            implements ColorMapSeriesMixin {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
-            public colorAttribs: ColorSeriesMixin['colorAttribs'];
+            public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public colorAxis: ColorAxis;
-            public colorKey: ColorSeriesMixin['colorKey'];
             public data: Array<HeatmapPoint>;
             public drawLegendSymbol: LegendSymbolMixin['drawRectangle'];
-            public optionalAxis: ColorSeriesMixin['optionalAxis'];
             public options: HeatmapSeriesOptions;
             public pointArrayMap: Array<string>;
             public pointClass: typeof HeatmapPoint;
             public points: Array<HeatmapPoint>;
             public trackerGroups: Array<string>;
-            public translateColors: ColorSeriesMixin['translateColors'];
             public valueData?: Array<number>;
             public valueMax: number;
             public valueMin: number;
@@ -86,11 +54,35 @@ declare global {
             public init(): void;
             public translate(): void;
         }
+        interface HeatmapPointOptions extends ScatterPointOptions {
+            pointPadding?: HeatmapPoint['pointPadding'];
+            value?: HeatmapPoint['value'];
+        }
+        interface HeatmapSeriesOptions
+            extends ScatterSeriesOptions
+        {
+            colsize?: number;
+            nullColor?: (ColorString|GradientColorObject|PatternObject);
+            pointPadding?: HeatmapPoint['pointPadding'];
+            rowsize?: number;
+            states?: SeriesStatesOptionsObject<HeatmapSeries>;
+        }
+        interface SeriesStatesHoverOptions
+        {
+            brightness?: number;
+        }
+        interface Series {
+            valueMax?: number;
+            valueMin?: number;
+        }
+        interface SeriesTypesDictionary {
+            heatmap: typeof HeatmapSeries;
+        }
     }
 }
 
-/**
- * @interface Highcharts.PointOptionsObject
+/* *
+ * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * Heatmap series only. Point padding for a single point.
  * @name Highcharts.PointOptionsObject#pointPadding
@@ -102,19 +94,25 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    clamp,
+    extend,
+    pick
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
-import './ColorSeriesMixin.js';
+import './ColorMapSeriesMixin.js';
 
-var colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin,
+var colorMapPointMixin = H.colorMapPointMixin,
+    colorMapSeriesMixin = H.colorMapSeriesMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
+    fireEvent = H.fireEvent,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -126,13 +124,16 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.HeatmapSeriesOptions>(
+seriesType<Highcharts.HeatmapSeries>(
     'heatmap',
     'scatter',
 
     /**
      * A heatmap is a graphical representation of data where the individual
      * values contained in a matrix are represented as colors.
+     *
+     * @productdesc {highcharts}
+     * Requires `modules/heatmap`.
      *
      * @sample highcharts/demo/heatmap/
      *         Simple heatmap
@@ -167,6 +168,11 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
          * @default   0
          * @since     6.0
          * @apioption plotOptions.heatmap.pointPadding
+         */
+
+        /**
+         * @default   value
+         * @apioption plotOptions.heatmap.colorKey
          */
 
         /**
@@ -221,20 +227,13 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
         nullColor: '${palette.neutralColor3}',
 
         dataLabels: {
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (number|null) { // #2945
                 return (this.point as Highcharts.HeatmapPoint).value;
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             padding: 0 // #3837
         },
 
@@ -268,7 +267,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
         }
 
-    }, merge(colorSeriesMixin, {
+    }, merge(colorMapSeriesMixin, {
 
         pointArrayMap: ['y', 'value'],
         hasPointSpecificOptions: true,
@@ -307,9 +306,6 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 seriesPointPadding = options.pointPadding || 0,
-                between = function (x: number, a: number, b: number): number {
-                    return Math.min(Math.max(a, x), b);
-                },
                 pointPlacement = series.pointPlacementToXValue(); // #7860
 
             series.generatePoints();
@@ -319,7 +315,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
             ): void {
                 var xPad = (options.colsize || 1) / 2,
                     yPad = (options.rowsize || 1) / 2,
-                    x1 = between(
+                    x1 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(
@@ -333,7 +329,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    x2 = between(
+                    x2 = clamp(
                         Math.round(
                             xAxis.len -
                             (xAxis.translate(point.x + xPad,
@@ -346,7 +342,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
-                    y1 = between(
+                    y1 = clamp(
                         Math.round(yAxis.translate(
                             point.y - yPad,
                             0 as any,
@@ -356,7 +352,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                         ) as any),
                         -yAxis.len, 2 * yAxis.len
                     ),
-                    y2 = between(
+                    y2 = clamp(
                         Math.round(yAxis.translate(
                             point.y + yPad,
                             0 as any,
@@ -381,7 +377,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
                 };
             });
 
-            series.translateColors();
+            fireEvent(series, 'afterTranslate');
         },
 
         /**
@@ -430,14 +426,14 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
          * @deprecated
          * @function Highcharts.seriesTypes.heatmap#animate
          */
-        animate: noop,
+        animate: noop as any,
 
         /**
          * @ignore
          * @deprecated
          * @function Highcharts.seriesTypes.heatmap#getBox
          */
-        getBox: noop,
+        getBox: noop as any,
 
         /**
          * @private
@@ -468,7 +464,7 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
         /* eslint-enable valid-jsdoc */
 
-    }), H.extend({
+    }), extend({
 
         /**
          * Heatmap series only. Padding between the points in the heatmap.
@@ -517,12 +513,15 @@ seriesType<Highcharts.HeatmapSeriesOptions>(
 
         /* eslint-enable valid-jsdoc */
 
-    }, colorPointMixin)
+    }, colorMapPointMixin)
 );
 
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
  * @excluding dataParser, dataURL, marker, pointRange, stack

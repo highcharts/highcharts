@@ -10,15 +10,18 @@
  */
 declare global {
     namespace Highcharts {
-        type DrawPoint = (Point & { shouldDraw(): boolean });
+        interface DrawPoint extends Point {
+            shouldDraw(): boolean;
+        }
         interface DrawPointParams {
             animatableAttribs: SVGAttributes;
             attribs: SVGAttributes;
-            css: CSSObject;
+            css?: CSSObject;
             group: SVGElement;
             onComplete?: Function;
             isNew?: boolean;
             renderer: Renderer;
+            shadow?: (boolean|ShadowOptionsObject);
             shapeArgs?: SVGAttributes;
             shapeType: string;
         }
@@ -66,7 +69,7 @@ var draw = function draw(
             .attr(params.attribs)
             .animate(
                 animatableAttribs,
-                params.isNew ? false : undefined,
+                params.isNew ? false : void 0,
                 onComplete
             );
     } else if (graphic) {
@@ -79,7 +82,7 @@ var draw = function draw(
 
         // animate only runs complete callback if something was animated.
         if (Object.keys(animatableAttribs).length) {
-            graphic.animate(animatableAttribs, undefined, function (): void {
+            graphic.animate(animatableAttribs, void 0, function (): void {
                 destroy();
             });
         } else {
@@ -91,7 +94,7 @@ var draw = function draw(
 /**
  * An extended version of draw customized for points.
  * It calls additional methods that is expected when rendering a point.
- *
+ * @private
  * @param {Highcharts.Dictionary<any>} params Parameters
  */
 var drawPoint = function drawPoint(

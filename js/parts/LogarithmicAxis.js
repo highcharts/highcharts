@@ -9,8 +9,9 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval, pick = H.pick;
+import U from './Utilities.js';
+var pick = U.pick;
+var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval;
 /* ************************************************************************** *
  * Methods defined on the Axis prototype
  * ************************************************************************** */
@@ -61,7 +62,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
                 // #1670, lastPos is #3113
                 if (pos > min &&
                     (!minor || lastPos <= max) &&
-                    lastPos !== undefined) {
+                    typeof lastPos !== 'undefined') {
                     positions.push(lastPos);
                 }
                 if (lastPos > max) {

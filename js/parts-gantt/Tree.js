@@ -11,10 +11,9 @@
  * */
 /* eslint no-console: 0 */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
-var extend = H.extend, pick = H.pick, isFunction = function (x) {
+var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var isFunction = function (x) {
     return typeof x === 'function';
 };
 /**
@@ -35,7 +34,7 @@ var extend = H.extend, pick = H.pick, isFunction = function (x) {
 var getListOfParents = function (data, ids) {
     var listOfParents = data.reduce(function (prev, curr) {
         var parent = pick(curr.parent, '');
-        if (prev[parent] === undefined) {
+        if (typeof prev[parent] === 'undefined') {
             prev[parent] = [];
         }
         prev[parent].push(curr);

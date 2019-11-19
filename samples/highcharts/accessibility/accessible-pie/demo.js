@@ -1,25 +1,47 @@
+function getColorPattern(i) {
+    var colors = Highcharts.getOptions().colors,
+        patternColors = [colors[2], colors[0], colors[3], colors[1], colors[4]],
+        patterns = [
+            'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+            'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+            'M 1.5 0 L 1.5 5 M 4 0 L 4 5',
+            'M 0 1.5 L 5 1.5 M 0 4 L 5 4',
+            'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
+        ];
+
+    return {
+        pattern: {
+            path: patterns[i],
+            color: patternColors[i],
+            width: 5,
+            height: 5
+        }
+    };
+}
+
 Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },
 
-    accessibility: {
-        description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
-    },
-
     title: {
-        text: 'Desktop screen readers'
+        text: 'Primary desktop/laptop screen readers'
     },
 
     subtitle: {
-        text: 'Click on point to visit official website'
+        text: 'Source: WebAIM. Click on point to visit official website'
+    },
+
+    tooltip: {
+        valueSuffix: '%',
+        borderColor: '#8ae'
     },
 
     plotOptions: {
         series: {
             dataLabels: {
                 enabled: true,
-                connectorColor: Highcharts.getOptions().colors[0],
+                connectorColor: '#777',
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %'
             },
             point: {
@@ -29,56 +51,58 @@ Highcharts.chart('container', {
                     }
                 }
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            borderWidth: 3
         }
     },
 
     series: [{
-        name: 'Percentage usage',
-        borderColor: Highcharts.getOptions().colors[0],
+        name: 'Screen reader usage',
         data: [{
-            name: 'JAWS',
-            y: 30.2,
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
-            color: 'url(#highcharts-default-pattern-0)',
+            name: 'NVDA',
+            y: 40.6,
+            color: getColorPattern(0),
+            website: 'https://www.nvaccess.org',
             accessibility: {
                 description: 'This is the most used desktop screen reader'
             }
         }, {
-            name: 'ZoomText',
-            y: 22.2,
-            website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader',
-            color: 'url(#highcharts-default-pattern-1)'
-        }, {
-            name: 'Window-Eyes',
-            y: 20.7,
-            website: 'http://www.gwmicro.com/window-eyes',
-            color: 'url(#highcharts-default-pattern-2)'
-        }, {
-            name: 'NVDA',
-            y: 14.6,
-            website: 'https://www.nvaccess.org',
-            color: 'url(#highcharts-default-pattern-4)'
+            name: 'JAWS',
+            y: 40.1,
+            color: getColorPattern(1),
+            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
         }, {
             name: 'VoiceOver',
-            y: 7.6,
-            website: 'http://www.apple.com/accessibility/osx/voiceover',
-            color: 'url(#highcharts-default-pattern-3)'
+            y: 12.9,
+            color: getColorPattern(2),
+            website: 'http://www.apple.com/accessibility/osx/voiceover'
         }, {
-            name: 'System Access To Go',
-            y: 1.5,
-            website: 'https://www.satogo.com',
-            color: 'url(#highcharts-default-pattern-7)'
-        }, {
-            name: 'ChromeVox',
-            y: 0.3,
-            website: 'http://www.chromevox.com',
-            color: 'url(#highcharts-default-pattern-6)'
+            name: 'ZoomText',
+            y: 2,
+            color: getColorPattern(3),
+            website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
         }, {
             name: 'Other',
-            y: 2.9,
-            website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php',
-            color: 'url(#highcharts-default-pattern-5)'
+            y: 4.4,
+            color: getColorPattern(4),
+            website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
         }]
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            format: '<b>{point.name}</b>'
+                        }
+                    }
+                }
+            }
+        }]
+    }
 });

@@ -35,6 +35,7 @@ declare global {
                 AreaRangeDataLabelsOptionsObject|
                 Array<AreaRangeDataLabelsOptionsObject>
             );
+            states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
         }
         interface Point {
@@ -66,6 +67,7 @@ declare global {
         }
         class AreaRangeSeries extends AreaSeries {
             public data: Array<AreaRangePoint>;
+            public deferTranslatePolar: boolean;
             public lowerStateMarkerGraphic?: SVGElement;
             public options: AreaRangeSeriesOptions;
             public pointClass: typeof AreaRangePoint;
@@ -83,89 +85,19 @@ declare global {
     }
 }
 
-/**
- * @interface Highcharts.PointOptionsObject
- *//**
- * Range series only. The high or maximum value for each data point.
- * @name Highcharts.PointOptionsObject#high
- * @type {number|undefined}
- *//**
- * Range series only. The low or minimum value for each data point.
- * @name Highcharts.PointOptionsObject#low
- * @type {number|undefined}
- */
-
-/**
- * Extended data labels for range series types. Range series data labels use no
- * `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and `yHigh`
- * options to allow the higher and lower data label sets individually.
- *
- * @interface Highcharts.SeriesAreaRangeDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- * @since 2.3.0
- * @product highcharts highstock
- *//**
- * X offset of the higher data labels relative to the point value.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
- *      Data labels on range series
- *
- * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#xHigh
- * @type {number|undefined}
- * @default 0
- * @since 2.3.0
- * @product highcharts highstock
- *//**
- * X offset of the lower data labels relative to the point value.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
- *      Data labels on range series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
- *      Data labels on range series
- *
- * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#xLow
- * @type {number|undefined}
- * @default 0
- * @since 2.3.0
- * @product highcharts highstock
- *//**
- * Y offset of the higher data labels relative to the point value.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
- *      Data labels on range series
- *
- * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#yHigh
- * @type {number|undefined}
- * @default 0
- * @since 2.3.0
- * @product highcharts highstock
- *//**
- * Y offset of the lower data labels relative to the point value.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
- *      Data labels on range series
- *
- * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#yLow
- * @type {number|undefined}
- * @default 0
- * @since 2.3.0
- * @product highcharts highstock
- */
-
-
 import U from '../parts/Utilities.js';
 const {
     defined,
+    extend,
     isArray,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
 
 var noop = H.noop,
-    pick = H.pick,
-    extend = H.extend,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -175,7 +107,6 @@ var noop = H.noop,
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
- * Requires `highcharts-more.js`.
  *
  * @sample {highcharts} highcharts/demo/arearange/
  *         Area range chart
@@ -185,9 +116,10 @@ var noop = H.noop,
  * @extends      plotOptions.area
  * @product      highcharts highstock
  * @excluding    stack, stacking
+ * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  */
-seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
+seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -197,6 +129,11 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
      * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
+     */
+
+    /**
+     * @default   low
+     * @apioption plotOptions.arearange.colorKey
      */
 
     /**
@@ -226,24 +163,58 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * @type    {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
-     * @default {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
+     * Extended data labels for range series types. Range series data labels use
+     * no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and
+     * `yHigh` options to allow the higher and lower data label sets
+     * individually.
+     *
+     * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
+     * @exclude x, y
+     * @since   2.3.0
+     * @product highcharts highstock
      *
      * @private
      */
     dataLabels: {
-        /** @ignore-option */
+
         align: null,
-        /** @ignore-option */
+
         verticalAlign: null,
-        /** @ignore-option */
+
+        /**
+         * X offset of the lower data labels relative to the point value.
+         *
+         * @sample highcharts/plotoptions/arearange-datalabels/
+         *         Data labels on range series
+         * @sample highcharts/plotoptions/arearange-datalabels/
+         *         Data labels on range series
+         */
         xLow: 0,
-        /** @ignore-option */
+
+        /**
+         * X offset of the higher data labels relative to the point value.
+         *
+         * @sample highcharts/plotoptions/arearange-datalabels/
+         *         Data labels on range series
+         */
         xHigh: 0,
-        /** @ignore-option */
+
+        /**
+         * Y offset of the lower data labels relative to the point value.
+         *
+         * @sample highcharts/plotoptions/arearange-datalabels/
+         *         Data labels on range series
+         */
         yLow: 0,
-        /** @ignore-option */
+
+        /**
+         * Y offset of the higher data labels relative to the point value.
+         *
+         * @sample highcharts/plotoptions/arearange-datalabels/
+         *         Data labels on range series
+         */
         yHigh: 0
+
     }
 
 // Prototype members
@@ -652,7 +623,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
 
             if (!series.chart.polar) {
                 point.isInside = point.isTopInside = (
-                    point.plotY !== undefined &&
+                    typeof point.plotY !== 'undefined' &&
                     point.plotY >= 0 &&
                     point.plotY <= series.yAxis.len && // #3519
                     point.plotX >= 0 &&
@@ -671,7 +642,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
             point = series.points[i];
             point.upperGraphic = point.graphic;
             point.graphic = point.lowerGraphic;
-            H.extend(point, point.origProps as any);
+            extend(point, point.origProps as any);
             delete point.origProps;
             i++;
         }
@@ -679,7 +650,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
 
     /* eslint-enable valid-jsdoc */
 
-    setStackedPoints: noop
+    setStackedPoints: noop as any
 }, {
     /**
      * Range series only. The high or maximum value for each data point.
@@ -745,7 +716,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
             series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
             // Lower marker is stored at stateMarkerGraphic
             // to avoid reference duplication (#7021)
-            series.lowerStateMarkerGraphic = undefined;
+            series.lowerStateMarkerGraphic = void 0;
         }
 
         pointProto.setState.apply(this, arguments as any);
@@ -753,9 +724,14 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
     },
     haloPath: function (
         this: Highcharts.AreaRangePoint
-    ): (Highcharts.SVGElement|Array<Highcharts.SVGElement>) {
+    ): (Highcharts.SVGElement|Highcharts.SVGPathArray|
+        Array<Highcharts.SVGElement>) {
         var isPolar = this.series.chart.polar,
-            path: (Highcharts.SVGElement|Array<Highcharts.SVGElement>) = [];
+            path: (
+                Highcharts.SVGElement|
+                Highcharts.SVGPathArray|
+                Array<Highcharts.SVGElement>
+            ) = [];
 
         // Bottom halo
         this.plotY = this.plotLow;
@@ -812,6 +788,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
  * @extends   series,plotOptions.arearange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.arearange
  */
 
@@ -872,7 +849,7 @@ seriesType<Highcharts.AreaRangeSeriesOptions>('arearange', 'area', {
  */
 
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
  */

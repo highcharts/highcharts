@@ -11,8 +11,6 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -62,12 +60,17 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick
+} = U;
 
-var min = Math.min,
-    max = Math.max,
-    abs = Math.abs,
-    pick = H.pick;
+const {
+    min,
+    max,
+    abs
+} = Math;
 
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and
@@ -272,7 +275,7 @@ var algorithms: Highcharts.PathfinderAlgorithmsObject = {
      *         renderer, as well as an array of new obstacles making up this
      *         path.
      */
-    simpleConnect: H.extend(function (
+    simpleConnect: extend(function (
         start: Highcharts.PositionObject,
         end: Highcharts.PositionObject,
         options: any
@@ -447,7 +450,7 @@ var algorithms: Highcharts.PathfinderAlgorithmsObject = {
      *         renderer, as well as an array of new obstacles making up this
      *         path.
      */
-    fastAvoid: H.extend(function (
+    fastAvoid: extend(function (
         start: Highcharts.PositionObject,
         end: Highcharts.PositionObject,
         options: any

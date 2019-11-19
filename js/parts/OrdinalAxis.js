@@ -11,12 +11,12 @@
 import H from './Globals.js';
 import './Axis.js';
 import U from './Utilities.js';
-var defined = U.defined;
+var defined = U.defined, extend = U.extend, pick = U.pick;
 import './Chart.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import './Navigator.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, extend = H.extend, noop = H.noop, pick = H.pick, Series = H.Series, timeUnits = H.timeUnits;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, noop = H.noop, Series = H.Series, timeUnits = H.timeUnits;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *
@@ -47,7 +47,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
     if ((!this.options.ordinal && !this.options.breaks) ||
         !positions ||
         positions.length < 3 ||
-        min === undefined) {
+        typeof min === 'undefined') {
         return time.getTimeTicks.apply(time, arguments);
     }
     // Analyze the positions array to split it into segments on gaps larger than
@@ -132,7 +132,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
         }
         // Now loop over again and remove ticks where needed
         i = groupPositions[length - 1] > max ? length - 1 : length; // #817
-        lastTranslated = undefined;
+        lastTranslated = void 0;
         while (i--) {
             translated = translatedArr[i];
             distance = Math.abs(lastTranslated - translated);
@@ -283,7 +283,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             else {
                 axis.overscrollPointsRange = pick(axis.closestPointRange, axis.overscrollPointsRange);
                 axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset =
-                    undefined;
+                    void 0;
             }
         }
         axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
@@ -401,7 +401,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             // If the index is within the range of the ordinal positions, return
             // the associated or interpolated value. If not, just return the
             // value
-            return (distance !== undefined && ordinalPositions[i] !== undefined ?
+            return (typeof distance !== 'undefined' &&
+                typeof ordinalPositions[i] !== 'undefined' ?
                 ordinalPositions[i] + (distance ?
                     distance *
                         (ordinalPositions[i + 1] - ordinalPositions[i]) :

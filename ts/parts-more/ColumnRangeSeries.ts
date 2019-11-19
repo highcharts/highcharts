@@ -18,14 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ColumnRangePointOptions extends AreaRangePointOptions {
-        }
-        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
-            minPointLength?: number;
-        }
-        interface SeriesTypesDictionary {
-            columnrange: typeof ColumnRangeSeries;
-        }
         class ColumnRangePoint extends AreaRangePoint {
             public barX: ColumnPoint['barX'];
             public options: ColumnRangePointOptions;
@@ -48,15 +40,27 @@ declare global {
             public polarArc: Function;
             public translate(): void;
         }
+        interface ColumnRangePointOptions extends AreaRangePointOptions {
+        }
+        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
+            minPointLength?: number;
+            states?: SeriesStatesOptionsObject<ColumnRangeSeries>;
+        }
+        interface SeriesTypesDictionary {
+            columnrange: typeof ColumnRangeSeries;
+        }
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    clamp,
+    pick
+} = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -64,8 +68,8 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
- * Y values along an X axis. Requires `highcharts-more.js`. To display
- * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
+ * Y values along an X axis. To display horizontal bars, set
+ * [chart.inverted](#chart.inverted) to `true`.
  *
  * @sample {highcharts|highstock} highcharts/demo/columnrange/
  *         Inverted column range
@@ -74,6 +78,7 @@ var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
  * @since        2.3.0
  * @excluding    negativeColor, stacking, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
@@ -84,8 +89,8 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
      * `yLow` and `yHigh` options to allow the higher and lower data label
      * sets individually.
      *
-     * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
-     * @default   {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
+     * @declare   Highcharts.SeriesAreaRangeDataLabelsOptionsObject
+     * @extends   plotOptions.arearange.dataLabels
      * @since     2.3.0
      * @product   highcharts highstock
      * @apioption plotOptions.columnrange.dataLabels
@@ -113,7 +118,7 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType('columnrange', 'arearange', merge(
+seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     defaultPlotOptions.column,
     defaultPlotOptions.arearange,
     columnRangeOptions
@@ -141,10 +146,7 @@ seriesType('columnrange', 'arearange', merge(
          * @private
          */
         function safeBounds(pixelPos: number): number {
-            return Math.min(Math.max(
-                -safeDistance,
-                pixelPos
-            ), safeDistance);
+            return clamp(pixelPos, -safeDistance, safeDistance);
         }
 
 
@@ -218,8 +220,8 @@ seriesType('columnrange', 'arearange', merge(
     },
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    drawGraph: noop,
-    getSymbol: noop,
+    drawGraph: noop as any,
+    getSymbol: noop as any,
 
     // Overrides from modules that may be loaded after this module
     crispCol: function (
@@ -268,6 +270,7 @@ seriesType('columnrange', 'arearange', merge(
  * @extends   series,plotOptions.columnrange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnrange
  */
 
@@ -328,7 +331,7 @@ seriesType('columnrange', 'arearange', merge(
  */
 
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.columnrange.dataLabels
  * @product   highcharts highstock
  * @apioption series.columnrange.data.dataLabels
  */

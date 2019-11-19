@@ -228,15 +228,17 @@ var path = require('path'),
 
     function getSortedDirFiles(files) {
         const versionFiles = files.map(file => file.replace('.md', ''));
-        const sortedVersions = versionFiles.sort((v1, v2) => {
-            if (v1.includes(v2) && v1.includes('-modified')) {
-                return -1;
-            }
-            if (v2.includes(v1) && v2.includes('-modified')) {
-                return 1;
-            }
-            return semver.rcompare(v1, v2);
-        });
+        const sortedVersions = versionFiles
+            .filter(v => semver.valid(v.replace('-modified', '')))
+            .sort((v1, v2) => {
+                if (v1.includes(v2) && v1.includes('-modified')) {
+                    return -1;
+                }
+                if (v2.includes(v1) && v2.includes('-modified')) {
+                    return 1;
+                }
+                return semver.rcompare(v1, v2);
+            });
         return sortedVersions.map(file => file + '.md');
     }
 

@@ -72,9 +72,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString;
+const {
+    defined,
+    extend,
+    isNumber,
+    isString,
+    pick,
+    wrap
+} = U;
 
 import './GridAxis.js';
 import Tree from './Tree.js';
@@ -85,7 +90,6 @@ var addEvent = H.addEvent,
     argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
@@ -97,8 +101,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return U.isObject(x, true);
     },
-    pick = H.pick,
-    wrap = H.wrap,
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
     GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
 
@@ -314,12 +316,13 @@ var renderLabelIcon = function (
         shouldRender = params.show && isNumber(iconCenter.y);
 
     if (isNew) {
-        tick.labelIcon = icon = renderer.path(renderer.symbols[options.type](
-            options.x,
-            options.y,
-            width,
-            height
-        ))
+        tick.labelIcon = icon = renderer
+            .path(renderer.symbols[options.type](
+                options.x,
+                options.y,
+                width,
+                height
+            ) as any)
             .addClass('highcharts-label-icon')
             .add(params.group);
     }
@@ -750,7 +753,7 @@ override(GridAxis.prototype, {
                         *
                         * @private
                         */
-                        level: undefined
+                        level: void 0
                     }, {
                         level: 1,
                         /**
@@ -799,7 +802,7 @@ override(GridAxis.prototype, {
                 reversed: true,
                 // grid.columns is not supported in treegrid
                 grid: {
-                    columns: undefined
+                    columns: void 0
                 }
             });
         }
@@ -886,7 +889,7 @@ override(GridAxis.prototype, {
 
             if (!tick) {
                 ticks[pos] = tick =
-                    new (GridAxisTick as any)(axis, pos, null, undefined, {
+                    new (GridAxisTick as any)(axis, pos, null, void 0, {
                         category: gridNode.name,
                         tickmarkOffset: gridNode.tickmarkOffset,
                         options: options
@@ -919,8 +922,8 @@ override(GridAxis.prototype, {
             isTreeGrid = options.type === 'treegrid';
 
         if (isTreeGrid) {
-            axis.min = pick(axis.userMin, options.min, axis.dataMin);
-            axis.max = pick(axis.userMax, options.max, axis.dataMax);
+            axis.min = pick(axis.userMin, options.min, axis.dataMin as any);
+            axis.max = pick(axis.userMax, options.max, axis.dataMax as any);
 
             fireEvent(axis, 'foundExtremes');
 

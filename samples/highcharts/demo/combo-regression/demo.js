@@ -1,13 +1,13 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Scatter plot with regression line'
+    },
     xAxis: {
         min: -0.5,
         max: 5.5
     },
     yAxis: {
         min: 0
-    },
-    title: {
-        text: 'Scatter plot with regression line'
     },
     series: [{
         type: 'line',

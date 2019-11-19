@@ -94,5 +94,19 @@ Highcharts.chart('container', {
     tooltip: {
         headerFormat: '<b>{series.name}</b><br>',
         pointFormat: '{point.x} cm, {point.y} kg'
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    align: 'center',
+                    layout: 'horizontal',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
     }
 });

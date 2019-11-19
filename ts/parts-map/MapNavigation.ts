@@ -83,7 +83,9 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    objectEach
+    extend,
+    objectEach,
+    pick
 } = U;
 
 import '../parts/Chart.js';
@@ -91,9 +93,7 @@ import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
     doc = H.doc,
-    extend = H.extend,
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -293,7 +293,8 @@ MapNavigation.prototype.updateEvents = function (
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
             chart.container,
-            doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel',
+            typeof doc.onmousewheel === 'undefined' ?
+                'DOMMouseScroll' : 'mousewheel',
             function (e: Highcharts.PointerEventObject): boolean {
                 chart.pointer.onContainerMouseWheel(e);
                 // Issue #5011, returning false from non-jQuery event does
@@ -439,14 +440,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         }
 
         // Zoom
-        if (howMuch !== undefined && !zoomOut) {
+        if (typeof howMuch !== 'undefined' && !zoomOut) {
             xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
             yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
         // Reset zoom
         } else {
-            xAxis.setExtremes(undefined, undefined, false);
-            yAxis.setExtremes(undefined, undefined, false);
+            xAxis.setExtremes(void 0, void 0, false);
+            yAxis.setExtremes(void 0, void 0, false);
         }
 
         // Prevent zooming until this one is finished animating

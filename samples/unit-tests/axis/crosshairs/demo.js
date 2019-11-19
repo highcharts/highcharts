@@ -1,4 +1,3 @@
-/* global TestController */
 QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
     var chart = Highcharts.chart('container', {
         yAxis: [{
@@ -194,7 +193,7 @@ QUnit.test('snap', function (assert) {
     // TODO Test positioning of crosshairs.
 });
 
-QUnit.test('Show only one crosshair at the same time (#6420, #7219).', function (assert) {
+QUnit.test('Show only one crosshair at the same time', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: [{
                 crosshair: true
@@ -279,6 +278,51 @@ QUnit.test('Show only one crosshair at the same time (#6420, #7219).', function 
         series2.yAxis.crossLabel.attr('visibility'),
         'hidden',
         'Hover Series 1 back: crosshair label on yAxis of Series 2 is hidden (#7219)'
+    );
+
+    chart.update({
+        yAxis: [{
+            crosshair: {
+                snap: true,
+                label: {
+                    enabled: false
+                }
+            }
+        }, {
+            crosshair: {
+                snap: true,
+                label: {
+                    enabled: false
+                }
+            }
+        }]
+    });
+
+    chart.update({
+        yAxis: [{
+            crosshair: {
+                label: {
+                    enabled: true
+                }
+            }
+        }, {
+            crosshair: {
+                label: {
+                    enabled: true
+                }
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        series1.yAxis.crossLabel.attr('visibility'),
+        'visible',
+        'Crosshair should be visible for the first series (#12298)'
+    );
+    assert.strictEqual(
+        typeof series2.yAxis.crossLabel,
+        'undefined',
+        'Crosshair should not be visible for the second series  (#12298)'
     );
 });
 

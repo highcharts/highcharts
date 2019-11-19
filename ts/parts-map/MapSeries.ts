@@ -14,91 +14,25 @@ import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
-        interface MapBaseTransObject {
-            originX: number;
-            originY: number;
-            transAX: number;
-            transAY: number;
-        }
-        interface MapChart extends Chart {
-        }
-        interface MapPointCacheObject {
-            _foundBox?: boolean;
-            _i?: number;
-            _maxX?: number;
-            _maxY?: number;
-            _midX?: number;
-            _midY?: number;
-            _minX?: number;
-            _minY?: number;
-        }
-        interface MapPointOptions extends ScatterPointOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dataLabels?: DataLabelsOptionsObject;
-            drilldown?: string;
-            id?: string;
-            labelrank?: number;
-            middleX?: number;
-            middleY?: number;
-            name?: string;
-            path?: (string|MapPoint['path']);
-            value?: MapPoint['value'];
-        }
-        interface MapSeriesOptions
-            extends ColorSeriesOptions, ScatterSeriesOptions
-        {
-            data?: Array<MapPointOptions|PointOptionsType>;
-            nullColor?: (ColorString|GradientColorObject|PatternObject);
-            nullInteraction?: boolean;
-            states?: MapSeriesStatesOptions;
-        }
-        interface MapSeriesStatesHoverOptions
-            extends ScatterSeriesStatesHoverOptions
-        {
-            brightness?: number;
-        }
-        interface MapSeriesStatesOptions
-            extends ScatterSeriesStatesOptions
-        {
-            hover?: MapSeriesStatesHoverOptions;
-            select?: MapSeriesStatesSelectOptions;
-        }
-        interface MapSeriesStatesSelectOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
-        interface Series {
-            valueMax?: number;
-            valueMin?: number;
-        }
-        interface SeriesOptions {
-            /** @requires highcharts/modules/map */
-            mapData?: (Array<MapPointOptions>|any);
-        }
-        interface SeriesTypesDictionary {
-            map: typeof MapSeries;
-        }
-        class MapPoint extends ScatterPoint implements ColorPointMixin {
+        class MapPoint extends ScatterPoint implements ColorMapPointMixin {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorPointMixin['dataLabelOnNull'];
-            public isValid: ColorPointMixin['isValid'];
+            public dataLabelOnNull: ColorMapPointMixin['dataLabelOnNull'];
+            public isValid: ColorMapPointMixin['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
             public path: SVGPathArray;
             public properties?: object;
             public series: MapSeries;
-            public setVisible: ColorPointMixin['setVisible'];
             public value: (number|null);
             public applyOptions(options: MapPointOptions, x: number): MapPoint;
             public onMouseOver(e?: PointerEventObject): void;
             public zoomTo(): void;
         }
-        class MapSeries extends ScatterSeries implements ColorSeriesMixin {
+        class MapSeries extends ScatterSeries implements ColorMapSeriesMixin {
             public baseTrans: MapBaseTransObject;
             public chart: MapChart;
-            public colorAxis: ColorAxis;
-            public colorAttribs: ColorSeriesMixin['colorAttribs'];
-            public colorKey: ColorSeriesMixin['colorKey'];
+            public colorAttribs: ColorMapSeriesMixin['colorAttribs'];
             public data: Array<MapPoint>;
             public dataMax: number;
             public dataMin: number;
@@ -112,16 +46,14 @@ declare global {
             public maxY: number;
             public minX?: number;
             public minY: number;
-            public optionalAxis: ColorSeriesMixin['optionalAxis'];
             public options: MapSeriesOptions;
             public pointArrayMap: Array<string>;
             public pointAttrToOptions: unknown;
             public pointClass: typeof MapPoint;
             public points: Array<MapPoint>;
             public preserveAspectRatio: boolean;
-            public trackerGroups: ColorSeriesMixin['trackerGroups'];
+            public trackerGroups: ColorMapSeriesMixin['trackerGroups'];
             public transformGroup: SVGElement;
-            public translateColors: ColorSeriesMixin['translateColors'];
             public useMapGeometry: boolean;
             public valueData?: Array<number>;
             public valueMax: number;
@@ -147,6 +79,60 @@ declare global {
             public translate(): void;
             public translatePath(path: SVGPathArray): SVGPathArray;
         }
+        interface MapBaseTransObject {
+            originX: number;
+            originY: number;
+            transAX: number;
+            transAY: number;
+        }
+        interface MapChart extends Chart {
+        }
+        interface MapPointCacheObject {
+            _foundBox?: boolean;
+            _i?: number;
+            _maxX?: number;
+            _maxY?: number;
+            _midX?: number;
+            _midY?: number;
+            _minX?: number;
+            _minY?: number;
+        }
+        interface MapPointOptions extends ScatterPointOptions {
+            color?: ColorType;
+            dataLabels?: DataLabelsOptionsObject;
+            drilldown?: string;
+            id?: string;
+            labelrank?: number;
+            middleX?: number;
+            middleY?: number;
+            name?: string;
+            path?: (string|MapPoint['path']);
+            value?: MapPoint['value'];
+        }
+        interface MapSeriesOptions
+            extends ColorSeriesOptions, ScatterSeriesOptions
+        {
+            data?: Array<MapPointOptions|PointOptionsType>;
+            nullColor?: ColorType;
+            nullInteraction?: boolean;
+            states?: SeriesStatesOptionsObject<MapSeries>;
+        }
+        interface SeriesStatesHoverOptionsObject
+        {
+            brightness?: number;
+            color?: ColorType;
+        }
+        interface Series {
+            valueMax?: number;
+            valueMin?: number;
+        }
+        interface SeriesOptions {
+            /** @requires modules/map */
+            mapData?: (Array<MapPointOptions>|any);
+        }
+        interface SeriesTypesDictionary {
+            map: typeof MapSeries;
+        }
     }
 }
 
@@ -156,22 +142,24 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
+import './ColorMapSeriesMixin.js';
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isArray,
     isNumber,
     objectEach,
+    pick,
     splat
 } = U;
 
-var colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin,
-    extend = H.extend,
+var colorMapPointMixin = H.colorMapPointMixin,
+    colorMapSeriesMixin = H.colorMapSeriesMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
+    fireEvent = H.fireEvent,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -184,7 +172,7 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapSeriesOptions>(
+seriesType<Highcharts.MapSeries>(
     'map',
     'scatter',
     /**
@@ -204,20 +192,13 @@ seriesType<Highcharts.MapSeriesOptions>(
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
-            /** @ignore-option */
             crop: false,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): (number|null) { // #2945
                 return (this.point as Highcharts.MapPoint).value;
             },
-            /** @ignore-option */
             inside: true, // for the color
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             padding: 0,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
@@ -322,13 +303,8 @@ seriesType<Highcharts.MapSeriesOptions>(
         borderWidth: 1,
 
         /**
-         * Set this option to `false` to prevent a series from connecting to
-         * the global color axis. This will cause the series to have its own
-         * legend item.
-         *
-         * @type      {boolean}
-         * @product   highmaps
-         * @apioption plotOptions.series.colorAxis
+         * @default   value
+         * @apioption plotOptions.map.colorKey
          */
 
         /**
@@ -464,12 +440,12 @@ seriesType<Highcharts.MapSeriesOptions>(
         }
 
     // Prototype members
-    }, merge(colorSeriesMixin, {
+    }, merge(colorMapSeriesMixin, {
         type: 'map',
         getExtremesFromAll: true,
         useMapGeometry: true, // get axis extremes from paths, not values
         forceDL: true,
-        searchPoint: noop,
+        searchPoint: noop as any,
         // When tooltip is not shared, this series (and derivatives) requires
         // direct touch/hover. KD-tree does not apply.
         directTouch: true,
@@ -602,14 +578,14 @@ seriesType<Highcharts.MapSeriesOptions>(
 
                 // If no minRange option is set, set the default minimum zooming
                 // range to 5 times the size of the smallest element
-                if (xAxis && xAxis.options.minRange === undefined) {
+                if (xAxis && typeof xAxis.options.minRange === 'undefined') {
                     xAxis.minRange = Math.min(
                         5 * minRange,
                         (this.maxX - this.minX) / 5,
                         xAxis.minRange || MAX_VALUE
                     );
                 }
-                if (yAxis && yAxis.options.minRange === undefined) {
+                if (yAxis && typeof yAxis.options.minRange === 'undefined') {
                     yAxis.minRange = Math.min(
                         5 * minRange,
                         (this.maxY - this.minY) / 5,
@@ -743,7 +719,10 @@ seriesType<Highcharts.MapSeriesOptions>(
                         // Run through pointArrayMap and what's left of the
                         // point data array in parallel, copying over the values
                         for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-                            if (pointArrayMap[j] && val[ix] !== undefined) {
+                            if (
+                                pointArrayMap[j] &&
+                                typeof val[ix] !== 'undefined'
+                            ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
                                     H.Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
@@ -861,11 +840,11 @@ seriesType<Highcharts.MapSeriesOptions>(
         },
 
         // No graph for the map series
-        drawGraph: noop,
+        drawGraph: noop as any,
 
         // We need the points' bounding boxes in order to draw the data labels,
         // so we skip it now and call it from drawPoints instead.
-        drawDataLabels: noop,
+        drawDataLabels: noop as any,
 
         // Allow a quick redraw by just translating the area group. Used for
         // zooming and panning in capable browsers.
@@ -894,8 +873,10 @@ seriesType<Highcharts.MapSeriesOptions>(
 
                 // Record the middle point (loosely based on centroid),
                 // determined by the middleX and middleY options.
-                point.plotX = xAxis.toPixels(point._midX as any, true);
-                point.plotY = yAxis.toPixels(point._midY as any, true);
+                if (isNumber(point._midX) && isNumber(point._midY)) {
+                    point.plotX = xAxis.toPixels(point._midX, true);
+                    point.plotY = yAxis.toPixels(point._midY, true);
+                }
 
                 if (doFullTranslate) {
 
@@ -906,7 +887,7 @@ seriesType<Highcharts.MapSeriesOptions>(
                 }
             });
 
-            series.translateColors();
+            fireEvent(series, 'afterTranslate');
         },
 
         // Get presentational attributes. In the maps series this runs in both
@@ -1320,7 +1301,7 @@ seriesType<Highcharts.MapSeriesOptions>(
                 mapPoint;
 
             if (series.mapData) {
-                mapPoint = (point as any)[joinBy[1]] !== undefined &&
+                mapPoint = typeof (point as any)[joinBy[1]] !== 'undefined' &&
                     (series.mapMap as any)[(point as any)[joinBy[1]]];
                 if (mapPoint) {
                     // This applies only to bubbles
@@ -1358,7 +1339,7 @@ seriesType<Highcharts.MapSeriesOptions>(
          * @sample maps/members/point-zoomto/
          *         Zoom to points from butons
          *
-         * @requires module:modules/map
+         * @requires modules/map
          *
          * @function Highcharts.Point#zoomTo
          */
@@ -1381,7 +1362,7 @@ seriesType<Highcharts.MapSeriesOptions>(
             );
             series.chart.redraw();
         }
-    }, colorPointMixin)
+    }, colorMapPointMixin)
 );
 
 /**

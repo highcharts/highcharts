@@ -374,7 +374,9 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
 QUnit.test('Switch from non-grouped to grouped', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            width: 400
+            width: 50, // So small to keep the data samle small and fast
+            marginLeft: 0,
+            marginRight: 0
         },
         series: [{
             dataGrouping: {
@@ -402,16 +404,26 @@ QUnit.test('Switch from non-grouped to grouped', function (assert) {
         }]
     });
 
+    assert.notOk(
+        chart.series[0].hasGroupedData,
+        'The chart should not have grouped data initially'
+    );
+
     chart.series[0].update({
         data: (() => {
             var arr = [],
                 i = 0;
-            for (; i < 3999; i++) {
+            for (; i < 200; i++) {
                 arr.push([Date.UTC(2019, 3, 30, 23, i * 10), i]);
             }
             return arr;
         })()
     });
+
+    assert.ok(
+        chart.series[0].hasGroupedData,
+        'The chart should have grouped data after update'
+    );
 
     assert.strictEqual(
         chart.container.querySelectorAll('.highcharts-markers path').length,
@@ -436,7 +448,10 @@ QUnit.test('Data grouping and extremes change', function (assert) {
                 pointInterval: 12 * 3600 * 1000,
                 data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
             }]
-        });
+        }),
+        series = chart.series[0],
+        controller = new TestController(chart),
+        expectedMin;
 
     assert.strictEqual(
         chart.xAxis[0].getExtremes().min,
@@ -449,7 +464,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         minPadding: 0.1
     });
 
-    chart.series[0].setData([
+    series.setData([
         [
             26179200000,
             0
@@ -466,9 +481,60 @@ QUnit.test('Data grouping and extremes change', function (assert) {
     ]);
 
     assert.strictEqual(
-        chart.xAxis[0].getExtremes().min < chart.series[0].points[0].x,
+        chart.xAxis[0].getExtremes().min < series.points[0].x,
         true,
         'minPadding should decrease xAxis.min even when points are grouped (#10932).'
+    );
+
+    series.setData(new Array(100).fill(10));
+    chart.xAxis[0].setExtremes(
+        series.options.pointStart + 5 * series.options.pointInterval,
+        series.options.pointStart + 15 * series.options.pointInterval
+    );
+    expectedMin = chart.xAxis[0].toValue(-30, true);
+
+    controller.mouseDown(
+        series.points[7].plotX,
+        series.points[7].plotY
+    );
+
+    controller.mouseMove(
+        series.points[7].plotX + 30,
+        series.points[7].plotY
+    );
+
+    controller.mouseUp(
+        series.points[7].plotX + 30,
+        series.points[7].plotY
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        expectedMin,
+        'DataGrouping should not prevent panning to the LEFT (#12099)'
+    );
+
+    expectedMin = chart.xAxis[0].toValue(30, true);
+
+    controller.mouseDown(
+        series.points[7].plotX,
+        series.points[7].plotY
+    );
+
+    controller.mouseMove(
+        series.points[7].plotX - 30,
+        series.points[7].plotY
+    );
+
+    controller.mouseUp(
+        series.points[7].plotX - 30,
+        series.points[7].plotY
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        expectedMin,
+        'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
 });
 
@@ -572,5 +638,35 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
         chart.series[0].points[0].dataGroup.start,
         chart.series[0].points[0].x,
         'dataGroup should consider crop start'
+    );
+});
+
+QUnit.test('DataGrouping and update', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            id: 'usdeur',
+            dataGrouping: {
+                forced: true
+            },
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.update({
+        series: [{
+            id: 'usdeur',
+            data: [3, 2, 1]
+        }, {
+            id: 'eurusd',
+            data: [1, 2, 3]
+        }]
+    }, true, true);
+
+    assert.ok(
+        true,
+        `Should be no errors when:
+            - updating one-to-one with IDs
+            - DG enabled
+        (#11471)`
     );
 });

@@ -1,7 +1,12 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- alt_text: Highcharts horizontal stacked bar chart JavaScript example graph compares human fruit consumption of apple pear grape.
+name: Stacked bar
+authors:
+  - Torstein Hønsi
+js_wrap: b
+alt_text: >-
+  Highcharts horizontal stacked bar chart JavaScript example graph compares
+  human fruit consumption of apple pear grape.
+tags: []
+categories:
+  - Column and bar charts
 ...

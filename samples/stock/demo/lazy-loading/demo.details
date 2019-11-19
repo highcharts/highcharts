@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- requiresManualTesting: true
+name: 1.7 million points with async loading
+authors:
+  - Torstein Hønsi
+js_wrap: b
+requiresManualTesting: true
+tags: []
+categories:
+  - General
 ...

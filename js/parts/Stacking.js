@@ -49,11 +49,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var defined = U.defined, objectEach = U.objectEach;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, objectEach = U.objectEach, pick = U.pick;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, correctFloat = H.correctFloat, destroyObjectProperties = H.destroyObjectProperties, format = H.format, pick = H.pick, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, format = H.format, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -120,7 +120,7 @@ H.StackItem.prototype = {
      */
     render: function (group) {
         var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
-            format(formatOption, this, chart.time) :
+            format(formatOption, this, chart) :
             options.formatter.call(this);
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
@@ -179,6 +179,7 @@ H.StackItem.prototype = {
             var bBox = label.getBBox(), boxOffsetX = chart.inverted ?
                 (isNegative ? bBox.width : 0) : bBox.width / 2, boxOffsetY = chart.inverted ?
                 bBox.height / 2 : (isNegative ? -4 : bBox.height + 4);
+            stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             // Align the label to the box
             label.align(stackItem.alignOptions, null, stackBox);
             // Set visibility (#678)
@@ -192,15 +193,17 @@ H.StackItem.prototype = {
                 Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, alignAttr, bBox, stackBox);
                 alignAttr.x += boxOffsetX;
             }
-            label.alignAttr = alignAttr;
+            alignAttr.x = label.alignAttr.x;
             label.attr({
                 x: alignAttr.x,
                 y: alignAttr.y
             });
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.alignAttr.x - bBox.width / 2, label.alignAttr.y) && chart.isInsidePlot(label.alignAttr.x + (chart.inverted ?
-                    (isNegative ? -bBox.width : bBox.width) :
-                    bBox.width / 2), label.alignAttr.y + bBox.height);
+                visible = chart.isInsidePlot(label.x +
+                    (chart.inverted ? 0 : -bBox.width / 2), label.y) &&
+                    chart.isInsidePlot(label.x + (chart.inverted ?
+                        (isNegative ? -bBox.width : bBox.width) :
+                        bBox.width / 2), label.y + bBox.height);
                 if (!visible) {
                     label.hide();
                 }
@@ -292,6 +295,7 @@ Axis.prototype.buildStacks = function () {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
+        H.fireEvent(this, 'afterBuildStacks');
     }
 };
 /**

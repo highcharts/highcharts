@@ -26,11 +26,6 @@ declare global {
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
         }
-        interface PlotSeriesOptions {
-            compare?: string;
-            compareBase?: (0|100);
-            compareStart?: boolean;
-        }
         interface Options {
             isStock?: boolean;
         }
@@ -42,6 +37,11 @@ declare global {
             compareValue?: number;
             modifyValue?(value?: number, point?: Point): (number|undefined);
             setCompare(compare?: string): void;
+        }
+        interface SeriesOptions {
+            compare?: string;
+            compareBase?: (0|100);
+            compareStart?: boolean;
         }
         interface SVGRenderer {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
@@ -60,10 +60,17 @@ declare global {
 }
 
 import U from './Utilities.js';
-var defined = U.defined,
-    isNumber = U.isNumber,
-    isString = U.isString,
-    splat = U.splat;
+const {
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    isNumber,
+    isString,
+    pick,
+    splat
+} = U;
 
 import './Chart.js';
 import './Axis.js';
@@ -82,14 +89,10 @@ import './Scrollbar.js';
 import './RangeSelector.js';
 
 var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     Axis = H.Axis,
     Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
@@ -398,7 +401,7 @@ addEvent(Axis, 'autoLabelAlign', function (
             if ((labelOptions as any).x === 15) { // default
                 (labelOptions as any).x = 0;
             }
-            if ((labelOptions as any).align === undefined) {
+            if (typeof (labelOptions as any).align === 'undefined') {
                 (labelOptions as any).align = 'right';
             }
             panes[key] = this;
@@ -528,7 +531,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old)
+            axis.translate(value as any, null, null, (e as any).old) as any
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
@@ -545,8 +548,9 @@ addEvent(Axis, 'getPlotLinePath', function (
                         (x1 < axisLeft || x1 > axisLeft + axis.width)
                     ) {
                         if (force) {
-                            x1 = x2 = Math.min(
-                                Math.max(axisLeft, x1),
+                            x1 = x2 = clamp(
+                                x1,
+                                axisLeft,
                                 axisLeft + axis.width
                             );
                         } else {
@@ -571,9 +575,10 @@ addEvent(Axis, 'getPlotLinePath', function (
                         (y1 < axisTop || y1 > axisTop + axis.height)
                     ) {
                         if (force) {
-                            y1 = y2 = Math.min(
-                                Math.max(axisTop, y1),
-                                axis.top + axis.height
+                            y1 = y2 = clamp(
+                                y1,
+                                axisTop,
+                                axisTop + axis.height
                             );
                         } else {
                             skip = true;
@@ -752,7 +757,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     crossLabel.attr({
         text: formatOption ?
-            format(formatOption, { value: value }, chart.time) :
+            format(formatOption, { value: value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
@@ -860,8 +865,8 @@ seriesProto.setCompare = function (
             var compareValue = this.compareValue;
 
             if (
-                value !== undefined &&
-                compareValue !== undefined
+                typeof value !== 'undefined' &&
+                typeof compareValue !== 'undefined'
             ) { // #2601, #5814
 
                 // Get the modified value
@@ -881,6 +886,7 @@ seriesProto.setCompare = function (
 
                 return value;
             }
+            return 0;
         } :
         null as any;
 
@@ -1013,10 +1019,11 @@ Point.prototype.tooltipFormatter = function (
     pointFormat: string
 ): string {
     var point = this;
+    const { numberFormatter } = point.series.chart;
 
     pointFormat = pointFormat.replace(
         '{point.change}',
-        ((point.change as any) > 0 ? '+' : '') + H.numberFormat(
+        ((point.change as any) > 0 ? '+' : '') + numberFormatter(
             point.change as any,
             pick(point.series.tooltipOptions.changeDecimals, 2)
         )

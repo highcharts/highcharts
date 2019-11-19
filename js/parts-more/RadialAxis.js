@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pInt = U.pInt;
+var correctFloat = U.correctFloat, extend = U.extend, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
-var addEvent = H.addEvent, Axis = H.Axis, extend = H.extend, merge = H.merge, noop = H.noop, pick = H.pick, Tick = H.Tick, wrap = H.wrap, correctFloat = H.correctFloat, 
+var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, 
 // @todo Extract this to a new file:
 hiddenAxisMixin, 
 // @todo Extract this to a new file
@@ -28,6 +28,9 @@ hiddenAxisMixin = {
     },
     render: function () {
         this.isDirty = false; // prevent setting Y axis dirty
+    },
+    createLabelCollector: function () {
+        return false;
     },
     setScale: noop,
     setCategories: noop,
@@ -120,7 +123,7 @@ radialAxisMixin = {
      */
     getLinePath: function (lineWidth, radius) {
         var center = this.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), path;
-        if (this.isCircular || radius !== undefined) {
+        if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], r, r, {
                 start: this.startAngleRad,
                 end: this.endAngleRad,
@@ -185,7 +188,7 @@ radialAxisMixin = {
         // one closestPointRange is added to the X axis to prevent the last
         // point from overlapping the first.
         this.autoConnect = (this.isCircular &&
-            pick(this.userMax, this.options.max) === undefined &&
+            typeof pick(this.userMax, this.options.max) === 'undefined' &&
             correctFloat(this.endAngleRad - this.startAngleRad) ===
                 correctFloat(2 * Math.PI));
         if (this.autoConnect) {
@@ -317,16 +320,25 @@ radialAxisMixin = {
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (options) {
-        var axis = this, center = axis.center, chart = axis.chart, value = options.value, reverse = options.reverse, end = axis.getPosition(value), xAxis, xy, tickPositions, ret;
+        var axis = this, center = axis.center, chart = axis.chart, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
+            (axis.pane.options.background[0] ||
+                axis.pane.options.background) :
+            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, xAxis, xy, tickPositions, ret;
         // Spokes
         if (axis.isCircular) {
+            a = (typeof innerRadius === 'string') ?
+                relativeLength(innerRadius, 1) : (innerRadius /
+                Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
+            b = (typeof outerRadius === 'string') ?
+                relativeLength(outerRadius, 1) : (outerRadius /
+                Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
             ret = [
                 'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
+                x1 + a * (x2 - x1),
+                y1 - a * (y1 - y2),
                 'L',
-                end.x,
-                end.y
+                x2 - (1 - b) * (x2 - x1),
+                y2 + (1 - b) * (y1 - y2)
             ];
             // Concentric circles
         }
@@ -379,14 +391,40 @@ radialAxisMixin = {
                     center[2]) +
                 (titleOptions.y || 0))
         };
+    },
+    /* *
+     * Attach and return collecting function for labels in radial axis for
+     * anti-collision.
+     */
+    createLabelCollector: function () {
+        var axis = this;
+        return function () {
+            if (axis.isRadial &&
+                axis.tickPositions &&
+                // undocumented option for now, but working
+                axis.options.labels.allowOverlap !== true) {
+                return axis.tickPositions
+                    .map(function (pos) {
+                    return axis.ticks[pos] && axis.ticks[pos].label;
+                })
+                    .filter(function (label) {
+                    return Boolean(label);
+                });
+            }
+        };
     }
     /* eslint-enable valid-jsdoc */
 };
 /* eslint-disable no-invalid-this */
 // Actions before axis init.
 addEvent(Axis, 'init', function (e) {
-    var axis = this, chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
+    var chart = this.chart, angular = chart.angular, polar = chart.polar, isX = this.isXAxis, isHidden = angular && isX, isCircular, chartOptions = chart.options, paneIndex = e.userOptions.pane || 0, pane = this.pane =
         chart.pane && chart.pane[paneIndex];
+    // Prevent changes for colorAxis
+    if (this.coll === 'colorAxis') {
+        this.isRadial = false;
+        return;
+    }
     // Before prototype.init
     if (angular) {
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
@@ -408,21 +446,13 @@ addEvent(Axis, 'init', function (e) {
         this.isRadial = true;
         chart.inverted = false;
         chartOptions.chart.zoomType = null;
-        // Prevent overlapping axis labels (#9761)
-        chart.labelCollectors.push(function () {
-            if (axis.isRadial &&
-                axis.tickPositions &&
-                // undocumented option for now, but working
-                axis.options.labels.allowOverlap !== true) {
-                return axis.tickPositions
-                    .map(function (pos) {
-                    return axis.ticks[pos] && axis.ticks[pos].label;
-                })
-                    .filter(function (label) {
-                    return Boolean(label);
-                });
-            }
-        });
+        if (!this.labelCollector) {
+            this.labelCollector = this.createLabelCollector();
+        }
+        if (this.labelCollector) {
+            // Prevent overlapping axis labels (#9761)
+            chart.labelCollectors.push(this.labelCollector);
+        }
     }
     else {
         this.isRadial = false;
@@ -452,8 +482,17 @@ addEvent(Axis, 'afterInit', function () {
 // (#4920)
 addEvent(Axis, 'autoLabelAlign', function (e) {
     if (this.isRadial) {
-        e.align = undefined;
+        e.align = void 0;
         e.preventDefault();
+    }
+});
+// Remove label collector function on axis remove/update
+addEvent(Axis, 'destroy', function () {
+    if (this.chart && this.chart.labelCollectors) {
+        var index = this.chart.labelCollectors.indexOf(this.labelCollector);
+        if (index >= 0) {
+            this.chart.labelCollectors.splice(index, 1);
+        }
     }
 });
 // Add special cases within the Tick class' methods for radial axes.
@@ -471,7 +510,7 @@ addEvent(Tick, 'afterGetLabelPosition', function (e) {
         correctAngle + 360 : correctAngle, reducedAngle2 = reducedAngle1, translateY = 0, translateX = 0, labelYPosCorrection = labelOptions.y === null ? -labelBBox.height * 0.3 : 0;
     if (axis.isRadial) { // Both X and Y axes in a polar chart
         ret = axis.getPosition(this.pos, (axis.center[2] / 2) +
-            H.relativeLength(pick(labelOptions.distance, -25), axis.center[2] / 2, -axis.center[2] / 2));
+            relativeLength(pick(labelOptions.distance, -25), axis.center[2] / 2, -axis.center[2] / 2));
         // Automatically rotated
         if (labelOptions.rotation === 'auto') {
             label.attr({

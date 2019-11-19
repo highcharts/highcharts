@@ -27,7 +27,9 @@ QUnit.test('pointDateFormat', function (assert) {
     var timeStart = new Date(Date.UTC(1995, 10, 15, 10, 45, 12)).getTime(),
         chart = Highcharts.chart('container', {
             accessibility: {
-                pointDateFormat: '%H:%M:%S'
+                point: {
+                    dateFormat: '%H:%M:%S'
+                }
             },
             xAxis: {
                 type: 'datetime'
@@ -50,10 +52,12 @@ QUnit.test('pointDateFormatter', function (assert) {
     var timeStart = new Date(Date.UTC(1995, 10, 15, 10, 45, 12)).getTime(),
         chart = Highcharts.chart('container', {
             accessibility: {
-                pointDateFormat: '%H:%M:%S',
-                pointDateFormatter: function (point) {
-                    if (point.x > 1) {
-                        return '%S';
+                point: {
+                    dateFormat: '%H:%M:%S',
+                    dateFormatter: function (point) {
+                        if (point.x > 1) {
+                            return '%S';
+                        }
                     }
                 }
             },

@@ -9,9 +9,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 import '../parts/Options.js';
-var noop = H.noop, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * The boxplot series type.
  *
@@ -33,6 +34,7 @@ var noop = H.noop, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.ser
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 seriesType('boxplot', 'column', {
@@ -191,6 +193,10 @@ seriesType('boxplot', 'column', {
      * @apioption plotOptions.boxplot.stemWidth
      */
     /**
+     * @default   high
+     * @apioption plotOptions.boxplot.colorKey
+     */
+    /**
      * The color of the whiskers, the horizontal lines marking low and high
      * values. When `undefined`, the general series color is used.
      *
@@ -264,7 +270,7 @@ seriesType('boxplot', 'column', {
         doQuartiles = series.doQuartiles !== false, pointWiskerLength, whiskerLength = series.options.whiskerLength;
         points.forEach(function (point) {
             var graphic = point.graphic, verb = graphic ? 'animate' : 'attr', shapeArgs = point.shapeArgs, boxAttr = {}, stemAttr = {}, whiskersAttr = {}, medianAttr = {}, color = point.color || series.color;
-            if (point.plotY !== undefined) {
+            if (typeof point.plotY !== 'undefined') {
                 // crisp vector coordinates
                 width = shapeArgs.width;
                 left = Math.floor(shapeArgs.x);
@@ -418,6 +424,7 @@ seriesType('boxplot', 'column', {
  * @extends   series,plotOptions.boxplot
  * @excluding dataParser, dataURL, marker, stack, stacking, states
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.boxplot
  */
 /**

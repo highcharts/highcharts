@@ -14,6 +14,96 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-v7.2.1"></a>
+              <a href="#highcharts-v7.2.1">Highcharts Basic v7.2.1 (2019-10-31)</a>
+            </p>
+            <ul>
+              <li>Added feature to draw plot lines on radial axes from the inner to the outer radius of the main pane. [<a href="https://github.com/highcharts/highcharts/pull/11989">Edit</a>]</li>
+              <li>Added support for combining <a href="https://api.highcharts.com/highcharts/tooltip.split">tooltip.split</a> and <a href="https://api.highcharts.com/highcharts/tooltip.outside">tooltip.outside</a>. [<a href="https://github.com/highcharts/highcharts/pull/11927">Edit</a>]</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="heading-7-2-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#7-2-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="7-2-1-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12222">#12222</a>, empty pie series showing <code>lineWidth</code> after hover. [<a href="https://github.com/highcharts/highcharts/pull/12281">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12223">#12223</a>, animating halo for a slice in pie series used to throw errors. [<a href="https://github.com/highcharts/highcharts/pull/12265">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12243">#12243</a>, fill property on pattern fills was applied to the wrong element. Introduced new option, <code>pattern.backgroundColor</code>. [<a href="https://github.com/highcharts/highcharts/pull/12243">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11644">#11644</a>, extremes in color axis were incorrect when using tilemap series with very small values. [<a href="https://github.com/highcharts/highcharts/pull/12201">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11738">#11738</a>, updating treemap series with the same amount of points caused cells to disappear. [<a href="https://github.com/highcharts/highcharts/pull/12199">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11650">#11650</a>, added missing <code>highcharts-tooltip-header</code> classname to the tooltip&#39;s header. [<a href="https://github.com/highcharts/highcharts/pull/12150">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12073">#12073</a>, dragging an annotation used to change points&#39; values too. [<a href="https://github.com/highcharts/highcharts/pull/12149">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7559">#7559</a>, error when updating a waterfall with first data value as sum or intermediate sum. [<a href="https://github.com/highcharts/highcharts/pull/12115">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11776">#11776</a>, data labels were not visible in 3D Column series. [<a href="https://github.com/highcharts/highcharts/pull/12105">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12055">#12055</a>, overlapping legend items when combining <code>layout: &#39;proximate&#39;</code> and <code>useHTML: true</code>. [<a href="https://github.com/highcharts/highcharts/pull/12089">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12064">#12064</a>, redundant spaces separating class names in SVG class attributes. [<a href="https://github.com/highcharts/highcharts/pull/12082">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12033">#12033</a>, error when toggling stacking on area series with nulls. [<a href="https://github.com/highcharts/highcharts/pull/12062">Edit</a>]</li>
+                      <li>Improved screen reader compatibility for chart export menu. [<a href="https://github.com/highcharts/highcharts/pull/12032">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11727">#11727</a>, logarithmic yAxis with just one label sometimes was rendered with numerical errors. [<a href="https://github.com/highcharts/highcharts/pull/12000">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11956">#11956</a>, <code>pointPlacement</code> did not work for columns with just one category. [<a href="https://github.com/highcharts/highcharts/pull/11999">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11955">#11955</a>, incorrect point positions on inverted chart, when <a href="https://api.highcharts.com/highcharts/plotOptions.series.pointPlacement">series.pointPlacement</a> was set to <code>between</code>. [<a href="https://github.com/highcharts/highcharts/pull/11998">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11966">#11966</a>, using <code>chart.setTitle()</code> on a chart with <code>scrollablePlotArea</code> misplaced the title. [<a href="https://github.com/highcharts/highcharts/pull/11997">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11510">#11510</a>, points with a relatively very small <code>z</code> value were not displayed in a variwide chart. [<a href="https://github.com/highcharts/highcharts/pull/11983">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11970">#11970</a>, annotation&#39;s <code>drag</code> event was not fired. [<a href="https://github.com/highcharts/highcharts/pull/11973">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11753">#11753</a>, invalid label placement broke venn diagrams in certain scenarios. [<a href="https://github.com/highcharts/highcharts/pull/11968">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11100">#11100</a>, 3D columns were not animated on data update. [<a href="https://github.com/highcharts/highcharts/pull/11965">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11476">#11476</a>, inverted variwide chart with disabled X axis labels threw an error. [<a href="https://github.com/highcharts/highcharts/pull/11964">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11801">#11801</a>, dragging annotations did not prevent zooming in. [<a href="https://github.com/highcharts/highcharts/pull/11949">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11897">#11897</a>, combination of pie series and polar chart with panes threw an error. [<a href="https://github.com/highcharts/highcharts/pull/11901">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11405">#11405</a>, plotLines were rendered outside the bottom and left chart edge if the value was the same as the axis extreme. [<a href="https://github.com/highcharts/highcharts/pull/11884">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11690">#11690</a>, removed use of undefined global variable that broke support for ES modules. [<a href="https://github.com/highcharts/highcharts/pull/11833">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11812">#11812</a>, point colors were not changed if <code>colorAxis</code> was added in update. [<a href="https://github.com/highcharts/highcharts/pull/11832">Edit</a>]</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highcharts-v7.2.0"></a>
+              <a href="#highcharts-v7.2.0">Highcharts Basic v7.2.0 (2019-09-03)</a>
+            </p>
+            <ul>
+              <li>Added new top-level option, <a href="https://api.highcharts.com/highcharts/caption">caption</a>. The caption has similar structure to title and subtitle. It renders a chart description below the chart contents, supports reponsiveness and is part of exported charts.</li>
+              <li>Added support for multiple <a href="https://api.highcharts.com/highcharts/colorAxis">color axes</a> for almost all series.</li>
+              <li>Added <code>high-contrast-light</code> and <code>high-contrast-dark</code> themes with 3:1 contrast against background.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="heading-7-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#7-2-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="7-2-0-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11792">#11792</a>, error and invalid attributes in organization chart with one point.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11783">#11783</a>, tooltip border and background disappeared when combining <a href="https://api.highcharts.com/highcharts/tooltip.outside">tooltip.outside</a> and <a href="https://api.highcharts.com/highcharts/chart.styledMode">chart.styledMode</a>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/7911">#7911</a>, <code>axis.reversed</code> should not take effect on a linked axis if the parent axis had a different setting.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/10962">#10962</a>, stack labels were misaligned in variwide series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11702">#11702</a>, error in organization chart with certain relations, plus color was not always applied to nodes.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11717">#11717</a>, loading network graph as ES6 module threw errors.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11609">#11609</a>, prevented reflow of destroyed charts in IE and Edge.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11546">#11546</a>, in packed bubble series <code>parentNodes</code> were missing after chart and series update.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11199">#11199</a>, a regression causing wrong grid line placement in a single-item category axis.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11469">#11469</a>, <code>Series.remove()</code> function didn&#39;t work properly with <em>networkgraph</em> and <em>packedbubble</em> series.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-v7.1.3"></a>
               <a href="#highcharts-v7.1.3">Highcharts Basic v7.1.3 (2019-08-14)</a>
             </p>
@@ -28,10 +118,24 @@
               <li>Improved keyboard navigation for inverted charts, including bar charts.</li>
               <li>Added support for Windows High Contrast Mode. A set of styling options are automatically set using chart/series/point update when WHCM is detected. The options automatically match the OS theme, but can be overridden with the new <a href="https://api.highcharts.com/highcharts/accessibility.highContrastTheme">accessibility.highContrastTheme</a> option.</li>
               <li>Added <a href="https://api.highcharts.com/highcharts/tooltip.className">tooltip.className</a> option for additional custom CSS class.</li>
+              <li>Added support for layout around subtitles with <a href="https://api.highcharts.com/highcharts/subtitle.verticalPosition">verticalPosition</a> <code>bottom</code>.</li>
             </ul>
             <div id="accordion" class="card-group">
               <div class="card">
+                <div id="heading-7-1-3-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#7-1-3-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                  </h4>
+                </div>
+                <div id="7-1-3-upgrade-notes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Exact positioning of titles and subtitles with <code>verticalPosition</code> other than <code>top</code> may have changed since last version due to better layout handling.</li>
+                    </ul>
 
+                  </div>
+
+                </div>
                 <div id="heading-7-1-3-bug-fixes" class="card-header">
                   <h4 class="card-title">
                     <a href="#7-1-3-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
@@ -4970,6 +5074,46 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highstock-v7.2.1"></a>
+              <a href="#highstock-v7.2.1">Highstock v7.2.1 (2019-10-31)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.1 above also apply to Highstock 7.2.1.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hs-heading-7-2-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hs-7-2-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-7-2-1-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12266">#12266</a>, applying zones on macd when the main series had no data produced an error. [<a href="https://github.com/highcharts/highcharts/pull/12270">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11471">#11471</a>, updating chart with new series and <code>oneToOne</code> set to true used to throw errors when data was grouped. [<a href="https://github.com/highcharts/highcharts/pull/12254">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12215">#12215</a>, VWAP technical indicator added via StockTools was added to the wrong pane. [<a href="https://github.com/highcharts/highcharts/pull/12220">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11426">#11426</a>, arearange series had disabled <code>dataGrouping</code> by default. [<a href="https://github.com/highcharts/highcharts/pull/12200">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/1172">#1172</a>, handles positions and <code>xAxis</code> extremes were incorrect when using column type series in navigator. [<a href="https://github.com/highcharts/highcharts/pull/12146">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12099">#12099</a>, panning to the left did not work properly after zooming in when data grouping was enabled. [<a href="https://github.com/highcharts/highcharts/pull/12144">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11716">#11716</a>, basic annotations (rect, circle and label) were missing options in StockTools&#39; popup. [<a href="https://github.com/highcharts/highcharts/pull/12104">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12058">#12058</a>, compare with one single data value failed. It now behaves like when comparing to data points of the same value - it renders on the 0 line. [<a href="https://github.com/highcharts/highcharts/pull/12083">Edit</a>]</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highstock-v7.2.0"></a>
+              <a href="#highstock-v7.2.0">Highstock v7.2.0 (2019-09-03)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.0 above also apply to Highstock 7.2.0.</li>
+            </ul>
+            <p class="release-header">
               <a id="highstock-v7.1.3"></a>
               <a href="#highstock-v7.1.3">Highstock v7.1.3 (2019-08-14)</a>
             </p>
@@ -7552,6 +7696,59 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highmaps-v7.2.1"></a>
+              <a href="#highmaps-v7.2.1">Highmaps v7.2.1 (2019-10-31)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.1 above also apply to Highmaps 7.2.1.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hm-heading-7-2-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hm-7-2-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hm-7-2-1-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12231">#12231</a>, loading Highmaps as a module and using color axis thrown a reference error. [<a href="https://github.com/highcharts/highcharts/pull/12255">Edit</a>]</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11924">#11924</a>, using the <code>addColorAxis</code> method in Highmaps hid the map. [<a href="https://github.com/highcharts/highcharts/pull/11950">Edit</a>]</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highmaps-v7.2.0"></a>
+              <a href="#highmaps-v7.2.0">Highmaps v7.2.0 (2019-09-03)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.0 above also apply to Highmaps 7.2.0.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hm-heading-7-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hm-7-2-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hm-7-2-0-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11448">#11448</a>, bubble legend in Highmaps caused unexpected grid lines.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highmaps-v7.1.3"></a>
               <a href="#highmaps-v7.1.3">Highmaps v7.1.3 (2019-08-14)</a>
             </p>
@@ -8555,6 +8752,20 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-gantt-v7.2.1"></a>
+              <a href="#highcharts-gantt-v7.2.1">Highcharts Gantt v7.2.1 (2019-10-31)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.1 above also apply to Highcharts Gantt 7.2.1.</li>
+            </ul>
+            <p class="release-header">
+              <a id="highcharts-gantt-v7.2.0"></a>
+              <a href="#highcharts-gantt-v7.2.0">Highcharts Gantt v7.2.0 (2019-09-03)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.2.0 above also apply to Highcharts Gantt 7.2.0.</li>
+            </ul>
             <p class="release-header">
               <a id="highcharts-gantt-v7.1.3"></a>
               <a href="#highcharts-gantt-v7.1.3">Highcharts Gantt v7.1.3 (2019-08-14)</a>

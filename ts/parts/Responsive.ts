@@ -77,11 +77,11 @@ const {
     isArray,
     isObject,
     objectEach,
+    pick,
     splat
 } = U;
 
-var Chart = H.Chart,
-    pick = H.pick;
+var Chart = H.Chart;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -153,7 +153,7 @@ var Chart = H.Chart,
 /**
  * A callback function to gain complete control on when the responsive
  * rule applies. Return `true` if it applies. This opens for checking
- * against other metrics than the chart size, or example the document
+ * against other metrics than the chart size, for example the document
  * size or other elements.
  *
  * @type      {Highcharts.ResponsiveCallbackFunction}
@@ -228,7 +228,7 @@ Chart.prototype.setResponsive = function (
         options.rules.forEach(function (
             rule: Highcharts.ResponsiveRulesOptions
         ): void {
-            if (rule._id === undefined) {
+            if (typeof rule._id === 'undefined') {
                 rule._id = H.uniqueKey();
             }
 
@@ -251,7 +251,7 @@ Chart.prototype.setResponsive = function (
     mergedOptions.isResponsiveOptions = true;
 
     // Stringified key for the rules that currently apply.
-    ruleIds = ((ruleIds.toString() as any) || undefined);
+    ruleIds = ((ruleIds.toString() as any) || void 0);
     currentRuleIds = currentResponsive && currentResponsive.ruleIds;
 
     // Changes in what rules apply
@@ -276,7 +276,7 @@ Chart.prototype.setResponsive = function (
             this.update(mergedOptions, redraw, true);
 
         } else {
-            this.currentResponsive = undefined;
+            this.currentResponsive = void 0;
         }
     }
 };
@@ -371,7 +371,7 @@ Chart.prototype.currentOptions = function (
             } else if (isObject(val)) {
                 ret[key] = isArray(val) ? [] : {};
                 getCurrent(val, curr[key] || {}, ret[key], depth + 1);
-            } else if (curr[key] === undefined) { // #10286
+            } else if (typeof curr[key] === 'undefined') { // #10286
                 ret[key] = null;
             } else {
                 ret[key] = curr[key];

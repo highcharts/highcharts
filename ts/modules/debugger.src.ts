@@ -48,12 +48,11 @@ setOptions({
          * Whether to display errors on the chart. When `false`, the errors will
          * be shown only in the console.
          *
-         * Requires `debugger.js` module.
-         *
          * @sample highcharts/chart/display-errors/
          *         Show errors on chart
          *
-         * @since 7.0.0
+         * @since    7.0.0
+         * @requires modules/debugger
          */
         displayErrors: true
     }
@@ -80,17 +79,24 @@ addEvent(H.Chart, 'displayError', function (
         });
     }
 
-    if (options && options.displayErrors) {
+    if (options && options.displayErrors && renderer) {
         chart.errorElements = [];
         msg = isNumber(code) ?
             (
                 'Highcharts error #' + code + ': ' +
-                (H.errorMessages as any)[code].title +
                 (H.errorMessages as any)[code].text
             ) :
             code;
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
+
+        // Format msg so SVGRenderer can handle it
+        msg = msg
+            .replace(
+                /<h1>(.*)<\/h1>/g,
+                '<br><span style="font-size: 24px">$1</span><br>'
+            )
+            .replace(/<\/p>/g, '</p><br>');
 
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(
@@ -104,21 +110,23 @@ addEvent(H.Chart, 'displayError', function (
             zIndex: 3
         }).add();
 
-        // Render error message.
+        // Render error message
         chart.errorElements[1] = renderer.label(
             msg,
             0,
             0,
             'rect',
-            null as any,
-            null as any,
-            true
+            void 0,
+            void 0,
+            void 0,
+            void 0,
+            'debugger'
         ).css({
             color: '#ffffff',
             width: chartWidth - 16,
             padding: 0
         }).attr({
-            fill: '#ff0000',
+            fill: 'rgba(255, 0, 0, 0.9)',
             width: chartWidth,
             padding: 8,
             zIndex: 10

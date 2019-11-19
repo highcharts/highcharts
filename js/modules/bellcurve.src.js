@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+var correctFloat = U.correctFloat, isNumber = U.isNumber;
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, correctFloat = H.correctFloat, merge = H.merge;
+var seriesType = H.seriesType, merge = H.merge;
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */
@@ -71,8 +71,9 @@ seriesType('bellcurve', 'areaspline'
  * @extends      plotOptions.areaspline
  * @since        6.0.0
  * @product      highcharts
- * @excluding    boostThreshold, connectNulls, stacking, pointInterval,
- *               pointIntervalUnit
+ * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
+ *               pointInterval, pointIntervalUnit
+ * @requires     modules/bellcurve
  * @optionparent plotOptions.bellcurve
  */
 , {
@@ -132,6 +133,7 @@ seriesType('bellcurve', 'areaspline'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, data
+ * @requires  modules/bellcurve
  * @apioption series.bellcurve
  */
 /**

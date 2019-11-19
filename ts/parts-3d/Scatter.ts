@@ -67,7 +67,9 @@ seriesType(
      *         Draggable 3d scatter
      *
      * @extends      plotOptions.scatter
+     * @excluding    dragDrop
      * @product      highcharts
+     * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
     {
@@ -106,7 +108,7 @@ seriesType(
             this: Highcharts.Scatter3dPoint
         ): Highcharts.Scatter3dPoint {
             Point.prototype.applyOptions.apply(this, arguments as any);
-            if (this.z === undefined) {
+            if (typeof this.z === 'undefined') {
                 this.z = 0;
             }
 
@@ -125,6 +127,7 @@ seriesType(
  *
  * @extends   series,plotOptions.scatter3d
  * @product   highcharts
+ * @requires  highcharts-3d
  * @apioption series.scatter3d
  */
 

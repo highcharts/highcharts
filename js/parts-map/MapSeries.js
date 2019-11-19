@@ -15,9 +15,10 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
+import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, splat = U.splat;
-var colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, extend = H.extend, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, pick = H.pick, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -41,20 +42,13 @@ seriesType('map', 'scatter',
 {
     animation: false,
     dataLabels: {
-        /** @ignore-option */
         crop: false,
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.value;
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         overflow: false,
-        /** @ignore-option */
         padding: 0,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     /**
@@ -149,13 +143,8 @@ seriesType('map', 'scatter',
      */
     borderWidth: 1,
     /**
-     * Set this option to `false` to prevent a series from connecting to
-     * the global color axis. This will cause the series to have its own
-     * legend item.
-     *
-     * @type      {boolean}
-     * @product   highmaps
-     * @apioption plotOptions.series.colorAxis
+     * @default   value
+     * @apioption plotOptions.map.colorKey
      */
     /**
      * What property to join the `mapData` to the value data. For example,
@@ -276,7 +265,7 @@ seriesType('map', 'scatter',
         }
     }
     // Prototype members
-}, merge(colorSeriesMixin, {
+}, merge(colorMapSeriesMixin, {
     type: 'map',
     getExtremesFromAll: true,
     useMapGeometry: true,
@@ -360,10 +349,10 @@ seriesType('map', 'scatter',
             this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
             // If no minRange option is set, set the default minimum zooming
             // range to 5 times the size of the smallest element
-            if (xAxis && xAxis.options.minRange === undefined) {
+            if (xAxis && typeof xAxis.options.minRange === 'undefined') {
                 xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
             }
-            if (yAxis && yAxis.options.minRange === undefined) {
+            if (yAxis && typeof yAxis.options.minRange === 'undefined') {
                 yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
             }
         }
@@ -443,7 +432,8 @@ seriesType('map', 'scatter',
                     // Run through pointArrayMap and what's left of the
                     // point data array in parallel, copying over the values
                     for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
-                        if (pointArrayMap[j] && val[ix] !== undefined) {
+                        if (pointArrayMap[j] &&
+                            typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
                                 H.Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
@@ -552,8 +542,10 @@ seriesType('map', 'scatter',
         series.data.forEach(function (point) {
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
-            point.plotX = xAxis.toPixels(point._midX, true);
-            point.plotY = yAxis.toPixels(point._midY, true);
+            if (isNumber(point._midX) && isNumber(point._midY)) {
+                point.plotX = xAxis.toPixels(point._midX, true);
+                point.plotY = yAxis.toPixels(point._midY, true);
+            }
             if (doFullTranslate) {
                 point.shapeType = 'path';
                 point.shapeArgs = {
@@ -561,7 +553,7 @@ seriesType('map', 'scatter',
                 };
             }
         });
-        series.translateColors();
+        fireEvent(series, 'afterTranslate');
     },
     // Get presentational attributes. In the maps series this runs in both
     // styled and non-styled mode, because colors hold data when a colorAxis
@@ -830,7 +822,7 @@ seriesType('map', 'scatter',
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
         if (series.mapData) {
-            mapPoint = point[joinBy[1]] !== undefined &&
+            mapPoint = typeof point[joinBy[1]] !== 'undefined' &&
                 series.mapMap[point[joinBy[1]]];
             if (mapPoint) {
                 // This applies only to bubbles
@@ -864,7 +856,7 @@ seriesType('map', 'scatter',
      * @sample maps/members/point-zoomto/
      *         Zoom to points from butons
      *
-     * @requires module:modules/map
+     * @requires modules/map
      *
      * @function Highcharts.Point#zoomTo
      */
@@ -874,7 +866,7 @@ seriesType('map', 'scatter',
         series.yAxis.setExtremes(point._minY, point._maxY, false);
         series.chart.redraw();
     }
-}, colorPointMixin));
+}, colorMapPointMixin));
 /**
  * A map data object containing a `path` definition and optionally additional
  * properties to join in the data as per the `joinBy` option.

@@ -92,8 +92,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: Array<XAxisOptions>;
-            yAxis?: Array<YAxisOptions>;
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -109,6 +109,7 @@ declare global {
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
             borderWidth?: number;
+            enabled?: boolean;
             format?: string;
             formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
             padding?: number;
@@ -274,10 +275,7 @@ declare global {
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
-            stops?: Array<[
-                number,
-                (ColorString|GradientColorObject|PatternObject)
-            ]>;
+            stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
         interface ZAxisOptions extends XAxisOptions {
@@ -370,7 +368,7 @@ declare global {
             public plotLinesAndBandsGroups: Dictionary<SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
-            public pos?: number;
+            public pos: number;
             public positiveValuesOnly: boolean;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
@@ -692,12 +690,22 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
+    arrayMax,
+    arrayMin,
+    clamp,
+    correctFloat,
     defined,
+    destroyObjectProperties,
+    extend,
     isArray,
     isNumber,
     isString,
     objectEach,
-    splat
+    pick,
+    relativeLength,
+    splat,
+    syncTimeout
 } = U;
 
 import './Color.js';
@@ -705,24 +713,16 @@ import './Options.js';
 import './Tick.js';
 
 var addEvent = H.addEvent,
-    animObject = H.animObject,
-    arrayMax = H.arrayMax,
-    arrayMin = H.arrayMin,
     color = H.color,
-    correctFloat = H.correctFloat,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
-    destroyObjectProperties = H.destroyObjectProperties,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
-    syncTimeout = H.syncTimeout,
     Tick = H.Tick;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -764,7 +764,7 @@ var Axis = function (this: Highcharts.Axis): any {
     /* eslint-enable no-invalid-this, valid-jsdoc */
 } as any;
 
-H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * The X axis or category axis. Normally this is the horizontal axis,
@@ -901,14 +901,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * If categories are present for the xAxis, names are used instead of
-         * numbers for that axis. Since Highcharts 3.0, categories can also
+         * numbers for that axis.
+         *
+         * Since Highcharts 3.0, categories can also
          * be extracted by giving each point a [name](#series.data) and setting
          * axis [type](#xAxis.type) to `category`. However, if you have multiple
          * series, best practice remains defining the `categories` array.
          *
-         * Example:
-         *
-         * <pre>categories: ['Apples', 'Bananas', 'Oranges']</pre>
+         * Example: `categories: ['Apples', 'Bananas', 'Oranges']`
          *
          * @sample {highcharts} highcharts/demo/line-labels/
          *         With
@@ -966,6 +966,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          *
+         * @declare   Highcharts.AxisCrosshairOptions
          * @type      {boolean|*}
          * @default   false
          * @since     4.1
@@ -996,7 +997,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash style for the crosshair. See
-         * [series.dashStyle](#plotOptions.series.dashStyle)
+         * [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
          * for possible values.
          *
          * @sample {highcharts|highmaps} highcharts/xaxis/crosshair-dotted/
@@ -1021,6 +1022,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} highcharts/css/crosshair-label/
          *         Style mode
          *
+         * @declare   Highcharts.AxisCrosshairLabelOptions
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label
@@ -1074,6 +1076,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.borderWidth
+         */
+
+        /**
+         * Flag to enable crosshair's label.
+         *
+         * @sample {highstock} stock/xaxis/crosshairs-xy/
+         *         Enabled label for yAxis' crosshair
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     2.1
+         * @product   highstock
+         * @apioption xAxis.crosshair.label.enabled
          */
 
         /**
@@ -1205,10 +1220,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
          *
+         * @declare Highcharts.AxisDateTimeLabelFormatsOptions
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             millisecond: {
@@ -1216,6 +1233,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             second: {
@@ -1223,6 +1241,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             minute: {
@@ -1230,6 +1249,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             hour: {
@@ -1237,24 +1257,28 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 range: false
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             day: {
                 main: '%e. %b'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             week: {
                 main: '%e. %b'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             month: {
                 main: '%b \'%y'
             },
             /**
+             * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             year: {
@@ -1320,7 +1344,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.afterSetExtremes
          */
 
@@ -1335,7 +1359,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @since     4.1.0
          * @product   highcharts gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointBreak
          */
 
@@ -1344,7 +1368,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
          * @product   highcharts highstock gantt
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
          */
 
@@ -1365,7 +1389,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     1.2.0
-         * @context   Axis
+         * @context   Highcharts.Axis
          * @apioption xAxis.events.setExtremes
          */
 
@@ -1737,6 +1761,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 fontSize: '11px'
             }
         },
+
+        /**
+         * The left position as the horizontal axis. If it's a number, it is
+         * interpreted as pixel position relative to the chart.
+         *
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the plot width, offset from plot area
+         * left.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.left
+         */
+
+        /**
+         * The top position as the vertical axis. If it's a number, it is
+         * interpreted as pixel position relative to the chart.
+         *
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
+         * as percentages of the plot height, offset from plot area top.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.top
+         */
 
         /**
          * Index of another axis that this axis is linked to. When an axis is
@@ -2846,6 +2895,30 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // gridLineWidth: 0,
 
         /**
+         * The height as the vertical axis. If it's a number, it is
+         * interpreted as pixels.
+         *
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
+         * as percentages of the total plot height.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.height
+         */
+
+        /**
+         * The width as the horizontal axis. If it's a number, it is interpreted
+         * as pixels.
+         *
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the total plot width.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.width
+         */
+
+        /**
          * Color for the main tick marks.
          *
          * In styled mode, the stroke is given in the `.highcharts-tick`
@@ -2877,7 +2950,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @type         {*|Array<*>}
      * @extends      xAxis
-     * @excluding    ordinal,overscroll,currentDateIndicator
+     * @excluding    currentDateIndicator,ordinal,overscroll
      * @optionparent yAxis
      *
      * @private
@@ -2944,8 +3017,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The height of the Y axis. If it's a number, it is interpreted as
          * pixels.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the total plot height.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the total plot height.
          *
          * @see [yAxis.top](#yAxis.top)
          *
@@ -2953,7 +3026,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Percentage height panes
          *
          * @type      {number|string}
-         * @product   highstock
+         * @product   highcharts highstock
          * @apioption yAxis.height
          */
 
@@ -3036,7 +3109,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Array<number,Highcharts.ColorString>>}
+         * @type      {Array<Highcharts.GradientColorStopObject>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -3520,8 +3593,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The top position of the Y axis. If it's a number, it is interpreted
          * as pixel position relative to the chart.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the plot height, offset from plot area top.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the plot height, offset from plot area top.
          *
          * @see [yAxis.height](#yAxis.height)
          *
@@ -3529,7 +3602,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Percentage height panes
          *
          * @type      {number|string}
-         * @product   highstock
+         * @product   highcharts highstock
          * @apioption yAxis.top
          */
 
@@ -3609,8 +3682,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @product highcharts
              */
             formatter: function (this: Highcharts.StackItemObject): string {
+                const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return H.numberFormat(this.total, -1);
+                return numberFormatter(this.total, -1);
             },
 
             /**
@@ -3659,7 +3733,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @extends   xAxis
      * @since     5.0.0
      * @product   highcharts
-     * @excluding breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
+     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+     *            nameToX, showEmpty, top, width
      * @apioption zAxis
      *
      * @private
@@ -3834,6 +3909,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Initial categories
         axis.hasNames =
             type === 'category' || (options.categories as any) === true;
+
+        /**
+         * If categories are present for the axis, names are used instead of
+         * numbers for that axis.
+         *
+         * Since Highcharts 3.0, categories can also be extracted by giving each
+         * point a name and setting axis type to `category`. However, if you
+         * have multiple series, best practice remains defining the `categories`
+         * array.
+         *
+         * @see [xAxis.categories](/highcharts/xAxis.categories)
+         *
+         * @name Highcharts.Axis#categories
+         * @type {Array<string>}
+         * @readonly
+         */
         axis.categories = (options.categories as any) || axis.hasNames;
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
@@ -3857,7 +3948,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3868,7 +3958,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
-         * @private
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3951,7 +4040,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             chart.inverted &&
             !axis.isZAxis &&
             isXAxis &&
-            axis.reversed === undefined
+            typeof axis.reversed === 'undefined'
         ) {
             axis.reversed = true;
         }
@@ -4009,9 +4098,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * The default label formatter. The context is a special config object for
      * the label. In apps, use the
      * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
-     * instead except when a modification is needed.
-     * @private
+     * instead, except when a modification is needed.
+     *
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @this Highcharts.AxisLabelsFormatterContextObject
+     *
      * @return {string}
+     * The formatted label content.
      */
     defaultLabelFormatter: function (
         this: Highcharts.AxisLabelsFormatterContextObject
@@ -4026,7 +4120,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
             i = numericSymbols && numericSymbols.length,
             multi,
-            ret,
+            ret: (string|undefined),
             formatOption = (axis.options.labels as any).format,
 
             // make sure the same symbol is added for all labels on a linear
@@ -4034,12 +4128,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             numericSymbolDetector = axis.isLog ?
                 Math.abs(value) :
                 axis.tickInterval;
+        const chart = this.chart;
+        const { numberFormatter } = chart;
 
         if (formatOption) {
-            ret = format(formatOption, this, time);
+            ret = format(formatOption, this, chart);
 
         } else if (categories) {
-            ret = value;
+            ret = value as any;
 
         } else if (dateTimeLabelFormat) { // datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
@@ -4049,7 +4145,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
             // enable it by a parameter.
-            while (i-- && ret === undefined) {
+            while (i-- && typeof ret === 'undefined') {
                 multi = Math.pow(numSymMagnitude, i + 1);
                 if (
                     // Only accept a numeric symbol when the distance is more
@@ -4062,20 +4158,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }
 
-        if (ret === undefined) {
+        if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // add thousands separators
-                ret = H.numberFormat(value, -1);
+                ret = numberFormatter(value, -1);
             } else { // small numbers
-                ret = H.numberFormat(value, -1, undefined, ''); // #2466
+                ret = numberFormatter(value, -1, void 0, ''); // #2466
             }
         }
 
-        return ret as any;
+        return ret;
     },
 
     /**
@@ -4276,7 +4373,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         0
                     )
                 ) :
-                undefined as any;
+                void 0 as any;
         }
 
         return returnValue;
@@ -4378,7 +4475,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             between = function (x: number, a: number, b: number): number {
                 if (force !== 'pass' && x < a || x > b) {
                     if (force) {
-                        x = Math.min(Math.max(a, x), b);
+                        x = clamp(x, a, b);
                     } else {
                         skip = true;
                     }
@@ -4402,9 +4499,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = Math.min(
-                Math.max(-1e5, translatedValue as any), 1e5
-            );
+            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
@@ -4632,7 +4727,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             minRange;
 
         // Set the automatic minimum range based on the closest point distance
-        if (axis.isXAxis && axis.minRange === undefined && !axis.isLog) {
+        if (
+            axis.isXAxis &&
+            typeof axis.minRange === 'undefined' &&
+            !axis.isLog
+        ) {
 
             if (defined(options.min) || defined(options.max)) {
                 axis.minRange = null; // don't do this again
@@ -4648,7 +4747,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     for (i = loopLength; i > 0; i--) {
                         distance = xData[i] - xData[i - 1];
                         if (
-                            closestDataRange === undefined ||
+                            typeof closestDataRange === 'undefined' ||
                             distance < closestDataRange
                         ) {
                             closestDataRange = distance;
@@ -4777,7 +4876,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Write the last point's name to the names array
-        if (x !== undefined) {
+        if (typeof x !== 'undefined') {
             this.names[x] = point.name as any;
             // Backwards mapping is much faster than array searching (#7725)
             (this.names as any).keys[point.name as any] = x;
@@ -4836,10 +4935,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     if (
                         point &&
                         point.options &&
-                        point.name !== undefined // #9562
+                        typeof point.name !== 'undefined' // #9562
                     ) {
                         x = axis.nameToX(point);
-                        if (x !== undefined && x !== point.x) {
+                        if (typeof x !== 'undefined' && x !== point.x) {
                             point.x = x;
                             (series.xData as any)[i] = x;
                         }
@@ -4942,7 +5041,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // pointRange means the width reserved for each point, like in a
             // column chart
-            axis.pointRange = Math.min(pointRange, range);
+            axis.pointRange = Math.min(
+                pointRange,
+                axis.single && hasCategories ? 1 : range
+            );
 
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
@@ -5049,8 +5151,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 }
             }
 
-            axis.min = pick(hardMin, thresholdMin, axis.dataMin);
-            axis.max = pick(hardMax, thresholdMax, axis.dataMax);
+            axis.min = pick(hardMin, thresholdMin, axis.dataMin as any);
+            axis.max = pick(hardMax, thresholdMax, axis.dataMax as any);
 
         }
 
@@ -5058,7 +5160,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
-                Math.min(axis.min as any, pick(axis.dataMin, axis.min)) <= 0
+                Math.min(
+                    axis.min as any, pick(axis.dataMin, axis.min as any)
+                ) <= 0
             ) { // #978
                 // Can't plot negative values on log axis
                 H.error(10, 1 as any, chart);
@@ -5066,8 +5170,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range
@@ -5114,34 +5218,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (
-            isNumber(options.softMin) &&
-            !isNumber(axis.userMin) &&
-            (options.softMin as any) < (axis.min as any)
-        ) {
-            axis.min = hardMin = options.softMin as any; // #6894
+        if (!isNumber(axis.userMin)) {
+            if (
+                isNumber(options.softMin) && options.softMin < (axis.min as any)
+            ) {
+                axis.min = hardMin = options.softMin; // #6894
+            }
+            if (isNumber(options.floor)) {
+                axis.min = Math.max(axis.min as any, options.floor);
+            }
         }
-        if (
-            isNumber(options.softMax) &&
-            !isNumber(axis.userMax) &&
-            (options.softMax as any) > (axis.max as any)
-        ) {
-            axis.max = hardMax = options.softMax as any; // #6894
+        if (!isNumber(axis.userMax)) {
+            if (
+                isNumber(options.softMax) && options.softMax > (axis.max as any)
+            ) {
+                axis.max = hardMax = options.softMax; // #6894
+            }
+            if (isNumber(options.ceiling)) {
+                axis.max = Math.min(axis.max as any, options.ceiling);
+            }
         }
-
-        if (isNumber(options.floor)) {
-            axis.min = Math.min(
-                Math.max(axis.min as any, options.floor as any),
-                Number.MAX_VALUE
-            );
-        }
-        if (isNumber(options.ceiling)) {
-            axis.max = Math.max(
-                Math.min(axis.max as any, options.ceiling as any),
-                pick(axis.userMax, -Number.MAX_VALUE)
-            );
-        }
-
 
         // When the threshold is soft, adjust the extreme value only if the data
         // extreme and the padded extreme land on either side of the threshold.
@@ -5176,8 +5272,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // get tickInterval
         if (
             axis.min === axis.max ||
-            axis.min === undefined ||
-            axis.max === undefined
+            typeof axis.min === 'undefined' ||
+            typeof axis.max === 'undefined'
         ) {
             axis.tickInterval = 1;
 
@@ -5196,7 +5292,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 this.tickAmount ?
                     (((axis.max as any) - (axis.min as any)) /
                     Math.max(this.tickAmount - 1, 1)) :
-                    undefined,
+                    void 0,
                 // For categoried axis, 1 is default, for linear axis use
                 // tickPix
                 categories ?
@@ -5639,7 +5735,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         tickPositions.splice(i, 1);
                     }
                 }
-                axis.finalTickAmt = undefined;
+                axis.finalTickAmt = void 0;
             }
         }
     },
@@ -5660,7 +5756,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.isDirty ||
                     // When x axis is dirty, we need new data extremes for y as
                     // well:
-                    series.xAxis.isDirty as any
+                    series.xAxis && (series.xAxis.isDirty as any)
                 );
             }),
             isDirtyAxisLength;
@@ -5810,8 +5906,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         var dataMin = this.dataMin,
             dataMax = this.dataMax,
             options = this.options,
-            min = Math.min(dataMin as any, pick(options.min, dataMin)),
-            max = Math.max(dataMax as any, pick(options.max, dataMax)),
+            min = Math.min(dataMin as any, pick(options.min, dataMin as any)),
+            max = Math.max(dataMax as any, pick(options.max, dataMax as any)),
             evt = {
                 newMin: newMin,
                 newMax: newMax
@@ -5852,14 +5948,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 // In full view, displaying the reset zoom button is not
                 // required
-                this.displayBtn = newMin !== undefined || newMax !== undefined;
+                this.displayBtn = (
+                    typeof newMin !== 'undefined' ||
+                    typeof newMax !== 'undefined'
+                );
 
                 // Do it
                 this.setExtremes(
                     newMin,
                     newMax,
                     false,
-                    undefined,
+                    void 0,
                     { trigger: 'zoom' }
                 );
             }
@@ -5883,26 +5982,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Check for percentage based input values. Rounding fixes problems
             // with column overflow and plot line filtering (#4898, #4899)
-            width = this.width = Math.round(H.relativeLength(
+            width = this.width = Math.round(relativeLength(
                 pick(
                     options.width,
                     chart.plotWidth - offsets[3] + offsets[1]
                 ),
                 chart.plotWidth
             )),
-            height = this.height = Math.round(H.relativeLength(
+            height = this.height = Math.round(relativeLength(
                 pick(
                     options.height,
                     chart.plotHeight - offsets[0] + offsets[2]
                 ),
                 chart.plotHeight
             )),
-            top = this.top = Math.round(H.relativeLength(
+            top = this.top = Math.round(relativeLength(
                 pick(options.top, chart.plotTop + offsets[0]),
                 chart.plotHeight,
                 chart.plotTop
             )),
-            left = this.left = Math.round(H.relativeLength(
+            left = this.left = Math.round(relativeLength(
                 pick(options.left, chart.plotLeft + offsets[3]),
                 chart.plotWidth,
                 chart.plotLeft
@@ -6986,7 +7085,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // alternate grid color
             if (alternateGridColor) {
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    to = tickPositions[i + 1] !== undefined ?
+                    to = typeof tickPositions[i + 1] !== 'undefined' ?
                         tickPositions[i + 1] + tickmarkOffset :
                         (axis.max as any) - tickmarkOffset;
 
@@ -7275,7 +7374,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
-                    (point as any).crosshairPos, // 3D axis extension
+                    this.coll !== 'colorAxis' ?
+                        (point as any).crosshairPos : // 3D axis extension
+                        null,
                     this.isXAxis ?
                         (point as any).plotX :
                         this.len - (point as any).plotY

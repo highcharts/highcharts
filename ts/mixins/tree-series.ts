@@ -13,37 +13,75 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface TreeColorObject {
-            color: (ColorString|GradientColorObject|PatternObject);
+            color: ColorType;
             colorIndex: number;
+        }
+        interface TreeNodeObject {
+            children: Array<TreeNodeObject>;
+            i: number;
+            id: string;
+            level: number;
+            val: number;
+            visible: boolean;
+        }
+        interface TreePoint extends Point {
+            options: TreePointOptions;
+        }
+        interface TreePointOptions extends PointOptionsObject {
+            value?: (number|null);
+        }
+        interface TreeSeries extends Series {
+            mapOptionsToLevel: any;
+            points: Array<TreePoint>;
+            tree: TreeNodeObject;
         }
         interface TreeSeriesMixin {
             getColor( // @todo
                 node: any,
                 options: any
             ): Highcharts.TreeColorObject;
-            getLevelOptions(params: any): (Dictionary<any>|null); // @todo
-            setTreeValues(tree: any, options: any): any; // @todo
+            getLevelOptions<T extends TreeSeries>(
+                params: any
+            ): (T['mapOptionsToLevel']|null);
+            setTreeValues<T extends TreeSeries>(
+                tree: T['tree'],
+                options: TreeValuesOptionsObject<T>
+            ): T['tree'];
             updateRootId(series: any): string; // @todo
+        }
+        interface TreeValuesBeforeCallbackFunction<
+            T extends TreeSeries = TreeSeries
+        > {
+            (node: T['tree'], options: TreeValuesOptionsObject<T>): T['tree'];
+        }
+        interface TreeValuesOptionsObject<T extends TreeSeries = TreeSeries> {
+            before?: TreeValuesBeforeCallbackFunction<T>;
+            idRoot: string;
+            levelIsConstant?: boolean;
+            mapIdToNode: Dictionary<TreeNodeObject>;
+            points: T['points'];
+            series: T;
+            visible?: boolean;
         }
     }
 }
 
 import U from '../parts/Utilities.js';
 const {
+    extend,
     isArray,
     isNumber,
-    isObject
+    isObject,
+    pick
 } = U;
 
-var extend = H.extend,
-    isBoolean = function (x: unknown): x is boolean {
+var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
     },
-    merge = H.merge,
-    pick = H.pick;
+    merge = H.merge;
 
 /* eslint-disable valid-jsdoc */
 
@@ -52,10 +90,10 @@ var extend = H.extend,
  * @todo Remove logic from Treemap and make it utilize this mixin.
  * @private
  */
-var setTreeValues = function setTreeValues(
-    tree: any,
-    options: any
-): any {
+var setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
+    tree: T['tree'],
+    options: Highcharts.TreeValuesOptionsObject<T>
+): T['tree'] {
     var before = options.before,
         idRoot = options.idRoot,
         mapIdToNode = options.mapIdToNode,
@@ -69,7 +107,7 @@ var setTreeValues = function setTreeValues(
         point = points[tree.i],
         optionsPoint = point && point.options || {},
         childrenTotal = 0,
-        children = [] as Array<any>,
+        children: Array<Highcharts.TreeNodeObject> = [],
         value;
 
     extend(tree, {
@@ -84,8 +122,13 @@ var setTreeValues = function setTreeValues(
         tree = before(tree, options);
     }
     // First give the children some values
-    tree.children.forEach(function (child: any, i: number): void {
-        var newOptions = extend({}, options);
+    tree.children.forEach(function (
+        child: Highcharts.TreeNodeObject,
+        i: number
+    ): void {
+        var newOptions = extend<Highcharts.TreeValuesOptionsObject>(
+            {} as any, options
+        );
 
         extend(newOptions, {
             index: i,
@@ -114,8 +157,17 @@ var setTreeValues = function setTreeValues(
  * @private
  */
 var getColor = function getColor(
-    node: any,
-    options: any
+    node: Highcharts.TreemapNodeObject,
+    options: {
+        colorIndex?: number;
+        colors: Array<Highcharts.ColorString>;
+        index: number;
+        mapOptionsToLevel: Array<Highcharts.TreemapSeriesOptions>;
+        parentColor: Highcharts.ColorString;
+        parentColorIndex: number;
+        series: Highcharts.Series;
+        siblings: number;
+    }
 ): Highcharts.TreeColorObject {
     var index = options.index,
         mapOptionsToLevel = options.mapOptionsToLevel,
@@ -126,7 +178,8 @@ var getColor = function getColor(
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
-        chartOptionsChart = series.chart.options.chart,
+        chartOptionsChart: Highcharts.ChartOptions =
+            series.chart.options.chart as any,
         point,
         level: Highcharts.Dictionary<any>,
         colorByPoint,
@@ -157,9 +210,9 @@ var getColor = function getColor(
         getColorByPoint = point && level.colorByPoint;
 
         if (getColorByPoint) {
-            colorIndexByPoint = point.index % (colors ?
+            colorIndexByPoint = (point.index as any) % (colors ?
                 colors.length :
-                chartOptionsChart.colorCount
+                (chartOptionsChart.colorCount as any)
             );
             colorByPoint = colors && colors[colorIndexByPoint];
         }
@@ -205,13 +258,13 @@ var getColor = function getColor(
  * @return {Highcharts.Dictionary<object>|null}
  *         Returns a map from level number to its given options.
  */
-var getLevelOptions = function getLevelOptions(
+var getLevelOptions = function getLevelOptions<T extends Highcharts.TreeSeries>(
     params: any
-): (Highcharts.Dictionary<any>|null) {
+): (T['mapOptionsToLevel']|null) {
     var result = null,
         defaults: any,
         converted,
-        i,
+        i: number,
         from: any,
         to,
         levels;

@@ -35,13 +35,16 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick,
+    wrap
+} = U;
+
 import '../parts/Pointer.js';
 
-var extend = H.extend,
-    pick = H.pick,
-    Pointer = H.Pointer,
-    wrap = H.wrap;
+var Pointer = H.Pointer;
 
 /* eslint-disable no-invalid-this */
 

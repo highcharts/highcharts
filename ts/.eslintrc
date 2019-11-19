@@ -1,6 +1,9 @@
 {
     "extends": [
-        "plugin:@typescript-eslint/recommended"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -28,32 +31,48 @@
             "error",
             {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "no-dupe-class-members": 0,
-        "no-shadow": 0,
+        "no-shadow": 0, // @todo
         "no-undef": 0,
-        "no-undefined": 0,
-        "no-underscore-dangle": 0,
+        "no-underscore-dangle": 0, // @todo
         "no-unused-expressions": 0,
         "no-use-before-define": 0,
         "no-useless-constructor": 0,
+        "no-useless-escape": 0, // @todo
         "no-useless-return": 0,
+        "no-var": 0, // @todo
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
-        "prefer-rest-params": 0,
+        "prefer-spread": 0, // @todo
+        "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "@typescript-eslint/array-type": 0,
-        "@typescript-eslint/explicit-function-return-type": 2,
+        "@typescript-eslint/explicit-function-return-type": [
+            "error",
+            {
+                "allowExpressions": false,
+                "allowTypedFunctionExpressions": false
+            }
+        ],
         "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
-        "@typescript-eslint/no-unused-vars": 0,
+        "@typescript-eslint/no-this-alias": 0, // @todo
+        "@typescript-eslint/no-unnecessary-type-assertion": 0, // @todo
+        "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
-        "node/no-unsupported-features/es-syntax": 0
+        "@typescript-eslint/prefer-includes": 0, // @todo
+        "@typescript-eslint/prefer-regexp-exec": 0, // @todo
+        "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
+        "@typescript-eslint/unbound-method": 0, // @todo
+        "node/no-missing-import": 0, // @todo
+        "node/no-unsupported-features/es-syntax": 0, // @todo
     }
 }

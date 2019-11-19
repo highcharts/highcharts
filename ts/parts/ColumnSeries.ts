@@ -22,11 +22,6 @@ declare global {
             offset: number;
             width: number;
         }
-        interface PlotSeriesZonesOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-        }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
             pointWidth?: number;
@@ -40,32 +35,7 @@ declare global {
             minPointLength?: number;
             pointPadding?: number;
             pointWidth?: number;
-            startFromThreshold?: boolean;
-            states?: ColumnSeriesStatesOptions;
-        }
-        interface ColumnSeriesStatesHoverOptions
-            extends LineSeriesStatesHoverOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-        }
-        interface ColumnSeriesStatesInactiveOptions
-            extends LineSeriesStatesInactiveOptions {
-        }
-        interface ColumnSeriesStatesOptions extends LineSeriesStatesOptions {
-            hover?: ColumnSeriesStatesHoverOptions;
-            inactive?: ColumnSeriesStatesInactiveOptions;
-            select?: ColumnSeriesStatesSelectOptions;
-        }
-        interface ColumnSeriesStatesSelectOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            brightness?: number;
-            color?: (ColorString|GradientColorObject|PatternObject);
-            dashStyle?: DashStyleValue;
-        }
-        interface PlotSeriesOptions {
-            startFromThreshold?: ColumnSeriesOptions['startFromThreshold'];
+            states?: SeriesStatesOptionsObject<ColumnSeries>;
         }
         interface Point {
             allowShadow?: ColumnPoint['allowShadow'];
@@ -74,8 +44,19 @@ declare global {
             barW?: number;
             pointXOffset?: number;
         }
+        interface SeriesStatesHoverOptionsObject {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            brightness?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
+            dashStyle?: DashStyleValue;
+        }
         interface SeriesTypesDictionary {
             column: typeof ColumnSeries;
+        }
+        interface SeriesZonesOptions {
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderWidth?: number;
+            color?: (ColorString|GradientColorObject|PatternObject);
         }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
@@ -127,26 +108,14 @@ declare global {
  * @type {number}
  */
 
-/**
- * @interface Highcharts.PointOptionsObject
- *//**
- * A name for the dash style to use for the column or bar. Overrides dashStyle
- * on the series. In styled mode, the stroke dash-array can be set with the same
- * classes as listed under {@link Highcharts.PointOptionsObject#color}.
- * @name Highcharts.PointOptionsObject#dashStyle
- * @type {Highcharts.DashStyleValue|undefined}
- *//**
-
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
- * @name Highcharts.PointOptionsObject#pointWidth
- * @type {number|undefined}
- */
-
 import U from './Utilities.js';
 const {
+    animObject,
+    clamp,
     defined,
-    isNumber
+    extend,
+    isNumber,
+    pick
 } = U;
 
 import './Color.js';
@@ -154,13 +123,10 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var animObject = H.animObject,
-    color = H.color,
-    extend = H.extend,
+var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType,
     svg = H.svg;
@@ -174,7 +140,7 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.ColumnSeriesOptions>(
+seriesType<Highcharts.ColumnSeries>(
     'column',
     'line',
 
@@ -497,15 +463,8 @@ seriesType<Highcharts.ColumnSeriesOptions>(
         },
 
         dataLabels: {
-            /**
-             * @internal
-             */
             align: null,
-            /**
-             * @internal
-             */
             verticalAlign: null,
-            /** @internal */
             y: null
         },
 
@@ -677,7 +636,10 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                     ) { // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
-                            if (stackGroups[stackKey as any] === undefined) {
+                            if (
+                                typeof stackGroups[stackKey as any] ===
+                                'undefined'
+                            ) {
                                 stackGroups[stackKey as any] = columnCount++;
                             }
                             columnIndex = stackGroups[stackKey as any];
@@ -839,13 +801,14 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold),
+                var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
-                    plotY = Math.min(
-                        Math.max(-safeDistance, point.plotY as any),
+                    plotY = clamp(
+                        point.plotY as any,
+                        -safeDistance,
                         yAxis.len + safeDistance
                     ),
                     barX = (point.plotX as any) + seriesXOffset,
@@ -926,7 +889,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
         },
 
-        getSymbol: noop,
+        getSymbol: noop as any,
 
         /**
          * Use a solid rectangle like the area series types
@@ -973,7 +936,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
-                stateOptions: Highcharts.ColumnSeriesStatesHoverOptions,
+                stateOptions: Highcharts.SeriesStatesHoverOptionsObject,
                 ret: Highcharts.SVGAttributes,
                 p2o = (this as any).pointAttrToOptions || {},
                 strokeOption = p2o.stroke || 'borderColor',
@@ -1025,7 +988,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
                 brightness = stateOptions.brightness;
                 fill =
                     stateOptions.color || (
-                        brightness !== undefined &&
+                        typeof brightness !== 'undefined' &&
                         color(fill as any)
                             .brighten(stateOptions.brightness as any)
                             .get()
@@ -1081,10 +1044,7 @@ seriesType<Highcharts.ColumnSeriesOptions>(
 
                     // When updating a series between 2d and 3d or cartesian and
                     // polar, the shape type changes.
-                    if (
-                        graphic &&
-                        graphic.element.nodeName !== point.shapeType
-                    ) {
+                    if (graphic && point.hasNewShapeType()) {
                         graphic = graphic.destroy();
                     }
 
@@ -1150,12 +1110,10 @@ seriesType<Highcharts.ColumnSeriesOptions>(
             if (svg) { // VML is too slow anyway
                 if (init) {
                     attr.scaleY = 0.001;
-                    translatedThreshold = Math.min(
-                        (yAxis.pos as any) + yAxis.len,
-                        Math.max(
-                            yAxis.pos as any,
-                            yAxis.toPixels(options.threshold as any)
-                        )
+                    translatedThreshold = clamp(
+                        yAxis.toPixels(options.threshold as any),
+                        yAxis.pos,
+                        yAxis.pos + yAxis.len
                     );
                     if (inverted) {
                         attr.translateX = translatedThreshold - yAxis.len;

@@ -18,24 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface BulletPointOptions extends ColumnPointOptions {
-            borderColor?: ColorType;
-            target?: number;
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesOptions extends ColumnSeriesOptions {
-            targetOptions?: BulletSeriesTargetOptions;
-        }
-        interface BulletSeriesTargetOptions {
-            borderColor?: ColorString;
-            borderWidth?: number;
-            color?: ColorType;
-            height?: number;
-            width?: (number|string);
-        }
-        interface SeriesTypesDictionary {
-            bullet: typeof BulletSeries;
-        }
         class BulletPoint extends ColumnPoint {
             public borderColor: BulletPointOptions['borderColor'];
             public options: BulletPointOptions;
@@ -55,15 +37,35 @@ declare global {
             public drawPoints(): void;
             public getExtremes(yData?: Array<number>): void;
         }
+        interface BulletPointOptions extends ColumnPointOptions {
+            borderColor?: ColorType;
+            target?: number;
+            targetOptions?: BulletSeriesTargetOptions;
+        }
+        interface BulletSeriesOptions extends ColumnSeriesOptions {
+            targetOptions?: BulletSeriesTargetOptions;
+        }
+        interface BulletSeriesTargetOptions {
+            borderColor?: ColorString;
+            borderWidth?: number;
+            color?: ColorType;
+            height?: number;
+            width?: (number|string);
+        }
+        interface SeriesTypesDictionary {
+            bullet: typeof BulletSeries;
+        }
     }
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    pick,
+    relativeLength
+} = U;
 
-var pick = H.pick,
-    relativeLength = H.relativeLength,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     columnProto = H.seriesTypes.column.prototype;
 
 /**
@@ -75,7 +77,7 @@ var pick = H.pick,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
+seriesType<Highcharts.BulletSeries>('bullet', 'column'
 
     /**
      * A bullet graph is a variation of a bar graph. The bullet graph features
@@ -90,6 +92,7 @@ seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @requires     modules/bullet
      * @optionparent plotOptions.bullet
      */
     , {
@@ -243,7 +246,7 @@ seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
                         if (isNumber(pointVal) && pointVal !== null) {
                             (targetGraphic.element as any).point = point;
                         } else {
-                            (targetGraphic.element as any).point = undefined;
+                            (targetGraphic.element as any).point = void 0;
                         }
                     } else {
                         point.targetGraphic = targetGraphic = chart.renderer
@@ -263,7 +266,7 @@ seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
                                     x: point.x,
                                     y: targetVal,
                                     options: {}
-                                }).color || series.color)) || undefined,
+                                }).color || series.color)) || void 0,
                                 point.color,
                                 series.color
                             ),
@@ -350,6 +353,7 @@ seriesType<Highcharts.BulletSeriesOptions>('bullet', 'column'
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, marker
+ * @requires  modules/bullet
  * @apioption series.bullet
  */
 

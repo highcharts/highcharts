@@ -18,17 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface MapPointPointOptions extends ScatterPointOptions {
-            lat?: number;
-            lon?: number;
-            x?: number;
-            y?: (number|null);
-        }
-        interface MapPointSeriesOptions extends ScatterSeriesOptions {
-        }
-        interface SeriesTypesDictionary {
-            mappoint: typeof MapPointSeries;
-        }
         class MapPointPoint extends ScatterPoint {
             public options: MapPointPointOptions;
             public series: MapPointSeries;
@@ -44,6 +33,18 @@ declare global {
                 options: (MapLatLonObject&MapPointPointOptions),
                 x?: number
             ): MapPointPoint
+        }
+        interface MapPointPointOptions extends ScatterPointOptions {
+            lat?: number;
+            lon?: number;
+            x?: number;
+            y?: (number|null);
+        }
+        interface MapPointSeriesOptions extends ScatterSeriesOptions {
+            states?: SeriesStatesOptionsObject<MapPointSeries>;
+        }
+        interface SeriesTypesDictionary {
+            mappoint: typeof MapPointSeries;
         }
     }
 }
@@ -64,7 +65,7 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-seriesType<Highcharts.MapPointSeriesOptions>(
+seriesType<Highcharts.MapPointSeries>(
     'mappoint',
     'scatter',
     /**
@@ -80,23 +81,17 @@ seriesType<Highcharts.MapPointSeriesOptions>(
      */
     {
         dataLabels: {
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             defer: false,
-            /** @ignore-option */
             enabled: true,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (
                 this: Highcharts.DataLabelsFormatterContextObject
             ): (string|undefined) { // #2945
                 return this.point.name;
             },
-            /** @ignore-option */
             overflow: false as any,
-            /** @ignore-option */
             style: {
+                /** @internal */
                 color: '${palette.neutralColor100}'
             }
         }
@@ -114,8 +109,8 @@ seriesType<Highcharts.MapPointSeriesOptions>(
             x?: number
         ): Highcharts.MapPointPoint {
             var mergedOptions = (
-                options.lat !== undefined &&
-                options.lon !== undefined ?
+                typeof options.lat !== 'undefined' &&
+                typeof options.lon !== 'undefined' ?
                     merge(
                         options, this.series.chart.fromLatLonToPoint(options)
                     ) :

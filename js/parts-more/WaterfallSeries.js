@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
-var correctFloat = H.correctFloat, pick = H.pick, arrayMin = H.arrayMin, arrayMax = H.arrayMax, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -32,6 +32,10 @@ addEvent(Axis, 'afterInit', function () {
             changed: false
         };
     }
+});
+addEvent(Axis, 'afterBuildStacks', function () {
+    this.waterfallStacks.changed = false;
+    delete this.waterfallStacks.alreadyChanged;
 });
 addEvent(Chart, 'beforeRedraw', function () {
     var axes = this.axes, series = this.series, i = series.length;
@@ -62,7 +66,7 @@ addEvent(Axis, 'afterRender', function () {
  * @function Highcharts.Axis#renderWaterfallStackTotals
  */
 Axis.prototype.renderWaterfallStackTotals = function () {
-    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, undefined);
+    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
     yAxis.dummyStackItem = dummyStackItem;
     // Render each waterfall stack total
     objectEach(waterfallStacks, function (type) {
@@ -91,6 +95,7 @@ Axis.prototype.renderWaterfallStackTotals = function () {
  *
  * @extends      plotOptions.column
  * @product      highcharts
+ * @requires     highcharts-more
  * @optionparent plotOptions.waterfall
  */
 seriesType('waterfall', 'column', {
@@ -114,7 +119,6 @@ seriesType('waterfall', 'column', {
      * @apioption plotOptions.waterfall.upColor
      */
     dataLabels: {
-        /** @ignore-option */
         inside: true
     },
     /**
@@ -380,17 +384,24 @@ seriesType('waterfall', 'column', {
             series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
+        return;
     },
     // Return y value or string if point is sum
     toYData: function (pt) {
         if (pt.isSum) {
-            // #3245 Error when first element is Sum or Intermediate Sum
-            return (pt.x === 0 ? null : 'sum');
+            return 'sum';
         }
         if (pt.isIntermediateSum) {
-            return (pt.x === 0 ? null : 'intermediateSum'); // #3245
+            return 'intermediateSum';
         }
         return pt.y;
+    },
+    updateParallelArrays: function (point, i) {
+        Series.prototype.updateParallelArrays.call(this, point, i);
+        // Prevent initial sums from triggering an error (#3245, #7559)
+        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
+            this.yData[0] = null;
+        }
     },
     // Postprocess mapping between options and SVG attributes
     pointAttribs: function (point, state) {
@@ -447,7 +458,7 @@ seriesType('waterfall', 'column', {
                     yPos
                 ];
             }
-            if (!stacking &&
+            if (!stacking && d &&
                 (prevPoint.y < 0 && !reversedYAxis) ||
                 (prevPoint.y > 0 && reversedYAxis)) {
                 d[2] += prevArgs.height;
@@ -467,7 +478,7 @@ seriesType('waterfall', 'column', {
     },
     // Waterfall has stacking along the x-values too.
     setStackedPoints: function () {
-        var series = this, options = series.options, waterfallStacks = series.yAxis.waterfallStacks, seriesThreshold = options.threshold, stackThreshold = seriesThreshold || 0, interSum = stackThreshold, stackKey = series.stackKey, xData = series.xData, xLength = xData.length, actualStack, actualStackX, totalYVal, actualSum, prevSum, statesLen, posTotal, negTotal, xPoint, yVal, x;
+        var series = this, options = series.options, waterfallStacks = series.yAxis.waterfallStacks, seriesThreshold = options.threshold, stackThreshold = seriesThreshold || 0, interSum = stackThreshold, stackKey = series.stackKey, xData = series.xData, xLength = xData.length, actualStack, actualStackX, totalYVal, actualSum, prevSum, statesLen, posTotal, negTotal, xPoint, yVal, x, alreadyChanged, changed;
         // function responsible for calculating correct values for stackState
         // array of each stack item. The arguments are: firstS - the value for
         // the first state, nextS - the difference between the previous and the
@@ -492,13 +503,22 @@ seriesType('waterfall', 'column', {
         // code responsible for creating stacks for waterfall series
         if (series.visible ||
             !series.chart.options.chart.ignoreHiddenSeries) {
+            changed = waterfallStacks.changed;
+            alreadyChanged = waterfallStacks.alreadyChanged;
+            // in case of a redraw, stack for each x value must be
+            // emptied (only for the first series in a specific stack)
+            // and recalculated once more
+            if (alreadyChanged &&
+                alreadyChanged.indexOf(stackKey) < 0) {
+                changed = true;
+            }
             if (!waterfallStacks[stackKey]) {
                 waterfallStacks[stackKey] = {};
             }
             actualStack = waterfallStacks[stackKey];
             for (var i = 0; i < xLength; i++) {
                 x = xData[i];
-                if (!actualStack[x] || waterfallStacks.changed) {
+                if (!actualStack[x] || changed) {
                     actualStack[x] = {
                         negTotal: 0,
                         posTotal: 0,
@@ -506,10 +526,10 @@ seriesType('waterfall', 'column', {
                         threshold: 0,
                         stateIndex: 0,
                         stackState: [],
-                        label: ((waterfallStacks.changed &&
+                        label: ((changed &&
                             actualStack[x]) ?
                             actualStack[x].label :
-                            undefined)
+                            void 0)
                     };
                 }
                 actualStackX = actualStack[x];
@@ -553,6 +573,10 @@ seriesType('waterfall', 'column', {
                 stackThreshold += actualStackX.stackTotal;
             }
             waterfallStacks.changed = false;
+            if (!waterfallStacks.alreadyChanged) {
+                waterfallStacks.alreadyChanged = [];
+            }
+            waterfallStacks.alreadyChanged.push(stackKey);
         }
     },
     // Extremes for a non-stacked series are recorded in processData.
@@ -608,6 +632,7 @@ seriesType('waterfall', 'column', {
  * @extends   series,plotOptions.waterfall
  * @excluding dataParser, dataURL
  * @product   highcharts
+ * @requires  highcharts-more
  * @apioption series.waterfall
  */
 /**

@@ -28,8 +28,8 @@ declare global {
             'T'|'V'|'Z'
         );
         type SymbolKeyValue = (
-            'arc'|'bottombutton'|'callout'|'circle'|'diamond'|'rect'|'square'|
-            'topbutton'|'triangle'|'triangle-down'
+            'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
+            'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
         );
         type VerticalAlignValue = ('bottom'|'middle'|'top');
         interface AlignObject {
@@ -39,7 +39,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface BBoxObject extends PositionObject {
+        interface BBoxObject extends PositionObject, SizeObject {
             height: number;
             width: number;
             x: number;
@@ -54,7 +54,7 @@ declare global {
             x: number;
             y: number;
         }
-        interface RectangleObject extends PositionObject, SizeObject {
+        interface RectangleObject extends BBoxObject {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
@@ -92,7 +92,9 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(SVGElement|SVGPathArray)>;
+            [key: string]: SymbolFunction<(
+                SVGElement|SVGPathArray|Array<SVGElement>
+            )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
             circle: SymbolFunction<SVGElement>;
@@ -184,7 +186,7 @@ declare global {
             ): void;
             public fadeOut(duration?: number): void;
             public fillSetter(
-                value: (Color|ColorString),
+                value: ColorType,
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -321,10 +323,10 @@ declare global {
             public circle(attribs: SVGAttributes): SVGElement;
             public circle(x?: number, y?: number, r?: number): SVGElement;
             public clipRect(
-                x: number,
-                y: number,
-                width: number,
-                height: number
+                x?: number,
+                y?: number,
+                width?: number,
+                height?: number
             ): ClipRectElement;
             public createElement(nodeName: string): SVGElement;
             public crispLine(points: SVGPathArray, width: number): SVGPathArray;
@@ -403,9 +405,9 @@ declare global {
                 options?: SymbolOptionsObject
             ): SVGElement;
             public text(
-                str: string,
-                x: number,
-                y: number,
+                str?: string,
+                x?: number,
+                y?: number,
                 useHTML?: boolean
             ): SVGElement;
             public truncate(
@@ -806,14 +808,18 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     attr,
     defined,
+    destroyObjectProperties,
     erase,
+    extend,
     isArray,
     isNumber,
     isObject,
     isString,
     objectEach,
+    pick,
     pInt,
     splat
 } = U;
@@ -830,16 +836,13 @@ var SVGElement: Highcharts.SVGElement,
     css = H.css,
     createElement = H.createElement,
     deg2rad = H.deg2rad,
-    destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
-    extend = H.extend,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    pick = H.pick,
     removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
@@ -956,10 +959,8 @@ extend((
         options?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var animOptions = H.animObject(
-            pick<(boolean|Highcharts.AnimationOptionsObject)>(
-                options, this.renderer.globalAnimation, true
-            )
+        var animOptions = animObject(
+            pick(options, this.renderer.globalAnimation, true)
         );
 
         // When the page is hidden save resources in the background by not
@@ -976,7 +977,7 @@ extend((
             }
             animate(this, params, animOptions);
         } else {
-            this.attr(params, undefined, complete);
+            this.attr(params, void 0, complete);
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
@@ -1014,7 +1015,7 @@ extend((
     ): void {
         var renderer = this.renderer,
             colorObject,
-            gradName: string,
+            gradName: keyof Highcharts.GradientColorObject,
             gradAttr: Highcharts.SVGAttributes,
             radAttr: Highcharts.SVGAttributes,
             gradients: Highcharts.Dictionary<Highcharts.SVGElement>,
@@ -1038,7 +1039,7 @@ extend((
             }
 
             if (gradName) {
-                gradAttr = (color as any)[gradName];
+                gradAttr = color[gradName] as any;
                 gradients = renderer.gradients;
                 stops = color.stops;
                 radialReference = (elem as any).radialReference;
@@ -1358,7 +1359,7 @@ extend((
             symbolCustomAttribs = this.symbolCustomAttribs;
 
         // single key-value pair
-        if (typeof hash === 'string' && val !== undefined) {
+        if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
             hash[key] = val;
@@ -1511,28 +1512,24 @@ extend((
         className: string,
         replace?: boolean
     ): Highcharts.SVGElement {
-        var currentClassName = this.attr('class') || '';
+        var currentClassName = replace ? '' : (this.attr('class') || '');
 
-        if (!replace) {
-
-            // Filter out existing
-            className = (className || '')
-                .split(/ /g)
-                .reduce(function (
-                    newClassName: Array<string>,
-                    name: string
-                ): Array<string> {
-                    if ((currentClassName as any).indexOf(name) === -1) {
-                        newClassName.push(name);
-                    }
-                    return newClassName;
-                }, (currentClassName ?
-                    [currentClassName] :
-                    []
-                ) as Array<string>)
-                .join(' ');
-
-        }
+        // Trim the string and remove duplicates
+        className = (className || '')
+            .split(/ /g)
+            .reduce(function (
+                newClassName: Array<string>,
+                name: string
+            ): Array<string> {
+                if ((currentClassName as any).indexOf(name) === -1) {
+                    newClassName.push(name);
+                }
+                return newClassName;
+            }, (currentClassName ?
+                [currentClassName] :
+                []
+            ) as Array<string>)
+            .join(' ');
 
         if (className !== currentClassName) {
             this.attr('class', className);
@@ -1577,7 +1574,12 @@ extend((
     ): Highcharts.SVGElement {
         return this.attr(
             'class',
-            (this.attr('class') as any || '').replace(className, '')
+            (this.attr('class') as any || '').replace(
+                isString(className) ?
+                    new RegExp(` ?${className} ?`) : // #12064
+                    className,
+                ''
+            )
         ) as any;
     },
 
@@ -1865,7 +1867,7 @@ extend((
 
         // In styled mode, read computed stroke width
         var val = this.getStyle('stroke-width'),
-            ret: number,
+            ret = 0,
             dummy: Highcharts.SVGDOMElement;
 
         // Read pixel values directly
@@ -1873,7 +1875,7 @@ extend((
             ret = pInt(val);
 
         // Other values like em, pt etc need to be measured
-        } else {
+        } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as any;
             attr(dummy, {
                 width: val,
@@ -2240,8 +2242,6 @@ extend((
             renderer = wrapper.renderer,
             width,
             height,
-            rotation,
-            rad,
             element = wrapper.element,
             styles = wrapper.styles,
             fontSize,
@@ -2252,8 +2252,7 @@ extend((
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             cacheKey;
 
-        rotation = pick(rot, wrapper.rotation);
-        rad = rotation * deg2rad;
+        const rotation = pick(rot, wrapper.rotation, 0);
 
         fontSize = renderer.styledMode ? (
             element &&
@@ -2278,7 +2277,7 @@ extend((
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation || 0,
+                rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
                 styles && styles.textOverflow // #5968
@@ -2380,6 +2379,7 @@ extend((
 
                 // Adjust for rotated text
                 if (rotation) {
+                    const rad = rotation * deg2rad;
                     bBox.width = Math.abs(height * Math.sin(rad)) +
                         Math.abs(width * Math.cos(rad));
                     bBox.height = Math.abs(height * Math.cos(rad)) +
@@ -2511,7 +2511,7 @@ extend((
         this.parentInverted = parent && (parent as any).inverted;
 
         // build formatted text
-        if (this.textStr !== undefined) {
+        if (typeof this.textStr !== 'undefined') {
             renderer.buildText(this);
         }
 
@@ -2773,7 +2773,7 @@ extend((
         ): void {
             this.safeRemoveChild(shadow);
         }, this);
-        this.shadows = undefined;
+        this.shadows = void 0;
     },
 
     /**
@@ -3178,7 +3178,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#fillSetter
      *
-     * @param {Highcharts.Color|Highcharts.ColorString} value
+     * @param {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} value
      *
      * @param {string} key
      *
@@ -3188,7 +3188,7 @@ extend((
      */
     fillSetter: function (
         this: Highcharts.SVGElement,
-        value: (Highcharts.Color|Highcharts.ColorString),
+        value: Highcharts.ColorType,
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {
@@ -3926,7 +3926,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // break for word wrapping.
                 var end = concatenatedEnd || charEnd;
 
-                if (lengths[end] === undefined) {
+                if (typeof lengths[end] === 'undefined') {
                     // Modern browsers
                     if ((tspan as any).getSubStringLength) {
                         // Fails with DOM exception on unit-tests/legend/members
@@ -4328,7 +4328,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                         wrapper,
                                         tspan,
                                         span,
-                                        undefined,
+                                        void 0,
                                         0,
                                         // Target width
                                         Math.max(
@@ -4782,7 +4782,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var attribs = (
                 isObject(x) ?
                     x as Highcharts.SVGAttributes :
-                    x === undefined ? {} : { x: x, y: y, r: r }
+                    typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
             ),
             wrapper = this.createElement('circle');
 
@@ -4937,7 +4937,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var wrapper = this.createElement('rect'),
             attribs: Highcharts.SVGAttributes = isObject(x) ?
                 (x as any) :
-                x === undefined ?
+                typeof x === 'undefined' ?
                     {} :
                     {
                         x: x,
@@ -4947,7 +4947,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     };
 
         if (!this.styledMode) {
-            if (strokeWidth !== undefined) {
+            if (typeof strokeWidth !== 'undefined') {
                 attribs.strokeWidth = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
@@ -5019,7 +5019,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         this.attr('height')
                 });
             },
-            duration: pick(animate, true) ? undefined : 0
+            duration: pick(animate, true) ? void 0 : 0
         });
 
         while (i--) {
@@ -5648,23 +5648,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
-     * @param {number} x
+     * @param {number} [x]
      *
-     * @param {number} y
+     * @param {number} [y]
      *
-     * @param {number} width
+     * @param {number} [width]
      *
-     * @param {number} height
+     * @param {number} [height]
      *
      * @return {Highcharts.ClipRectElement}
      *         A clipping rectangle.
      */
     clipRect: function (
         this: Highcharts.SVGRenderer,
-        x: number,
-        y: number,
-        width: number,
-        height: number
+        x?: number,
+        y?: number,
+        width?: number,
+        height?: number
     ): Highcharts.ClipRectElement {
         var wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
@@ -5699,13 +5699,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @function Highcharts.SVGRenderer#text
      *
-     * @param {string} str
+     * @param {string} [str]
      *        The text of (subset) HTML to draw.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        The x position of the text's lower left corner.
      *
-     * @param {number} y
+     * @param {number} [y]
      *        The y position of the text's lower left corner.
      *
      * @param {boolean} [useHTML=false]
@@ -5716,9 +5716,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     text: function (
         this: Highcharts.SVGElement,
-        str: string,
-        x: number,
-        y: number,
+        str?: string,
+        x?: number,
+        y?: number,
         useHTML?: boolean
     ): Highcharts.SVGElement {
 
@@ -5965,8 +5965,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 crispAdjust,
                 attribs = {} as Highcharts.SVGAttributes;
 
-            bBox = (
-                (width === undefined || height === undefined || textAlign) &&
+            bBox = ((
+                typeof width === 'undefined' ||
+                typeof height === 'undefined' ||
+                textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()
             ); // #3295 && 3514 box failure when string equals 0
@@ -6047,7 +6049,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     bBox = text.getBBox(true);
                     updateBoxSize();
                 }
-                if (textY !== undefined) {
+                if (typeof textY !== 'undefined') {
                     text.attr('y', textY);
                 }
             }
@@ -6137,7 +6139,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         // apply these to the box and the text alike
         wrapper.textSetter = function (value?: string): void {
-            if (value !== undefined) {
+            if (typeof value !== 'undefined') {
                 // Must use .attr to ensure transforms are done (#10009)
                 text.attr({
                     text: value
@@ -6226,7 +6228,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     (wrapper.textProps as Array<string>).forEach(function (
                         prop: string
                     ): void {
-                        if (styles[prop] !== undefined) {
+                        if (typeof styles[prop] !== 'undefined') {
                             textStyles[prop] = styles[prop];
                             delete styles[prop];
                         }

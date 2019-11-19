@@ -58,13 +58,13 @@ import H from './Globals.js';
  *        Event that occured.
  */
 import U from './Utilities.js';
-var defined = U.defined, isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
 import './Chart.js';
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, extend = H.extend, fireEvent = H.fireEvent, hasTouch = H.hasTouch, Legend = H.Legend, merge = H.merge, pick = H.pick, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var addEvent = H.addEvent, Chart = H.Chart, createElement = H.createElement, css = H.css, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, hasTouch = H.hasTouch, Legend = H.Legend, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -86,7 +86,7 @@ TrackerMixin = H.TrackerMixin = {
         var series = this, chart = series.chart, pointer = chart.pointer, onMouseOver = function (e) {
             var point = pointer.getPointFromEvent(e);
             // undefined on graph in scatterchart
-            if (point !== undefined) {
+            if (typeof point !== 'undefined') {
                 pointer.isDirectTouch = true;
                 point.onMouseOver(e);
             }
@@ -685,7 +685,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.PointStateValue|""} [state]
      *        The new state, can be one of `''` (an empty string), `hover`,
      *        `select` or `inactive`.
      * @param {boolean} [move]
@@ -805,7 +805,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         haloOptions = stateOptions.halo;
         var markerGraphic = (point.graphic || stateMarkerGraphic);
         var markerVisibility = (markerGraphic && markerGraphic.visibility || 'inherit');
-        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
@@ -923,7 +926,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.SeriesStateValue|""} [state]
      *        Can be either `hover` or undefined to set to normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
@@ -1042,7 +1045,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             vis =
                 series.options.visible =
                     series.userOptions.visible =
-                        vis === undefined ? !oldVisibility : vis; // #5618
+                        typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
         showOrHide = vis ? 'show' : 'hide';
         // show or hide elements
         [
@@ -1141,7 +1144,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         var series = this;
         series.selected =
             selected =
-                this.options.selected = (selected === undefined ?
+                this.options.selected = (typeof selected === 'undefined' ?
                     !series.selected :
                     selected);
         if (series.checkbox) {

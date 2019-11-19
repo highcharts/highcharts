@@ -60,7 +60,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var splat = U.splat;
+const {
+    extend,
+    pick,
+    splat,
+    wrap
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
@@ -71,14 +76,11 @@ var ZAxis: typeof Highcharts.Axis,
     Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,
-    extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
-    pick = H.pick,
     shapeArea = H.shapeArea,
-    Tick = H.Tick,
-    wrap = H.wrap;
+    Tick = H.Tick;
 
 /**
  * @optionparent xAxis
@@ -112,6 +114,7 @@ var extendedOptions: Highcharts.AxisOptions = {
          * @since      5.0.15
          * @validvalue ['offset', 'chart', 'flap', 'ortho']
          * @product    highcharts
+         * @requires   highcharts-3d
          */
         position3d: 'offset',
 
@@ -126,8 +129,9 @@ var extendedOptions: Highcharts.AxisOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @since   5.0.15
-         * @product highcharts
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: false
     },
@@ -157,9 +161,10 @@ var extendedOptions: Highcharts.AxisOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type       {"offset"|"chart"|"flap"|"ortho"|null}
-         * @since      5.0.15
-         * @product    highcharts
+         * @type     {"offset"|"chart"|"flap"|"ortho"|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         position3d: null,
 
@@ -176,9 +181,10 @@ var extendedOptions: Highcharts.AxisOptions = {
          * @sample highcharts/3d/skewed-labels/
          *         Skewed labels
          *
-         * @type    {boolean|null}
-         * @since   5.0.15
-         * @product highcharts
+         * @type     {boolean|null}
+         * @since    5.0.15
+         * @product  highcharts
+         * @requires highcharts-3d
          */
         skew3d: null
     }
@@ -671,11 +677,11 @@ extend(ZAxis.prototype, {
                 zData = series.zData as any;
                 if (zData.length) {
                     axis.dataMin = Math.min(
-                        pick(axis.dataMin, zData[0]),
+                        pick(axis.dataMin, zData[0] as any),
                         Math.min.apply(null, zData as any)
                     );
                     axis.dataMax = Math.max(
-                        pick(axis.dataMax, zData[0]),
+                        pick(axis.dataMax, zData[0] as any),
                         Math.max.apply(null, zData as any)
                     );
                 }

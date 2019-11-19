@@ -30,30 +30,30 @@ declare global {
             lon: number;
         }
         interface Chart {
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             mapCredits?: string;
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             mapCreditsFull?: string;
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             mapTransforms?: any;
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             fromLatLonToPoint(latLon: MapLatLonObject): MapCoordinateObject;
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             fromPointToLatLon(
                 point: MapCoordinateObject
             ): (MapLatLonObject|undefined);
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             transformFromLatLon(
                 latLon: MapLatLonObject,
                 transform: any
             ): MapCoordinateObject;
-            /** @requires highcharts/modules/maps */
+            /** @requires modules/maps */
             transformToLatLon(
                 point: MapCoordinateObject,
                 transform: any
             ): (MapLatLonObject|undefined);
         }
-        /** @requires highcharts/modules/maps */
+        /** @requires modules/maps */
         function geojson(
             geojson: any,
             hType?: string,
@@ -93,16 +93,19 @@ declare global {
  * @type {number}
  */
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    wrap
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    extend = H.extend,
     format = H.format,
     merge = H.merge,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -145,7 +148,7 @@ function pointInPolygon(
  * Highmaps only. Get point from latitude and longitude using specified
  * transform definition.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-transform/
  *         Use specific transformation for lat/lon
@@ -167,7 +170,7 @@ Chart.prototype.transformFromLatLon = function (
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return {
             x: 0,
@@ -203,7 +206,7 @@ Chart.prototype.transformFromLatLon = function (
  * Highmaps only. Get latLon from point using specified transform definition.
  * The method returns an object with the numeric properties `lat` and `lon`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-transform/
  *         Use specific transformation for lat/lon
@@ -226,7 +229,7 @@ Chart.prototype.transformToLatLon = function (
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return;
     }
@@ -265,7 +268,7 @@ Chart.prototype.transformToLatLon = function (
  * Highmaps only. Calculate latitude/longitude values for a point. Returns an
  * object with the numeric properties `lat` and `lon`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/demo/latlon-advanced/
  *         Advanced lat/lon demo
@@ -314,7 +317,7 @@ Chart.prototype.fromPointToLatLon = function (
  * Highmaps only. Get chart coordinates from latitude/longitude. Returns an
  * object with x and y values corresponding to the `xAxis` and `yAxis`.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/series/latlon-to-point/
  *         Find a point from lat/lon
@@ -372,7 +375,7 @@ Chart.prototype.fromLatLonToPoint = function (
  * either `map`, `mapline` or `mappoint`. Meta data in GeoJSON's properties
  * object will be copied directly over to {@link Point.properties} in Highmaps.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @sample maps/demo/geojson/
  *         Simple areas
@@ -475,7 +478,7 @@ H.geojson = function (
                  * In Highmaps, when data is loaded from GeoJSON, the GeoJSON
                  * item's properies are copied over here.
                  *
-                 * @requires module:modules/map
+                 * @requires modules/map
                  * @name Highcharts.Point#properties
                  * @type {*}
                  */

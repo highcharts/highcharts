@@ -9,13 +9,14 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import U from '../parts/Utilities.js';
+var clamp = U.clamp, pick = U.pick;
+var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
- * Y values along an X axis. Requires `highcharts-more.js`. To display
- * horizontal bars, set [chart.inverted](#chart.inverted) to `true`.
+ * Y values along an X axis. To display horizontal bars, set
+ * [chart.inverted](#chart.inverted) to `true`.
  *
  * @sample {highcharts|highstock} highcharts/demo/columnrange/
  *         Inverted column range
@@ -24,6 +25,7 @@ var colProto = seriesTypes.column.prototype;
  * @since        2.3.0
  * @excluding    negativeColor, stacking, softThreshold, threshold
  * @product      highcharts highstock
+ * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
 var columnRangeOptions = {
@@ -33,8 +35,8 @@ var columnRangeOptions = {
      * `yLow` and `yHigh` options to allow the higher and lower data label
      * sets individually.
      *
-     * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
-     * @default   {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
+     * @declare   Highcharts.SeriesAreaRangeDataLabelsOptionsObject
+     * @extends   plotOptions.arearange.dataLabels
      * @since     2.3.0
      * @product   highcharts highstock
      * @apioption plotOptions.columnrange.dataLabels
@@ -72,7 +74,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
          * @private
          */
         function safeBounds(pixelPos) {
-            return Math.min(Math.max(-safeDistance, pixelPos), safeDistance);
+            return clamp(pixelPos, -safeDistance, safeDistance);
         }
         colProto.translate.apply(series);
         // Set plotLow and plotHigh
@@ -163,6 +165,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @extends   series,plotOptions.columnrange
  * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
+ * @requires  highcharts-more
  * @apioption series.columnrange
  */
 /**
@@ -221,7 +224,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @apioption series.columnrange.data
  */
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.columnrange.dataLabels
  * @product   highcharts highstock
  * @apioption series.columnrange.data.dataLabels
  */

@@ -6,6 +6,8 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 'use strict';
@@ -140,14 +142,19 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var defined = U.defined;
+const {
+    clamp,
+    defined,
+    extend,
+    pick,
+    setAnimation
+} = U;
 
 
 import './integrations.js';
 import './QuadTree.js';
 
-var pick = H.pick,
-    addEvent = H.addEvent,
+var addEvent = H.addEvent,
     Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -157,7 +164,7 @@ H.layouts = {
     }
 } as any;
 
-H.extend(
+extend(
     /**
      * Reingold-Fruchterman algorithm from
      * "Graph Drawing by Force-directed Placement" paper.
@@ -750,21 +757,13 @@ H.extend(
 
             */
             // Limit X-coordinates:
-            node.plotX = Math.max(
-                Math.min(
-                    node.plotX as any,
-                    box.width - radius
-                ),
-                box.left + radius
+            node.plotX = clamp(
+                node.plotX as any, box.left + radius, box.width - radius
             );
 
             // Limit Y-coordinates:
-            node.plotY = Math.max(
-                Math.min(
-                    node.plotY as any,
-                    box.height - radius
-                ),
-                box.top + radius
+            node.plotY = clamp(
+                node.plotY as any, box.top + radius, box.height - radius
             );
         },
         /**
@@ -891,7 +890,7 @@ addEvent(Chart as any, 'render', function (
     }
 
     if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
+        setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach(
             function (layout: Highcharts.NetworkgraphLayout): void {

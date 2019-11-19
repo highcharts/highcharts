@@ -214,6 +214,9 @@ $indicator-negative-line: #F21313;
     fill: $tooltip-background;
     fill-opacity: 0.85;
 }
+div.highcharts-tooltip {
+    filter: none;
+}
 
 .highcharts-selection-marker {
     fill: $highlight-color-80;
@@ -388,6 +391,11 @@ g.highcharts-series,
     fill: none;
     stroke-width: 2px;
  }
+
+/* Dumbbell/lollipop connector */
+.highcharts-lollipop-stem {
+	stroke: $neutral-color-100;
+}
 
 
 /* Legend */

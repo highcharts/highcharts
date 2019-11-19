@@ -14,12 +14,35 @@
 //   module importing the same data.
 'use strict';
 import Highcharts from '../parts/Globals.js';
+/**
+ * Function callback to execute while data rows are processed for exporting.
+ * This allows the modification of data rows before processed into the final
+ * format.
+ *
+ * @callback Highcharts.ExportDataCallbackFunction
+ * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *
+ * @param {Highcharts.Chart} this
+ * Chart context where the event occured.
+ *
+ * @param {Highcharts.ExportDataEventObject} event
+ * Event object with data rows that can be modified.
+ */
+/**
+ * Contains information about the export data event.
+ *
+ * @interface Highcharts.ExportDataEventObject
+ */ /**
+* Contains the data rows for the current export task and can be modified.
+* @name Highcharts.ExportDataEventObject#dataRows
+* @type {Array<Array<string>>}
+*/
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, pick = U.pick;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
-var pick = Highcharts.pick, win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
+var win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -38,39 +61,50 @@ function htmlencode(html) {
 }
 Highcharts.setOptions({
     /**
-     * Export-data module required. When set to `false` will prevent the series
-     * data from being included in any form of data export.
+     * Callback that fires while exporting data. This allows the modification of
+     * data rows before processed into the final format.
+     *
+     * @type      {Highcharts.ExportDataCallbackFunction}
+     * @context   Highcharts.Chart
+     * @requires  modules/export-data
+     * @apioption chart.events.exportData
+     */
+    /**
+     * When set to `false` will prevent the series data from being included in
+     * any form of data export.
      *
      * Since version 6.0.0 until 7.1.0 the option was existing undocumented
      * as `includeInCSVExport`.
      *
      * @type      {boolean}
      * @since     7.1.0
+     * @requires  modules/export-data
      * @apioption plotOptions.series.includeInDataExport
      */
     /**
      * @optionparent exporting
-     *
      * @private
      */
     exporting: {
         /**
-         * Export-data module required. Caption for the data table. Same as
-         * chart title by default. Set to `false` to disable.
+         * Caption for the data table. Same as chart title by default. Set to
+         * `false` to disable.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
          * @type      {boolean|string}
          * @since     6.0.4
+         * @requires  modules/export-data
          * @apioption exporting.tableCaption
          */
         /**
          * Options for exporting data to CSV or ExCel, or displaying the data
-         * in a HTML table or a JavaScript structure. Requires the
-         * `export-data.js` module. This module adds data export options to the
-         * export menu and provides functions like `Chart.getCSV`,
-         * `Chart.getTable`, `Chart.getDataRows` and `Chart.viewData`.
+         * in a HTML table or a JavaScript structure.
+         *
+         * This module adds data export options to the export menu and provides
+         * functions like `Chart.getCSV`, `Chart.getTable`, `Chart.getDataRows`
+         * and `Chart.viewData`.
          *
          * The XLS converter is limited and only creates a HTML string that is
          * passed for download, which works but creates a warning before
@@ -82,7 +116,8 @@ Highcharts.setOptions({
          * @sample  highcharts/export-data/xlsx/
          *          Using a third party XLSX converter
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         csv: {
             /**
@@ -143,8 +178,7 @@ Highcharts.setOptions({
             lineDelimiter: '\n'
         },
         /**
-         * Export-data module required. Show a HTML table below the chart with
-         * the chart's current data.
+         * Show a HTML table below the chart with the chart's current data.
          *
          * @sample highcharts/export-data/showtable/
          *         Show the table
@@ -152,29 +186,31 @@ Highcharts.setOptions({
          *         Experiment with putting the table inside the subtitle to
          *         allow exporting it.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         showTable: false,
         /**
-         * Export-data module required. Use multi level headers in data table.
-         * If [csv.columnHeaderFormatter](#exporting.csv.columnHeaderFormatter)
-         * is defined, it has to return objects in order for multi level headers
-         * to work.
+         * Use multi level headers in data table. If [csv.columnHeaderFormatter
+         * ](#exporting.csv.columnHeaderFormatter) is defined, it has to return
+         * objects in order for multi level headers to work.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @since 6.0.4
+         * @since    6.0.4
+         * @requires modules/export-data
          */
         useMultiLevelHeaders: true,
         /**
-         * Export-data module required. If using multi level table headers, use
-         * rowspans for headers that have only one level.
+         * If using multi level table headers, use rowspans for headers that
+         * have only one level.
          *
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @since 6.0.4
+         * @since    6.0.4
+         * @requires modules/export-data
          */
         useRowspanHeaders: true
     },
@@ -185,27 +221,31 @@ Highcharts.setOptions({
      */
     lang: {
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         downloadCSV: 'Download CSV',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         downloadXLS: 'Download XLS',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.1.0
+         * @since    6.1.0
+         * @requires modules/export-data
          */
         openInCloud: 'Open in Highcharts Cloud',
         /**
-         * Export-data module only. The text for the menu item.
+         * The text for the menu item.
          *
-         * @since 6.0.0
+         * @since    6.0.0
+         * @requires modules/export-data
          */
         viewData: 'View data table'
     }
@@ -258,9 +298,11 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
+ *
+ * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
+    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
         if (csvOptions.columnHeaderFormatter) {
@@ -285,21 +327,31 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             };
         }
         return item.name + (keyLength > 1 ? ' (' + key + ')' : '');
+    }, 
+    // Map the categories for value axes
+    getCategoryAndDateTimeMap = function (series, pointArrayMap, pIdx) {
+        var categoryMap = {}, dateTimeValueAxisMap = {};
+        pointArrayMap.forEach(function (prop) {
+            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
+                prop) + 'Axis', 
+            // Points in parallel coordinates refers to all yAxis
+            // not only `series.yAxis`
+            axis = Highcharts.isNumber(pIdx) ?
+                series.chart[axisName][pIdx] :
+                series[axisName];
+            categoryMap[prop] = (axis && axis.categories) || [];
+            dateTimeValueAxisMap[prop] = (axis && axis.isDatetimeAxis);
+        });
+        return {
+            categoryMap: categoryMap,
+            dateTimeValueAxisMap: dateTimeValueAxisMap
+        };
     }, xAxisIndices = [];
     // Loop the series and index values
     i = 0;
     this.setUpKeyToAxis();
     this.series.forEach(function (series) {
-        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, categoryMap = {}, datetimeValueAxisMap = {}, xAxisIndex = xAxes.indexOf(series.xAxis), mockSeries, j;
-        // Map the categories for value axes
-        pointArrayMap.forEach(function (prop) {
-            var axisName = ((series.keyToAxis && series.keyToAxis[prop]) ||
-                prop) + 'Axis';
-            categoryMap[prop] = (series[axisName] &&
-                series[axisName].categories) || [];
-            datetimeValueAxisMap[prop] = (series[axisName] &&
-                series[axisName].isDatetimeAxis);
-        });
+        var keys = series.options.keys, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(series.xAxis), categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
         if (series.options.includeInDataExport !== false &&
             !series.options.isInternal &&
             series.visible !== false // #55
@@ -334,6 +386,11 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             // data (#7913), and we need to support Boost (#7026).
             series.options.data.forEach(function eachData(options, pIdx) {
                 var key, prop, val, name, point;
+                // In parallel coordinates chart, each data point is connected
+                // to a separate yAxis, conform this
+                if (hasParallelCoords) {
+                    categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap, pIdx);
+                }
                 point = { series: mockSeries };
                 series.pointClass.prototype.applyOptions.apply(point, [options]);
                 key = point.x;
@@ -361,10 +418,15 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = point[prop];
-                    rows[key][i + j] = pick(categoryMap[prop][val], // Y axis category if present
-                    datetimeValueAxisMap[prop] ?
+                    rows[key][i + j] = pick(
+                    // Y axis category if present
+                    categoryAndDatetimeMap.categoryMap[prop][val], 
+                    // datetime yAxis
+                    categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                         time.dateFormat(csvOptions.dateFormat, val) :
-                        null, val);
+                        null, 
+                    // linear/log yAxis
+                    val);
                     j++;
                 }
             });
@@ -486,6 +548,8 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  *
  * @return {string}
  *         HTML representation of the data.
+ *
+ * @fires Highcharts.Chart#event:afterGetTable
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     var html = '<table id="highcharts-data-table-' + this.index + '">', options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
@@ -575,7 +639,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
         if (subheaders) {
             html += '<tr>';
             for (i = 0, len = subheaders.length; i < len; ++i) {
-                if (subheaders[i] !== undefined) {
+                if (typeof subheaders[i] !== 'undefined') {
                     html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
                 }
             }
@@ -694,6 +758,8 @@ Highcharts.Chart.prototype.downloadXLS = function () {
  *
  * @function Highcharts.Chart#viewData
  * @return {void}
+ *
+ * @fires Highcharts.Chart#event:afterViewData
  */
 Highcharts.Chart.prototype.viewData = function () {
     if (!this.dataTableDiv) {
@@ -777,7 +843,7 @@ Highcharts.Chart.prototype.openInCloud = function () {
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;
 if (exportingOptions) {
-    Highcharts.extend(exportingOptions.menuItemDefinitions, {
+    extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {
             textKey: 'downloadCSV',
             onclick: function () {

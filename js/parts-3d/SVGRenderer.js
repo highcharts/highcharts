@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, objectEach = U.objectEach;
+var animObject = U.animObject, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var animObject = H.animObject, charts = H.charts, color = H.color, deg2rad = H.deg2rad, extend = H.extend, merge = H.merge, perspective = H.perspective, pick = H.pick, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -231,7 +231,7 @@ element3dMethods = {
         elem3d.parts.forEach(function (part) {
             // if different props for different parts
             if (partsProps) {
-                props = H.pick(partsProps[part], false);
+                props = pick(partsProps[part], false);
             }
             // only if something to set, but allow undefined
             if (props !== false) {
@@ -263,7 +263,7 @@ cuboidMethods = H.merge(element3dMethods, {
         if (args.shapeArgs || defined(args.x)) {
             return this.singleSetterForParts('d', null, this.renderer[this.pathType + 'Path'](args.shapeArgs || args));
         }
-        return SVGElement.prototype.attr.call(this, args, undefined, complete, continueAnimation);
+        return SVGElement.prototype.attr.call(this, args, void 0, complete, continueAnimation);
     },
     animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {
@@ -297,12 +297,13 @@ SVGRenderer.prototype.elements3d = {
 /**
  * return result, generalization
  * @private
+ * @requires highcharts-3d
  */
 SVGRenderer.prototype.element3d = function (type, shapeArgs) {
     // base
     var ret = this.g();
     // extend
-    H.extend(ret, this.elements3d[type]);
+    extend(ret, this.elements3d[type]);
     // init
     ret.initArgs(shapeArgs);
     // return

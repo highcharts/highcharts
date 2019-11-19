@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Column with negative values
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Column and bar charts
 ...

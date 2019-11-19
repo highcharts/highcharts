@@ -53,11 +53,13 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 // Mathematical Functionility
-var deg2rad = H.deg2rad,
-    pick = H.pick;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable max-len */
 /**
@@ -122,14 +124,20 @@ function rotate3D(
  * needed also outside of perspective() function (#8042).
  * @private
  * @function Highcharts.perspective3D
+ *
  * @param {Highcharts.Position3dObject} coordinate
- *        3D position
+ * 3D position
+ *
  * @param {Highcharts.Position3dObject} origin
- *        3D root position
+ * 3D root position
+ *
  * @param {number} distance
- *        Perspective distance
+ * Perspective distance
+ *
  * @return {Highcharts.PositionObject}
- *         Perspective 3D Position
+ * Perspective 3D Position
+ *
+ * @requires highcharts-3d
  */
 H.perspective3D = function (
     coordinate: Highcharts.Position3dObject,
@@ -151,14 +159,20 @@ H.perspective3D = function (
  *
  * @private
  * @function Highcharts.perspective
+ *
  * @param {Array<Highcharts.Position3dObject>} points
- *        The array of points
+ * The array of points
+ *
  * @param {Highcharts.Chart} chart
- *        The chart
+ * The chart
+ *
  * @param {boolean} [insidePlotArea]
- *        Wether to verifiy the points are inside the plotArea
+ * Wether to verifiy the points are inside the plotArea
+ *
  * @return {Array<Highcharts.Position3dObject>}
- *         An array of transformed points
+ * An array of transformed points
+ *
+ * @requires highcharts-3d
  */
 H.perspective = function (
     points: Array<Highcharts.Position3dObject>,
@@ -221,12 +235,17 @@ H.perspective = function (
  *
  * @private
  * @function Highcharts.pointCameraDistance
+ *
  * @param {Highcharts.Dictionary<number>} coordinates
- *        Coordinates of the specific point
+ * Coordinates of the specific point
+ *
  * @param {Highcharts.Chart} chart
- *        Related chart
+ * Related chart
+ *
  * @return {number}
- *         Distance from camera to point
+ * Distance from camera to point
+ *
+ * @requires highcharts-3d
  */
 H.pointCameraDistance = function (
     coordinates: Highcharts.Dictionary<number>,
@@ -254,10 +273,14 @@ H.pointCameraDistance = function (
  *
  * @private
  * @function Highcharts.shapeArea
+ *
  * @param {Array<Highcharts.PositionObject>} vertexes
- *        2D Polygon
+ * 2D Polygon
+ *
  * @return {number}
- *         Calculated area
+ * Calculated area
+ *
+ * @requires highcharts-3d
  */
 H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
     var area = 0,
@@ -276,14 +299,20 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  *
  * @private
  * @function Highcharts.shapeArea3d
+ *
  * @param {Array<Highcharts.Position3dObject>} vertexes
- *        3D Polygon
+ * 3D Polygon
+ *
  * @param {Highcharts.Chart} chart
- *        Related chart
+ * Related chart
+ *
  * @param {boolean} [insidePlotArea]
- *        Wether to verifiy the points are inside the plotArea
+ * Wether to verifiy the points are inside the plotArea
+ *
  * @return {number}
- *         Calculated area
+ * Calculated area
+ *
+ * @requires highcharts-3d
  */
 H.shapeArea3d = function (
     vertexes: Array<Highcharts.Position3dObject>,

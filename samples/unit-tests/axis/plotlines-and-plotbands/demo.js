@@ -1,3 +1,100 @@
+QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            min: 1452666442250,
+            max: 1453899392750,
+            type: 'datetime',
+            plotBands: [{
+                color: "#BDBDBD",
+                from: 1453101708000,
+                to: 1453109508000
+            }, {
+                color: "red",
+                from: 1453726531000,
+                to: 1453728606000
+            }]
+        },
+        series: [{
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[1] !==
+            chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[6],
+        true,
+        'Second plotband is visible'
+    );
+});
+QUnit.test('Plot bands on added axis should be exported (#5082)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            height: 300
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+
+        yAxis: {
+            title: {
+                text: 'Temperature'
+            },
+            lineWidth: 2,
+            lineColor: '#F33',
+            id: 'temperature-axis'
+        },
+
+        series: [{
+            name: 'Temperature',
+            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+            color: '#F33'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'Chart has one Y axis'
+    );
+
+    // Add secondary yAxis
+    chart.addAxis({
+        id: 'rainfall-axis',
+        title: {
+            text: 'Rainfall'
+        },
+        lineWidth: 2,
+        lineColor: '#08F',
+        opposite: true
+    });
+
+    // Add a plot band to it
+    chart.yAxis[1].addPlotBand({
+        color: '#abcdef',
+        from: 12,
+        to: 25
+    });
+
+    // ... and a series
+    chart.addSeries({
+        name: 'Rainfall',
+        type: 'column',
+        color: '#08F',
+        yAxis: 'rainfall-axis',
+        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    });
+
+    // Export it
+    $('#output').html(chart.getSVG());
+
+    assert.strictEqual(
+        $('#output path[fill="#abcdef"]').length,
+        1,
+        'Correctly filled path is present in the export'
+    );
+});
+
 QUnit.test('Defaults', assert => {
     const chart = Highcharts.chart('container', {
 
@@ -92,6 +189,82 @@ QUnit.test('General tests', function (assert) {
         line[line.length - 1],
         'z',
         'Border should be rendered around the shape (#5909)'
+    );
+
+    // Radial Axes plot lines
+    var plotLineValue = 27,
+        innerRadiusPx = 50,
+        axis, plotLine, bBox, center, end, start, plotLineLength;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        title: null,
+        pane: {
+            center: ['50%', '50%'],
+            size: '100%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                innerRadius: '43%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 200,
+            lineWidth: 0,
+            minorTickInterval: null,
+            plotLines: [{
+                color: '#268FDD',
+                width: 2,
+                value: plotLineValue,
+                zIndex: 5
+            }]
+        },
+        series: [{
+            innerRadius: '43%',
+            data: [80]
+        }]
+    });
+
+    axis = chart.yAxis[0];
+    plotLine = axis.plotLinesAndBands[0];
+    bBox = plotLine.svgElem.getBBox();
+    center = chart.pane[0].center;
+    end = axis.getPosition(plotLineValue);
+    start = {
+        x: center[0] + chart.plotLeft,
+        y: center[1] + chart.plotTop
+    };
+    plotLineLength =
+        Math.sqrt(Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2));
+
+    assert.equal(
+        (0.57 * Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2))).toFixed(3),
+        plotLineLength.toFixed(3),
+        'RadialAxis plotLine should be plotted from inner to outer radius (percentage radius).'
+    );
+
+    chart.update({
+        pane: {
+            background: {
+                innerRadius: innerRadiusPx
+            }
+        }
+    });
+
+    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    bBox = plotLine.svgElem.getBBox();
+    plotLineLength =
+            Math.sqrt(Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2));
+
+    assert.equal(
+        (Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)) - innerRadiusPx).toFixed(3),
+        plotLineLength.toFixed(3),
+        'RadialAxis plotLine should be plotted from inner to outer radius (pixel radius).'
     );
 });
 

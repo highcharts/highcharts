@@ -26,16 +26,19 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    extend = H.extend,
     merge = H.merge,
-    pick = H.pick,
     Renderer = H.Renderer,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
@@ -307,7 +310,7 @@ defaultOptions.mapNavigation = {
 /**
  * Utility for reading SVG paths directly.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @function Highcharts.splitPath
  *
@@ -340,7 +343,7 @@ H.splitPath = function (path: string): Highcharts.SVGPathArray {
 /**
  * Contains all loaded map data for Highmaps.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @name Highcharts.maps
  * @type {Highcharts.Dictionary<*>}
@@ -425,7 +428,7 @@ if ((Renderer as any) === VMLRenderer) {
  * Highcharts.Chart|Chart} object with different default options than the basic
  * Chart.
  *
- * @requires module:modules/map
+ * @requires modules/map
  *
  * @function Highcharts.mapChart
  *

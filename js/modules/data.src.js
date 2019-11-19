@@ -84,11 +84,11 @@ import Highcharts from '../parts/Globals.js';
  *         continue async.
  */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
 // Utilities
-var addEvent = Highcharts.addEvent, Chart = Highcharts.Chart, win = Highcharts.win, doc = win.document, pick = Highcharts.pick, merge = Highcharts.merge, fireEvent = Highcharts.fireEvent, SeriesBuilder;
+var addEvent = Highcharts.addEvent, Chart = Highcharts.Chart, win = Highcharts.win, doc = win.document, merge = Highcharts.merge, fireEvent = Highcharts.fireEvent, SeriesBuilder;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
@@ -107,6 +107,7 @@ var addEvent = Highcharts.addEvent, Chart = Highcharts.Chart, win = Highcharts.w
  *         CSV
  *
  * @since     4.0
+ * @requires  modules/data
  * @apioption data
  */
 /**
@@ -471,7 +472,7 @@ var Data = function (dataOptions, chartOptions, chart) {
     this.init(dataOptions, chartOptions, chart);
 };
 // Set the prototype properties
-Highcharts.extend(Data.prototype, {
+extend(Data.prototype, {
     /**
      * Initialize the Data object with the given options
      *
@@ -490,7 +491,7 @@ Highcharts.extend(Data.prototype, {
             this.chart = chart;
         }
         if (decimalPoint !== '.' && decimalPoint !== ',') {
-            decimalPoint = undefined;
+            decimalPoint = void 0;
         }
         this.options = options;
         this.columns = (options.columns ||
@@ -605,14 +606,14 @@ Highcharts.extend(Data.prototype, {
                 if (!builder.hasReader(pointArrayMap[i])) {
                     // Create and add a column reader for the next free column
                     // index
-                    builder.addColumnReader(undefined, pointArrayMap[i]);
+                    builder.addColumnReader(void 0, pointArrayMap[i]);
                 }
             }
             seriesBuilders.push(builder);
             seriesIndex++;
         });
         var globalPointArrayMap = getPointArrayMap(globalType);
-        if (globalPointArrayMap === undefined) {
+        if (typeof globalPointArrayMap === 'undefined') {
             globalPointArrayMap = ['y'];
         }
         this.valueCount = {
@@ -1305,7 +1306,7 @@ Highcharts.extend(Data.prototype, {
                 // Insert null for empty spreadsheet cells (#5298)
                 columns.forEach(function (column) {
                     for (i = 0; i < column.length; i++) {
-                        if (column[i] === undefined) {
+                        if (typeof column[i] === 'undefined') {
                             column[i] = null;
                         }
                     }
@@ -1388,7 +1389,7 @@ Highcharts.extend(Data.prototype, {
             trimInsideVal = this.trim(val, true);
             floatVal = parseFloat(trimInsideVal);
             // Set it the first time
-            if (rawColumns[col][row] === undefined) {
+            if (typeof rawColumns[col][row] === 'undefined') {
                 rawColumns[col][row] = trimVal;
             }
             // Disable number or date parsing by setting the X axis type to
@@ -1407,7 +1408,7 @@ Highcharts.extend(Data.prototype, {
                 else {
                     column.isNumeric = true;
                 }
-                if (column[row + 1] !== undefined) {
+                if (typeof column[row + 1] !== 'undefined') {
                     descending = floatVal > column[row + 1];
                 }
                 // String, continue to determine if it is a date string or really a
@@ -1425,9 +1426,10 @@ Highcharts.extend(Data.prototype, {
                     // Check if the dates are uniformly descending or ascending.
                     // If they are not, chances are that they are a different
                     // time format, so check for alternative.
-                    if (column[row + 1] !== undefined) {
+                    if (typeof column[row + 1] !== 'undefined') {
                         diff = dateVal > column[row + 1];
-                        if (diff !== descending && descending !== undefined) {
+                        if (diff !== descending &&
+                            typeof descending !== 'undefined') {
                             if (this.alternativeFormat) {
                                 this.dateFormat = this.alternativeFormat;
                                 row = column.length;
@@ -1702,7 +1704,7 @@ Highcharts.extend(Data.prototype, {
                 for (i = 0; i < this.valueCount.global; i++) {
                     // Create and add a column reader for the next free column
                     // index
-                    builder.addColumnReader(undefined, this.valueCount.globalPointArrayMap[i]);
+                    builder.addColumnReader(void 0, this.valueCount.globalPointArrayMap[i]);
                 }
                 // If the builder can be populated with remaining columns, then
                 // add it to allBuilders
@@ -1714,7 +1716,7 @@ Highcharts.extend(Data.prototype, {
             if (allSeriesBuilders.length > 0 &&
                 allSeriesBuilders[0].readers.length > 0) {
                 typeCol = columns[allSeriesBuilders[0].readers[0].columnIndex];
-                if (typeCol !== undefined) {
+                if (typeof typeCol !== 'undefined') {
                     if (typeCol.isDatetime) {
                         type = 'datetime';
                     }
@@ -1842,7 +1844,7 @@ addEvent(Chart, 'init', function (e) {
          * @name Highcharts.Chart#data
          * @type {Highcharts.Data|undefined}
          */
-        chart.data = new Data(Highcharts.extend(userOptions.data, {
+        chart.data = new Data(extend(userOptions.data, {
             afterComplete: function (dataOptions) {
                 var i, series;
                 // Merge series configs
@@ -1908,7 +1910,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // The freeIndexes.shift() will return undefined if there
     // are no more columns.
     builder.readers.forEach(function (reader) {
-        if (reader.columnIndex === undefined) {
+        if (typeof reader.columnIndex === 'undefined') {
             reader.columnIndex = freeIndexes.shift();
         }
     });
@@ -1916,7 +1918,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // then return false to signal that this series should
     // not be added.
     builder.readers.forEach(function (reader) {
-        if (reader.columnIndex === undefined) {
+        if (typeof reader.columnIndex === 'undefined') {
             enoughColumns = false;
         }
     });
@@ -1954,7 +1956,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
         }
     });
     // The name comes from the first column (excluding the x column)
-    if (this.name === undefined && builder.readers.length >= 2) {
+    if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
         columnIndexes = builder.getReferencedColumnIndexes();
         if (columnIndexes.length >= 2) {
             // remove the first one (x col)
@@ -1985,7 +1987,9 @@ SeriesBuilder.prototype.addColumnReader = function (columnIndex, configName) {
         columnIndex: columnIndex,
         configName: configName
     });
-    if (!(configName === 'x' || configName === 'y' || configName === undefined)) {
+    if (!(configName === 'x' ||
+        configName === 'y' ||
+        typeof configName === 'undefined')) {
         this.pointIsArray = false;
     }
 };
@@ -2001,7 +2005,7 @@ SeriesBuilder.prototype.getReferencedColumnIndexes = function () {
     var i, referencedColumnIndexes = [], columnReader;
     for (i = 0; i < this.readers.length; i = i + 1) {
         columnReader = this.readers[i];
-        if (columnReader.columnIndex !== undefined) {
+        if (typeof columnReader.columnIndex !== 'undefined') {
             referencedColumnIndexes.push(columnReader.columnIndex);
         }
     }

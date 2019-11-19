@@ -13,10 +13,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var pick = U.pick;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, pick = H.pick, seriesType = H.seriesType, 
+var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, seriesType = H.seriesType, 
 // Work on H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;
 /**
@@ -42,13 +43,19 @@ seriesType('cylinder', 'column',
  * @extends      plotOptions.column
  * @since        7.0.0
  * @product      highcharts
- * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+ *               dragDrop
+ * @requires     modules/cylinder
  * @optionparent plotOptions.cylinder
  */
 {}, {}, 
 /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
 {
-    shapeType: 'cylinder'
+    shapeType: 'cylinder',
+    hasNewShapeType: H
+        .seriesTypes.column.prototype
+        .pointClass.prototype
+        .hasNewShapeType
 });
 /**
  * A `cylinder` series. If the [type](#series.cylinder.type) option is not
@@ -58,6 +65,7 @@ seriesType('cylinder', 'column',
  * @since     7.0.0
  * @product   highcharts
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @requires  modules/cylinder
  * @apioption series.cylinder
  */
 /**

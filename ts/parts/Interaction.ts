@@ -40,7 +40,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): SVGElement;
+            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -85,6 +85,9 @@ declare global {
             setState(state?: string, inherit?: boolean): void;
             setVisible(visible?: boolean, redraw?: boolean): void;
             show(): void;
+        }
+        interface SeriesOptions {
+            inactiveOtherPoints?: boolean;
         }
         interface TrackerMixin {
             drawTrackerGraph(this: Highcharts.Series): void;
@@ -149,9 +152,11 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    extend,
     isArray,
     isObject,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 import './Chart.js';
@@ -166,12 +171,10 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
     merge = H.merge,
-    pick = H.pick,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -205,7 +208,7 @@ TrackerMixin = H.TrackerMixin = {
                 var point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
-                if (point !== undefined) {
+                if (typeof point !== 'undefined') {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
@@ -1092,7 +1095,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.PointStateValue|""} [state]
      *        The new state, can be one of `''` (an empty string), `hover`,
      *        `select` or `inactive`.
      * @param {boolean} [move]
@@ -1102,7 +1105,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (
         this: Highcharts.Point,
-        state?: string,
+        state?: (Highcharts.PointStateValue|''),
         move?: boolean
     ): void {
         var point = this,
@@ -1296,11 +1299,14 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions && haloOptions.size && markerVisibility !== 'hidden') {
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden') {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
-                    .add((markerGraphic as any).parentGroup);
+                    .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
                 d: point.haloPath(haloOptions.size) as any
@@ -1456,14 +1462,14 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @function Highcharts.Series#setState
      *
-     * @param {string} [state]
+     * @param {Highcharts.SeriesStateValue|""} [state]
      *        Can be either `hover` or undefined to set to normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
      */
     setState: function (
         this: Highcharts.Series,
-        state?: string,
+        state?: (Highcharts.SeriesStateValue|''),
         inherit?: boolean
     ): void {
         var series = this,
@@ -1556,18 +1562,18 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series.markerGroup,
                         series.dataLabelsGroup,
                         series.labelBySeries
-                    ].forEach(
-                        function (group: Highcharts.SVGElement): void {
-                            if (group) {
-                                group.animate(
-                                    {
-                                        opacity: opacity
-                                    },
-                                    stateAnimation
-                                );
-                            }
+                    ].forEach(function (
+                        group: (Highcharts.SVGElement|undefined)
+                    ): void {
+                        if (group) {
+                            group.animate(
+                                {
+                                    opacity: opacity
+                                },
+                                stateAnimation
+                            );
                         }
-                    );
+                    });
                 }
             }
         }
@@ -1637,7 +1643,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             vis =
             series.options.visible =
             series.userOptions.visible =
-            vis === undefined ? !oldVisibility : vis; // #5618
+            typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
         showOrHide = vis ? 'show' : 'hide';
 
         // show or hide elements
@@ -1759,7 +1765,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         series.selected =
         selected =
         this.options.selected = (
-            selected === undefined ?
+            typeof selected === 'undefined' ?
                 !series.selected :
                 selected
         );
