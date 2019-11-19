@@ -296,11 +296,11 @@ seriesType('sma', 'line',
             yData: yData
         };
     },
-    destroy: function (keepEvents) {
+    destroy: function () {
         this.dataEventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
-        Series.prototype.destroy.call(this, keepEvents);
+        Series.prototype.destroy.apply(this, arguments);
     }
 });
 /**
