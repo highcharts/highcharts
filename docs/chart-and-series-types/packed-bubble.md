@@ -100,7 +100,6 @@ Here is an example of setting min and max size for bubbles:
 
 <iframe width="100%" height="500" style="null" src=https://jsfiddle.net/gvaartjes/vrzfwcdk/embedded/result allow="fullscreen"></iframe>
 
-Describe feature(s) or configuration option(s)
 ----------------------------------------------
 
 ### ALGORITHMS
@@ -109,27 +108,30 @@ The layout algorithm is configured using [series.layoutAlgorithm](https://api.hi
 
 The `series.layoutAlgorithm` are includes options to change the speed, padding, initial bubbles positions and more.
 
-    
-    layoutAlgorithm: {
-        gravitationalConstant: 0.05,
-        splitSeries: true,
-        seriesInteraction: false,
-        dragBetweenSeries: true,
-        parentNodeLimit: true
-    },
+```js
+layoutAlgorithm: {
+    gravitationalConstant: 0.05,
+    splitSeries: true,
+    seriesInteraction: false,
+    dragBetweenSeries: true,
+    parentNodeLimit: true
+}
+```
 
 ### SPLIT
 
 Whether to split series into individual groups or to mix all series together.
 
-    
-    plotOptions: {
-        packedbubble: {
-            layoutAlgorithm: {
-                splitSeries: true
-            }
+
+```js
+plotOptions: {
+    packedbubble: {
+        layoutAlgorithm: {
+            splitSeries: true
         }
     }
+}
+```
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble-split allow="fullscreen"></iframe>
 
@@ -137,17 +139,18 @@ Whether to split series into individual groups or to mix all series together.
 
 [The simulation](https://api.highcharts.com/highcharts/series.packedbubble.useSimulation) can be disabled or enabled, which has an influence on adding options to the series graph based on the used layout. All parameters reflect in both animation and the final position of bubbles.
 
-    
-    plotOptions: {
-         packedbubble: {
-             useSimulation: true
-         }
-     }    
-    plotOptions: {
-          packedbubble: {
-              useSimulation: false
-          }
-      } 
+```js
+plotOptions: {
+    packedbubble: {
+        useSimulation: true
+    }
+}
+plotOptions: {
+    packedbubble: {
+        useSimulation: false
+    }
+}
+```
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-packedbubble/spiral allow="fullscreen"></iframe>
 
@@ -155,20 +158,22 @@ Whether to split series into individual groups or to mix all series together.
 
 Flag to determine if nodes are draggable or not. Available for graph with useSimulation set to true only.
 
-    
-    plotOptions: {
-           packedbubble: {
-               Draggable: true
-           }
-       } 
+```js
+plotOptions: {
+    packedbubble: {
+        Draggable: true
+    }
+}
+```
 
 The option [dragBetweenSeries: true](https://api.highcharts.com/highcharts/series.packedbubble.layoutAlgoritm.dragBetweenSeries) is declared in layoutAlgorithm params and allows the user to drag and drop points between series, for changing point related series.
 
-    
-     layoutAlgorithm: {
-           splitSeries: true,
-           dragBetweenSeries: true
-       }
+```js
+layoutAlgorithm: {
+    splitSeries: true,
+    dragBetweenSeries: true
+}
+```
 
 Use Cases
 ---------
@@ -181,15 +186,16 @@ Use Cases
 
 2. Configuration
 
-    
-    plotOptions: {
-           packedbubble: {
-               useSimulation: true,
-               layoutAlgorithm: {
-                   splitSeries: false
-               }
-           }
-       }
+```js
+plotOptions: {
+    packedbubble: {
+        useSimulation: true,
+        layoutAlgorithm: {
+            splitSeries: false
+        }
+    }
+}
+```
 
 ### Use Case 2
 
@@ -199,18 +205,19 @@ Use Cases
 
 2. Configuration:
 
-    
-    plotOptions: {
-            packedbubble: {
-                useSimulation: true,
-                layoutAlgorithm: {
-                    splitSeries: true,
-                    seriesInteraction: false,
-                    dragBetweenSeries: true,
-                    parentNodeLimit: true
-                }
-            }
+```js
+plotOptions: {
+    packedbubble: {
+        useSimulation: true,
+        layoutAlgorithm: {
+            splitSeries: true,
+            seriesInteraction: false,
+            dragBetweenSeries: true,
+            parentNodeLimit: true
         }
+    }
+}
+```
 
 ### Use Case 3
 

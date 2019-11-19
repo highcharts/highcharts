@@ -23,10 +23,10 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: PCIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public linesApiNames: MultipleLinesMixin['linesApiNames'];
             public nameBase: string;
             public nameComponents: Array<string>;
@@ -146,10 +146,10 @@ H.seriesType<Highcharts.PCIndicator>(
         nameBase: 'Price Channel',
         nameComponents: ['period'],
         linesApiNames: ['topLine', 'bottomLine'],
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.PCIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -170,7 +170,7 @@ H.seriesType<Highcharts.PCIndicator>(
                 i: number;
 
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             for (i = period; i <= yValLen; i++) {
@@ -189,7 +189,7 @@ H.seriesType<Highcharts.PCIndicator>(
                 values: PC,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -44,73 +44,8 @@ import H from '../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
-/**
- * Data labels options
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- * @since 7.0.0
- */ /**
-* The
-* [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-* specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
-* `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#format
-* @type {string|undefined}
-* @since 7.0.0
-*/ /**
-* Callback JavaScript function to format the data label for a node. Note that
-* if a `format` is defined, the format takes precedence and the formatter is
-* ignored.
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#formatter
-* @type {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
-* @since 7.0.0
-*/ /**
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeFormat
-* @type {string|undefined}
-* @since 7.1.0
-*/ /**
-* Callback to format data labels for _parentNodes_. The `parentNodeFormat`
-* option takes precedence over the `parentNodeFormatter`.
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeFormatter
-* @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>|undefined}
-* @since 7.1.0
-*/ /**
-* Options for a _parentNode_ label text.
-* @sample highcharts/series-packedbubble/packed-dashboard
-*         Dashboard with dataLabels on parentNodes
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#parentNodeTextPath
-* @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
-* @since 7.1.0
-*/ /**
-* Options for a _node_ label text which should follow marker's shape.
-* **Note:** Only SVG-based renderer supports this option.
-* @see {@link Highcharts.SeriesPackedBubbleDataLabelsTextPath#linkTextPath}
-* @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#textPath
-* @type {Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject|undefined}
-* @since 7.1.0
-*/
-/**
- * **Note:** Only SVG-based renderer supports this option.
- *
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
- * @since 7.1.0
- */ /**
-* Presentation attributes for the text path.
-* @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#attributes
-* @type {Highcharts.SVGAttributes|undefined}
-* @since 7.1.0
-*/ /**
-* Enable or disable `textPath` option for link's or marker's data labels.
-* @name Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject#enabled
-* @type {boolean|undefined}
-* @since 7.1.0
-*/
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
@@ -160,7 +95,7 @@ H.networkgraphIntegrations.packedbubble = {
     integrate: H.networkgraphIntegrations.verlet.integrate,
     getK: H.noop
 };
-H.layouts.packedbubble = H.extendClass(Reingold, {
+H.layouts.packedbubble = extendClass(Reingold, {
     beforeStep: function () {
         if (this.options.marker) {
             this.series.forEach(function (series) {
@@ -343,27 +278,87 @@ seriesType('packedbubble', 'bubble',
      */
     useSimulation: true,
     /**
-     * @type    {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
-     * @default {"formatter": function () { return this.point.value; }, "parentNodeFormatter": function () { return this.name; }, "parentNodeTextPath": {"enabled: true}, "padding": 0}
+     * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
      *
      * @private
      */
     dataLabels: {
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _node_ in the networkgraph. In v7.0
+         * defaults to `{key}`, since v7.1 defaults to `undefined` and
+         * `formatter` is used instead.
+         *
+         * @type      {string}
+         * @since     7.0.0
+         * @apioption plotOptions.packedBubble.dataLabels.format
+         */
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
+        /**
+         * Callback JavaScript function to format the data label for a node.
+         * Note that if a `format` is defined, the format takes precedence
+         * and the formatter is ignored.
+         *
+         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
+         * @since 7.0.0
+         */
         formatter: function () {
             return this.point.value;
         },
+        /**
+         * @type      {string}
+         * @since     7.1.0
+         * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+         */
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
+        /**
+         * Callback to format data labels for _parentNodes_. The
+         * `parentNodeFormat` option takes precedence over the
+         * `parentNodeFormatter`.
+         *
+         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
+         * @since 7.1.0
+         */
         parentNodeFormatter: function () {
             return this.name;
         },
-        /** @ignore-option */
+        /**
+         * Options for a _parentNode_ label text.
+         *
+         * **Note:** Only SVG-based renderer supports this option.
+         *
+         * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
+         *         Dashboard with dataLabels on parentNodes
+         *
+         * @declare Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
+         * @since   7.1.0
+         */
         parentNodeTextPath: {
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @since     7.1.0
+             * @apioption plotOptions.packedBubble.dataLabels.attributes
+             */
+            /**
+             * Enable or disable `textPath` option for link's or marker's
+             * data labels.
+             *
+             * @since 7.1.0
+             */
             enabled: true
         },
-        /** @ignore-option */
+        /**
+         * Options for a _node_ label text which should follow marker's
+         * shape.
+         *
+         * **Note:** Only SVG-based renderer supports this option.
+         *
+         * @extends   plotOptions.series.dataLabels.textPath
+         * @apioption plotOptions.packedBubble.dataLabels.textPath
+         */
         padding: 0
     },
     /**
@@ -511,8 +506,12 @@ seriesType('packedbubble', 'bubble',
     pointArrayMap: ['value'],
     pointValKey: 'value',
     isCartesian: false,
+    requireSorting: false,
+    directTouch: true,
     axisTypes: [],
     noSharedTooltip: true,
+    // solving #12287
+    searchPoint: H.noop,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Create a single array of all points from all series
@@ -660,11 +659,10 @@ seriesType('packedbubble', 'bubble',
     calculateParentRadius: function () {
         var series = this, bBox, parentPadding = 20, minParentRadius = 20;
         bBox = series.seriesBox();
-        series.parentNodeRadius =
-            Math.min(Math.max(Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding, minParentRadius), bBox ?
-                Math.max(Math.sqrt(Math.pow(bBox.width, 2) +
-                    Math.pow(bBox.height, 2)) / 2 + parentPadding, minParentRadius) :
-                Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding);
+        series.parentNodeRadius = clamp(Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding, minParentRadius, bBox ?
+            Math.max(Math.sqrt(Math.pow(bBox.width, 2) +
+                Math.pow(bBox.height, 2)) / 2 + parentPadding, minParentRadius) :
+            Math.sqrt(2 * series.parentNodeMass / Math.PI) + parentPadding);
         if (series.parentNode) {
             series.parentNode.marker.radius =
                 series.parentNode.radius = series.parentNodeRadius;
@@ -1108,7 +1106,7 @@ seriesType('packedbubble', 'bubble',
             [minSize, maxSize];
         (allDataPoints || []).forEach(function (point, i) {
             value = useSimulation ?
-                Math.max(Math.min(point[2], zExtremes[1]), zExtremes[0]) :
+                clamp(point[2], zExtremes[0], zExtremes[1]) :
                 point[2];
             radius = series.getRadius(zExtremes[0], zExtremes[1], minSize, maxSize, value);
             if (radius === 0) {

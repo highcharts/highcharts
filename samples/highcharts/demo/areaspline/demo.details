@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Area-spline
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Area charts
 ...

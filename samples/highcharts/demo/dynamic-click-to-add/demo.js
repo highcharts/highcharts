@@ -21,6 +21,11 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Click the plot area to add a point. Click a point to remove it.'
     },
+    accessibility: {
+        announceNewData: {
+            enabled: true
+        }
+    },
     xAxis: {
         gridLineWidth: 1,
         minPadding: 0.2,

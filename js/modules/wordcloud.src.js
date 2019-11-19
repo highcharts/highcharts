@@ -534,6 +534,7 @@ var wordCloudOptions = {
      */
     allowExtendPlayingField: true,
     animation: {
+        /** @internal */
         duration: 500
     },
     borderWidth: 0,
@@ -767,7 +768,7 @@ var wordCloudSeries = {
                 css: css,
                 group: group,
                 renderer: renderer,
-                shapeArgs: undefined,
+                shapeArgs: void 0,
                 shapeType: 'text'
             });
         });

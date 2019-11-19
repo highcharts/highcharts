@@ -94,7 +94,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 import '../parts/ColumnSeries.js';
@@ -106,7 +107,6 @@ var charts = H.charts,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    relativeLength = H.relativeLength,
     // Use H.Renderer instead of H.SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     //
@@ -210,17 +210,10 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
         edgeWidth: 0,
         colorByPoint: true,
         showInLegend: false,
-        /**
-         * @default {"align": "right", "crop": false, "inside": false, "overflow": "allow"}
-         */
         dataLabels: {
-            /** @ignore-option */
             align: 'right',
-            /** @ignore-option */
             crop: false,
-            /** @ignore-option */
             inside: false,
-            /** @ignore-option */
             overflow: 'allow'
         }
     }, {

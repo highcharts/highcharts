@@ -31,13 +31,12 @@
             "error",
             {
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "no-dupe-class-members": 0,
         "no-shadow": 0, // @todo
         "no-undef": 0,
-        "no-undefined": 0,
         "no-underscore-dangle": 0, // @todo
         "no-unused-expressions": 0,
         "no-use-before-define": 0,
@@ -73,6 +72,7 @@
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
+        "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo
     }
 }

@@ -68,12 +68,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    correctFloat,
+    isNumber
+} = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
 var seriesType = H.seriesType,
-    correctFloat = H.correctFloat,
     merge = H.merge;
 
 /* ************************************************************************** *

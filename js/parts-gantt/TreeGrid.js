@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
 import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -24,7 +24,7 @@ var addEvent = H.addEvent, argsToArray = function (args) {
 }, isObject = function (x) {
     // Always use strict mode.
     return U.isObject(x, true);
-}, wrap = H.wrap, GridAxis = H.Axis, GridAxisTick = H.Tick;
+}, GridAxis = H.Axis, GridAxisTick = H.Tick;
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {
@@ -486,7 +486,7 @@ override(GridAxis.prototype, {
                             *
                             * @private
                             */
-                            level: undefined
+                            level: void 0
                         }, {
                             level: 1,
                             /**
@@ -533,7 +533,7 @@ override(GridAxis.prototype, {
                 reversed: true,
                 // grid.columns is not supported in treegrid
                 grid: {
-                    columns: undefined
+                    columns: void 0
                 }
             });
         }
@@ -588,7 +588,7 @@ override(GridAxis.prototype, {
             }
             if (!tick) {
                 ticks[pos] = tick =
-                    new GridAxisTick(axis, pos, null, undefined, {
+                    new GridAxisTick(axis, pos, null, void 0, {
                         category: gridNode.name,
                         tickmarkOffset: gridNode.tickmarkOffset,
                         options: options

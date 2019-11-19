@@ -10,13 +10,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, splat = U.splat;
+var pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, wrap = H.wrap, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto;
+var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -207,7 +207,17 @@ H.addEvent(Series, 'afterTranslate', function () {
                 var circ;
                 if (chart.polar) {
                     circ = this.yAxis.center;
-                    this.group.clip(chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2));
+                    if (!this.clipCircle) {
+                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
+                    }
+                    else {
+                        this.clipCircle.animate({
+                            x: circ[0],
+                            y: circ[1],
+                            r: circ[2] / 2
+                        });
+                    }
+                    this.group.clip(this.clipCircle);
                     this.setClip = H.noop;
                 }
             }));
@@ -244,7 +254,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
          * @apioption plotOptions.series.connectEnds
          */
         if (this.options.connectEnds !== false &&
-            firstValid !== undefined) {
+            typeof firstValid !== 'undefined') {
             this.connectEnds = true; // re-used in splines
             points.splice(points.length, 0, points[firstValid]);
             popLastPoint = true;
@@ -252,7 +262,7 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
         // For area charts, pseudo points are added to the graph, now we
         // need to translate these
         points.forEach(function (point) {
-            if (point.polarPlotY === undefined) {
+            if (typeof point.polarPlotY === 'undefined') {
                 series.toXY(point);
             }
         });

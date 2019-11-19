@@ -807,6 +807,7 @@ var wordCloudOptions: Highcharts.WordcloudSeriesOptions = {
      */
     allowExtendPlayingField: true,
     animation: {
+        /** @internal */
         duration: 500
     },
     borderWidth: 0,
@@ -1120,7 +1121,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                 css: css,
                 group: group,
                 renderer: renderer,
-                shapeArgs: undefined,
+                shapeArgs: void 0,
                 shapeType: 'text'
             });
         });

@@ -207,7 +207,6 @@ seriesType<Highcharts.FunnelSeries>(
         size: true as any,
 
         dataLabels: {
-            /** @ignore-option */
             connectorWidth: 1
         },
 
@@ -461,7 +460,7 @@ seriesType<Highcharts.FunnelSeries>(
 
         // Extend the pie data label method
         drawDataLabels: function (
-            this: Highcharts.FunnelSeries,
+            this: Highcharts.FunnelSeries
         ): void {
             var series = this,
                 data = series.data,

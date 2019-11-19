@@ -108,24 +108,10 @@ declare global {
  * @type {number}
  */
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * A name for the dash style to use for the column or bar. Overrides dashStyle
- * on the series. In styled mode, the stroke dash-array can be set with the same
- * classes as listed under {@link Highcharts.PointOptionsObject#color}.
- * @name Highcharts.PointOptionsObject#dashStyle
- * @type {Highcharts.DashStyleValue|undefined}
- *//**
-
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
- * @name Highcharts.PointOptionsObject#pointWidth
- * @type {number|undefined}
- */
-
 import U from './Utilities.js';
 const {
+    animObject,
+    clamp,
     defined,
     extend,
     isNumber,
@@ -137,8 +123,7 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var animObject = H.animObject,
-    color = H.color,
+var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -478,15 +463,8 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         dataLabels: {
-            /**
-             * @internal
-             */
             align: null,
-            /**
-             * @internal
-             */
             verticalAlign: null,
-            /** @internal */
             y: null
         },
 
@@ -658,7 +636,10 @@ seriesType<Highcharts.ColumnSeries>(
                     ) { // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
-                            if (stackGroups[stackKey as any] === undefined) {
+                            if (
+                                typeof stackGroups[stackKey as any] ===
+                                'undefined'
+                            ) {
                                 stackGroups[stackKey as any] = columnCount++;
                             }
                             columnIndex = stackGroups[stackKey as any];
@@ -825,8 +806,9 @@ seriesType<Highcharts.ColumnSeries>(
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
-                    plotY = Math.min(
-                        Math.max(-safeDistance, point.plotY as any),
+                    plotY = clamp(
+                        point.plotY as any,
+                        -safeDistance,
                         yAxis.len + safeDistance
                     ),
                     barX = (point.plotX as any) + seriesXOffset,
@@ -1006,7 +988,7 @@ seriesType<Highcharts.ColumnSeries>(
                 brightness = stateOptions.brightness;
                 fill =
                     stateOptions.color || (
-                        brightness !== undefined &&
+                        typeof brightness !== 'undefined' &&
                         color(fill as any)
                             .brighten(stateOptions.brightness as any)
                             .get()
@@ -1128,12 +1110,10 @@ seriesType<Highcharts.ColumnSeries>(
             if (svg) { // VML is too slow anyway
                 if (init) {
                     attr.scaleY = 0.001;
-                    translatedThreshold = Math.min(
-                        (yAxis.pos as any) + yAxis.len,
-                        Math.max(
-                            yAxis.pos as any,
-                            yAxis.toPixels(options.threshold as any)
-                        )
+                    translatedThreshold = clamp(
+                        yAxis.toPixels(options.threshold as any),
+                        yAxis.pos,
+                        yAxis.pos + yAxis.len
                     );
                     if (inverted) {
                         attr.translateX = translatedThreshold - yAxis.len;

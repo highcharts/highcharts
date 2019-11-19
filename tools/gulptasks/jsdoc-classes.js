@@ -44,6 +44,7 @@ const SOURCE_GLOBS = [
     'js/parts-map/MapSeries.js',
     'js/parts-more/AreaRangeSeries.js',
     'js/parts-more/PackedBubbleSeries.js',
+    'js/mixins/ajax.js',
     'js/modules/accessibility/*.js',
     'js/modules/draggable-points.src.js',
     'js/modules/drilldown.src.js',
@@ -55,6 +56,7 @@ const SOURCE_GLOBS = [
     'js/modules/pattern-fill.src.js',
     'js/modules/sankey.src.js',
     'js/modules/sunburst.src.js',
+    'js/modules/timeline.src.js',
     'js/modules/networkgraph/*.js',
     'js/modules/sonification/*.js',
     'js/annotations/annotations.src.js'

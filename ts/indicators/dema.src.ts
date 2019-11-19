@@ -27,10 +27,10 @@ declare global {
                 i?: number,
                 xVal?: Array<number>
             ): [number, number];
-            public getValues(
-                series: DEMAIndicatorLinkedParentSeries,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: DEMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public options: DEMAIndicatorOptions;
             public pointClass: typeof DEMAIndicatorPoint;
@@ -38,9 +38,7 @@ declare global {
         }
 
         interface DEMAIndicatorLinkedParentSeries extends Series {
-            EMApercent: number;
-            xData: Array<number>;
-            yData: Array<Array<number>>;
+            EMApercent?: number;
         }
 
         interface DEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
@@ -62,13 +60,15 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMAindicator = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin,
-    correctFloat = H.correctFloat;
+    requiredIndicator = requiredIndicatorMixin;
 
 /**
  * The DEMA series Type
@@ -134,23 +134,25 @@ H.seriesType<Highcharts.DEMAIndicator>(
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
                 yVal,
-                i === undefined ? 1 : i,
+                typeof i === 'undefined' ? 1 : i,
                 (this.chart.series[0] as any).EMApercent,
                 prevEMA,
-                index === undefined ? -1 : index,
+                typeof index === 'undefined' ? -1 : index,
                 SMA
             );
         },
 
-        getValues: function (
+        getValues: function<
+            TLinkedSeries extends Highcharts.DEMAIndicatorLinkedParentSeries
+        > (
             this: Highcharts.DEMAIndicator,
-            series: Highcharts.DEMAIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.DEMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod: number = 2 * period,
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 index = -1,
                 accumulatePeriodPoints = 0,
@@ -173,7 +175,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 2 * period - 1) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
@@ -237,7 +239,7 @@ H.seriesType<Highcharts.DEMAIndicator>(
                 values: DEMA,
                 xData: xDataDema,
                 yData: yDataDema
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

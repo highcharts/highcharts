@@ -77,7 +77,8 @@ const {
     extend,
     isNumber,
     isString,
-    pick
+    pick,
+    wrap
 } = U;
 
 import './GridAxis.js';
@@ -100,7 +101,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return U.isObject(x, true);
     },
-    wrap = H.wrap,
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
     GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
 
@@ -753,7 +753,7 @@ override(GridAxis.prototype, {
                         *
                         * @private
                         */
-                        level: undefined
+                        level: void 0
                     }, {
                         level: 1,
                         /**
@@ -802,7 +802,7 @@ override(GridAxis.prototype, {
                 reversed: true,
                 // grid.columns is not supported in treegrid
                 grid: {
-                    columns: undefined
+                    columns: void 0
                 }
             });
         }
@@ -889,7 +889,7 @@ override(GridAxis.prototype, {
 
             if (!tick) {
                 ticks[pos] = tick =
-                    new (GridAxisTick as any)(axis, pos, null, undefined, {
+                    new (GridAxisTick as any)(axis, pos, null, void 0, {
                         category: gridNode.name,
                         tickmarkOffset: gridNode.tickmarkOffset,
                         options: options

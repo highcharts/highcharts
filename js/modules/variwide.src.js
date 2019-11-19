@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick;
+var isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../parts/AreaSeries.js';
 var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
@@ -167,7 +167,7 @@ seriesType('variwide', 'column'
                 '') + series.stackKey];
             pointStack = stack[xValue];
             if (stack && pointStack && !point.isNull) {
-                pointStack.setOffset(-(pointWidth / 2) || 0, pointWidth || 0, undefined, undefined, point.plotX);
+                pointStack.setOffset(-(pointWidth / 2) || 0, pointWidth || 0, void 0, void 0, point.plotX);
             }
         });
     }
@@ -219,7 +219,7 @@ addEvent(H.Tick, 'afterGetPosition', function (e) {
         this.postTranslate(e.pos, xOrY, this.pos);
     }
 });
-H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
+wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
     var args = Array.prototype.slice.call(arguments, 1), xy, xOrY = horiz ? 'x' : 'y';
     // Replace the x with the original x
     if (this.axis.variwide &&

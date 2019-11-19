@@ -39,11 +39,11 @@ declare global {
                 tripledPeriod: number,
                 EMAlevels: EMAIndicatorLevelsObject,
                 i: number
-            ): [number, number];
-            public getValues(
-                series: TEMAIndicatorLinkedParentSeries,
+            ): ([number, (number|null)]|undefined);
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: TEMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public options: TEMAIndicatorOptions;
             public pointClass: typeof TEMAIndicatorPoint;
@@ -51,9 +51,7 @@ declare global {
         }
 
         interface TEMAIndicatorLinkedParentSeries extends Series {
-            EMApercent: number;
-            xData: Array<number>;
-            yData: Array<Array<number>>;
+            EMApercent?: number;
         }
 
         interface TEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
@@ -76,13 +74,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
+
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMAindicator = H.seriesTypes.ema,
-    requiredIndicator = requiredIndicatorMixin,
-    correctFloat = H.correctFloat;
+    requiredIndicator = requiredIndicatorMixin;
 
 /**
  * The TEMA series type.
@@ -147,10 +148,10 @@ H.seriesType<Highcharts.TEMAIndicator>(
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
                 yVal,
-                i === undefined ? 1 : i,
+                typeof i === 'undefined' ? 1 : i,
                 (this.chart.series[0] as any).EMApercent,
                 prevEMA,
-                index === undefined ? -1 : index,
+                typeof index === 'undefined' ? -1 : index,
                 SMA
             );
         },
@@ -170,23 +171,25 @@ H.seriesType<Highcharts.TEMAIndicator>(
 
             return TEMAPoint;
         },
-        getValues: function (
+        getValues: function<
+            TLinkedSeries extends Highcharts.TEMAIndicatorLinkedParentSeries
+        > (
             this: Highcharts.TEMAIndicator,
-            series: Highcharts.TEMAIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.TEMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod = 2 * period,
                 tripledPeriod = 3 * period,
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 index = -1,
                 accumulatePeriodPoints = 0,
                 SMA = 0,
-                TEMA: Array<[number, number]> = [],
-                xDataTema: Array<number> = [],
-                yDataTema: Array<number> = [],
+                TEMA: Array<Array<(number|null)>> = [],
+                xDataTema: Array<(number|null)> = [],
+                yDataTema: Array<(number|null)> = [],
                 // EMA of previous point
                 prevEMA: (number|undefined),
                 prevEMAlevel2: (number|undefined),
@@ -194,7 +197,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
                 EMAvalues: Array<number> = [],
                 EMAlevel2values: Array<number> = [],
                 i: number,
-                TEMAPoint: [number, number],
+                TEMAPoint: ([number, (number|null)]|undefined),
                 // This object contains all EMA EMAlevels calculated like below
                 // EMA = level1
                 // EMA(EMA) = level2,
@@ -205,7 +208,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 3 * period - 2) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
@@ -304,7 +307,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
                 values: TEMA,
                 xData: xDataTema,
                 yData: yDataTema
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

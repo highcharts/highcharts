@@ -62,7 +62,7 @@ seriesType('scatter3d', 'scatter',
 }, {
     applyOptions: function () {
         Point.prototype.applyOptions.apply(this, arguments);
-        if (this.z === undefined) {
+        if (typeof this.z === 'undefined') {
             this.z = 0;
         }
         return this;

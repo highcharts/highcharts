@@ -26,7 +26,7 @@ H.colorPointMixin = {
      */
     setVisible: function (vis) {
         var point = this, method = vis ? 'show' : 'hide';
-        point.visible = Boolean(vis);
+        point.visible = point.options.visible = Boolean(vis);
         // Show and hide associated elements
         ['graphic', 'dataLabel'].forEach(function (key) {
             if (point[key]) {
@@ -58,7 +58,7 @@ H.colorSeriesMixin = {
             color = point.options.color ||
                 (point.isNull ?
                     nullColor :
-                    (colorAxis && value !== undefined) ?
+                    (colorAxis && typeof value !== 'undefined') ?
                         colorAxis.toColor(value, point) :
                         point.color || series.color);
             if (color) {

@@ -40,34 +40,6 @@ import H from '../parts/Globals.js';
 * @name Highcharts.DragDropPositionObject#prevdY
 * @type {number|undefined}
 */
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* Callback that fires while dragging a point. The mouse event is passed in as
-* parameter. The original data can be accessed from `e.origin`, and the new
-* point values can be accessed from `e.newPoints`. If there is only a single
-* point being updated, it can be accessed from `e.newPoint` for simplicity, and
-* its ID can be accessed from `e.newPointId`. The this context is the point
-* being dragged. To stop the default drag action, return `false`.
-* @name Highcharts.PointEventsOptionsObject#drag
-* @type {Highcharts.PointDragCallbackFunction|undefined}
-* @requires modules/dragable-points
-*/ /**
-* Point specific options for the draggable-points module.
-* @name Highcharts.PointEventsOptionsObject#dragDrop
-* @type {Highcharts.SeriesLineDataDragDropOptions|Highcharts.SeriesXrangeDataDragDropOptions|undefined}
-*/ /**
-* Callback that fires when starting to drag a point. The mouse event object is
-* passed in as an argument. If a drag handle is used, `e.updateProp` is set to
-* the data property being dragged. The `this` context is the point.
-* @name Highcharts.PointEventsOptionsObject#dragStart
-* @type {Highcharts.PointDragStartCallbackFunction|undefined}
-*/ /**
-* Callback that fires when the point is dropped. The parameters passed are the
-* same as for drag. To stop the default drop action, return `false`.
-* @name Highcharts.PointEventsOptionsObject#drop
-* @type {Highcharts.PointDropCallbackFunction|undefined}
-*/
 /**
  * Function callback to execute while series points are dragged. Return false to
  * stop the default drag action.
@@ -196,7 +168,7 @@ import H from '../parts/Globals.js';
 * @type {"drop"}
 */
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach, pick = U.pick;
+var clamp = U.clamp, objectEach = U.objectEach, pick = U.pick;
 var addEvent = H.addEvent, merge = H.merge, seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -911,6 +883,7 @@ function (type) {
  * @sample highcharts/dragdrop/drag-xrange
  *         Draggable X range series
  *
+ * @declare   Highcharts.SeriesDragDropOptionsObject
  * @since     6.2.0
  * @requires  modules/draggable-points
  * @apioption plotOptions.series.dragDrop
@@ -932,7 +905,7 @@ var defaultDragSensitivity = 2;
  * Style options for the guide box. The guide box has one state by default, the
  * `default` state.
  *
- * @type         {Highcharts.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>}
+ * @type         {Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>}
  * @since        6.2.0
  * @optionparent plotOptions.series.dragDrop.guideBox
  *
@@ -942,7 +915,8 @@ var defaultGuideBoxOptions = {
     /**
      * Style options for the guide box default state.
      *
-     * @since 6.2.0
+     * @declare Highcharts.DragDropGuideBoxOptionsObject
+     * @since   6.2.0
      */
     'default': {
         /**
@@ -989,6 +963,7 @@ var defaultGuideBoxOptions = {
 /**
  * Options for the drag handles.
  *
+ * @declare      Highcharts.DragDropHandleOptionsObject
  * @since        6.2.0
  * @optionparent plotOptions.series.dragDrop.dragHandle
  *
@@ -1216,6 +1191,7 @@ var defaultDragHandleOptions = {
  * Point specific options for the draggable-points module. Overrides options on
  * `series.dragDrop`.
  *
+ * @declare   Highcharts.SeriesLineDataDragDropOptions
  * @extends   plotOptions.series.dragDrop
  * @since     6.2.0
  * @requires  modules/draggable-points
@@ -1315,8 +1291,8 @@ function isPointMovable(point) {
  *         The normalized event.
  */
 function getNormalizedEvent(e, chart) {
-    return (e.chartX === undefined ||
-        e.chartY === undefined ?
+    return (typeof e.chartX === 'undefined' ||
+        typeof e.chartY === 'undefined' ?
         chart.pointer.normalize(e) :
         e);
 }
@@ -1697,7 +1673,7 @@ function dragMove(e, point) {
  * @function Highcharts.Chart#setGuideBoxState
  * @param {string} state
  *        The state to set the guide box to.
- * @param {Highcharts.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>} [options]
+ * @param {Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>} [options]
  *        Additional overall guideBox options to consider.
  * @return {Highcharts.SVGElement}
  *         The modified guide box.
@@ -1750,7 +1726,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     // Find out if we only have one prop to update
     for (var key in updateProps) {
         if (Object.hasOwnProperty.call(updateProps, key)) {
-            if (updateSingleProp !== undefined) {
+            if (typeof updateSingleProp !== 'undefined') {
                 updateSingleProp = false;
                 break;
             }
@@ -1774,7 +1750,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
         if (precision) {
             res = Math.round(res / precision) * precision;
         }
-        return Math.max(min, Math.min(max, res));
+        return clamp(res, min, max);
     };
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
@@ -1786,7 +1762,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
         if (!(updateSingleProp &&
             val.propValidate &&
             !val.propValidate(newVal, point)) &&
-            oldVal !== undefined) {
+            typeof oldVal !== 'undefined') {
             result[key] = newVal;
         }
     });

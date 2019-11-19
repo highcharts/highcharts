@@ -51,6 +51,7 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
+        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
@@ -209,8 +210,8 @@ declare global {
             eventArguments?: (Dictionary<any>|Event),
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
-        function format(str: string, ctx: any, time?: Time): string;
-        function formatSingle(format: string, val: any, time?: Time): string;
+        function format(str: string, ctx: any, chart?: Chart): string;
+        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -1315,6 +1316,19 @@ H.merge = function<T> (): T {
 };
 
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
+
+/**
  * Shortcut for parseInt
  *
  * @private
@@ -1771,7 +1785,7 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T, TReturn = T> (
+function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
@@ -1780,7 +1794,7 @@ H.extendClass = function<T, TReturn = T> (
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1799,7 +1813,7 @@ H.extendClass = function<T, TReturn = T> (
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length?: number, padder?: string): string {
+function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1807,7 +1821,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-};
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -1827,7 +1841,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1835,7 +1849,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1856,7 +1870,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1877,7 +1891,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -1914,9 +1928,8 @@ H.datePropsToTimestamps = function (obj: any): void {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
@@ -1924,18 +1937,20 @@ H.datePropsToTimestamps = function (obj: any): void {
 H.formatSingle = function (
     format: string,
     val: any,
-    time?: Highcharts.Time
+    chart?: Highcharts.Chart
 ): string {
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
         lang = H.defaultOptions.lang,
         decimals: number;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex) as any;
         decimals = decimals ? (decimals as any)[1] : -1;
         if (val !== null) {
-            val = H.numberFormat(
+            val = numberFormatter(
                 val,
                 decimals,
                 (lang as any).decimalPoint,
@@ -1943,7 +1958,7 @@ H.formatSingle = function (
             );
         }
     } else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1968,14 +1983,13 @@ H.formatSingle = function (
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
+H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -2011,7 +2025,7 @@ H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
 
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
 
             // Push the result and advance the cursor
@@ -2137,7 +2151,7 @@ H.normalizeTickInterval = function (
 
     // Multiply back to the correct magnitude. Correct floats to appropriate
     // precision (#6085).
-    retInterval = H.correctFloat(
+    retInterval = correctFloat(
         retInterval * (magnitude as any),
         -Math.round(Math.log(0.001) / Math.LN10)
     );
@@ -2303,11 +2317,11 @@ function discardElement(element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec?: number): number {
+function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-};
+}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -2351,13 +2365,13 @@ function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-H.animObject = function (
+function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-};
+}
 
 /**
  * The time unit lookup
@@ -2401,7 +2415,7 @@ H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-H.numberFormat = function (
+function numberFormat(
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -2488,7 +2502,7 @@ H.numberFormat = function (
     }
 
     return ret;
-};
+}
 
 /**
  * Easing definition
@@ -3284,7 +3298,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(
+    seriesTypes[type] = extendClass(
         seriesTypes[parent] || function (): void {},
         props
     );
@@ -3293,7 +3307,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
 
     return seriesTypes[type];
@@ -3387,26 +3401,34 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    animObject,
     arrayMax,
     arrayMin,
     attr,
+    clamp,
+    correctFloat,
     defined,
     destroyObjectProperties,
     discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isClass,
     isDOMElement,
     isNumber,
     isObject,
     isString,
+    numberFormat,
     objectEach,
+    pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

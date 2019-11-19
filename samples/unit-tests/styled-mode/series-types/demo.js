@@ -65,6 +65,9 @@ QUnit.module('Styled mode for series types', function () {
                         type: type,
                         styledMode: true
                     },
+                    accessibility: {
+                        enabled: false // A11y forces graphic for null points
+                    },
                     series: [{
                         id: 'primary',
                         data: [

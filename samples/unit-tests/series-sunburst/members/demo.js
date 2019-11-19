@@ -107,6 +107,27 @@ QUnit.test('utils.calculateLevelSizes', function (assert) {
     );
 });
 
+QUnit.test('utils.getLevelFromAndTo', function (assert) {
+    const {
+        getLevelFromAndTo
+    } = Highcharts.seriesTypes.sunburst.prototype.utils;
+    assert.deepEqual(
+        getLevelFromAndTo({ level: 0, height: 3 }),
+        { from: 1, to: 3 },
+        'should display levels from 1 to 3 when node is on level 0 and has the height of 3. Should never display level 0'
+    );
+    assert.deepEqual(
+        getLevelFromAndTo({ level: 1, height: 2 }),
+        { from: 1, to: 3 },
+        'should display levels from 1 to 3 when node is on level 1 and has the height of 2'
+    );
+    assert.deepEqual(
+        getLevelFromAndTo({ level: 4, height: 10 }),
+        { from: 4, to: 14 },
+        'should display levels from 4 to 14 when node is on level 4 and has the height of 10'
+    );
+});
+
 QUnit.test('utils.range', function (assert) {
     var sunburstPrototype = Highcharts.seriesTypes.sunburst.prototype,
         range = sunburstPrototype.utils.range;

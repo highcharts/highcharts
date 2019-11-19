@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- isNew: true
+name: Dependency wheel
+authors:
+  - Torstein Hønsi
+js_wrap: b
+isNew: true
+tags: []
+categories:
+  - More chart types
 ...

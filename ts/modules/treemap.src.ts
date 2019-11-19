@@ -289,6 +289,7 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     defined,
     extend,
     isArray,
@@ -508,12 +509,8 @@ seriesType<Highcharts.TreemapSeries>(
          * @since 4.1.0
          */
         dataLabels: {
-            /** @ignore-option */
             defer: false,
-            /** @ignore-option */
             enabled: true,
-            // eslint-disable-next-line valid-jsdoc
-            /** @ignore-option */
             formatter: function (): string {
                 var point: Highcharts.TreemapPoint = this && this.point ?
                         (this.point as Highcharts.TreemapPoint) :
@@ -522,9 +519,7 @@ seriesType<Highcharts.TreemapSeries>(
 
                 return name;
             },
-            /** @ignore-option */
             inside: true,
-            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
@@ -776,7 +771,7 @@ seriesType<Highcharts.TreemapSeries>(
          * [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels) for
          * possible values.
          *
-         * @type      {Highcharts.DataLabelsOptionsObject}
+         * @extends   plotOptions.treemap.dataLabels
          * @since     4.1.0
          * @product   highcharts
          * @apioption plotOptions.treemap.levels.dataLabels
@@ -929,7 +924,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ): Highcharts.TreemapListOfParentsObject {
                     var parent = pick(curr.parent, '');
 
-                    if (prev[parent] === undefined) {
+                    if (typeof prev[parent] === 'undefined') {
                         prev[parent] = [];
                     }
                     prev[parent].push(i);
@@ -1421,7 +1416,7 @@ seriesType<Highcharts.TreemapSeries>(
                         x: pX,
                         y: pY,
                         width: pW,
-                        height: H.correctFloat(pH)
+                        height: correctFloat(pH)
                     });
                     if (group.direction === 0) {
                         plot.y = plot.y + pH;
@@ -2268,7 +2263,6 @@ seriesType<Highcharts.TreemapSeries>(
     }
 );
 
-
 /**
  * A `treemap` series. If the [type](#series.treemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -2286,26 +2280,26 @@ seriesType<Highcharts.TreemapSeries>(
  *
  * 1. An array of numerical values. In this case, the numerical values will be
  *    interpreted as `value` options. Example:
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
+ * 2. An array of objects with named values. The following snippet shows only a
  *    few settings, see the complete options set below. If the total number of
  *    data points exceeds the series'
  *    [turboThreshold](#series.treemap.turboThreshold),
- * this option is not available.
- *  ```js
- *     data: [{
- *         value: 9,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ *    this option is not available.
+ *    ```js
+ *      data: [{
+ *        value: 9,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *      }, {
+ *        value: 6,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *      }]
+ *    ```
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
@@ -2355,3 +2349,5 @@ seriesType<Highcharts.TreemapSeries>(
  * @product   highcharts
  * @apioption series.treemap.data.parent
  */
+
+''; // adds doclets above to transpiled file

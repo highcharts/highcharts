@@ -63,7 +63,8 @@ const {
     erase,
     extend,
     pick,
-    splat
+    splat,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -77,7 +78,6 @@ var Axis = H.Axis,
     AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
 
 var defaultXAxisOptions = {
@@ -211,7 +211,7 @@ addEvent(Chart, 'init', function (
         if (!options.legend) {
             options.legend = {};
         }
-        if (options.legend.enabled === undefined) {
+        if (typeof options.legend.enabled === 'undefined') {
             options.legend.enabled = false;
         }
         merge(
@@ -469,7 +469,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
                 point.plotY = chart.yAxis[i]
                     .translate(point.y, false, true, null, true);
 
-                if (lastPlotX !== undefined) {
+                if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
                         closestPointRangePx,
                         Math.abs(point.plotX - lastPlotX)
@@ -563,7 +563,7 @@ function addFormattedValue(
                     this,
                     { value: this.y }
                 ),
-                chart.time
+                chart
             );
         } else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(

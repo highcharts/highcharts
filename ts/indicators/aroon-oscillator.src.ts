@@ -20,10 +20,10 @@ declare global {
         class AroonOscillatorIndicator extends AroonIndicator
             implements MultipleLinesMixin {
             public data: Array<AroonOscillatorIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: AroonIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): IndicatorValuesObject<TLinkedSeries>;
             public init(): void;
             public nameBase: string;
             public options: AroonOscillatorIndicatorOptions;
@@ -134,15 +134,15 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
                 }
             );
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.AroonIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             // 0- date, 1- Aroon Oscillator
-            var ARO: Array<[number, number]> = [],
+            var ARO: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
-                aroon: Highcharts.IndicatorMultipleValuesObject,
+                aroon: Highcharts.IndicatorValuesObject<TLinkedSeries>,
                 aroonUp: number,
                 aroonDown: number,
                 oscillator: number,
@@ -151,11 +151,11 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
             aroon = (
                 AROON.prototype.getValues.call(
                     this, series, params
-                ) as Highcharts.IndicatorMultipleValuesObject);
+                ) as Highcharts.IndicatorValuesObject<TLinkedSeries>);
 
             for (i = 0; i < aroon.yData.length; i++) {
-                aroonUp = aroon.yData[i][0];
-                aroonDown = aroon.yData[i][1];
+                aroonUp = (aroon.yData[i] as any)[0];
+                aroonDown = (aroon.yData[i] as any)[1];
                 oscillator = aroonUp - aroonDown;
 
                 ARO.push([aroon.xData[i], oscillator]);
@@ -167,7 +167,7 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
                 values: ARO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

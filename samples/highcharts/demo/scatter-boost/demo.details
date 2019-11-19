@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- requiresManualTesting: true
- js_wrap: b
+name: Scatter plot with 1 million points
+authors:
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+tags: []
+categories:
+  - Scatter and bubble charts
 ...

@@ -13,7 +13,7 @@ import H from './Globals.js';
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach;
+var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, wrap = U.wrap;
 import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
@@ -301,19 +301,19 @@ seriesType('flags', 'column'
             stackIndex = point.stackIndex;
             shape = point.options.shape || options.shape;
             plotY = point.plotY;
-            if (plotY !== undefined) {
+            if (typeof plotY !== 'undefined') {
                 plotY = point.plotY + optionsY -
-                    (stackIndex !== undefined &&
+                    (typeof stackIndex !== 'undefined' &&
                         (stackIndex * options.stackDistance));
             }
             // skip connectors for higher level stacked points
-            point.anchorX = stackIndex ? undefined : point.plotX;
-            anchorY = stackIndex ? undefined : point.plotY;
+            point.anchorX = stackIndex ? void 0 : point.plotX;
+            anchorY = stackIndex ? void 0 : point.plotY;
             centered = shape !== 'flag';
             graphic = point.graphic;
             // Only draw the point if y is defined and the flag is within
             // the visible area
-            if (plotY !== undefined &&
+            if (typeof plotY !== 'undefined' &&
                 plotX >= 0 &&
                 !outsideRight) {
                 // Create the flag
@@ -411,7 +411,7 @@ seriesType('flags', 'column'
         }
         // Can be a mix of SVG and HTML and we need events for both (#6303)
         if (options.useHTML) {
-            H.wrap(series.markerGroup, 'on', function (proceed) {
+            wrap(series.markerGroup, 'on', function (proceed) {
                 return H.SVGElement.prototype.on.apply(
                 // for HTML
                 proceed.apply(this, [].slice.call(arguments, 1)), 
@@ -513,7 +513,7 @@ seriesType('flags', 'column'
     isValid: function () {
         // #9233 - Prevent from treating flags as null points (even if
         // they have no y values defined).
-        return isNumber(this.y) || this.y === undefined;
+        return isNumber(this.y) || typeof this.y === 'undefined';
     }
 });
 // create the flag icon with anchor

@@ -162,12 +162,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    animObject,
     erase,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
 
 
@@ -331,7 +332,7 @@ H.SVGRenderer.prototype.addPattern = function (
 ): (Highcharts.SVGElement|undefined) {
     var pattern: (Highcharts.SVGElement|undefined),
         animate = pick(animation, true),
-        animationOptions = H.animObject(animate),
+        animationOptions = animObject(animate),
         path: Highcharts.SVGAttributes,
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,
@@ -422,7 +423,7 @@ H.SVGRenderer.prototype.addPattern = function (
     }
 
     // For non-animated patterns, set opacity now
-    if (!(options.image && animate) && options.opacity !== undefined) {
+    if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
         [].forEach.call(pattern.element.childNodes, function (
             child: Highcharts.SVGDOMElement
         ): void {

@@ -23,10 +23,10 @@ declare global {
             public options: WMAIndicatorOptions;
             public pointClass: typeof WMAIndicatorPoint;
             public points: Array<WMAIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: WMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface WMAIndicatorOptions extends SMAIndicatorOptions {
@@ -151,10 +151,10 @@ seriesType<Highcharts.WMAIndicator>(
      * @lends Highcharts.Series#
      */
     {
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.WMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -171,7 +171,7 @@ seriesType<Highcharts.WMAIndicator>(
                 WMAPoint: (Array<number>|undefined);
 
             if (xVal.length < period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick
@@ -207,7 +207,7 @@ seriesType<Highcharts.WMAIndicator>(
                 values: WMA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

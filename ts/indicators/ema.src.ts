@@ -36,10 +36,10 @@ declare global {
                 index: number,
                 SMA: number
             ): [number, number];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: EMAIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         interface EMAIndicatorOptions extends SMAIndicatorOptions {
@@ -62,10 +62,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    correctFloat,
+    isArray
+} = U;
 
-var seriesType = H.seriesType,
-    correctFloat = H.correctFloat;
+var seriesType = H.seriesType;
 
 /**
  * The EMA series type.
@@ -144,24 +146,24 @@ seriesType<Highcharts.EMAIndicator>(
                     (yVal as any)[i - 1][index],
                 y: number;
 
-            y = calEMA === undefined ?
+            y = typeof calEMA === 'undefined' ?
                 SMA : correctFloat((yValue * EMApercent) +
                 (calEMA * (1 - EMApercent)));
 
             return [x, y];
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.EMAIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.EMAIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 EMApercent = 2 / (period + 1),
                 sum = 0,
-                EMA: Array<[number, number]> = [],
+                EMA: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 index = -1,
@@ -172,7 +174,7 @@ seriesType<Highcharts.EMAIndicator>(
 
             // Check period, if bigger than points length, skip
             if (yValLen < period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
@@ -211,7 +213,7 @@ seriesType<Highcharts.EMAIndicator>(
                 values: EMA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

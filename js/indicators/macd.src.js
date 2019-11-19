@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, correctFloat = H.correctFloat;
+var correctFloat = U.correctFloat, defined = U.defined;
+var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
 /**
  * The MACD series type.
  *
@@ -72,7 +72,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     /**
@@ -96,7 +96,7 @@ seriesType('macd', 'sma',
              *
              * @type  {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     threshold: 0,
@@ -255,7 +255,7 @@ seriesType('macd', 'sma',
         this.zones = this.signalZones.zones;
         SMA.prototype.applyZones.call(this);
         // applyZones hides only main series.graph, hide macd line manually
-        if (this.options.macdLine.zones.length) {
+        if (this.graphmacd && this.options.macdLine.zones.length) {
             this.graphmacd.hide();
         }
         this.zones = histogramZones;
@@ -264,7 +264,7 @@ seriesType('macd', 'sma',
         var j = 0, MACD = [], xMACD = [], yMACD = [], signalLine = [], shortEMA, longEMA, i;
         if (series.xData.length <
             params.longPeriod + params.signalPeriod) {
-            return false;
+            return;
         }
         // Calculating the short and long EMA used when calculating the MACD
         shortEMA = EMA.prototype.getValues(series, {
@@ -309,7 +309,8 @@ seriesType('macd', 'sma',
         // Setting the MACD Histogram. In comparison to the loop with pure
         // MACD this loop uses MACD x value not xData.
         for (i = 0; i < MACD.length; i++) {
-            if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
+            // detect the first point
+            if (MACD[i][0] >= signalLine[0][0]) {
                 MACD[i][2] = signalLine[j][1];
                 yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
                 if (MACD[i][3] === null) {

@@ -22,10 +22,10 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: StochasticIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleNullableValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public linesApiNames: Array<string>;
             public nameBase: string;
@@ -139,7 +139,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         dataGrouping: {
@@ -168,18 +168,18 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 }
             }, this.options);
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.StochasticIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.StochasticIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleNullableValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periodK: number = (params.periods as any)[0],
                 periodD: number = (params.periods as any)[1],
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 // 0- date, 1-%K, 2-%D
-                SO: Array<[number, number, (number|null)]> = [],
+                SO: Array<Array<(number|null)>> = [],
                 xData: Array<number> = [],
                 yData: Array<Array<(number|null)>> = [],
                 slicedY: Array<Array<number>>,
@@ -191,12 +191,9 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 LL: number,
                 K: number,
                 D: number|null = null,
-                points: (boolean|Highcharts.IndicatorValuesObject|
-                Highcharts.IndicatorNullableValuesObject|
-                Highcharts.IndicatorUndefinableValuesObject|
-                Highcharts.IndicatorMultipleValuesObject|
-                Highcharts.IndicatorMultipleNullableValuesObject|
-                Highcharts.IndicatorMultipleUndefinableValuesObject
+                points: (
+                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
+                    undefined
                 ),
                 extremes: [number, number],
                 i: number;
@@ -208,7 +205,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
-                return false;
+                return;
             }
 
             // For a N-period, we start from N-1 point, to calculate Nth point
@@ -246,7 +243,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 values: SO,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     })
 );

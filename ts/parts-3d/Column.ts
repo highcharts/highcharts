@@ -49,7 +49,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/Series.js';
@@ -58,8 +59,7 @@ var addEvent = H.addEvent,
     perspective = H.perspective,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    wrap = H.wrap;
+    svg = H.svg;
 
 /**
  * Depth of the columns in a 3D column chart.
@@ -362,7 +362,7 @@ wrap(
         if (series.chart.is3d()) {
             series.data.forEach(function (point: Highcharts.ColumnPoint): void {
                 point.visible = point.options.visible = vis =
-                    vis === undefined ?
+                    typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
                 pointVis = vis ? 'visible' : 'hidden';
                 (series.options.data as any)[series.data.indexOf(point)] =
@@ -391,7 +391,8 @@ addEvent(Series, 'afterInit', function (): void {
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
             z = 0;
 
-        if (!(grouping !== undefined && !grouping)) {
+        // @todo grouping === true ?
+        if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack

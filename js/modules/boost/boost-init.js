@@ -12,11 +12,11 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, wrap = U.wrap;
 import '../../parts/Series.js';
 import butils from './boost-utils.js';
 import createAndAttachRenderer from './boost-attach.js';
-var addEvent = H.addEvent, fireEvent = H.fireEvent, Series = H.Series, seriesTypes = H.seriesTypes, wrap = H.wrap, noop = function () { }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
+var addEvent = H.addEvent, fireEvent = H.fireEvent, Series = H.Series, seriesTypes = H.seriesTypes, noop = function () { }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
 /* eslint-disable valid-jsdoc */
 /**
  * Initialize the boot module.
@@ -78,7 +78,7 @@ function init() {
                 // If all series were boosting, but are not anymore
                 // restore private markerGroup
                 if (this.markerGroup === chart.markerGroup) {
-                    this.markerGroup = undefined;
+                    this.markerGroup = void 0;
                 }
                 this.markerGroup = series.plotGroup('markerGroup', 'markers', true, 1, chart.seriesGroup);
             }
@@ -142,15 +142,17 @@ function init() {
                     if (!isNull && x >= xMin && x <= xMax && isYInside) {
                         clientX = xAxis.toPixels(x, true);
                         if (sampling) {
-                            if (minI === undefined || clientX === lastClientX) {
+                            if (typeof minI === 'undefined' ||
+                                clientX === lastClientX) {
                                 if (!isRange) {
                                     low = y;
                                 }
-                                if (maxI === undefined || y > maxVal) {
+                                if (typeof maxI === 'undefined' ||
+                                    y > maxVal) {
                                     maxVal = y;
                                     maxI = i;
                                 }
-                                if (minI === undefined ||
+                                if (typeof minI === 'undefined' ||
                                     low < minVal) {
                                     minVal = low;
                                     minI = i;
@@ -158,7 +160,8 @@ function init() {
                             }
                             // Add points and reset
                             if (clientX !== lastClientX) {
-                                if (minI !== undefined) { // maxI is number too
+                                // maxI is number too:
+                                if (typeof minI !== 'undefined') {
                                     plotY =
                                         yAxis.toPixels(maxVal, true);
                                     yBottom =
@@ -168,7 +171,7 @@ function init() {
                                         addKDPoint(clientX, yBottom, minI);
                                     }
                                 }
-                                minI = maxI = undefined;
+                                minI = maxI = void 0;
                                 lastClientX = clientX;
                             }
                         }
@@ -254,7 +257,7 @@ function init() {
          */
         function preRender() {
             // Reset force state
-            chart.boostForceChartBoost = undefined;
+            chart.boostForceChartBoost = void 0;
             chart.boostForceChartBoost = shouldForceChartSeriesBoosting(chart);
             chart.isBoosting = false;
             if (!chart.isChartSeriesBoosting() && chart.didBoost) {

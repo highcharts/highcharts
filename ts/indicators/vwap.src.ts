@@ -22,7 +22,7 @@ declare global {
     namespace Highcharts {
         class VWAPIndicator extends SMAIndicator {
             public data: Array<VWAPIndicatorPoint>;
-            public calculateVWAPValues(
+            public calculateVWAPValues<TLinkedSeries extends Series>(
                 isOHLC: boolean,
                 xValues: Array<number>,
                 yValues: (
@@ -30,19 +30,14 @@ declare global {
                 ),
                 volumeSeries: Series,
                 period: number
-            ): IndicatorValuesObject;
-            public getValues(
-                series: VWAPLinkedParentSeries,
+            ): IndicatorValuesObject<TLinkedSeries>;
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: VWAPIndicatorParamsOptions,
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: VWAPIndicatorOptions;
             public pointClass: typeof VWAPIndicatorPoint;
             public points: Array<VWAPIndicatorPoint>;
-        }
-
-        interface VWAPLinkedParentSeries extends Series {
-            xData: Array<number>;
-            yData: (Array<number>|Array<[number, number, number, number]>);
         }
 
         interface VWAPIndicatorParamsOptions extends SMAIndicatorParamsOptions {
@@ -120,17 +115,17 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
          * @param {object} params - params
          * @return {object} - computed VWAP
          **/
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.VWAPIndicator,
-            series: Highcharts.VWAPLinkedParentSeries,
-            params: Highcharts.VWAPIndicatorParamsOptions,
-        ): Highcharts.IndicatorValuesObject {
+            series: TLinkedSeries,
+            params: Highcharts.VWAPIndicatorParamsOptions
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
                 chart: Highcharts.Chart = series.chart,
-                xValues: Array<number> = series.xData,
+                xValues: Array<number> = (series.xData as any),
                 yValues: (
                     Array<number>|Array<[number, number, number, number]>
-                ) = series.yData,
+                ) = (series.yData as any),
                 period: number = (params.period as any),
                 isOHLC = true,
                 volumeSeries: Highcharts.Series;
@@ -139,13 +134,14 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     chart
-                ) as any);
+                );
+                return;
             }
 
             // Checks if series data fits the OHLC format
@@ -174,13 +170,15 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
          * @param {number} period - number of points to be calculated
          * @return {object} - Object contains computed VWAP
          **/
-        calculateVWAPValues: function (
+        calculateVWAPValues: function <
+            TLinkedSeries extends Highcharts.Series
+        > (
             isOHLC: boolean,
             xValues: Array<number>,
             yValues: (Array<number>|Array<[number, number, number, number]>),
             volumeSeries: Highcharts.Series,
             period: number
-        ): Highcharts.IndicatorValuesObject {
+        ): Highcharts.IndicatorValuesObject<TLinkedSeries> {
             var volumeValues: Array<number> = (volumeSeries.yData as any),
                 volumeLength: number = (volumeSeries.xData as any).length,
                 pointsLength: number = xValues.length,
@@ -188,7 +186,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
                 cumulativeVolume: Array<number> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
-                VWAP: Array<[number, number]> = [],
+                VWAP: Array<Array<number>> = [],
                 commonLength: number,
                 typicalPrice: number,
                 cPrice: number,
@@ -236,7 +234,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
                 values: VWAP,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

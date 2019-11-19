@@ -493,3 +493,31 @@ QUnit.test("Change of label alignment after add (#4652)", function (assert) {
     );
 
 });
+
+QUnit.test('Labels and styled mode', assert => {
+    var renderer;
+
+    renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        300,
+        undefined,
+        false,
+        false,
+        true // styled mode
+    );
+
+    var label = renderer.label('Hello world', 200, 100).attr();
+
+    label.attr({
+        text: 'Test'
+    });
+
+    label.add();
+
+    assert.ok(
+        true,
+        `No errors should be thrown when updating
+        labels text before adding to DOM (#11758)`
+    );
+});

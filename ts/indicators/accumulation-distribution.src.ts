@@ -22,10 +22,10 @@ declare global {
             public options: ADIndicatorOptions;
             public pointClass: typeof ADIndicatorPoint;
             public points: Array<ADIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ADIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
 
         class ADIndicatorPoint extends SMAIndicatorPoint {
@@ -116,10 +116,10 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
     {
         nameComponents: (false as any),
         nameBase: 'Accumulation/Distribution',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.ADIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<(number|null|undefined)> = (series.yData as any),
@@ -140,17 +140,18 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
                 yValLen &&
                 (yVal[0] as any).length !== 4
             ) {
-                return false;
+                return;
             }
 
             if (!volumeSeries) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     series.chart
-                ) as any);
+                );
+                return;
             }
 
             // i = period <-- skip first N-points
@@ -176,7 +177,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
                 values: AD,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     });
 

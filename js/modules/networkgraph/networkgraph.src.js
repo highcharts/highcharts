@@ -46,51 +46,6 @@ import H from '../../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
-/**
- * Data labels options
- *
- * @interface Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
- * @extends Highcharts.DataLabelsOptionsObject
- * @since 7.0.0
- */ /**
-* The
-* [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-* specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
-* `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
-* @name Highcharts.SeriesNetworkgraphDataLabelsOptionsObject#format
-* @type {string|undefined}
-* @since 7.0.0
-*/ /**
-* Callback JavaScript function to format the data label for a node. Note that
-* if a `format` is defined, the format takes precedence and the formatter is
-* ignored.
-* @name Highcharts.SeriesNetworkgraphDataLabelsOptionsObject#formatter
-* @type {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction|undefined}
-* @since 7.0.0
-*/ /**
-* The
-* [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-* specifying what to show for _links_ in the networkgraph. (Default:
-* `undefined`)
-* @name Highcharts.SeriesNetworkgraphDataLabelsOptionsObject#linkFormat
-* @type {string|undefined}
-* @since 7.1.0
-*/ /**
-* Callback to format data labels for _links_ in the sankey diagram. The
-* `linkFormat` option takes precedence over the `linkFormatter`.
-* @name Highcharts.SeriesNetworkgraphDataLabelsOptionsObject#linkFormatter
-* @type {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction|undefined}
-* @since 7.1.0
-*/ /**
-* Options for a _link_ label text which should follow link connection. Border
-* and background are disabled for a label that follows a path.
-* **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
-* true will disable this option.
-* @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
-* @name Highcharts.SeriesNetworkgraphDataLabelsOptionsObject#linkTextPath
-* @type {Highcharts.DataLabelsTextPathOptionsObject|undefined}
-* @since 7.1.0
-*/
 import U from '../../parts/Utilities.js';
 var defined = U.defined, pick = U.pick;
 import '../../parts/Options.js';
@@ -137,13 +92,12 @@ seriesType('networkgraph', 'line',
             /**
              * The opposite state of a hover for a single point node.
              * Applied to all not connected nodes to the hovered one.
+             *
+             * @declare Highcharts.PointStatesInactiveOptionsObject
              */
             inactive: {
                 /**
                  * Opacity of inactive markers.
-                 *
-                 * @apioption plotOptions.series.marker.states.inactive.opacity
-                 * @type {number}
                  */
                 opacity: 0.3,
                 /**
@@ -152,6 +106,7 @@ seriesType('networkgraph', 'line',
                  * @type {boolean|Highcharts.AnimationOptionsObject}
                  */
                 animation: {
+                    /** @internal */
                     duration: 50
                 }
             }
@@ -161,6 +116,8 @@ seriesType('networkgraph', 'line',
         /**
          * The opposite state of a hover for a single point link. Applied
          * to all links that are not comming from the hovered node.
+         *
+         * @declare Highcharts.SeriesStatesInactiveOptionsObject
          */
         inactive: {
             /**
@@ -173,6 +130,7 @@ seriesType('networkgraph', 'line',
              * @type {boolean|Highcharts.AnimationOptionsObject}
              */
             animation: {
+                /** @internal */
                 duration: 50
             }
         }
@@ -187,32 +145,73 @@ seriesType('networkgraph', 'line',
      * @sample highcharts/series-networkgraph/link-datalabels
      *         Data labels moved under the links
      *
-     * @type    {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
-     * @default {"formatter": function () { return this.key; }, "linkFormatter": function () { return this.point.fromNode.name + "<br>" + this.point.toNode.name; }, "linkTextPath": {"enabled": true}, "textPath": {"enabled": false}}
+     * @declare Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
      *
      * @private
      */
     dataLabels: {
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _node_ in the networkgraph. In v7.0
+         * defaults to `{key}`, since v7.1 defaults to `undefined` and
+         * `formatter` is used instead.
+         *
+         * @type      {string}
+         * @since     7.0.0
+         * @apioption plotOptions.networkgraph.dataLabels.format
+         */
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
+        /**
+         * Callback JavaScript function to format the data label for a node.
+         * Note that if a `format` is defined, the format takes precedence
+         * and the formatter is ignored.
+         *
+         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
+         * @since 7.0.0
+         */
         formatter: function () {
             return this.key;
         },
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _links_ in the networkgraph.
+         * (Default: `undefined`)
+         *
+         * @type      {string}
+         * @since     7.1.0
+         * @apioption plotOptions.networkgraph.dataLabels.linkFormat
+         */
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
+        /**
+         * Callback to format data labels for _links_ in the sankey diagram.
+         * The `linkFormat` option takes precedence over the
+         * `linkFormatter`.
+         *
+         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
+         * @since 7.1.0
+         */
         linkFormatter: function () {
             return (this.point.fromNode.name +
                 '<br>' +
                 this.point.toNode.name);
         },
-        /** @ignore-option */
+        /**
+         * Options for a _link_ label text which should follow link
+         * connection. Border and background are disabled for a label that
+         * follows a path.
+         *
+         * **Note:** Only SVG-based renderer supports this option. Setting
+         * `useHTML` to true will disable this option.
+         *
+         * @extends plotOptions.networkgraph.dataLabels.textPath
+         * @since   7.1.0
+         */
         linkTextPath: {
-            /** @ignore-option */
             enabled: true
         },
-        /** @ignore-option */
         textPath: {
-            /** @ignore-option */
             enabled: false
         }
     },

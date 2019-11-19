@@ -181,6 +181,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    correctFloat,
     defined,
     destroyObjectProperties,
     objectEach,
@@ -193,7 +194,6 @@ import './Series.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    correctFloat = H.correctFloat,
     format = H.format,
     Series = H.Series;
 
@@ -291,7 +291,7 @@ H.StackItem.prototype = {
             formatOption = options.format,
             attr = {},
             str = formatOption ? // format the text in the label
-                format(formatOption, this, chart.time) :
+                format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
@@ -548,6 +548,7 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
+        H.fireEvent(this, 'afterBuildStacks');
     }
 };
 

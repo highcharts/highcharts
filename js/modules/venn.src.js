@@ -23,7 +23,7 @@ import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = NelderMeadModule.nelderMead;
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var animObject = U.animObject, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
 import '../parts/Series.js';
 var addEvent = H.addEvent, color = H.Color, extend = H.extend, getAreaOfCircle = geometryCircles.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCircles.getAreaOfIntersectionBetweenCircles, getCirclesIntersectionPolygon = geometryCircles.getCirclesIntersectionPolygon, getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, getOverlapBetweenCirclesByDistance = geometryCircles.getOverlapBetweenCircles, isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles, isPointInsideCircle = geometryCircles.isPointInsideCircle, isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
@@ -237,7 +237,7 @@ var getLabelPosition = function getLabelPosition(internal, external) {
             return best;
         }, best);
     }, {
-        point: undefined,
+        point: void 0,
         margin: -Number.MAX_VALUE
     }).point;
     // Use nelder mead to optimize the initial label position.
@@ -496,7 +496,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             return best;
         }, {
             loss: Number.MAX_VALUE,
-            coordinates: undefined
+            coordinates: void 0
         });
         // Add the set to its final position.
         positionSet(set, bestPosition.coordinates);
@@ -683,12 +683,8 @@ var vennOptions = {
     clip: false,
     colorByPoint: true,
     dataLabels: {
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         verticalAlign: 'middle',
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         }
@@ -865,7 +861,7 @@ var vennSeries = {
     /* eslint-enable valid-jsdoc */
     animate: function (init) {
         if (!init) {
-            var series = this, animOptions = H.animObject(series.options.animation);
+            var series = this, animOptions = animObject(series.options.animation);
             series.points.forEach(function (point) {
                 var args = point.shapeArgs;
                 if (point.graphic && args) {

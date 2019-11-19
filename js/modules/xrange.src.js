@@ -20,8 +20,8 @@ import H from '../parts/Globals.js';
 * @requires modules/xrange
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
-var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, correctFloat = H.correctFloat, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, find = H.find, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
 /**
  * Return color of a point based on its category.
  *
@@ -112,8 +112,6 @@ seriesType('xrange', 'column'
      */
     colorByPoint: true,
     dataLabels: {
-        // eslint-disable-next-line valid-jsdoc
-        /** @ignore-option */
         formatter: function () {
             var point = this.point, amount = point.partialFill;
             if (isObject(amount)) {
@@ -123,9 +121,7 @@ seriesType('xrange', 'column'
                 return correctFloat(amount * 100) + '%';
             }
         },
-        /** @ignore-option */
         inside: true,
-        /** @ignore-option */
         verticalAlign: 'middle'
     },
     tooltip: {
@@ -207,29 +203,29 @@ seriesType('xrange', 'column'
      * returns undefined if no match is found.
      */
     findPointIndex: function (options) {
-        var series = this, 
-        // Search in data, since broken-axis can remove points inside a
-        // break.
-        points = series.data, oldData = series.points, id = options.id, point, pointIndex;
+        var _a = this, cropped = _a.cropped, cropStart = _a.cropStart, points = _a.points;
+        var id = options.id;
+        var pointIndex;
         if (id) {
-            point = H.find(points, function (point) {
+            var point = find(points, function (point) {
                 return point.id === id;
             });
-            pointIndex = point ? point.index : undefined;
+            pointIndex = point ? point.index : void 0;
         }
-        if (pointIndex === undefined) {
-            point = H.find(points, function (point) {
+        if (typeof pointIndex === 'undefined') {
+            var point = find(points, function (point) {
                 return (point.x === options.x &&
                     point.x2 === options.x2 &&
-                    !(oldData[pointIndex] &&
-                        oldData[pointIndex].touched));
+                    !point.touched);
             });
-            pointIndex = point ? point.index : undefined;
+            pointIndex = point ? point.index : void 0;
         }
         // Reduce pointIndex if data is cropped
-        if (series.cropped &&
-            pointIndex >= series.cropStart) {
-            pointIndex -= series.cropStart;
+        if (cropped &&
+            isNumber(pointIndex) &&
+            isNumber(cropStart) &&
+            pointIndex >= cropStart) {
+            pointIndex -= cropStart;
         }
         return pointIndex;
     },
@@ -250,7 +246,7 @@ seriesType('xrange', 'column'
             plotX2 += widthDifference / 2;
         }
         plotX = Math.max(plotX, -10);
-        plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
+        plotX2 = clamp(plotX2, -10, xAxis.len + 10);
         // Handle individual pointWidth
         if (defined(point.options.pointWidth)) {
             yOffset -= ((Math.ceil(point.options.pointWidth) - pointHeight) / 2);
@@ -273,8 +269,8 @@ seriesType('xrange', 'column'
         dlLeft = point.shapeArgs.x;
         dlRight = dlLeft + point.shapeArgs.width;
         if (dlLeft < 0 || dlRight > xAxis.len) {
-            dlLeft = Math.min(xAxis.len, Math.max(0, dlLeft));
-            dlRight = Math.max(0, Math.min(dlRight, xAxis.len));
+            dlLeft = clamp(dlLeft, 0, xAxis.len);
+            dlRight = clamp(dlRight, 0, xAxis.len);
             dlWidth = dlRight - dlLeft;
             point.dlBox = merge(point.shapeArgs, {
                 x: dlLeft,
@@ -286,22 +282,13 @@ seriesType('xrange', 'column'
             point.dlBox = null;
         }
         // Tooltip position
-        if (!inverted) {
-            point.tooltipPos[0] +=
-                length / 2 * (xAxis.reversed ? -1 : 1);
-            point.tooltipPos[1] -= metrics.width / 2;
-            // Limit position by the correct axis size (#9727)
-            point.tooltipPos[0] = Math.max(Math.min(point.tooltipPos[0], xAxis.len - 1), 0);
-            point.tooltipPos[1] = Math.max(Math.min(point.tooltipPos[1], yAxis.len - 1), 0);
-        }
-        else {
-            point.tooltipPos[1] +=
-                length / 2 * (xAxis.reversed ? 1 : -1);
-            point.tooltipPos[0] += metrics.width / 2;
-            // Limit position by the correct axis size (#9727)
-            point.tooltipPos[1] = Math.max(Math.min(point.tooltipPos[1], xAxis.len - 1), 0);
-            point.tooltipPos[0] = Math.max(Math.min(point.tooltipPos[0], yAxis.len - 1), 0);
-        }
+        var tooltipPos = point.tooltipPos;
+        var xIndex = !inverted ? 0 : 1;
+        var yIndex = !inverted ? 1 : 0;
+        // Limit position by the correct axis size (#9727)
+        tooltipPos[xIndex] = clamp(tooltipPos[xIndex] + ((!inverted ? 1 : -1) * (xAxis.reversed ? -1 : 1) *
+            (length / 2)), 0, xAxis.len - 1);
+        tooltipPos[yIndex] = clamp(tooltipPos[yIndex] + ((!inverted ? -1 : 1) * (metrics.width / 2)), 0, yAxis.len - 1);
         // Add a partShapeArgs to the point, based on the shapeArgs property
         partialFill = point.partialFill;
         if (partialFill) {
@@ -360,7 +347,8 @@ seriesType('xrange', 'column'
      */
     drawPoint: function (point, verb) {
         var series = this, seriesOpts = series.options, renderer = series.chart.renderer, graphic = point.graphic, type = point.shapeType, shapeArgs = point.shapeArgs, partShapeArgs = point.partShapeArgs, clipRectArgs = point.clipRectArgs, pfOptions = point.partialFill, cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, pointState = point.state, stateOpts = (seriesOpts.states[pointState || 'normal'] ||
-            {}), pointStateVerb = pointState === undefined ? 'attr' : verb, pointAttr = series.pointAttribs(point, pointState), animation = pick(series.chart.options.chart.animation, stateOpts.animation), fill;
+            {}), pointStateVerb = typeof pointState === 'undefined' ?
+            'attr' : verb, pointAttr = series.pointAttribs(point, pointState), animation = pick(series.chart.options.chart.animation, stateOpts.animation), fill;
         if (!point.isNull) {
             // Original graphic
             if (graphic) { // update
@@ -601,6 +589,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.XrangePointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data
  * @product   highcharts highstock gantt
@@ -644,6 +633,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
+ * @declare   Highcharts.XrangePointPartialFillOptionsObject
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill
  */

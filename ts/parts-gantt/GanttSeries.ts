@@ -123,7 +123,6 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
         grouping: false,
 
         dataLabels: {
-            /** @ignore-option */
             enabled: true
         },
         tooltip: {
@@ -176,6 +175,9 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
         },
         connectors: {
             type: 'simpleConnect',
+            /**
+             * @declare Highcharts.ConnectorsAnimationOptionsObject
+             */
             animation: {
                 reversed: true // Dependencies go from child to parent
             },
@@ -307,7 +309,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
              * @private
              */
             function addIfExists(prop: string, val: unknown): void {
-                if (val !== undefined) {
+                if (typeof val !== 'undefined') {
                     (options as any)[prop] = val;
                 }
             }
@@ -393,6 +395,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
 /**
  * Data for a Gantt series.
  *
+ * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
  * @excluding className, color, colorIndex, connect, dataLabels, events, id,

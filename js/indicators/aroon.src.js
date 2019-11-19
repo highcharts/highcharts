@@ -92,7 +92,7 @@ H.seriesType('aroon', 'sma',
              *
              * @type {Highcharts.ColorString}
              */
-            lineColor: undefined
+            lineColor: void 0
         }
     },
     dataGrouping: {

@@ -833,6 +833,16 @@ H.defaultOptions = {
          * @apioption chart.marginTop
          */
         /**
+         * Callback function to override the default function that formats all
+         * the numbers in the chart. Returns a string with the formatted number.
+         *
+         * @sample highcharts/members/highcharts-numberformat
+         *      Arabic digits in Highcharts
+         * @type {Highcharts.NumberFormatterCallbackFunction}
+         * @since next
+         * @apioption chart.numberFormatter
+         */
+        /**
          * Allows setting a key to switch between zooming and panning. Can be
          * one of `alt`, `ctrl`, `meta` (the command key on Mac and Windows
          * key on Windows) or `shift`. The keys are mapped directly to the key
@@ -2773,6 +2783,8 @@ H.defaultOptions = {
     /**
      * Options for the tooltip that appears when the user hovers over a
      * series or point.
+     *
+     * @declare Highcharts.TooltipOptions
      */
     tooltip: {
         /**
@@ -2811,6 +2823,13 @@ H.defaultOptions = {
          * @type      {*}
          * @default   true
          * @apioption tooltip.crosshairs
+         */
+        /**
+         * Distance from point to tooltip in pixels.
+         *
+         * @type      {number}
+         * @default   16
+         * @apioption tooltip.distance
          */
         /**
          * Whether the tooltip should follow the mouse as it moves across
@@ -2858,10 +2877,10 @@ H.defaultOptions = {
          *
          * A subset of HTML is supported. Unless `useHTML` is true, the HTML of
          * the tooltip is parsed and converted to SVG, therefore this isn't a
-         * complete HTML renderer. The following tags are supported: `<b>`,
-         * `<strong>`, `<i>`, `<em>`, `<br/>`, `<span>`. Spans can be styled
-         * with a `style` attribute, but only text-related CSS that is shared
-         * with SVG is handled.
+         * complete HTML renderer. The following HTML tags are supported: `b`,
+         * `br`, `em`, `i`, `span`, `strong`. Spans can be styled with a `style`
+         * attribute, but only text-related CSS, that is shared with SVG, is
+         * handled.
          *
          * The available data in the formatter differ a bit depending on whether
          * the tooltip is shared or split, or belongs to a single point. In a
@@ -3213,13 +3232,21 @@ H.defaultOptions = {
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /** @internal */
             millisecond: '%A, %b %e, %H:%M:%S.%L',
+            /** @internal */
             second: '%A, %b %e, %H:%M:%S',
+            /** @internal */
             minute: '%A, %b %e, %H:%M',
+            /** @internal */
             hour: '%A, %b %e, %H:%M',
+            /** @internal */
             day: '%A, %b %e, %Y',
+            /** @internal */
             week: 'Week from %A, %b %e, %Y',
+            /** @internal */
             month: '%B %Y',
+            /** @internal */
             year: '%Y'
         },
         /**
@@ -3383,29 +3410,18 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/tooltip/style/
          *         Greater padding, bold text
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor80}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'default',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '12px',
-            /**
-             * @ignore
-             */
+            /** @internal */
             pointerEvents: 'none',
-            /**
-             * @ignore
-             */
+            /** @internal */
             whiteSpace: 'nowrap'
         }
     },
@@ -3493,21 +3509,14 @@ H.defaultOptions = {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"cursor": "pointer", "color": "#999999", "fontSize": "10px"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'pointer',
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor40}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '9px'
         },
         /**

@@ -1,6 +1,13 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
+parameters:
+  run_reset_tests:
+    type: boolean
+    default: false
+  reset_tests:
+    type: string
+    default: ""
 ######### Anchors ####################
 defaults: &defaults
   executor: node_image
@@ -14,6 +21,13 @@ persist_workspace: &persist_workspace
 load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
+
+load_source_from_cache: &load_source_from_cache
+  - restore_cache:
+      keys:
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
+        - source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-
 
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
@@ -38,46 +52,49 @@ executors:
       - image: circleci/node:lts-browsers
 
 commands:
-  early_return_for_forked_pull_requests:
-    description: >-
-      If this build is from a fork, stop executing the current job and return success.
-      This is useful to avoid steps that will fail due to missing credentials.
+  generate_references_command:
+    parameters:
+      browsercount:
+        type: integer
+        default: 1
     steps:
-      - run:
-          name: Early return if this build is from a forked PR
-          command: |
-            if [ -n "$CIRCLE_PR_NUMBER" ]; then
-              echo "Nothing to do for forked PRs, so marking this step successful"
-              circleci step halt
-            fi
+      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
+      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
 
 jobs:
-  checkout_code:
+  checkout_and_install:
     <<: *defaults
     steps:
       # rather than using the checkout keyword we checkout via commandline
       # to avoid a huge and slow checkout depth
      - <<: *add_gh_keys
      - <<: *add_to_ssh_config
-     - run:
-         name: Clone GitHub highcharts repository
-         command: |
-           if [ -n "$CIRCLE_TAG" ]; then
-            git clone --branch "${CIRCLE_TAG}" ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           else
-            git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-           fi
+     - << : *load_source_from_cache
+     # Temporary workaround for https://discuss.circleci.com/t/22437
+     - run: |
+        if [ -n "$CIRCLE_TAG" ]
+        then
+          git fetch --force origin "refs/tags/${CIRCLE_TAG}:refs/tags/${CIRCLE_TAG}"
+        fi
+     - checkout
+     - save_cache:
+         key: source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
+         paths:
+           - ".git"
+     - run: node --version && npm --version
+     - restore_cache:
+         keys:
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
+     - run: npm install --quiet
+     - save_cache:
+         paths:
+           - /home/circleci/repo/highcharts/node_modules
+         key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+     - run: npm run gulp scripts
      - <<: *persist_workspace
-
-  install_dependencies:
-    <<: *defaults
-    steps:
-      # Restore checked out code and built dependencies.
-      - << : *load_workspace
-      - run: node --version && npm --version
-      - run: npm install --quiet
-      - run: npm run gulp scripts # needed for running the tests
-      - <<: *persist_workspace
 
   generate_ts_declarations:
     <<: *defaults
@@ -110,64 +127,74 @@ jobs:
         default: 1
     steps:
       - << : *load_workspace
-      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
-      - run: mkdir ../test-results
       - run:
-          name: Save test results
-          command: |
-            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
-          when: always
-      - store_test_results:
-          path: ../test-results
-      - store_artifacts:
-          path: ../test-results
+          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
+          no_output_timeout: 20m
+
+  check_for_docs_changes_and_deploy:
+    <<: *defaults
+    description: Checks for changes in docs/ and triggers deploy via doc-builder
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN}
 
   generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - generate_references_command
       - run: "mkdir -p /home/circleci/repo/tmp/latest/"
       - aws-s3/sync:
           from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/' # delete existing latest references in S3 location
+          to: 's3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/' # delete existing latest references in S3 location
           overwrite: true
       - run:
           name: "Upload test results"
-          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
           when: always
       - <<: *persist_workspace
+
+  reset_visual_references_job:
+    <<: *defaults
+    description: Reset reference images stored on S3 based on
+    parameters:
+      reset_tests:
+        description: "Which tests to run?"
+        type: string
+        default: ""
+    steps:
+      - <<: *load_workspace
+      - run: "npx gulp reset-visual-references --tests << parameters.reset_tests >> --reference --browsercount 2 --bucket ${HIGHCHARTS_STAGING_CODE_BUCKET}"
 
   visual_comparison_with_master:
     <<: *defaults
     description: Visual diff and compare PR with master
     steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
       - run: |
           if [ -z "$CIRCLE_PULL_REQUEST" ]; then
             echo "Not a PR according to CircleCI, so marking this step successful"
             circleci step halt
           fi
       - <<: *load_workspace
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
       - run: sudo apt-get install -y rsync
-      - run: git fetch origin master:master && git checkout master && npm i && npx gulp scripts
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite"
-      - run: git checkout ${CIRCLE_BRANCH} && npm i && npx gulp scripts
+      - run: > # checkout master at diverge point of current branch and install
+          git checkout master && git fetch origin master && git reset --hard origin/master &&
+          git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          npm i && npx gulp scripts
+      - generate_references_command:
+          browsercount: 2
+      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm i && npx gulp scripts
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
       - run:
-          name: Comment on PR
+          name: Comment on PR and upload visual test images if any produced
           command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
           when: always
       - run:
@@ -190,24 +217,20 @@ jobs:
         type: string
         default: "ChromeHeadless"
     steps:
-      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - <<: *load_workspace
       - run:
           name: "Set application version env var"
           command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 1 --no-fail-on-empty-test-suite"
+      - generate_references_command
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
-          from: "s3://${HIGHCHARTS_S3_BUCKET}/test/visualtests/reference/latest/"
+          from: "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/"
           to: "samples/"
           arguments: |
             --exclude "*" \
             --include "*/reference.svg"
       - run:
           name: "Upload old and any new reference images"
-          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --tag ${HIGHCHARTS_VERSION} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
       - run:
           # run tests in sequence due to all writing to the same file
           name: "Highcharts visual tests"
@@ -241,7 +264,7 @@ jobs:
             find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
       - run:
           name: "Upload visual test candidates and diff assets"
-          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_S3_BUCKET}"
+          command: "npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
           when: always
 
   build_dist:
@@ -283,9 +306,6 @@ jobs:
           name: install pre dependencies
           command: sudo apt-get install cpio
       - run:
-          name: Fetch full highcharts/master branch
-          command: git fetch --unshallow
-      - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
       - run:
@@ -323,39 +343,31 @@ jobs:
 workflows:
   version: 2
   build_and_test:
+    unless: << pipeline.parameters.run_reset_tests >>
     jobs:
-      - checkout_code:
+      - checkout_and_install:
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
-      - install_dependencies:
-          requires:
-            - checkout_code
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-common
       - lint:
-          requires:
-            - install_dependencies
+          requires: [checkout_and_install]
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
-          requires:
-            - lint
+          requires: [lint]
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - visual_comparison_with_master:
-          requires:
-            - install_dependencies
+          requires: [lint]
           filters:
             branches:
               ignore: master
           context: highcharts-staging
       - generate_release_reference_images:
-          requires:
-            - install_dependencies
+          requires: [lint]
           filters:
             branches:
               ignore: /.*/
@@ -366,30 +378,31 @@ workflows:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
-          requires:
-            - install_dependencies
+          requires: [lint]
       - test_browsers:
           name: "test-Win.IE8"
-          requires:
-            - install_dependencies
+          requires: [lint]
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires:
-            - install_dependencies
+          requires: ["test-Win.IE8"]
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
           browsercount: 2
-          requires:
-            - "test-Mac.Safari"
+          requires: ["test-Mac.Safari"]
           browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires:
-            - "test-Win.IE8"
+          requires: ["test-Mac.Firefox"]
           browsers: "Win.Chrome"
+      - check_for_docs_changes_and_deploy:
+          requires: ["test-Mac.Firefox", "test-Win.Chrome"]
+          filters:
+            branches:
+              only: [master]
+          context: highcharts-staging
 
   nightly:
     triggers:
@@ -398,59 +411,54 @@ workflows:
           filters:
             branches:
               only:
-                - tools/visual-tests-generate-missing-refs
                 - master
     jobs:
-      - checkout_code
-      - install_dependencies:
-          requires:
-            - checkout_code
+      - checkout_and_install:
+          context: highcharts-common
       - nightly_visual_diff:
           name: "Test visual differences and distribute diff log to S3."
-          requires:
-            - install_dependencies
+          requires: [checkout_and_install]
           context: highcharts-staging
       - test_browsers:
           name: "test-Mac.Safari"
-          requires:
-            - install_dependencies
+          requires: [checkout_and_install]
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires:
-            - "test-Mac.Safari"
+          requires: ["test-Mac.Safari"]
+          browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Firefox"
           browsercount: 2
-          requires:
-            - "test-Win.Chrome"
+          requires: ["test-Win.Chrome"]
           browsers: "Mac.Firefox"
       - test_browsers:
           name: "test-Win.IE8"
-          requires:
-            - "test-Mac.Firefox"
+          requires: ["test-Mac.Firefox"]
           browsers: "Win.IE8 --oldie"
       - build_dist:
-          requires:
-            - install_dependencies
-            - "test-Mac.Firefox"
-            - "test-Mac.Safari"
-            - "test-Win.IE8"
-            - "test-Win.Chrome"
+          requires: [checkout_and_install, "test-Win.IE8"]
       - deploy_code:
-          requires:
-            - build_dist
+          requires: [build_dist]
           context: highcharts-staging
       - deploy_api_docs:
-          requires:
-            - build_dist
+          requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:
-          requires:
-            - build_dist
+          requires: [build_dist]
           context: highcharts-staging
       - deploy_to_highcharts_dist:
-          requires:
-            - build_dist
+          requires: [build_dist]
           context: highcharts-staging
+
+  reset_visual_test_references:
+    when: << pipeline.parameters.run_reset_tests >>
+    jobs:
+      - checkout_and_install:
+          filters:
+            branches:
+              only: [master, tools/reset-visual-test]
+      - reset_visual_references_job:
+          requires: [checkout_and_install]
+          reset_tests: << pipeline.parameters.reset_tests >>

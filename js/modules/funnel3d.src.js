@@ -14,10 +14,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend, pick = U.pick, relativeLength = U.relativeLength;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, error = H.error, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, relativeLength = H.relativeLength, 
+var charts = H.charts, color = H.color, error = H.error, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, 
 // Use H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 
 //
@@ -112,17 +112,10 @@ seriesType('funnel3d', 'column',
     edgeWidth: 0,
     colorByPoint: true,
     showInLegend: false,
-    /**
-     * @default {"align": "right", "crop": false, "inside": false, "overflow": "allow"}
-     */
     dataLabels: {
-        /** @ignore-option */
         align: 'right',
-        /** @ignore-option */
         crop: false,
-        /** @ignore-option */
         inside: false,
-        /** @ignore-option */
         overflow: 'allow'
     }
 }, {

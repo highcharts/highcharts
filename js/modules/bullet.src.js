@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick;
-var relativeLength = H.relativeLength, seriesType = H.seriesType, columnProto = H.seriesTypes.column.prototype;
+var isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength;
+var seriesType = H.seriesType, columnProto = H.seriesTypes.column.prototype;
 /**
  * The bullet series type.
  *
@@ -146,7 +146,7 @@ seriesType('bullet', 'column'
                         targetGraphic.element.point = point;
                     }
                     else {
-                        targetGraphic.element.point = undefined;
+                        targetGraphic.element.point = void 0;
                     }
                 }
                 else {
@@ -163,7 +163,7 @@ seriesType('bullet', 'column'
                             x: point.x,
                             y: targetVal,
                             options: {}
-                        }).color || series.color)) || undefined, point.color, series.color),
+                        }).color || series.color)) || void 0, point.color, series.color),
                         stroke: pick(targetOptions.borderColor, point.borderColor, series.options.borderColor),
                         'stroke-width': targetOptions.borderWidth
                     });

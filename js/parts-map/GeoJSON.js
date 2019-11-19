@@ -36,10 +36,10 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win, wrap = H.wrap;
+var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
@@ -82,7 +82,7 @@ function pointInPolygon(point, polygon) {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return {
             x: 0,
@@ -127,7 +127,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-    if (win.proj4 === undefined) {
+    if (typeof win.proj4 === 'undefined') {
         H.error(21, false, this);
         return;
     }

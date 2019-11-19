@@ -25,10 +25,10 @@ declare global {
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: MACDIndicatorParamsOptions
-            ): (boolean|IndicatorMultipleNullableValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public getZonesGraphs(
                 props: Array<Array<string>>
             ): Array<Array<string>>;
@@ -102,15 +102,17 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    correctFloat,
+    defined
+} = U;
 
 
 var seriesType = H.seriesType,
     noop = H.noop,
     merge = H.merge,
     SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema,
-    correctFloat = H.correctFloat;
+    EMA = H.seriesTypes.ema;
 
 /**
  * The MACD series type.
@@ -177,7 +179,7 @@ seriesType<Highcharts.MACDIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         /**
@@ -201,7 +203,7 @@ seriesType<Highcharts.MACDIndicator>(
                  *
                  * @type  {Highcharts.ColorString}
                  */
-                lineColor: undefined
+                lineColor: void 0
             }
         },
         threshold: 0,
@@ -416,19 +418,19 @@ seriesType<Highcharts.MACDIndicator>(
             SMA.prototype.applyZones.call(this);
 
             // applyZones hides only main series.graph, hide macd line manually
-            if ((this.options.macdLine as any).zones.length) {
+            if (this.graphmacd && (this.options.macdLine as any).zones.length) {
                 (this.graphmacd as any).hide();
             }
 
             this.zones = histogramZones;
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.MACDIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorMultipleNullableValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var j = 0,
-                MACD: Array<[number, number, number|null, number]> = [],
-                xMACD: Array<number> = [],
+                MACD: Array<Array<(number|null)>> = [],
+                xMACD: Array<(number|null)> = [],
                 yMACD: Array<Array<(number|null)>> = [],
                 signalLine: Array<Array<number>> = [],
                 shortEMA: Array<Array<number>>,
@@ -438,7 +440,7 @@ seriesType<Highcharts.MACDIndicator>(
             if ((series.xData as any).length <
                 (params.longPeriod as any) + params.signalPeriod
             ) {
-                return false;
+                return;
             }
 
             // Calculating the short and long EMA used when calculating the MACD
@@ -503,7 +505,8 @@ seriesType<Highcharts.MACDIndicator>(
             // Setting the MACD Histogram. In comparison to the loop with pure
             // MACD this loop uses MACD x value not xData.
             for (i = 0; i < MACD.length; i++) {
-                if (MACD[i][0] >= signalLine[0][0]) { // detect the first point
+                // detect the first point
+                if ((MACD[i] as any)[0] >= signalLine[0][0]) {
 
                     MACD[i][2] = signalLine[j][1];
                     yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
@@ -512,9 +515,9 @@ seriesType<Highcharts.MACDIndicator>(
                         MACD[i][1] = 0;
                         yMACD[i][0] = 0;
                     } else {
-                        MACD[i][1] = correctFloat(MACD[i][3] -
+                        MACD[i][1] = correctFloat((MACD[i] as any)[3] -
                         signalLine[j][1]);
-                        yMACD[i][0] = correctFloat(MACD[i][3] -
+                        yMACD[i][0] = correctFloat((MACD[i] as any)[3] -
                         signalLine[j][1]);
                     }
 
@@ -526,7 +529,7 @@ seriesType<Highcharts.MACDIndicator>(
                 values: MACD,
                 xData: xMACD,
                 yData: yMACD
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

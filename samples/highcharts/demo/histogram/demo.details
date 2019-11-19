@@ -1,4 +1,7 @@
 ---
- name: Highcharts Histogram
- js_wrap: b
+name: Histogram
+js_wrap: b
+tags: []
+categories:
+  - More chart types
 ...

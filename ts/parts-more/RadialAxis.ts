@@ -134,9 +134,12 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     extend,
     pick,
-    pInt
+    pInt,
+    relativeLength,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -148,8 +151,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
     Tick = H.Tick,
-    wrap = H.wrap,
-    correctFloat = H.correctFloat,
 
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
@@ -293,7 +294,7 @@ radialAxisMixin = {
             r = pick(radius, center[2] / 2 - this.offset),
             path: Highcharts.RadialAxisPath;
 
-        if (this.isCircular || radius !== undefined) {
+        if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(
                 this.left + center[0],
                 this.top + center[1],
@@ -374,7 +375,7 @@ radialAxisMixin = {
         // point from overlapping the first.
         this.autoConnect = (
             this.isCircular &&
-            pick(this.userMax, this.options.max) === undefined &&
+            typeof pick(this.userMax, this.options.max) === 'undefined' &&
             correctFloat(this.endAngleRad - this.startAngleRad) ===
             correctFloat(2 * Math.PI)
         );
@@ -612,13 +613,13 @@ radialAxisMixin = {
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
-                H.relativeLength(innerRadius, 1) : (
+                relativeLength(innerRadius, 1) : (
                     innerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
 
             b = (typeof outerRadius === 'string') ?
-                H.relativeLength(outerRadius, 1) : (
+                relativeLength(outerRadius, 1) : (
                     outerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
@@ -844,7 +845,7 @@ addEvent(Axis as any, 'autoLabelAlign', function (
     e: (Event & { align?: string })
 ): void {
     if (this.isRadial) {
-        e.align = undefined;
+        e.align = void 0;
         e.preventDefault();
     }
 });
@@ -907,7 +908,7 @@ addEvent(Tick as any, 'afterGetLabelPosition', function (
         ret = axis.getPosition(
             this.pos,
             (axis.center[2] / 2) +
-                H.relativeLength(
+                relativeLength(
                     pick((labelOptions as any).distance, -25),
                     axis.center[2] / 2,
                     -axis.center[2] / 2

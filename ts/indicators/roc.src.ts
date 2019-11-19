@@ -21,10 +21,10 @@ declare global {
 
         class ROCIndicator extends SMAIndicator {
             public data: Array<ROCIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ROCIndicatorParamsOptions
-            ): (boolean|IndicatorNullableValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: ROCIndicatorOptions;
             public pointClass: typeof ROCIndicatorPoint;
@@ -138,10 +138,10 @@ seriesType<Highcharts.ROCIndicator>(
      */
     {
         nameBase: 'Rate of Change',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.ROCIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorNullableValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -156,7 +156,7 @@ seriesType<Highcharts.ROCIndicator>(
             // Period is used as a number of time periods ago, so we need more
             // (at least 1 more) data than the period value
             if (xVal.length <= period) {
-                return false;
+                return;
             }
 
             // Switch index for OHLC / Candlestick / Arearange
@@ -177,7 +177,7 @@ seriesType<Highcharts.ROCIndicator>(
                 values: ROC,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

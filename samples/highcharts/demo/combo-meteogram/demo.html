@@ -2,15 +2,27 @@
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/windbarb.js"></script>
+<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://highcharts.github.io/pattern-fill/pattern-fill-v2.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<div id="container" style="max-width: 800px; min-width: 380px; height: 310px; margin: 0 auto">
-    <div style="margin-top: 100px; text-align: center" id="loading">
-        <i class="fa fa-spinner fa-spin"></i> Loading data from external source
+
+<figure class="highcharts-figure">
+    <div id="container" style="max-width: 800px; min-width: 380px; height: 310px; margin: 0 auto">
+        <div style="margin-top: 100px; text-align: center" id="loading">
+            <i class="fa fa-spinner fa-spin"></i> Loading data from external source
+        </div>
     </div>
-</div>
+    <p class="highcharts-description">
+        Chart showing meteorological data. This is an advanced example of using
+        Highcharts to load data from an external API, and displaying the data
+        using several custom visuals. The chart loads the data from a weather
+        forecast website. After the data is parsed, the chart is generated, then
+        the icons are added. In the end, the wind arrows are displayed.
+    </p>
+</figure>
+
 <!--
 <div style="width: 800px; margin: 0 auto">
     <a href="#http://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml">London</a>,

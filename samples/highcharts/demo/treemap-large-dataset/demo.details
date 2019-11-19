@@ -1,6 +1,9 @@
 ---
- name: Treemap Demo
- authors:
-   - Jon Arild Nygård
- js_wrap: b
+name: Large tree map
+authors:
+  - Jon Arild Nygård
+js_wrap: b
+tags: []
+categories:
+  - Heat and tree maps
 ...

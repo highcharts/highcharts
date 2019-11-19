@@ -50,10 +50,10 @@ declare global {
         class SupertrendIndicator extends SMAIndicator {
             public data: Array<SupertrendIndicatorPoint>;
             public drawGraph(): void;
-            public getValues(
-                series: SupertrendLinkedParentObject,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: SupertrendIndicatorParamsOptions
-            ): (boolean|IndicatorUndefinableValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public linkedParent: SupertrendLinkedParentObject;
             public nameBase: string;
@@ -88,13 +88,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
+const {
+    correctFloat
+} = U;
+
 var isArray = U.isArray,
     objectEach = U.objectEach;
 
 var ATR = H.seriesTypes.atr,
     SMA = H.seriesTypes.sma,
-    merge = H.merge,
-    correctFloat = H.correctFloat;
+    merge = H.merge;
 
 /* eslint-disable require-jsdoc */
 // Utils:
@@ -535,17 +538,17 @@ H.seriesType<Highcharts.SupertrendIndicator>(
         //     ) THAN Current FINAL LOWERBAND
 
 
-        getValues: function (
-            series: Highcharts.SupertrendLinkedParentObject,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorUndefinableValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 multiplier: number = (params.multiplier as any),
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 ATRData: Array<number> = [],
                 // 0- date, 1- Supertrend indicator
-                ST: Array<[number, (number|undefined)]> = [],
+                ST: Array<Array<(number|undefined)>> = [],
                 xData: Array<number> = [],
                 yData: Array<(number|undefined)> = [],
                 close = 3,
@@ -568,7 +571,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                 (xVal.length <= period) || !isArray(yVal[0]) ||
                 yVal[0].length !== 4 || period < 0
             ) {
-                return false;
+                return;
             }
 
             ATRData = (ATR.prototype.getValues.call(this, series, {
@@ -631,7 +634,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                 values: ST,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

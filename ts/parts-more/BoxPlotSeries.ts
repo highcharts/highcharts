@@ -417,7 +417,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                 medianAttr = {} as Highcharts.SVGAttributes,
                 color = point.color || series.color;
 
-            if (point.plotY !== undefined) {
+            if (typeof point.plotY !== 'undefined') {
 
                 // crisp vector coordinates
                 width = shapeArgs.width;

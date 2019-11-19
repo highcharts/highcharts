@@ -25,10 +25,10 @@ declare global {
             public options: ZigzagIndicatorOptions;
             public pointClass: typeof ZigzagIndicatorPoint;
             public points: Array<ZigzagIndicatorPoint>;
-            public getValues(
-                series: ZigzagIndicatorLinkedParentSeries,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ZigzagIndicatorParamsOptions
-            ): (boolean|IndicatorValuesObject);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
         }
         class ZigzagIndicatorPoint extends SMAIndicatorPoint {
             series: ZigzagIndicator;
@@ -36,10 +36,7 @@ declare global {
         interface SeriesTypesDictionary {
             zigzag: typeof ZigzagIndicator;
         }
-        interface ZigzagIndicatorLinkedParentSeries extends Series {
-            xData: Array<number>;
-            yData: Array<Array<number>>;
-        }
+
         interface ZigzagIndicatorOptions extends SMAIndicatorOptions {
             params?: ZigzagIndicatorParamsOptions;
         }
@@ -123,11 +120,11 @@ seriesType<Highcharts.ZigzagIndicator>(
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.ZigzagIndicator,
-            series: Highcharts.ZigzagIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.ZigzagIndicatorParamsOptions
-        ): (boolean|Highcharts.IndicatorValuesObject) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var lowIndex: number = params.lowIndex as any,
                 highIndex: number = params.highIndex as any,
                 deviation = (params.deviation as any) / 100,
@@ -136,7 +133,7 @@ seriesType<Highcharts.ZigzagIndicator>(
                     'high': 1 - deviation
                 },
                 xVal = series.xData,
-                yVal = series.yData,
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen = yVal ? yVal.length : 0,
                 zigzag: Array<Array<number>> = [],
                 xData: Array<number> = [],
@@ -153,7 +150,7 @@ seriesType<Highcharts.ZigzagIndicator>(
 
             // Exit if not enught points or no low or high values
             if (
-                xVal.length <= 1 ||
+                !xVal || xVal.length <= 1 ||
                 (
                     yValLen &&
                     (
@@ -162,7 +159,7 @@ seriesType<Highcharts.ZigzagIndicator>(
                     )
                 )
             ) {
-                return false;
+                return;
             }
 
             // Set first zigzag point candidate
@@ -262,7 +259,7 @@ seriesType<Highcharts.ZigzagIndicator>(
                 values: zigzag,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

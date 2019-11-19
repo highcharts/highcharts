@@ -37,10 +37,10 @@ declare global {
                 zonesStyles: CSSObject
             ): void;
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: VBPIndicatorParamsOptions
-            ): IndicatorValuesObject;
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(chart: Chart): Highcharts.VBPIndicator;
             public nameBase: string;
             public negWidths: Array<number>;
@@ -122,10 +122,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax,
-    arrayMin = U.arrayMin,
-    extend = U.extend,
-    isArray = U.isArray;
+const {
+    animObject,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    extend,
+    isArray
+} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -161,7 +165,6 @@ function arrayExtremesOHLC(
 var abs = Math.abs,
     noop = H.noop,
     addEvent = H.addEvent,
-    correctFloat = H.correctFloat,
     seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 
@@ -264,19 +267,14 @@ seriesType<Highcharts.VBPIndicator>(
             enabled: false
         },
         dataLabels: {
-            /** @ignore-option */
             allowOverlap: true,
-            /** @ignore-option */
             enabled: true,
-            /** @ignore-option */
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
-            /** @ignore-option */
             padding: 0,
-            /** @ignore-option */
             style: {
+                /** @internal */
                 fontSize: '7px'
             },
-            /** @ignore-option */
             verticalAlign: 'top'
         }
     },
@@ -367,7 +365,7 @@ seriesType<Highcharts.VBPIndicator>(
                 attr.translateX = series.yAxis.pos;
                 (series.group as any).animate(
                     attr,
-                    extend(H.animObject(series.options.animation), {
+                    extend(animObject(series.options.animation), {
                         step: function (val: any, fx: any): void {
                             (series.group as any).attr({
                                 scaleX: Math.max(0.001, fx.pos)
@@ -547,17 +545,17 @@ seriesType<Highcharts.VBPIndicator>(
                 }
             }
         },
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.VBPIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.VBPIndicatorParamsOptions
-        ): Highcharts.IndicatorValuesObject {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
                 xValues: Array<number> = series.processedXData,
                 yValues: Array<Array<number>> = (series.processedYData as any),
                 chart = indicator.chart,
                 ranges: number = (params.ranges as any),
-                VBP: Array<[number, number]> = [],
+                VBP: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 isOHLC: boolean,
@@ -566,38 +564,41 @@ seriesType<Highcharts.VBPIndicator>(
 
             // Checks if base series exists
             if (!series.chart) {
-                return (H.error(
+                H.error(
                     'Base series not found! In case it has been removed, add ' +
                     'a new one.',
                     true,
                     chart
-                ) as any);
+                );
+                return;
             }
 
             // Checks if volume series exists
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                return (H.error(
+                H.error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
                     true,
                     chart
-                ) as any);
+                );
+                return;
             }
 
             // Checks if series data fits the OHLC format
             isOHLC = isArray(yValues[0]);
 
             if (isOHLC && yValues[0].length !== 4) {
-                return (H.error(
+                H.error(
                     'Type of ' +
                     series.name +
                     ' series is different than line, OHLC or candlestick.',
                     true,
                     chart
-                ) as any);
+                );
+                return;
             }
 
             // Price zones contains all the information about the zones (index,
@@ -625,7 +626,7 @@ seriesType<Highcharts.VBPIndicator>(
                 values: VBP,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         },
         // Specifing where each zone should start ans end
         specifyZones: function (

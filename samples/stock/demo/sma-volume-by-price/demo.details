@@ -1,7 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- compareTooltips: true
- js_wrap: b
+name: SMA volume by price
+authors:
+  - Torstein Hønsi
+compareTooltips: true
+js_wrap: b
+tags: []
+categories:
+  - Flags and Indicators
 ...

@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, extend = U.extend, isArray = U.isArray;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -32,7 +32,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, noop = H.noop, addEvent = H.addEvent, correctFloat = H.correctFloat, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
+var abs = Math.abs, noop = H.noop, addEvent = H.addEvent, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *
@@ -130,19 +130,14 @@ seriesType('vbp', 'sma',
         enabled: false
     },
     dataLabels: {
-        /** @ignore-option */
         allowOverlap: true,
-        /** @ignore-option */
         enabled: true,
-        /** @ignore-option */
         format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
-        /** @ignore-option */
         padding: 0,
-        /** @ignore-option */
         style: {
+            /** @internal */
             fontSize: '7px'
         },
-        /** @ignore-option */
         verticalAlign: 'top'
     }
 }, 
@@ -202,7 +197,7 @@ seriesType('vbp', 'sma',
         var series = this, attr = {};
         if (H.svg && !init) {
             attr.translateX = series.yAxis.pos;
-            series.group.animate(attr, extend(H.animObject(series.options.animation), {
+            series.group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
                         scaleX: Math.max(0.001, fx.pos)
@@ -311,21 +306,24 @@ seriesType('vbp', 'sma',
         var indicator = this, xValues = series.processedXData, yValues = series.processedYData, chart = indicator.chart, ranges = params.ranges, VBP = [], xData = [], yData = [], isOHLC, volumeSeries, priceZones;
         // Checks if base series exists
         if (!series.chart) {
-            return H.error('Base series not found! In case it has been removed, add ' +
+            H.error('Base series not found! In case it has been removed, add ' +
                 'a new one.', true, chart);
+            return;
         }
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            return H.error('Series ' +
+            H.error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
+            return;
         }
         // Checks if series data fits the OHLC format
         isOHLC = isArray(yValues[0]);
         if (isOHLC && yValues[0].length !== 4) {
-            return H.error('Type of ' +
+            H.error('Type of ' +
                 series.name +
                 ' series is different than line, OHLC or candlestick.', true, chart);
+            return;
         }
         // Price zones contains all the information about the zones (index,
         // start, end, volumes, etc.)

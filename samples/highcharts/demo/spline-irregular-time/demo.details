@@ -1,6 +1,9 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Time data with irregular intervals
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags: []
+categories:
+  - Line charts
 ...

@@ -73,7 +73,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/AreaSeries.js';
@@ -320,8 +321,8 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                     pointStack.setOffset(
                         -(pointWidth / 2) || 0,
                         pointWidth || 0,
-                        undefined,
-                        undefined,
+                        void 0,
+                        void 0,
                         point.plotX
                     );
                 }
@@ -411,7 +412,7 @@ addEvent(H.Tick, 'afterGetPosition', function (
     }
 });
 
-H.wrap(H.Tick.prototype, 'getLabelPosition', function (
+wrap(H.Tick.prototype, 'getLabelPosition', function (
     this: Highcharts.Tick,
     proceed: Function,
     x: number,
