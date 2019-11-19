@@ -51,6 +51,7 @@ declare global {
             connectEnds?: boolean;
             data: Array<PolarPoint>;
             group: SVGElement;
+            hasClipCircleSetter?: boolean;
             kdByAngle?: boolean;
             points: Array<PolarPoint>;
             preventPostTranslate?: boolean;
@@ -389,32 +390,36 @@ H.addEvent(Series as any, 'afterTranslate', function (
         }
 
         // Perform clip after render
-        series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function (
-            this: Highcharts.PolarSeries
-        ): void {
-            var circ: Array<number>;
+        if (!this.hasClipCircleSetter) {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(
+                H.addEvent(series, 'afterRender', function (
+                    this: Highcharts.PolarSeries
+                ): void {
+                    var circ: Array<number>;
 
-            if (chart.polar) {
-                circ = this.yAxis.center as any;
+                    if (chart.polar) {
+                        circ = this.yAxis.center as any;
 
-                if (!this.clipCircle) {
-                    this.clipCircle = chart.renderer.clipCircle(
-                        circ[0],
-                        circ[1],
-                        circ[2] / 2
-                    );
-                } else {
-                    this.clipCircle.animate({
-                        x: circ[0],
-                        y: circ[1],
-                        r: circ[2] / 2
-                    });
-                }
+                        if (!this.clipCircle) {
+                            this.clipCircle = chart.renderer.clipCircle(
+                                circ[0],
+                                circ[1],
+                                circ[2] / 2
+                            );
+                        } else {
+                            this.clipCircle.animate({
+                                x: circ[0],
+                                y: circ[1],
+                                r: circ[2] / 2
+                            });
+                        }
 
-                this.group.clip(this.clipCircle);
-                this.setClip = H.noop as any;
-            }
-        }));
+                        this.group.clip(this.clipCircle);
+                        this.setClip = H.noop as any;
+                    }
+                })
+            );
+        }
     }
 }, { order: 2 }); // Run after translation of ||-coords
 
