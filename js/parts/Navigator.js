@@ -252,8 +252,8 @@ extend(defaultOptions, {
          * is borrowed from the first series in the chart.
          *
          * Default series options for the navigator series are:
-         *
-         * <pre>series: {
+         * ```js
+         * series: {
          *     type: 'areaspline',
          *     fillOpacity: 0.05,
          *     dataGrouping: {
@@ -263,7 +263,8 @@ extend(defaultOptions, {
          *     marker: {
          *         enabled: false
          *     }
-         * }</pre>
+         * }
+         * ```
          *
          * @see In styled mode, the navigator series is styled with the
          *      `.highcharts-navigator-series` class.
@@ -381,10 +382,10 @@ extend(defaultOptions, {
             threshold: null
         },
         /**
-         * Options for the navigator X axis. Default series options
-         * for the navigator xAxis are:
-         *
-         * <pre>xAxis: {
+         * Options for the navigator X axis. Default series options for the
+         * navigator xAxis are:
+         * ```js
+         * xAxis: {
          *     tickWidth: 0,
          *     lineWidth: 0,
          *     gridLineWidth: 1,
@@ -397,7 +398,8 @@ extend(defaultOptions, {
          *         x: 3,
          *         y: -4
          *     }
-         * }</pre>
+         * }
+         * ```
          *
          * @extends   xAxis
          * @excluding linkedTo, maxZoom, minRange, opposite, range, scrollbar,
@@ -433,10 +435,10 @@ extend(defaultOptions, {
             crosshair: false
         },
         /**
-         * Options for the navigator Y axis. Default series options
-         * for the navigator yAxis are:
-         *
-         * <pre>yAxis: {
+         * Options for the navigator Y axis. Default series options for the
+         * navigator yAxis are:
+         * ```js
+         * yAxis: {
          *     gridLineWidth: 0,
          *     startOnTick: false,
          *     endOnTick: false,
@@ -449,7 +451,8 @@ extend(defaultOptions, {
          *         text: null
          *     },
          *     tickWidth: 0
-         * }</pre>
+         * }
+         * ```
          *
          * @extends   yAxis
          * @excluding height, linkedTo, maxZoom, minRange, ordinal, range,

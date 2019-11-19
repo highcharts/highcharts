@@ -217,14 +217,16 @@ H.defaultOptions = {
      * ### Legacy
      *
      * In Highcharts 3.x, the default colors were:
-     *
-     * <pre>colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-     *     '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']</pre>
+     * ```js
+     * colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
+     *         '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']
+     * ```
      *
      * In Highcharts 2.x, the default colors were:
-     *
-     * <pre>colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-     *    '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']</pre>
+     * ```js
+     * colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
+     *         '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
+     * ```
      *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
@@ -253,7 +255,8 @@ H.defaultOptions = {
      * initialization. Instead, use `Highcharts.setOptions` to set it before any
      * chart is initialized.
      *
-     * <pre>Highcharts.setOptions({
+     * ```js
+     * Highcharts.setOptions({
      *     lang: {
      *         months: [
      *             'Janvier', 'Février', 'Mars', 'Avril',
@@ -265,7 +268,8 @@ H.defaultOptions = {
      *             'Jeudi', 'Vendredi', 'Samedi'
      *         ]
      *     }
-     * });</pre>
+     * });
+     * ```
      */
     lang: {
         /**
@@ -412,12 +416,13 @@ H.defaultOptions = {
      * the `lang` options, must be set using the `Highcharts.setOptions`
      * method.
      *
-     * <pre>Highcharts.setOptions({
+     * ```js
+     * Highcharts.setOptions({
      *     global: {
      *         useUTC: false
      *     }
-     * });</pre>
-     *
+     * });
+     * ```
      */
     /**
      * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
@@ -564,20 +569,11 @@ H.defaultOptions = {
          * duration of 500 ms. If used as a configuration object, the following
          * properties are supported:
          *
-         * <dl>
+         * - **duration**: The duration of the animation in milliseconds.
          *
-         * <dt>duration</dt>
-         *
-         * <dd>The duration of the animation in milliseconds.</dd>
-         *
-         * <dt>easing</dt>
-         *
-         * <dd>A string reference to an easing function set on the `Math`
-         * object. See [the easing
-         * demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
-         * </dd>
-         *
-         * </dl>
+         * - **easing**: A string reference to an easing function set on the
+         *   `Math` object. See
+         *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
@@ -634,12 +630,14 @@ H.defaultOptions = {
          * are `event.xAxis[0]` and `event.yAxis[0]`. Remember the unit of a
          * datetime axis is milliseconds since 1970-01-01 00:00:00.
          *
-         * <pre>click: function(e) {
+         * ```js
+         * click: function(e) {
          *     console.log(
          *         Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', e.xAxis[0].value),
          *         e.yAxis[0].value
          *     )
-         * }</pre>
+         * }
+         * ```
          *
          * @sample {highcharts} highcharts/chart/events-click/
          *         Alert coordinates on click
@@ -721,7 +719,8 @@ H.defaultOptions = {
          * `event.xAxis[0]` and `event.yAxis[0]`. Remember the unit of a
          * datetime axis is milliseconds since 1970-01-01 00:00:00.
          *
-         * <pre>selection: function(event) {
+         * ```js
+         * selection: function(event) {
          *     // log the min and max of the primary, datetime x-axis
          *     console.log(
          *         Highcharts.dateFormat(
@@ -735,7 +734,8 @@ H.defaultOptions = {
          *     );
          *     // log the min and max of the y axis
          *     console.log(event.yAxis[0].min, event.yAxis[0].max);
-         * }</pre>
+         * }
+         * ```
          *
          * @sample {highcharts} highcharts/chart/events-selection/
          *         Report on selection and reset
@@ -1911,11 +1911,12 @@ H.defaultOptions = {
         /**
          * CSS styles for each label. To position the label, use left and top
          * like this:
-         *
-         * <pre>style: {
+         * ```js
+         * style: {
          *     left: '100px',
          *     top: '100px'
-         * }</pre>
+         * }
+         * ```
          *
          * @deprecated
          * @type      {Highcharts.CSSObject}
@@ -2805,7 +2806,7 @@ H.defaultOptions = {
         /**
          * Since 4.1, the crosshair definitions are moved to the Axis object
          * in order for a better separation from the tooltip. See
-         * [xAxis.crosshair](#xAxis.crosshair)<a>.</a>
+         * [xAxis.crosshair](#xAxis.crosshair).
          *
          * @sample {highcharts} highcharts/tooltip/crosshairs-x/
          *         Enable a crosshair for the x value
@@ -2881,45 +2882,31 @@ H.defaultOptions = {
          *
          * Available data are:
          *
-         * <dl>
+         * - **this.percentage (not shared) /**
+         *   **this.points[i].percentage (shared)**:
+         *   Stacked series and pies only. The point's percentage of the total.
          *
-         * <dt>this.percentage (not shared) / this.points[i].percentage (shared)
-         * </dt>
+         * - **this.point (not shared) / this.points[i].point (shared)**:
+         *   The point object. The point name, if defined, is available through
+         *   `this.point.name`.
          *
-         * <dd>Stacked series and pies only. The point's percentage of the
-         * total.
-         * </dd>
+         * - **this.points**:
+         *   In a shared tooltip, this is an array containing all other
+         *   properties for each point.
          *
-         * <dt>this.point (not shared) / this.points[i].point (shared)</dt>
+         * - **this.series (not shared) / this.points[i].series (shared)**:
+         *   The series object. The series name is available through
+         *   `this.series.name`.
          *
-         * <dd>The point object. The point name, if defined, is available
-         * through `this.point.name`.</dd>
+         * - **this.total (not shared) / this.points[i].total (shared)**:
+         *   Stacked series only. The total value at this point's x value.
          *
-         * <dt>this.points</dt>
+         * - **this.x**:
+         *   The x value. This property is the same regardless of the tooltip
+         *   being shared or not.
          *
-         * <dd>In a shared tooltip, this is an array containing all other
-         * properties for each point.</dd>
-         *
-         * <dt>this.series (not shared) / this.points[i].series (shared)</dt>
-         *
-         * <dd>The series object. The series name is available through
-         * `this.series.name`.</dd>
-         *
-         * <dt>this.total (not shared) / this.points[i].total (shared)</dt>
-         *
-         * <dd>Stacked series only. The total value at this point's x value.
-         * </dd>
-         *
-         * <dt>this.x</dt>
-         *
-         * <dd>The x value. This property is the same regardless of the tooltip
-         * being shared or not.</dd>
-         *
-         * <dt>this.y (not shared) / this.points[i].y (shared)</dt>
-         *
-         * <dd>The y value.</dd>
-         *
-         * </dl>
+         * - **this.y (not shared) / this.points[i].y (shared)**:
+         *   The y value.
          *
          * @sample {highcharts} highcharts/tooltip/formatter-simple/
          *         Simple string formatting
@@ -3326,7 +3313,6 @@ H.defaultOptions = {
          *         Format demo
          *
          * @type       {string}
-         * @default    <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */

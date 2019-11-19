@@ -556,7 +556,7 @@ defaultOptions.drilldown = {
  *
  * Event arguments:
  *
- * - `category`: If a category label was clicked, which index.</dd>
+ * - `category`: If a category label was clicked, which index.
  *
  * - `originalEvent`: The original browser event (usually click) that triggered
  *   the drilldown.
@@ -564,7 +564,7 @@ defaultOptions.drilldown = {
  * - `point`: The originating point.
  *
  * - `points`: If a category label was clicked, this array holds all points
- *   corresponing to the category.</dd>
+ *   corresponing to the category.
  *
  * - `seriesOptions`: Options for the new series.
  *
