@@ -37,7 +37,10 @@ function test_advanced() {
     Highcharts.chart('container', {
         chart: {
             zoomType: 'x',
-            panning: true,
+            panning: {
+                enabled: true,
+                type: 'x'
+            },
             panKey: 'shift',
             scrollablePlotArea: {
                 minWidth: 600

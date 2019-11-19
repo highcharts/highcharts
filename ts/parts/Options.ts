@@ -85,7 +85,7 @@ declare global {
             marginTop?: number;
             numberFormatter?: NumberFormatterCallbackFunction;
             panKey?: string;
-            panning?: boolean;
+            panning?: PanningOptions;
             pinchType?: string;
             plotBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject
@@ -1289,16 +1289,31 @@ H.defaultOptions = {
          * requires two fingers. To allow panning with one finger, set
          * `followTouchMove` to `false`.
          *
-         * @sample {highcharts} highcharts/chart/pankey/ Zooming and panning
+         * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
+         * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
+         *
+         * @product highcharts highstock gantt
+         * @apioption chart.panning
+         */
+
+        /**
+         * Enable or disable chart panning.
          *
          * @type      {boolean}
          * @default   {highcharts} false
          * @default   {highstock} true
-         * @since     4.0.3
-         * @product   highcharts highstock gantt
-         * @apioption chart.panning
+         * @apioption chart.panning.enabled
          */
 
+        /**
+         * Decides in what dimensions the user can pan the chart. Can be
+         * one of `x`, `y`, or `xy`.
+         *
+         * @type    {string}
+         * @validvalue ["x", "y", "xy"]
+         * @default x
+         * @apioption chart.panning.type
+         */
 
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch

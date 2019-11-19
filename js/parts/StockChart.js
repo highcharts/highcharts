@@ -118,13 +118,13 @@ var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, me
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), disableStartOnTick = navigatorEnabled ? {
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning && /y/.test(panning.type), disableStartOnTick = {
         startOnTick: false,
         endOnTick: false
-    } : null;
+    };
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge({
@@ -145,7 +145,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         {
             type: 'datetime',
             categories: null
-        }, disableStartOnTick);
+        }, (navigatorEnabled ? disableStartOnTick : null));
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
@@ -171,13 +171,16 @@ H.StockChart = H.stockChart = function (a, b, c) {
             }
         }, defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions // user options
-        );
+        yAxisOptions, // user options
+        (verticalPanningEnabled ? disableStartOnTick : null));
     });
     options.series = null;
     options = merge({
         chart: {
-            panning: true,
+            panning: {
+                enabled: true,
+                type: 'x'
+            },
             pinchType: 'x'
         },
         navigator: {
@@ -762,5 +765,29 @@ addEvent(Chart, 'update', function (e) {
         merge(true, this.options.scrollbar, options.scrollbar);
         this.navigator.update({}, false);
         delete options.scrollbar;
+    }
+});
+// Extend the Axis prototype to calculate start min/max values
+// (including min/maxPadding). This is related to using vertical panning
+// (#11315).
+addEvent(Axis, 'afterSetScale', function () {
+    var axis = this, panning = axis.chart.options.chart &&
+        axis.chart.options.chart.panning;
+    if (panning &&
+        (panning.type === 'y' ||
+            panning.type === 'xy') &&
+        !axis.isXAxis &&
+        !defined(axis.panningState)) {
+        var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
+        axis.series.forEach(function (series) {
+            min = Math.min(H.arrayMin(series.yData), min) -
+                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+            max = Math.max(H.arrayMax(series.yData), max) +
+                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+        });
+        axis.panningState = {
+            startMin: min,
+            startMax: max
+        };
     }
 });
