@@ -28,7 +28,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 var marginNames = H.marginNames, addEvent = H.addEvent, wrap = H.wrap, fireEvent = H.fireEvent;
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable no-invalid-this, valid-jsdoc, no-undefined */
 /**
  * Utility function for checking if the Advanced Module should kick in.
  *

@@ -368,19 +368,19 @@ Highcharts.Legend.prototype = {
 
         // Below options represend translated user input
         // TODO: these values can be NaN's - handle them better.
-        this.widthOption = H.relativeLength(
+        this.widthOption = relativeLength(
             options.width as any, spacingBox.width - padding
         );
 
-        this.heightOption = H.relativeLength(
+        this.heightOption = relativeLength(
             options.height as any, spacingBox.height - padding
         );
 
-        this.xOption = H.relativeLength(
+        this.xOption = relativeLength(
             options.x as any, spacingBox.width - padding
         );
 
-        this.yOption = H.relativeLength(
+        this.yOption = relativeLength(
             options.y as any, spacingBox.height - padding
         );
         fireEvent(this, 'afterSetOptions');

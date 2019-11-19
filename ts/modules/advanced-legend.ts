@@ -132,7 +132,7 @@ var marginNames = H.marginNames,
     fireEvent = H.fireEvent;
 
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable no-invalid-this, valid-jsdoc, no-undefined */
 
 /**
  * Utility function for checking if the Advanced Module should kick in.

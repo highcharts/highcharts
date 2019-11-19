@@ -170,10 +170,10 @@ Highcharts.Legend.prototype = {
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
         // Below options represend translated user input
         // TODO: these values can be NaN's - handle them better.
-        this.widthOption = H.relativeLength(options.width, spacingBox.width - padding);
-        this.heightOption = H.relativeLength(options.height, spacingBox.height - padding);
-        this.xOption = H.relativeLength(options.x, spacingBox.width - padding);
-        this.yOption = H.relativeLength(options.y, spacingBox.height - padding);
+        this.widthOption = relativeLength(options.width, spacingBox.width - padding);
+        this.heightOption = relativeLength(options.height, spacingBox.height - padding);
+        this.xOption = relativeLength(options.x, spacingBox.width - padding);
+        this.yOption = relativeLength(options.y, spacingBox.height - padding);
         fireEvent(this, 'afterSetOptions');
     },
     /**
@@ -704,7 +704,6 @@ Highcharts.Legend.prototype = {
      * @function Highcharts.sortItems
      * @return {void}
      */
-
     sortItems: function () {
         // sort by legendIndex
         stableSort(this.allItems, function (a, b) {
