@@ -203,24 +203,26 @@ H.addEvent(Series, 'afterTranslate', function () {
             }
         }
         // Perform clip after render
-        series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
-            var circ;
-            if (chart.polar) {
-                circ = this.yAxis.center;
-                if (!this.clipCircle) {
-                    this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
+        if (!this.hasClipCircleSetter) {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
+                var circ;
+                if (chart.polar) {
+                    circ = this.yAxis.center;
+                    if (!this.clipCircle) {
+                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
+                    }
+                    else {
+                        this.clipCircle.animate({
+                            x: circ[0],
+                            y: circ[1],
+                            r: circ[2] / 2
+                        });
+                    }
+                    this.group.clip(this.clipCircle);
+                    this.setClip = H.noop;
                 }
-                else {
-                    this.clipCircle.animate({
-                        x: circ[0],
-                        y: circ[1],
-                        r: circ[2] / 2
-                    });
-                }
-                this.group.clip(this.clipCircle);
-                this.setClip = H.noop;
-            }
-        }));
+            }));
+        }
     }
 }, { order: 2 }); // Run after translation of ||-coords
 /**
