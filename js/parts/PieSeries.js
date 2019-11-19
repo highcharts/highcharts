@@ -37,9 +37,9 @@ seriesType('pie', 'line',
  *
  * @extends      plotOptions.line
  * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
- *               getExtremesFromAll, label, lineWidth, marker,
- *               negativeColor, pointInterval, pointIntervalUnit,
+ *               cropThreshold, dashStyle, dataSorting, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
+ *               marker, negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointStart, softThreshold, stacking, step,
  *               threshold, turboThreshold, zoneAxis, zones
  * @product      highcharts

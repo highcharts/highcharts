@@ -246,6 +246,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
 
+                    if (series.enabledDataSorting) {
+                        // We need to call `setData` after `linkSeries`
+                        series.setData(options.data as any, false);
+                    }
+
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
                     if (redraw) {
@@ -871,9 +876,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.series.forEach(function (series: Highcharts.Series): void {
-                series.update({}, false);
-            });
+            chart.getSeriesOrderByLinks().forEach(function (
+                series: Highcharts.Series
+            ): void {
+                // Avoid removed navigator series
+                if (series.chart) {
+                    series.update({}, false);
+                }
+            }, this);
         }
 
         // For loading, just update the options, do not redraw
@@ -1520,6 +1530,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             });
 
             if (options.data) {
+                // setData uses dataSorting options so we need to update them
+                // earlier
+                if (options.dataSorting) {
+                    extend(series.options.dataSorting, options.dataSorting);
+                }
                 this.setData(options.data, false);
             }
         }

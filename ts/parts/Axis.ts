@@ -1453,6 +1453,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * The axis labels show the number or category for each tick.
          *
+         * Since v8.0.0: Labels are animated in categorized x-axis with
+         * updating data if `tickInterval` and `step` is set to 1.
+         *
          * @productdesc {highmaps}
          * X and Y axis labels are by default disabled in Highmaps, but the
          * functionality is inherited from Highcharts and used on `colorAxis`,
@@ -6349,6 +6352,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Get the longest label length
         tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
             tick = ticks[tick as any];
+
+            // Replace label - sorting animation
+            if (tick.movedLabel) {
+                tick.replaceMovedLabel();
+            }
+
             if (
                 tick &&
                 (tick as any).label &&
