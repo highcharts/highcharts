@@ -823,24 +823,20 @@ var sunburstPoint = {
         return true;
     },
     getDataLabelPath: function (label) {
-        var renderer = this.series.chart.renderer, shapeArgs = this.shapeExisting, start = shapeArgs.start, end = shapeArgs.end, angle = start + (end - start) / 2, // arc middle point
+        var renderer = this.series.chart.renderer, shapeArgs = this.shapeExisting, start = shapeArgs.start, end = shapeArgs.end, angle = start + (end - start) / 2, // arc middle value
         upperHalf = angle < 0 &&
             angle > -Math.PI ||
             angle > Math.PI, r = (shapeArgs.r + (label.options.distance || 0)), moreThanHalf;
-        // check if point is a full circle
+        // Check if point is a full circle
         if (start === -Math.PI / 2 &&
-            correctFloat(end) === correctFloat(Math.PI + Math.PI / 2)) {
+            correctFloat(end) === correctFloat(Math.PI * 1.5)) {
             start = -Math.PI + Math.PI / 360;
             end = -Math.PI / 360;
             upperHalf = true;
         }
-        // check if dataLabels should be render in the
+        // Check if dataLabels should be render in the
         // upper half of the circle
-        if (start <= 0 && start * (-1) + end > Math.PI) {
-            upperHalf = false;
-            moreThanHalf = true;
-        }
-        else if (start >= 0 && end - start > Math.PI) {
+        if (end - start > Math.PI) {
             upperHalf = false;
             moreThanHalf = true;
         }
