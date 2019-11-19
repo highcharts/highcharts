@@ -2040,13 +2040,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // (e.g. ellipsis is applied), so we need to rebuild textPath too
             if (textPathWrapper &&
                 textPathWrapper.element.parentNode === null) {
-                // case when buildText functionality was triggered again
+                // When buildText functionality was triggered again
                 // and deletes textPathWrapper parentNode
                 firstTime = true;
                 textPathWrapper = textPathWrapper.destroy();
             }
             else if (textPathWrapper) {
-                // case after drillup when spans were added into
+                // Case after drillup when spans were added into
                 // the DOM outside the textPathWrapper parentGroup
                 this.removeTextOutline.call(textPathWrapper.parentGroup, [].slice.call(elem.getElementsByTagName('tspan')));
             }
