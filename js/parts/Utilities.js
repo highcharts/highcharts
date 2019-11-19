@@ -1248,11 +1248,11 @@ function pad(number, length, padder) {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (value, base, offset) {
+function relativeLength(value, base, offset) {
     return (/%$/).test(value) ?
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
-};
+}
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -1272,7 +1272,7 @@ H.relativeLength = function (value, base, offset) {
  *
  * @return {void}
  */
-H.wrap = function (obj, method, func) {
+function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
@@ -1284,7 +1284,7 @@ H.wrap = function (obj, method, func) {
         ctx.proceed = null;
         return ret;
     };
-};
+}
 /**
  * Recursively converts all Date properties to timestamps.
  *
@@ -2539,8 +2539,10 @@ var utils = {
     pad: pad,
     pick: pick,
     pInt: pInt,
+    relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
-    syncTimeout: syncTimeout
+    syncTimeout: syncTimeout,
+    wrap: wrap
 };
 export default utils;

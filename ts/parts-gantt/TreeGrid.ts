@@ -77,7 +77,8 @@ const {
     extend,
     isNumber,
     isString,
-    pick
+    pick,
+    wrap
 } = U;
 
 import './GridAxis.js';
@@ -100,7 +101,6 @@ var addEvent = H.addEvent,
         // Always use strict mode.
         return U.isObject(x, true);
     },
-    wrap = H.wrap,
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
     GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
 

@@ -703,6 +703,7 @@ const {
     isString,
     objectEach,
     pick,
+    relativeLength,
     splat,
     syncTimeout
 } = U;
@@ -900,14 +901,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * If categories are present for the xAxis, names are used instead of
-         * numbers for that axis. Since Highcharts 3.0, categories can also
+         * numbers for that axis.
+         *
+         * Since Highcharts 3.0, categories can also
          * be extracted by giving each point a [name](#series.data) and setting
          * axis [type](#xAxis.type) to `category`. However, if you have multiple
          * series, best practice remains defining the `categories` array.
          *
-         * Example:
-         *
-         * <pre>categories: ['Apples', 'Bananas', 'Oranges']</pre>
+         * Example: `categories: ['Apples', 'Bananas', 'Oranges']`
          *
          * @sample {highcharts} highcharts/demo/line-labels/
          *         With
@@ -1763,6 +1764,31 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 fontSize: '11px'
             }
         },
+
+        /**
+         * The left position as the horizontal axis. If it's a number, it is
+         * interpreted as pixel position relative to the chart.
+         *
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the plot width, offset from plot area
+         * left.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.left
+         */
+
+        /**
+         * The top position as the vertical axis. If it's a number, it is
+         * interpreted as pixel position relative to the chart.
+         *
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
+         * as percentages of the plot height, offset from plot area top.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.top
+         */
 
         /**
          * Index of another axis that this axis is linked to. When an axis is
@@ -2871,6 +2897,30 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // gridLineWidth: 0,
 
         /**
+         * The height as the vertical axis. If it's a number, it is
+         * interpreted as pixels.
+         *
+         * Since Highcharts 2: If it's a percentage string, it is interpreted
+         * as percentages of the total plot height.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.height
+         */
+
+        /**
+         * The width as the horizontal axis. If it's a number, it is interpreted
+         * as pixels.
+         *
+         * Since Highcharts v5.0.13: If it's a percentage string, it is
+         * interpreted as percentages of the total plot width.
+         *
+         * @type      {number|string}
+         * @product   highcharts highstock
+         * @apioption xAxis.width
+         */
+
+        /**
          * Color for the main tick marks.
          *
          * In styled mode, the stroke is given in the `.highcharts-tick`
@@ -2902,7 +2952,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @type         {*|Array<*>}
      * @extends      xAxis
-     * @excluding    ordinal,overscroll,currentDateIndicator
+     * @excluding    currentDateIndicator,ordinal,overscroll
      * @optionparent yAxis
      *
      * @private
@@ -2969,8 +3019,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The height of the Y axis. If it's a number, it is interpreted as
          * pixels.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the total plot height.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the total plot height.
          *
          * @see [yAxis.top](#yAxis.top)
          *
@@ -2978,7 +3028,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Percentage height panes
          *
          * @type      {number|string}
-         * @product   highstock
+         * @product   highcharts highstock
          * @apioption yAxis.height
          */
 
@@ -3544,8 +3594,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * The top position of the Y axis. If it's a number, it is interpreted
          * as pixel position relative to the chart.
          *
-         * Since Highstock 2: If it's a percentage string, it is interpreted
-         * as percentages of the plot height, offset from plot area top.
+         * Since Highcharts 2: If it's a percentage string, it is interpreted as
+         * percentages of the plot height, offset from plot area top.
          *
          * @see [yAxis.height](#yAxis.height)
          *
@@ -3553,7 +3603,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Percentage height panes
          *
          * @type      {number|string}
-         * @product   highstock
+         * @product   highcharts highstock
          * @apioption yAxis.top
          */
 
@@ -3684,7 +3734,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @extends   xAxis
      * @since     5.0.0
      * @product   highcharts
-     * @excluding breaks, crosshair, lineColor, lineWidth, nameToX, showEmpty
+     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+     *            nameToX, showEmpty, top, width
      * @apioption zAxis
      *
      * @private
@@ -3859,6 +3910,22 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Initial categories
         axis.hasNames =
             type === 'category' || (options.categories as any) === true;
+
+        /**
+         * If categories are present for the axis, names are used instead of
+         * numbers for that axis.
+         *
+         * Since Highcharts 3.0, categories can also be extracted by giving each
+         * point a name and setting axis type to `category`. However, if you
+         * have multiple series, best practice remains defining the `categories`
+         * array.
+         *
+         * @see [xAxis.categories](/highcharts/xAxis.categories)
+         *
+         * @name Highcharts.Axis#categories
+         * @type {Array<string>}
+         * @readonly
+         */
         axis.categories = (options.categories as any) || axis.hasNames;
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
@@ -5916,26 +5983,26 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Check for percentage based input values. Rounding fixes problems
             // with column overflow and plot line filtering (#4898, #4899)
-            width = this.width = Math.round(H.relativeLength(
+            width = this.width = Math.round(relativeLength(
                 pick(
                     options.width,
                     chart.plotWidth - offsets[3] + offsets[1]
                 ),
                 chart.plotWidth
             )),
-            height = this.height = Math.round(H.relativeLength(
+            height = this.height = Math.round(relativeLength(
                 pick(
                     options.height,
                     chart.plotHeight - offsets[0] + offsets[2]
                 ),
                 chart.plotHeight
             )),
-            top = this.top = Math.round(H.relativeLength(
+            top = this.top = Math.round(relativeLength(
                 pick(options.top, chart.plotTop + offsets[0]),
                 chart.plotHeight,
                 chart.plotTop
             )),
-            left = this.left = Math.round(H.relativeLength(
+            left = this.left = Math.round(relativeLength(
                 pick(options.left, chart.plotLeft + offsets[3]),
                 chart.plotWidth,
                 chart.plotLeft

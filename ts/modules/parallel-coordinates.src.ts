@@ -63,7 +63,8 @@ const {
     erase,
     extend,
     pick,
-    splat
+    splat,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -77,7 +78,6 @@ var Axis = H.Axis,
     AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
 
 var defaultXAxisOptions = {

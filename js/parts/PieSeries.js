@@ -9,15 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* Pie series only. Whether to display a slice offset from the center.
-* @name Highcharts.PointOptionsObject#sliced
-* @type {boolean|undefined}
-*/
 import U from './Utilities.js';
-var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
+var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
@@ -705,7 +698,7 @@ seriesType('pie', 'line',
                 point.options.dataLabels.distance), labelDistance);
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
-            point.labelDistance = H.relativeLength(point.labelDistance, point.shapeArgs.r);
+            point.labelDistance = relativeLength(point.labelDistance, point.shapeArgs.r);
             // Saved for later dataLabels distance calculation.
             series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
             // The angle must stay within -90 and 270 (#2645)
@@ -1127,7 +1120,7 @@ seriesType('pie', 'line',
             ];
         },
         crookedLine: function (labelPosition, connectorPosition, options) {
-            var touchingSliceAt = connectorPosition.touchingSliceAt, series = this.series, pieCenterX = series.center[0], plotWidth = series.chart.plotWidth, plotLeft = series.chart.plotLeft, alignment = labelPosition.alignment, radius = this.shapeArgs.r, crookDistance = H.relativeLength(// % to fraction
+            var touchingSliceAt = connectorPosition.touchingSliceAt, series = this.series, pieCenterX = series.center[0], plotWidth = series.chart.plotWidth, plotLeft = series.chart.plotLeft, alignment = labelPosition.alignment, radius = this.shapeArgs.r, crookDistance = relativeLength(// % to fraction
             options.crookDistance, 1), crookX = alignment === 'left' ?
                 pieCenterX + radius + (plotWidth + plotLeft -
                     pieCenterX - radius) * (1 - crookDistance) :

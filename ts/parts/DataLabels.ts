@@ -216,22 +216,28 @@ declare global {
  */
 
 /**
+ * Options for the series data labels, appearing next to each data point.
+ *
+ * Since v6.2.0, multiple data labels can be applied to each single point by
+ * defining them as an array of configs.
+ *
+ * In styled mode, the data labels can be styled with the
+ * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
+ *      Data labels enabled
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
+ *      Multiple data labels on a bar series
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
+ *      Style mode example
+ *
+ * @interface Highcharts.DataLabelsOptionsObject
+ */
+
+/**
  * Values for handling data labels that flow outside the plot area.
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
- */
-
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * Individual data labels for each point.
- * @name Highcharts.PointOptionsObject#dataLabels
- * @type {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>|undefined}
- *//**
- * The rank for this point's data label in case of collision. If two data labels
- * are about to overlap, only the one with the highest labelrank will be drawn.
- * @name Highcharts.PointOptionsObject#labelrank
- * @type {number|undefined}
  */
 
 import U from './Utilities.js';
@@ -244,6 +250,7 @@ const {
     isArray,
     objectEach,
     pick,
+    relativeLength,
     splat
 } = U;
 
@@ -252,7 +259,6 @@ import './Series.js';
 var format = H.format,
     merge = H.merge,
     noop = H.noop,
-    relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;

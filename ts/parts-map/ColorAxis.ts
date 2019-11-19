@@ -235,10 +235,10 @@ extend(ColorAxis.prototype, {
      *
      * @extends      xAxis
      * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
-     *               categories, crosshair, dateTimeLabelFormats, lineWidth,
-     *               linkedTo, maxZoom, minRange, minTickInterval, offset,
-     *               opposite, pane, plotBands, plotLines, reversedStacks,
-     *               showEmpty, title, zoomEnabled
+     *               categories, crosshair, dateTimeLabelFormats, height, left,
+     *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
+     *               offset, opposite, pane, plotBands, plotLines,
+     *               reversedStacks, showEmpty, title, top, width, zoomEnabled
      * @product      highcharts highstock highmaps
      * @type         {*|Array<*>}
      * @optionparent colorAxis

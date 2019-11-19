@@ -134,6 +134,7 @@ declare global {
             name?: string;
             selected?: boolean;
             states?: PointStatesOptionsObject;
+            visible?: boolean;
             x?: number;
             y?: (null|number);
         }
@@ -285,6 +286,21 @@ declare global {
  *
  * @param {global.Event} event
  *        Event that occured.
+ */
+
+/**
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
  */
 
 /**
