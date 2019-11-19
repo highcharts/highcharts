@@ -13,7 +13,7 @@ Installation
 ------------
 
 You need a TypeScript-capable Editor, like Microsoft's Visual Studio Code, for
-getting autocompletion and hints for Highcharts. Please note, that Highcharts
+getting autocompletion and hints for Highcharts. Please note that Highcharts
 contains comprehensive declarations, which makes increased memory usage in a few
 editors like Webstorm necessary.
 
@@ -66,7 +66,7 @@ require.config({
 })
 ```
 
-For Highstock and other additions it is recommend, to use the previous
+For Highstock and other additions it is recommended to use the previous
 configuration and load the module (`highcharts/modules/stock`) instead. For the
 package you have to change the configuration in the following way:
 
