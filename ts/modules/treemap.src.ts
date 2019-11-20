@@ -297,7 +297,8 @@ const {
     isObject,
     isString,
     objectEach,
-    pick
+    pick,
+    stableSort
 } = U;
 
 import '../parts/Options.js';
@@ -320,7 +321,6 @@ var seriesType = H.seriesType,
         return typeof x === 'boolean';
     },
     Series = H.Series,
-    stableSort = H.stableSort,
     color = H.Color,
     // @todo Similar to recursive, this function is likely redundant
     eachObject = function (

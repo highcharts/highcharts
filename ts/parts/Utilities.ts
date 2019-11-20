@@ -2174,7 +2174,7 @@ H.normalizeTickInterval = function (
  *
  * @return {void}
  */
-H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
+function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -2197,7 +2197,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
@@ -3427,6 +3427,7 @@ const utils = {
     relativeLength,
     setAnimation,
     splat,
+    stableSort,
     syncTimeout,
     wrap
 };

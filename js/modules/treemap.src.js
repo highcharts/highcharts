@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
@@ -23,7 +23,7 @@ var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEven
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
-}, Series = H.Series, stableSort = H.stableSort, color = H.Color, 
+}, Series = H.Series, color = H.Color, 
 // @todo Similar to recursive, this function is likely redundant
 eachObject = function (list, func, context) {
     context = context || this;

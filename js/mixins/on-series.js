@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var seriesTypes = H.seriesTypes, stableSort = H.stableSort;
+var defined = U.defined, stableSort = U.stableSort;
+var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @mixin onSeriesMixin

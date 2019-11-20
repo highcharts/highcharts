@@ -1504,7 +1504,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
  *
  * @return {void}
  */
-H.stableSort = function (arr, sortFunction) {
+function stableSort(arr, sortFunction) {
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
@@ -1521,7 +1521,7 @@ H.stableSort = function (arr, sortFunction) {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -2542,6 +2542,7 @@ var utils = {
     relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
+    stableSort: stableSort,
     syncTimeout: syncTimeout,
     wrap: wrap
 };
