@@ -138,8 +138,11 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     drawTracker: function () {
         return colProto.drawTracker.apply(this, arguments);
     },
-    findMinColumnWidth: function () {
-        return colProto.findMinColumnWidth.apply(this, arguments);
+    getMaxColumnCount: function () {
+        return colProto.getMaxColumnCount.apply(this, arguments);
+    },
+    getMinColumnWidth: function () {
+        return colProto.getMinColumnWidth.apply(this, arguments);
     },
     getColumnCount: function (point) {
         return colProto.getColumnCount.apply(this, arguments);
@@ -147,8 +150,8 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     getColumnMetrics: function () {
         return colProto.getColumnMetrics.apply(this, arguments);
     },
-    hasPointInX: function (point, otherSeries) {
-        return colProto.hasPointInX.apply(this, arguments);
+    hasValueInX: function (point, otherSeries) {
+        return colProto.hasValueInX.apply(this, arguments);
     },
     pointAttribs: function () {
         return colProto.pointAttribs.apply(this, arguments);

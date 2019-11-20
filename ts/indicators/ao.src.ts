@@ -26,6 +26,7 @@ declare global {
             public crispCol: ColumnSeries['crispCol'];
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues(
                 series: Series,
@@ -132,6 +133,7 @@ H.seriesType<Highcharts.AOIndicator>(
 
         // Columns support:
         markerAttribs: (noop as any),
+        getColumnCount: H.seriesTypes.column.prototype.getColumnCount,
         getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
         crispCol: H.seriesTypes.column.prototype.crispCol,
         translate: H.seriesTypes.column.prototype.translate,

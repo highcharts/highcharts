@@ -79,6 +79,7 @@ H.seriesType('ao', 'sma',
     nameComponents: false,
     // Columns support:
     markerAttribs: noop,
+    getColumnCount: H.seriesTypes.column.prototype.getColumnCount,
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
     crispCol: H.seriesTypes.column.prototype.crispCol,
     translate: H.seriesTypes.column.prototype.translate,

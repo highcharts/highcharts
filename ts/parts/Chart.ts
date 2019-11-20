@@ -93,7 +93,7 @@ declare global {
             public margin: Array<number>;
             public marginBottom?: number;
             public maxColumnCount?: number;
-            public minColumnWidth?: number;
+            public minColWidth?: number;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
             public options: Options;
@@ -873,40 +873,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
 
-        if (chart.minColumnWidth) {
-            delete chart.minColumnWidth;
-        }
-
-        if (chart.maxColumnCount) {
-            delete chart.maxColumnCount;
-        }
-
-        chart.series.forEach(function (series: Highcharts.Series): void {
-            const ignoreNulls =
-                (series as Highcharts.ColumnSeries).options.ignoreNulls;
-
-            if (
-                (series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar') &&
-                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')
-            ) {
-                (series as Highcharts.ColumnSeries).findMinColumnWidth();
-                if (ignoreNulls === 'centered') {
-                    series.points.forEach((point): void => {
-                        if (
-                            !chart.maxColumnCount ||
-                            (series as Highcharts.ColumnSeries)
-                                .getColumnCount(point) > chart.maxColumnCount
-                        ) {
-                            chart.maxColumnCount =
-                                (series as Highcharts.ColumnSeries)
-                                    .getColumnCount(point);
-                        }
-                    });
-                }
-            }
-        });
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
 
         // redraw affected series
         series.forEach(function (serie: Highcharts.Series): void {
@@ -2356,33 +2325,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     renderSeries: function (this: Highcharts.Chart): void {
         const chart = this;
-        chart.series.forEach(function (series: Highcharts.Series): void {
-            const ignoreNulls =
-                (series as Highcharts.ColumnSeries).options.ignoreNulls;
 
-            if (
-                (series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar') &&
-                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')
-            ) {
-                (series as Highcharts.ColumnSeries).findMinColumnWidth();
-                if (ignoreNulls === 'centered') {
-                    series.points.forEach((point): void => {
-                        if (
-                            !chart.maxColumnCount ||
-                            (series as Highcharts.ColumnSeries)
-                                .getColumnCount(point) > chart.maxColumnCount
-                        ) {
-                            chart.maxColumnCount =
-                                (series as Highcharts.ColumnSeries)
-                                    .getColumnCount(point);
-                        }
-                    });
-                }
-            }
-        });
-        this.series.forEach(function (series: Highcharts.Series): void {
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
+
+        chart.series.forEach(function (series: Highcharts.Series): void {
             series.translate();
             series.render();
         });

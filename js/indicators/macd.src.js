@@ -142,6 +142,7 @@ seriesType(
         pointValKey: 'y',
         // Columns support:
         markerAttribs: noop,
+        getColumnCount: H.seriesTypes.column.prototype.getColumnCount,
         getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
         crispCol: H.seriesTypes.column.prototype.crispCol,
         // Colors and lines:

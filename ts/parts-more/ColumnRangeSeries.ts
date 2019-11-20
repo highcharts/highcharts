@@ -33,10 +33,11 @@ declare global {
             public data: Array<ColumnRangePoint>;
             public drawPoints: ColumnSeries['drawPoints'];
             public drawTracker: ColumnSeries['drawTracker'];
-            public findMinColumnWidth: ColumnSeries['findMinColumnWidth'];
+            public getMaxColumnCount: ColumnSeries['getMaxColumnCount'];
+            public getMinColumnWidth: ColumnSeries['getMinColumnWidth'];
             public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public hasPointInX: ColumnSeries['hasPointInX'];
+            public hasValueInX: ColumnSeries['hasValueInX'];
             public options: ColumnRangeSeriesOptions;
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
@@ -245,8 +246,11 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.drawTracker.apply(this, arguments as any);
     },
-    findMinColumnWidth: function (this: Highcharts.ColumnRangeSeries): void {
-        return colProto.findMinColumnWidth.apply(this, arguments as any);
+    getMaxColumnCount: function (this: Highcharts.ColumnRangeSeries): number {
+        return colProto.getMaxColumnCount.apply(this, arguments as any);
+    },
+    getMinColumnWidth: function (this: Highcharts.ColumnRangeSeries): number {
+        return colProto.getMinColumnWidth.apply(this, arguments as any);
     },
     getColumnCount: function (
         this: Highcharts.ColumnRangeSeries,
@@ -259,12 +263,12 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     ): Highcharts.ColumnMetricsObject {
         return colProto.getColumnMetrics.apply(this, arguments as any);
     },
-    hasPointInX: function (
+    hasValueInX: function (
         this: Highcharts.ColumnRangeSeries,
         point: Highcharts.Point,
         otherSeries: Highcharts.Series
     ): boolean {
-        return colProto.hasPointInX.apply(this, arguments as any);
+        return colProto.hasValueInX.apply(this, arguments as any);
     },
     pointAttribs: function (
         this: Highcharts.ColumnRangeSeries

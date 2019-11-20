@@ -429,7 +429,33 @@ seriesType('column', 'line',
      *
      * @private
      */
-    borderColor: '${palette.backgroundColor}'
+    borderColor: '${palette.backgroundColor}',
+    /**
+     * Whether to ignore null points and center columns in a category.
+     * Possible values are `undefined` to disable (bring back the old
+     * behavior before Highcharts 8), `"normal"` to align columns close to
+     * the center of category, `"evenlySpaced"` to center columns evenly,
+     * and `"fillSpace"` to center the columns and let them fill the whole
+     * space.
+     *
+     * Note, that using the `pointPadding` with `ignoreNulls: "normal"`
+     * does not give an obvious effect - `pointPadding` is affected by
+     * null points.
+     * To get equal spacing between points, use pointPadding with
+     * `ignoreNulls: "normal"` instead.
+     *
+     *
+     * To do: sample
+     * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
+     *         Dark gray border
+     *
+     * @type      {boolean|string}
+     * @default   false
+     * @product   highcharts highstock
+     *
+     * @private
+     */
+    ignoreNulls: false
 }, 
 /**
  * @lends seriesTypes.column.prototype
@@ -465,6 +491,14 @@ seriesType('column', 'line',
             });
         }
     },
+    /**
+     * Wrap the standard addPoint method to dirty the affected series
+     * before redrawing them.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#addPoint
+     * @return {void}
+     */
     addPoint: function () {
         var series = this, ignoreNulls = series.options.ignoreNulls, point = Highcharts.Point.prototype.optionsToObject.call({ series: series }, arguments[0]);
         if (ignoreNulls) {
@@ -513,46 +547,69 @@ seriesType('column', 'line',
             height: h
         };
     },
+    /**
+     * Dirty the series that should be redrawn after addPoint(),
+     * point.remove() or similar.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#dirtyTheSeries
+     * @return {void}
+     */
     dirtyTheSeries: function (series, point) {
         series.xAxis.series.forEach(function (otherSeries) {
             if (otherSeries.type === series.type &&
-                otherSeries.hasPointInX(point, otherSeries)) {
+                otherSeries.hasValueInX(point, otherSeries)) {
                 otherSeries.isDirty = true;
             }
         });
     },
-    findMinColumnWidth: function () {
+    /**
+     * Calculate the width of the narrowest column.
+     * When `series.ignoreNulls` is either `"normal"` or `"evenlySpaced"`,
+     * the `minColumnWidth` is calculated before first series.translate().
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#getMinColumnWidth
+     * @return {number}
+     */
+    getMinColumnWidth: function () {
         var series = this, chart = series.chart;
-        var colWidth;
+        var colWidth, minColWidth = Infinity;
         Series.prototype.translate.apply(series);
-        if (series.index === series.chart.series.length - 1) {
-            chart.series.forEach(function (series) {
-                if (series.type === 'column' ||
-                    series.type === 'columnrange' ||
-                    series.type === 'bar') {
-                    series.points.forEach(function (point) {
-                        colWidth = series
-                            .getColumnMetrics(point).width;
-                        if (chart.minColumnWidth === void 0 ||
-                            colWidth < chart.minColumnWidth) {
-                            chart.minColumnWidth = colWidth;
-                        }
-                    });
-                }
-            });
-        }
+        chart.series.forEach(function (series) {
+            // Make sure that this series is the last
+            // of column/columnrange/bar.
+            if ((series.type === 'column' ||
+                series.type === 'columnrange' ||
+                series.type === 'bar') && series.points) {
+                series.points.forEach(function (point) {
+                    colWidth = series
+                        .getColumnMetrics(point).width;
+                    if (colWidth < minColWidth) {
+                        minColWidth = colWidth;
+                    }
+                });
+            }
+        });
+        return minColWidth;
     },
+    /**
+     * Find how many columns are in the specific category.
+     * When `series.ignoreNulls` is turned on,
+     * the `columnCount` is calculated before first series.translate().
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#getColumnCount
+     * @return {number}
+     */
     getColumnCount: function (point) {
         var series = this, options = series.options, yAxis = series.yAxis, stackKey, stackGroups = {}, columnCount = 0, ignoreNulls = options.ignoreNulls;
-        // Get the total number of column type series. This is called on
-        // every series. Consider moving this logic to a chart.orderStacks()
-        // function and call it on init, addSeries and removeSeries
         if (options.grouping === false) {
             columnCount = 1;
         }
         else {
             series.chart.series.forEach(function (otherSeries) {
-                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex, hasPointInX;
+                var otherYAxis = otherSeries.yAxis, otherOptions = otherSeries.options, columnIndex, hasValueInX;
                 if (otherSeries.type === series.type &&
                     (otherSeries.visible ||
                         !series.chart.options.chart
@@ -560,12 +617,11 @@ seriesType('column', 'line',
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) {
                     if (ignoreNulls) {
-                        hasPointInX =
-                            H.seriesTypes.column.prototype
-                                .hasPointInX.call(series, point, otherSeries);
+                        hasValueInX =
+                            series.hasValueInX(point, otherSeries);
                     }
                     // #642, #2086
-                    if (hasPointInX || !ignoreNulls) {
+                    if (hasValueInX || !ignoreNulls) {
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
                             if (stackKey &&
@@ -593,11 +649,11 @@ seriesType('column', 'line',
      * @return {Highcharts.ColumnMetricsObject}
      */
     getColumnMetrics: function (point) {
-        var series = this, chart = series.chart, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, 
+        var series = this, chart = series.chart, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, ignoreNulls = series.options.ignoreNulls, 
         // Keep backward compatibility: reversed xAxis had reversed
         // stacks
         reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks), columnCount = H.seriesTypes.column.prototype.getColumnCount.call(series, point), categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
+            (!xAxis.reversed && reversedStacks), columnCount = series.getColumnCount(point), categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
             options.pointRange ||
             xAxis.closestPointRange ||
             xAxis.tickInterval ||
@@ -609,8 +665,11 @@ seriesType('column', 'line',
             (groupPadding +
                 colIndex * pointOffsetWidth -
                 (categoryWidth / 2)) * (reverseStacks ? -1 : 1);
-        if (chart.maxColumnCount &&
-            series.options.ignoreNulls === 'centered') {
+        // Handle pointXOffset when series.ignoreNulls: 'normal'
+        // so the points are aligned to the center of category.
+        if (chart.maxColumnCount && ignoreNulls &&
+            ignoreNulls !== 'evenlySpaced' &&
+            ignoreNulls !== 'fillSpace') {
             pointXOffset = pointPadding +
                 (groupPadding +
                     colIndex * pointOffsetWidth - categoryWidth / 2 +
@@ -624,13 +683,42 @@ seriesType('column', 'line',
         };
         return series.columnMetrics;
     },
-    hasPointInX: function (point, otherSeries) {
+    /**
+     * Find the highest number of columns per category.
+     * When `series.ignoreNulls` is `"normal"`, the `maxColumnCount`
+     * is calculated before the first series.translate().
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#getMaxColumnCount
+     * @return {number}
+     */
+    getMaxColumnCount: function () {
+        var series = this;
+        var maxColumnCount = 0;
+        series.points.forEach(function (point) {
+            var columnCount = series.getColumnCount(point);
+            if (columnCount > maxColumnCount) {
+                maxColumnCount = columnCount;
+            }
+        });
+        return maxColumnCount;
+    },
+    /**
+     * Whether the point in x has a value other than null.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#hasValueInX
+     * @return {boolean}
+     */
+    hasValueInX: function (point, otherSeries) {
         var series = this, xData = otherSeries.processedXData, yData = otherSeries.processedYData;
-        var hasPointInX = false;
+        var hasValueInX = false;
         xData.forEach(function (x) {
             if (point && point.x === x &&
                 series.xAxis === otherSeries.xAxis) {
                 var index = xData.indexOf(x), pointY_1;
+                // Handle multiple points with the same x like
+                // data: [[2, null], [2, null], [2, 3]]
                 var indices = [];
                 while (index !== -1) {
                     indices.push(index);
@@ -640,12 +728,12 @@ seriesType('column', 'line',
                     pointY_1 = yData[index];
                     if (H.isArray(pointY_1) ?
                         pointY_1[0] !== null : pointY_1 !== null) {
-                        hasPointInX = true;
+                        hasValueInX = true;
                     }
                 });
             }
         });
-        return hasPointInX;
+        return hasValueInX;
     },
     /**
      * Translate each point to the plot area coordinate system and find
@@ -713,9 +801,10 @@ seriesType('column', 'line',
                     Math.ceil(point.options.pointWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
-            if ((ignoreNulls === 'evenlySpaced' ||
-                ignoreNulls === 'centered') && chart.minColumnWidth) {
-                pointWidth = barW = chart.minColumnWidth;
+            // Handle series.ignoreNulls 'normal' or 'evenlySpaced'.
+            if (ignoreNulls && chart.minColWidth &&
+                ignoreNulls !== 'fillSpace') {
+                pointWidth = barW = chart.minColWidth;
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
             // Cache for access in polar
@@ -1086,3 +1175,27 @@ seriesType('column', 'line',
  * @apioption series.column.states.select
  */
 ''; // includes above doclets in transpilat
+H.addEvent(H.Chart, 'getColumnProps', function () {
+    var chart = this; // eslint-disable-line no-invalid-this
+    if (chart.minColWidth) {
+        delete chart.minColWidth;
+    }
+    if (chart.maxColumnCount) {
+        delete chart.maxColumnCount;
+    }
+    chart.series.forEach(function (series) {
+        var ignoreNulls = series.options.ignoreNulls;
+        // TO DO: add more series like boxplot etc.
+        if (ignoreNulls && ignoreNulls !== 'fillSpace' &&
+            (series.type === 'column' ||
+                series.type === 'columnrange' ||
+                series.type === 'bar')) {
+            chart.minColWidth = series
+                .getMinColumnWidth();
+            if (ignoreNulls !== 'evenlySpaced') {
+                chart.maxColumnCount = series
+                    .getMaxColumnCount();
+            }
+        }
+    });
+});

@@ -522,32 +522,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Fire an event before redrawing series, used by the boost module to
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
-        if (chart.minColumnWidth) {
-            delete chart.minColumnWidth;
-        }
-        if (chart.maxColumnCount) {
-            delete chart.maxColumnCount;
-        }
-        chart.series.forEach(function (series) {
-            var ignoreNulls = series.options.ignoreNulls;
-            if ((series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar') &&
-                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')) {
-                series.findMinColumnWidth();
-                if (ignoreNulls === 'centered') {
-                    series.points.forEach(function (point) {
-                        if (!chart.maxColumnCount ||
-                            series
-                                .getColumnCount(point) > chart.maxColumnCount) {
-                            chart.maxColumnCount =
-                                series
-                                    .getColumnCount(point);
-                        }
-                    });
-                }
-            }
-        });
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
         // redraw affected series
         series.forEach(function (serie) {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
@@ -1618,27 +1595,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     renderSeries: function () {
         var chart = this;
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
         chart.series.forEach(function (series) {
-            var ignoreNulls = series.options.ignoreNulls;
-            if ((series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar') &&
-                (ignoreNulls === 'evenlySpaced' || ignoreNulls === 'centered')) {
-                series.findMinColumnWidth();
-                if (ignoreNulls === 'centered') {
-                    series.points.forEach(function (point) {
-                        if (!chart.maxColumnCount ||
-                            series
-                                .getColumnCount(point) > chart.maxColumnCount) {
-                            chart.maxColumnCount =
-                                series
-                                    .getColumnCount(point);
-                        }
-                    });
-                }
-            }
-        });
-        this.series.forEach(function (series) {
             series.translate();
             series.render();
         });
