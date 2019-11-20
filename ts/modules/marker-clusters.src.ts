@@ -260,7 +260,10 @@ var Series = H.Series,
     syncTimeout = U.syncTimeout,
     animObject = H.animObject,
     baseGeneratePoints = Series.prototype.generatePoints,
-    stateIdCounter = 0;
+    stateIdCounter = 0,
+    // Points that ids are included in the oldPointsStateId array
+    // are hidden before animation. Other ones are destroyed.
+    oldPointsStateId: Array<string> = [];
 
 /**
  * Options for marker clusters, the concept of sampling the data
@@ -1250,6 +1253,9 @@ Scatter.prototype.getPointsState = function (
         oldState,
         i;
 
+    // Clear global array before populate with new ids.
+    oldPointsStateId = [];
+
     // Build points state structure.
     clusteredData.clusters.forEach(function (
         cluster: Highcharts.ClusterAndNoiseObject
@@ -1292,6 +1298,10 @@ Scatter.prototype.getPointsState = function (
             state[newState.parentStateId].parentsId.push(
                 oldState.parentStateId
             );
+
+            if (oldPointsStateId.indexOf(oldState.parentStateId) === -1) {
+                oldPointsStateId.push(oldState.parentStateId);
+            }
         }
     }
 
@@ -2004,17 +2014,33 @@ Scatter.prototype.destroyClusteredData = function (
 Scatter.prototype.hideClusteredData = function (
     this: Highcharts.Series
 ): void {
-    var clusteredSeriesData = this.markerClusterSeriesData;
+    var series = this,
+        clusteredSeriesData = this.markerClusterSeriesData,
+        oldState =
+            ((series.markerClusterInfo || {}).pointsState || {}).oldState || {},
+        oldPointsId = oldPointsStateId.map((elem): string =>
+            (oldState[elem].point || {}).id || ''
+        );
 
     (clusteredSeriesData || []).forEach(function (
         point: (Highcharts.Point | null)
     ): void {
-        if (point && point.graphic) {
-            point.graphic.hide();
-        }
+        // If an old point is used in animation hide it, otherwise destroy.
+        if (
+            point &&
+            oldPointsId.indexOf(point.id) !== -1
+        ) {
+            if (point.graphic) {
+                point.graphic.hide();
+            }
 
-        if (point && point.dataLabel) {
-            point.dataLabel.hide();
+            if (point.dataLabel) {
+                point.dataLabel.hide();
+            }
+        } else {
+            if (point && point.destroy) {
+                point.destroy();
+            }
         }
     });
 };
@@ -2220,6 +2246,19 @@ Scatter.prototype.generatePoints = function (
                 noise.point = series.points[noise.index];
             });
 
+            // When animation is enabled save points state.
+            if (
+                clusterOptions.animation &&
+                series.markerClusterInfo
+            ) {
+                series.markerClusterInfo.pointsState = {
+                    oldState: oldPointsState,
+                    newState: series.getPointsState(
+                        clusteredData, oldMarkerClusterInfo, oldDataLen
+                    )
+                };
+            }
+
             // Record grouped data in order to let it be destroyed the next time
             // processData runs.
             if (!clusterOptions.animation) {
@@ -2230,19 +2269,6 @@ Scatter.prototype.generatePoints = function (
 
             this.markerClusterSeriesData =
                 this.hasGroupedData ? this.points : null;
-        }
-
-        // When animation is enabled save points state.
-        if (
-            clusterOptions.animation &&
-            series.markerClusterInfo
-        ) {
-            series.markerClusterInfo.pointsState = {
-                oldState: oldPointsState,
-                newState: series.getPointsState(
-                    clusteredData, oldMarkerClusterInfo, oldDataLen
-                )
-            };
         }
     } else {
         baseGeneratePoints.apply(this);

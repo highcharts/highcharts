@@ -45,7 +45,10 @@ import U from '../parts/Utilities.js';
 import '../parts/Series.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = U.isNumber, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, syncTimeout = U.syncTimeout, animObject = H.animObject, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0;
+var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = U.isNumber, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, syncTimeout = U.syncTimeout, animObject = H.animObject, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+// Points that ids are included in the oldPointsStateId array
+// are hidden before animation. Other ones are destroyed.
+oldPointsStateId = [];
 /**
  * Options for marker clusters, the concept of sampling the data
  * values into larger blocks in order to ease readability and
@@ -789,6 +792,8 @@ Scatter.prototype.getClusterDistancesFromPoint = function (clusters, pointX, poi
 Scatter.prototype.getPointsState = function (clusteredData, oldMarkerClusterInfo, dataLength) {
     var oldDataStateArr = oldMarkerClusterInfo ?
         getDataState(oldMarkerClusterInfo, dataLength) : [], newDataStateArr = getDataState(clusteredData, dataLength), state = {}, newState, oldState, i;
+    // Clear global array before populate with new ids.
+    oldPointsStateId = [];
     // Build points state structure.
     clusteredData.clusters.forEach(function (cluster) {
         state[cluster.stateId] = {
@@ -819,6 +824,9 @@ Scatter.prototype.getPointsState = function (clusteredData, oldMarkerClusterInfo
             state[newState.parentStateId] &&
             state[newState.parentStateId].parentsId.indexOf(oldState.parentStateId) === -1) {
             state[newState.parentStateId].parentsId.push(oldState.parentStateId);
+            if (oldPointsStateId.indexOf(oldState.parentStateId) === -1) {
+                oldPointsStateId.push(oldState.parentStateId);
+            }
         }
     }
     return state;
@@ -1260,13 +1268,24 @@ Scatter.prototype.destroyClusteredData = function () {
 };
 // Hide clustered data points.
 Scatter.prototype.hideClusteredData = function () {
-    var clusteredSeriesData = this.markerClusterSeriesData;
+    var series = this, clusteredSeriesData = this.markerClusterSeriesData, oldState = ((series.markerClusterInfo || {}).pointsState || {}).oldState || {}, oldPointsId = oldPointsStateId.map(function (elem) {
+        return (oldState[elem].point || {}).id || '';
+    });
     (clusteredSeriesData || []).forEach(function (point) {
-        if (point && point.graphic) {
-            point.graphic.hide();
+        // If an old point is used in animation hide it, otherwise destroy.
+        if (point &&
+            oldPointsId.indexOf(point.id) !== -1) {
+            if (point.graphic) {
+                point.graphic.hide();
+            }
+            if (point.dataLabel) {
+                point.dataLabel.hide();
+            }
         }
-        if (point && point.dataLabel) {
-            point.dataLabel.hide();
+        else {
+            if (point && point.destroy) {
+                point.destroy();
+            }
         }
     });
 };
@@ -1390,6 +1409,14 @@ Scatter.prototype.generatePoints = function () {
             (series.markerClusterInfo.noise || []).forEach(function (noise) {
                 noise.point = series.points[noise.index];
             });
+            // When animation is enabled save points state.
+            if (clusterOptions.animation &&
+                series.markerClusterInfo) {
+                series.markerClusterInfo.pointsState = {
+                    oldState: oldPointsState,
+                    newState: series.getPointsState(clusteredData, oldMarkerClusterInfo, oldDataLen)
+                };
+            }
             // Record grouped data in order to let it be destroyed the next time
             // processData runs.
             if (!clusterOptions.animation) {
@@ -1400,14 +1427,6 @@ Scatter.prototype.generatePoints = function () {
             }
             this.markerClusterSeriesData =
                 this.hasGroupedData ? this.points : null;
-        }
-        // When animation is enabled save points state.
-        if (clusterOptions.animation &&
-            series.markerClusterInfo) {
-            series.markerClusterInfo.pointsState = {
-                oldState: oldPointsState,
-                newState: series.getPointsState(clusteredData, oldMarkerClusterInfo, oldDataLen)
-            };
         }
     }
     else {
