@@ -90,7 +90,7 @@ import H from '../parts/Globals.js';
 * @type {Highcharts.SankeyNodeObject}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength;
+var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -544,7 +544,7 @@ seriesType('sankey', 'column',
                 .forEach(function (node) {
                 order(node, 0);
             });
-            H.stableSort(this.nodes, function (a, b) {
+            stableSort(this.nodes, function (a, b) {
                 return a.level - b.level;
             });
         }
