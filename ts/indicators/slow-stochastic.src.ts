@@ -18,7 +18,6 @@ declare global {
     namespace Highcharts {
         class SlowStochasticIndicator extends StochasticIndicator {
             public nameBase: string;
-            public init(): void;
             public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
                 params: SlowStochasticIndicatorParamsOptions
@@ -134,19 +133,19 @@ H.seriesType<Highcharts.SlowStochasticIndicator>(
             const fastYData = fastValues.yData.slice(periods[1] - 1);
 
             // Get SMA(%D)
-            const smoothedValues: undefined|
-            Highcharts.IndicatorValuesObject<Highcharts.Series> =
-                seriesTypes.sma.prototype.getValues.call(
-                    this,
-                    ({
-                        xData: slowValues.xData,
-                        yData: fastYData
-                    } as any),
-                    {
-                        index: 1,
-                        period: periods[2]
-                    }
-                );
+            const smoothedValues: (
+                undefined|Highcharts.IndicatorValuesObject<Highcharts.Series>
+            ) = seriesTypes.sma.prototype.getValues.call(
+                this,
+                ({
+                    xData: slowValues.xData,
+                    yData: fastYData
+                } as any),
+                {
+                    index: 1,
+                    period: periods[2]
+                }
+            );
 
             if (!smoothedValues) {
                 return;
