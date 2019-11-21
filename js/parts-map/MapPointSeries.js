@@ -13,7 +13,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
-var merge = H.merge, Point = H.Point, seriesType = H.seriesType;
+var merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType;
 /**
  * @private
  * @class
@@ -50,7 +50,13 @@ seriesType('mappoint', 'scatter',
     // Prototype members
 }, {
     type: 'mappoint',
-    forceDL: true
+    forceDL: true,
+    drawDataLabels: function () {
+        Series.prototype.drawDataLabels.call(this);
+        if (this.dataLabelsGroup) {
+            this.dataLabelsGroup.clip(this.chart.clipRect);
+        }
+    }
     // Point class
 }, {
     applyOptions: function (options, x) {
