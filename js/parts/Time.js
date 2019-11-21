@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat;
+var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
 /**
  * Normalized interval.
  *
@@ -57,7 +57,7 @@ var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = 
 * @name Highcharts.AxisTickPositionsArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
-var H = Highcharts, merge = H.merge, timeUnits = H.timeUnits, win = H.win;
+var H = Highcharts, merge = H.merge, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using

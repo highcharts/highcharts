@@ -66,6 +66,7 @@ extend(Highcharts, {
     setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout,
+    timeUnits: U.timeUnits,
     wrap: U.wrap
 });
 

@@ -20,7 +20,8 @@ const {
     objectEach,
     pad,
     pick,
-    splat
+    splat,
+    timeUnits
 } = U;
 
 /**
@@ -150,7 +151,6 @@ declare global {
 
 var H = Highcharts,
     merge = H.merge,
-    timeUnits = H.timeUnits,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

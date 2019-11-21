@@ -46,6 +46,7 @@ const {
     isArray,
     isNumber,
     pick,
+    timeUnits,
     wrap
 } = U;
 
@@ -681,7 +682,7 @@ addEvent(
                                 count = parentInfo.count * 10;
                             }
 
-                            unitRange = H.timeUnits[unitName];
+                            unitRange = (timeUnits as any)[unitName];
                             this.tickInterval = unitRange * count;
                             return this.getTimeTicks(
                                 {
