@@ -4123,21 +4123,16 @@ null,
      *
      * @private
      * @function Highcharts.Series#destroy
-     * @param {boolean} [keepEvents]
+     * @param {boolean} [keepEventsForUpdate]
      * @return {void}
      * @fires Highcharts.Series#event:destroy
      */
-    destroy: function (keepEvents) {
+    destroy: function (keepEventsForUpdate) {
         var series = this, chart = series.chart, issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent), destroy, i, data = series.data || [], point, axis;
         // add event hook
         fireEvent(series, 'destroy');
-        // remove all events
-        if (!keepEvents) {
-            removeEvent(series);
-        }
-        else {
-            series.removeEvents();
-        }
+        // remove events
+        this.removeEvents(keepEventsForUpdate);
         // erase from axes
         (series.axisTypes || []).forEach(function (AXIS) {
             axis = series[AXIS];
@@ -4181,7 +4176,7 @@ null,
         chart.orderSeries();
         // clear all members
         objectEach(series, function (val, prop) {
-            if (!keepEvents || prop !== 'hcEvents') {
+            if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete series[prop];
             }
         });
@@ -4636,11 +4631,17 @@ null,
      *
      * @private
      * @function Highcharts.Series#removeEvents
+     * @param {boolean} [removeEventsForUpdate]
      * @return {void}
      */
-    removeEvents: function () {
+    removeEvents: function (removeEventsForUpdate) {
         var series = this;
-        if (series.eventsToUnbind.length) {
+        if (!removeEventsForUpdate) {
+            // remove all events
+            removeEvent(series);
+        }
+        else if (series.eventsToUnbind.length) {
+            // remove only internal events for proper update
             // #12355 - solves problem with multiple destroy events
             series.eventsToUnbind.forEach(function (unbind) {
                 unbind();

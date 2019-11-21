@@ -120,7 +120,7 @@ declare global {
                 max: number,
                 cropShoulder?: number
             ): SeriesCropDataObject;
-            public destroy(keepEvents?: boolean): void;
+            public destroy(keepEventsForUpdate?: boolean): void;
             public drawGraph(): void;
             public drawPoints(): void;
             public findPointIndex(
@@ -177,7 +177,7 @@ declare global {
             public processData(force?: boolean): (boolean|undefined);
             public redraw(): void;
             public redrawPoints(): void;
-            public removeEvents(): void;
+            public removeEvents(keepEventsForUpdate?: boolean): void;
             public render(): void;
             public searchKDTree(
                 point: KDPointSearchObject,
@@ -5516,13 +5516,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#destroy
-         * @param {boolean} [keepEvents]
+         * @param {boolean} [keepEventsForUpdate]
          * @return {void}
          * @fires Highcharts.Series#event:destroy
          */
         destroy: function (
             this: Highcharts.Series,
-            keepEvents?: boolean
+            keepEventsForUpdate?: boolean
         ): void {
 
             var series = this,
@@ -5537,12 +5537,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             // add event hook
             fireEvent(series, 'destroy');
 
-            // remove all events
-            if (!keepEvents) {
-                removeEvent(series);
-            } else {
-                series.removeEvents();
-            }
+            // remove events
+            this.removeEvents(keepEventsForUpdate);
 
             // erase from axes
             (series.axisTypes || []).forEach(function (AXIS: string): void {
@@ -5595,7 +5591,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             // clear all members
             objectEach(series, function (val: any, prop: string): void {
-                if (!keepEvents || prop !== 'hcEvents') {
+                if (!keepEventsForUpdate || prop !== 'hcEvents') {
                     delete (series as any)[prop];
                 }
             });
@@ -6221,12 +6217,20 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#removeEvents
+         * @param {boolean} [removeEventsForUpdate]
          * @return {void}
          */
-        removeEvents: function (this: Highcharts.Series): void {
+        removeEvents: function (
+            this: Highcharts.Series,
+            removeEventsForUpdate?: boolean
+        ): void {
             const series = this;
 
-            if (series.eventsToUnbind.length) {
+            if (!removeEventsForUpdate) {
+                // remove all events
+                removeEvent(series);
+            } else if (series.eventsToUnbind.length) {
+                // remove only internal events for proper update
                 // #12355 - solves problem with multiple destroy events
                 series.eventsToUnbind.forEach(function (
                     unbind: Function
