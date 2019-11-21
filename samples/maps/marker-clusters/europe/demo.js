@@ -14,16 +14,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
         },
         tooltip: {
             headerFormat: '',
-            pointFormatter: function () {
-                var point = this,
-                    lat = point.lat.toFixed(2),
-                    lon = point.lon.toFixed(2),
-                    text = '<b>' + point.name +
-                    '</b><br>Lat: ' + lat +
-                    ', Lon: ' + lon;
-
-                return text;
-            }
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: {point.lon:.2f}'
         },
         colorAxis: {
             min: 0,

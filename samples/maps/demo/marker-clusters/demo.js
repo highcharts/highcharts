@@ -7,23 +7,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
             text: 'European Train Stations Near Airports'
         },
         subtitle: {
-            text: 'Data source: https://github.com/trainline-eu/stations'
+            text: 'Source: <a href="https://github.com/trainline-eu/stations">' +
+                'github.com/trainline-eu/stations</a>'
         },
         mapNavigation: {
             enabled: true
         },
         tooltip: {
             headerFormat: '',
-            pointFormatter: function () {
-                var point = this,
-                    lat = point.lat.toFixed(2),
-                    lon = point.lon.toFixed(2),
-                    text = '<b>' + point.name +
-                    '</b><br>Lat: ' + lat +
-                    ', Lon: ' + lon;
-
-                return text;
-            }
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: {point.lon:.2f}'
         },
         colorAxis: {
             min: 0,
@@ -78,14 +70,13 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
         series: [{
             name: 'Basemap',
             borderColor: '#A0A0A0',
-            nullColor: 'rgba(200, 200, 200, 0.3)',
+            nullColor: 'rgba(177, 244, 177, 0.5)',
             showInLegend: false
         }, {
             type: 'mappoint',
             enableMouseTracking: true,
             colorKey: 'clusterPointsAmount',
             name: 'Cities',
-            color: Highcharts.getOptions().colors[1],
             data: data
         }]
     });
