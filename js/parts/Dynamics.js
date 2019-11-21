@@ -350,9 +350,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'colorAxis',
-        'series',
-        'pane'
+        'series'
     ],
     /**
      * A generic function to update any element of the chart. Elements can be
@@ -655,7 +653,6 @@ Chart.prototype.collectionsWithInit = {
     // collectionName: [ initializingMethod, [extraArguments] ]
     xAxis: [Chart.prototype.addAxis, [true]],
     yAxis: [Chart.prototype.addAxis, [false]],
-    colorAxis: [Chart.prototype.addColorAxis, [false]],
     series: [Chart.prototype.addSeries]
 };
 // extend the Point prototype for dynamic methods

@@ -581,9 +581,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'colorAxis',
-        'series',
-        'pane'
+        'series'
     ],
 
     /**
@@ -980,7 +978,6 @@ Chart.prototype.collectionsWithInit = {
     // collectionName: [ initializingMethod, [extraArguments] ]
     xAxis: [Chart.prototype.addAxis, [true]],
     yAxis: [Chart.prototype.addAxis, [false]],
-    colorAxis: [Chart.prototype.addColorAxis, [false]],
     series: [Chart.prototype.addSeries]
 };
 

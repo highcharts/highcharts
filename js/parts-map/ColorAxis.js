@@ -24,6 +24,8 @@ import './ColorSeriesMixin.js';
 var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
+Chart.prototype.collectionsWithUpdate.push('colorAxis');
+Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The ColorAxis object for inclusion in gradient legends.
