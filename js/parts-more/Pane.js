@@ -17,6 +17,7 @@ import U from '../parts/Utilities.js';
 var extend = U.extend, splat = U.splat;
 var CenteredSeriesMixin = H.CenteredSeriesMixin, merge = H.merge;
 /* eslint-disable valid-jsdoc */
+H.Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *

@@ -430,6 +430,11 @@ addEvent(Axis, 'destroy', function () {
 /*
 Z-AXIS
  */
+Chart.prototype.addZAxis = function (options) {
+    return new ZAxis(this, options);
+};
+Chart.prototype.collectionsWithUpdate.push('zAxis');
+Chart.prototype.collectionsWithInit.zAxis = [Chart.prototype.addZAxis];
 Axis.prototype.swapZ = function (p, insidePlotArea) {
     if (this.isZAxis) {
         var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
@@ -502,7 +507,7 @@ addEvent(Chart, 'afterGetAxes', function () {
         axisOptions.index = i;
         // Z-Axis is shown horizontally, so it's kind of a X-Axis
         axisOptions.isX = true;
-        var zAxis = new ZAxis(chart, axisOptions);
+        var zAxis = chart.addZAxis(axisOptions);
         zAxis.setScale();
     });
 });
