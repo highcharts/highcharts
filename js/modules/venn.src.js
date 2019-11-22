@@ -305,44 +305,40 @@ var getLabelWidth = function getLabelWidth(pos, internal, external) {
     return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
 };
 /**
- * Calulates data label values for a list of relations.
+ * Calulates data label values for a given relations object.
+ *
  * @private
  * @todo add unit tests
- * @todo NOTE: may be better suited as a part of the layout function.
- * @param {Array<Highcharts.VennRelationObject>} relations
- * The list of relations.
- * @return {Highcharts.Dictionary<Highcharts.VennLabelValuesObject>}
- * Returns a map from id to the data label values.
+ * @param {Highcharts.VennRelationObject} relation A relations object.
+ * @param {Array<Highcharts.VennRelationObject>} setRelations The list of
+ * relations that is a set.
+ * @return {Highcharts.VennLabelValuesObject}
+ * Returns an object containing position and width of the label.
  */
-var getLabelValues = function getLabelValues(relations) {
-    var singleSets = relations.filter(isSet);
-    return relations.reduce(function (map, relation) {
-        if (relation.value) {
-            var sets = relation.sets, id = sets.join(), 
-            // Create a list of internal and external circles.
-            data = singleSets.reduce(function (data, set) {
-                // If the set exists in this relation, then it is internal,
-                // otherwise it will be external.
-                var isInternal = sets.indexOf(set.sets[0]) > -1, property = isInternal ? 'internal' : 'external';
-                // Add the circle to the list.
-                data[property].push(set.circle);
-                return data;
-            }, {
-                internal: [],
-                external: []
-            }), 
-            // Calulate the label position.
-            position = getLabelPosition(data.internal, data.external), 
-            // Calculate the label width
-            width = getLabelWidth(position, data.internal, data.external);
-            map[id] = {
-                position: position,
-                width: width
-            };
-        }
-        return map;
-    }, {});
-};
+function getLabelValues(relation, setRelations) {
+    var sets = relation.sets;
+    // Create a list of internal and external circles.
+    var data = setRelations.reduce(function (data, set) {
+        // If the set exists in this relation, then it is internal,
+        // otherwise it will be external.
+        var isInternal = sets.indexOf(set.sets[0]) > -1;
+        var property = isInternal ? 'internal' : 'external';
+        // Add the circle to the list.
+        data[property].push(set.circle);
+        return data;
+    }, {
+        internal: [],
+        external: []
+    });
+    // Calulate the label position.
+    var position = getLabelPosition(data.internal, data.external);
+    // Calculate the label width
+    var width = getLabelWidth(position, data.internal, data.external);
+    return {
+        position: position,
+        width: width
+    };
+}
 /**
  * Takes an array of relations and adds the properties `totalOverlap` and
  * `overlapping` to each set. The property `totalOverlap` is the sum of value
@@ -505,34 +501,42 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
     return mapOfIdToCircles;
 };
 /**
- * Calculates the positions of all the sets in the venn diagram.
+ * Calculates the positions, and the label values of all the sets in the venn
+ * diagram.
+ *
  * @private
  * @todo Add support for constrained MDS.
  * @param {Array<Highchats.VennRelationObject>} relations
  * List of the overlap between two or more sets, or the size of a single set.
- * @return {Highcharts.Dictionary<(Highcharts.CircleObject|Highcharts.GeometryIntersectionObject)>}
+ * @return {Highcharts.Dictionary<*>}
  * List of circles and their calculated positions.
  */
-var layout = function (relations) {
+function layout(relations) {
     var mapOfIdToShape = {};
+    var mapOfIdToLabelValues = {};
     // Calculate best initial positions by using greedy layout.
     if (relations.length > 0) {
-        mapOfIdToShape = layoutGreedyVenn(relations);
+        var mapOfIdToCircles_1 = layoutGreedyVenn(relations);
+        var setRelations_1 = relations.filter(isSet);
         relations
-            .filter(function (x) {
-            return !isSet(x);
-        })
             .forEach(function (relation) {
-            var sets = relation.sets, id = sets.join(), circles = sets.map(function (set) {
-                return mapOfIdToShape[set];
-            });
-            // Add intersection shape to map
-            mapOfIdToShape[id] =
-                getAreaOfIntersectionBetweenCircles(circles);
+            var sets = relation.sets;
+            var id = sets.join();
+            // Get shape from map of circles, or calculate intersection.
+            var shape = isSet(relation) ?
+                mapOfIdToCircles_1[id] :
+                getAreaOfIntersectionBetweenCircles(sets.map(function (set) {
+                    return mapOfIdToCircles_1[set];
+                }));
+            // Calculate label values if the set has a shape
+            if (shape) {
+                mapOfIdToShape[id] = shape;
+                mapOfIdToLabelValues[id] = getLabelValues(relation, setRelations_1);
+            }
         });
     }
-    return mapOfIdToShape;
-};
+    return { mapOfIdToShape: mapOfIdToShape, mapOfIdToLabelValues: mapOfIdToLabelValues };
+}
 var isValidRelation = function (x) {
     var map = {};
     return (isObject(x) &&
@@ -730,9 +734,7 @@ var vennSeries = {
         // Process the data before passing it into the layout function.
         var relations = processVennData(this.options.data);
         // Calculate the positions of each circle.
-        var mapOfIdToShape = layout(relations);
-        // Calculate positions of each data label
-        var mapOfIdToLabelValues = getLabelValues(relations);
+        var _a = layout(relations), mapOfIdToShape = _a.mapOfIdToShape, mapOfIdToLabelValues = _a.mapOfIdToLabelValues;
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
             .filter(function (key) {
