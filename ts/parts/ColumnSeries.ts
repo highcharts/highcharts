@@ -93,7 +93,7 @@ declare global {
             ): void;
             public getColumnCount(point?: Point): number;
             public getColumnMetrics(point?: Point): ColumnMetricsObject;
-            public getMaxColumnCount(): number;
+            public getMaxColumnCount(): number|undefined;
             public getMinColumnWidth(): number;
             public hasValueInX(
                 point: Point,
@@ -759,13 +759,13 @@ seriesType<Highcharts.ColumnSeries>(
          */
         getMinColumnWidth: function (this: Highcharts.ColumnSeries): number {
             const series = this,
-                chart = series.chart;
+                yAxis = series.yAxis;
             let colWidth,
                 minColWidth = Infinity;
 
             Series.prototype.translate.apply(series);
 
-            chart.series.forEach((series): void => {
+            yAxis.series.forEach((series): void => {
                 // Make sure that this series is the last
                 // of column/columnrange/bar.
                 if (
@@ -865,11 +865,11 @@ seriesType<Highcharts.ColumnSeries>(
             point
         ): Highcharts.ColumnMetricsObject {
             var series = this,
-                chart = series.chart,
                 options = series.options,
                 xAxis = series.xAxis,
                 reversedStacks = xAxis.options.reversedStacks,
                 ignoreNulls = series.options.ignoreNulls,
+                maxColumnCount = series.yAxis.maxColumnCount,
                 // Keep backward compatibility: reversed xAxis had reversed
                 // stacks
                 reverseStacks = (xAxis.reversed && !reversedStacks) ||
@@ -888,7 +888,7 @@ seriesType<Highcharts.ColumnSeries>(
                 groupPadding = categoryWidth * (options.groupPadding as any),
                 groupWidth = categoryWidth - 2 * groupPadding,
                 pointOffsetWidth =
-                    groupWidth / pick(chart.maxColumnCount, columnCount, 1),
+                    groupWidth / pick(maxColumnCount, columnCount, 1),
                 pointWidth = Math.min(
                     options.maxPointWidth || xAxis.len,
                     pick(
@@ -912,7 +912,7 @@ seriesType<Highcharts.ColumnSeries>(
             // Handle pointXOffset when series.ignoreNulls: 'normal'
             // so the points are aligned to the center of category.
             if (
-                chart.maxColumnCount && ignoreNulls &&
+                maxColumnCount && ignoreNulls &&
                 ignoreNulls !== 'evenlySpaced' &&
                 ignoreNulls !== 'fillSpace'
             ) {
@@ -920,7 +920,7 @@ seriesType<Highcharts.ColumnSeries>(
                 (
                     groupPadding +
                     colIndex * pointOffsetWidth - categoryWidth / 2 +
-                    (chart.maxColumnCount - columnCount) *
+                    (maxColumnCount - columnCount) *
                     (pointWidth / 2 + pointPadding)
                 ) * (reverseStacks ? -1 : 1);
             }
@@ -944,15 +944,15 @@ seriesType<Highcharts.ColumnSeries>(
          */
         getMaxColumnCount: function (
             this: Highcharts.ColumnSeries
-        ): number {
+        ): number|undefined {
             const series = this;
-            let maxColumnCount = 0;
+            let maxColumnCount = series.yAxis.maxColumnCount;
 
             series.points.forEach((point): void => {
                 const columnCount =
                     (series as Highcharts.ColumnSeries).getColumnCount(point);
 
-                if (columnCount > maxColumnCount) {
+                if (!maxColumnCount || (columnCount > maxColumnCount)) {
                     maxColumnCount = columnCount;
                 }
             });
@@ -1116,10 +1116,10 @@ seriesType<Highcharts.ColumnSeries>(
 
                 // Handle series.ignoreNulls 'normal' or 'evenlySpaced'.
                 if (
-                    ignoreNulls && chart.minColWidth &&
+                    ignoreNulls && yAxis.minColumnWidth &&
                     ignoreNulls !== 'fillSpace'
                 ) {
-                    pointWidth = barW = chart.minColWidth;
+                    pointWidth = barW = yAxis.minColumnWidth;
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 
@@ -1613,36 +1613,35 @@ seriesType<Highcharts.ColumnSeries>(
 ''; // includes above doclets in transpilat
 
 H.addEvent(H.Chart, 'getColumnProps', function (this: Highcharts.Chart): void {
-    const chart = this; // eslint-disable-line no-invalid-this
 
-    if (chart.minColWidth) {
-        delete chart.minColWidth;
-    }
-
-    if (chart.maxColumnCount) {
-        delete chart.maxColumnCount;
-    }
-
-    chart.series.forEach(function (series: Highcharts.Series): void {
-        const ignoreNulls =
-            (series as Highcharts.ColumnSeries).options.ignoreNulls;
-
-        // TO DO: add more series like boxplot etc.
-        if (
-            ignoreNulls && ignoreNulls !== 'fillSpace' &&
-            (
-                series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar'
-            )
-        ) {
-            chart.minColWidth = (series as Highcharts.ColumnSeries)
-                .getMinColumnWidth();
-            if (ignoreNulls !== 'evenlySpaced') {
-                chart.maxColumnCount = (series as Highcharts.ColumnSeries)
-                    .getMaxColumnCount();
-            }
+    this.yAxis.forEach((yAxis): void => { // eslint-disable-line no-invalid-this
+        if (yAxis.minColumnWidth) {
+            yAxis.minColumnWidth;
         }
+        if (yAxis.maxColumnCount) {
+            delete yAxis.maxColumnCount;
+        }
+        yAxis.series.forEach((series: Highcharts.Series): void => {
+            const ignoreNulls =
+                (series as Highcharts.ColumnSeries).options.ignoreNulls;
+
+            // TO DO: add more series like boxplot etc.
+            if (
+                ignoreNulls && ignoreNulls !== 'fillSpace' &&
+                (
+                    series.type === 'column' ||
+                    series.type === 'columnrange' ||
+                    series.type === 'bar'
+                )
+            ) {
+                yAxis.minColumnWidth = (series as Highcharts.ColumnSeries)
+                    .getMinColumnWidth();
+                if (ignoreNulls !== 'evenlySpaced') {
+                    yAxis.maxColumnCount = (series as Highcharts.ColumnSeries)
+                        .getMaxColumnCount();
+                }
+            }
+        });
     });
 
 });

@@ -174,8 +174,15 @@ seriesType(
         calculateOn: 'render',
         markerAttribs: noop,
         drawGraph: noop,
-        getColumnMetrics: columnPrototype.getColumnMetrics,
-        crispCol: columnPrototype.crispCol,
+        getColumnCount: function () {
+            return columnPrototype.getColumnCount.apply(this, arguments);
+        },
+        getColumnMetrics: function () {
+            return columnPrototype.getColumnMetrics.apply(this, arguments);
+        },
+        crispCol: function () {
+            return columnPrototype.crispCol.apply(this, arguments);
+        },
         init: function (chart) {
             var indicator = this,
                 params,

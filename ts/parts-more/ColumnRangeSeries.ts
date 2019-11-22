@@ -246,7 +246,9 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.drawTracker.apply(this, arguments as any);
     },
-    getMaxColumnCount: function (this: Highcharts.ColumnRangeSeries): number {
+    getMaxColumnCount: function (
+        this: Highcharts.ColumnRangeSeries
+    ): number|undefined {
         return colProto.getMaxColumnCount.apply(this, arguments as any);
     },
     getMinColumnWidth: function (this: Highcharts.ColumnRangeSeries): number {

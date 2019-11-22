@@ -573,10 +573,10 @@ seriesType('column', 'line',
      * @return {number}
      */
     getMinColumnWidth: function () {
-        var series = this, chart = series.chart;
+        var series = this, yAxis = series.yAxis;
         var colWidth, minColWidth = Infinity;
         Series.prototype.translate.apply(series);
-        chart.series.forEach(function (series) {
+        yAxis.series.forEach(function (series) {
             // Make sure that this series is the last
             // of column/columnrange/bar.
             if ((series.type === 'column' ||
@@ -649,7 +649,7 @@ seriesType('column', 'line',
      * @return {Highcharts.ColumnMetricsObject}
      */
     getColumnMetrics: function (point) {
-        var series = this, chart = series.chart, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, ignoreNulls = series.options.ignoreNulls, 
+        var series = this, options = series.options, xAxis = series.xAxis, reversedStacks = xAxis.options.reversedStacks, ignoreNulls = series.options.ignoreNulls, maxColumnCount = series.yAxis.maxColumnCount, 
         // Keep backward compatibility: reversed xAxis had reversed
         // stacks
         reverseStacks = (xAxis.reversed && !reversedStacks) ||
@@ -659,7 +659,7 @@ seriesType('column', 'line',
             xAxis.tickInterval ||
             1), // #2610
         xAxis.len // #1535
-        ), groupPadding = categoryWidth * options.groupPadding, groupWidth = categoryWidth - 2 * groupPadding, pointOffsetWidth = groupWidth / pick(chart.maxColumnCount, columnCount, 1), pointWidth = Math.min(options.maxPointWidth || xAxis.len, pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))), pointPadding = (pointOffsetWidth - pointWidth) / 2, 
+        ), groupPadding = categoryWidth * options.groupPadding, groupWidth = categoryWidth - 2 * groupPadding, pointOffsetWidth = groupWidth / pick(maxColumnCount, columnCount, 1), pointWidth = Math.min(options.maxPointWidth || xAxis.len, pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))), pointPadding = (pointOffsetWidth - pointWidth) / 2, 
         // #1251, #3737
         colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0), pointXOffset = pointPadding +
             (groupPadding +
@@ -667,13 +667,13 @@ seriesType('column', 'line',
                 (categoryWidth / 2)) * (reverseStacks ? -1 : 1);
         // Handle pointXOffset when series.ignoreNulls: 'normal'
         // so the points are aligned to the center of category.
-        if (chart.maxColumnCount && ignoreNulls &&
+        if (maxColumnCount && ignoreNulls &&
             ignoreNulls !== 'evenlySpaced' &&
             ignoreNulls !== 'fillSpace') {
             pointXOffset = pointPadding +
                 (groupPadding +
                     colIndex * pointOffsetWidth - categoryWidth / 2 +
-                    (chart.maxColumnCount - columnCount) *
+                    (maxColumnCount - columnCount) *
                         (pointWidth / 2 + pointPadding)) * (reverseStacks ? -1 : 1);
         }
         // Save it for reading in linked series (Error bars particularly)
@@ -694,10 +694,10 @@ seriesType('column', 'line',
      */
     getMaxColumnCount: function () {
         var series = this;
-        var maxColumnCount = 0;
+        var maxColumnCount = series.yAxis.maxColumnCount;
         series.points.forEach(function (point) {
             var columnCount = series.getColumnCount(point);
-            if (columnCount > maxColumnCount) {
+            if (!maxColumnCount || (columnCount > maxColumnCount)) {
                 maxColumnCount = columnCount;
             }
         });
@@ -802,9 +802,9 @@ seriesType('column', 'line',
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
             // Handle series.ignoreNulls 'normal' or 'evenlySpaced'.
-            if (ignoreNulls && chart.minColWidth &&
+            if (ignoreNulls && yAxis.minColumnWidth &&
                 ignoreNulls !== 'fillSpace') {
-                pointWidth = barW = chart.minColWidth;
+                pointWidth = barW = yAxis.minColumnWidth;
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
             // Cache for access in polar
@@ -1176,26 +1176,27 @@ seriesType('column', 'line',
  */
 ''; // includes above doclets in transpilat
 H.addEvent(H.Chart, 'getColumnProps', function () {
-    var chart = this; // eslint-disable-line no-invalid-this
-    if (chart.minColWidth) {
-        delete chart.minColWidth;
-    }
-    if (chart.maxColumnCount) {
-        delete chart.maxColumnCount;
-    }
-    chart.series.forEach(function (series) {
-        var ignoreNulls = series.options.ignoreNulls;
-        // TO DO: add more series like boxplot etc.
-        if (ignoreNulls && ignoreNulls !== 'fillSpace' &&
-            (series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar')) {
-            chart.minColWidth = series
-                .getMinColumnWidth();
-            if (ignoreNulls !== 'evenlySpaced') {
-                chart.maxColumnCount = series
-                    .getMaxColumnCount();
-            }
+    this.yAxis.forEach(function (yAxis) {
+        if (yAxis.minColumnWidth) {
+            yAxis.minColumnWidth;
         }
+        if (yAxis.maxColumnCount) {
+            delete yAxis.maxColumnCount;
+        }
+        yAxis.series.forEach(function (series) {
+            var ignoreNulls = series.options.ignoreNulls;
+            // TO DO: add more series like boxplot etc.
+            if (ignoreNulls && ignoreNulls !== 'fillSpace' &&
+                (series.type === 'column' ||
+                    series.type === 'columnrange' ||
+                    series.type === 'bar')) {
+                yAxis.minColumnWidth = series
+                    .getMinColumnWidth();
+                if (ignoreNulls !== 'evenlySpaced') {
+                    yAxis.maxColumnCount = series
+                        .getMaxColumnCount();
+                }
+            }
+        });
     });
 });
