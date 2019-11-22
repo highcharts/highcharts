@@ -6500,16 +6500,16 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#removeEvents
-         * @param {boolean} [removeEventsForUpdate]
+         * @param {boolean} [keepEventsForUpdate]
          * @return {void}
          */
         removeEvents: function (
             this: Highcharts.Series,
-            removeEventsForUpdate?: boolean
+            keepEventsForUpdate?: boolean
         ): void {
             const series = this;
 
-            if (!removeEventsForUpdate) {
+            if (!keepEventsForUpdate) {
                 // remove all events
                 removeEvent(series);
             } else if (series.eventsToUnbind.length) {
