@@ -4828,12 +4828,12 @@ null,
      *
      * @private
      * @function Highcharts.Series#removeEvents
-     * @param {boolean} [removeEventsForUpdate]
+     * @param {boolean} [keepEventsForUpdate]
      * @return {void}
      */
-    removeEvents: function (removeEventsForUpdate) {
+    removeEvents: function (keepEventsForUpdate) {
         var series = this;
-        if (!removeEventsForUpdate) {
+        if (!keepEventsForUpdate) {
             // remove all events
             removeEvent(series);
         }
