@@ -130,12 +130,14 @@ radialAxisMixin = {
          * @apioption  xAxis.gridLineInterpolation
          */
         gridLineInterpolation: 'circle',
+        gridLineWidth: 1,
         labels: {
             align: 'right',
             x: -3,
             y: -2
         },
         showLastLabel: false,
+        tickPixelInterval: 20,
         title: {
             x: 4,
             text: null,
@@ -243,6 +245,11 @@ radialAxisMixin = {
             typeof pick(this.userMax, this.options.max) === 'undefined' &&
             correctFloat(this.endAngleRad - this.startAngleRad) ===
                 correctFloat(2 * Math.PI));
+        // This will lead to add an extra tick to xAxis in order to display a
+        // correct range on inverted polar
+        if (!this.isCircular && this.chart.inverted) {
+            this.max++;
+        }
         if (this.autoConnect) {
             this.max += ((this.categories && 1) ||
                 this.pointRange ||
@@ -552,16 +559,12 @@ addEvent(Axis, 'init', function (e) {
         isCircular = this.horiz;
         this.defaultRadialOptions = isCircular ?
             this.defaultCircularRadialOptions :
-            merge(this.defaultYAxisOptions, this.defaultNonCircularRadialOptions);
-        // Apply options only for inverted polar
-        if (inverted) {
-            if (coll === 'xAxis') {
-                this.defaultRadialOptions.minPadding = 0;
-            }
-            else {
-                this.defaultRadialOptions.stackLabels =
-                    this.defaultYAxisOptions.stackLabels;
-            }
+            merge(coll === 'xAxis' ?
+                this.defaultOptions : this.defaultYAxisOptions, this.defaultNonCircularRadialOptions);
+        // Apply the stack labels for yAxis in case of inverted chart
+        if (inverted && coll === 'yAxis') {
+            this.defaultRadialOptions.stackLabels =
+                this.defaultYAxisOptions.stackLabels;
         }
     }
     // Disable certain features on angular and polar axes

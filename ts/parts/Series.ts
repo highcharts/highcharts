@@ -6098,7 +6098,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                         (series as any)[groupName].width = series.yAxis.len;
                         (series as any)[groupName].height = series.xAxis.len;
-                        (series as any)[groupName].invert(inverted);
+                        // If inverted polar, don't invert series group
+                        (series as any)[groupName].invert(
+                            series.isRadialSeries ? false : inverted
+                        );
                     }
                 });
             }
@@ -6108,17 +6111,12 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 return;
             }
 
-            // Don't invert series on inverted polar
-            if (series.isRadialSeries) {
-                inverted = false;
-            }
-
             // A fixed size is needed for inversion to work
             remover = addEvent(chart, 'resize', setInvert);
             addEvent(series, 'destroy', remover);
 
             // Do it now
-            (setInvert as any)(inverted); // do it now
+            (setInvert as any)();
 
             // On subsequent render and redraw, just do setInvert without
             // setting up events again
@@ -6286,8 +6284,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (series.visible) {
                 series.drawPoints();
             }
-
-            fireEvent(series, 'afterDrawPoints');
 
             /* series.points.forEach(function (point) {
                 if (point.redraw) {

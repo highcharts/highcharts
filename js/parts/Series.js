@@ -4549,7 +4549,8 @@ null,
                     }
                     series[groupName].width = series.yAxis.len;
                     series[groupName].height = series.xAxis.len;
-                    series[groupName].invert(inverted);
+                    // If inverted polar, don't invert series group
+                    series[groupName].invert(series.isRadialSeries ? false : inverted);
                 }
             });
         }
@@ -4557,15 +4558,11 @@ null,
         if (!series.xAxis) {
             return;
         }
-        // Don't invert series on inverted polar
-        if (series.isRadialSeries) {
-            inverted = false;
-        }
         // A fixed size is needed for inversion to work
         remover = addEvent(chart, 'resize', setInvert);
         addEvent(series, 'destroy', remover);
         // Do it now
-        setInvert(inverted); // do it now
+        setInvert();
         // On subsequent render and redraw, just do setInvert without
         // setting up events again
         series.invertGroups = setInvert;
@@ -4672,7 +4669,6 @@ null,
         if (series.visible) {
             series.drawPoints();
         }
-        fireEvent(series, 'afterDrawPoints');
         /* series.points.forEach(function (point) {
             if (point.redraw) {
                 point.redraw();

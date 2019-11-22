@@ -58,9 +58,13 @@ declare global {
             borderWidth?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
         }
+        interface CompleteAnimateFunction {
+            (this: SVGElement): void;
+        }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
             public barX: number;
+            public complete?: CompleteAnimateFunction;
             public group?: SVGElement;
             public options: ColumnPointOptions;
             public pointWidth: number;
@@ -1065,13 +1069,8 @@ seriesType<Highcharts.ColumnSeries>(
                     }
 
                     if (graphic) { // update
-                        graphic[verb](
-                            merge(shapeArgs),
-                            null,
-                            function (): void {
-                                H.fireEvent(point, 'afterPointAnimate');
-                            }
-                        );
+                        graphic[verb](merge(shapeArgs), void 0,
+                            point.complete);
                     } else {
                         point.graphic = graphic =
                             (renderer as any)[point.shapeType as any](shapeArgs)

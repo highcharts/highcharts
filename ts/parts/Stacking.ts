@@ -537,7 +537,6 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
         reversedStacks = pick(this.options.reversedStacks, true),
         len = axisSeries.length,
         actualSeries,
-        seriesOptions,
         i;
 
     if (!this.isXAxis) {
@@ -545,13 +544,6 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
         i = len;
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-            seriesOptions = actualSeries.options;
-            // Threshold should always be set to 0 in case of percent
-            // stacking in inverted polar bars
-            if (actualSeries.isRadialBar &&
-                seriesOptions.stacking === 'percent') {
-                seriesOptions.threshold = 0;
-            }
             actualSeries.setStackedPoints();
         }
 

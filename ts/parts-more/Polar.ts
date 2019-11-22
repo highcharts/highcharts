@@ -666,7 +666,8 @@ if (seriesTypes.column) {
             barX,
             shapeArgs,
             innerR,
-            r;
+            r,
+            complete;
 
         series.preventPostTranslate = true;
 
@@ -684,27 +685,45 @@ if (seriesTypes.column) {
                 threshold = 0;
             }
 
-            // Finding a correct threshold
-            if (chart.inverted && H.isNumber(threshold)) {
-                thresholdAngleRad = yAxis.translate(threshold);
-
-                // Checks if threshold is outside the visible range
-                if (defined(thresholdAngleRad)) {
-                    if (thresholdAngleRad < 0) {
-                        thresholdAngleRad = 0;
-                    } else if (thresholdAngleRad > visibleRange) {
-                        thresholdAngleRad = visibleRange;
+            if (chart.inverted) {
+                // Creating a function that is used as complete in animation for
+                // radial bar points
+                complete = function (
+                    this: Highcharts.SVGElement
+                ): void {
+                    // Do not update when the point already is placed in the
+                    // center
+                    if (this.innerR && this.start === this.end) {
+                        this.attr({
+                            r: 0,
+                            innerR: 0,
+                            height: 0,
+                            width: 0
+                        });
                     }
+                };
 
-                    // Adding start angle offset
-                    series.translatedThreshold =
-                        thresholdAngleRad + startAngleRad;
+                // Finding a correct threshold
+                if (H.isNumber(threshold)) {
+                    thresholdAngleRad = yAxis.translate(threshold);
+
+                    // Checks if threshold is outside the visible range
+                    if (defined(thresholdAngleRad)) {
+                        if (thresholdAngleRad < 0) {
+                            thresholdAngleRad = 0;
+                        } else if (thresholdAngleRad > visibleRange) {
+                            thresholdAngleRad = visibleRange;
+                        }
+
+                        // Adding start angle offset
+                        series.translatedThreshold =
+                            thresholdAngleRad + startAngleRad;
+                    }
                 }
             }
 
             while (i--) {
                 point = points[i];
-                point.shapeType = 'path';
                 barX = point.barX;
                 pointX = point.x as any;
                 pointY = point.y as any;
@@ -744,7 +763,7 @@ if (seriesTypes.column) {
 
                     if (start > end) {
                         // Swapping start and end
-                        [start, end] = [end, start];
+                        end = [start, start = end][0];
                     }
 
                     // Prevent from rendering point outside the
@@ -797,34 +816,19 @@ if (seriesTypes.column) {
                         (start < series.translatedThreshold ? start : end)) -
                             startAngleRad;
 
-                    if (!point.graphic || point.shapeType !==
-                        point.graphic.element.tagName) {
-
-                        // (TEMPORARY) This is only a temporary solution for an
-                        // issue when points aren't visible in case of updating
-                        // chart.polar to false and then to true again. I'll get
-                        // rid of it/move it out of here along with the logic
-                        // for creating a graphic in the future commit.
-
-                        // Destroy graphic when the element isn't a path
-                        if (point.graphic) {
-                            point.graphic.destroy();
-                        }
-
-                        // The graphic cannot be added to a group here
-                        // as the group doesn't exist yet, it is added
-                        // later on the afterDrawPoints event
-                        graphic = point.graphic =
-                            chart.renderer.arc(shapeArgs);
-
-                        if (!chart.styledMode) {
-                            graphic.attr({
-                                'stroke-width':
-                                    pick(options.borderWidth, 1)
-                            });
-                        }
-                    } else {
+                    if (point.graphic) {
                         graphic = point.graphic;
+
+                        // In case when point's graphic exists but it is not a
+                        // path (arc) then point needs to be drawn once again.
+                        // This happens for example when the polar property is
+                        // updated to false and then to true once again
+                        point.shapeType =
+                            point.graphic.element.nodeName !== 'path' ?
+                                'arc' : 'path';
+
+                        // Add complete function for animation
+                        point.complete = complete;
 
                         // Prevent from unwanted animation of a point
                         // from the center
@@ -839,8 +843,15 @@ if (seriesTypes.column) {
                                 });
                             }
                         }
+                    } else {
+                        point.shapeType = 'arc';
+                        if (shapeArgs.start === shapeArgs.end) {
+                            shapeArgs.r = 0;
+                            shapeArgs.innerR = 0;
+                        }
                     }
                 } else {
+                    point.shapeType = 'path';
                     start = barX + startAngleRad;
                     point.shapeArgs = {
                         d: series.polarArc(
@@ -1087,25 +1098,6 @@ H.addEvent(H.Chart, 'afterDrawChartBox', function (
     });
 });
 
-// Event responsible for correctly hiding points that are outside the
-// range and preserve the right animation sequence
-H.addEvent(H.Point, 'afterPointAnimate', function (
-    this: Highcharts.Point
-): void {
-    var shapeArgs = (this.shapeArgs);
-
-    // Do not update when the point already is placed in the center
-    if (this.series.isRadialBar && shapeArgs && shapeArgs.innerR &&
-        shapeArgs.start === shapeArgs.end) {
-        (this.graphic as any).attr({
-            r: 0,
-            innerR: 0,
-            height: 0,
-            width: 0
-        });
-    }
-});
-
 H.addEvent(H.Series, 'afterInit', function (
     this: Highcharts.Series
 ): void {
@@ -1120,22 +1112,20 @@ H.addEvent(H.Series, 'afterInit', function (
     }
 });
 
-H.addEvent(H.Series, 'afterDrawPoints', function (
+H.addEvent(H.Series, 'afterRender', function (
     this: Highcharts.Series
 ): void {
-    var series = this,
-        graphic;
+    var series = this;
 
-    // Add points to series' group
     if (series.isRadialBar) {
-        series.points.forEach(function (point): void {
-            graphic = point.graphic;
+        (series.points as Highcharts.ColumnPoint[]).forEach(function (
+            point: Highcharts.ColumnPoint
+        ): void {
 
-            if (graphic) {
-                // Previously applied shadows must be removed in order
-                // to apply it correctly
-                graphic.add(series.group).shadow(false);
-                graphic.shadow(series.options.shadow);
+            // Get rid of the complete function from the point after animation
+            // is done
+            if (point.complete) {
+                point.complete = void 0;
             }
         });
     }
