@@ -51,6 +51,7 @@ Gulp.registry(new GulpForwardReference());
     'lint-ts',
     'scripts',
     'scripts-clean',
+    'scripts-code',
     'scripts-compile',
     'scripts-css',
     'scripts-js',
