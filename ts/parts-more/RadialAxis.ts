@@ -285,7 +285,6 @@ radialAxisMixin = {
             y: -2
         },
         showLastLabel: false,
-        tickPixelInterval: 20,
         title: {
             x: 4,
             text: null,
