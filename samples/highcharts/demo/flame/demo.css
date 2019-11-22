@@ -5,7 +5,20 @@
 }
 
 #container {
-    height: 800px;
+    height: 700px;
+}
+
+.button-row button {
+    font-size: 12px;
+    border-radius: 2px;
+    border: 0;
+    background-color: #ddd;
+    padding: 13px 18px;
+    display: inline-block;
+    margin: 0;
+}
+.button-row button[disabled] {
+    color: silver;
 }
 
 .highcharts-data-table table {

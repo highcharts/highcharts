@@ -422,15 +422,9 @@ var colors = Highcharts.getOptions().colors,
     }, {
         "name": "(root)",
         "id": "1",
-        "parent": "0",
-        "value": 397316,
-        "color": colors[2]
-    }, {
-        "name": "~",
-        "id": "0",
         "parent": "",
         "value": 397316,
-        "color": "none"
+        "color": colors[2]
     }],
     data = [{
         "name": "buildText",
@@ -1001,8 +995,10 @@ var colors = Highcharts.getOptions().colors,
         "low": 0,
         "high": 397316
     }];
-    
-(function(H){
+
+// Add new series type for the flame series
+
+(function (H) {
     H.seriesType('flame', 'columnrange', {
         cursor: 'pointer',
         dataLabels: {
@@ -1038,35 +1034,38 @@ var colors = Highcharts.getOptions().colors,
         pointPadding: 0,
         groupPadding: 0,
     }, {
-            drawDataLabels: H.seriesTypes.line.prototype.drawDataLabels
+        drawDataLabels: H.seriesTypes.line.prototype.drawDataLabels
     });
 }(Highcharts))
 
-Highcharts.chart('container', {
+// Create the chart
+
+var chart = Highcharts.chart('container', {
     chart: {
         inverted: true,
-        marginTop: 100
+        marginTop: 45
     },
     title: {
-        text: 'Flame chart (layout: flame)',
-        y: 70
+        text: 'Flame chart (layout: flame)'
     },
     subtitle: {
         text: 'Highcharts chart rendering process',
-        y: 85
+        y: 30
     },
     legend: {
-            enabled: false
+        enabled: false
     },
     xAxis: [{
         visible: false
     }, {
         visible: false,
         startOnTick: false,
-        endOnTick: false
+        endOnTick: false,
+        minPadding: 0,
+        maxPadding: 0
     }],
     yAxis: [{
-            visible: false
+        visible: false
     }, {
         visible: false,
         min: 0,
@@ -1080,7 +1079,7 @@ Highcharts.chart('container', {
         yAxis: 1,
         xAxis: 1
     }, {
-            visible: false,
+        visible: false,
         size: '100%',
         type: 'sunburst',
         data: sunburstData,
@@ -1106,100 +1105,81 @@ Highcharts.chart('container', {
         headerFormat: "",
         pointFormat: 'selfSize of <b>{point.name}</b> is <b>{point.value}</b>'
     }
-}, function(chart) {
-    var ren = chart.renderer,
-            buttonAttr = {
-            zIndex: 3,
-            width: 50,
-            'text-align': 'center'
-        },
-        inactive = {
-                fill: colors[0],
-            stroke: colors[2],
-            style: {
-                    color: 'black'
-            }
-        },
-            text = ren.text('The chart layout: ', 15, 30).add(),
-        icicleButton = ren.button('<b>icicle</b>', 125, 10, null, null, null, null, inactive)
-        .attr(buttonAttr)
-        .on('click', function() {
-            chart.update({
-                    chart: {
-                        inverted: true
-                },
-                xAxis: [{}, {
-                    reversed: false
-                }],
-                title: {
-                    text: 'Flame chart (layout: icicle)'
-                },
-                series: [{
-                        visible: true
-                }, {
-                        visible: false
-                }]
-            }, true, false, activeButtonIndex !== 2);
-            
-            allButtons[activeButtonIndex].setState(0);
-            icicleButton.setState(3);
-            activeButtonIndex = 0;
-        })
-        .add(),
-
-        flameButton = ren.button('<b>flame</b>', 195, 10, null, null, null, null, inactive)
-        .attr(buttonAttr)
-        .on('click', function() {
-            chart.update({
-                    chart: {
-                        inverted: true
-                },
-                xAxis: [{}, {
-                    reversed: true
-                }],
-                title: {
-                    text: 'Flame chart (layout: flame)'
-                },
-                series: [{
-                        visible: true
-                }, {
-                        visible: false
-                }]
-            }, true, false, activeButtonIndex !== 2);
-
-            allButtons[activeButtonIndex].setState(0);
-            flameButton.setState(3);
-            activeButtonIndex = 1;
-        })
-        .add(),
-        
-        sunburstButton = ren.button('<b>sunburst</b>', 265, 10, null, null, null, null, inactive)
-        .attr(buttonAttr)
-        .on('click', function() {
-            chart.update({
-                    chart: {
-                        inverted: false
-                },
-                xAxis: [{}, {
-                    reversed: true
-                }],
-                title: {
-                    text: 'Flame chart (layout: flame)'
-                },
-                series: [{
-                        visible: false
-                }, {
-                        visible: true
-                }]
-            }, true, false, false);
-            
-            allButtons[activeButtonIndex].setState(0);
-            sunburstButton.setState(3);
-            activeButtonIndex = 2;
-        })
-        .add(),
-        allButtons = [icicleButton, flameButton, sunburstButton],
-        activeButtonIndex = 1;
-
-    allButtons[activeButtonIndex].setState(3);
 });
+
+// Set up buttons for the chart layout change
+
+var icicleButton = document.getElementById('icicle'),
+    flameButton = document.getElementById('flame'),
+    sunburstButton = document.getElementById('sunburst'),
+    activeButtonIndex = 1,
+    allButtons = [icicleButton, flameButton, sunburstButton];
+
+icicleButton.onclick = function () {
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: [{}, {
+            reversed: false
+        }],
+        title: {
+            text: 'Flame chart (layout: icicle)'
+        },
+        series: [{
+            visible: true
+        }, {
+            visible: false
+        }]
+    }, true, false, activeButtonIndex !== 2);
+    
+    allButtons[activeButtonIndex].disabled = false;
+    icicleButton.disabled = true;
+    activeButtonIndex = 0;
+};
+
+flameButton.onclick = function () {
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: [{}, {
+            reversed: true
+        }],
+        title: {
+            text: 'Flame chart (layout: flame)'
+        },
+        series: [{
+            visible: true
+        }, {
+            visible: false
+        }]
+    }, true, false, activeButtonIndex !== 2);
+
+    allButtons[activeButtonIndex].disabled = false;
+    flameButton.disabled = true;
+    activeButtonIndex = 1;
+};
+
+sunburstButton.onclick = function () {
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        xAxis: [{}, {
+            reversed: true
+        }],
+        title: {
+            text: 'Flame chart (layout: flame)'
+        },
+        series: [{
+            visible: false
+        }, {
+            visible: true
+        }]
+    }, true, false, false);
+    
+    allButtons[activeButtonIndex].disabled = false;
+    sunburstButton.disabled = true;
+    activeButtonIndex = 2;
+};
