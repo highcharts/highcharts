@@ -20,42 +20,42 @@ declare global {
     namespace Highcharts {
         interface AccessibilityAnnounceNewDataOptions {
             announcementFormatter?: Function;
-            enabled?: boolean;
-            interruptUser?: boolean;
-            minAnnounceInterval?: number;
+            enabled: boolean;
+            interruptUser: boolean;
+            minAnnounceInterval: number;
         }
         interface AccessibilityKeyboardNavigationFocusBorderOptions {
-            enabled?: boolean;
-            hideBrowserFocusOutline?: boolean;
-            margin?: number;
-            style?: CSSObject;
+            enabled: boolean;
+            hideBrowserFocusOutline: boolean;
+            margin: number;
+            style: CSSObject;
         }
         interface AccessibilityKeyboardNavigationOptions {
-            enabled?: boolean;
-            focusBorder?: AccessibilityKeyboardNavigationFocusBorderOptions;
-            order?: Array<string>;
-            seriesNavigation?: (
+            enabled: boolean;
+            focusBorder: AccessibilityKeyboardNavigationFocusBorderOptions;
+            order: Array<string>;
+            seriesNavigation: (
                 AccessibilityKeyboardNavigationSeriesNavigationOptions
             );
-            wrapAround?: boolean;
+            wrapAround: boolean;
         }
         interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
             mode?: string;
-            pointNavigationEnabledThreshold?: (boolean|number);
-            skipNullPoints?: boolean;
+            pointNavigationEnabledThreshold: (boolean|number);
+            skipNullPoints: boolean;
         }
         interface AccessibilityOptions {
-            announceNewData?: AccessibilityAnnounceNewDataOptions;
+            announceNewData: AccessibilityAnnounceNewDataOptions;
             customComponents?: Dictionary<any>;
             description?: string;
-            enabled?: boolean;
+            enabled: boolean;
             highContrastTheme?: Dictionary<any>;
-            keyboardNavigation?: AccessibilityKeyboardNavigationOptions;
-            landmarkVerbosity?: string;
-            linkedDescription?: (string|HTMLDOMElement);
+            keyboardNavigation: AccessibilityKeyboardNavigationOptions;
+            landmarkVerbosity: string;
+            linkedDescription: (string|HTMLDOMElement);
             point?: AccessibilityPointOptions;
             series?: AccessibilitySeriesOptions;
-            screenReaderSection?: AccessibilityScreenReaderSectionOptions;
+            screenReaderSection: AccessibilityScreenReaderSectionOptions;
             typeDescription?: string;
         }
         interface AccessibilityPointOptions {
@@ -67,10 +67,10 @@ declare global {
             valueSuffix?: string;
         }
         interface AccessibilityScreenReaderSectionOptions {
-            afterChartFormat?: string;
+            afterChartFormat: string;
             afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
-            axisRangeDateFormat?: string;
-            beforeChartFormat?: string;
+            axisRangeDateFormat: string;
+            beforeChartFormat: string;
             beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
             onViewDataTableClick?: ScreenReaderClickCallbackFunction;
         }
@@ -78,21 +78,21 @@ declare global {
             descriptionFormatter?: (
                 ScreenReaderFormatterCallbackFunction<Series>
             );
-            describeSingleSeries?: boolean;
-            pointDescriptionEnabledThreshold?: (boolean|number);
+            describeSingleSeries: boolean;
+            pointDescriptionEnabledThreshold: (boolean|number);
         }
         interface ExportingAccessibilityOptions {
-            enabled?: boolean;
+            enabled: boolean;
         }
         interface ExportingOptions {
             accessibility?: ExportingAccessibilityOptions;
         }
         interface LegendAccessibilityKeyboardNavigationOptions {
-            enabled?: boolean;
+            enabled: boolean;
         }
         interface LegendAccessibilityOptions {
-            enabled?: boolean;
-            keyboardNavigation?: LegendAccessibilityKeyboardNavigationOptions;
+            enabled: boolean;
+            keyboardNavigation: LegendAccessibilityKeyboardNavigationOptions;
         }
         interface LegendOptions {
             accessibility?: LegendAccessibilityOptions;
@@ -137,6 +137,29 @@ declare global {
         }
     }
 }
+
+/**
+ * @callback Highcharts.AccessibilityAnnouncementFormmatter
+ *
+ * @param {Array<Highcharts.Series>} updatedSeries
+ * Array of all series that received updates. If an announcement is already
+ * queued, the series that received updates for that announcement are also
+ * included in this array.
+ *
+ * @param {Highcharts.Series} [addedSeries]
+ * This is provided if {@link Highcharts.Chart#addSeries} was called, and there
+ * is a new series. In that case, this argument is a reference to the new
+ * series.
+ *
+ * @param {Highcharts.Point} [addedPoint]
+ * This is provided if {@link Highcharts.Series#addPoint} was called, and there
+ * is a new point. In that case, this argument is a reference to the new point.
+ *
+ * @return {boolean|string}
+ * The function should return a string with the text to announce to the user.
+ * Return empty string to not announce anything. Return `false` to use the
+ * default announcement format.
+ */
 
 /**
  * @interface Highcharts.PointAccessibilityOptionsObject
@@ -801,8 +824,7 @@ var options: Highcharts.Options = {
      * Enable/disable keyboard navigation support for a specific series.
      *
      * @type       {boolean}
-     * @default    undefined
-     * @since 7.1.0
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
 

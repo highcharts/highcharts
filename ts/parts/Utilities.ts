@@ -34,6 +34,9 @@ type Nullable = null|undefined;
  * @private
  */
 declare global {
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
     interface Math {
         easeInOutSine(pos: number): number;
     }

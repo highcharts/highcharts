@@ -81,12 +81,17 @@ import './focusBorder.js';
 
 
 // Add default options
-merge(true, H.defaultOptions, defaultOptions, {
-    accessibility: {
-        highContrastTheme: highContrastTheme
-    },
-    lang: defaultLangOptions
-});
+merge<Highcharts.Options, DeepPartial<Highcharts.Options>>(
+    true,
+    H.defaultOptions,
+    defaultOptions,
+    {
+        accessibility: {
+            highContrastTheme: highContrastTheme
+        },
+        lang: defaultLangOptions
+    }
+);
 
 
 // Expose functionality on Highcharts namespace

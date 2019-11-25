@@ -240,7 +240,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @return {boolean|undefined}
      */
     shouldHaveLegendNavigation: function () {
-        var chart = this.chart, legendOptions = chart.options.legend || {}, hasLegend = chart.legend && chart.legend.allItems, hasColorAxis = chart.colorAxis && chart.colorAxis.length, legendA11yOptions = legendOptions.accessibility || {};
+        var chart = this.chart, legendOptions = chart.options.legend || {}, hasLegend = chart.legend && chart.legend.allItems, hasColorAxis = chart.colorAxis && chart.colorAxis.length, legendA11yOptions = (legendOptions.accessibility || {});
         return hasLegend &&
             chart.legend.display &&
             !hasColorAxis &&

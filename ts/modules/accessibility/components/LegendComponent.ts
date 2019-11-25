@@ -441,7 +441,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             legendOptions = chart.options.legend || {},
             hasLegend = chart.legend && chart.legend.allItems,
             hasColorAxis = chart.colorAxis && chart.colorAxis.length,
-            legendA11yOptions = legendOptions.accessibility || {};
+            legendA11yOptions: DeepPartial<(
+                Highcharts.LegendAccessibilityOptions
+            )> = (
+                legendOptions.accessibility || {}
+            );
 
         return hasLegend &&
             chart.legend.display &&

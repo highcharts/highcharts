@@ -11,6 +11,28 @@
  * */
 'use strict';
 /**
+ * @callback Highcharts.AccessibilityAnnouncementFormmatter
+ *
+ * @param {Array<Highcharts.Series>} updatedSeries
+ * Array of all series that received updates. If an announcement is already
+ * queued, the series that received updates for that announcement are also
+ * included in this array.
+ *
+ * @param {Highcharts.Series} [addedSeries]
+ * This is provided if {@link Highcharts.Chart#addSeries} was called, and there
+ * is a new series. In that case, this argument is a reference to the new
+ * series.
+ *
+ * @param {Highcharts.Point} [addedPoint]
+ * This is provided if {@link Highcharts.Series#addPoint} was called, and there
+ * is a new point. In that case, this argument is a reference to the new point.
+ *
+ * @return {boolean|string}
+ * The function should return a string with the text to announce to the user.
+ * Return empty string to not announce anything. Return `false` to use the
+ * default announcement format.
+ */
+/**
  * @interface Highcharts.PointAccessibilityOptionsObject
  */ /**
 * Provide a description of the data point, announced to screen readers.
@@ -619,8 +641,7 @@ var options = {
      * Enable/disable keyboard navigation support for a specific series.
      *
      * @type       {boolean}
-     * @default    undefined
-     * @since 7.1.0
+     * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
     /**
