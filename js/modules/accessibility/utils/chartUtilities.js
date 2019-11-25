@@ -18,7 +18,6 @@ var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
  */
 function getChartTitle(chart) {
     return stripHTMLTags(chart.options.title.text ||
-        // @todo langFormat nowhere defined
         chart.langFormat('accessibility.defaultChartTitle', { chart: chart }));
 }
 /**

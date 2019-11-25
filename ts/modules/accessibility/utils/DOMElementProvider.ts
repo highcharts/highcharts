@@ -31,10 +31,7 @@ declare global {
         class DOMElementProvider {
             public constructor ();
             public elements: Array<HTMLDOMElement>;
-            public createElement(
-                tagName: string,
-                options?: ElementCreationOptions
-            ): HTMLDOMElement;
+            public createElement: Document['createElement'];
             public destroyCreatedElements(): void;
         }
     }

@@ -51,9 +51,9 @@ declare global {
 /**
  * @return {string}
  */
-function getChartTitle(chart: Highcharts.Chart): string {
+function getChartTitle(chart: Highcharts.AccessibilityChart): string {
     return stripHTMLTags(
-        (chart.options.title as any).text ||
+        chart.options.title.text ||
         chart.langFormat(
             'accessibility.defaultChartTitle', { chart: chart }
         )

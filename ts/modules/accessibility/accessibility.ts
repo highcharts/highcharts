@@ -23,8 +23,8 @@ import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 declare global {
     namespace Highcharts {
         class Accessibility {
-            public constructor(chart: Chart);
-            public chart: Chart;
+            public constructor(chart: AccessibilityChart);
+            public chart: AccessibilityChart;
             public components: AccessibilityComponentsObject;
             public keyboardNavigation: KeyboardNavigation;
             public destroy(): void;
@@ -42,6 +42,18 @@ declare global {
             rangeSelector: RangeSelectorComponent;
             series: SeriesComponent;
             zoom: ZoomComponent;
+        }
+        interface AccessibilityChart extends Chart {
+            options: Required<Options>;
+            series: Array<AccessibilitySeries>;
+        }
+        interface AccessibilityPoint extends Point {
+            series: AccessibilitySeries;
+        }
+        interface AccessibilitySeries extends Series {
+            chart: AccessibilityChart;
+            options: Required<SeriesOptions>;
+            points: Array<AccessibilityPoint>;
         }
         interface Chart {
             a11yDirty?: boolean;
@@ -96,8 +108,8 @@ merge<Highcharts.Options, DeepPartial<Highcharts.Options>>(
 
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
-(H as any).KeyboardNavigationHandler = KeyboardNavigationHandler;
-(H as any).AccessibilityComponent = AccessibilityComponent;
+H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
+H.AccessibilityComponent = AccessibilityComponent as any;
 
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -133,7 +145,7 @@ Accessibility.prototype = {
         this: Highcharts.Accessibility,
         chart: Highcharts.Chart
     ): void {
-        this.chart = chart;
+        this.chart = chart as any;
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
@@ -158,9 +170,7 @@ Accessibility.prototype = {
      */
     initComponents: function (this: Highcharts.Accessibility): void {
         var chart = this.chart,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility as any
-            );
+            a11yOptions = chart.options.accessibility;
 
         this.components = {
             container: new ContainerComponent(),
@@ -178,7 +188,7 @@ Accessibility.prototype = {
         var components = this.components;
         // Refactor to use Object.values if we polyfill
         Object.keys(components).forEach(function (componentName: string): void {
-            (components[componentName] as any).initBase(chart);
+            components[componentName].initBase(chart);
             components[componentName].init();
         });
     },
@@ -190,9 +200,7 @@ Accessibility.prototype = {
     update: function (this: Highcharts.Accessibility): void {
         var components = this.components,
             chart = this.chart,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility as any
-            );
+            a11yOptions = chart.options.accessibility;
 
         fireEvent(chart, 'beforeA11yUpdate');
 
@@ -313,7 +321,8 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart, 'update', function (
+addEvent(H.Chart as any, 'update', function (
+    this: Highcharts.AccessibilityChart,
     e: { options: Highcharts.Options }
 ): void {
     // Merge new options
@@ -321,7 +330,7 @@ addEvent(H.Chart, 'update', function (
     if (newOptions) {
         // Handle custom component updating specifically
         if (newOptions.customComponents) {
-            (this.options.accessibility as any).customComponents =
+            this.options.accessibility.customComponents =
                 newOptions.customComponents;
             delete newOptions.customComponents;
         }

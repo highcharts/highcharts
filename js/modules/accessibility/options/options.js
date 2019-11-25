@@ -11,6 +11,8 @@
  * */
 'use strict';
 /**
+ * Formatter callback for the accessibility announcement.
+ *
  * @callback Highcharts.AccessibilityAnnouncementFormmatter
  *
  * @param {Array<Highcharts.Series>} updatedSeries
@@ -548,7 +550,7 @@ var options = {
              * @sample highcharts/accessibility/custom-dynamic
              *         High priority live alerts
              *
-             * @type      {Function}
+             * @type      {Highcharts.AccessibilityAnnouncementFormmatter}
              * @apioption accessibility.announceNewData.announcementFormatter
              */
             /**
@@ -614,12 +616,12 @@ var options = {
      */
     /**
      * Formatter function to use instead of the default for point
-     * descriptions. Same as `accessibility.pointDescriptionFormatter`, but for
+     * descriptions. Same as `accessibility.point.descriptionFormatter`, but for
      * a single series.
      *
-     * @see [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter)
+     * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
      *
-     * @type      {Function}
+     * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
      * @since     7.1.0
      * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
      */

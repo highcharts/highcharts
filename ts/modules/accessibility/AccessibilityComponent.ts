@@ -38,7 +38,7 @@ declare global {
     namespace Highcharts {
         class AccessibilityComponent {
             public constructor();
-            public chart?: Chart;
+            public chart: AccessibilityChart;
             public domElementProvider?: DOMElementProvider;
             public eventProvider?: EventProvider;
             public keyCodes?: Dictionary<number>;
@@ -65,6 +65,7 @@ declare global {
                 KeyboardNavigationHandler|Array<KeyboardNavigationHandler>
             );
             public init(): void;
+            public initBase(chart: AccessibilityChart): void;
             public onChartRender(): void;
             public onChartUpdate(): void;
             public proxyMouseEventsForButton(
@@ -76,7 +77,7 @@ declare global {
                 bBox: (BBoxObject|Dictionary<number>)
             ): void;
         }
-        interface Chart {
+        interface AccessibilityChart {
             a11yProxyContainer?: HTMLDOMElement;
         }
     }
@@ -147,7 +148,7 @@ AccessibilityComponent.prototype = {
      */
     initBase: function (
         this: Highcharts.AccessibilityComponent,
-        chart: Highcharts.Chart
+        chart: Highcharts.AccessibilityChart
     ): void {
         this.chart = chart;
 
@@ -244,7 +245,7 @@ AccessibilityComponent.prototype = {
     createOrUpdateProxyContainer: function (
         this: Highcharts.AccessibilityComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             rendererSVGEl = chart.renderer.box;
 
         chart.a11yProxyContainer = chart.a11yProxyContainer ||
