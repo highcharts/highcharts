@@ -13,37 +13,6 @@ declare global {
         interface CircleObject extends PositionObject {
             r: number;
         }
-        interface GeometryCircleMixin {
-            getAreaOfCircle(r: number): number;
-            getAreaOfIntersectionBetweenCircles(
-                circles: Array<CircleObject>
-            ): (GeometryIntersectionObject|undefined);
-            getCircleCircleIntersection(
-                c1: CircleObject,
-                c2: CircleObject
-            ): Array<PositionObject>;
-            getCirclesIntersectionPoints(
-                circles: Array<CircleObject>
-            ): Array<PositionObject>;
-            getCirclesIntersectionPolygon(
-                circles: Array<CircleObject>
-            ): Array<GeometryObject>;
-            getCircularSegmentArea(r: number, h: number): number;
-            getOverlapBetweenCircles(r1: number, r2: number, d: number): number;
-            isPointInsideAllCircles(
-                point: PositionObject,
-                circles: Array<CircleObject>
-            ): boolean;
-            isPointInsideCircle(
-                point: PositionObject,
-                circle: CircleObject
-            ): boolean;
-            isPointOutsideAllCircles(
-                point: PositionObject,
-                circles: Array<CircleObject>
-            ): boolean;
-            round(x: number, decimals: number): number;
-        }
         interface GeometryIntersectionObject {
             center: PositionObject;
             d: Array<SVGPathArray>;
@@ -435,7 +404,7 @@ function getAreaOfIntersectionBetweenCircles(
     return result;
 }
 
-const geometryCircles: Highcharts.GeometryCircleMixin = {
+const geometryCircles = {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection,

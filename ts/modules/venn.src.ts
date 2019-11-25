@@ -86,7 +86,7 @@ declare global {
         }
         interface VennUtilsObject {
             geometry: GeometryMixin;
-            geometryCircles: GeometryCircleMixin;
+            geometryCircles: object;
             nelderMead: NelderMeadMixin;
             addOverlapToSets(
                 relations: Array<VennRelationObject>
@@ -126,7 +126,17 @@ declare global {
 
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import geometryCircles from '../mixins/geometry-circles.js';
+import GeometryCircleMixin from '../mixins/geometry-circles.js';
+const {
+    getAreaOfCircle,
+    getAreaOfIntersectionBetweenCircles,
+    getCircleCircleIntersection,
+    getCirclesIntersectionPolygon,
+    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
+    isPointInsideAllCircles,
+    isPointInsideCircle,
+    isPointOutsideAllCircles
+} = GeometryCircleMixin;
 
 import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
@@ -146,19 +156,8 @@ import '../parts/Series.js';
 var addEvent = H.addEvent,
     color = H.Color,
     extend = H.extend,
-    getAreaOfCircle = geometryCircles.getAreaOfCircle,
-    getAreaOfIntersectionBetweenCircles =
-        geometryCircles.getAreaOfIntersectionBetweenCircles,
-    getCirclesIntersectionPolygon =
-        geometryCircles.getCirclesIntersectionPolygon,
-    getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
     getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    getOverlapBetweenCirclesByDistance =
-        geometryCircles.getOverlapBetweenCircles,
-    isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
-    isPointInsideCircle = geometryCircles.isPointInsideCircle,
-    isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -1365,7 +1364,7 @@ var vennSeries = {
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: geometryCircles,
+        geometryCircles: GeometryCircleMixin,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
