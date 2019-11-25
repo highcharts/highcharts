@@ -133,6 +133,7 @@ const {
     getCircleCircleIntersection,
     getCirclesIntersectionPolygon,
     getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
+    isCircle1CompletelyOverlappingCircle2,
     isPointInsideAllCircles,
     isPointInsideCircle,
     isPointOutsideAllCircles
@@ -583,6 +584,15 @@ function getLabelValues(
         internal: [],
         external: []
     });
+
+    // Filter out external circles that are completely overlapping all internal
+    data.external = data.external.filter((externalCircle): boolean =>
+        data.internal.some((internalCircle): boolean =>
+            !isCircle1CompletelyOverlappingCircle2(
+                externalCircle, internalCircle
+            )
+        )
+    );
 
     // Calulate the label position.
     const position = getLabelPosition(data.internal, data.external);
