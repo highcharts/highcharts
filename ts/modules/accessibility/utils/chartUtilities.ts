@@ -54,7 +54,6 @@ declare global {
 function getChartTitle(chart: Highcharts.Chart): string {
     return stripHTMLTags(
         (chart.options.title as any).text ||
-        // @todo langFormat nowhere defined
         chart.langFormat(
             'accessibility.defaultChartTitle', { chart: chart }
         )
