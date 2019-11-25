@@ -19,11 +19,11 @@
 declare global {
     namespace Highcharts {
         interface LangAccessibilityAnnounceNewDataOptions {
-            newDataAnnounce?: string;
-            newSeriesAnnounceSingle?: string;
-            newPointAnnounceSingle?: string;
-            newSeriesAnnounceMultiple?: string;
-            newPointAnnounceMultiple?: string;
+            newDataAnnounce: string;
+            newSeriesAnnounceSingle: string;
+            newPointAnnounceSingle: string;
+            newSeriesAnnounceMultiple: string;
+            newPointAnnounceMultiple: string;
         }
         interface LangAccessibilityAxisOptions {
             rangeCategories: string;
@@ -67,31 +67,31 @@ declare global {
             menuButtonLabel: string;
         }
         interface LangAccessibilityLegendOptions {
-            legendItem?: string;
-            legendLabel?: string;
+            legendItem: string;
+            legendLabel: string;
         }
         interface LangAccessibilityOptions {
-            announceNewData?: LangAccessibilityAnnounceNewDataOptions;
-            axis?: LangAccessibilityAxisOptions;
-            chartContainerLabel?: string;
-            chartTypes?: LangAccessibilityChartTypesOptions;
-            credits?: string;
-            defaultChartTitle?: string;
-            drillUpButton?: string;
-            exporting?: LangAccessibilityExportingOptions;
-            graphicContainerLabel?: string;
-            legend?: LangAccessibilityLegendOptions;
-            rangeSelector?: LangAccessibilityRangeSelectorOptions;
-            screenReaderSection?: LangAccessibilityScreenReaderSectionOptions;
-            series?: LangAccessibilitySeriesOptions;
-            seriesTypeDescriptions?: (
+            announceNewData: LangAccessibilityAnnounceNewDataOptions;
+            axis: LangAccessibilityAxisOptions;
+            chartContainerLabel: string;
+            chartTypes: LangAccessibilityChartTypesOptions;
+            credits: string;
+            defaultChartTitle: string;
+            drillUpButton: string;
+            exporting: LangAccessibilityExportingOptions;
+            graphicContainerLabel: string;
+            legend: LangAccessibilityLegendOptions;
+            rangeSelector: LangAccessibilityRangeSelectorOptions;
+            screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
+            series: LangAccessibilitySeriesOptions;
+            seriesTypeDescriptions: (
                 LangAccessibilitySeriesTypeDescriptionsOptions
             );
-            svgContainerLabel?: string;
-            svgContainerTitle?: string;
-            table?: LangAccessibilityTableOptions;
-            thousandsSep?: string;
-            zoom?: LangAccessibilityZoomOptions;
+            svgContainerLabel: string;
+            svgContainerTitle: string;
+            table: LangAccessibilityTableOptions;
+            thousandsSep: string;
+            zoom: LangAccessibilityZoomOptions;
         }
         interface LangAccessibilityRangeSelectorOptions {
             buttonText: string;
@@ -99,9 +99,9 @@ declare global {
             minInputLabel: string;
         }
         interface LangAccessibilityScreenReaderSectionOptions {
-            afterRegionLabel?: string;
-            beforeRegionLabel?: string;
-            endOfChartMarker?: string;
+            afterRegionLabel: string;
+            beforeRegionLabel: string;
+            endOfChartMarker: string;
         }
         interface LangAccessibilitySeriesOptions {
             description: string;
