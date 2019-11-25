@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
 import GeometryCircleMixin from '../mixins/geometry-circles.js';
-var getAreaOfCircle = GeometryCircleMixin.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCircleMixin.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCircleMixin.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCircleMixin.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCircleMixin.getOverlapBetweenCircles, isPointInsideAllCircles = GeometryCircleMixin.isPointInsideAllCircles, isPointInsideCircle = GeometryCircleMixin.isPointInsideCircle, isPointOutsideAllCircles = GeometryCircleMixin.isPointOutsideAllCircles;
+var getAreaOfCircle = GeometryCircleMixin.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCircleMixin.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCircleMixin.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCircleMixin.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCircleMixin.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCircleMixin.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCircleMixin.isPointInsideAllCircles, isPointInsideCircle = GeometryCircleMixin.isPointInsideCircle, isPointOutsideAllCircles = GeometryCircleMixin.isPointOutsideAllCircles;
 import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = NelderMeadModule.nelderMead;
@@ -330,6 +330,12 @@ function getLabelValues(relation, setRelations) {
     }, {
         internal: [],
         external: []
+    });
+    // Filter out external circles that are completely overlapping all internal
+    data.external = data.external.filter(function (externalCircle) {
+        return data.internal.some(function (internalCircle) {
+            return !isCircle1CompletelyOverlappingCircle2(externalCircle, internalCircle);
+        });
     });
     // Calulate the label position.
     var position = getLabelPosition(data.internal, data.external);
