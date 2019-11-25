@@ -1,4 +1,4 @@
-(function () {
+QUnit.module('Series.getValidPoints', () => {
 
     function getData() {
         var arr = [];
@@ -14,8 +14,11 @@
         return arr;
     }
     function test(inverted) {
-        QUnit.test('Get valid points', function (assert) {
-            var chart = Highcharts.chart('container', {
+        QUnit.test(`chart.inverted: ${inverted}`, assert => {
+            const {
+                series: [series],
+                series: [{ points }]
+            } = Highcharts.chart('container', {
                 chart: {
                     type: 'scatter',
                     inverted: inverted,
@@ -37,17 +40,23 @@
                 }]
             });
 
-            var series = chart.series[0];
             assert.strictEqual(
-                series.getValidPoints(series.points).length,
+                series.getValidPoints(points).length,
                 99,
                 'All valid points'
             );
 
             assert.strictEqual(
-                series.getValidPoints(series.points, true).length,
+                series.getValidPoints(points, true).length,
                 63,
                 'Valid points inside plot area'
+            );
+
+            points[0].visible = false;
+            assert.strictEqual(
+                series.getValidPoints(points).length,
+                98,
+                'Should filter out points with visible equal to false'
             );
         });
     }
@@ -55,4 +64,4 @@
     test(false);
     test(true);
 
-}());
+});

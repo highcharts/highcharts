@@ -91,6 +91,8 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 
 /* eslint-disable valid-jsdoc */
 
+H.Chart.prototype.collectionsWithUpdate.push('pane');
+
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *

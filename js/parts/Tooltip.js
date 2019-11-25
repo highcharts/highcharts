@@ -1202,7 +1202,7 @@ H.Tooltip.prototype = {
             e.text = format(formatString, {
                 point: labelConfig,
                 series: series
-            }, this.chart.time);
+            }, this.chart);
         });
         return evt.text;
     },

@@ -6,11 +6,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Average fruit consumption during one week'
     },
-    subtitle: {
-        style: {
-            position: 'absolute',
-            right: '0px',
-            bottom: '10px'
+    accessibility: {
+        keyboardNavigation: {
+            seriesNavigation: {
+                mode: 'serialize'
+            }
         }
     },
     legend: {

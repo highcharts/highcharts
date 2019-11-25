@@ -61,11 +61,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
-    pick
+    pick,
+    relativeLength
 } = U;
 
-var relativeLength = H.relativeLength,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     columnProto = H.seriesTypes.column.prototype;
 
 /**

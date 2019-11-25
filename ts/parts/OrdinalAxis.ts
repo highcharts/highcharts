@@ -919,9 +919,16 @@ addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
         chartX = e.originalEvent.chartX,
+        panning = chart.options.chart &&
+                chart.options.chart.panning,
         runBase = false;
 
-    if (xAxis.options.ordinal && xAxis.series.length) {
+    if (
+        panning &&
+        panning.type !== 'y' &&
+        xAxis.options.ordinal &&
+        xAxis.series.length
+    ) {
 
         var mouseDownX = chart.mouseDownX,
             extremes = xAxis.getExtremes(),
@@ -1019,7 +1026,7 @@ addEvent(Chart, 'pan', function (this: Highcharts.Chart, e: any): void {
     }
 
     // revert to the linear chart.pan version
-    if (runBase) {
+    if (runBase || (panning && /y/.test(panning.type))) {
         if (overscroll) {
             xAxis.max = (xAxis.dataMax as any) + overscroll;
         }

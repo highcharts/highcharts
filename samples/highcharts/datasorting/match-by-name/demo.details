@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Pawel Potaczek
+ js_wrap: b
+...

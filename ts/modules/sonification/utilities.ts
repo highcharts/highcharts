@@ -12,6 +12,8 @@
 
 'use strict';
 import musicalFrequencies from './musicalFrequencies.js';
+import U from '../../parts/Utilities.js';
+const { clamp } = U;
 
 /**
  * Internal types.
@@ -93,15 +95,14 @@ SignalHandler.prototype.registerSignalCallbacks = function (
     var signalHandler = this;
 
     signalHandler.supportedSignals.forEach(function (
-        supportedSignal: string
+        supportedSignal: keyof typeof signals
     ): void {
-        if (signals[supportedSignal]) {
+        const signal = signals[supportedSignal];
+        if (signal) {
             (
                 signalHandler.signals[supportedSignal] =
                 signalHandler.signals[supportedSignal] || []
-            ).push(
-                signals[supportedSignal] as any
-            );
+            ).push(signal);
         }
     });
 };
@@ -249,7 +250,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
                 lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
 
         return lenValueAxis > 0 ?
-            Math.max(Math.min(virtualAxisValue, limits.max), limits.min) :
+            clamp(virtualAxisValue, limits.min, limits.max) :
             limits.min;
     }
 };

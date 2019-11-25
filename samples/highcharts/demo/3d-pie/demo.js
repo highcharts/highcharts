@@ -10,6 +10,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Browser market shares at a specific website, 2014'
     },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
     },

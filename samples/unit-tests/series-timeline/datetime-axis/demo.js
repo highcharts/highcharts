@@ -15,6 +15,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     }
 
     var chart = Highcharts.chart('container', {
+        accessibility: { enabled: false }, // silence deprecation warnings
         chart: {
             width: 600,
             height: 400,
@@ -126,6 +127,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     );
 
     chart = Highcharts.chart('container', {
+        accessibility: { enabled: false }, // silence deprecation warnings
         chart: {
             width: 600,
             height: 400

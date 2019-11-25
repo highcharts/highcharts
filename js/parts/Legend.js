@@ -43,13 +43,6 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLegendItemClickEventObject#type
 * @type {"legendItemClick"}
 */
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* The sequential index of the data point in the legend.
-* @name Highcharts.PointOptionsObject#legendIndex
-* @type {number|undefined}
-*/
 /**
  * Gets fired when the legend item belonging to a series is clicked. The default
  * action is to toggle the visibility of the series. This can be prevented by
@@ -85,8 +78,8 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
-var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
+var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -428,7 +421,7 @@ Highcharts.Legend.prototype = {
         var options = this.options;
         item.legendItem.attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart.time) :
+                H.format(options.labelFormat, item, this.chart) :
                 options.labelFormatter.call(item)
         });
     },
@@ -713,7 +706,7 @@ Highcharts.Legend.prototype = {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(options.width, chart.spacingBox.width - padding);
+        legend.widthOption = relativeLength(options.width, chart.spacingBox.width - padding);
         // Compute how wide the legend is allowed to be
         allowedWidth =
             chart.spacingBox.width - 2 * padding - options.x;
@@ -990,14 +983,15 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     scroll: function (scrollBy, animation) {
-        var pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
+        var _this = this;
+        var chart = this.chart, pages = this.pages, pageCount = pages.length, currentPage = this.currentPage + scrollBy, clipHeight = this.clipHeight, navOptions = this.options.navigation, pager = this.pager, padding = this.padding;
         // When resizing while looking at the last page
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
         if (currentPage > 0) {
             if (typeof animation !== 'undefined') {
-                setAnimation(animation, this.chart);
+                setAnimation(animation, chart);
             }
             this.nav.attr({
                 translateX: padding,
@@ -1023,7 +1017,7 @@ Highcharts.Legend.prototype = {
                         'highcharts-legend-nav-active'
                 });
             }, this);
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 this.up
                     .attr({
                     fill: currentPage === 1 ?
@@ -1053,6 +1047,11 @@ Highcharts.Legend.prototype = {
             });
             this.currentPage = currentPage;
             this.positionCheckboxes();
+            // Fire event after scroll animation is complete
+            var animOptions = H.animObject(pick(animation, chart.renderer.globalAnimation, true));
+            syncTimeout(function () {
+                fireEvent(_this, 'afterScroll', { currentPage: currentPage });
+            }, animOptions.duration || 0);
         }
     }
 };

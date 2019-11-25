@@ -47,7 +47,7 @@ module.exports = async since => {
             owner: 'highcharts',
             repo: 'highcharts',
             state: 'closed',
-            // base: 'master',
+            base: 'master',
             page
         }).catch(error);
 

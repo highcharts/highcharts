@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -477,8 +478,8 @@ extend(defaultOptions, {
          * is borrowed from the first series in the chart.
          *
          * Default series options for the navigator series are:
-         *
-         * <pre>series: {
+         * ```js
+         * series: {
          *     type: 'areaspline',
          *     fillOpacity: 0.05,
          *     dataGrouping: {
@@ -488,7 +489,8 @@ extend(defaultOptions, {
          *     marker: {
          *         enabled: false
          *     }
-         * }</pre>
+         * }
+         * ```
          *
          * @see In styled mode, the navigator series is styled with the
          *      `.highcharts-navigator-series` class.
@@ -621,10 +623,10 @@ extend(defaultOptions, {
         },
 
         /**
-         * Options for the navigator X axis. Default series options
-         * for the navigator xAxis are:
-         *
-         * <pre>xAxis: {
+         * Options for the navigator X axis. Default series options for the
+         * navigator xAxis are:
+         * ```js
+         * xAxis: {
          *     tickWidth: 0,
          *     lineWidth: 0,
          *     gridLineWidth: 1,
@@ -637,7 +639,8 @@ extend(defaultOptions, {
          *         x: 3,
          *         y: -4
          *     }
-         * }</pre>
+         * }
+         * ```
          *
          * @extends   xAxis
          * @excluding linkedTo, maxZoom, minRange, opposite, range, scrollbar,
@@ -688,10 +691,10 @@ extend(defaultOptions, {
         },
 
         /**
-         * Options for the navigator Y axis. Default series options
-         * for the navigator yAxis are:
-         *
-         * <pre>yAxis: {
+         * Options for the navigator Y axis. Default series options for the
+         * navigator yAxis are:
+         * ```js
+         * yAxis: {
          *     gridLineWidth: 0,
          *     startOnTick: false,
          *     endOnTick: false,
@@ -704,7 +707,8 @@ extend(defaultOptions, {
          *         text: null
          *     },
          *     tickWidth: 0
-         * }</pre>
+         * }
+         * ```
          *
          * @extends   yAxis
          * @excluding height, linkedTo, maxZoom, minRange, ordinal, range,
@@ -1345,17 +1349,16 @@ Navigator.prototype = {
         }
 
         // Handles are allowed to cross, but never exceed the plot area
-        navigator.zoomedMax = Math.min(
-            Math.max(pxMin as any, pxMax as any, 0),
+        navigator.zoomedMax = clamp(
+            Math.max(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
-        navigator.zoomedMin = Math.min(
-            Math.max(
-                navigator.fixedWidth ?
-                    navigator.zoomedMax - navigator.fixedWidth :
-                    Math.min(pxMin as any, pxMax as any),
-                0
-            ),
+        navigator.zoomedMin = clamp(
+            navigator.fixedWidth ?
+                navigator.zoomedMax - navigator.fixedWidth :
+                Math.min(pxMin, pxMax as any),
+            0,
             zoomedMax
         );
 

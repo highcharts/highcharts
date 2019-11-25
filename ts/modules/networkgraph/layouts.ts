@@ -143,6 +143,7 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    clamp,
     defined,
     extend,
     pick,
@@ -639,7 +640,7 @@ extend(
                             // Node can not repulse itself:
                             node !== repNode &&
                             // Only close nodes affect each other:
-                            /* layout.getDistR(node, repNode) < 2 * k && */
+                            // layout.getDistR(node, repNode) < 2 * k &&
                             // Not dragged:
                             !(node as any).fixedPosition
                         ) {
@@ -756,21 +757,13 @@ extend(
 
             */
             // Limit X-coordinates:
-            node.plotX = Math.max(
-                Math.min(
-                    node.plotX as any,
-                    box.width - radius
-                ),
-                box.left + radius
+            node.plotX = clamp(
+                node.plotX as any, box.left + radius, box.width - radius
             );
 
             // Limit Y-coordinates:
-            node.plotY = Math.max(
-                Math.min(
-                    node.plotY as any,
-                    box.height - radius
-                ),
-                box.top + radius
+            node.plotY = clamp(
+                node.plotY as any, box.top + radius, box.height - radius
             );
         },
         /**

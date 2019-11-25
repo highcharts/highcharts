@@ -238,8 +238,7 @@ extend(
          * divide the available space into another four quadrants.
          *
          * Indexes of quadrants are:
-         *
-         * <pre>
+         * ```
          * -------------               -------------
          * |           |               |     |     |
          * |           |               |  0  |  1  |
@@ -249,7 +248,7 @@ extend(
          * |           |               |  3  |  2  |
          * |           |               |     |     |
          * -------------               -------------
-         * </pre>
+         * ```
          */
         divideBox: function (this: Highcharts.QuadTreeNode): void {
             var halfWidth = this.box.width / 2,
@@ -289,7 +288,7 @@ extend(
         },
         /**
          * Determine which of the quadrants should be used when placing node in
-         * the QuadTree. Returned index is always in range `<0, 3>`.
+         * the QuadTree. Returned index is always in range `< 0 , 3 >`.
          *
          * @param {Highcharts.Point} point
          * @return {number}
@@ -385,13 +384,13 @@ extend(
          * Depfth first treversal (DFS). Using `before` and `after` callbacks,
          * we can get two results: preorder and postorder traversals, reminder:
          *
-         * <pre>
+         * ```
          *     (a)
          *     / \
          *   (b) (c)
          *   / \
          * (d) (e)
-         * </pre>
+         * ```
          *
          * DFS (preorder): `a -> b -> d -> e -> c`
          *

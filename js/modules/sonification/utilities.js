@@ -11,6 +11,8 @@
  * */
 'use strict';
 import musicalFrequencies from './musicalFrequencies.js';
+import U from '../../parts/Utilities.js';
+var clamp = U.clamp;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The SignalHandler class. Stores signal callbacks (event handlers), and
@@ -45,9 +47,10 @@ SignalHandler.prototype.init = function (supportedSignals) {
 SignalHandler.prototype.registerSignalCallbacks = function (signals) {
     var signalHandler = this;
     signalHandler.supportedSignals.forEach(function (supportedSignal) {
-        if (signals[supportedSignal]) {
+        var signal = signals[supportedSignal];
+        if (signal) {
             (signalHandler.signals[supportedSignal] =
-                signalHandler.signals[supportedSignal] || []).push(signals[supportedSignal]);
+                signalHandler.signals[supportedSignal] || []).push(signal);
         }
     });
 };
@@ -155,7 +158,7 @@ var utilities = {
         var lenValueAxis = dataExtremes.max - dataExtremes.min, lenVirtualAxis = limits.max - limits.min, virtualAxisValue = limits.min +
             lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
         return lenValueAxis > 0 ?
-            Math.max(Math.min(virtualAxisValue, limits.max), limits.min) :
+            clamp(virtualAxisValue, limits.min, limits.max) :
             limits.min;
     }
 };

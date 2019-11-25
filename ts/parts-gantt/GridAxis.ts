@@ -45,7 +45,8 @@ const {
     erase,
     isArray,
     isNumber,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
@@ -53,25 +54,17 @@ var addEvent = H.addEvent,
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
-    isObject = function (x: unknown): boolean {
+    isObject = function (x: unknown): x is object {
         // Always use strict mode
         return U.isObject(x, true);
     },
     merge = H.merge,
-    wrap = H.wrap,
     Chart = H.Chart,
     Axis = H.Axis,
     Tick = H.Tick;
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
-    var options = axis.options,
-        gridOptions = options && isObject(options.grid) ? options.grid : {},
-        // TODO: Consider using cell margins defined in % of font size?
-        // 25 is optimal height for default fontSize (11px)
-        // 25 / 11 ≈ 2.28
-        fontSizeToCellHeightRatio = 25 / 11,
-        fontSize = (options.labels as any).style.fontSize,
-        fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
+    var options = axis.options;
 
     // Center-align by default
     if (!options.labels) {
@@ -88,13 +81,6 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
        an "extra" label would appear. */
     if (!axis.categories) {
         options.showLastLabel = false;
-    }
-
-    // Make tick marks taller, creating cell walls of a grid. Use cellHeight
-    // axis option if set
-    if (axis.horiz) {
-        options.tickLength = (gridOptions as any).cellHeight ||
-                fontMetrics.h * fontSizeToCellHeightRatio;
     }
 
     // Prevents rotation of labels when squished, as rotating them would not
@@ -150,8 +136,10 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
 
 /**
  * Set cell height for grid axis labels. By default this is calculated from font
- * size.
+ * size. This option only applies to horizontal axes.
  *
+ * @sample gantt/grid-axis/cellheight
+ *         Gant chart with custom cell height
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */
@@ -426,23 +414,21 @@ addEvent(Axis, 'afterTickSize', function (
         tickSize?: Array<number>;
     }
 ): void {
-    var axis = this,
-        dimensions = axis.maxLabelDimensions,
-        options = axis.options,
-        gridOptions: Highcharts.XAxisGridOptions =
-            (options && isObject(options.grid)) ? (options.grid as any) : {},
-        labelPadding,
-        distance;
+    const {
+        defaultLeftAxisOptions,
+        horiz,
+        options: {
+            grid: gridOptions = {}
+        }
+    } = this;
+    const dimensions: Highcharts.SizeObject = this.maxLabelDimensions as any;
 
-    if (gridOptions.enabled === true) {
-        labelPadding =
-            (Math.abs((axis.defaultLeftAxisOptions.labels as any).x) * 2);
-        distance = labelPadding + (
-            axis.horiz ?
-                (dimensions as any).height :
-                (dimensions as any).width
-        );
-
+    if (gridOptions.enabled) {
+        const labelPadding =
+            (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
+        const distance = horiz ?
+            gridOptions.cellHeight || labelPadding + dimensions.height :
+            labelPadding + dimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {
@@ -678,11 +664,6 @@ addEvent(
                                 }
                             }
 
-                            // Spanning multiple years, go default
-                            if (!(units as any)[unitIdx as any][1]) {
-                                return;
-                            }
-
                             // Get the first allowed count on the next unit.
                             if ((units as any)[(unitIdx as any) + 1]) {
                                 unitName = (units as any)[
@@ -692,6 +673,12 @@ addEvent(
                                     ((units as any)[
                                         (unitIdx as any) + 1
                                     ][1] || [1])[0];
+
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
+                            } else if (parentInfo.unitName === 'year') {
+                                unitName = 'year';
+                                count = parentInfo.count * 10;
                             }
 
                             unitRange = H.timeUnits[unitName];

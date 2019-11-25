@@ -700,8 +700,9 @@ seriesType<Highcharts.TreemapSeries>(
 
         /**
          * Set the dash style of the border of all the point which lies on the
-         * level. See <a href"#plotoptions.scatter.dashstyle">
-         * plotOptions.scatter.dashStyle</a> for possible options.
+         * level. See
+         * [plotOptions.scatter.dashStyle](#plotoptions.scatter.dashstyle)
+         * for possible options.
          *
          * @type      {Highcharts.DashStyleValue}
          * @since     4.1.0

@@ -14,10 +14,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, objectEach = U.objectEach;
+var clamp = U.clamp, isNumber = U.isNumber, objectEach = U.objectEach, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Pointer.js';
-var hasTouch = H.hasTouch, merge = H.merge, wrap = H.wrap, addEvent = H.addEvent, relativeLength = H.relativeLength, Axis = H.Axis, Pointer = H.Pointer, 
+var hasTouch = H.hasTouch, merge = H.merge, addEvent = H.addEvent, Axis = H.Axis, Pointer = H.Pointer, 
 // Default options for AxisResizer.
 resizerOptions = {
     /**
@@ -210,7 +210,7 @@ H.AxisResizer.prototype = {
     render: function () {
         var resizer = this, axis = resizer.axis, chart = axis.chart, options = resizer.options, x = options.x, y = options.y, 
         // Normalize control line position according to the plot area
-        pos = Math.min(Math.max(axis.top + axis.height + y, chart.plotTop), chart.plotTop + chart.plotHeight), attr = {}, lineWidth;
+        pos = clamp(axis.top + axis.height + y, chart.plotTop, chart.plotTop + chart.plotHeight), attr = {}, lineWidth;
         if (!chart.styledMode) {
             attr = {
                 cursor: options.cursor,
@@ -332,10 +332,10 @@ H.AxisResizer.prototype = {
         axesConfigs = [], stopDrag = false, plotTop = chart.plotTop, plotHeight = chart.plotHeight, plotBottom = plotTop + plotHeight, yDelta, calculatePercent = function (value) {
             return value * 100 / plotHeight + '%';
         }, normalize = function (val, min, max) {
-            return Math.round(Math.min(Math.max(val, min), max));
+            return Math.round(clamp(val, min, max));
         };
         // Normalize chartY to plot area limits
-        chartY = Math.max(Math.min(chartY, plotBottom), plotTop);
+        chartY = clamp(chartY, plotTop, plotBottom);
         yDelta = chartY - resizer.lastPos;
         // Update on changes of at least 1 pixel in the desired direction
         if (yDelta * yDelta < 1) {

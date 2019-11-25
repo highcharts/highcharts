@@ -171,14 +171,6 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * The sequential index of the data point in the legend.
- * @name Highcharts.PointOptionsObject#legendIndex
- * @type {number|undefined}
- */
-
 /**
  * Gets fired when the legend item belonging to a series is clicked. The default
  * action is to toggle the visibility of the series. This can be prevented by
@@ -221,7 +213,10 @@ const {
     discardElement,
     isNumber,
     pick,
-    setAnimation
+    relativeLength,
+    setAnimation,
+    syncTimeout,
+    wrap
 } = U;
 
 var H = Highcharts,
@@ -232,8 +227,7 @@ var H = Highcharts,
     marginNames = H.marginNames,
     merge = H.merge,
     stableSort = H.stableSort,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -710,7 +704,7 @@ Highcharts.Legend.prototype = {
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart.time) :
+                H.format(options.labelFormat, item, this.chart) :
                 (options.labelFormatter as any).call(item)
         });
     },
@@ -1159,7 +1153,7 @@ Highcharts.Legend.prototype = {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(
+        legend.widthOption = relativeLength(
             options.width as any,
             (chart.spacingBox as any).width - padding
         );
@@ -1542,7 +1536,8 @@ Highcharts.Legend.prototype = {
         scrollBy: number,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
-        var pages = this.pages,
+        var chart = this.chart,
+            pages = this.pages,
             pageCount = pages.length,
             currentPage = (this.currentPage as any) + scrollBy,
             clipHeight = this.clipHeight,
@@ -1558,7 +1553,7 @@ Highcharts.Legend.prototype = {
         if (currentPage > 0) {
 
             if (typeof animation !== 'undefined') {
-                setAnimation(animation, this.chart);
+                setAnimation(animation, chart);
             }
 
             (this.nav as any).attr({
@@ -1589,7 +1584,7 @@ Highcharts.Legend.prototype = {
                 });
             }, this);
 
-            if (!this.chart.styledMode) {
+            if (!chart.styledMode) {
                 (this.up as any)
                     .attr({
                         fill: currentPage === 1 ?
@@ -1622,8 +1617,15 @@ Highcharts.Legend.prototype = {
 
             this.currentPage = currentPage;
             this.positionCheckboxes();
-        }
 
+            // Fire event after scroll animation is complete
+            const animOptions = H.animObject(
+                pick(animation, chart.renderer.globalAnimation, true)
+            );
+            syncTimeout((): void => {
+                fireEvent(this, 'afterScroll', { currentPage });
+            }, animOptions.duration || 0);
+        }
     }
 
 } as any;

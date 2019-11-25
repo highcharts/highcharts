@@ -44,14 +44,15 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    wrap
 } = U;
 
 import './data.src.js';
 
 /* eslint-disable no-invalid-this */
 
-H.wrap(H.Data.prototype, 'init', function (
+wrap(H.Data.prototype, 'init', function (
     this: Highcharts.Data,
     proceed: Function,
     options: Highcharts.DataOptions

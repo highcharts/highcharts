@@ -22,10 +22,10 @@ declare global {
     namespace Highcharts {
         class MFIIndicator extends SMAIndicator {
             public data: Array<MFIIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: MFIIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public nameBase: string;
             public options: MFIIndicatorOptions;
             public pointClass: typeof MFIIndicatorPoint;
@@ -128,10 +128,10 @@ H.seriesType<Highcharts.MFIIndicator>(
      */
     {
         nameBase: 'Money Flow Index',
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.MFIIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 xVal: Array<number> = (series.xData as any),
                 yVal: Array<Array<number>> = (series.yData as any),
@@ -146,7 +146,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 yValVolume: Array<number> = (
                     volumeSeries && (volumeSeries.yData as any)
                 ),
-                MFI: Array<[number, number]> = [],
+                MFI: Array<Array<number>> = [],
                 isUp = false,
                 xData: Array<number> = [],
                 yData: Array<number> = [],
@@ -235,7 +235,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 values: MFI,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

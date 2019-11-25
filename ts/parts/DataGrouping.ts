@@ -870,7 +870,8 @@ addEvent(Tooltip, 'headerFormatter', function (
     e: Highcharts.Dictionary<any>
 ): void {
     var tooltip = this,
-        time = this.chart.time,
+        chart = this.chart,
+        time = chart.time,
         labelConfig = e.labelConfig,
         series = labelConfig.series as Highcharts.Series,
         options = series.options,
@@ -943,7 +944,7 @@ addEvent(Tooltip, 'headerFormatter', function (
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
             },
-            time
+            chart
         );
 
         e.preventDefault();
@@ -1056,7 +1057,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
  *
  * @function Highcharts.Axis#setDataGrouping
  *
- * @param {boolean|Highcharts.PlotSeriesDataGroupingOptions} [dataGrouping]
+ * @param {boolean|Highcharts.DataGroupingOptionsObject} [dataGrouping]
  *        A `dataGrouping` configuration. Use `false` to disable data grouping
  *        dynamically.
  *
@@ -1128,6 +1129,7 @@ export default dataGrouping;
  * the first point instance are copied over to the group point. This can be
  * altered through a custom `approximation` callback function.
  *
+ * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
  * @requires  modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
@@ -1175,8 +1177,8 @@ export default dataGrouping;
  * time range and the current data grouping.
  *
  * The default formats are:
- *
- * <pre>{
+ * ```js
+ * {
  *     millisecond: [
  *         '%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'
  *     ],
@@ -1187,7 +1189,8 @@ export default dataGrouping;
  *     week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
  *     year: ['%Y', '%Y', '-%Y']
- * }</pre>
+ * }
+ * ```
  *
  * For each of these array definitions, the first item is the format
  * used when the active time span is one unit. For instance, if the
@@ -1276,9 +1279,10 @@ export default dataGrouping;
  * An array determining what time intervals the data is allowed to be
  * grouped to. Each array item is an array where the first value is
  * the time unit and the second value another array of allowed multiples.
- * Defaults to:
  *
- * <pre>units: [[
+ * Defaults to:
+ * ```js
+ * units: [[
  *     'millisecond', // unit name
  *     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
  * ], [
@@ -1302,7 +1306,8 @@ export default dataGrouping;
  * ], [
  *     'year',
  *     null
- * ]]</pre>
+ * ]]
+ * ```
  *
  * @type      {Array<Array<string,(Array<number>|null)>>}
  * @product   highstock

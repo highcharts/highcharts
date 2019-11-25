@@ -19,10 +19,10 @@ declare global {
     namespace Highcharts {
         class NATRIndicator extends SMAIndicator {
             public data: Array<NATRIndicatorPoint>;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: NATRIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public options: NATRIndicatorOptions;
             public pointClass: typeof NATRIndicatorPoint;
             public points: Array<NATRIndicatorPoint>;
@@ -84,11 +84,14 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
      */
     {
         requiredIndicators: ['atr'],
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.NATRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
-            var atrData: Highcharts.IndicatorValuesObject|undefined = (
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
+            var atrData: (
+                    Highcharts.IndicatorValuesObject<Highcharts.Series>|
+                    undefined
+                ) = (
                     ATR.prototype.getValues.apply(this, arguments)
                 ),
                 atrLength: number = (atrData as any).values.length,
@@ -101,12 +104,14 @@ H.seriesType<Highcharts.NATRIndicator>('natr', 'sma',
             }
 
             for (; i < atrLength; i++) {
-                atrData.yData[i] = atrData.values[i][1] / yVal[period][3] * 100;
+                atrData.yData[i] = (
+                    (atrData.values as any)[i][1] / yVal[period][3] * 100
+                );
                 atrData.values[i][1] = atrData.yData[i];
                 period++;
             }
 
-            return atrData;
+            return atrData as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
 
     });

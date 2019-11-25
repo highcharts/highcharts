@@ -165,7 +165,7 @@ Earcon.prototype.sonify = function (
             instrumentOpts = H.merge(opts.playOptions),
             instrOnEnd: (Function|undefined),
             instrumentCopy,
-            copyId: (string|undefined);
+            copyId = '';
 
         if (instrument && instrument.play) {
             if (opts.playOptions) {
@@ -179,7 +179,7 @@ Earcon.prototype.sonify = function (
                 // Handle onEnd
                 instrOnEnd = instrumentOpts.onEnd;
                 instrumentOpts.onEnd = function (): void {
-                    delete earcon.instrumentsPlaying[copyId as any];
+                    delete earcon.instrumentsPlaying[copyId];
                     if (instrOnEnd) {
                         instrOnEnd.apply(this, arguments);
                     }

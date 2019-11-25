@@ -1023,18 +1023,18 @@ H.Toolbar.prototype = {
                     ' ' + PREFIX + 'disabled-btn';
             }
 
-            ['click', 'touchstart'].forEach(function (eventName: string): void {
+            _self.eventsToUnbind.push(
                 addEvent(
                     (button as any).buttonWrapper,
-                    eventName,
+                    'click',
                     function (): void {
                         _self.eraseActiveButtons(
                             allButtons as any,
                             (button as any).buttonWrapper
                         );
                     }
-                );
-            });
+                )
+            );
 
             if (isArray((defs as any)[btnName].items)) {
                 // create submenu buttons
@@ -1074,8 +1074,8 @@ H.Toolbar.prototype = {
         this.addSubmenuItems(buttonWrapper, button);
 
         // show / hide submenu
-        ['click', 'touchstart'].forEach(function (eventName: string): void {
-            addEvent(submenuArrow, eventName, function (e: Event): void {
+        _self.eventsToUnbind.push(
+            addEvent(submenuArrow, 'click', function (e: Event): void {
 
                 e.stopPropagation();
                 // Erase active class on all other buttons
@@ -1120,8 +1120,8 @@ H.Toolbar.prototype = {
                         H.getStyle(menuWrapper, 'padding-left') +
                         (submenuWrapper as any).offsetWidth + 3 + 'px';
                 }
-            });
-        });
+            })
+        );
     },
     /**
      * Create buttons in submenu
@@ -1156,18 +1156,18 @@ H.Toolbar.prototype = {
                 lang
             );
 
-            ['click', 'touchstart'].forEach(function (eventName: string): void {
+            _self.eventsToUnbind.push(
                 addEvent(
                     (submenuBtn as any).mainButton,
-                    eventName,
+                    'click',
                     function (): void {
                         (_self.switchSymbol as any)(this, buttonWrapper, true);
                         menuWrapper.style.width =
                             (menuWrapper as any).startWidth + 'px';
                         submenuWrapper.style.display = 'none';
                     }
-                );
-            });
+                )
+            );
         });
 
         // select first submenu item
@@ -1206,8 +1206,8 @@ H.Toolbar.prototype = {
         });
     },
     /**
-     * Create single button. Consist of `<li>` , `<span>` and (if exists)
-     * submenu container.
+     * Create single button. Consist of HTML elements `li`, `span`, and (if
+     * exists) submenu container.
      * @private
      * @param {HTMLDOMElement} - HTML reference, where button should be added
      * @param {Object} - all options, by btnName refer to particular button
@@ -1314,15 +1314,17 @@ H.Toolbar.prototype = {
             toolbar = _self.toolbar,
             step = 0.1 * wrapper.offsetHeight; // 0.1 = 10%
 
-        ['click', 'touchstart'].forEach(function (eventName: string): void {
-            addEvent(_self.arrowUp, eventName, function (): void {
+        _self.eventsToUnbind.push(
+            addEvent(_self.arrowUp, 'click', function (): void {
                 if (targetY > 0) {
                     targetY -= step;
                     (toolbar.style as any)['margin-top'] = -targetY + 'px';
                 }
-            });
+            })
+        );
 
-            addEvent(_self.arrowDown, eventName, function (): void {
+        _self.eventsToUnbind.push(
+            addEvent(_self.arrowDown, 'click', function (): void {
                 if (
                     wrapper.offsetHeight + targetY <=
                     toolbar.offsetHeight + step
@@ -1330,8 +1332,8 @@ H.Toolbar.prototype = {
                     targetY += step;
                     (toolbar.style as any)['margin-top'] = -targetY + 'px';
                 }
-            });
-        });
+            })
+        );
     },
     /*
      * Create stockTools HTML main elements.
@@ -1434,9 +1436,9 @@ H.Toolbar.prototype = {
             ) + 'px';
         }
 
-        // toggle menu
-        ['click', 'touchstart'].forEach(function (eventName: string): void {
-            addEvent(showhideBtn, eventName, function (): void {
+        // Toggle menu
+        stockToolbar.eventsToUnbind.push(
+            addEvent(showhideBtn, 'click', function (): void {
                 chart.update({
                     stockTools: {
                         gui: {
@@ -1445,8 +1447,8 @@ H.Toolbar.prototype = {
                         }
                     }
                 });
-            });
-        });
+            })
+        );
     },
     /*
      * In main GUI button, replace icon and class with submenu button's

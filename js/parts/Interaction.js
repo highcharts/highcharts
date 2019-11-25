@@ -465,7 +465,20 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @return {void}
      */
     pan: function (e, panning) {
-        var chart = this, hoverPoints = chart.hoverPoints, doRedraw;
+        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, chartOptions = chart.options.chart, doRedraw, type;
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        }
+        else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+        if (chartOptions && chartOptions.panning) {
+            chartOptions.panning = panningOptions;
+        }
+        type = panningOptions.type;
         fireEvent(this, 'pan', { originalEvent: e }, function () {
             // remove active points for shared tooltip
             if (hoverPoints) {
@@ -473,9 +486,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     point.setState();
                 });
             }
-            // xy is used in maps
-            (panning === 'xy' ? [1, 0] : [1]).forEach(function (isX) {
-                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+            // panning axis mapping
+            var xy = [1]; // x
+            if (type === 'xy') {
+                xy = [1, 0];
+            }
+            else if (type === 'y') {
+                xy = [0];
+            }
+            xy.forEach(function (isX) {
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
                     1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
@@ -487,27 +507,40 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     extremes.max :
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding)), spill;
-                // If the new range spills over, either to the min or max,
-                // adjust the new range.
-                spill = paddedMin - newMin;
-                if (spill > 0) {
-                    newMax += spill;
-                    newMin = paddedMin;
+                // It is not necessary to calculate extremes on ordinal axis,
+                // because the are already calculated, so we don't want to
+                // override them.
+                if (!axisOpt.ordinal) {
+                    // If the new range spills over, either to the min or max,
+                    // adjust the new range.
+                    if (isX) {
+                        spill = paddedMin - newMin;
+                        if (spill > 0) {
+                            newMax += spill;
+                            newMin = paddedMin;
+                        }
+                        spill = newMax - paddedMax;
+                        if (spill > 0) {
+                            newMax = paddedMax;
+                            newMin -= spill;
+                        }
+                    }
+                    // Set new extremes if they are actually new
+                    if (axis.series.length &&
+                        newMin !== extremes.min &&
+                        newMax !== extremes.max &&
+                        isX ? true : (axis.panningState &&
+                        newMin >= axis.panningState
+                            .startMin &&
+                        newMax <= axis.panningState
+                            .startMax //
+                    )) {
+                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                        doRedraw = true;
+                    }
+                    // set new reference for next run:
+                    chart[mouseDown] = mousePos;
                 }
-                spill = newMax - paddedMax;
-                if (spill > 0) {
-                    newMax = paddedMax;
-                    newMin -= spill;
-                }
-                // Set new extremes if they are actually new
-                if (axis.series.length &&
-                    newMin !== extremes.min &&
-                    newMax !== extremes.max) {
-                    axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-                    doRedraw = true;
-                }
-                // set new reference for next run:
-                chart[mouseDown] = mousePos;
             });
             if (doRedraw) {
                 chart.redraw(false);

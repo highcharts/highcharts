@@ -21,16 +21,10 @@ var splat = U.splat;
  */
 declare global {
     namespace Highcharts {
-        interface PointSonifyOptionsObject {
-            cancelled?: boolean;
-        }
         interface SignalDataObject {
             event?: TimelineEvent;
             cancelled?: boolean;
             path?: TimelinePath;
-        }
-        interface SonificationObject {
-            fadeOutTime?: number;
         }
         class Timeline {
             public constructor(options: TimelineOptionsObject);
@@ -88,7 +82,7 @@ declare global {
             public constructor(options: TimelinePathOptionsObject);
             public cursor: number;
             public events: Array<TimelineEvent>;
-            public eventIdMap: Dictionary<number>;
+            public eventIdMap: Dictionary<(number|undefined)>;
             public eventsPlaying: Dictionary<TimelineEvent>;
             public id: string;
             public nextScheduledPlay?: number;
@@ -716,7 +710,7 @@ Timeline.prototype.playPaths = function (
             timeline.pathsPlaying[path.id] = path;
             // Do the play
             path[direction > 0 ? 'play' : 'rewind'](function (
-                callbackData?: Highcharts.PointSonifyOptionsObject
+                callbackData?: Highcharts.SignalDataObject
             ): void {
                 // Play ended callback
                 // Data to pass to signal callbacks
@@ -765,7 +759,7 @@ Timeline.prototype.playPaths = function (
             // Leave a timeout to let notes fade out before next play
             setTimeout(function (): void {
                 playPath(path);
-            }, H.sonification.fadeOutTime);
+            }, H.sonification.fadeOutDuration);
         }
     });
 };

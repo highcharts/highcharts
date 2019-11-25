@@ -15,11 +15,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber;
+var extend = U.extend, isNumber = U.isNumber, wrap = U.wrap;
 import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
-var win = H.win, doc = win.document, noop = function () { }, Color = H.Color, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, wrap = H.wrap, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var win = H.win, doc = win.document, noop = function () { }, Color = H.Color, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.
@@ -28,7 +28,7 @@ var win = H.win, doc = win.document, noop = function () { }, Color = H.Color, Se
  */
 H.initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
-        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
+        wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
             var chart = this.chart, ctx = this.getContext(), inverted = this.chart.inverted, xAxis = this.xAxis, yAxis = this.yAxis;
             if (ctx) {
                 // draw the columns

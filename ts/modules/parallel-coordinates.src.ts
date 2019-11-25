@@ -63,7 +63,8 @@ const {
     erase,
     extend,
     pick,
-    splat
+    splat,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -77,7 +78,6 @@ var Axis = H.Axis,
     AxisProto = H.Axis.prototype;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
 
 var defaultXAxisOptions = {
@@ -112,7 +112,7 @@ var defaultParallelOptions: Highcharts.ChartOptions = {
      * This feature requires `modules/parallel-coordinates.js`.
      *
      * The default options are:
-     * <pre>
+     * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
      *    gridlinesWidth: 0,  // classic mode only
@@ -127,7 +127,8 @@ var defaultParallelOptions: Highcharts.ChartOptions = {
      *        reserveSpace: false
      *    },
      *    offset: 0
-     * }</pre>
+     * }
+     * ```
      *
      * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
      *         Set the same tickAmount for all yAxes
@@ -563,7 +564,7 @@ function addFormattedValue(
                     this,
                     { value: this.y }
                 ),
-                chart.time
+                chart
             );
         } else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(

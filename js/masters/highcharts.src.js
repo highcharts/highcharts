@@ -49,18 +49,23 @@ extend(Highcharts, {
     discardElement: U.discardElement,
     erase: U.erase,
     extend: U.extend,
+    extendClass: U.extendClass,
     isArray: U.isArray,
     isClass: U.isClass,
     isDOMElement: U.isDOMElement,
     isNumber: U.isNumber,
     isObject: U.isObject,
     isString: U.isString,
+    numberFormat: U.numberFormat,
     objectEach: U.objectEach,
+    pad: U.pad,
     pick: U.pick,
     pInt: U.pInt,
+    relativeLength: U.relativeLength,
     setAnimation: U.setAnimation,
     splat: U.splat,
-    syncTimeout: U.syncTimeout
+    syncTimeout: U.syncTimeout,
+    wrap: U.wrap
 });
 
 export default Highcharts;

@@ -50,10 +50,10 @@ declare global {
         class SupertrendIndicator extends SMAIndicator {
             public data: Array<SupertrendIndicatorPoint>;
             public drawGraph(): void;
-            public getValues(
-                series: SupertrendLinkedParentObject,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: SupertrendIndicatorParamsOptions
-            ): (IndicatorUndefinableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public linkedParent: SupertrendLinkedParentObject;
             public nameBase: string;
@@ -560,17 +560,17 @@ H.seriesType<Highcharts.SupertrendIndicator>(
         //     ) THAN Current FINAL LOWERBAND
 
 
-        getValues: function (
-            series: Highcharts.SupertrendLinkedParentObject,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.SupertrendIndicatorParamsOptions
-        ): (Highcharts.IndicatorUndefinableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 multiplier: number = (params.multiplier as any),
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 ATRData: Array<number> = [],
                 // 0- date, 1- Supertrend indicator
-                ST: Array<[number, (number|undefined)]> = [],
+                ST: Array<Array<(number|undefined)>> = [],
                 xData: Array<number> = [],
                 yData: Array<(number|undefined)> = [],
                 close = 3,
@@ -656,7 +656,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                 values: ST,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

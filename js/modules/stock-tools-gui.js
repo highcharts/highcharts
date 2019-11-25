@@ -816,11 +816,9 @@ H.Toolbar.prototype = {
                 button.buttonWrapper.className +=
                     ' ' + PREFIX + 'disabled-btn';
             }
-            ['click', 'touchstart'].forEach(function (eventName) {
-                addEvent(button.buttonWrapper, eventName, function () {
-                    _self.eraseActiveButtons(allButtons, button.buttonWrapper);
-                });
-            });
+            _self.eventsToUnbind.push(addEvent(button.buttonWrapper, 'click', function () {
+                _self.eraseActiveButtons(allButtons, button.buttonWrapper);
+            }));
             if (isArray(defs[btnName].items)) {
                 // create submenu buttons
                 addSubmenu.call(_self, button, defs[btnName]);
@@ -845,48 +843,46 @@ H.Toolbar.prototype = {
         // create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
         // show / hide submenu
-        ['click', 'touchstart'].forEach(function (eventName) {
-            addEvent(submenuArrow, eventName, function (e) {
-                e.stopPropagation();
-                // Erase active class on all other buttons
-                _self.eraseActiveButtons(allButtons, buttonWrapper);
-                // hide menu
-                if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
-                    menuWrapper.style.width =
-                        menuWrapper.startWidth + 'px';
-                    buttonWrapper.classList.remove(PREFIX + 'current');
-                    submenuWrapper.style.display = 'none';
+        _self.eventsToUnbind.push(addEvent(submenuArrow, 'click', function (e) {
+            e.stopPropagation();
+            // Erase active class on all other buttons
+            _self.eraseActiveButtons(allButtons, buttonWrapper);
+            // hide menu
+            if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
+                menuWrapper.style.width =
+                    menuWrapper.startWidth + 'px';
+                buttonWrapper.classList.remove(PREFIX + 'current');
+                submenuWrapper.style.display = 'none';
+            }
+            else {
+                // show menu
+                // to calculate height of element
+                submenuWrapper.style.display = 'block';
+                topMargin = submenuWrapper.offsetHeight -
+                    buttonWrapper.offsetHeight - 3;
+                // calculate position of submenu in the box
+                // if submenu is inside, reset top margin
+                if (
+                // cut on the bottom
+                !(submenuWrapper.offsetHeight +
+                    buttonWrapper.offsetTop >
+                    wrapper.offsetHeight &&
+                    // cut on the top
+                    buttonWrapper.offsetTop > topMargin)) {
+                    topMargin = 0;
                 }
-                else {
-                    // show menu
-                    // to calculate height of element
-                    submenuWrapper.style.display = 'block';
-                    topMargin = submenuWrapper.offsetHeight -
-                        buttonWrapper.offsetHeight - 3;
-                    // calculate position of submenu in the box
-                    // if submenu is inside, reset top margin
-                    if (
-                    // cut on the bottom
-                    !(submenuWrapper.offsetHeight +
-                        buttonWrapper.offsetTop >
-                        wrapper.offsetHeight &&
-                        // cut on the top
-                        buttonWrapper.offsetTop > topMargin)) {
-                        topMargin = 0;
-                    }
-                    // apply calculated styles
-                    css(submenuWrapper, {
-                        top: -topMargin + 'px',
-                        left: buttonWidth + 3 + 'px'
-                    });
-                    buttonWrapper.className += ' ' + PREFIX + 'current';
-                    menuWrapper.startWidth = wrapper.offsetWidth;
-                    menuWrapper.style.width = menuWrapper.startWidth +
-                        H.getStyle(menuWrapper, 'padding-left') +
-                        submenuWrapper.offsetWidth + 3 + 'px';
-                }
-            });
-        });
+                // apply calculated styles
+                css(submenuWrapper, {
+                    top: -topMargin + 'px',
+                    left: buttonWidth + 3 + 'px'
+                });
+                buttonWrapper.className += ' ' + PREFIX + 'current';
+                menuWrapper.startWidth = wrapper.offsetWidth;
+                menuWrapper.style.width = menuWrapper.startWidth +
+                    H.getStyle(menuWrapper, 'padding-left') +
+                    submenuWrapper.offsetWidth + 3 + 'px';
+            }
+        }));
     },
     /**
      * Create buttons in submenu
@@ -903,14 +899,12 @@ H.Toolbar.prototype = {
         items.forEach(function (btnName) {
             // add buttons to submenu
             submenuBtn = _self.addButton(submenuWrapper, button, btnName, lang);
-            ['click', 'touchstart'].forEach(function (eventName) {
-                addEvent(submenuBtn.mainButton, eventName, function () {
-                    _self.switchSymbol(this, buttonWrapper, true);
-                    menuWrapper.style.width =
-                        menuWrapper.startWidth + 'px';
-                    submenuWrapper.style.display = 'none';
-                });
-            });
+            _self.eventsToUnbind.push(addEvent(submenuBtn.mainButton, 'click', function () {
+                _self.switchSymbol(this, buttonWrapper, true);
+                menuWrapper.style.width =
+                    menuWrapper.startWidth + 'px';
+                submenuWrapper.style.display = 'none';
+            }));
         });
         // select first submenu item
         firstSubmenuItem = submenuWrapper
@@ -940,8 +934,8 @@ H.Toolbar.prototype = {
         });
     },
     /**
-     * Create single button. Consist of `<li>` , `<span>` and (if exists)
-     * submenu container.
+     * Create single button. Consist of HTML elements `li`, `span`, and (if
+     * exists) submenu container.
      * @private
      * @param {HTMLDOMElement} - HTML reference, where button should be added
      * @param {Object} - all options, by btnName refer to particular button
@@ -1011,21 +1005,19 @@ H.Toolbar.prototype = {
      */
     scrollButtons: function () {
         var targetY = 0, _self = this, wrapper = _self.wrapper, toolbar = _self.toolbar, step = 0.1 * wrapper.offsetHeight; // 0.1 = 10%
-        ['click', 'touchstart'].forEach(function (eventName) {
-            addEvent(_self.arrowUp, eventName, function () {
-                if (targetY > 0) {
-                    targetY -= step;
-                    toolbar.style['margin-top'] = -targetY + 'px';
-                }
-            });
-            addEvent(_self.arrowDown, eventName, function () {
-                if (wrapper.offsetHeight + targetY <=
-                    toolbar.offsetHeight + step) {
-                    targetY += step;
-                    toolbar.style['margin-top'] = -targetY + 'px';
-                }
-            });
-        });
+        _self.eventsToUnbind.push(addEvent(_self.arrowUp, 'click', function () {
+            if (targetY > 0) {
+                targetY -= step;
+                toolbar.style['margin-top'] = -targetY + 'px';
+            }
+        }));
+        _self.eventsToUnbind.push(addEvent(_self.arrowDown, 'click', function () {
+            if (wrapper.offsetHeight + targetY <=
+                toolbar.offsetHeight + step) {
+                targetY += step;
+                toolbar.style['margin-top'] = -targetY + 'px';
+            }
+        }));
     },
     /*
      * Create stockTools HTML main elements.
@@ -1101,19 +1093,17 @@ H.Toolbar.prototype = {
             showhideBtn.style.left = (wrapper.offsetWidth +
                 H.getStyle(toolbar, 'padding-left')) + 'px';
         }
-        // toggle menu
-        ['click', 'touchstart'].forEach(function (eventName) {
-            addEvent(showhideBtn, eventName, function () {
-                chart.update({
-                    stockTools: {
-                        gui: {
-                            visible: !visible,
-                            placed: true
-                        }
+        // Toggle menu
+        stockToolbar.eventsToUnbind.push(addEvent(showhideBtn, 'click', function () {
+            chart.update({
+                stockTools: {
+                    gui: {
+                        visible: !visible,
+                        placed: true
                     }
-                });
+                }
             });
-        });
+        }));
     },
     /*
      * In main GUI button, replace icon and class with submenu button's

@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var clamp = U.clamp, pick = U.pick;
 var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
@@ -35,8 +35,8 @@ var columnRangeOptions = {
      * `yLow` and `yHigh` options to allow the higher and lower data label
      * sets individually.
      *
-     * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
-     * @default   {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
+     * @declare   Highcharts.SeriesAreaRangeDataLabelsOptionsObject
+     * @extends   plotOptions.arearange.dataLabels
      * @since     2.3.0
      * @product   highcharts highstock
      * @apioption plotOptions.columnrange.dataLabels
@@ -74,7 +74,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
          * @private
          */
         function safeBounds(pixelPos) {
-            return Math.min(Math.max(-safeDistance, pixelPos), safeDistance);
+            return clamp(pixelPos, -safeDistance, safeDistance);
         }
         colProto.translate.apply(series);
         // Set plotLow and plotHigh
@@ -224,7 +224,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @apioption series.columnrange.data
  */
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.columnrange.dataLabels
  * @product   highcharts highstock
  * @apioption series.columnrange.data.dataLabels
  */
