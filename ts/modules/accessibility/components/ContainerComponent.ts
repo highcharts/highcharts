@@ -195,7 +195,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * Accessibility disabled/chart destroyed.
      */
     destroy: function (this: Highcharts.ContainerComponent): void {
-        (this.chart as any).renderTo.setAttribute('aria-hidden', true as any);
+        (this.chart as any).renderTo.setAttribute('aria-hidden', true);
     }
 
 });

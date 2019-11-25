@@ -228,7 +228,7 @@ AccessibilityComponent.prototype = {
 
         Object.keys(attrs || {}).forEach(function (prop: string): void {
             if ((attrs as any)[prop] !== null) {
-                groupDiv.setAttribute(prop, (attrs as any)[prop] as any);
+                groupDiv.setAttribute(prop, (attrs as any)[prop]);
             }
         });
         (this.chart as any).a11yProxyContainer.appendChild(groupDiv);

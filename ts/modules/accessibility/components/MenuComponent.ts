@@ -327,7 +327,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             ): void {
                 if (item.tagName === 'LI' &&
                     !(item.children && item.children.length)) {
-                    item.setAttribute('tabindex', -1 as any);
+                    item.setAttribute('tabindex', -1);
                 } else {
                     item.setAttribute('aria-hidden', 'true');
                 }

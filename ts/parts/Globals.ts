@@ -113,6 +113,10 @@ declare global {
         mozRequestFullScreen: Function;
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
+        setAttribute(
+            qualifiedName: string,
+            value: (boolean|number|string)
+        ): void;
     }
     interface OscillatorNode extends AudioNode {
     }

@@ -99,7 +99,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 this.label &&
                 this.label.element
             ) {
-                this.label.element.setAttribute('aria-hidden', true as any);
+                this.label.element.setAttribute('aria-hidden', true);
             }
         });
     },

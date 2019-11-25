@@ -137,7 +137,7 @@ Accessibility.prototype = {
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
-            chart.renderTo.setAttribute('aria-hidden', true as any);
+            chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
 
@@ -230,7 +230,7 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart = this.chart || {};
+        var chart: Highcharts.Chart = this.chart || {};
 
         // Destroy components
         var components = this.components;
@@ -290,7 +290,7 @@ H.Chart.prototype.updateA11yEnabled = function (): void {
         delete this.accessibility;
     } else {
         // Just hide container
-        this.renderTo.setAttribute('aria-hidden', true as any);
+        this.renderTo.setAttribute('aria-hidden', true);
     }
 };
 

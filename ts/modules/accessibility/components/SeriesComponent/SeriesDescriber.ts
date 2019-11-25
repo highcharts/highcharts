@@ -476,7 +476,7 @@ function describePointsInSeries(series: Highcharts.Series): void {
                 if (setScreenReaderProps) {
                     setPointScreenReaderAttribs(point, pointEl);
                 } else {
-                    pointEl.setAttribute('aria-hidden', true as any);
+                    pointEl.setAttribute('aria-hidden', true);
                 }
             }
         });

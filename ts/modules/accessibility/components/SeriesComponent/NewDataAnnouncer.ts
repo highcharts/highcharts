@@ -189,7 +189,7 @@ extend(NewDataAnnouncer.prototype, {
                 (chart.options.accessibility as any).announceNewData
             );
 
-        div.setAttribute('aria-hidden', false as any);
+        div.setAttribute('aria-hidden', false);
         div.setAttribute(
             'aria-live', announceOptions.interruptUser ? 'assertive' : 'polite'
         );

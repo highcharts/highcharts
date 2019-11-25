@@ -348,7 +348,7 @@ KeyboardNavigation.prototype = {
     ): void {
         el.setAttribute('class', 'highcharts-exit-anchor');
         el.setAttribute('tabindex', '0');
-        el.setAttribute('aria-hidden', false as any);
+        el.setAttribute('aria-hidden', false);
 
         // Handle focus
         this.addExitAnchorEventsToEl(el);

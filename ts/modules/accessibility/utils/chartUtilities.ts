@@ -134,7 +134,7 @@ function unhideChartElementFromAT(
     chart: Highcharts.Chart,
     element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
 ): void {
-    element.setAttribute('aria-hidden', false as any);
+    element.setAttribute('aria-hidden', false);
     if (element === chart.renderTo || !element.parentNode) {
         return;
     }
@@ -146,7 +146,7 @@ function unhideChartElementFromAT(
             node: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
         ): void {
             if (!node.hasAttribute('aria-hidden')) {
-                node.setAttribute('aria-hidden', true as any);
+                node.setAttribute('aria-hidden', true);
             }
         }
     );
@@ -166,7 +166,7 @@ function hideSeriesFromAT(series: Highcharts.Series): void {
     var seriesEl = getSeriesA11yElement(series);
 
     if (seriesEl) {
-        seriesEl.setAttribute('aria-hidden', true as any);
+        seriesEl.setAttribute('aria-hidden', true);
     }
 }
 
