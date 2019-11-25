@@ -18,14 +18,15 @@
 import H from '../parts/Globals.js';
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import geometryCircles from '../mixins/geometry-circles.js';
+import GeometryCircleMixin from '../mixins/geometry-circles.js';
+var getAreaOfCircle = GeometryCircleMixin.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCircleMixin.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCircleMixin.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCircleMixin.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCircleMixin.getOverlapBetweenCircles, isPointInsideAllCircles = GeometryCircleMixin.isPointInsideAllCircles, isPointInsideCircle = GeometryCircleMixin.isPointInsideCircle, isPointOutsideAllCircles = GeometryCircleMixin.isPointOutsideAllCircles;
 import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = NelderMeadModule.nelderMead;
 import U from '../parts/Utilities.js';
 var animObject = U.animObject, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
 import '../parts/Series.js';
-var addEvent = H.addEvent, color = H.Color, extend = H.extend, getAreaOfCircle = geometryCircles.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCircles.getAreaOfIntersectionBetweenCircles, getCirclesIntersectionPolygon = geometryCircles.getCirclesIntersectionPolygon, getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, getOverlapBetweenCirclesByDistance = geometryCircles.getOverlapBetweenCircles, isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles, isPointInsideCircle = geometryCircles.isPointInsideCircle, isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var addEvent = H.addEvent, color = H.Color, extend = H.extend, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];
@@ -899,7 +900,7 @@ var vennSeries = {
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: geometryCircles,
+        geometryCircles: GeometryCircleMixin,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
