@@ -15,7 +15,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    wrap
 } = U;
 
 /**
@@ -419,7 +420,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
 
             // Wrap the offset function so that the hanging node's children are
             // aligned to their parent
-            H.wrap(column, 'offset', function (
+            wrap(column, 'offset', function (
                 this: Highcharts.OrganizationPoint,
                 proceed: Highcharts.SankeyColumnArray['offset'],
                 node: Highcharts.OrganizationPoint,

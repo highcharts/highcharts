@@ -21,6 +21,11 @@ function jsDocWebSearch() {
     const libLog = require('./lib/log');
     const libProcess = require('./lib/process');
 
+    if (process.argv.includes('--skip-websearch')) {
+        libLog.warn('Skipping...');
+        return Promise.resolve();
+    }
+
     return Promise
         .resolve()
         .then(() => libLog.message('Creating web search...'))

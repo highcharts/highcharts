@@ -56,11 +56,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
-    pick
+    pick,
+    relativeLength
 } = U;
 
-var deg2rad = H.deg2rad,
-    relativeLength = H.relativeLength;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable valid-jsdoc */
 

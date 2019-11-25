@@ -3,6 +3,7 @@
  */
 
 const fs = require('fs-extra');
+const { EOL } = require('os');
 
 /**
  * Convert a properties file line to a nested object.
@@ -41,7 +42,7 @@ function getBuildProperties() {
         const lines = fs.readFileSync(
             './build.properties', 'utf8'
         );
-        lines.split('\n').forEach(function (line) {
+        lines.split(EOL).forEach(function (line) {
             if (!line.startsWith('#')) {
                 const splitLine = line.split('=');
                 if (splitLine[0]) {

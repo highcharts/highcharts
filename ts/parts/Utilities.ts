@@ -1841,7 +1841,7 @@ function pad(number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1849,7 +1849,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1870,7 +1870,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1891,7 +1891,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -3385,7 +3385,7 @@ if ((win as any).jQuery) {
 
             // Create the chart
             if (args[0]) {
-                new (H as any)[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line computed-property-spacing, no-new
                     // Constructor defaults to Chart
                     isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
@@ -3424,9 +3424,11 @@ const utils = {
     pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

@@ -10,13 +10,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, splat = U.splat;
+var pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, wrap = H.wrap, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto;
+var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -173,37 +173,38 @@ if (seriesTypes.spline) {
  * @private
  */
 H.addEvent(Series, 'afterTranslate', function () {
-    var chart = this.chart, points, i;
-    if (chart.polar && this.xAxis) {
+    var series = this;
+    var chart = series.chart;
+    if (chart.polar && series.xAxis) {
         // Prepare k-d-tree handling. It searches by angle (clientX) in
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
-        this.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (this.kdByAngle) {
-            this.searchPoint = this.searchPointByAngle;
+        series.kdByAngle = chart.tooltip && chart.tooltip.shared;
+        if (series.kdByAngle) {
+            series.searchPoint = series.searchPointByAngle;
         }
         else {
-            this.options.findNearestPointBy = 'xy';
+            series.options.findNearestPointBy = 'xy';
         }
         // Postprocess plot coordinates
-        if (!this.preventPostTranslate) {
-            points = this.points;
-            i = points.length;
+        if (!series.preventPostTranslate) {
+            var points = series.points;
+            var i = points.length;
             while (i--) {
                 // Translate plotX, plotY from angle and radius to true plot
                 // coordinates
-                this.toXY(points[i]);
+                series.toXY(points[i]);
                 // Treat points below Y axis min as null (#10082)
                 if (!chart.hasParallelCoordinates &&
-                    !this.yAxis.reversed &&
-                    points[i].y < this.yAxis.min) {
+                    !series.yAxis.reversed &&
+                    points[i].y < series.yAxis.min) {
                     points[i].isNull = true;
                 }
             }
         }
         // Perform clip after render
         if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = Boolean(H.addEvent(this, 'afterRender', function () {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
                 var circ;
                 if (chart.polar) {
                     circ = this.yAxis.center;

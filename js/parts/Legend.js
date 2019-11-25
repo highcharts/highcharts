@@ -43,13 +43,6 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLegendItemClickEventObject#type
 * @type {"legendItemClick"}
 */
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* The sequential index of the data point in the legend.
-* @name Highcharts.PointOptionsObject#legendIndex
-* @type {number|undefined}
-*/
 /**
  * Gets fired when the legend item belonging to a series is clicked. The default
  * action is to toggle the visibility of the series. This can be prevented by
@@ -85,8 +78,8 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout;
-var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win, wrap = H.wrap;
+var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, stableSort = H.stableSort, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -713,7 +706,7 @@ Highcharts.Legend.prototype = {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = H.relativeLength(options.width, chart.spacingBox.width - padding);
+        legend.widthOption = relativeLength(options.width, chart.spacingBox.width - padding);
         // Compute how wide the legend is allowed to be
         allowedWidth =
             chart.spacingBox.width - 2 * padding - options.x;

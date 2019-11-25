@@ -933,7 +933,7 @@ defaultOptions.exporting = {
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
      *
-     * @type     {Highcharts.Dictionary<Highcharts.ExportingButtonsContextButtonOptions>}
+     * @type     {Highcharts.Dictionary<*>}
      * @requires modules/exporting
      */
     buttons: {
@@ -944,6 +944,7 @@ defaultOptions.exporting = {
          * In styled mode, export button styles can be applied with the
          * `.highcharts-contextbutton` class.
          *
+         * @declare  Highcharts.ExportingButtonsOptionsObject
          * @extends  navigation.buttonOptions
          * @requires modules/exporting
          */

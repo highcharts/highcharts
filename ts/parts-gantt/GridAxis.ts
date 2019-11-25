@@ -45,7 +45,8 @@ const {
     erase,
     isArray,
     isNumber,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
@@ -58,7 +59,6 @@ var addEvent = H.addEvent,
         return U.isObject(x, true);
     },
     merge = H.merge,
-    wrap = H.wrap,
     Chart = H.Chart,
     Axis = H.Axis,
     Tick = H.Tick;
@@ -664,11 +664,6 @@ addEvent(
                                 }
                             }
 
-                            // Spanning multiple years, go default
-                            if (!(units as any)[unitIdx as any][1]) {
-                                return;
-                            }
-
                             // Get the first allowed count on the next unit.
                             if ((units as any)[(unitIdx as any) + 1]) {
                                 unitName = (units as any)[
@@ -678,6 +673,12 @@ addEvent(
                                     ((units as any)[
                                         (unitIdx as any) + 1
                                     ][1] || [1])[0];
+
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
+                            } else if (parentInfo.unitName === 'year') {
+                                unitName = 'year';
+                                count = parentInfo.count * 10;
                             }
 
                             unitRange = H.timeUnits[unitName];

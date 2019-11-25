@@ -543,7 +543,7 @@ seriesType<Highcharts.SMAIndicator>(
             ): void {
                 unbinder();
             });
-            Series.prototype.destroy.call(this);
+            Series.prototype.destroy.apply(this, arguments);
         }
     }
 );

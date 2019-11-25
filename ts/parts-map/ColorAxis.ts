@@ -167,6 +167,9 @@ var addEvent = H.addEvent,
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
+Chart.prototype.collectionsWithUpdate.push('colorAxis');
+Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The ColorAxis object for inclusion in gradient legends.
@@ -235,10 +238,10 @@ extend(ColorAxis.prototype, {
      *
      * @extends      xAxis
      * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
-     *               categories, crosshair, dateTimeLabelFormats, lineWidth,
-     *               linkedTo, maxZoom, minRange, minTickInterval, offset,
-     *               opposite, pane, plotBands, plotLines, reversedStacks,
-     *               showEmpty, title, zoomEnabled
+     *               categories, crosshair, dateTimeLabelFormats, height, left,
+     *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
+     *               offset, opposite, pane, plotBands, plotLines,
+     *               reversedStacks, showEmpty, title, top, width, zoomEnabled
      * @product      highcharts highstock highmaps
      * @type         {*|Array<*>}
      * @optionparent colorAxis

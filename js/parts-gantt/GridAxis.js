@@ -11,13 +11,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 var addEvent = H.addEvent, argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
 }, dateFormat = H.dateFormat, isObject = function (x) {
     // Always use strict mode
     return U.isObject(x, true);
-}, merge = H.merge, wrap = H.wrap, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
+}, merge = H.merge, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
 var applyGridOptions = function applyGridOptions(axis) {
     var options = axis.options;
     // Center-align by default
@@ -421,15 +421,17 @@ function (e) {
                                 break;
                             }
                         }
-                        // Spanning multiple years, go default
-                        if (!units[unitIdx][1]) {
-                            return;
-                        }
                         // Get the first allowed count on the next unit.
                         if (units[unitIdx + 1]) {
                             unitName = units[unitIdx + 1][0];
                             count =
                                 (units[unitIdx + 1][1] || [1])[0];
+                            // In case the base X axis shows years, make the
+                            // secondary axis show ten times the years (#11427)
+                        }
+                        else if (parentInfo.unitName === 'year') {
+                            unitName = 'year';
+                            count = parentInfo.count * 10;
                         }
                         unitRange = H.timeUnits[unitName];
                         this.tickInterval = unitRange * count;

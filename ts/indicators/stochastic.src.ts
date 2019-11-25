@@ -40,7 +40,7 @@ declare global {
 
         interface StochasticIndicatorParamsOptions
             extends SMAIndicatorParamsOptions {
-            periods?: [number, number];
+            periods?: Array<number>;
         }
 
         class StochasticIndicatorPoint extends SMAIndicatorPoint {

@@ -271,6 +271,7 @@ bindingsUtils.manageIndicators = function (
             'natr',
             'williamsr',
             'stochastic',
+            'slowstochastic',
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',

@@ -149,14 +149,14 @@ const {
     arrayMin,
     isNumber,
     objectEach,
-    pick
+    pick,
+    wrap
 } = U;
 
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
     addEvent = H.addEvent,
-    wrap = H.wrap,
     color = H.color,
     merge = H.merge,
     noop = H.noop,

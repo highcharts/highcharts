@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, extend = U.extend, pick = U.pick, pInt = U.pInt;
+var correctFloat = U.correctFloat, extend = U.extend, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
-var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, wrap = H.wrap, 
+var addEvent = H.addEvent, Axis = H.Axis, merge = H.merge, noop = H.noop, Tick = H.Tick, 
 // @todo Extract this to a new file:
 hiddenAxisMixin, 
 // @todo Extract this to a new file
@@ -327,10 +327,10 @@ radialAxisMixin = {
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
-                H.relativeLength(innerRadius, 1) : (innerRadius /
+                relativeLength(innerRadius, 1) : (innerRadius /
                 Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
             b = (typeof outerRadius === 'string') ?
-                H.relativeLength(outerRadius, 1) : (outerRadius /
+                relativeLength(outerRadius, 1) : (outerRadius /
                 Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
             ret = [
                 'M',
@@ -510,7 +510,7 @@ addEvent(Tick, 'afterGetLabelPosition', function (e) {
         correctAngle + 360 : correctAngle, reducedAngle2 = reducedAngle1, translateY = 0, translateX = 0, labelYPosCorrection = labelOptions.y === null ? -labelBBox.height * 0.3 : 0;
     if (axis.isRadial) { // Both X and Y axes in a polar chart
         ret = axis.getPosition(this.pos, (axis.center[2] / 2) +
-            H.relativeLength(pick(labelOptions.distance, -25), axis.center[2] / 2, -axis.center[2] / 2));
+            relativeLength(pick(labelOptions.distance, -25), axis.center[2] / 2, -axis.center[2] / 2));
         // Automatically rotated
         if (labelOptions.rotation === 'auto') {
             label.attr({

@@ -38,13 +38,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/Pointer.js';
 
-var Pointer = H.Pointer,
-    wrap = H.wrap;
+var Pointer = H.Pointer;
 
 /* eslint-disable no-invalid-this */
 

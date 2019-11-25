@@ -30,13 +30,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    wrap
 } = U;
 
 var deg2rad = H.deg2rad,
     seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    wrap = H.wrap;
+    svg = H.svg;
 
 /**
  * The thickness of a 3D pie.

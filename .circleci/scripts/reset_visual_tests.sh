@@ -37,7 +37,10 @@ echo "Triggering reset visual tests job on CircleCI using branch ${BRANCH}.."
 # Circle API v2
 
 httpUrl="https://circleci.com/api/v2/project/github/highcharts/highcharts/pipeline?circle-token=${TOKEN}&branch=${BRANCH}"
-rep=$(curl -f -X POST -H 'Content-Type: application/json' -d '{ "branch":"${BRANCH}", "parameters": { "run_reset_tests": true, "reset_tests": "${TESTS}" }}' "$httpUrl")
+payload="{ \"branch\":\"${BRANCH}\", \"parameters\": { \"run_reset_tests\": true, \"reset_tests\": \"${TESTS}\" }}"
+echo "$payload"
+
+rep=$(curl -fv -X POST -H "Content-Type: application/json" -d "$payload" "$httpUrl")
 status="$?"
 echo "$rep"
 exit "$status"
