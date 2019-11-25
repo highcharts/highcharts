@@ -124,6 +124,7 @@ Chart.prototype.hideOverlappingLabels = function (
         label2,
         box1,
         box2,
+        isLabelAffected = false,
         isIntersectRect = function (
             box1: Highcharts.BBoxObject,
             box2: Highcharts.BBoxObject
@@ -254,6 +255,8 @@ Chart.prototype.hideOverlappingLabels = function (
                         };
                     }
 
+                    isLabelAffected = true;
+
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
                     label[label.isOld ? 'animate' : 'attr'](
@@ -261,7 +264,7 @@ Chart.prototype.hideOverlappingLabels = function (
                         null as any,
                         complete
                     );
-                    fireEvent(chart, 'afterHideOverlappingLabels');
+                    fireEvent(chart, 'afterHideOverlappingLabel');
                 } else { // other labels, tick labels
                     label.attr({
                         opacity: newOpacity
@@ -272,4 +275,8 @@ Chart.prototype.hideOverlappingLabels = function (
             label.isOld = true;
         }
     });
+
+    if (isLabelAffected) {
+        fireEvent(chart, 'afterHideAllOverlappingLabels');
+    }
 };

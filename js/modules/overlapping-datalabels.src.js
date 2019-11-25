@@ -70,7 +70,7 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
-    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isIntersectRect = function (box1, box2) {
+    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, isIntersectRect = function (box1, box2) {
         return !(box2.x > box1.x + box1.width ||
             box2.x + box2.width < box1.x ||
             box2.y > box1.y + box1.height ||
@@ -163,10 +163,11 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                             label.placed = false; // avoid animation from top
                         };
                     }
+                    isLabelAffected = true;
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
                     label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
-                    fireEvent(chart, 'afterHideOverlappingLabels');
+                    fireEvent(chart, 'afterHideOverlappingLabel');
                 }
                 else { // other labels, tick labels
                     label.attr({
@@ -177,4 +178,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
             label.isOld = true;
         }
     });
+    if (isLabelAffected) {
+        fireEvent(chart, 'afterHideAllOverlappingLabels');
+    }
 };
