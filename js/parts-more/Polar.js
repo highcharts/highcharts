@@ -371,9 +371,7 @@ if (seriesTypes.column) {
             i = points.length;
             yMin = yAxis.translate(yAxis.min);
             yMax = yAxis.translate(yAxis.max);
-            if (threshold === null) {
-                threshold = 0;
-            }
+            threshold = options.threshold || 0;
             if (chart.inverted) {
                 // Creating a function that is used as complete in animation for
                 // radial bar points
@@ -412,6 +410,7 @@ if (seriesTypes.column) {
                 pointX = point.x;
                 pointY = point.y;
                 if (chart.inverted) {
+                    point.shapeType = 'arc';
                     point.plotY = yAxis.translate(pointY);
                     if (stacking) {
                         stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
@@ -488,15 +487,10 @@ if (seriesTypes.column) {
                     point.plotY = (defined(series.translatedThreshold) &&
                         (start < series.translatedThreshold ? start : end)) -
                         startAngleRad;
-                    if (point.graphic) {
+                    if (point.graphic &&
+                        point.graphic.element.nodeName === 'path') {
+                        point.shapeType = 'path';
                         graphic = point.graphic;
-                        // In case when point's graphic exists but it is not a
-                        // path (arc) then point needs to be drawn once again.
-                        // This happens for example when the polar property is
-                        // updated to false and then to true once again
-                        point.shapeType =
-                            point.graphic.element.nodeName !== 'path' ?
-                                'arc' : 'path';
                         // Add complete function for animation
                         point.complete = complete;
                         // Prevent from unwanted animation of a point
@@ -515,7 +509,6 @@ if (seriesTypes.column) {
                         }
                     }
                     else {
-                        point.shapeType = 'arc';
                         if (shapeArgs.start === shapeArgs.end) {
                             shapeArgs.r = 0;
                             shapeArgs.innerR = 0;
