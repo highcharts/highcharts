@@ -30,7 +30,10 @@ declare global {
             ): void;
         }
         interface SVGElement {
+            focusBorder?: SVGElement;
+            /** @requires modules/accessibility */
             addFocusBorder(margin: number, style: CSSObject): void;
+            /** @requires modules/accessibility */
             removeFocusBorder(): void;
         }
     }
@@ -74,7 +77,7 @@ extend(H.SVGElement.prototype, {
             bb.y - pad,
             bb.width + 2 * pad,
             bb.height + 2 * pad,
-            style && style.borderRadius as any
+            parseInt((style && style.borderRadius || 0).toString(), 10)
         )
             .addClass('highcharts-focus-border')
             .attr({
@@ -118,12 +121,13 @@ extend(H.SVGElement.prototype, {
  *        to focusElement.
  */
 H.Chart.prototype.setFocusToElement = function (
+    this: Highcharts.AccessibilityChart,
     svgElement: Highcharts.SVGElement,
     focusElement?: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
 ): void {
     var focusBorderOptions: (
             Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
-        ) = (this.options.accessibility as any).keyboardNavigation.focusBorder,
+        ) = this.options.accessibility.keyboardNavigation.focusBorder,
         browserFocusElement = focusElement || svgElement.element;
 
     // Set browser focus if possible
@@ -153,10 +157,10 @@ H.Chart.prototype.setFocusToElement = function (
             this.focusElement.removeFocusBorder();
         }
         // Draw focus border (since some browsers don't do it automatically)
-        svgElement.addFocusBorder(focusBorderOptions.margin as any, {
-            stroke: (focusBorderOptions.style as any).color,
-            strokeWidth: (focusBorderOptions.style as any).lineWidth,
-            borderRadius: (focusBorderOptions.style as any).borderRadius
+        svgElement.addFocusBorder(focusBorderOptions.margin, {
+            stroke: focusBorderOptions.style.color,
+            strokeWidth: focusBorderOptions.style.lineWidth,
+            borderRadius: focusBorderOptions.style.borderRadius
         });
         this.focusElement = svgElement;
     }

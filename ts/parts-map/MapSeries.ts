@@ -1006,8 +1006,8 @@ seriesType<Highcharts.MapSeries>(
                             point.graphic.css(
                                 series.pointAttribs(
                                     point,
-                                    (point.selected && 'select') as any
-                                )
+                                    point.selected && 'select' || void 0
+                                ) as any
                             );
                         }
                     }
