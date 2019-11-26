@@ -82,8 +82,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      */
     setRenderToAttrs: function () {
         var chart = this.chart;
-        if (chart.options.accessibility.landmarkVerbosity !==
-            'disabled') {
+        if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
         }
         else {

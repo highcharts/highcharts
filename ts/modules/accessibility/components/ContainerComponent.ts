@@ -141,12 +141,9 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setRenderToAttrs: function (this: Highcharts.ContainerComponent): void {
-        var chart: Highcharts.Chart = this.chart as any;
+        var chart = this.chart;
 
-        if (
-            (chart.options.accessibility as any).landmarkVerbosity !==
-            'disabled'
-        ) {
+        if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
         } else {
             chart.renderTo.removeAttribute('role');
@@ -195,7 +192,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * Accessibility disabled/chart destroyed.
      */
     destroy: function (this: Highcharts.ContainerComponent): void {
-        (this.chart as any).renderTo.setAttribute('aria-hidden', true);
+        this.chart.renderTo.setAttribute('aria-hidden', true);
     }
 
 });
