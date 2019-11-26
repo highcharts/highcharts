@@ -270,10 +270,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * proxy overlay.
      */
     onChartRender: function (this: Highcharts.MenuComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility as any
-            );
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility;
 
         // Always start with a clean slate
         removeElement(this.exportProxyGroup);
@@ -316,7 +314,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     addAccessibleContextMenuAttribs: function (
         this: Highcharts.MenuComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             exportList = chart.exportDivElements;
 
         if (exportList && exportList.length) {
@@ -356,7 +354,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent
     ): Highcharts.KeyboardNavigation {
         var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
-            chart: Highcharts.Chart = this.chart as any,
+            chart = this.chart,
             component = this;
 
         return new (KeyboardNavigationHandler as any)(chart, {
@@ -406,8 +404,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             // enabled on chart
             validate: function (): boolean {
                 return chart.exportChart &&
-                    (chart.options.exporting as any).enabled !== false &&
-                    (chart.options.exporting as any).accessibility.enabled !==
+                    chart.options.exporting.enabled !== false &&
+                    (chart.options.exporting.accessibility as any).enabled !==
                     false;
             },
 
@@ -440,10 +438,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart: Highcharts.Chart = this.chart as any,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility as any
-            ),
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
             response = keyboardNavigationHandler.response,
             i = chart.highlightedExportItemIx || 0;
 
@@ -456,7 +452,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         }
 
         // We failed, so wrap around or move to prev module
-        if ((a11yOptions.keyboardNavigation as any).wrapAround) {
+        if (a11yOptions.keyboardNavigation.wrapAround) {
             chart.highlightLastExportItem();
             return response.success;
         }
@@ -474,10 +470,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart: Highcharts.Chart = this.chart as any,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility as any
-            ),
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
             response = keyboardNavigationHandler.response,
             i = (chart.highlightedExportItemIx || 0) + 1;
 
@@ -490,7 +484,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         }
 
         // We failed, so wrap around or move to next module
-        if ((a11yOptions.keyboardNavigation as any).wrapAround) {
+        if (a11yOptions.keyboardNavigation.wrapAround) {
             chart.highlightExportItem(0);
             return response.success;
         }
@@ -508,7 +502,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart: Highcharts.Chart = this.chart as any;
+        var chart = this.chart;
         this.fakeClickEvent(
             (chart.exportDivElements as any)[
                 chart.highlightedExportItemIx as any
