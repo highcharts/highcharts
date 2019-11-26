@@ -40,10 +40,10 @@ declare global {
                 EMAlevels: EMAIndicatorLevelsObject,
                 i: number
             ): ([number, (number|null)]|undefined);
-            public getValues(
-                series: TEMAIndicatorLinkedParentSeries,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: TEMAIndicatorParamsOptions
-            ): (IndicatorNullableValuesObject|undefined);
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
             public init(): void;
             public options: TEMAIndicatorOptions;
             public pointClass: typeof TEMAIndicatorPoint;
@@ -51,9 +51,7 @@ declare global {
         }
 
         interface TEMAIndicatorLinkedParentSeries extends Series {
-            EMApercent: number;
-            xData: Array<number>;
-            yData: Array<Array<number>>;
+            EMApercent?: number;
         }
 
         interface TEMAIndicatorParamsOptions extends EMAIndicatorParamsOptions {
@@ -173,21 +171,23 @@ H.seriesType<Highcharts.TEMAIndicator>(
 
             return TEMAPoint;
         },
-        getValues: function (
+        getValues: function<
+            TLinkedSeries extends Highcharts.TEMAIndicatorLinkedParentSeries
+        > (
             this: Highcharts.TEMAIndicator,
-            series: Highcharts.TEMAIndicatorLinkedParentSeries,
+            series: TLinkedSeries,
             params: Highcharts.TEMAIndicatorParamsOptions
-        ): (Highcharts.IndicatorNullableValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = (params.period as any),
                 doubledPeriod = 2 * period,
                 tripledPeriod = 3 * period,
-                xVal: Array<number> = series.xData,
-                yVal: Array<Array<number>> = series.yData,
+                xVal: Array<number> = (series.xData as any),
+                yVal: Array<Array<number>> = (series.yData as any),
                 yValLen: number = yVal ? yVal.length : 0,
                 index = -1,
                 accumulatePeriodPoints = 0,
                 SMA = 0,
-                TEMA: Array<[number, (number|null)]> = [],
+                TEMA: Array<Array<(number|null)>> = [],
                 xDataTema: Array<(number|null)> = [],
                 yDataTema: Array<(number|null)> = [],
                 // EMA of previous point
@@ -307,7 +307,7 @@ H.seriesType<Highcharts.TEMAIndicator>(
                 values: TEMA,
                 xData: xDataTema,
                 yData: yDataTema
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

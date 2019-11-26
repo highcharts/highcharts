@@ -108,22 +108,6 @@ declare global {
  * @type {number}
  */
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * A name for the dash style to use for the column or bar. Overrides dashStyle
- * on the series. In styled mode, the stroke dash-array can be set with the same
- * classes as listed under {@link Highcharts.PointOptionsObject#color}.
- * @name Highcharts.PointOptionsObject#dashStyle
- * @type {Highcharts.DashStyleValue|undefined}
- *//**
-
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
- * @name Highcharts.PointOptionsObject#pointWidth
- * @type {number|undefined}
- */
-
 import U from './Utilities.js';
 const {
     animObject,
@@ -387,6 +371,8 @@ seriesType<Highcharts.ColumnSeries>(
          *
          * The default `null` means it is computed automatically, but this
          * option can be used to override the automatic value.
+         *
+         * This option is set by default to 1 if data sorting is enabled.
          *
          * @sample {highcharts} highcharts/plotoptions/column-pointrange/
          *         Set the point range to one day on a data set with one week
@@ -1052,6 +1038,7 @@ seriesType<Highcharts.ColumnSeries>(
             ): void {
                 var plotY = point.plotY,
                     graphic = point.graphic,
+                    hasGraphic = !!graphic,
                     verb = graphic && chart.pointCount < animationLimit ?
                         'animate' : 'attr';
 
@@ -1064,15 +1051,37 @@ seriesType<Highcharts.ColumnSeries>(
                         graphic = graphic.destroy();
                     }
 
-                    if (graphic) { // update
-                        graphic[verb](
-                            merge(shapeArgs)
-                        );
+                    // Set starting position for point sliding animation.
+                    if (series.enabledDataSorting) {
+                        point.startXPos = series.xAxis.reversed ?
+                            -(shapeArgs ? shapeArgs.width : 0) :
+                            series.xAxis.width;
+                    }
 
-                    } else {
+                    if (!graphic) {
                         point.graphic = graphic =
                             (renderer as any)[point.shapeType as any](shapeArgs)
                                 .add(point.group || series.group);
+
+                        if (
+                            graphic &&
+                            series.enabledDataSorting &&
+                            chart.hasRendered &&
+                            chart.pointCount < animationLimit
+                        ) {
+                            graphic.attr({
+                                x: point.startXPos
+                            });
+
+                            hasGraphic = true;
+                            verb = 'animate';
+                        }
+                    }
+
+                    if (graphic && hasGraphic) { // update
+                        graphic[verb](
+                            merge(shapeArgs)
+                        );
                     }
 
                     // Border radius is not stylable (#6900)

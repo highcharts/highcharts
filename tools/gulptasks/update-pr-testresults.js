@@ -10,6 +10,7 @@ const argv = require('yargs').argv;
 const { getFilesChanged } = require('./lib/git');
 const { uploadFiles } = require('./lib/uploadS3');
 
+const DEFAULT_PR_ASSET_S3_BASEPATH = 'visualtests/diffs/pullrequests';
 const DEFAULT_COMMENT_MATCH = '## Visual test results';
 const DEFAULT_OPTIONS = {
     method: 'GET',
@@ -21,7 +22,7 @@ const DEFAULT_OPTIONS = {
     }
 };
 
-const PR_IMAGEDIFF_BUCKET = process.env.HIGHCHARTS_PR_IMAGEDIFF_BUCKET || 'staging-vis-dev.highcharts.com';
+const VISUAL_TESTS_BUCKET = process.env.HIGHCHARTS_VISUAL_TESTS_BUCKET || 'staging-vis-dev.highcharts.com';
 
 /**
  * Executes a request with the specified options
@@ -197,11 +198,11 @@ function createTemplateForChangeSamples() {
 
 /* eslint-disable require-jsdoc */
 function buildImgS3Path(filename, sample, pr) {
-    return `highcharts/pr-diffs/${pr}/${sample}/${filename}`;
+    return `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${sample}/${filename}`;
 }
 
 function buildImgURL(filename, sample, pr) {
-    return `http://${PR_IMAGEDIFF_BUCKET}.s3.eu-central-1.amazonaws.com/${buildImgS3Path(filename, sample, pr)}`;
+    return `http://${VISUAL_TESTS_BUCKET}.s3.eu-central-1.amazonaws.com/${buildImgS3Path(filename, sample, pr)}`;
 }
 
 function buildImgMarkdownLinks(sample, pr) {
@@ -211,8 +212,8 @@ function buildImgMarkdownLinks(sample, pr) {
 /* eslint-enable require-jsdoc */
 
 /**
- * Using a list of diffing samples (visual test differences) this
- * function uploads the reference/candidate/diff images that are produced
+ * Based on a list of diffing samples (that contain visual test differences compared to a baseline/reference)
+ * this function uploads the reference/candidate/diff images + JSON report that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
  * @param {string} pr number to upload for
@@ -236,7 +237,12 @@ function uploadVisualTestDiffImages(diffingSamples = [], pr) {
             return resultingFiles;
         }, []);
 
-        uploadFiles({ files, bucket: PR_IMAGEDIFF_BUCKET, name: `image diff on PR #${pr}` })
+        files.push({
+            from: 'test/visual-test-results.json',
+            to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/visual-test-results.json`
+        });
+
+        uploadFiles({ files, bucket: VISUAL_TESTS_BUCKET, name: `image diff on PR #${pr}` })
             .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
     }
 }
@@ -309,7 +315,7 @@ commentOnPR.description = 'Comments any diff from test/visual-test-results.json'
 commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--user': 'Github user',
-    '--token': 'Github token (can also be specified with GITHUB_TOKEN env var.',
+    '--token': 'Github token (can also be specified with GITHUB_TOKEN env var)',
     '--contains-text': 'Filter text used to find PR comment to overwrite',
     '--always-add': 'If present any old test results comment won\'t be deleted',
     '--fail-silently': 'Will always return exitCode 0 (success)'

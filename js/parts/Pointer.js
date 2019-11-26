@@ -744,7 +744,9 @@ Highcharts.Pointer.prototype = {
      * @return {void}
      */
     drag: function (e) {
-        var chart = this.chart, chartOptions = chart.options.chart, chartX = e.chartX, chartY = e.chartY, zoomHor = this.zoomHor, zoomVert = this.zoomVert, plotLeft = chart.plotLeft, plotTop = chart.plotTop, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, clickedInside, size, selectionMarker = this.selectionMarker, mouseDownX = this.mouseDownX, mouseDownY = this.mouseDownY, panKey = (chartOptions.panKey && e[chartOptions.panKey + 'Key']);
+        var chart = this.chart, chartOptions = chart.options.chart, chartX = e.chartX, chartY = e.chartY, zoomHor = this.zoomHor, zoomVert = this.zoomVert, plotLeft = chart.plotLeft, plotTop = chart.plotTop, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, clickedInside, size, selectionMarker = this.selectionMarker, mouseDownX = this.mouseDownX, mouseDownY = this.mouseDownY, panningEnabled = isObject(chartOptions.panning) ?
+            chartOptions.panning && chartOptions.panning.enabled :
+            chartOptions.panning, panKey = (chartOptions.panKey && e[chartOptions.panKey + 'Key']);
         // If the device supports both touch and mouse (like IE11), and we are
         // touch-dragging inside the plot area, don't handle the mouse event.
         // #4339.
@@ -809,7 +811,9 @@ Highcharts.Pointer.prototype = {
                 });
             }
             // panning
-            if (clickedInside && !selectionMarker && chartOptions.panning) {
+            if (clickedInside &&
+                !selectionMarker &&
+                panningEnabled) {
                 chart.pan(e, chartOptions.panning);
             }
         }

@@ -51,6 +51,7 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
+        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
@@ -1784,7 +1785,7 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T, TReturn = T> (
+function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
@@ -1793,7 +1794,7 @@ H.extendClass = function<T, TReturn = T> (
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1812,7 +1813,7 @@ H.extendClass = function<T, TReturn = T> (
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length?: number, padder?: string): string {
+function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1820,7 +1821,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-};
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -1840,7 +1841,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1848,7 +1849,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1869,7 +1870,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1890,7 +1891,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -3297,7 +3298,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(
+    seriesTypes[type] = extendClass(
         seriesTypes[parent] || function (): void {},
         props
     );
@@ -3306,7 +3307,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
 
     return seriesTypes[type];
@@ -3384,7 +3385,7 @@ if ((win as any).jQuery) {
 
             // Create the chart
             if (args[0]) {
-                new (H as any)[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line computed-property-spacing, no-new
                     // Constructor defaults to Chart
                     isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
@@ -3411,6 +3412,7 @@ const utils = {
     discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isClass,
     isDOMElement,
@@ -3419,11 +3421,14 @@ const utils = {
     isString,
     numberFormat,
     objectEach,
+    pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

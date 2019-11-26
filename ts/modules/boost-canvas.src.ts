@@ -74,8 +74,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var extend = U.extend,
-    isNumber = U.isNumber;
+const {
+    extend,
+    isNumber,
+    wrap
+} = U;
 
 import '../parts/Color.js';
 import '../parts/Series.js';
@@ -91,7 +94,6 @@ var win = H.win,
     fireEvent = H.fireEvent,
     merge = H.merge,
     pick = H.pick,
-    wrap = H.wrap,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
@@ -104,7 +106,7 @@ var win = H.win,
  */
 H.initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
-        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
+        wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
             this: Highcharts.HeatmapSeries
         ): void {
             var chart = this.chart,

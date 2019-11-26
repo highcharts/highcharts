@@ -18,6 +18,7 @@ const {
     extend,
     isObject,
     objectEach,
+    pad,
     pick,
     splat
 } = U;
@@ -661,7 +662,6 @@ Highcharts.Time.prototype = {
             lang = H.defaultOptions.lang,
             langWeekdays = (lang as any).weekdays,
             shortWeekdays = (lang as any).shortWeekdays,
-            pad = H.pad,
 
             // List all format keys. Custom formats can be added from the
             // outside.

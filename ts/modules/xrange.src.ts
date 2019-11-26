@@ -115,6 +115,7 @@ const {
 var addEvent = H.addEvent,
     color = H.color,
     columnType = H.seriesTypes.column,
+    find = H.find,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -351,17 +352,12 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             this: Highcharts.XRangeSeries,
             options: Highcharts.XRangePointOptions
         ): (number|undefined) {
-            var series = this,
-                // Search in data, since broken-axis can remove points inside a
-                // break.
-                points = series.data,
-                oldData = series.points,
-                id = options.id,
-                point: (Highcharts.XRangePoint|undefined),
-                pointIndex: (number|undefined);
+            const { cropped, cropStart, points } = this;
+            const { id } = options;
+            let pointIndex: (number|undefined);
 
             if (id) {
-                point = H.find(points, function (
+                const point = find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
                     return point.id === id;
@@ -370,14 +366,13 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             }
 
             if (typeof pointIndex === 'undefined') {
-                point = H.find(points, function (
+                const point = find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
                     return (
                         point.x === options.x &&
                         point.x2 === options.x2 &&
-                        !(oldData[pointIndex as any] &&
-                        oldData[pointIndex as any].touched)
+                        !point.touched
                     );
                 });
                 pointIndex = point ? point.index : void 0;
@@ -385,10 +380,12 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
 
             // Reduce pointIndex if data is cropped
             if (
-                series.cropped &&
-                (pointIndex as any) >= (series.cropStart as any)
+                cropped &&
+                isNumber(pointIndex) &&
+                isNumber(cropStart) &&
+                pointIndex >= cropStart
             ) {
-                (pointIndex as any) -= (series.cropStart as any);
+                pointIndex -= cropStart;
             }
 
             return pointIndex;

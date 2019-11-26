@@ -153,13 +153,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 label &&
                 (!label.alignAttr || label.placed)
             ) {
-                const x = label.attr('x');
-                const y = label.attr('y');
-                if (typeof x === 'number' && typeof y === 'number') {
-                    pos = { x, y };
-                } else {
-                    pos = label.alignAttr;
-                }
+                pos = label.alignAttr || {
+                    x: label.attr('x'),
+                    y: label.attr('y')
+                };
                 parent = label.parentGroup as any;
 
                 // Get width and height if pure text nodes (stack labels)

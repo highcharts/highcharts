@@ -256,7 +256,8 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     isObject,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 import '../parts/Options.js';
@@ -649,7 +650,7 @@ seriesType<Highcharts.SankeySeries>(
                     totalNodeOffset = column[i].getSum() * factor + nodePadding;
                     if (column[i] === node) {
                         return {
-                            relativeTop: offset + H.relativeLength(
+                            relativeTop: offset + relativeLength(
                                 node.options.offset || 0,
                                 totalNodeOffset
                             )
@@ -1096,7 +1097,7 @@ seriesType<Highcharts.SankeySeries>(
             this.generatePoints();
 
             this.nodeColumns = this.createNodeColumns();
-            this.nodeWidth = H.relativeLength(
+            this.nodeWidth = relativeLength(
                 this.options.nodeWidth as any,
                 this.chart.plotSizeX as any
             );

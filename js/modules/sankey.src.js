@@ -90,7 +90,7 @@ import H from '../parts/Globals.js';
 * @type {Highcharts.SankeyNodeObject}
 */
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject, pick = U.pick;
+var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -407,7 +407,7 @@ seriesType('sankey', 'column',
                 totalNodeOffset = column[i].getSum() * factor + nodePadding;
                 if (column[i] === node) {
                     return {
-                        relativeTop: offset + H.relativeLength(node.options.offset || 0, totalNodeOffset)
+                        relativeTop: offset + relativeLength(node.options.offset || 0, totalNodeOffset)
                     };
                 }
                 offset += totalNodeOffset;
@@ -692,7 +692,7 @@ seriesType('sankey', 'column',
         }
         this.generatePoints();
         this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = H.relativeLength(this.options.nodeWidth, this.chart.plotSizeX);
+        this.nodeWidth = relativeLength(this.options.nodeWidth, this.chart.plotSizeX);
         var series = this, chart = this.chart, options = this.options, nodeWidth = this.nodeWidth, nodeColumns = this.nodeColumns, nodePadding = this.getNodePadding();
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.

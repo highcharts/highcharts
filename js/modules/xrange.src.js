@@ -21,7 +21,7 @@ import H from '../parts/Globals.js';
 */
 import U from '../parts/Utilities.js';
 var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
-var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
+var addEvent = H.addEvent, color = H.color, columnType = H.seriesTypes.column, find = H.find, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
 /**
  * Return color of a point based on its category.
  *
@@ -203,29 +203,29 @@ seriesType('xrange', 'column'
      * returns undefined if no match is found.
      */
     findPointIndex: function (options) {
-        var series = this, 
-        // Search in data, since broken-axis can remove points inside a
-        // break.
-        points = series.data, oldData = series.points, id = options.id, point, pointIndex;
+        var _a = this, cropped = _a.cropped, cropStart = _a.cropStart, points = _a.points;
+        var id = options.id;
+        var pointIndex;
         if (id) {
-            point = H.find(points, function (point) {
+            var point = find(points, function (point) {
                 return point.id === id;
             });
             pointIndex = point ? point.index : void 0;
         }
         if (typeof pointIndex === 'undefined') {
-            point = H.find(points, function (point) {
+            var point = find(points, function (point) {
                 return (point.x === options.x &&
                     point.x2 === options.x2 &&
-                    !(oldData[pointIndex] &&
-                        oldData[pointIndex].touched));
+                    !point.touched);
             });
             pointIndex = point ? point.index : void 0;
         }
         // Reduce pointIndex if data is cropped
-        if (series.cropped &&
-            pointIndex >= series.cropStart) {
-            pointIndex -= series.cropStart;
+        if (cropped &&
+            isNumber(pointIndex) &&
+            isNumber(cropStart) &&
+            pointIndex >= cropStart) {
+            pointIndex -= cropStart;
         }
         return pointIndex;
     },

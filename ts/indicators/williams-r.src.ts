@@ -17,14 +17,14 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class WilliamsRIndicator extends SMAIndicator {
-            data: Array<WilliamsRIndicatorPoint>;
-            getValues(
-                series: Series,
+            public data: Array<WilliamsRIndicatorPoint>;
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: WilliamsRIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined);
-            options: WilliamsRIndicatorOptions;
-            pointClass: typeof WilliamsRIndicatorPoint;
-            points: Array<WilliamsRIndicatorPoint>;
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+            public options: WilliamsRIndicatorOptions;
+            public pointClass: typeof WilliamsRIndicatorPoint;
+            public points: Array<WilliamsRIndicatorPoint>;
         }
         class WilliamsRIndicatorPoint extends SMAIndicatorPoint {
             series: WilliamsRIndicator;
@@ -95,11 +95,11 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
      */
     {
         nameBase: 'Williams %R',
-        getValues: function (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             this: Highcharts.WilliamsRIndicator,
-            series: Highcharts.Series,
+            series: TLinkedSeries,
             params: Highcharts.WilliamsRIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period: number = params.period as any,
                 xVal: Array<number> = series.xData as any,
                 yVal: Array<Array<number>> = series.yData as any,
@@ -151,7 +151,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
                 values: WR,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

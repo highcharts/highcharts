@@ -1200,12 +1200,12 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function (parent, members) {
+function extendClass(parent, members) {
     var obj = (function () { });
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 /**
  * Left-pad a string to a given length by adding a character repetetively.
  *
@@ -1223,13 +1223,13 @@ H.extendClass = function (parent, members) {
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number, length, padder) {
+function pad(number, length, padder) {
     return new Array((length || 2) +
         1 -
         String(number)
             .replace('-', '')
             .length).join(padder || '0') + number;
-};
+}
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  *
@@ -1248,11 +1248,11 @@ H.pad = function (number, length, padder) {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (value, base, offset) {
+function relativeLength(value, base, offset) {
     return (/%$/).test(value) ?
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
-};
+}
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -1272,7 +1272,7 @@ H.relativeLength = function (value, base, offset) {
  *
  * @return {void}
  */
-H.wrap = function (obj, method, func) {
+function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
@@ -1284,7 +1284,7 @@ H.wrap = function (obj, method, func) {
         ctx.proceed = null;
         return ret;
     };
-};
+}
 /**
  * Recursively converts all Date properties to timestamps.
  *
@@ -2431,12 +2431,12 @@ H.seriesType = function (type, parent, options, props, pointProps) {
     // Merge the options
     defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
     // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () { }, props);
+    seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
     return seriesTypes[type];
 };
@@ -2503,7 +2503,7 @@ if (win.jQuery) {
         if (this[0]) { // this[0] is the renderTo div
             // Create the chart
             if (args[0]) {
-                new H[ // eslint-disable-line no-new
+                new H[ // eslint-disable-line computed-property-spacing, no-new
                 // Constructor defaults to Chart
                 isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
                 return this;
@@ -2527,6 +2527,7 @@ var utils = {
     discardElement: discardElement,
     erase: erase,
     extend: extend,
+    extendClass: extendClass,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
@@ -2535,10 +2536,13 @@ var utils = {
     isString: isString,
     numberFormat: numberFormat,
     objectEach: objectEach,
+    pad: pad,
     pick: pick,
     pInt: pInt,
+    relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
-    syncTimeout: syncTimeout
+    syncTimeout: syncTimeout,
+    wrap: wrap
 };
 export default utils;

@@ -24,6 +24,7 @@ declare global {
             public colorIndex: number;
             public formatPrefix: string;
             public id: string;
+            public isNew?: boolean;
             public isNull: boolean;
             public marker?: PointMarkerOptionsObject;
             public nonZonedColor?: (
@@ -34,15 +35,20 @@ declare global {
             public series: Series;
             public shapeArgs?: SVGAttributes;
             public shapeType?: string;
+            public startXPos?: number;
             public state?: string;
             public total?: number;
             public visible: boolean;
             public x: (number|null);
             public y?: (number|null);
+            public animateBeforeDestroy(): void;
             public applyOptions(options: PointOptionsType, x?: number): Point;
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;
             public getClassName(): string;
+            public getGraphicalProps(
+                kinds?: Dictionary<number>
+            ): PointGraphicalProps;
             public firePointEvent(
                 eventType: string,
                 eventArgs?: (Dictionary<any>|Event),
@@ -61,6 +67,10 @@ declare global {
             public resolveColor(): void;
             public setNestedProperty<T>(object: T, value: any, key: string): T;
             public tooltipFormatter(pointFormat: string): string;
+        }
+        interface PointGraphicalProps {
+            singular: Array<string>;
+            plural: Array<string>;
         }
         interface PlotSeriesPointOptions {
             events?: PointEventsOptionsObject;
@@ -117,12 +127,14 @@ declare global {
             drilldown?: string;
             events?: PointEventsOptionsObject;
             id?: string;
+            index?: number;
             labelrank?: number;
             legendIndex?: number;
             marker?: PointMarkerOptionsObject;
             name?: string;
             selected?: boolean;
             states?: PointStatesOptionsObject;
+            visible?: boolean;
             x?: number;
             y?: (null|number);
         }
@@ -277,6 +289,21 @@ declare global {
  */
 
 /**
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
+ */
+
+/**
  * Possible option types for a data point.
  *
  * @typedef {number|string|Array<(number|string)>|Highcharts.PointOptionsObject|null} Highcharts.PointOptionsType
@@ -326,12 +353,14 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     defined,
     erase,
     extend,
     isArray,
     isNumber,
     isObject,
+    syncTimeout,
     pick
 } = U;
 
@@ -768,36 +797,96 @@ Highcharts.Point.prototype = {
         var point = this,
             series = point.series,
             chart = series.chart,
+            dataSorting = series.options.dataSorting,
             hoverPoints = chart.hoverPoints,
+            globalAnimation = point.series.chart.renderer.globalAnimation,
+            animation = animObject(globalAnimation),
             prop;
 
-        chart.pointCount--;
+        /**
+         * Allow to call after animation.
+         * @private
+         */
+        function destroyPoint(): void {
+            if (hoverPoints) {
+                point.setState();
+                erase(hoverPoints, point);
+                if (!hoverPoints.length) {
+                    chart.hoverPoints = null as any;
+                }
 
-        if (hoverPoints) {
-            point.setState();
-            erase(hoverPoints, point);
-            if (!hoverPoints.length) {
-                chart.hoverPoints = null as any;
+            }
+            if (point === chart.hoverPoint) {
+                point.onMouseOut();
             }
 
-        }
-        if (point === chart.hoverPoint) {
-            point.onMouseOut();
+            // Remove all events and elements
+            if (point.graphic || point.dataLabel || point.dataLabels) {
+                removeEvent(point);
+                point.destroyElements();
+            }
+
+            for (prop in point) { // eslint-disable-line guard-for-in
+                (point as any)[prop] = null;
+            }
         }
 
-        // Remove all events and elements
-        if (point.graphic || point.dataLabel || point.dataLabels) {
-            removeEvent(point);
-            point.destroyElements();
+        // Remove properties after animation
+        if (!dataSorting || !dataSorting.enabled) {
+            destroyPoint();
+
+        } else {
+            this.animateBeforeDestroy();
+            syncTimeout(destroyPoint, (animation as any).duration);
         }
+
+        chart.pointCount--;
 
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
         }
+    },
 
-        for (prop in point) { // eslint-disable-line guard-for-in
-            (point as any)[prop] = null;
-        }
+    /**
+     * Animate SVG elements associated with the point.
+     *
+     * @private
+     * @function Highcharts.Point#animateBeforeDestroy
+     * @return {void}
+     */
+    animateBeforeDestroy: function (
+        this: Highcharts.Point
+    ): void {
+        var point = this,
+            animateParams = { x: point.startXPos, opacity: 0 },
+            isDataLabel,
+            graphicalProps = point.getGraphicalProps();
+
+        graphicalProps.singular.forEach(function (prop: string): void {
+            isDataLabel = prop === 'dataLabel';
+
+            (point as any)[prop] = (point as any)[prop].animate(
+                isDataLabel ? {
+                    x: (point as any)[prop].startXPos,
+                    y: (point as any)[prop].startYPos,
+                    opacity: 0
+                } : animateParams
+            );
+        });
+
+        graphicalProps.plural.forEach(function (plural: any): void {
+            (point as any)[plural].forEach(function (item: any): void {
+                if (item.element) {
+                    item.animate(extend(
+                        { x: point.startXPos },
+                        (item.startYPos ? {
+                            x: item.startXPos,
+                            y: item.startYPos
+                        } : {})
+                    ));
+                }
+            });
+        });
     },
 
     /**
@@ -813,11 +902,44 @@ Highcharts.Point.prototype = {
         kinds?: Highcharts.Dictionary<number>
     ): void {
         var point = this,
+            props = point.getGraphicalProps(kinds);
+
+        props.singular.forEach(function (prop: string): void {
+            (point as any)[prop] = (point as any)[prop].destroy();
+        });
+
+        props.plural.forEach(function (plural: any): void {
+            (point as any)[plural].forEach(function (item: any): void {
+                if (item.element) {
+                    item.destroy();
+                }
+            });
+
+            delete (point as any)[plural];
+        });
+    },
+
+    /**
+     * Get props of all existing graphical point elements.
+     *
+     * @private
+     * @function Highcharts.Point#getGraphicalProps
+     * @param {Highcharts.Dictionary<number>} [kinds]
+     * @return {Highcharts.PointGraphicalProps}
+     */
+    getGraphicalProps: function (
+        this: Highcharts.Point,
+        kinds?: Highcharts.Dictionary<number>
+    ): Highcharts.PointGraphicalProps {
+        var point = this,
             props = [],
             prop,
-            i;
+            i,
+            graphicalProps: Highcharts.PointGraphicalProps =
+                { singular: [], plural: [] };
 
         kinds = kinds || { graphic: 1, dataLabel: 1 };
+
         if (kinds.graphic) {
             props.push('graphic', 'shadowGroup');
         }
@@ -829,21 +951,18 @@ Highcharts.Point.prototype = {
         while (i--) {
             prop = props[i];
             if ((point as any)[prop]) {
-                (point as any)[prop] = (point as any)[prop].destroy();
+                graphicalProps.singular.push(prop);
             }
         }
 
         ['dataLabel', 'connector'].forEach(function (prop: string): void {
             var plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
-                (point as any)[plural].forEach(function (item: any): void {
-                    if (item.element) {
-                        item.destroy();
-                    }
-                });
-                delete (point as any)[plural];
+                graphicalProps.plural.push(plural);
             }
         });
+
+        return graphicalProps;
     },
 
     /**

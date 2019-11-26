@@ -16,7 +16,8 @@ var defined = U.defined,
     erase = U.erase,
     extend = U.extend,
     pick = U.pick,
-    splat = U.splat;
+    splat = U.splat,
+    wrap = U.wrap;
 
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
@@ -1309,7 +1310,7 @@ chartProto.callbacks.push(function (chart) {
     });
 });
 
-H.wrap(
+wrap(
     H.Pointer.prototype,
     'onContainerMouseDown',
     function (proceed) {

@@ -164,11 +164,11 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     erase,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
 
 

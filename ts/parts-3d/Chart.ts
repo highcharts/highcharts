@@ -86,7 +86,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isArray,
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/Chart.js';
@@ -94,8 +95,7 @@ import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
     merge = H.merge,
-    perspective = H.perspective,
-    wrap = H.wrap;
+    perspective = H.perspective;
 
 /**
  * Shorthand to check the is3d flag.
@@ -268,7 +268,7 @@ function getScale(chart: Highcharts.Chart, depth: number): number {
 }
 
 
-H.wrap(H.Chart.prototype, 'isInsidePlot', function (
+wrap(H.Chart.prototype, 'isInsidePlot', function (
     this: Highcharts.Chart,
     proceed: Function
 ): boolean {

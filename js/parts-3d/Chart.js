@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, pick = U.pick;
+var isArray = U.isArray, pick = U.pick, wrap = U.wrap;
 import '../parts/Chart.js';
-var addEvent = H.addEvent, Chart = H.Chart, merge = H.merge, perspective = H.perspective, wrap = H.wrap;
+var addEvent = H.addEvent, Chart = H.Chart, merge = H.merge, perspective = H.perspective;
 /**
  * Shorthand to check the is3d flag.
  * @private
@@ -138,7 +138,7 @@ function getScale(chart, depth) {
     }
     return scale;
 }
-H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
+wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
     return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 var defaultOptions = H.getOptions();

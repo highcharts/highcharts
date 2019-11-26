@@ -14,6 +14,7 @@
 
 import H from '../parts/Globals.js';
 
+
 /**
  * Internal types
  * @private
@@ -53,11 +54,16 @@ declare global {
     }
 }
 
+import U from '../parts/Utilities.js';
+const {
+    wrap
+} = U;
+
 var addEvent = H.addEvent,
     Axis = H.Axis,
     PlotLineOrBand = H.PlotLineOrBand,
-    merge = H.merge,
-    wrap = H.wrap;
+    merge = H.merge;
+
 
 var defaultConfig: (
     Highcharts.CurrentDateIndicatorOptions &

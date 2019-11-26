@@ -315,7 +315,7 @@ H.layouts['reingold-fruchterman'].prototype, {
                     // Node can not repulse itself:
                     node !== repNode &&
                         // Only close nodes affect each other:
-                        /* layout.getDistR(node, repNode) < 2 * k && */
+                        // layout.getDistR(node, repNode) < 2 * k &&
                         // Not dragged:
                         !node.fixedPosition) {
                         distanceXY = layout.getDistXY(node, repNode);

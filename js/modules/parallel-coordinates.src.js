@@ -12,13 +12,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 // Extensions for parallel coordinates plot.
 var Axis = H.Axis, Chart = H.Chart, ChartProto = Chart.prototype, AxisProto = H.Axis.prototype;
-var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge;
+var addEvent = H.addEvent, merge = H.merge;
 var defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
@@ -50,7 +50,7 @@ var defaultParallelOptions = {
      * This feature requires `modules/parallel-coordinates.js`.
      *
      * The default options are:
-     * <pre>
+     * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
      *    gridlinesWidth: 0,  // classic mode only
@@ -65,7 +65,8 @@ var defaultParallelOptions = {
      *        reserveSpace: false
      *    },
      *    offset: 0
-     * }</pre>
+     * }
+     * ```
      *
      * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
      *         Set the same tickAmount for all yAxes
