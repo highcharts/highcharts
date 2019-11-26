@@ -76,7 +76,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
         (this.newDataAnnouncer as any).init();
 
         this.keyboardNavigation = new (SeriesKeyboardNavigation as any)(
-            this.chart as any, this.keyCodes as any
+            this.chart, this.keyCodes
         );
         (this.keyboardNavigation as any).init();
 

@@ -353,7 +353,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
     ): Highcharts.KeyboardNavigation {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var keys = this.keyCodes,
             chart = this.chart,
             component = this;
 

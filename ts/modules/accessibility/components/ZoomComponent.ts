@@ -278,8 +278,8 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
     getMapZoomNavigation: function (
         this: Highcharts.ZoomComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
-            chart: Highcharts.Chart = this.chart as any,
+        var keys = this.keyCodes,
+            chart = this.chart,
             component = this;
 
         return new (KeyboardNavigationHandler as any)(chart, {
@@ -335,14 +335,14 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var keys = this.keyCodes,
             panAxis: ('xAxis'|'yAxis') =
                 (keyCode === keys.up || keyCode === keys.down) ?
                     'yAxis' : 'xAxis',
             stepDirection = (keyCode === keys.left || keyCode === keys.up) ?
                 -1 : 1;
 
-        (this.chart as any)[panAxis][0].panStep(stepDirection);
+        this.chart[panAxis][0].panStep(stepDirection);
 
         return keyboardNavigationHandler.response.success;
     },
@@ -435,9 +435,9 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         proxyProp: string,
         onClick: Function
     ): Highcharts.KeyboardNavigationHandler {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var keys = this.keyCodes,
             component = this,
-            chart: Highcharts.Chart = this.chart as any;
+            chart = this.chart;
 
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [

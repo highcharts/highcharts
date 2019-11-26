@@ -142,7 +142,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function (this: Highcharts.RangeSelectorComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             component = this,
             rangeSelector = chart.rangeSelector;
 
@@ -187,7 +187,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         button: Highcharts.SVGElement
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             label = chart.langFormat(
                 'accessibility.rangeSelector.buttonText',
                 {
@@ -212,7 +212,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         input: Highcharts.HTMLDOMElement,
         langKey: string
     ): void {
-        var chart: Highcharts.Chart = this.chart as any;
+        var chart = this.chart;
 
         setElAttrs(input, {
             tabindex: -1,
@@ -230,8 +230,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     getRangeSelectorButtonNavigation: function (
         this: Highcharts.RangeSelectorComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var chart: Highcharts.Chart = this.chart as any,
-            keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var chart = this.chart,
+            keys = this.keyCodes,
             component = this;
 
         return new (KeyboardNavigationHandler as any)(chart, {
@@ -286,10 +286,10 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         keyCode: number
     ): number {
         var response = keyboardNavigationHandler.response,
-            keys: Highcharts.Dictionary<number> = this.keyCodes as any,
-            chart: Highcharts.Chart = this.chart as any,
-            wrapAround = (chart.options.accessibility as any).keyboardNavigation
-                .wrapAround,
+            keys = this.keyCodes,
+            chart = this.chart,
+            wrapAround = chart.options.accessibility
+                .keyboardNavigation.wrapAround,
             direction = (
                 keyCode === keys.left || keyCode === keys.up
             ) ? -1 : 1,
@@ -315,7 +315,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     onButtonNavKbdClick: function (
         this: Highcharts.RangeSelectorComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             wasDisabled = chart.oldRangeSelectorItemState === 3;
 
         if (!wasDisabled) {
@@ -337,8 +337,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     getRangeSelectorInputNavigation: function (
         this: Highcharts.RangeSelectorComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var chart: Highcharts.Chart = this.chart as any,
-            keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var chart = this.chart,
+            keys = this.keyCodes,
             component = this;
 
         return new (KeyboardNavigationHandler as any)(chart, {

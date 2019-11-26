@@ -324,7 +324,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     getKeyboardNavigation: function (
         this: Highcharts.LegendComponent
     ): Highcharts.KeyboardNavigationHandler {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var keys = this.keyCodes,
             component = this,
             chart = this.chart;
 
@@ -372,12 +372,10 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         keyCode: number
     ): number {
-        var keys: Highcharts.Dictionary<number> = this.keyCodes as any,
+        var keys = this.keyCodes,
             response = keyboardNavigationHandler.response,
             chart = this.chart,
-            a11yOptions: Highcharts.AccessibilityOptions = (
-                chart.options.accessibility
-            ),
+            a11yOptions = chart.options.accessibility,
             numItems = chart.legend.allItems.length,
             direction = (keyCode === keys.left || keyCode === keys.up) ? -1 : 1;
 
