@@ -46,7 +46,7 @@ var whcm = {
      *
      * @function Highcharts#setHighContrastTheme
      * @private
-     * @param {Highcharts.Chart} chart The chart to set the theme of.
+     * @param {Highcharts.AccessibilityChart} chart The chart to set the theme of.
      * @return {void}
      */
     setHighContrastTheme: function (chart) {

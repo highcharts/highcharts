@@ -49,7 +49,7 @@ declare global {
             customComponents?: Dictionary<any>;
             description?: string;
             enabled: boolean;
-            highContrastTheme?: Dictionary<any>;
+            highContrastTheme: Dictionary<any>;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);
@@ -203,7 +203,7 @@ declare global {
  *         Formatted string for the screen reader module.
  */
 
-var options: Highcharts.Options = {
+var options: DeepPartial<Highcharts.Options> = {
 
     /**
      * Options for configuring accessibility for the chart. Requires the

@@ -73,10 +73,12 @@ var whcm = {
      *
      * @function Highcharts#setHighContrastTheme
      * @private
-     * @param {Highcharts.Chart} chart The chart to set the theme of.
+     * @param {Highcharts.AccessibilityChart} chart The chart to set the theme of.
      * @return {void}
      */
-    setHighContrastTheme: function (chart: Highcharts.Chart): void {
+    setHighContrastTheme: function (
+        chart: Highcharts.AccessibilityChart
+    ): void {
         // We might want to add additional functionality here in the future for
         // storing the old state so that we can reset the theme if HC mode is
         // disabled. For now, the user will have to reload the page.
@@ -85,7 +87,7 @@ var whcm = {
 
         // Apply theme to chart
         var theme: Highcharts.Dictionary<any> = (
-            (chart.options.accessibility as any).highContrastTheme
+            chart.options.accessibility.highContrastTheme
         );
         chart.update(theme, false);
 
