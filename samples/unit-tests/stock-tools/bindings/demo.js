@@ -316,8 +316,8 @@ QUnit.test('Bindings general tests', function (assert) {
     points = chart.series[0].points;
     chart.navigationBindings.popup.closePopup();
     controller.click(
-        points[2].plotX + plotLeft - 5,
-        points[2].plotY + plotTop - 25
+        points[2].plotX + plotLeft + 15,
+        points[2].plotY + plotTop + 25
     );
     assert.strictEqual(
         chart.navigationBindings.popup.container.classList
