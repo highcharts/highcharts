@@ -2503,7 +2503,7 @@ if (win.jQuery) {
         if (this[0]) { // this[0] is the renderTo div
             // Create the chart
             if (args[0]) {
-                new H[ // eslint-disable-line no-new
+                new H[ // eslint-disable-line computed-property-spacing, no-new
                 // Constructor defaults to Chart
                 isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
                 return this;
