@@ -130,7 +130,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     addLegendProxyGroup: function () {
-        var a11yOptions = (this.chart.options.accessibility), groupLabel = this.chart.langFormat('accessibility.legend.legendLabel'), groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+        var a11yOptions = this.chart.options.accessibility, groupLabel = this.chart.langFormat('accessibility.legend.legendLabel', {}), groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
         this.legendProxyGroup = this.addProxyGroup({
             'aria-label': groupLabel,
@@ -208,7 +208,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * Response code
      */
     onKbdArrowKey: function (keyboardNavigationHandler, keyCode) {
-        var keys = this.keyCodes, response = keyboardNavigationHandler.response, chart = this.chart, a11yOptions = chart.options.accessibility, numItems = chart.legend.allItems.length, direction = (keyCode === keys.left || keyCode === keys.up) ? -1 : 1;
+        var keys = this.keyCodes, response = keyboardNavigationHandler.response, chart = this.chart, a11yOptions = (chart.options.accessibility), numItems = chart.legend.allItems.length, direction = (keyCode === keys.left || keyCode === keys.up) ? -1 : 1;
         var res = chart.highlightLegendItem(this.highlightedLegendItemIx + direction);
         if (res) {
             this.highlightedLegendItemIx += direction;
