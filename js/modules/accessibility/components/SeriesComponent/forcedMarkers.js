@@ -26,8 +26,8 @@ function isWithinDescriptionThreshold(series) {
  * @private
  */
 function isWithinNavigationThreshold(series) {
-    var navOptions = (series.chart.options.accessibility
-        .keyboardNavigation.seriesNavigation);
+    var navOptions = series.chart.options.accessibility
+        .keyboardNavigation.seriesNavigation;
     return series.points.length <
         navOptions.pointNavigationEnabledThreshold ||
         navOptions.pointNavigationEnabledThreshold === false;
@@ -36,7 +36,7 @@ function isWithinNavigationThreshold(series) {
  * @private
  */
 function shouldForceMarkers(series) {
-    var chartA11yEnabled = (series.chart.options.accessibility.enabled), seriesA11yEnabled = (series.options.accessibility &&
+    var chartA11yEnabled = series.chart.options.accessibility.enabled, seriesA11yEnabled = (series.options.accessibility &&
         series.options.accessibility.enabled) !== false, withinDescriptionThreshold = isWithinDescriptionThreshold(series), withinNavigationThreshold = isWithinNavigationThreshold(series);
     return chartA11yEnabled && seriesA11yEnabled &&
         (withinDescriptionThreshold || withinNavigationThreshold);

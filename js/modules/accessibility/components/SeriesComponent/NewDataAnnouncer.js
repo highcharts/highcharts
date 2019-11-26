@@ -247,10 +247,11 @@ extend(NewDataAnnouncer.prototype, {
      * @param {Highcharts.Point} [newPoint]
      *          If a single point was added, a reference to this point.
      *
-     * @return {string} The announcement message to give to user.
+     * @return {string|null}
+     * The announcement message to give to user.
      */
     buildAnnouncementMessage: function (dirtySeries, newSeries, newPoint) {
-        var chart = this.chart, annOptions = (chart.options.accessibility.announceNewData);
+        var chart = this.chart, annOptions = chart.options.accessibility.announceNewData;
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
             var formatterRes = annOptions.announcementFormatter(dirtySeries, newSeries, newPoint);

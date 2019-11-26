@@ -18,8 +18,15 @@
  */
 declare global {
     namespace Highcharts {
+        interface AccessibilityAnnouncementFormatter {
+            (
+                updatedSeries: Array<Series>,
+                addedSeries?: Series,
+                addedPoint?: Point,
+            ): boolean|string;
+        }
         interface AccessibilityAnnounceNewDataOptions {
-            announcementFormatter?: Function;
+            announcementFormatter?: AccessibilityAnnouncementFormatter;
             enabled: boolean;
             interruptUser: boolean;
             minAnnounceInterval: number;
@@ -141,7 +148,7 @@ declare global {
 /**
  * Formatter callback for the accessibility announcement.
  *
- * @callback Highcharts.AccessibilityAnnouncementFormmatter
+ * @callback Highcharts.AccessibilityAnnouncementFormatter
  *
  * @param {Array<Highcharts.Series>} updatedSeries
  * Array of all series that received updates. If an announcement is already
@@ -721,7 +728,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * @sample highcharts/accessibility/custom-dynamic
              *         High priority live alerts
              *
-             * @type      {Highcharts.AccessibilityAnnouncementFormmatter}
+             * @type      {Highcharts.AccessibilityAnnouncementFormatter}
              * @apioption accessibility.announceNewData.announcementFormatter
              */
 

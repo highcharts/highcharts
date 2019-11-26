@@ -35,7 +35,7 @@ H.Series.prototype.keyboardMoveVertical = true;
  * @private
  * @function getPointIndex
  *
- * @param {Highcharts.Point} point
+ * @param {Highcharts.AccessibilityPoint} point
  *        The point to find index of.
  *
  * @return {number|undefined}
@@ -89,8 +89,7 @@ function isSkipSeries(series) {
 function isSkipPoint(point) {
     var a11yOptions = point.series.chart.options.accessibility;
     return point.isNull &&
-        a11yOptions.keyboardNavigation.seriesNavigation
-            .skipNullPoints ||
+        a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         isSkipSeries(point.series);
 }

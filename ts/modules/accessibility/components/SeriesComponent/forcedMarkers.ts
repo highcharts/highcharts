@@ -26,7 +26,7 @@ declare global {
         }
         interface Series {
             a11yMarkersForced?: boolean;
-            resetA11yMarkerOptions?: PointMarkerOptionsObject;
+            resetA11yMarkerOptions: PointMarkerOptionsObject;
             resetMarkerOptions?: unknown;
         }
     }
@@ -38,10 +38,10 @@ declare global {
 /**
  * @private
  */
-function isWithinDescriptionThreshold(series: Highcharts.Series): boolean {
-    var a11yOptions: Highcharts.AccessibilityOptions = (
-        series.chart.options.accessibility as any
-    );
+function isWithinDescriptionThreshold(
+    series: Highcharts.AccessibilitySeries
+): boolean {
+    var a11yOptions = series.chart.options.accessibility;
 
     return series.points.length <
         (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
@@ -52,27 +52,25 @@ function isWithinDescriptionThreshold(series: Highcharts.Series): boolean {
 /**
  * @private
  */
-function isWithinNavigationThreshold(series: Highcharts.Series): boolean {
-    var navOptions: (
-        Highcharts.AccessibilityKeyboardNavigationSeriesNavigationOptions
-    ) = (
-        (series.chart.options.accessibility as any)
-            .keyboardNavigation.seriesNavigation
-    );
+function isWithinNavigationThreshold(
+    series: Highcharts.AccessibilitySeries
+): boolean {
+    var navOptions = series.chart.options.accessibility
+        .keyboardNavigation.seriesNavigation;
 
     return series.points.length <
-        (navOptions.pointNavigationEnabledThreshold as any) ||
-        (navOptions.pointNavigationEnabledThreshold as any) === false;
+        navOptions.pointNavigationEnabledThreshold ||
+        navOptions.pointNavigationEnabledThreshold === false;
 }
 
 
 /**
  * @private
  */
-function shouldForceMarkers(series: Highcharts.Series): boolean {
-    var chartA11yEnabled: boolean = (
-            (series.chart.options.accessibility as any).enabled
-        ),
+function shouldForceMarkers(
+    series: Highcharts.AccessibilitySeries
+): boolean {
+    var chartA11yEnabled = series.chart.options.accessibility.enabled,
         seriesA11yEnabled = (series.options.accessibility &&
             series.options.accessibility.enabled) !== false,
         withinDescriptionThreshold = isWithinDescriptionThreshold(series),
@@ -86,10 +84,8 @@ function shouldForceMarkers(series: Highcharts.Series): boolean {
 /**
  * @private
  */
-function unforceMarkerOptions(series: Highcharts.Series): void {
-    var resetMarkerOptions: Highcharts.PointMarkerOptionsObject = (
-        series.resetA11yMarkerOptions as any
-    );
+function unforceMarkerOptions(series: Highcharts.AccessibilitySeries): void {
+    var resetMarkerOptions = series.resetA11yMarkerOptions;
 
     merge(true, series.options, {
         marker: {
@@ -182,7 +178,9 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    H.addEvent(H.Series, 'render', function (): void {
+    H.addEvent(H.Series as any, 'render', function (
+        this: Highcharts.AccessibilitySeries
+    ): void {
         var series = this,
             options = series.options;
 

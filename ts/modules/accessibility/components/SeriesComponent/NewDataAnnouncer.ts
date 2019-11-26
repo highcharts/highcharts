@@ -40,9 +40,9 @@ import DOMElementProvider from '../../utils/DOMElementProvider.js';
 declare global {
     namespace Highcharts {
         class NewDataAnnouncer {
-            public constructor(chart: Chart);
+            public constructor(chart: AccessibilityChart);
             public announceRegion: HTMLDOMElement;
-            public chart: Chart;
+            public chart: AccessibilityChart;
             public clearAnnouncementContainerTimer?: number;
             public dirty: NewDataAnnouncerDirtyObject;
             public domElementProvider: DOMElementProvider;
@@ -144,7 +144,7 @@ function getUniqueSeries(
  */
 var NewDataAnnouncer: typeof Highcharts.NewDataAnnouncer = function (
     this: Highcharts.NewDataAnnouncer,
-    chart: Highcharts.Chart
+    chart: Highcharts.AccessibilityChart
 ): void {
     this.chart = chart;
 } as any;
@@ -442,24 +442,23 @@ extend(NewDataAnnouncer.prototype, {
      * @param {Highcharts.Point} [newPoint]
      *          If a single point was added, a reference to this point.
      *
-     * @return {string} The announcement message to give to user.
+     * @return {string|null}
+     * The announcement message to give to user.
      */
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
         dirtySeries: Array<Highcharts.Series>,
-        newSeries?: Highcharts.Series,
-        newPoint?: Highcharts.Point
-    ): string {
+        newSeries?: Highcharts.AccessibilitySeries,
+        newPoint?: Highcharts.AccessibilityPoint
+    ): (string|null) {
         var chart = this.chart,
-            annOptions: Highcharts.AccessibilityAnnounceNewDataOptions = (
-                (chart.options.accessibility as any).announceNewData
-            );
+            annOptions = chart.options.accessibility.announceNewData;
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
-            var formatterRes = annOptions.announcementFormatter(
+            var formatterRes: (false|string) = annOptions.announcementFormatter(
                 dirtySeries, newSeries, newPoint
-            );
+            ) as any;
             if (formatterRes !== false) {
                 return formatterRes.length ? formatterRes : null;
             }

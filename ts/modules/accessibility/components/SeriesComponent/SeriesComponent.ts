@@ -72,7 +72,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
      * Init the component.
      */
     init: function (this: Highcharts.SeriesComponent): void {
-        this.newDataAnnouncer = new NewDataAnnouncer(this.chart as any);
+        this.newDataAnnouncer = new NewDataAnnouncer(this.chart);
         (this.newDataAnnouncer as any).init();
 
         this.keyboardNavigation = new (SeriesKeyboardNavigation as any)(
@@ -130,9 +130,11 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
      * markers change on zoom/pixel density.
      */
     onChartRender: function (this: Highcharts.SeriesComponent): void {
-        var chart: Highcharts.Chart = this.chart as any;
+        var chart = this.chart;
 
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (
+            series: Highcharts.AccessibilitySeries
+        ): void {
             var shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
                 series.visible;

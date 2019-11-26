@@ -75,6 +75,7 @@ declare global {
             updateProxyOverlays(): void;
         }
         interface Axis {
+            /** @requires modules/accessibility */
             panStep(direction: number, granularity?: number): void;
         }
     }

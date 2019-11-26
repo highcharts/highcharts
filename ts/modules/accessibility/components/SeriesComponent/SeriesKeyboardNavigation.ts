@@ -21,8 +21,11 @@ import H from '../../../../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class SeriesKeyboardNavigation {
-            public constructor(chart: Chart, keyCodes: Dictionary<number>);
-            public chart: Chart;
+            public constructor(
+                chart: AccessibilityChart,
+                keyCodes: Dictionary<number>
+            );
+            public chart: AccessibilityChart;
             public eventProvider?: EventProvider;
             public keyCodes: Dictionary<number>;
             public lastDrilledDownPoint?: (
@@ -111,18 +114,18 @@ H.Series.prototype.keyboardMoveVertical = true;
  * @private
  * @function getPointIndex
  *
- * @param {Highcharts.Point} point
+ * @param {Highcharts.AccessibilityPoint} point
  *        The point to find index of.
  *
  * @return {number|undefined}
  *         The index in the series.points array of the point.
  */
 function getPointIndex(point: Highcharts.Point): (number|undefined) {
-    var index: number = point.index as any,
+    var index = point.index,
         points = point.series.points,
         i = points.length;
 
-    if (points[index] !== point) {
+    if (points[index as any] !== point) {
         while (i--) {
             if (points[i] === point) {
                 return i;
@@ -144,13 +147,11 @@ function getPointIndex(point: Highcharts.Point): (number|undefined) {
  *
  * @return {boolean|number|undefined}
  */
-function isSkipSeries(series: Highcharts.Series): (boolean|number|undefined) {
-    var a11yOptions: Highcharts.AccessibilityOptions = (
-            series.chart.options.accessibility as any
-        ),
-        seriesNavOptions: (
-            Highcharts.AccessibilityKeyboardNavigationSeriesNavigationOptions
-        ) = (a11yOptions.keyboardNavigation as any).seriesNavigation,
+function isSkipSeries(
+    series: Highcharts.AccessibilitySeries
+): (boolean|number|undefined) {
+    var a11yOptions = series.chart.options.accessibility,
+        seriesNavOptions = a11yOptions.keyboardNavigation.seriesNavigation,
         seriesA11yOptions = series.options.accessibility || {},
         seriesKbdNavOptions = seriesA11yOptions.keyboardNavigation;
 
@@ -178,14 +179,13 @@ function isSkipSeries(series: Highcharts.Series): (boolean|number|undefined) {
  *
  * @return {boolean|number|undefined}
  */
-function isSkipPoint(point: Highcharts.Point): (boolean|number|undefined) {
-    var a11yOptions: Highcharts.AccessibilityOptions = (
-        point.series.chart.options.accessibility as any
-    );
+function isSkipPoint(
+    point: Highcharts.AccessibilityPoint
+): (boolean|number|undefined) {
+    var a11yOptions = point.series.chart.options.accessibility;
 
     return point.isNull &&
-        (a11yOptions.keyboardNavigation as any).seriesNavigation
-            .skipNullPoints ||
+        a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         isSkipSeries(point.series);
 }
@@ -206,8 +206,8 @@ function isSkipPoint(point: Highcharts.Point): (boolean|number|undefined) {
  * @return {Highcharts.Point|undefined}
  */
 function getClosestPoint(
-    point: Highcharts.Point,
-    series: Highcharts.Series,
+    point: Highcharts.AccessibilityPoint,
+    series: Highcharts.AccessibilitySeries,
     xWeight?: number,
     yWeight?: number
 ): (Highcharts.Point|undefined) {
@@ -294,13 +294,14 @@ H.Point.prototype.highlight = function (): Highcharts.Point {
  *         point to highlight in chosen direction).
  */
 H.Chart.prototype.highlightAdjacentPoint = function (
+    this: Highcharts.AccessibilityChart,
     next: boolean
 ): (boolean|Highcharts.Point) {
     var chart = this,
         series = chart.series,
         curPoint = chart.highlightedPoint,
         curPointIndex = curPoint && getPointIndex(curPoint) || 0,
-        curPoints: Array<Highcharts.Point> =
+        curPoints: Array<Highcharts.AccessibilityPoint> =
         (curPoint && curPoint.series.points) as any,
         lastSeries = chart.series && chart.series[chart.series.length - 1],
         lastPoint = lastSeries && lastSeries.points &&
@@ -366,6 +367,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (
  * @return {boolean|Highcharts.Point}
  */
 H.Series.prototype.highlightFirstValidPoint = function (
+    this: Highcharts.AccessibilitySeries
 ): (boolean|Highcharts.Point) {
     var curPoint = this.chart.highlightedPoint,
         start: number = (curPoint && curPoint.series) === this ?
@@ -402,13 +404,14 @@ H.Series.prototype.highlightFirstValidPoint = function (
  * @return {Highcharts.Point|boolean}
  */
 H.Chart.prototype.highlightAdjacentSeries = function (
+    this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Highcharts.Point) {
     var chart = this,
         newSeries,
         newPoint,
         adjacentNewPoint,
-        curPoint: Highcharts.Point = chart.highlightedPoint as any,
+        curPoint: Highcharts.AccessibilityPoint = chart.highlightedPoint as any,
         lastSeries = chart.series && chart.series[chart.series.length - 1],
         lastPoint = lastSeries && lastSeries.points &&
                     lastSeries.points[lastSeries.points.length - 1];
@@ -466,9 +469,10 @@ H.Chart.prototype.highlightAdjacentSeries = function (
  * @return {Highcharts.Point|boolean}
  */
 H.Chart.prototype.highlightAdjacentPointVertical = function (
+    this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Highcharts.Point) {
-    var curPoint: Highcharts.Point = this.highlightedPoint as any,
+    var curPoint: Highcharts.AccessibilityPoint = this.highlightedPoint as any,
         minDistance = Infinity,
         bestPoint: (Highcharts.Point|undefined);
 
@@ -476,12 +480,16 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (
         return false;
     }
 
-    this.series.forEach(function (series: Highcharts.Series): void {
+    this.series.forEach(function (
+        series: Highcharts.AccessibilitySeries
+    ): void {
         if (isSkipSeries(series)) {
             return;
         }
 
-        series.points.forEach(function (point: Highcharts.Point): void {
+        series.points.forEach(function (
+            point: Highcharts.AccessibilityPoint
+        ): void {
             if (!defined(point.plotY) || !defined(point.plotX) ||
                 point === curPoint) {
                 return;
@@ -588,7 +596,7 @@ function updateChartFocusAfterDrilling(chart: Highcharts.Chart): void {
  */
 function SeriesKeyboardNavigation(
     this: Highcharts.SeriesKeyboardNavigation,
-    chart: Highcharts.Chart,
+    chart: Highcharts.AccessibilityChart,
     keyCodes: Highcharts.Dictionary<number>
 ): void {
     this.keyCodes = keyCodes;

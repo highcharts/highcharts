@@ -13,7 +13,7 @@
 /**
  * Formatter callback for the accessibility announcement.
  *
- * @callback Highcharts.AccessibilityAnnouncementFormmatter
+ * @callback Highcharts.AccessibilityAnnouncementFormatter
  *
  * @param {Array<Highcharts.Series>} updatedSeries
  * Array of all series that received updates. If an announcement is already
@@ -550,7 +550,7 @@ var options = {
              * @sample highcharts/accessibility/custom-dynamic
              *         High priority live alerts
              *
-             * @type      {Highcharts.AccessibilityAnnouncementFormmatter}
+             * @type      {Highcharts.AccessibilityAnnouncementFormatter}
              * @apioption accessibility.announceNewData.announcementFormatter
              */
             /**

@@ -121,7 +121,7 @@ function shouldDescribeSeriesElement(series) {
  * @return {string}
  */
 function pointNumberToString(point, value) {
-    var chart = point.series.chart, a11yPointOptions = (chart.options.accessibility.point || {}), tooltipOptions = point.series.tooltipOptions || {}, lang = chart.options.lang;
+    var chart = point.series.chart, a11yPointOptions = chart.options.accessibility.point || {}, tooltipOptions = point.series.tooltipOptions || {}, lang = chart.options.lang;
     if (isNumber(value)) {
         return numberFormat(value, a11yPointOptions.valueDecimals ||
             tooltipOptions.valueDecimals ||
@@ -164,7 +164,7 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
  * The description as string.
  */
 function getPointA11yTimeDescription(point) {
-    var series = point.series, chart = series.chart, a11yOptions = (chart.options.accessibility.point || {}), hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
     if (hasDateXAxis) {
         var tooltipDateFormat = H.Tooltip.prototype.getXDateFormat.call({
             getDateFormat: H.Tooltip.prototype.getDateFormat,
@@ -209,7 +209,7 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
  * @return {string}
  */
 function getPointValueDescription(point) {
-    var series = point.series, a11yPointOpts = (series.chart.options.accessibility.point || {}), tooltipOptions = series.tooltipOptions || {}, valuePrefix = a11yPointOpts.valuePrefix ||
+    var series = point.series, a11yPointOpts = series.chart.options.accessibility.point || {}, tooltipOptions = series.tooltipOptions || {}, valuePrefix = a11yPointOpts.valuePrefix ||
         tooltipOptions.valuePrefix || '', valueSuffix = a11yPointOpts.valueSuffix ||
         tooltipOptions.valueSuffix || '', fallbackKey = (typeof point.value !==
         'undefined' ?
