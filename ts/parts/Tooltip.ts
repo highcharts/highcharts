@@ -1645,7 +1645,7 @@ H.Tooltip.prototype = {
             }
 
             // The first format that is too great for the range
-            if ((timeUnits as any)[n] > range) {
+            if (timeUnits[n] > range) {
                 n = lastN;
                 break;
             }

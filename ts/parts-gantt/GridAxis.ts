@@ -682,7 +682,7 @@ addEvent(
                                 count = parentInfo.count * 10;
                             }
 
-                            unitRange = (timeUnits as any)[unitName];
+                            unitRange = timeUnits[unitName];
                             this.tickInterval = unitRange * count;
                             return this.getTimeTicks(
                                 {

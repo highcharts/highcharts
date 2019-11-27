@@ -139,7 +139,7 @@ Axis.prototype.normalizeTimeTickInterval = function (
             null
         ]] as Array<[string, (Array<number>|null)]>,
         unit = units[units.length - 1], // default unit is years
-        interval = (timeUnits as any)[unit[0]],
+        interval = timeUnits[unit[0]],
         multiples = unit[1],
         count,
         i;
@@ -147,7 +147,7 @@ Axis.prototype.normalizeTimeTickInterval = function (
     // loop through the units to find the one that best fits the tickInterval
     for (i = 0; i < units.length; i++) {
         unit = units[i];
-        interval = (timeUnits as any)[unit[0]];
+        interval = timeUnits[unit[0]];
         multiples = unit[1];
 
 
@@ -157,7 +157,7 @@ Axis.prototype.normalizeTimeTickInterval = function (
             var lessThan = (
                 interval *
                 (multiples as any)[(multiples as any).length - 1] +
-                (timeUnits as any)[units[i + 1][0]]
+                timeUnits[units[i + 1][0]]
             ) / 2;
 
             // break and keep the current unit
