@@ -2684,7 +2684,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -2696,7 +2696,7 @@ H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 
 /**
  * Stop running animation.
@@ -3421,6 +3421,7 @@ const utils = {
     isString,
     numberFormat,
     objectEach,
+    offset,
     pad,
     pick,
     pInt,
