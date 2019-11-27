@@ -29,6 +29,7 @@
  * - Columns are always one pixel wide. Don't set the threshold too low.
  * - Disable animations
  * - Marker shapes are not supported: markers will always be circles
+ * - Marker shapes are only rectangles on heatmap chart
  *
  * Optimizing tips for users
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to

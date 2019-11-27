@@ -28,7 +28,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, symbols = H.SVGRenderer.prototype.symbols, UNDEFINED;
 /**
  * @private
  * @class
@@ -136,8 +136,13 @@ seriesType('heatmap', 'scatter',
         overflow: false,
         padding: 0 // #3837
     },
-    /** @ignore-option */
-    marker: null,
+    marker: {
+        symbol: 'rect',
+        /** @ignore-option */
+        radius: 0,
+        lineColor: UNDEFINED
+    },
+    clip: true,
     /** @ignore-option */
     pointRange: null,
     tooltip: {
@@ -179,6 +184,24 @@ seriesType('heatmap', 'scatter',
         options.pointRange = pick(options.pointRange, options.colsize || 1);
         // general point range
         this.yAxis.axisPointRange = options.rowsize || 1;
+        // Bind new symbol names
+        extend(symbols, {
+            ellipse: symbols.circle,
+            rect: symbols.square
+        });
+    },
+    getSymbol: seriesTypes.scatter.prototype.getSymbol,
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.heatmap#setClip
+     * @return {void}
+     */
+    setClip: function () {
+        Series.prototype.setClip.apply(this, arguments);
+        if (this.options.clip !== false && this.markerGroup) {
+            this.markerGroup
+                .clip(this.chart.clipRect);
+        }
     },
     /**
      * @private
@@ -186,24 +209,96 @@ seriesType('heatmap', 'scatter',
      * @return {void}
      */
     translate: function () {
-        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, pointPlacement = series.pointPlacementToXValue(); // #7860
+        var series = this, options = series.options, symbol = options.marker && options.marker.symbol || '', shape = symbols[symbol] ? symbol : 'rect', options = series.options, hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = clamp(Math.round(xAxis.len -
-                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = clamp(Math.round(xAxis.len -
-                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = clamp(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = clamp(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
-            // Set plotX and plotY for use in K-D-Tree and more
-            point.plotX = point.clientX = (x1 + x2) / 2;
-            point.plotY = (y1 + y2) / 2;
-            point.shapeType = 'rect';
-            point.shapeArgs = {
-                x: Math.min(x1, x2) + pointPadding,
-                y: Math.min(y1, y2) + pointPadding,
-                width: Math.max(Math.abs(x2 - x1) - pointPadding * 2, 0),
-                height: Math.max(Math.abs(y2 - y1) - pointPadding * 2, 0)
+            var pointAttr, dif, hasImage = (point.marker && point.marker.symbol || shape || '')
+                .match(/url/), cellAttr = point.getCellAttributes(), shapeArgs = {
+                x: Math.min(cellAttr.x1, cellAttr.x2),
+                y: Math.min(cellAttr.y1, cellAttr.y2),
+                width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
+                height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
             };
+            // If marker shape is regular (symetric), find shorter
+            // cell's side.
+            if (hasRegularShape) {
+                dif = Math.abs(shapeArgs.width - shapeArgs.height);
+                shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
+                    (shapeArgs.width < shapeArgs.height ? 0 : dif / 2);
+                shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
+                    (shapeArgs.width < shapeArgs.height ? dif / 2 : 0);
+                shapeArgs.width = shapeArgs.height =
+                    Math.min(shapeArgs.width, shapeArgs.height);
+            }
+            pointAttr = {
+                plotX: (cellAttr.x1 + cellAttr.x2) / 2,
+                plotY: (cellAttr.y1 + cellAttr.y2) / 2,
+                clientX: (cellAttr.x1 + cellAttr.x2) / 2,
+                shapeType: 'path',
+                shapeArgs: merge(true, shapeArgs, {
+                    d: symbols[shape](shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height)
+                })
+            };
+            if (hasImage) {
+                point.marker = {
+                    width: shapeArgs.width,
+                    height: shapeArgs.height
+                };
+            }
+            extend(point, pointAttr);
         });
         fireEvent(series, 'afterTranslate');
+    },
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.heatmap#pointAttribs
+     * @param {Highcharts.HeatmapPoint} point
+     * @param {string} state
+     * @return {Highcharts.SVGAttributes}
+     */
+    pointAttribs: function (point, state) {
+        var attr = seriesTypes.scatter.prototype.pointAttribs
+            .call(this, point, state), seriesOptions = this.options || {}, stateOptions, brightness;
+        // Apply lineColor, or set it to default series color.
+        attr.stroke = (point.marker && point.marker.lineColor ||
+            seriesOptions.marker && seriesOptions.marker.lineColor ||
+            this.color);
+        if (state) {
+            stateOptions = merge(seriesOptions.states[state], (seriesOptions.marker &&
+                seriesOptions.marker.states)[state], point.options.states &&
+                point.options.states[state] || {});
+            brightness = stateOptions.brightness;
+            attr.fill =
+                stateOptions.color || (brightness !== UNDEFINED &&
+                    H.color(attr.fill)
+                        .brighten(brightness)
+                        .get()) || attr.fill;
+            attr.stroke = stateOptions.lineColor;
+        }
+        return attr;
+    },
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.heatmap#markerAttribs
+     * @param {Highcharts.HeatmapPoint} point
+     * @return {Highcharts.SVGAttributes}
+     */
+    markerAttribs: function (point) {
+        var symbol = (point.marker &&
+            point.marker.symbol || (this.options.marker || {}).symbol), shapeArgs = point.shapeArgs || {};
+        point.hasImage = (symbol && symbol.indexOf('url') === 0) || false;
+        if (point.hasImage) {
+            return {
+                x: point.plotX,
+                y: point.plotY
+            };
+        }
+        return {
+            x: shapeArgs.x,
+            y: shapeArgs.y,
+            width: shapeArgs.width,
+            height: shapeArgs.height
+        };
     },
     /**
      * @private
@@ -213,11 +308,16 @@ seriesType('heatmap', 'scatter',
     drawPoints: function () {
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        var func = this.chart.styledMode ? 'css' : 'animate';
-        seriesTypes.column.prototype.drawPoints.call(this);
-        this.points.forEach(function (point) {
-            point.graphic[func](this.colorAttribs(point));
-        }, this);
+        var func = this.chart.styledMode ? 'css' : 'animate', seriesMarkerOptions = this.options.marker || {};
+        if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
+            seriesTypes.scatter.prototype.drawPoints.call(this);
+            this.points.forEach(function (point) {
+                if (!point.isNull) {
+                    point.graphic &&
+                        point.graphic[func](this.colorAttribs(point));
+                }
+            }, this);
+        }
     },
     // Define hasData function for non-cartesian series.
     // Returns true if the series has points at all.
@@ -229,12 +329,6 @@ seriesType('heatmap', 'scatter',
     getValidPoints: function (points, insideOnly) {
         return Series.prototype.getValidPoints.call(this, points, insideOnly, true);
     },
-    /**
-     * @ignore
-     * @deprecated
-     * @function Highcharts.seriesTypes.heatmap#animate
-     */
-    animate: noop,
     /**
      * @ignore
      * @deprecated
@@ -263,9 +357,32 @@ seriesType('heatmap', 'scatter',
         this.valueMax = this.dataMax;
         // Get the extremes from the y data
         Series.prototype.getExtremes.call(this);
+    },
+    /**
+     * @private
+     * @borrows Highcharts.seriesTypes.line.setOptions as Highcharts.seriesTypes.heatmap#setOptions
+     */
+    setOptions: function (itemOptions) {
+        var newOptions, propsMap = {
+            borderWidth: 'lineWidth',
+            borderColor: 'lineColor'
+        };
+        // Keep backward compatibility for borderWidth
+        for (var prop in propsMap) {
+            if (H.defined(itemOptions[prop])) {
+                var markerOptions = {};
+                markerOptions[propsMap[prop]] =
+                    itemOptions[prop];
+                newOptions = merge(newOptions, itemOptions, {
+                    marker: merge(itemOptions.marker, markerOptions)
+                });
+            }
+        }
+        return Series.prototype.setOptions
+            .apply(this, [newOptions || itemOptions]);
     }
     /* eslint-enable valid-jsdoc */
-}), extend({
+}), merge(colorMapPointMixin, {
     /**
      * Heatmap series only. Padding between the points in the heatmap.
      * @name Highcharts.Point#pointPadding
@@ -302,9 +419,43 @@ seriesType('heatmap', 'scatter',
             rect.y - size,
             'Z'
         ];
+    },
+    getCellAttributes: function () {
+        var point = this, series = point.series, seriesOptions = series.options, xPad = (seriesOptions.colsize || 1) / 2, yPad = (seriesOptions.rowsize || 1) / 2, xAxis = series.xAxis, yAxis = series.yAxis, seriesMarkerOptions = series.options.marker, pointPlacement = series.pointPlacementToXValue(), // #7860
+        pointPadding = pick(point.pointPadding, seriesOptions.pointPadding, 0), cellAttr = {
+            x1: clamp(Math.round(xAxis.len -
+                (xAxis.translate(point.x - xPad, false, true, false, true, -pointPlacement) || 0)), -xAxis.len, 2 * xAxis.len),
+            x2: clamp(Math.round(xAxis.len -
+                (xAxis.translate(point.x + xPad, false, true, false, true, -pointPlacement) || 0)), -xAxis.len, 2 * xAxis.len),
+            y1: clamp(Math.round((yAxis.translate(point.y - yPad, false, true, false, true) || 0)), -yAxis.len, 2 * yAxis.len),
+            y2: clamp(Math.round((yAxis.translate(point.y + yPad, false, true, false, true) || 0)), -yAxis.len, 2 * yAxis.len)
+        };
+        // Handle marker's fixed width, and height values including border
+        // and pointPadding while calculating cell attributes.
+        ['width', 'height'].forEach(function (prop) {
+            var direction = prop === 'width' ? 'x' : 'y', coords = [direction + "1", direction + "2"];
+            var side = Math.abs(cellAttr[coords[0]] - cellAttr[coords[1]]), borderWidth = seriesMarkerOptions &&
+                seriesMarkerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[coords[0]] + cellAttr[coords[1]]) / 2;
+            if (seriesMarkerOptions[prop] &&
+                seriesMarkerOptions[prop] < side) {
+                cellAttr[coords[0]] = plotPos - (seriesMarkerOptions[prop] / 2) -
+                    (borderWidth / 2);
+                cellAttr[coords[1]] = plotPos + (seriesMarkerOptions[prop] / 2) +
+                    (borderWidth / 2);
+            }
+            // Handle pointPadding
+            if (pointPadding) {
+                if (direction === 'y') {
+                    coords.reverse();
+                }
+                cellAttr[coords[0]] += pointPadding;
+                cellAttr[coords[1]] -= pointPadding;
+            }
+        });
+        return cellAttr;
     }
     /* eslint-enable valid-jsdoc */
-}, colorMapPointMixin));
+}));
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

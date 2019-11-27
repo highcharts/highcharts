@@ -44,6 +44,7 @@ declare global {
             public points: Array<TilemapPoint>;
             public tileShape: TilemapShapeObject;
             public translateColors: ColorSeries['translateColors'];
+            public drawPoints(): void;
             public getSeriesPixelPadding(axis: Axis): Dictionary<number>;
             public setOptions(): TilemapSeriesOptions;
             public translate(): void;
@@ -790,7 +791,22 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
         tileShape: 'hexagon'
 
     }, { // Prototype functions
-
+        // Use drawPoints method from old heatmap implementation
+        // Consider standarizing heatmap and tilemap into more consistent form.
+        drawPoints: function (
+            this: Highcharts.TilemapSeries
+        ): void {
+            // In styled mode, use CSS, otherwise the fill used in the style
+            // sheet will take precedence over the fill attribute.
+            var func = this.chart.styledMode ? 'css' : 'animate';
+            H.seriesTypes.column.prototype.drawPoints.call(this);
+            this.points.forEach(
+                (point: Highcharts.TilemapPoint): void => {
+                    point.graphic &&
+                    point.graphic[func](this.colorAttribs(point));
+                }
+            );
+        },
         // Set tile shape object on series
         setOptions: function (
             this: Highcharts.TilemapSeries
