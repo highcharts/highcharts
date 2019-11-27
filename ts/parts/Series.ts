@@ -5022,7 +5022,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 hasModifyValue = !!series.modifyValue,
                 i,
                 pointPlacement = series.pointPlacementToXValue(), // #7860
-                dynamicallyPlaced = isNumber(pointPlacement),
+                dynamicallyPlaced = Boolean(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -6963,21 +6963,23 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {number}
          */
         pointPlacementToXValue: function (this: Highcharts.Series): number {
+            const {
+                options: {
+                    pointPlacement,
+                    pointRange
+                },
+                xAxis: axis
+            } = this;
 
-            var series = this,
-                axis = series.xAxis,
-                pointPlacement = series.options.pointPlacement;
-
+            let factor = pointPlacement;
             // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
-            }
-            if (isNumber(pointPlacement)) {
-                (pointPlacement as any) *=
-                    pick(series.options.pointRange || axis.pointRange);
+            if (factor === 'between') {
+                factor = axis.reversed ? -0.5 : 0.5; // #11955
             }
 
-            return pointPlacement as any;
+            return isNumber(factor) ?
+                factor * pick(pointRange, axis.pointRange) :
+                0;
         }
     }
 ) as any; // end Series prototype
