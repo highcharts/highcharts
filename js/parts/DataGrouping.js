@@ -469,7 +469,7 @@ seriesProto.processData = function () {
                     xAxis.min === xAxis.dataMin) {
                     xAxis.min = Math.min(groupedXData[0], xAxis.min);
                 }
-                xAxis.dataMin = groupedXData[0];
+                xAxis.dataMin = Math.min(groupedXData[0], xAxis.dataMin);
             }
             // We calculated all group positions but we should render
             // only the ones within the visible range
