@@ -1302,7 +1302,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         if (haloOptions &&
             haloOptions.size &&
             markerGraphic &&
-            markerVisibility !== 'hidden') {
+            markerVisibility !== 'hidden' &&
+            !point.isCluster
+        ) {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
