@@ -432,7 +432,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 brightness;
 
             // Apply lineColor, or set it to default series color.
-            attr.stroke = (point.marker && point.marker.lineColor ||
+            attr.stroke = (point && point.marker && point.marker.lineColor ||
                 seriesOptions.marker && seriesOptions.marker.lineColor ||
                 this.color);
 

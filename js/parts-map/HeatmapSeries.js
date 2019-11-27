@@ -260,7 +260,7 @@ seriesType('heatmap', 'scatter',
         var attr = seriesTypes.scatter.prototype.pointAttribs
             .call(this, point, state), seriesOptions = this.options || {}, stateOptions, brightness;
         // Apply lineColor, or set it to default series color.
-        attr.stroke = (point.marker && point.marker.lineColor ||
+        attr.stroke = (point && point.marker && point.marker.lineColor ||
             seriesOptions.marker && seriesOptions.marker.lineColor ||
             this.color);
         if (state) {
