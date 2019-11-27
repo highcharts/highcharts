@@ -742,17 +742,12 @@ extend(ColorAxis.prototype, {
      * @return {void}
      */
     drawLegendSymbol: function (legend, item) {
-        var padding = legend.padding, legendOptions = legend.options, horiz = this.horiz, 
-        // TODO: Replace these numbers with variables:
-        // (why 12, 16, 40? etc...)
-        width = pick(legendOptions.symbolWidth, horiz ? (legend.widthOption || this.defaultLegendLength) -
-            legend.padding : 12), height = pick(legendOptions.symbolHeight, horiz ? 12 :
-            ((legend.heightOption || this.defaultLegendLength) -
-                legend.titleHeight - 40)), labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30), itemDistance = pick(legendOptions.itemDistance, 10);
+        var padding = legend.padding, legendOptions = legend.options, horiz = this.horiz, width = pick(legendOptions.symbolWidth, horiz ? (legend.widthOption || this.defaultLegendLength) : 12), height = pick(legendOptions.symbolHeight, horiz ? 12 :
+            (legend.heightOption || this.defaultLegendLength)), labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30), itemDistance = pick(legendOptions.itemDistance, 10);
         this.setLegendColor();
         // Create the gradient
         item.legendSymbol = this.chart.renderer.rect(0, legend.baseline - 11, width, height).attr({
-            zIndex: 1
+            zIndex: 0 // make sure that rect is always beneath the ticks
         }).add(item.legendGroup);
         // Set how much space this legend item takes up
         this.legendItemWidth = width + padding +
@@ -1137,7 +1132,7 @@ addEvent(Legend, 'afterUpdate', function () {
         });
     }
 });
-// Calculate and set colors for points
+// Calculate and set colors for points.
 addEvent(Series, 'afterTranslate', function () {
     if (this.chart.colorAxis &&
         this.chart.colorAxis.length ||
@@ -1145,33 +1140,36 @@ addEvent(Series, 'afterTranslate', function () {
         this.translateColors();
     }
 });
-// TODO: refactor ts and make color axis compatible
-// with legendItemObject interface
-H.ColorAxis.prototype.renderAsLegendItem = function () {
-    if (!this.legendGroup) {
-        this.legendGroup = this.chart.renderer
-            .g('legend-item')
-            .addClass('highcharts-coloraxis')
-            .attr({
-            zIndex: 1
-        })
-            .add(this.legend.scrollGroup);
-    }
-    this.legend.baseline = 20;
-    this.drawLegendSymbol(this.legend, this);
-    this.itemWidth = this.legendItemWidth;
-    this.itemHeight = this.legendItemHeight;
-    this.legend.maxItemWidth =
-        Math.max(this.legend.maxItemWidth, this.itemWidth);
-    this.legend.totalItemWidth += this.itemWidth;
-    this.legend.itemHeight = this.itemHeight;
-    this.marginTop = 10;
-    // Fake legend item is required for now -
-    // for color axis only legend symbol is used.
-    this.legendItem = this.chart.renderer.text('', 0, 0);
-    if (this.visible && this.legendColor) {
-        this.legendSymbol.attr({
-            fill: this.legendColor
-        });
-    }
-};
+// Render color axis in legend.
+H.ColorAxis.prototype.renderAsLegendItem =
+    function () {
+        if (!this.legendGroup) {
+            this.legendGroup = this.chart.renderer
+                .g('legend-item')
+                .addClass('highcharts-coloraxis')
+                .attr({
+                zIndex: 1
+            })
+                .add(this.legend.scrollGroup);
+        }
+        this.legend.baseline = 15;
+        // Always create a new symbol.
+        if (this.legendSymbol) {
+            this.legendSymbol.destroy();
+        }
+        this.drawLegendSymbol(this.legend, this);
+        this.itemWidth = this.legendItemWidth;
+        this.itemHeight = this.legendItemHeight;
+        this.legend.maxItemWidth =
+            Math.max(this.legend.maxItemWidth, this.itemWidth);
+        this.legend.totalItemWidth += this.itemWidth;
+        this.legend.itemHeight = this.itemHeight;
+        // Fake legend item is required for now -
+        // for color axis only legend symbol is used.
+        this.legendItem = this.chart.renderer.text('', 0, 0);
+        if (this.visible && this.legendColor && this.legendSymbol) {
+            this.legendSymbol.attr({
+                fill: this.legendColor
+            });
+        }
+    };

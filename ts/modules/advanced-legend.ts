@@ -31,6 +31,8 @@ declare global {
         }
 
         class AdvancedLegend extends Legend implements AdvancedLegendItem {
+            public coll: string;
+            public chart: AdvancedLegendChart;
             public id?: string;
             public itemWidth: number;
             public marginTop: number;
@@ -72,6 +74,7 @@ declare global {
 
         interface Chart {
             isAdvancedLegendEnabled(): boolean;
+            addLegend(options: AdvancedLegendOptions): void;
         }
 
         interface AdvancedLegendChart extends Chart {
@@ -105,10 +108,6 @@ declare global {
  * Highcharts module that introduces multiple legends and sublegends.
  *
  * TODO:
- * - add docs for `legend` options in series, bubble legend and color
- *   axis options
- * - add support for multiple bubble legends in one chart
- * - create demos for options
  * - allow to import advanced legend module without loading
  *   coloraxis and bubble legend modules beforehand
  * - allow referring the legend by index
@@ -157,7 +156,7 @@ H.Chart.prototype.isAdvancedLegendEnabled =
  *
  * @class
  * @name Highcharts.AdvancedLegend
- *
+ * @augments Highcharts.Legend
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
@@ -173,7 +172,8 @@ H.AdvancedLegend = function (
     options: Highcharts.LegendOptions,
     parentLegend: Highcharts.AdvancedLegend
 ): Highcharts.AdvancedLegend {
-    this.id = options.id; // for debugging puposes
+    this.id = options.id;
+    this.coll = 'legends';
     this.legend = parentLegend; // TODO: refactor to this.parentLegend
     // chart.legend servers as default options for all legends and sublegends.
     this.init(chart, H.merge(chart.options.legend, options));
@@ -198,12 +198,14 @@ H.extend(H.AdvancedLegend.prototype, {
      * @sample highcharts/advanced-legend/rich/
      *         Multiple legends with sublegends, color axes and bubble legend
      *
-     * @type         {Array<*>}
      * @since        8.0.0
-     * @requires     modules/highcharts-more
+     * @requires     highcharts-more
      * @requires     modules/heatmap
      * @requires     modules/advanced-legend
-     * @optionparent legends
+     * @extends      legend
+     * @product      highcharts highstock highmaps
+     * @type         {Array<*>}
+     * @optionparent   legends
      */
 
     /**
@@ -250,32 +252,10 @@ H.extend(H.AdvancedLegend.prototype, {
         this.chart.series.forEach(function (
             series: Highcharts.Series
         ): void {
-            var seriesOptions = series && series.options,
-                legendOptions;
+            var legendOptions = series.parentLegendOptions;
 
-            // Handle showInLegend. If the series is linked to another series,
-            // defaults to false.
-            if (series && pick(
-                seriesOptions.showInLegend,
-                !defined(seriesOptions.linkedTo) ? undefined : false, true
-            )) {
-                legendOptions = series.parentLegendOptions;
-
-                if (legendOptions && this.options.id === legendOptions.id) {
-                    // Use points or series for the legend item depending on
-                    // legendType
-                    // TODO: below logic is copied form Legend.ts file -
-                    // move it to a separate function and override it in
-                    // advanced legend module.
-                    allItems = allItems.concat(
-                        series.legendItems as any ||
-                        (
-                            seriesOptions.legendType === 'point' ?
-                                series.data :
-                                series
-                        )
-                    );
-                }
+            if (legendOptions && this.options.id === legendOptions.id) {
+                allItems = allItems.concat(this.getSeriesItems(series));
             }
         }, this);
 
@@ -331,11 +311,9 @@ H.extend(H.AdvancedLegend.prototype, {
             .options.layout === 'horizontal' ?
             pick(this.legend.options.itemDistance, 20) : 0;
 
-        // TODO: this two lines of code will probably cause failure
-        // during the update. Handle this scenario.
         this.legendItem = this as any;
 
-        // Sublegend's group is the same thing item's legend too.
+        // Sublegend's group is the same thing as item's legend.
         this.legendGroup = this.group;
 
         this.setState = H.noop;
@@ -348,52 +326,6 @@ H.extend(H.AdvancedLegend.prototype, {
         this.legend.itemHeight = this.itemHeight =
             Math.round(this.legendHeight);
         this.marginTop = pick(this.legend.itemMarginTop, 10);
-    },
-
-    /**
-     * Override the default legend's method. Advanced legend can act as a
-     * legedn item (sublegend) thus positionItem method has to be equiped with
-     * knowledge of how to position sublegends.
-     *
-     * @private
-     * @function Highcharts.AdvancedLegend#positionItem
-     * @param {Highcharts.AdvancedLegendItem} item
-     *        The item to position
-     * @return {void}
-     */
-    positionItem: function (
-        this: Highcharts.AdvancedLegend,
-        item: Highcharts.AdvancedLegendItem
-    ): void {
-        var legend = this,
-            options = legend.options,
-            symbolPadding = options.symbolPadding,
-            ltr = !options.rtl,
-            legendItemPos = item._legendItemPos,
-            itemX = (legendItemPos as any)[0],
-            itemY = (legendItemPos as any)[1],
-            checkbox = item.checkbox,
-            legendGroup = item.legendGroup,
-            sublegend: Highcharts.AdvancedLegend;
-
-        // Positioning of a sublegend
-        if (legendGroup && legendGroup.element) { // item is sublegend?
-            // TODO: replace all below sublegend references with
-            // properties of AdvancedLegendItem.
-            sublegend = item as Highcharts.AdvancedLegend;
-            legendGroup[defined(legendGroup.translateY) ? 'animate' : 'attr']({
-                translateX: ltr ?
-                    itemX :
-                    legend.legendWidth - itemX - (sublegend.allItems ?
-                        sublegend.legendWidth : 2 * (symbolPadding as any) + 4),
-                translateY: itemY
-            });
-        }
-
-        if (checkbox) {
-            checkbox.x = itemX;
-            checkbox.y = itemY;
-        }
     },
 
     /**
@@ -432,6 +364,20 @@ H.extend(H.AdvancedLegend.prototype, {
         y: number;
     } {
         return this.group.getBBox();
+    },
+
+    /**
+     * Remove the legend from chart.
+     *
+     * @private
+     * @function Highcharts.AdvancedLegend#remove
+     * @return {void}
+     */
+    remove: function (this: Highcharts.AdvancedLegend): void {
+        this.destroy();
+        H.erase(this.chart.legends, this);
+        this.chart.isDirtyLegend = this.chart.isDirtyBox = true;
+        this.chart.redraw();
     }
 }) as any;
 
@@ -492,27 +438,27 @@ extend(H.LegendAdapter.prototype, {
         margin: Array<number>,
         spacing: Array<number>): void {
 
+        var chart = this.chart,
+            titleMarginOption,
+            titleMargin: number,
+            titleMarginBottom: number;
+
+        if (chart.options.title) {
+            titleMarginOption = chart.options.title.margin;
+        }
+
+        titleMargin = titleMarginOption !== undefined ?
+            chart.titleOffset[0] + titleMarginOption :
+            0;
+        titleMarginBottom = titleMarginOption !== undefined ?
+            chart.titleOffset[2] + titleMarginOption :
+            0;
+
         this.legends.forEach(function (legend): void {
 
-            // TODO: title handling shouldn't be inside forEach
-            var chart = this.chart,
-                options = legend.options,
+            var options = legend.options,
                 alignment = legend.getAlignment(),
-                value: number,
-                titleMarginOption,
-                titleMargin: number,
-                titleMarginBottom: number;
-
-            if (chart.options.title) {
-                titleMarginOption = chart.options.title.margin;
-            }
-
-            titleMargin = titleMarginOption !== undefined ?
-                chart.titleOffset[0] + titleMarginOption :
-                0;
-            titleMarginBottom = titleMarginOption !== undefined ?
-                chart.titleOffset[2] + titleMarginOption :
-                0;
+                marginValue: number;
 
             if (alignment && options.enabled) { //  move options.enabled higher
                 ([
@@ -525,7 +471,7 @@ extend(H.LegendAdapter.prototype, {
 
                         // Now we have detected on which side of the
                         // chart we should reserve space for the legend
-                        value = Math.max(
+                        marginValue = Math.max(
                             (chart as any)[marginNames[side]],
                             (
                                 legend[
@@ -545,7 +491,7 @@ extend(H.LegendAdapter.prototype, {
                                         0 : titleMarginBottom))
                             )
                         );
-                        (chart as any)[marginNames[side]] = value;
+                        (chart as any)[marginNames[side]] = marginValue;
                     }
                 });
             }
@@ -604,6 +550,16 @@ extend(H.LegendAdapter.prototype, {
                 legend.render();
             }
         });
+    },
+
+    update: function (
+        this: Highcharts.LegendAdapter,
+        options: Highcharts.LegendOptions,
+        redraw?: boolean
+    ): void {
+        this.legends.forEach(function (legend): void {
+            legend.update(H.merge(true, options, legend.options), redraw);
+        });
     }
 
 });
@@ -627,7 +583,29 @@ wrap(H.Chart.prototype, 'renderLegend', function (
         }, this);
 
     this.legend = new H.LegendAdapter(this, this.options.legend);
+
+    // Add legends array to updatable collections.
+    H.Chart.prototype.collectionsWithUpdate.push('legends');
 });
+
+/**
+ * Add a new legend to chart.
+ *
+ * @private
+ * @function Highcharts.Chart.addLegend
+ * @param {Highcharts.AdvancedLegendOptions} options
+ * @return {void}
+ */
+H.Chart.prototype.addLegend = function (
+    this: Highcharts.AdvancedLegendChart,
+    options: Highcharts.AdvancedLegendOptions
+): void {
+    this.legends.push(
+        new H.AdvancedLegend(this, H.merge(this.options.legend, options))
+    );
+    this.isDirtyLegend = this.isDirtyBox = true;
+    this.redraw();
+};
 
 /**
  * @private
@@ -650,10 +628,12 @@ H.LegendItemMixin =
  */
 H.LegendItemMixin.prototype.findTargetLegendOptions =
     function (item: Highcharts.AdvancedLegendItem): any {
-        // TODO: refactor this enigmatic piece of code.
         var id = item.legendId =
+            // Get legend id from user options.
             (item as any).userOptions ?
                 (item as any).userOptions.legend :
+                // Use options if user options don't specify
+                // the legend id.
                 ((item as any).options ? (item as any)
                     .options.legend : undefined),
 
@@ -693,14 +673,14 @@ H.LegendItemMixin.prototype.findTargetLegendOptions =
     };
 
 /**
-     * Add `legendOptions` property to legend item object or
-     * throw an error if target legend was not found.
-     *
-     * @private
-     * @function Highcharts.LegendItemMixin.setTargetLegendOptions
-     *
-     * @return {Highcharts.AdvancedLegendOptions}
-    */
+ * Add `legendOptions` property to legend item object or
+ * throw an error if target legend was not found.
+ *
+ * @private
+ * @function Highcharts.LegendItemMixin.setTargetLegendOptions
+ *
+ * @return {Highcharts.AdvancedLegendOptions}
+*/
 H.LegendItemMixin.prototype.setTargetLegendOptions =
     function (item: Highcharts.AdvancedLegendItem): void {
 
@@ -717,6 +697,16 @@ H.LegendItemMixin.prototype.setTargetLegendOptions =
             }
         }
     };
+
+
+/**
+ * The id of a legend where the series should be rendred.
+ * The default legend is the first one that appears in
+ * chart's options.
+ *
+ * @type      {string}
+ * @apioption plotOptions.series.legendId
+ */
 
 // Provide the series with information about its target legend.
 H.extend(H.Series.prototype, H.LegendItemMixin);
@@ -773,6 +763,7 @@ addEvent(H.AdvancedLegend.prototype, 'afterGetAllItems', function (
 
 // Provide the bubble legend with information about its target legend.
 H.extend(H.BubbleLegend.prototype, H.LegendItemMixin);
+
 addEvent(H.BubbleLegend, 'afterSetOptions',
     function (this: Highcharts.AdvancedLegendItem): void {
         H.LegendItemMixin.prototype.setTargetLegendOptions(this);
@@ -798,8 +789,17 @@ wrap(H.Chart.prototype, 'getLegendForBubbleLegend', function (
 
 // COLOR AXIS INTERGRATION:
 
+/**
+ * The id of a legend where the color axis should be rendred.
+ * The default legend is the first one that appears in chart's options.
+ *
+ * @type      {string}
+ * @apioption colorAxis.legendId
+ */
+
 // Provide the color axis with information about its target legend.
 H.extend(H.ColorAxis.prototype, H.LegendItemMixin);
+
 addEvent(H.ColorAxis, 'beforeBuildOptions',
     function (this: Highcharts.AdvancedLegendItem): void {
         H.LegendItemMixin.prototype.setTargetLegendOptions(this);

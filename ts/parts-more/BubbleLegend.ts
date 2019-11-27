@@ -1120,6 +1120,13 @@ H.BubbleLegend.prototype = {
         }
     },
 
+    /**
+     * Logic for rendering bubble legend as a legend item.
+     *
+     * @private
+     * @function Highcharts.BubbleLegend#renderAsLegendItem
+     * @return {void}
+     */
     renderAsLegendItem: function (): void {
 
         this.legendGroup = this.chart.renderer
@@ -1130,16 +1137,18 @@ H.BubbleLegend.prototype = {
             })
             .add(this.legend.scrollGroup);
 
-        this.legend.baseline = this.legend.padding;
-
         this.drawLegendSymbol(this.legend);
 
-        // TODO: comment about bubble legend lifecycle
+        // Bubble legend item size depends on bubble series point sizes.
+        // Legend is rendered before series thus bubble legend item
+        // doesn't have any size initially and is updated as soon as
+        // bubble series is rendered.
         this.itemWidth = 0;
         this.itemHeight = 0;
         if (this.legendItem) {
             this.itemWidth = this.legend.maxItemWidth = this.legendItemWidth;
-            this.itemHeight = this.legendItemHeight + this.legend.padding;
+            this.itemHeight = Math.round(this.legendItemHeight);
+            this.maxItemWidth = Math.max(this.maxItemWidth, this.itemWidth);
         }
     }
 

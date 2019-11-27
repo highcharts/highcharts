@@ -1046,18 +1046,14 @@ extend(ColorAxis.prototype, {
         var padding = legend.padding,
             legendOptions = legend.options,
             horiz = this.horiz,
-            // TODO: Replace these numbers with variables:
-            // (why 12, 16, 40? etc...)
             width = pick(
                 legendOptions.symbolWidth,
-                horiz ? (legend.widthOption || this.defaultLegendLength) -
-                    legend.padding : 12
+                horiz ? (legend.widthOption || this.defaultLegendLength) : 12
             ),
             height = pick(
                 legendOptions.symbolHeight,
                 horiz ? 12 :
-                    ((legend.heightOption || this.defaultLegendLength) -
-                    legend.titleHeight - 40)
+                    (legend.heightOption || this.defaultLegendLength)
             ),
             labelPadding = pick(
                 (legendOptions as any).labelPadding,
@@ -1074,7 +1070,7 @@ extend(ColorAxis.prototype, {
             width,
             height
         ).attr({
-            zIndex: 1
+            zIndex: 0 // make sure that rect is always beneath the ticks
         }).add(item.legendGroup);
 
         // Set how much space this legend item takes up
@@ -1615,7 +1611,7 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
     }
 });
 
-// Calculate and set colors for points
+// Calculate and set colors for points.
 addEvent(Series as any, 'afterTranslate', function (): void {
     if (
         this.chart.colorAxis &&
@@ -1626,37 +1622,41 @@ addEvent(Series as any, 'afterTranslate', function (): void {
     }
 });
 
-// TODO: refactor ts and make color axis compatible
-// with legendItemObject interface
-H.ColorAxis.prototype.renderAsLegendItem = function (this: any): void {
-    if (!this.legendGroup) {
-        this.legendGroup = this.chart.renderer
-            .g('legend-item')
-            .addClass('highcharts-coloraxis')
-            .attr({
-                zIndex: 1
-            })
-            .add(this.legend.scrollGroup);
-    }
+// Render color axis in legend.
+H.ColorAxis.prototype.renderAsLegendItem =
+    function (this: Highcharts.ColorAxis): void {
+        if (!this.legendGroup) {
+            this.legendGroup = this.chart.renderer
+                .g('legend-item')
+                .addClass('highcharts-coloraxis')
+                .attr({
+                    zIndex: 1
+                })
+                .add(this.legend.scrollGroup);
+        }
 
-    this.legend.baseline = 20;
-    (this as any).drawLegendSymbol(this.legend, this);
-    this.itemWidth = this.legendItemWidth;
-    this.itemHeight = this.legendItemHeight;
-    this.legend.maxItemWidth =
-        Math.max(this.legend.maxItemWidth, this.itemWidth);
+        this.legend.baseline = 15;
 
-    this.legend.totalItemWidth += this.itemWidth;
-    this.legend.itemHeight = this.itemHeight;
-    this.marginTop = 10;
+        // Always create a new symbol.
+        if (this.legendSymbol) {
+            this.legendSymbol.destroy();
+        }
+        this.drawLegendSymbol(this.legend, this);
+        this.itemWidth = this.legendItemWidth;
+        this.itemHeight = this.legendItemHeight;
+        this.legend.maxItemWidth =
+            Math.max(this.legend.maxItemWidth, this.itemWidth as number);
 
-    // Fake legend item is required for now -
-    // for color axis only legend symbol is used.
-    this.legendItem = this.chart.renderer.text('', 0, 0);
+        this.legend.totalItemWidth += this.itemWidth as number;
+        this.legend.itemHeight = this.itemHeight as number;
 
-    if (this.visible && this.legendColor) {
-        this.legendSymbol.attr({
-            fill: this.legendColor
-        });
-    }
-};
+        // Fake legend item is required for now -
+        // for color axis only legend symbol is used.
+        this.legendItem = this.chart.renderer.text('', 0, 0) as any;
+
+        if (this.visible && this.legendColor && this.legendSymbol) {
+            this.legendSymbol.attr({
+                fill: this.legendColor
+            });
+        }
+    };

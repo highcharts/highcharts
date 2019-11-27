@@ -24,9 +24,16 @@ Highcharts.chart('container', {
         data: [4, 5, 6, 7, 1],
         legend: 'legend1'
     }, {
-        data: [6, 7, 1, 7, 8, 9, 1, 2, 9],
-        type: 'pie',
-        showInLegend: true,
+        data: [6, 7, 1, 7, 8],
+        type: 'scatter',
+        legend: 'sublegend-1'
+    }, {
+        data: [1, 6, 8, 2, 1],
+        type: 'scatter',
+        legend: 'sublegend-1'
+    }, {
+        data: [7, 1, 7, 8, 3],
+        type: 'scatter',
         legend: 'sublegend-1'
     }, {
         data: [6, 7, 1],
@@ -38,6 +45,7 @@ Highcharts.chart('container', {
         legend: 'sublegend-2'
     }, {
         type: 'bubble',
+        colorAxis: false,
         legend: 'legend-bubble',
         data: [{
             x: 5,
@@ -50,7 +58,7 @@ Highcharts.chart('container', {
             z: 14.7
         },
         {
-            x: 8.8,
+            x: 2.8,
             y: 9.5,
             z: 15.8
         }
@@ -81,7 +89,7 @@ Highcharts.chart('container', {
         verticalAlign: 'middle',
         sublegends: [{
             title: {
-                text: 'Sublegend 1 (pie series)'
+                text: 'Sublegend 1 (scatter series)'
             },
             id: 'sublegend-1'
         },
@@ -95,7 +103,6 @@ Highcharts.chart('container', {
 
     }, {
         id: 'legend-bubble',
-        borderWidth: 1,
         title: {
             text: 'Bubble legend'
         },
@@ -115,7 +122,6 @@ Highcharts.chart('container', {
         x: -20,
         layout: 'vertical',
         width: 60,
-        height: 200,
         title: {
             text: 'Color Axis Legend'
         }

@@ -573,9 +573,8 @@ Highcharts.Legend.prototype = {
             itemDistance) : itemWidth) + padding, this.offsetWidth);
     },
     /**
-     * Get all items, which is one item per series for most series and one
-     * item per point for pie series and its derivatives. Fires the event
-     * `afterGetAllItems`.
+     * Get all items to be rendered in legend.
+     * Fires the event `afterGetAllItems`.
      *
      * @private
      * @function Highcharts.Legend#getAllItems
@@ -586,20 +585,36 @@ Highcharts.Legend.prototype = {
     getAllItems: function () {
         var allItems = [];
         this.chart.series.forEach(function (series) {
-            var seriesOptions = series && series.options;
-            // Handle showInLegend. If the series is linked to another series,
-            // defaults to false.
-            if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
-                // Use points or series for the legend item depending on
-                // legendType
-                allItems = allItems.concat(series.legendItems ||
-                    (seriesOptions.legendType === 'point' ?
-                        series.data :
-                        series));
-            }
-        });
+            allItems = allItems.concat(this.getSeriesItems(series));
+        }, this);
         fireEvent(this, 'afterGetAllItems', { allItems: allItems });
         return allItems;
+    },
+    /**
+     * Get items that represent a single series in legend.
+     * Majority of series types are represented just by one item - series itself
+     * (an array of 1 item is returned). However, pie series and its derivatives
+     * are represented by their individual points (an array of mulitple
+     * items is returned).
+     *
+     * @private
+     * @function Highcharts.Legend#getSeriesItems
+     * @return {Array<(Highcharts.Point|Highcharts.Series)>}
+     *         Items that represent a series.
+     */
+    getSeriesItems: function (series) {
+        var seriesOptions = series && series.options, items = [];
+        // Handle showInLegend. If the series is linked to another series,
+        // defaults to false.
+        if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
+            // Use points or series for the legend item depending on
+            // legendType
+            items = series.legendItems ||
+                (seriesOptions.legendType === 'point' ?
+                    series.data :
+                    series);
+        }
+        return items;
     },
     /**
      * Get a short, three letter string reflecting the alignment and layout.
@@ -863,16 +878,14 @@ Highcharts.Legend.prototype = {
         return allowedWidth;
     },
     /**
-     * Compute how wide the legend is allowed to be.
+     * Render all legend items.
      *
      * @private
-     * @function Highcharts.renderBox
-     * @return {number}
+     * @function Highcharts.renderItems
+     * @return {void}
      */
     renderItems: function () {
-        // TODO: use Legend item interface
         this.allItems.forEach(function (item) {
-            // TODO: Advanced legend hook
             item.legend = this;
             item.renderAsLegendItem();
         }, this);
@@ -885,7 +898,6 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     layoutItems: function () {
-        // TODO: use legend item interface
         this.allItems.forEach(function (item) {
             this.layoutItem(item);
         }, this);
@@ -926,7 +938,7 @@ Highcharts.Legend.prototype = {
         // Don't display legend without items
         legend.display = !!allItems.length;
         // Render the items. renderItems() sets the text and properties
-        // and read all the bounding boxes. layoutItems() computes the item
+        // and read all the bounding boxes. layoutItems() computes items'
         // positions based on the bounding boxes.
         legend.lastLineHeight = 0;
         legend.maxItemWidth = 0;
