@@ -325,6 +325,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    offset,
     pick,
     pInt
 } = U;
@@ -450,7 +451,7 @@ if (!svg) {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = H.offset(this.chart.container);
+            this.chartPosition = chartPosition = offset(this.chart.container);
         }
 
         return extend(e, {

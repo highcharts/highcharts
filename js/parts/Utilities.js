@@ -1929,7 +1929,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el) {
+function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
         { top: 0, left: 0 };
@@ -1939,7 +1939,7 @@ H.offset = function (el) {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 /**
  * Stop running animation.
  *
@@ -2536,6 +2536,7 @@ var utils = {
     isString: isString,
     numberFormat: numberFormat,
     objectEach: objectEach,
+    offset: offset,
     pad: pad,
     pick: pick,
     pInt: pInt,
