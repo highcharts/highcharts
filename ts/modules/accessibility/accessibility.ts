@@ -93,7 +93,7 @@ import './focusBorder.js';
 
 
 // Add default options
-merge<Highcharts.Options, DeepPartial<Highcharts.Options>>(
+merge(
     true,
     H.defaultOptions,
     defaultOptions,
