@@ -782,6 +782,9 @@ if (seriesTypes.column) {
                         end: end
                     };
 
+                    // Fade out the points if not inside the polar "plot area"
+                    point.opacity = start === end ? 0 : void 0;
+
                     // A correct value for stacked or not fully visible
                     // point
                     point.plotY = (defined(series.translatedThreshold) &&

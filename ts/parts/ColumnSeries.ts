@@ -66,6 +66,7 @@ declare global {
             public barX: number;
             public complete?: CompleteAnimateFunction;
             public group?: SVGElement;
+            public opacity?: number;
             public options: ColumnPointOptions;
             public pointWidth: number;
             public series: ColumnSeries;
@@ -938,7 +939,7 @@ seriesType<Highcharts.ColumnSeries>(
          */
         pointAttribs: function (
             this: Highcharts.ColumnSeries,
-            point: Highcharts.ColumnPoint,
+            point: Highcharts.ColumnPoint|undefined,
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
@@ -960,7 +961,7 @@ seriesType<Highcharts.ColumnSeries>(
                     (this as any)[strokeWidthOption] || 0,
                 dashstyle =
                     (point && point.options.dashStyle) || options.dashStyle,
-                opacity = pick(options.opacity, 1),
+                opacity = pick(point && point.opacity, options.opacity, 1),
                 zone,
                 brightness;
 
@@ -983,7 +984,7 @@ seriesType<Highcharts.ColumnSeries>(
             }
 
             // Select or hover states
-            if (state) {
+            if (state && point) {
                 stateOptions = merge(
                     (options.states as any)[state],
                     // #6401
