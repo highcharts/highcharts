@@ -108,8 +108,8 @@ import H from '../parts/Globals.js';
 * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
 */
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, erase = U.erase, pick = U.pick;
-var addEvent = H.addEvent, wrap = H.wrap, merge = H.merge;
+var animObject = U.animObject, erase = U.erase, pick = U.pick, wrap = U.wrap;
+var addEvent = H.addEvent, merge = H.merge;
 /**
  * Utility function to compute a hash value from an object. Modified Java
  * String.hashCode implementation in JS. Use the preSeed parameter to add an

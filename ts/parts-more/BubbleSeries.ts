@@ -136,6 +136,7 @@ var Axis = H.Axis,
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
+ * @excluding    cluster
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble

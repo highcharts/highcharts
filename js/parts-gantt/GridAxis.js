@@ -11,13 +11,13 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 var addEvent = H.addEvent, argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
 }, dateFormat = H.dateFormat, isObject = function (x) {
     // Always use strict mode
     return U.isObject(x, true);
-}, merge = H.merge, wrap = H.wrap, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
+}, merge = H.merge, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
 var applyGridOptions = function applyGridOptions(axis) {
     var options = axis.options;
     // Center-align by default

@@ -51,6 +51,7 @@ const SOURCE_GLOBS = [
     'js/modules/exporting.src.js',
     'js/modules/export-data.src.js',
     'js/modules/data.src.js',
+    'js/modules/marker-clusters.src.js',
     'js/modules/offline-exporting.src.js',
     'js/modules/organization.src.js',
     'js/modules/pattern-fill.src.js',

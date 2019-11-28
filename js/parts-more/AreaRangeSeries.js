@@ -9,17 +9,6 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* Range series only. The high or maximum value for each data point.
-* @name Highcharts.PointOptionsObject#high
-* @type {number|undefined}
-*/ /**
-* Range series only. The low or minimum value for each data point.
-* @name Highcharts.PointOptionsObject#low
-* @type {number|undefined}
-*/
 import U from '../parts/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Options.js';

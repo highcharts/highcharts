@@ -153,9 +153,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
+    defined,
     extend,
     pick,
-    pInt
+    pInt,
+    relativeLength,
+    wrap
 } = U;
 
 import '../parts/Axis.js';
@@ -167,8 +170,6 @@ var addEvent = H.addEvent,
     merge = H.merge,
     noop = H.noop,
     Tick = H.Tick,
-    wrap = H.wrap,
-    defined = H.defined,
 
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
@@ -744,13 +745,13 @@ radialAxisMixin = {
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
-                H.relativeLength(innerRadius, 1) : (
+                relativeLength(innerRadius, 1) : (
                     innerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
 
             b = (typeof outerRadius === 'string') ?
-                H.relativeLength(outerRadius, 1) : (
+                relativeLength(outerRadius, 1) : (
                     outerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
@@ -1067,7 +1068,7 @@ addEvent(Tick as any, 'afterGetLabelPosition', function (
         ret = axis.getPosition(
             this.pos,
             (axis.center[2] / 2) +
-                H.relativeLength(
+                relativeLength(
                     pick((labelOptions as any).distance, -25),
                     axis.center[2] / 2,
                     -axis.center[2] / 2

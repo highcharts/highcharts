@@ -39,10 +39,7 @@
 /utils/samples/temp/
 /utils/samples/nightly/
 
-/tree.json
-/tree-error.json
-/tree-namespace.json
-/tree-typescript.json
+/tree*.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github

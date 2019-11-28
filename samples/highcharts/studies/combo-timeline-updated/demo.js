@@ -58,7 +58,7 @@ function onChartLoad() {
         .add();
 
     // Big 5
-    big5 = this.renderer.text('5')
+    big5 = this.renderer.text('10')
         .attr({
             zIndex: 6
         })
@@ -131,8 +131,8 @@ function onChartLoad() {
         })
         .add();
 
-    // 2009-2014
-    years = this.renderer.text('2009-2014')
+    // 2009-2019
+    years = this.renderer.text('2009-2019')
         .attr({
             zIndex: 6
         })
@@ -174,14 +174,61 @@ function onChartLoad() {
                         .attr({
                             fill: 'url(#pattern-' + point.image + ')'
                         })
-                        .animate({ opacity: 1 }, { duration: 500 });
+                        .animate({
+                            opacity: 1
+                        }, {
+                            duration: 500
+                        });
                 });
                 Highcharts.addEvent(point, 'mouseOut', function () {
-                    empImage.animate({ opacity: 0 }, { duration: 500 });
+                    empImage.animate({
+                        opacity: 0
+                    }, {
+                        duration: 500
+                    });
                 });
             }
         });
     }
+}
+
+// Get the turnover. Read the table from the HTML, sort by the joined/left
+// events and keep track of the number of employees.
+function getTurnover() {
+    let employees = 0;
+    return [].reduce.call(
+        document.getElementById('turnover').querySelectorAll('tr'),
+        (turnover, tr) => {
+            const dateJoined = Date.parse(tr.children[1].textContent);
+            if (!isNaN(dateJoined)) {
+                turnover.push({
+                    x: dateJoined,
+                    name: `${tr.children[0].textContent} joined`,
+                    accumulate: 1,
+                    image: tr.children[3].textContent || null
+                });
+            }
+
+            const dateLeft = Date.parse(tr.children[2].textContent);
+            if (!isNaN(dateLeft)) {
+                turnover.push({
+                    x: dateLeft,
+                    name: `${tr.children[0].textContent} left`,
+                    accumulate: -1,
+                    image: tr.children[3].textContent || null
+                });
+            }
+
+            return turnover;
+        },
+        []
+    )
+        .sort((a, b) => a.x - b.x)
+        .map(event => Object.assign(
+            event, {
+                y: (employees += event.accumulate)
+            }
+        ));
 }
 
 
@@ -204,7 +251,7 @@ var options = {
             to: Date.UTC(2010, 11, 1),
             color: '#EFFFFF',
             label: {
-                text: '<em>Offices:</em><br> Torstein\'s basement',
+                text: '<em>Offices:</em><br> Torstein\'s<br>basement',
                 style: {
                     color: '#999999'
                 },
@@ -223,7 +270,7 @@ var options = {
             }
         }, {
             from: Date.UTC(2013, 9, 1),
-            to: Date.UTC(2015, 10, 27),
+            to: Date.UTC(2016, 2, 10),
             color: '#FFEFFF',
             label: {
                 text: '<em>Offices:</em><br> VikØrsta',
@@ -231,6 +278,19 @@ var options = {
                     color: '#999999'
                 },
                 y: 30
+            }
+        }, {
+            from: Date.UTC(2016, 2, 10),
+            to: Date.now(),
+            color: '#EFFFEF',
+            label: {
+                text: '<em>Offices:</em><br> Blix Hotel',
+                style: {
+                    color: '#999999'
+                },
+                align: 'left',
+                y: 20,
+                x: 20
             }
         }]
 
@@ -257,17 +317,8 @@ var options = {
         gridLineColor: 'rgba(0, 0, 0, 0.07)'
     }, {
         allowDecimals: false,
-        max: 15,
-        labels: {
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
-        },
         title: {
-            text: 'Employees',
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
+            text: 'Employees'
         },
         opposite: true,
         gridLineWidth: 0
@@ -286,309 +337,136 @@ var options = {
             clip: false,
             tooltip: {
                 xDateFormat: '%B %e, %Y'
-            }
+            },
+            allowOverlapX: true
         }
     },
 
     series: [{
-        type: 'spline',
-        id: 'google-trends',
-        dashStyle: 'dash',
-        name: 'Google search for <em>highcharts</em>',
-        data: [{ x: 1258322400000, /* November 2009 */ y: 0 }, { x: 1260961200000, y: 5 }, { x: 1263639600000, y: 7 }, { x: 1266188400000, y: 5 }, { x: 1268740800000, y: 6 }, { x: 1271368800000, y: 8 }, { x: 1274004000000, y: 11 }, { x: 1276639200000, y: 9 }, { x: 1279274400000, y: 12 }, { x: 1281952800000, y: 13 }, { x: 1284588000000, y: 17 }, { x: 1287223200000, y: 17 }, { x: 1289858400000, y: 18 }, { x: 1292497200000, y: 20 }, { x: 1295175600000, y: 20 }, { x: 1297724400000, y: 27 }, { x: 1300276800000, y: 32 }, { x: 1302904800000, y: 29 }, { x: 1305540000000, y: 34 }, { x: 1308175200000, y: 34 }, { x: 1310810400000, y: 36 }, { x: 1313488800000, y: 43 }, { x: 1316124000000, y: 44 }, { x: 1318759200000, y: 42 }, { x: 1321394400000, y: 47 }, { x: 1324033200000, y: 46 }, { x: 1326711600000, y: 50 }, { x: 1329303600000, y: 57 }, { x: 1331899200000, y: 54 }, { x: 1334527200000, y: 59 }, { x: 1337162400000, y: 62 }, { x: 1339797600000, y: 66 }, { x: 1342432800000, y: 61 }, { x: 1345111200000, y: 68 }, { x: 1347746400000, y: 67 }, { x: 1350381600000, y: 73 }, { x: 1353016800000, y: 63 }, { x: 1355655600000, y: 54 }, { x: 1358334000000, y: 67 }, { x: 1360882800000, y: 74 }, { x: 1363435200000, y: 81 }, { x: 1366063200000, y: 89 }, { x: 1368698400000, y: 83 }, { x: 1371333600000, y: 88 }, { x: 1373968800000, y: 86 }, { x: 1376647200000, y: 81 }, { x: 1379282400000, y: 83 }, { x: 1381917600000, y: 95 }, { x: 1384552800000, y: 86 }, { x: 1387191600000, y: 83 }, { x: 1389870000000, y: 89 }, { x: 1392418800000, y: 90 }, { x: 1394971200000, y: 94 }, { x: 1397599200000, y: 100 }, { x: 1400234400000, y: 100 }, { x: 1402869600000, y: 99 }, { x: 1405504800000, y: 99 }, { x: 1408183200000, y: 93 }, { x: 1410818400000, y: 97 }, { x: 1413453600000, y: 98 }],
-        tooltip: {
-            xDateFormat: '%B %Y',
-            valueSuffix: ' % of best month'
-        }
-    }, {
         name: 'Revenue',
         id: 'revenue',
         type: 'area',
         data: [
-            [
-                1259622000000,
-                2
-            ],
-            [
-                1262300400000,
-                2
-            ],
-            [
-                1264978800000,
-                2
-            ],
-            [
-                1267398000000,
-                2
-            ],
-            [
-                1270072800000,
-                2
-            ],
-            [
-                1272664800000,
-                3
-            ],
-            [
-                1275343200000,
-                3
-            ],
-            [
-                1277935200000,
-                3
-            ],
-            [
-                1280613600000,
-                5
-            ],
-            [
-                1283292000000,
-                4
-            ],
-            [
-                1285884000000,
-                6
-            ],
-            [
-                1288566000000,
-                7
-            ],
-            [
-                1291158000000,
-                5
-            ],
-            [
-                1293836400000,
-                7
-            ],
-            [
-                1296514800000,
-                9
-            ],
-            [
-                1298934000000,
-                10
-            ],
-            [
-                1301608800000,
-                10
-            ],
-            [
-                1304200800000,
-                10
-            ],
-            [
-                1306879200000,
-                11
-            ],
-            [
-                1309471200000,
-                15
-            ],
-            [
-                1312149600000,
-                13
-            ],
-            [
-                1314828000000,
-                14
-            ],
-            [
-                1317420000000,
-                22
-            ],
-            [
-                1320102000000,
-                23
-            ],
-            [
-                1322694000000,
-                25
-            ],
-            [
-                1325372400000,
-                23
-            ],
-            [
-                1328050800000,
-                27
-            ],
-            [
-                1330556400000,
-                25
-            ],
-            [
-                1333231200000,
-                24
-            ],
-            [
-                1335823200000,
-                27
-            ],
-            [
-                1338501600000,
-                24
-            ],
-            [
-                1341093600000,
-                27
-            ],
-            [
-                1343772000000,
-                29
-            ],
-            [
-                1346450400000,
-                33
-            ],
-            [
-                1349042400000,
-                29
-            ],
-            [
-                1351724400000,
-                36
-            ],
-            [
-                1354316400000,
-                28
-            ],
-            [
-                1356994800000,
-                29
-            ],
-            [
-                1359673200000,
-                29
-            ],
-            [
-                1362092400000,
-                35
-            ],
-            [
-                1364767200000,
-                35
-            ],
-            [
-                1367359200000,
-                38
-            ],
-            [
-                1370037600000,
-                41
-            ],
-            [
-                1372629600000,
-                45
-            ],
-            [
-                1375308000000,
-                42
-            ],
-            [
-                1377986400000,
-                43
-            ],
-            [
-                1380578400000,
-                41
-            ],
-            [
-                1383260400000,
-                41
-            ],
-            [
-                1385852400000,
-                40
-            ],
-            [
-                1388530800000,
-                44
-            ],
-            [
-                1391209200000,
-                36
-            ],
-            [
-                1393628400000,
-                49
-            ],
-            [
-                1396303200000,
-                38
-            ],
-            [
-                1398895200000,
-                47
-            ],
-            [
-                1401573600000,
-                43
-            ],
-            [
-                1404165600000,
-                44
-            ],
-            [
-                1406844000000,
-                44
-            ],
-            [
-                1409522400000,
-                60
-            ],
-            [
-                1412114400000,
-                69
-            ],
-            [
-                1414796400000,
-                59
-            ],
-            [
-                1417388400000,
-                82
-            ],
-            [
-                1420066800000,
-                60
-            ],
-            [
-                1422745200000,
-                57
-            ],
-            [
-                1425164400000,
-                89
-            ],
-            [
-                1427839200000,
-                66
-            ],
-            [
-                1430431200000,
-                54
-            ],
-            [
-                1433109600000,
-                75
-            ],
-            [
-                1435701600000,
-                70
-            ],
-            [
-                1438380000000,
-                71
-            ],
-            [
-                1441058400000,
-                85
-            ],
-            [
-                1443650400000,
-                100
-            ]
+            [1259622000000, 2],
+            [1262300400000, 2],
+            [1264978800000, 2],
+            [1267398000000, 2],
+            [1270072800000, 2],
+            [1272664800000, 3],
+            [1275343200000, 3],
+            [1277935200000, 3],
+            [1280613600000, 5],
+            [1283292000000, 4],
+            [1285884000000, 6],
+            [1288566000000, 7],
+            [1291158000000, 5],
+            [1293836400000, 7],
+            [1296514800000, 8],
+            [1298934000000, 10],
+            [1301608800000, 9],
+            [1304200800000, 10],
+            [1306879200000, 11],
+            [1309471200000, 14],
+            [1312149600000, 13],
+            [1314828000000, 13],
+            [1317420000000, 21],
+            [1320102000000, 23],
+            [1322694000000, 24],
+            [1325372400000, 22],
+            [1328050800000, 26],
+            [1330556400000, 24],
+            [1333231200000, 23],
+            [1335823200000, 26],
+            [1338501600000, 24],
+            [1341093600000, 26],
+            [1343772000000, 28],
+            [1346450400000, 32],
+            [1349042400000, 28],
+            [1351724400000, 35],
+            [1354316400000, 27],
+            [1356994800000, 28],
+            [1359673200000, 28],
+            [1362092400000, 34],
+            [1364767200000, 34],
+            [1367359200000, 37],
+            [1370037600000, 40],
+            [1372629600000, 44],
+            [1375308000000, 41],
+            [1377986400000, 42],
+            [1380578400000, 40],
+            [1383260400000, 40],
+            [1385852400000, 38],
+            [1388530800000, 42],
+            [1391209200000, 34],
+            [1393628400000, 47],
+            [1396303200000, 37],
+            [1398895200000, 46],
+            [1401573600000, 41],
+            [1404165600000, 42],
+            [1406844000000, 42],
+            [1409522400000, 58],
+            [1412114400000, 66],
+            [1414796400000, 57],
+            [1417388400000, 79],
+            [1420066800000, 58],
+            [1422745200000, 55],
+            [1425164400000, 86],
+            [1427839200000, 64],
+            [1430431200000, 53],
+            [1433109600000, 73],
+            [1435701600000, 68],
+            [1438380000000, 69],
+            [1441058400000, 83],
+            [1443650400000, 97],
+            [1446332400000, 78],
+            [1448924400000, 81],
+            [1451602800000, 68],
+            [1454281200000, 68],
+            [1456786800000, 84],
+            [1459461600000, 73],
+            [1462053600000, 73],
+            [1464732000000, 72],
+            [1467324000000, 72],
+            [1470002400000, 86],
+            [1472680800000, 76],
+            [1475272800000, 83],
+            [1477954800000, 84],
+            [1480546800000, 83],
+            [1483225200000, 53],
+            [1485903600000, 60],
+            [1488322800000, 80],
+            [1490997600000, 71],
+            [1493589600000, 63],
+            [1496268000000, 77],
+            [1498860000000, 57],
+            [1501538400000, 98],
+            [1504216800000, 55],
+            [1506808800000, 84],
+            [1509490800000, 74],
+            [1512082800000, 79],
+            [1514761200000, 71],
+            [1517439600000, 50],
+            [1519858800000, 95],
+            [1522533600000, 69],
+            [1525125600000, 93],
+            [1527804000000, 80],
+            [1530396000000, 56],
+            [1533074400000, 63],
+            [1535752800000, 72],
+            [1538344800000, 85],
+            [1541026800000, 90],
+            [1543618800000, 78],
+            [1546297200000, 86],
+            [1548975600000, 76],
+            [1551394800000, 92],
+            [1554069600000, 76],
+            [1556661600000, 100],
+            [1559340000000, 73],
+            [1561932000000, 95],
+            [1564610400000, 80],
+            [1567288800000, 71],
+            [1569880800000, 96],
+            [1572562800000, null]
         ],
         tooltip: {
             xDateFormat: '%B %Y',
@@ -606,28 +484,7 @@ var options = {
             pointFormat: '{point.name}<br><b>{point.y}</b>',
             valueSuffix: ' employees'
         },
-        data: [
-            { x: Date.UTC(2009, 10, 1), y: 1, name: 'Torstein worked alone', image: 'Torstein' },
-            { x: Date.UTC(2010, 10, 20), y: 2, name: 'Grethe joined', image: 'Grethe' },
-            { x: Date.UTC(2011, 3, 1), y: 3, name: 'Erik joined', image: null },
-            { x: Date.UTC(2011, 7, 1), y: 4, name: 'Gert joined', image: 'Gert' },
-            { x: Date.UTC(2011, 7, 15), y: 5, name: 'Hilde joined', image: 'Hilde' },
-            { x: Date.UTC(2012, 5, 1), y: 6, name: 'Guro joined', image: 'Guro' },
-            { x: Date.UTC(2012, 8, 1), y: 5, name: 'Erik left', image: null },
-            { x: Date.UTC(2012, 8, 15), y: 6, name: 'Anne Jorunn joined', image: 'AnneJorunn' },
-            { x: Date.UTC(2013, 0, 1), y: 7, name: 'Hilde T. joined', image: null },
-            { x: Date.UTC(2013, 7, 1), y: 8, name: 'Jon Arild joined', image: 'JonArild' },
-            { x: Date.UTC(2013, 7, 20), y: 9, name: 'Øystein joined', image: 'Oystein' },
-            { x: Date.UTC(2013, 9, 1), y: 10, name: 'Stephane joined', image: null },
-            { x: Date.UTC(2014, 9, 1), y: 11, name: 'Anita joined', image: 'Anita' },
-            { x: Date.UTC(2015, 0, 1), y: 12, name: 'Gjertrud joined', image: 'Gjertrud' },
-            { x: Date.UTC(2015, 1, 1), y: 13, name: 'Mustapha joined', image: 'Mustapha' },
-            { x: Date.UTC(2015, 4, 10), y: 14, name: 'Katharina joined', image: 'Katharina' },
-            { x: Date.UTC(2015, 5, 1), y: 13, name: 'Stephane left', image: null },
-            { x: Date.UTC(2015, 7, 18), y: 14, name: 'Linda joined', image: 'Linda' },
-            { x: Date.UTC(2015, 7, 18, 1), y: 15, name: 'Sigrid joined', image: 'Sigrid' },
-            { x: Date.UTC(2015, 10, 27), y: 15, name: ' ', image: null }
-        ]
+        data: getTurnover()
 
     }]
 };
@@ -636,22 +493,37 @@ var options = {
 if (Highcharts.seriesTypes.flags) {
     options.series.push({
         type: 'flags',
-        name: 'Cloud',
-        color: '#333333',
-        shape: 'squarepin',
-        y: -80,
-        data: [
-            { x: Date.UTC(2014, 4, 1), text: 'Highcharts Cloud Beta', title: 'Cloud', shape: 'squarepin' }
-        ],
-        showInLegend: false
-    }, {
-        type: 'flags',
         name: 'Highmaps',
         color: '#333333',
         shape: 'squarepin',
+        y: -80,
+        data: [{
+            x: Date.UTC(2014, 5, 13),
+            text: 'Highmaps version 1.0 released',
+            title: 'Maps'
+        }],
+        showInLegend: false
+    }, {
+        type: 'flags',
+        name: 'Cloud',
+        color: '#333333',
+        shape: 'squarepin',
         y: -55,
-        data: [
-            { x: Date.UTC(2014, 5, 13), text: 'Highmaps version 1.0 released', title: 'Maps' }
+        data: [{
+            x: Date.UTC(2014, 4, 1),
+            text: 'Highcharts Cloud Beta',
+            title: 'Cloud'
+        },
+        {
+            x: Date.UTC(2017, 10, 24),
+            text: 'Highcharts Cloud v2',
+            title: 'Cloud v2'
+        },
+        {
+            x: Date.UTC(2018, 11, 6),
+            text: 'Highcharts Cloud v2',
+            title: 'Cloud v3'
+        }
         ],
         showInLegend: false
     }, {
@@ -659,28 +531,109 @@ if (Highcharts.seriesTypes.flags) {
         name: 'Highcharts',
         color: '#333333',
         shape: 'circlepin',
-        data: [
-            { x: Date.UTC(2009, 10, 27), text: 'Highcharts version 1.0 released', title: '1.0' },
-            { x: Date.UTC(2010, 6, 13), text: 'Ported from canvas to SVG rendering', title: '2.0' },
-            { x: Date.UTC(2010, 10, 23), text: 'Dynamically resize and scale to text labels', title: '2.1' },
-            { x: Date.UTC(2011, 9, 18), text: 'Highstock version 1.0 released', title: 'Stock', shape: 'squarepin' },
-            { x: Date.UTC(2012, 7, 24), text: 'Gauges, polar charts and range series', title: '2.3' },
-            { x: Date.UTC(2013, 2, 22), text: 'Multitouch support, more series types', title: '3.0' },
-            { x: Date.UTC(2014, 3, 22), text: '3D charts, heatmaps', title: '4.0' }
+        data: [{
+            x: Date.UTC(2009, 10, 27),
+            text: 'Highcharts version 1.0 released',
+            title: '1.0'
+        },
+        {
+            x: Date.UTC(2010, 6, 13),
+            text: 'Ported from canvas to SVG rendering',
+            title: '2.0'
+        },
+        {
+            x: Date.UTC(2010, 10, 23),
+            text: 'Dynamically resize and scale to text labels',
+            title: '2.1'
+        },
+        {
+            x: Date.UTC(2011, 9, 18),
+            text: 'Highstock version 1.0 released',
+            title: 'Stock',
+            shape: 'squarepin'
+        },
+        {
+            x: Date.UTC(2012, 7, 24),
+            text: 'Gauges, polar charts and range series',
+            title: '2.3'
+        },
+        {
+            x: Date.UTC(2013, 2, 22),
+            text: 'Multitouch support, more series types',
+            title: '3.0'
+        },
+        {
+            x: Date.UTC(2014, 3, 22),
+            text: '3D charts, heatmaps',
+            title: '4.0'
+        },
+        {
+            x: Date.UTC(2016, 8, 29),
+            text: 'Styled mode, responsive options, accessibility, chart.update',
+            title: '5.0'
+        },
+        {
+            x: Date.UTC(2017, 9, 4),
+            text: 'Annotations, Boost, Series labels, new series types',
+            title: '6.0'
+        },
+        {
+            x: Date.UTC(2018, 11, 11),
+            text: 'Sonification, TypeScript (beta), new series types',
+            title: '7.0'
+        }
         ],
         showInLegend: false
+    }, {
+        type: 'flags',
+        name: 'logo',
+        shape: 'url(https://www.highcharts.com/favicon.ico)',
+        data: [{
+            x: Date.UTC(2014, 4, 21),
+            text: 'New logo',
+            title: ' '
+        }],
+        y: -200,
+        showInLegend: false
+
     }, {
         type: 'flags',
         name: 'Events',
         color: '#333333',
         fillColor: 'rgba(255,255,255,0.8)',
-        data: [
-            { x: Date.UTC(2012, 10, 1), text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway', title: 'Award' },
-            { x: Date.UTC(2012, 11, 25), text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.', title: 'First book' },
-            { x: Date.UTC(2013, 4, 25), text: 'Highsoft nominated Norway\'s Startup of the Year', title: 'Award' },
-            { x: Date.UTC(2014, 4, 25), text: 'Highsoft nominated Best Startup in Nordic Startup Awards', title: 'Award' }
+        data: [{
+            x: Date.UTC(2012, 10, 1),
+            text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
+            title: 'Award'
+        },
+        {
+            x: Date.UTC(2012, 11, 25),
+            text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.',
+            title: 'First book'
+        },
+        {
+            x: Date.UTC(2013, 4, 25),
+            text: 'Highsoft nominated Norway\'s Startup of the Year',
+            title: 'Award'
+        },
+        {
+            x: Date.UTC(2014, 4, 25),
+            text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+            title: 'Award'
+        },
+        {
+            x: Date.UTC(2017, 9, 20),
+            text: 'Torstein awarded EY Entrepeneur of the Year, Vestlandet',
+            title: 'Award'
+        },
+        {
+            x: Date.UTC(2018, 11, 13),
+            text: 'Grethe awarded NCE Ambassador',
+            title: 'Award'
+        }
         ],
         onSeries: 'revenue',
+        allowOverlapX: true,
         showInLegend: false
     });
 }

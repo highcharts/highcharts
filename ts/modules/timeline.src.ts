@@ -434,7 +434,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             });
             addEvent(
                 series.chart,
-                'afterHideOverlappingLabels',
+                'afterHideOverlappingLabel',
                 function (): void {
                     series.points.forEach(function (
                         p: Highcharts.TimelinePoint
