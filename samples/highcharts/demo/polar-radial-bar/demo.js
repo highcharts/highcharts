@@ -3,17 +3,13 @@ Highcharts.chart('container', {
     chart: {
         type: 'column',
         inverted: true,
-        polar: true,
-        marginTop: 30
+        polar: true
     },
     title: {
         text: 'Winter Olympic medals per existing country (TOP 10)'
     },
     tooltip: {
         outside: true
-    },
-    legend: {
-        y: 25
     },
     pane: {
         size: '85%',
@@ -26,7 +22,10 @@ Highcharts.chart('container', {
             useHTML: true,
             allowOverlap: true,
             step: 1,
-            y: 4
+            y: 4,
+            style: {
+                fontSize: '12px'
+            }
         },
         lineWidth: 0,
         categories: [
