@@ -445,9 +445,8 @@ seriesType('column', 'line',
      * `ignoreNulls: "normal"` instead.
      *
      *
-     * To do: sample
-     * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-     *         Dark gray border
+     * @sample {highcharts} highcharts/plotoptions/column-ignorenulls/
+     *         Compare different options
      *
      * @type      {boolean|string}
      * @default   false
@@ -579,9 +578,8 @@ seriesType('column', 'line',
         yAxis.series.forEach(function (series) {
             // Make sure that this series is the last
             // of column/columnrange/bar.
-            if ((series.type === 'column' ||
-                series.type === 'columnrange' ||
-                series.type === 'bar') && series.points) {
+            if (series.type.match(/column|columnrange|bar/g) &&
+                series.points) {
                 series.points.forEach(function (point) {
                     colWidth = series
                         .getColumnMetrics(point).width;
@@ -591,7 +589,7 @@ seriesType('column', 'line',
                 });
             }
         });
-        return minColWidth;
+        return Math.floor(minColWidth);
     },
     /**
      * Find how many columns are in the specific category.
@@ -1178,7 +1176,7 @@ seriesType('column', 'line',
 H.addEvent(H.Chart, 'getColumnProps', function () {
     this.yAxis.forEach(function (yAxis) {
         if (yAxis.minColumnWidth) {
-            yAxis.minColumnWidth;
+            delete yAxis.minColumnWidth;
         }
         if (yAxis.maxColumnCount) {
             delete yAxis.maxColumnCount;
@@ -1187,9 +1185,7 @@ H.addEvent(H.Chart, 'getColumnProps', function () {
             var ignoreNulls = series.options.ignoreNulls;
             // TO DO: add more series like boxplot etc.
             if (ignoreNulls && ignoreNulls !== 'fillSpace' &&
-                (series.type === 'column' ||
-                    series.type === 'columnrange' ||
-                    series.type === 'bar')) {
+                (series.type.match(/column|columnrange|bar/g))) {
                 yAxis.minColumnWidth = series
                     .getMinColumnWidth();
                 if (ignoreNulls !== 'evenlySpaced') {

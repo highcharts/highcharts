@@ -593,9 +593,8 @@ seriesType<Highcharts.ColumnSeries>(
          * `ignoreNulls: "normal"` instead.
          *
          *
-         * To do: sample
-         * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
-         *         Dark gray border
+         * @sample {highcharts} highcharts/plotoptions/column-ignorenulls/
+         *         Compare different options
          *
          * @type      {boolean|string}
          * @default   false
@@ -769,11 +768,8 @@ seriesType<Highcharts.ColumnSeries>(
                 // Make sure that this series is the last
                 // of column/columnrange/bar.
                 if (
-                    (
-                        series.type === 'column' ||
-                        series.type === 'columnrange' ||
-                        series.type === 'bar'
-                    ) && series.points
+                    series.type.match(/column|columnrange|bar/g) &&
+                    series.points
                 ) {
                     series.points.forEach((point): void => {
                         colWidth = (series as Highcharts.ColumnSeries)
@@ -785,7 +781,7 @@ seriesType<Highcharts.ColumnSeries>(
                 }
             });
 
-            return minColWidth;
+            return Math.floor(minColWidth);
         },
         /**
          * Find how many columns are in the specific category.
@@ -1616,7 +1612,7 @@ H.addEvent(H.Chart, 'getColumnProps', function (this: Highcharts.Chart): void {
 
     this.yAxis.forEach((yAxis): void => { // eslint-disable-line no-invalid-this
         if (yAxis.minColumnWidth) {
-            yAxis.minColumnWidth;
+            delete yAxis.minColumnWidth;
         }
         if (yAxis.maxColumnCount) {
             delete yAxis.maxColumnCount;
@@ -1628,11 +1624,7 @@ H.addEvent(H.Chart, 'getColumnProps', function (this: Highcharts.Chart): void {
             // TO DO: add more series like boxplot etc.
             if (
                 ignoreNulls && ignoreNulls !== 'fillSpace' &&
-                (
-                    series.type === 'column' ||
-                    series.type === 'columnrange' ||
-                    series.type === 'bar'
-                )
+                (series.type.match(/column|columnrange|bar/g))
             ) {
                 yAxis.minColumnWidth = (series as Highcharts.ColumnSeries)
                     .getMinColumnWidth();
