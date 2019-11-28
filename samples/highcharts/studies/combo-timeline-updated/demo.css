@@ -4,3 +4,13 @@
     height: 420px;
     margin: 1em auto;
 }
+
+table {
+    border-collapse: collapse;
+}
+
+table td,
+table th {
+    border: 1px solid silver;
+    padding: 0.5em;
+}
