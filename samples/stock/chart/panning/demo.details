@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

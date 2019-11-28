@@ -1,0 +1,26 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/sunburst.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<figure class="highcharts-figure">
+
+    <div class="controls">
+        <small class="label">Chart layout</small>
+        <span class="button-row">
+            <button id="icicle">Icicle</button>
+            <button id="flame" disabled>Flame</button>
+            <button id="sunburst">Sunburst</button>
+        </span>
+    </div>
+
+    <div id="container"></div>
+
+    <p class="highcharts-description">
+        The Highcharts flame chart implementation is based on inverted chart
+        with columnrange series (for the flame and icicle layouts) and
+        a sunburst series (for the sunburst layout).
+    </p>
+</figure>

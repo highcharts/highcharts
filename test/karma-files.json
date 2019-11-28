@@ -63,6 +63,7 @@
 	"code/modules/organization.src.js",
 	"code/modules/dotplot.src.js",
 	"code/modules/advanced-legend.src.js",
+	"code/modules/marker-clusters.src.js",
 	"code/indicators/indicators-all.src.js",
 
 	"node_modules/@highcharts/map-collection/countries/gb/gb-all.js",

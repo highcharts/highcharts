@@ -127,6 +127,13 @@ declare global {
                 isNew?: boolean
             ): (boolean|undefined);
             placeDataLabels?(): void;
+            setDataLabelStartPos(
+                point: ColumnPoint,
+                dataLabel: SVGElement,
+                isNew: boolean|undefined,
+                isInside: boolean,
+                alignOptions: AlignObject
+            ): void;
             verifyDataLabelOverflow?(overflow: Array<number>): boolean;
         }
         interface SeriesDataLabelPositionersObject {
@@ -680,6 +687,8 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
+                        } else {
+                            delete point.contrastColor;
                         }
                         if (seriesOptions.cursor) {
                             (style as any).cursor = seriesOptions.cursor;
@@ -837,8 +846,10 @@ Series.prototype.alignDataLabel = function (
     alignTo: Highcharts.BBoxObject,
     isNew?: boolean
 ): void {
-    var chart = this.chart,
+    var series = this,
+        chart = this.chart,
         inverted = this.isCartesian && chart.inverted,
+        enabledDataSorting = this.enabledDataSorting,
         plotX = pick(
             point.dlBox && (point.dlBox as any).centerX,
             point.plotX,
@@ -852,13 +863,20 @@ Series.prototype.alignDataLabel = function (
         negRotation,
         align = options.align,
         rotCorr, // rotation correction
+        isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted),
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
+        alignAttr, // the final position;
+        justify = pick(
+            options.overflow,
+            (enabledDataSorting ? 'none' : 'justify')
+        ) === 'justify',
         visible =
             this.visible &&
             (
                 point.series.forceDL ||
-                chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
+                (enabledDataSorting && !justify) ||
+                isInsidePlot ||
                 (
                     alignTo && chart.isInsidePlot(
                         plotX,
@@ -869,8 +887,17 @@ Series.prototype.alignDataLabel = function (
                     )
                 )
             ),
-        alignAttr, // the final position;
-        justify = pick(options.overflow, 'justify') === 'justify';
+        setStartPos = function (alignOptions: Highcharts.AlignObject): void {
+            if (enabledDataSorting && series.xAxis && !justify) {
+                series.setDataLabelStartPos(
+                    point as Highcharts.ColumnPoint,
+                    dataLabel,
+                    isNew,
+                    isInsidePlot,
+                    alignOptions
+                );
+            }
+        };
 
     if (visible) {
 
@@ -914,6 +941,7 @@ Series.prototype.alignDataLabel = function (
                     alignTo.height
                 )
             };
+            setStartPos(alignAttr); // data sorting
             dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
                 .attr({ // #3003
                     align: align
@@ -936,6 +964,7 @@ Series.prototype.alignDataLabel = function (
             dataLabel.alignAttr = alignAttr;
 
         } else {
+            setStartPos(alignTo); // data sorting
             dataLabel.align(options as any, null as any, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
@@ -977,13 +1006,90 @@ Series.prototype.alignDataLabel = function (
             });
         }
     }
-
+    // To use alignAttr property in hideOverlappingLabels
+    if (isNew && enabledDataSorting) {
+        dataLabel.placed = false;
+    }
     // Show or hide based on the final aligned position
-    if (!visible) {
+    if (!visible && (!enabledDataSorting || justify)) {
         dataLabel.hide(true);
         dataLabel.placed = false; // don't animate back in
     }
+};
 
+/**
+ * Set starting position for data label sorting animation.
+ *
+ * @private
+ * @function Highcharts.Series#setDataLabelStartPos
+ * @param {Highcharts.SVGElement} dataLabel
+ * @param {Highcharts.ColumnPoint} point
+ * @param {boolean | undefined} [isNew]
+ * @param {boolean} [isInside]
+ * @param {Highcharts.AlignObject} [alignOptions]
+ *
+ * @return {void}
+ */
+Series.prototype.setDataLabelStartPos = function (
+    this: Highcharts.Series,
+    point: Highcharts.ColumnPoint,
+    dataLabel: Highcharts.SVGElement,
+    isNew: boolean,
+    isInside: boolean,
+    alignOptions: Highcharts.AlignObject
+): void {
+    var chart = this.chart,
+        inverted = chart.inverted,
+        xAxis = this.xAxis,
+        reversed = xAxis.reversed,
+        labelCenter = inverted ? dataLabel.height / 2 : dataLabel.width / 2,
+        pointWidth = point.pointWidth,
+        halfWidth = pointWidth ? pointWidth / 2 : 0,
+        startXPos,
+        startYPos;
+
+    startXPos = inverted ?
+        alignOptions.x :
+        (reversed ?
+            -labelCenter - halfWidth :
+            xAxis.width - labelCenter + halfWidth
+        );
+
+    startYPos = inverted ?
+        (reversed ?
+            this.yAxis.height - labelCenter + halfWidth :
+            -labelCenter - halfWidth
+        ) : alignOptions.y;
+
+    dataLabel.startXPos = startXPos;
+    dataLabel.startYPos = startYPos;
+
+    // We need to handle visibility in case of sorting point outside plot area
+    if (!isInside) {
+        dataLabel
+            .attr({ opacity: 1 })
+            .animate(
+                { opacity: 0 },
+                void 0,
+                dataLabel.hide
+            );
+
+    } else if (dataLabel.visibility === 'hidden') {
+        dataLabel.show();
+        dataLabel
+            .attr({ opacity: 0 })
+            .animate({ opacity: 1 });
+    }
+    // Save start position on first render, but do not change position
+    if (!chart.hasRendered) {
+        return;
+    }
+    // Set start position
+    if (isNew) {
+        dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos });
+    }
+
+    dataLabel.placed = true;
 };
 
 /**

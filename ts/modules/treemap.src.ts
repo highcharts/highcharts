@@ -700,8 +700,9 @@ seriesType<Highcharts.TreemapSeries>(
 
         /**
          * Set the dash style of the border of all the point which lies on the
-         * level. See <a href"#plotoptions.scatter.dashstyle">
-         * plotOptions.scatter.dashStyle</a> for possible options.
+         * level. See
+         * [plotOptions.scatter.dashStyle](#plotoptions.scatter.dashstyle)
+         * for possible options.
          *
          * @type      {Highcharts.DashStyleValue}
          * @since     4.1.0
@@ -982,34 +983,38 @@ seriesType<Highcharts.TreemapSeries>(
             }
 
             // Handle deprecated options.
-            addEvent(series, 'setOptions', function (
-                event: {
-                    userOptions: Highcharts.TreemapSeriesOptions;
-                }
-            ): void {
-                var options = event.userOptions;
+            series.eventsToUnbind.push(
+                addEvent(series, 'setOptions', function (
+                    event: {
+                        userOptions: Highcharts.TreemapSeriesOptions;
+                    }
+                ): void {
+                    var options = event.userOptions;
 
-                if (
-                    defined(options.allowDrillToNode) &&
-                    !defined(options.allowTraversingTree)
-                ) {
-                    options.allowTraversingTree = options.allowDrillToNode;
-                    delete options.allowDrillToNode;
-                }
+                    if (
+                        defined(options.allowDrillToNode) &&
+                        !defined(options.allowTraversingTree)
+                    ) {
+                        options.allowTraversingTree = options.allowDrillToNode;
+                        delete options.allowDrillToNode;
+                    }
 
-                if (
-                    defined(options.drillUpButton) &&
-                    !defined(options.traverseUpButton)
-                ) {
-                    options.traverseUpButton = options.drillUpButton;
-                    delete options.drillUpButton;
-                }
-            });
+                    if (
+                        defined(options.drillUpButton) &&
+                        !defined(options.traverseUpButton)
+                    ) {
+                        options.traverseUpButton = options.drillUpButton;
+                        delete options.drillUpButton;
+                    }
+                })
+            );
 
             Series.prototype.init.call(series, chart, options);
 
             if (series.options.allowTraversingTree) {
-                addEvent(series, 'click', series.onClickDrillToNode as any);
+                series.eventsToUnbind.push(
+                    addEvent(series, 'click', series.onClickDrillToNode as any)
+                );
             }
         },
         buildNode: function (

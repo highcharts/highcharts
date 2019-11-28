@@ -1206,8 +1206,8 @@ H.Toolbar.prototype = {
         });
     },
     /**
-     * Create single button. Consist of `<li>` , `<span>` and (if exists)
-     * submenu container.
+     * Create single button. Consist of HTML elements `li`, `span`, and (if
+     * exists) submenu container.
      * @private
      * @param {HTMLDOMElement} - HTML reference, where button should be added
      * @param {Object} - all options, by btnName refer to particular button

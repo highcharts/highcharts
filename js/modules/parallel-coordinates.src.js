@@ -50,7 +50,7 @@ var defaultParallelOptions = {
      * This feature requires `modules/parallel-coordinates.js`.
      *
      * The default options are:
-     * <pre>
+     * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
      *    gridlinesWidth: 0,  // classic mode only
@@ -65,7 +65,8 @@ var defaultParallelOptions = {
      *        reserveSpace: false
      *    },
      *    offset: 0
-     * }</pre>
+     * }
+     * ```
      *
      * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
      *         Set the same tickAmount for all yAxes

@@ -21,6 +21,7 @@ declare global {
         interface Axis {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
+            panningState?: AxisPanningState;
         }
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
@@ -47,6 +48,10 @@ declare global {
         }
         interface VMLRenderer {
             crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
+        }
+        interface AxisPanningState {
+            startMin: number;
+            startMax: number;
         }
         class StockChart extends Chart {
         }
@@ -124,7 +129,8 @@ var addEvent = H.addEvent,
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point <b>before</b> the range.
+ * range or should start from the first point **before** the range.
+ *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
  * according to the previous point (`compareStart=false`).
@@ -204,7 +210,7 @@ H.StockChart = H.stockChart = function (
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
         opposite,
-
+        panning = options.chart && options.chart.panning,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
         navigatorEnabled = pick(
@@ -212,10 +218,11 @@ H.StockChart = H.stockChart = function (
             (defaultOptions.navigator as any).enabled,
             true
         ),
-        disableStartOnTick = navigatorEnabled ? {
+        verticalPanningEnabled = panning && /y/.test(panning.type),
+        disableStartOnTick = {
             startOnTick: false,
             endOnTick: false
-        } : null;
+        };
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (
@@ -243,7 +250,7 @@ H.StockChart = H.stockChart = function (
                 type: 'datetime',
                 categories: null
             },
-            disableStartOnTick as any
+            (navigatorEnabled ? disableStartOnTick : null) as any
         );
     });
 
@@ -279,7 +286,8 @@ H.StockChart = H.stockChart = function (
             },
             defaultOptions.yAxis, // #3802
             defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions // user options
+            yAxisOptions, // user options
+            (verticalPanningEnabled ? disableStartOnTick : null) as any
         );
     });
 
@@ -288,7 +296,10 @@ H.StockChart = H.stockChart = function (
     options = merge(
         {
             chart: {
-                panning: true,
+                panning: {
+                    enabled: true,
+                    type: 'x'
+                },
                 pinchType: 'x'
             },
             navigator: {
@@ -1097,5 +1108,40 @@ addEvent(Chart, 'update', function (
         merge(true, this.options.scrollbar, options.scrollbar);
         (this.navigator.update as any)({}, false);
         delete options.scrollbar;
+    }
+});
+
+// Extend the Axis prototype to calculate start min/max values
+// (including min/maxPadding). This is related to using vertical panning
+// (#11315).
+addEvent(Axis, 'afterSetScale', function (
+    this: Highcharts.Axis
+): void {
+    var axis = this,
+        panning = axis.chart.options.chart &&
+            axis.chart.options.chart.panning;
+
+    if (
+        panning &&
+        (panning.type === 'y' ||
+        panning.type === 'xy') &&
+        !axis.isXAxis &&
+        !defined(axis.panningState)
+    ) {
+
+        var min = Number.MAX_VALUE,
+            max = Number.MIN_VALUE;
+
+        axis.series.forEach(function (series): void {
+            min = Math.min(H.arrayMin(series.yData as any), min) -
+                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+            max = Math.max(H.arrayMax(series.yData as any), max) +
+                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+        });
+
+        axis.panningState = {
+            startMin: min,
+            startMax: max
+        };
     }
 });

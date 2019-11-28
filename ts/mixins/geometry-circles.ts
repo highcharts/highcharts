@@ -13,37 +13,6 @@ declare global {
         interface CircleObject extends PositionObject {
             r: number;
         }
-        interface GeometryCircleMixin {
-            getAreaOfCircle(r: number): number;
-            getAreaOfIntersectionBetweenCircles(
-                circles: Array<CircleObject>
-            ): (GeometryIntersectionObject|undefined);
-            getCircleCircleIntersection(
-                c1: CircleObject,
-                c2: CircleObject
-            ): Array<PositionObject>;
-            getCirclesIntersectionPoints(
-                circles: Array<CircleObject>
-            ): Array<PositionObject>;
-            getCirclesIntersectionPolygon(
-                circles: Array<CircleObject>
-            ): Array<GeometryObject>;
-            getCircularSegmentArea(r: number, h: number): number;
-            getOverlapBetweenCircles(r1: number, r2: number, d: number): number;
-            isPointInsideAllCircles(
-                point: PositionObject,
-                circles: Array<CircleObject>
-            ): boolean;
-            isPointInsideCircle(
-                point: PositionObject,
-                circle: CircleObject
-            ): boolean;
-            isPointOutsideAllCircles(
-                point: PositionObject,
-                circles: Array<CircleObject>
-            ): boolean;
-            round(x: number, decimals: number): number;
-        }
         interface GeometryIntersectionObject {
             center: PositionObject;
             d: Array<SVGPathArray>;
@@ -235,6 +204,23 @@ function getCirclesIntersectionPoints(
 
         return points.concat(additional);
     }, []);
+}
+
+/**
+ * Tests wether the first circle is completely overlapping the second circle.
+ *
+ * @private
+ * @param {Highcharts.CircleObject} circle1 The first circle.
+ * @param {Highcharts.CircleObject} circle2 The The second circle.
+ * @return {boolean} Returns true if circle1 is completely overlapping circle2,
+ * false if not.
+ */
+function isCircle1CompletelyOverlappingCircle2(
+    circle1: Highcharts.CircleObject,
+    circle2: Highcharts.CircleObject
+): boolean {
+    return getDistanceBetweenPoints(circle1, circle2) + circle2.r <
+        circle1.r + 1e-10;
 }
 
 /**
@@ -435,7 +421,7 @@ function getAreaOfIntersectionBetweenCircles(
     return result;
 }
 
-const geometryCircles: Highcharts.GeometryCircleMixin = {
+const geometryCircles = {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection,
@@ -443,6 +429,7 @@ const geometryCircles: Highcharts.GeometryCircleMixin = {
     getCirclesIntersectionPolygon,
     getCircularSegmentArea,
     getOverlapBetweenCircles,
+    isCircle1CompletelyOverlappingCircle2,
     isPointInsideCircle,
     isPointInsideAllCircles,
     isPointOutsideAllCircles,

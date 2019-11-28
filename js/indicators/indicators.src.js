@@ -300,7 +300,7 @@ seriesType('sma', 'line',
         this.dataEventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
-        Series.prototype.destroy.call(this);
+        Series.prototype.destroy.apply(this, arguments);
     }
 });
 /**

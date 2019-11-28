@@ -149,6 +149,7 @@ bindingsUtils.manageIndicators = function (data) {
         'natr',
         'williamsr',
         'stochastic',
+        'slowstochastic',
         'linearRegression',
         'linearRegressionSlope',
         'linearRegressionIntercept',

@@ -386,6 +386,41 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         return series;
     },
     /**
+     * Internal function to set data for all series with enabled sorting.
+     *
+     * @private
+     * @function Highcharts.Chart#setSeriesData
+     *
+     * @param {Highcharts.SeriesOptions} options
+     *
+     * @return {void}
+     */
+    setSeriesData: function () {
+        this.getSeriesOrderByLinks().forEach(function (series) {
+            // We need to set data for series with sorting after series init
+            if (!series.points && !series.data && series.enabledDataSorting) {
+                series.setData(series.options.data, false);
+            }
+        });
+    },
+    /**
+     * Sort and return chart series in order depending on the number of linked
+     * series.
+     *
+     * @private
+     * @function Highcharts.Series#getSeriesOrderByLinks
+     *
+     * @return {Array<Highcharts.Series>}
+     */
+    getSeriesOrderByLinks: function () {
+        return this.series.concat().sort(function (a, b) {
+            if (a.linkedSeries.length || b.linkedSeries.length) {
+                return b.linkedSeries.length - a.linkedSeries.length;
+            }
+            return 0;
+        });
+    },
+    /**
      * Order all series above a given index. When series are added and ordered
      * by configuration, only the last series is handled (#248, #1123, #2456,
      * #6112). This function is called on series initialization and destroy.
@@ -1619,6 +1654,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 if (linkedTo && linkedTo.linkedParent !== series) {
                     linkedTo.linkedSeries.push(series);
                     series.linkedParent = linkedTo;
+                    if (linkedTo.enabledDataSorting) {
+                        series.setDataSortingOptions();
+                    }
                     series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
                 }
             }
@@ -1925,6 +1963,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.initSeries(serieOptions);
         });
         chart.linkSeries();
+        chart.setSeriesData();
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
         // xData and yData arrays, so we can access those before rendering. Used
