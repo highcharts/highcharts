@@ -8,22 +8,6 @@
  *
  * */
 'use strict';
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
@@ -419,15 +403,17 @@ radialAxisMixin = {
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (options) {
-        var _a;
         var axis = this, center = axis.center, chart = axis.chart, inverted = chart.inverted, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
             (axis.pane.options.background[0] ||
                 axis.pane.options.background) :
-            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, otherAxis, xy, tickPositions, ret;
+            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, a, b, otherAxis, xy, tickPositions, crossPos, ret;
         // Crosshair logic
         if (options.isCrosshair) {
             // Find crosshair's position and perform destructuring assignment
-            _a = __read(this.getCrosshairPosition(options, x1, y1), 3), value = _a[0], x2 = _a[1], y2 = _a[2];
+            crossPos = this.getCrosshairPosition(options, x1, y1);
+            value = crossPos[0];
+            x2 = crossPos[1];
+            y2 = crossPos[2];
         }
         // Spokes
         if (axis.isCircular) {

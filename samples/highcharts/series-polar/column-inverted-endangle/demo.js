@@ -38,6 +38,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
+        colorByPoint: true,
         data: [29, 71, 106, 129, 144, 176, 135, 148, 216, 194, 95, 94]
     }]
 });

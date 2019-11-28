@@ -300,9 +300,7 @@ var polarAnimate = function (proceed, init) {
             // Enable animation on polar charts only in SVG. In VML, the scaling
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
-                if (animation === true) {
-                    animation = {};
-                }
+                animation = H.animObject(animation);
                 // Initialize the animation
                 if (init) {
                     // Scale down the group and place it in the center

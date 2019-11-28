@@ -734,12 +734,16 @@ radialAxisMixin = {
             otherAxis: (Highcharts.RadialAxis|undefined),
             xy,
             tickPositions,
+            crossPos,
             ret: Highcharts.SVGPathArray;
 
         // Crosshair logic
         if (options.isCrosshair) {
             // Find crosshair's position and perform destructuring assignment
-            [value, x2, y2] = this.getCrosshairPosition(options, x1, y1);
+            crossPos = this.getCrosshairPosition(options, x1, y1);
+            value = crossPos[0];
+            x2 = crossPos[1];
+            y2 = crossPos[2];
         }
 
         // Spokes
