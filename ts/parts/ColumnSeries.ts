@@ -58,13 +58,9 @@ declare global {
             borderWidth?: number;
             color?: (ColorString|GradientColorObject|PatternObject);
         }
-        interface CompleteAnimateFunction {
-            (this: SVGElement): void;
-        }
         class ColumnPoint extends LinePoint {
             public allowShadow?: boolean;
             public barX: number;
-            public complete?: CompleteAnimateFunction;
             public group?: SVGElement;
             public opacity?: number;
             public options: ColumnPointOptions;

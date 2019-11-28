@@ -1,4 +1,4 @@
-QUnit.skip('Positions of the points.', function (assert) {
+QUnit.test('Positions of the points.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -61,7 +61,9 @@ QUnit.skip('Positions of the points.', function (assert) {
     });
 
     series.points.forEach(function (point) {
-        customSum += point.startR;
+        if (point.shapeArgs.start !== point.shapeArgs.end) {
+            customSum++;
+        }
     });
 
     assert.strictEqual(
@@ -98,7 +100,9 @@ QUnit.skip('Positions of the points.', function (assert) {
     });
 
     series.points.forEach(function (point) {
-        customSum += point.startR;
+        if (point.shapeArgs.start !== point.shapeArgs.end) {
+            customSum++;
+        }
     });
 
     assert.strictEqual(
@@ -108,7 +112,7 @@ QUnit.skip('Positions of the points.', function (assert) {
     );
 });
 
-QUnit.skip('Positions of the stacked points.', function (assert) {
+QUnit.test('Positions of the stacked points.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -192,7 +196,9 @@ QUnit.skip('Positions of the stacked points.', function (assert) {
     customSum = 0;
     chart.series.forEach(function (series) {
         series.points.forEach(function (point) {
-            customSum += point.startR;
+            if (point.shapeArgs.start !== point.shapeArgs.end) {
+                customSum++;
+            }
         });
     });
 

@@ -59,7 +59,7 @@ radialAxisMixin = {
         zIndex: 2 // behind dials, points in the series group
     },
     // Circular axis around the perimeter of a polar chart
-    defaultCircularRadialOptions: {
+    defaultCircularOptions: {
         gridLineWidth: 1,
         labels: {
             align: null,
@@ -76,7 +76,7 @@ radialAxisMixin = {
         tickLength: 0
     },
     // Radial axis, like a spoke in a polar chart
-    defaultNonCircularRadialOptions: {
+    defaultRadialOptions: {
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
          * 0 is up and 90 is right. The angle determines the position of the
@@ -133,7 +133,7 @@ radialAxisMixin = {
      * @private
      */
     setOptions: function (userOptions) {
-        var options = this.options = merge(this.defaultOptions, this.defaultRadialOptions, userOptions);
+        var options = this.options = merge(this.defaultOptions, this.defaultPolarOptions, userOptions);
         // Make sure the plotBands array is instanciated for each Axis
         // (#2649)
         if (!options.plotBands) {
@@ -534,21 +534,20 @@ addEvent(Axis, 'init', function (e) {
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
         isCircular = !isX;
         if (isCircular) {
-            this.defaultRadialOptions =
-                this.defaultRadialGaugeOptions;
+            this.defaultPolarOptions = this.defaultRadialGaugeOptions;
         }
     }
     else if (polar) {
         extend(this, radialAxisMixin);
         // Check which axis is circular
         isCircular = this.horiz;
-        this.defaultRadialOptions = isCircular ?
-            this.defaultCircularRadialOptions :
+        this.defaultPolarOptions = isCircular ?
+            this.defaultCircularOptions :
             merge(coll === 'xAxis' ?
-                this.defaultOptions : this.defaultYAxisOptions, this.defaultNonCircularRadialOptions);
+                this.defaultOptions : this.defaultYAxisOptions, this.defaultRadialOptions);
         // Apply the stack labels for yAxis in case of inverted chart
         if (inverted && coll === 'yAxis') {
-            this.defaultRadialOptions.stackLabels =
+            this.defaultPolarOptions.stackLabels =
                 this.defaultYAxisOptions.stackLabels;
         }
     }

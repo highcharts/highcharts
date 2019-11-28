@@ -64,15 +64,13 @@ declare global {
             defaultRadialGaugeOptions: (
                 RadialAxisMixin['defaultRadialGaugeOptions']
             );
-            defaultRadialOptions: (
+            defaultPolarOptions: (
                 RadialAxisMixin['defaultRadialGaugeOptions'] |
-                RadialAxisMixin['defaultCircularRadialOptions'] |
-                RadialAxisMixin['defaultNonCircularRadialOptions']
+                RadialAxisMixin['defaultCircularOptions'] |
+                RadialAxisMixin['defaultRadialOptions']
             );
-            defaultCircularRadialOptions:
-            RadialAxisMixin['defaultCircularRadialOptions'];
-            defaultNonCircularRadialOptions:
-            RadialAxisMixin['defaultNonCircularRadialOptions'];
+            defaultCircularOptions: RadialAxisMixin['defaultCircularOptions'];
+            defaultRadialOptions: RadialAxisMixin['defaultRadialOptions'];
             endAngleRad: number;
             getCrosshairPosition: RadialAxisMixin['getCrosshairPosition'];
             getLinePath: RadialAxisMixin['getLinePath'];
@@ -100,8 +98,8 @@ declare global {
                 this: RadialAxis
             ): ChartLabelCollectorFunction | boolean;
             defaultRadialGaugeOptions: RadialAxisOptions;
-            defaultCircularRadialOptions: RadialAxisXOptions;
-            defaultNonCircularRadialOptions: RadialAxisYOptions;
+            defaultCircularOptions: RadialAxisXOptions;
+            defaultRadialOptions: RadialAxisYOptions;
             beforeSetTickPositions(this: RadialAxis): void;
             getCrosshairPosition(
                 this: RadialAxis,
@@ -221,7 +219,7 @@ radialAxisMixin = {
     },
 
     // Circular axis around the perimeter of a polar chart
-    defaultCircularRadialOptions: {
+    defaultCircularOptions: {
         gridLineWidth: 1, // spokes
         labels: {
             align: null as any, // auto
@@ -239,7 +237,7 @@ radialAxisMixin = {
     },
 
     // Radial axis, like a spoke in a polar chart
-    defaultNonCircularRadialOptions: {
+    defaultRadialOptions: {
 
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
@@ -306,7 +304,7 @@ radialAxisMixin = {
 
         var options = this.options = merge(
             this.defaultOptions,
-            this.defaultRadialOptions,
+            this.defaultPolarOptions,
             userOptions
         );
 
@@ -921,8 +919,7 @@ addEvent(Axis as any, 'init', function (
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
         isCircular = !isX;
         if (isCircular) {
-            this.defaultRadialOptions =
-            this.defaultRadialGaugeOptions;
+            this.defaultPolarOptions = this.defaultRadialGaugeOptions;
         }
 
     } else if (polar) {
@@ -931,16 +928,16 @@ addEvent(Axis as any, 'init', function (
         // Check which axis is circular
         isCircular = this.horiz;
 
-        this.defaultRadialOptions = isCircular ?
-            this.defaultCircularRadialOptions :
+        this.defaultPolarOptions = isCircular ?
+            this.defaultCircularOptions :
             merge(coll === 'xAxis' ?
                 this.defaultOptions : this.defaultYAxisOptions,
-            this.defaultNonCircularRadialOptions
+            this.defaultRadialOptions
             );
 
         // Apply the stack labels for yAxis in case of inverted chart
         if (inverted && coll === 'yAxis') {
-            this.defaultRadialOptions.stackLabels =
+            this.defaultPolarOptions.stackLabels =
                 this.defaultYAxisOptions.stackLabels;
         }
     }

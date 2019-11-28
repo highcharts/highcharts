@@ -1053,25 +1053,6 @@ H.addEvent(H.Series, 'afterInit', function (
     }
 });
 
-H.addEvent(H.Series, 'afterRender', function (
-    this: Highcharts.Series
-): void {
-    var series = this;
-
-    if (series.isRadialBar) {
-        (series.points as Highcharts.ColumnPoint[]).forEach(function (
-            point: Highcharts.ColumnPoint
-        ): void {
-
-            // Get rid of the complete function from the point after animation
-            // is done
-            if (point.complete) {
-                point.complete = void 0;
-            }
-        });
-    }
-});
-
 /**
  * Extend chart.get to also search in panes. Used internally in
  * responsiveness and chart.update.
