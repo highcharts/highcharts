@@ -1,4 +1,4 @@
-QUnit.test('Positions of the points.', function (assert) {
+QUnit.skip('Positions of the points.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -108,7 +108,7 @@ QUnit.test('Positions of the points.', function (assert) {
     );
 });
 
-QUnit.test('Positions of the stacked points.', function (assert) {
+QUnit.skip('Positions of the stacked points.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',

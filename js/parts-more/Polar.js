@@ -361,7 +361,7 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(colProto, 'translate', function (proceed) {
-        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, graphic, barX, shapeArgs, innerR, r, complete;
+        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, barX, innerR, r;
         series.preventPostTranslate = true;
         // Run uber method
         proceed.call(series);
@@ -373,20 +373,6 @@ if (seriesTypes.column) {
             yMax = yAxis.translate(yAxis.max);
             threshold = options.threshold || 0;
             if (chart.inverted) {
-                // Creating a function that is used as complete in animation for
-                // radial bar points
-                complete = function () {
-                    // Do not update when the point already is placed in the
-                    // center
-                    if (this.innerR && this.start === this.end) {
-                        this.attr({
-                            r: 0,
-                            innerR: 0,
-                            height: 0,
-                            width: 0
-                        });
-                    }
-                };
                 // Finding a correct threshold
                 if (H.isNumber(threshold)) {
                     thresholdAngleRad = yAxis.translate(threshold);
@@ -472,9 +458,7 @@ if (seriesTypes.column) {
                     // a center point
                     innerR = Math.max(barX, 0);
                     r = Math.max(barX + point.pointWidth, 0);
-                    // Required for the pie animation
-                    point.startR = start === end ? 0 : r;
-                    point.shapeArgs = shapeArgs = {
+                    point.shapeArgs = {
                         x: center[0],
                         y: center[1],
                         r: r,
@@ -487,33 +471,6 @@ if (seriesTypes.column) {
                     point.plotY = (defined(series.translatedThreshold) &&
                         (start < series.translatedThreshold ? start : end)) -
                         startAngleRad;
-                    if (point.graphic &&
-                        point.graphic.element.nodeName === 'path') {
-                        point.shapeType = 'path';
-                        graphic = point.graphic;
-                        // Add complete function for animation
-                        point.complete = complete;
-                        // Prevent from unwanted animation of a point
-                        // from the center
-                        if (graphic.innerR === 0) {
-                            if (shapeArgs.start === shapeArgs.end) {
-                                shapeArgs.r = 0;
-                                shapeArgs.innerR = 0;
-                            }
-                            else {
-                                graphic.attr({
-                                    r: shapeArgs.r,
-                                    innerR: shapeArgs.innerR
-                                });
-                            }
-                        }
-                    }
-                    else {
-                        if (shapeArgs.start === shapeArgs.end) {
-                            shapeArgs.r = 0;
-                            shapeArgs.innerR = 0;
-                        }
-                    }
                 }
                 else {
                     point.shapeType = 'path';

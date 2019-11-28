@@ -772,11 +772,6 @@ seriesType<Highcharts.PieSeries>(
                             end: startAngleRad
                         });
 
-                        // Required for radial bar series animation
-                        if (series.isRadialBar) {
-                            args.r = point.startR;
-                        }
-
                         // animate
                         graphic.animate({
                             r: args.r,

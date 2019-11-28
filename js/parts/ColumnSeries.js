@@ -759,7 +759,7 @@ seriesType('column', 'line',
                     graphic = graphic.destroy();
                 }
                 if (graphic) { // update
-                    graphic[verb](merge(shapeArgs), void 0, point.complete);
+                    graphic[verb](merge(shapeArgs));
                 }
                 else {
                     point.graphic = graphic =
