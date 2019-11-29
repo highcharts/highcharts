@@ -5490,7 +5490,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2 && !this.categories) {
+            if (
+                this.single && tickPositions.length < 2 && !this.categories &&
+                !this.series.some((s: Highcharts.Series): boolean =>
+                    (s.type === 'heatmap' && s.options.pointPlacement === 'between')
+                )
+            ) {
                 (this.min as any) -= 0.5;
                 (this.max as any) += 0.5;
             }
