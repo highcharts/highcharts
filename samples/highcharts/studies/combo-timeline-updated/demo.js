@@ -9,8 +9,8 @@
  */
 function onChartLoad() {
 
-    var centerX = 140,
-        centerY = 110,
+    var centerX = Math.max(this.chartWidth * 0.2, 140),
+        centerY = Math.max(this.chartHeight * 0.3, 110),
         path = [],
         angle,
         radius,
@@ -237,7 +237,8 @@ var options = {
     chart: {
         events: {
             load: onChartLoad
-        }
+        },
+        height: '56%'
     },
 
     xAxis: {
