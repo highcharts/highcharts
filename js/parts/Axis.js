@@ -2311,20 +2311,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
     defaultYAxisOptions: {
         /**
-         * In a polar chart, this is the angle of the Y axis in degrees, where
-         * 0 is up and 90 is right. The angle determines the position of the
-         * axis line and the labels, though the coordinate system is unaffected.
-         *
-         * @sample {highcharts} highcharts/yaxis/angle/
-         *         Dual axis polar chart
-         *
-         * @type      {number}
-         * @default   0
-         * @since     4.2.7
-         * @product   highcharts
-         * @apioption yAxis.angle
-         */
-        /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
          * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
          * `linear` for other chart types.
@@ -2347,21 +2333,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @default   {gantt} treegrid
          * @product   highcharts gantt
          * @apioption yAxis.type
-         */
-        /**
-         * Polar charts only. Whether the grid lines should draw as a polygon
-         * with straight lines between categories, or as circles. Can be either
-         * `circle` or `polygon`.
-         *
-         * @sample {highcharts} highcharts/demo/polar-spider/
-         *         Polygon grid lines
-         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
-         *         Circle and polygon
-         *
-         * @type       {string}
-         * @product    highcharts
-         * @validvalue ["circle", "polygon"]
-         * @apioption  yAxis.gridLineInterpolation
          */
         /**
          * The height of the Y axis. If it's a number, it is interpreted as
@@ -5547,7 +5518,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair: function (e, point) {
-        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross;
+        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
@@ -5578,13 +5549,25 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     this.len - point.plotY);
             }
             if (defined(pos)) {
-                path = this.getPlotLinePath({
+                crossOptions = {
                     // value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
                         pick(point.stackY, point.y)),
                     translatedValue: pos
-                }) || null; // #3189
+                };
+                if (this.chart.polar) {
+                    // Additional information required for crosshairs in
+                    // polar chart
+                    extend(crossOptions, {
+                        isCrosshair: true,
+                        chartX: e && e.chartX,
+                        chartY: e && e.chartY,
+                        point: point
+                    });
+                }
+                path = this.getPlotLinePath(crossOptions) ||
+                    null; // #3189
             }
             if (!defined(path)) {
                 this.hideCrosshair();

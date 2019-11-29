@@ -755,20 +755,21 @@ seriesType<Highcharts.PieSeries>(
                     var graphic = point.graphic,
                         args = point.shapeArgs;
 
-                    if (graphic) {
+                    if (graphic && args) {
                     // start values
                         graphic.attr({
                         // animate from inner radius (#779)
-                            r: point.startR || (series.center[3] / 2),
+                            r: pick(point.startR,
+                                (series.center && series.center[3] / 2)),
                             start: startAngleRad,
                             end: startAngleRad
                         });
 
                         // animate
                         graphic.animate({
-                            r: (args as any).r,
-                            start: (args as any).start,
-                            end: (args as any).end
+                            r: args.r,
+                            start: args.start,
+                            end: args.end
                         }, series.options.animation);
                     }
                 });

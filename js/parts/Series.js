@@ -4745,7 +4745,8 @@ null,
                     }
                     series[groupName].width = series.yAxis.len;
                     series[groupName].height = series.xAxis.len;
-                    series[groupName].invert(inverted);
+                    // If inverted polar, don't invert series group
+                    series[groupName].invert(series.isRadialSeries ? false : inverted);
                 }
             });
         }
@@ -4756,7 +4757,7 @@ null,
         // A fixed size is needed for inversion to work
         series.eventsToUnbind.push(addEvent(chart, 'resize', setInvert));
         // Do it now
-        setInvert(inverted); // do it now
+        setInvert();
         // On subsequent render and redraw, just do setInvert without
         // setting up events again
         series.invertGroups = setInvert;

@@ -18,12 +18,17 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        type AxisGridLineInterpolationValue = ('circle'|'polygon');
         type RadialAxisOptions = (RadialAxisXOptions|RadialAxisYOptions);
         type RadialAxisXOptions = XAxisOptions;
         type RadialAxisYOptions = YAxisOptions;
         interface Axis {
             angleRad?: RadialAxis['angleRad'];
             sector?: number;
+        }
+        interface XAxisOptions {
+            angle?: number;
+            gridLineInterpolation?: AxisGridLineInterpolationValue;
         }
         interface AxisPlotBandsOptions {
             innerRadius?: (number|string);
@@ -32,6 +37,10 @@ declare global {
             thickness?: (number|string);
         }
         interface AxisPlotLinesOptions {
+            chartX?: number;
+            chartY?: number;
+            isCrosshair?: boolean;
+            point?: Point;
             reverse?: boolean;
         }
         interface Chart {
@@ -55,14 +64,15 @@ declare global {
             defaultRadialGaugeOptions: (
                 RadialAxisMixin['defaultRadialGaugeOptions']
             );
-            defaultRadialOptions: (
+            defaultPolarOptions: (
                 RadialAxisMixin['defaultRadialGaugeOptions'] |
-                RadialAxisMixin['defaultRadialXOptions'] |
-                RadialAxisMixin['defaultRadialYOptions']
+                RadialAxisMixin['defaultCircularOptions'] |
+                RadialAxisMixin['defaultRadialOptions']
             );
-            defaultRadialXOptions: RadialAxisMixin['defaultRadialXOptions'];
-            defaultRadialYOptions: RadialAxisMixin['defaultRadialYOptions'];
+            defaultCircularOptions: RadialAxisMixin['defaultCircularOptions'];
+            defaultRadialOptions: RadialAxisMixin['defaultRadialOptions'];
             endAngleRad: number;
+            getCrosshairPosition: RadialAxisMixin['getCrosshairPosition'];
             getLinePath: RadialAxisMixin['getLinePath'];
             getOffset: RadialAxisMixin['getOffset'];
             getPlotBandPath: RadialAxisMixin['getPlotBandPath'];
@@ -88,9 +98,15 @@ declare global {
                 this: RadialAxis
             ): ChartLabelCollectorFunction | boolean;
             defaultRadialGaugeOptions: RadialAxisOptions;
-            defaultRadialXOptions: RadialAxisXOptions;
-            defaultRadialYOptions: RadialAxisYOptions;
+            defaultCircularOptions: RadialAxisXOptions;
+            defaultRadialOptions: RadialAxisYOptions;
             beforeSetTickPositions(this: RadialAxis): void;
+            getCrosshairPosition(
+                this: RadialAxis,
+                options: AxisPlotLinesOptions,
+                x1: number,
+                y1: number
+            ): [(number | undefined), number, number];
             getLinePath(
                 this: RadialAxis,
                 lineWidth: number,
@@ -135,6 +151,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
+    defined,
     extend,
     pick,
     pInt,
@@ -202,7 +219,7 @@ radialAxisMixin = {
     },
 
     // Circular axis around the perimeter of a polar chart
-    defaultRadialXOptions: {
+    defaultCircularOptions: {
         gridLineWidth: 1, // spokes
         labels: {
             align: null as any, // auto
@@ -220,8 +237,47 @@ radialAxisMixin = {
     },
 
     // Radial axis, like a spoke in a polar chart
-    defaultRadialYOptions: {
+    defaultRadialOptions: {
+
+        /**
+         * In a polar chart, this is the angle of the Y axis in degrees, where
+         * 0 is up and 90 is right. The angle determines the position of the
+         * axis line and the labels, though the coordinate system is unaffected.
+         * Since v8.0.0 this option is also applicable for X axis (inverted
+         * polar).
+         *
+         * @sample {highcharts} highcharts/xaxis/angle/
+         *         Custom X axis' angle on inverted polar chart
+         * @sample {highcharts} highcharts/yaxis/angle/
+         *         Dual axis polar chart
+         *
+         * @type      {number}
+         * @default   0
+         * @since     4.2.7
+         * @product   highcharts
+         * @apioption xAxis.angle
+         */
+
+        /**
+         * Polar charts only. Whether the grid lines should draw as a polygon
+         * with straight lines between categories, or as circles. Can be either
+         * `circle` or `polygon`. Since v8.0.0 this option is also applicable
+         * for X axis (inverted polar).
+         *
+         * @sample {highcharts} highcharts/demo/polar-spider/
+         *         Polygon grid lines
+         * @sample {highcharts} highcharts/xaxis/gridlineinterpolation/
+         *         Circle and polygon on inverted polar
+         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
+         *         Circle and polygon
+         *
+         * @type       {string}
+         * @product    highcharts
+         * @validvalue ["circle", "polygon"]
+         * @apioption  xAxis.gridLineInterpolation
+         */
         gridLineInterpolation: 'circle',
+        gridLineWidth: 1,
         labels: {
             align: 'right',
             x: -3,
@@ -248,7 +304,7 @@ radialAxisMixin = {
 
         var options = this.options = merge(
             this.defaultOptions,
-            this.defaultRadialOptions,
+            this.defaultPolarOptions,
             userOptions
         );
 
@@ -380,6 +436,12 @@ radialAxisMixin = {
             correctFloat(2 * Math.PI)
         );
 
+        // This will lead to add an extra tick to xAxis in order to display a
+        // correct range on inverted polar
+        if (!this.isCircular && this.chart.inverted) {
+            this.max++;
+        }
+
         if (this.autoConnect) {
             this.max += (
                 (this.categories && 1) ||
@@ -428,13 +490,16 @@ radialAxisMixin = {
         value: number,
         length?: number
     ): Highcharts.PositionObject {
+        var translatedVal = this.translate(value) as any;
+
         return this.postTranslate(
-            this.isCircular ?
-                (this.translate(value) as any) :
-                this.angleRad, // #2848
-            pick(
-                this.isCircular ? length : this.translate(value),
-                this.center[2] / 2
+            this.isCircular ? translatedVal : this.angleRad, // #2848
+            // In case when translatedVal is negative, the 0 value must be
+            // used instead, in order to deal with lines and labels that
+            // fall out of the visible range near the center of a pane
+            pick(this.isCircular ?
+                length :
+                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
             ) - this.offset
         );
     },
@@ -581,6 +646,64 @@ radialAxisMixin = {
     },
 
     /* *
+     * Find the correct end values of crosshair in polar.
+     */
+    getCrosshairPosition: function (
+        this: Highcharts.RadialAxis,
+        options: Highcharts.AxisPlotLinesOptions,
+        x1: number,
+        y1: number
+    ): [(number | undefined), number, number] {
+        var axis = this,
+            value = options.value,
+            shapeArgs,
+            end,
+            x2,
+            y2;
+
+        if (axis.isCircular) {
+            if (!defined(value)) {
+                // When the snap is set to false
+                x2 = options.chartX || 0;
+                y2 = options.chartY || 0;
+
+                value = axis.translate(
+                    Math.atan2(y2 - y1, x2 - x1) - axis.startAngleRad,
+                    true
+                );
+            } else if (options.point) {
+                // When the snap is set to true
+                shapeArgs = options.point.shapeArgs || {};
+                if (shapeArgs.start) {
+                    // Find a true value of the point based on the
+                    // angle
+                    value = axis.translate(
+                        (options.point.rectPlotY as any), true);
+                }
+            }
+            end = axis.getPosition(value as any);
+            x2 = end.x;
+            y2 = end.y;
+        } else {
+            if (!defined(value)) {
+                x2 = options.chartX;
+                y2 = options.chartY;
+            }
+
+            if (defined(x2) && defined(y2)) {
+                // Calculate radius of non-circular axis' crosshair
+                value = axis.translate(Math.min(
+                    Math.sqrt(
+                        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
+                    ), axis.len
+                ), true);
+            }
+        }
+
+        return [value, x2 || 0, y2 || 0];
+    },
+
+    /* *
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (
@@ -590,6 +713,7 @@ radialAxisMixin = {
         var axis = this,
             center = axis.center,
             chart = axis.chart,
+            inverted = chart.inverted,
             value = options.value,
             reverse = options.reverse,
             end = axis.getPosition(value as any),
@@ -605,10 +729,20 @@ radialAxisMixin = {
             y2 = end.y,
             a,
             b,
-            xAxis: (Highcharts.RadialAxis|undefined),
+            otherAxis: (Highcharts.RadialAxis|undefined),
             xy,
             tickPositions,
+            crossPos,
             ret: Highcharts.SVGPathArray;
+
+        // Crosshair logic
+        if (options.isCrosshair) {
+            // Find crosshair's position and perform destructuring assignment
+            crossPos = this.getCrosshairPosition(options, x1, y1);
+            value = crossPos[0];
+            x2 = crossPos[1];
+            y2 = crossPos[2];
+        }
 
         // Spokes
         if (axis.isCircular) {
@@ -632,39 +766,55 @@ radialAxisMixin = {
                 x2 - (1 - b) * (x2 - x1),
                 y2 + (1 - b) * (y1 - y2)
             ];
-
-        // Concentric circles
-        } else if (axis.options.gridLineInterpolation === 'circle') {
-            value = axis.translate(value as any);
-
-            // a value of 0 is in the center, so it won't be visible,
-            // but draw it anyway for update and animation (#2366)
-            ret = axis.getLinePath(0, value);
-        // Concentric polygons
+            // Concentric circles
         } else {
-            // Find the X axis in the same pane
-            chart.xAxis.forEach(function (a: Highcharts.Axis): void {
-                if (a.pane === axis.pane) {
-                    xAxis = a as Highcharts.RadialAxis;
-                }
-            });
-            ret = [];
+            // Pick the right values depending if it is grid line or
+            // crosshair
             value = axis.translate(value as any);
-            tickPositions = (xAxis as any).tickPositions;
-            if ((xAxis as any).autoConnect) {
-                tickPositions = tickPositions.concat([tickPositions[0]]);
-            }
-            // Reverse the positions for concatenation of polygonal plot
-            // bands
-            if (reverse) {
-                tickPositions = [].concat(tickPositions).reverse();
+
+            // This is required in case when xAxis is non-circular to
+            // prevent grid lines (or crosshairs, if enabled) from
+            // rendering above the center after they supposed to be
+            // displayed below the center point
+            if (!options.isCrosshair &&
+                (value as any < 0 || value as any > axis.height) && inverted) {
+                value = 0;
             }
 
-            tickPositions.forEach(function (pos: number, i: number): void {
-                xy = (xAxis as any).getPosition(pos, value);
-                ret.push(i ? 'L' : 'M', xy.x, xy.y);
-            });
+            if (axis.options.gridLineInterpolation === 'circle') {
+                // A value of 0 is in the center, so it won't be
+                // visible, but draw it anyway for update and animation
+                // (#2366)
+                ret = axis.getLinePath(0, value);
+                // Concentric polygons
+            } else {
+                // Find the other axis (a circular one) in the same pane
+                chart[inverted ? 'yAxis' : 'xAxis'].forEach(
+                    function (a): void {
+                        if (a.pane === axis.pane) {
+                            otherAxis = a as Highcharts.RadialAxis;
+                        }
+                    });
 
+                ret = [];
+                tickPositions = (otherAxis as any).tickPositions;
+
+                if ((otherAxis as any).autoConnect) {
+                    tickPositions =
+                        tickPositions.concat([tickPositions[0]]);
+                }
+
+                // Reverse the positions for concatenation of polygonal
+                // plot bands
+                if (reverse) {
+                    tickPositions = [].concat(tickPositions).reverse();
+                }
+
+                tickPositions.forEach(function (pos: number, i: number): void {
+                    xy = (otherAxis as any).getPosition(pos, value);
+                    ret.push(i ? 'L' : 'M', xy.x, xy.y);
+                });
+            }
         }
 
         return ret;
@@ -746,9 +896,11 @@ addEvent(Axis as any, 'init', function (
     e: { userOptions: Highcharts.RadialAxisOptions }
 ): void {
     var chart = this.chart,
+        inverted = chart.inverted,
         angular = chart.angular,
         polar = chart.polar,
         isX = this.isXAxis,
+        coll = this.coll,
         isHidden = angular && isX,
         isCircular: (boolean|undefined),
         chartOptions = chart.options,
@@ -757,7 +909,7 @@ addEvent(Axis as any, 'init', function (
             chart.pane && chart.pane[paneIndex];
 
     // Prevent changes for colorAxis
-    if (this.coll === 'colorAxis') {
+    if (coll === 'colorAxis') {
         this.isRadial = false;
         return;
     }
@@ -767,23 +919,32 @@ addEvent(Axis as any, 'init', function (
         extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
         isCircular = !isX;
         if (isCircular) {
-            this.defaultRadialOptions =
-            this.defaultRadialGaugeOptions;
+            this.defaultPolarOptions = this.defaultRadialGaugeOptions;
         }
 
     } else if (polar) {
         extend(this, radialAxisMixin);
-        isCircular = isX;
-        this.defaultRadialOptions = isX ?
-            this.defaultRadialXOptions :
-            merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 
+        // Check which axis is circular
+        isCircular = this.horiz;
+
+        this.defaultPolarOptions = isCircular ?
+            this.defaultCircularOptions :
+            merge(coll === 'xAxis' ?
+                this.defaultOptions : this.defaultYAxisOptions,
+            this.defaultRadialOptions
+            );
+
+        // Apply the stack labels for yAxis in case of inverted chart
+        if (inverted && coll === 'yAxis') {
+            this.defaultPolarOptions.stackLabels =
+                this.defaultYAxisOptions.stackLabels;
+        }
     }
 
     // Disable certain features on angular and polar axes
     if (angular || polar) {
         this.isRadial = true;
-        chart.inverted = false;
         (chartOptions.chart as any).zoomType = null as any;
 
         if (!this.labelCollector) {

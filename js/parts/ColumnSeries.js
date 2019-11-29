@@ -679,7 +679,7 @@ seriesType('column', 'line',
             this.color ||
             fill), strokeWidth = (point && point[strokeWidthOption]) ||
             options[strokeWidthOption] ||
-            this[strokeWidthOption] || 0, dashstyle = (point && point.options.dashStyle) || options.dashStyle, opacity = pick(options.opacity, 1), zone, brightness;
+            this[strokeWidthOption] || 0, dashstyle = (point && point.options.dashStyle) || options.dashStyle, opacity = pick(point && point.opacity, options.opacity, 1), zone, brightness;
         // Handle zone colors
         if (point && this.zones.length) {
             zone = point.getZone();
@@ -695,7 +695,7 @@ seriesType('column', 'line',
             }
         }
         // Select or hover states
-        if (state) {
+        if (state && point) {
             stateOptions = merge(options.states[state], 
             // #6401
             point.options.states &&

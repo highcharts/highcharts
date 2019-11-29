@@ -24,7 +24,6 @@ declare global {
             'navigator'|'pan'|'rangeSelectorButton'|'rangeSelectorInput'|
             'scrollbar'|'traverseUpButton'|'zoom'
         );
-        type AxisGridLineInterpolationValue = ('circle'|'polygon');
         type AxisMinorTickPositionValue = ('inside'|'outside');
         type AxisOptions = (XAxisOptions|YAxisOptions|ZAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
@@ -270,8 +269,6 @@ declare global {
             y?: number;
         }
         interface YAxisOptions extends XAxisOptions {
-            angle?: number;
-            gridLineInterpolation?: AxisGridLineInterpolationValue;
             maxColor?: (ColorString|GradientColorObject|PatternObject);
             minColor?: (ColorString|GradientColorObject|PatternObject);
             staticScale?: number;
@@ -2968,21 +2965,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     defaultYAxisOptions: {
 
         /**
-         * In a polar chart, this is the angle of the Y axis in degrees, where
-         * 0 is up and 90 is right. The angle determines the position of the
-         * axis line and the labels, though the coordinate system is unaffected.
-         *
-         * @sample {highcharts} highcharts/yaxis/angle/
-         *         Dual axis polar chart
-         *
-         * @type      {number}
-         * @default   0
-         * @since     4.2.7
-         * @product   highcharts
-         * @apioption yAxis.angle
-         */
-
-        /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
          * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
          * `linear` for other chart types.
@@ -3005,22 +2987,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default   {gantt} treegrid
          * @product   highcharts gantt
          * @apioption yAxis.type
-         */
-
-        /**
-         * Polar charts only. Whether the grid lines should draw as a polygon
-         * with straight lines between categories, or as circles. Can be either
-         * `circle` or `polygon`.
-         *
-         * @sample {highcharts} highcharts/demo/polar-spider/
-         *         Polygon grid lines
-         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
-         *         Circle and polygon
-         *
-         * @type       {string}
-         * @product    highcharts
-         * @validvalue ["circle", "polygon"]
-         * @apioption  yAxis.gridLineInterpolation
          */
 
         /**
@@ -7360,7 +7326,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             snap = pick((options as any).snap, true),
             pos,
             categorized,
-            graphic = this.cross;
+            graphic = this.cross,
+            crossOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7400,16 +7367,27 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
 
             if (defined(pos)) {
-                path = this.getPlotLinePath(
-                    {
-                        // value, only used on radial
-                        value: point && (this.isXAxis ?
-                            point.x :
-                            pick(point.stackY, point.y)
-                        ) as any,
-                        translatedValue: pos
-                    }
-                ) || null; // #3189
+                crossOptions = {
+                    // value, only used on radial
+                    value: point && (this.isXAxis ?
+                        point.x :
+                        pick(point.stackY, point.y)) as any,
+                    translatedValue: pos
+                };
+
+                if (this.chart.polar) {
+                    // Additional information required for crosshairs in
+                    // polar chart
+                    extend(crossOptions, {
+                        isCrosshair: true,
+                        chartX: e && e.chartX,
+                        chartY: e && e.chartY,
+                        point: point
+                    });
+                }
+
+                path = this.getPlotLinePath(crossOptions) ||
+                    null; // #3189
             }
 
             if (!defined(path)) {

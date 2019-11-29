@@ -781,8 +781,9 @@ Highcharts.Point.prototype = {
     hasNewShapeType: function (
         this: Highcharts.Point
     ): boolean|undefined {
-        return this.graphic &&
-            this.graphic.element.nodeName !== this.shapeType;
+        const oldShapeType = this.graphic &&
+            (this.graphic.symbolName || this.graphic.element.nodeName);
+        return oldShapeType !== this.shapeType;
     },
 
     /**
