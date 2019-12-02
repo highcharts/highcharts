@@ -131,6 +131,9 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     addPoint: function () {
         return colProto.addPoint.apply(this, arguments);
     },
+    correctStackLabels: function (point) {
+        return colProto.correctStackLabels.apply(this, arguments);
+    },
     crispCol: function () {
         return colProto.crispCol.apply(this, arguments);
     },

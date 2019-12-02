@@ -77,7 +77,8 @@ QUnit.test('ignoreNulls', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[1].points[2].shapeArgs.x + chart.plotLeft > chart.xAxis[0].ticks[2].mark.element.getBBox().x,
+        chart.series[1].points[2].shapeArgs.x + chart.plotLeft >
+            chart.xAxis[0].ticks[2].mark.element.getBBox().x,
         true,
         'Point should be on the right side of the tick.'
     );
@@ -189,7 +190,8 @@ QUnit.test('ignoreNulls', function (assert) {
     chart.redraw();
 
     assert.strictEqual(
-        chart.series[1].points[1].shapeArgs.x + chart.plotLeft + chart.plotSizeX / 2 > chart.xAxis[1].ticks[1].mark.element.getBBox().x,
+        chart.series[1].points[1].shapeArgs.x + chart.plotLeft + chart.plotSizeX / 2 >
+            chart.xAxis[1].ticks[1].mark.element.getBBox().x,
         true,
         'ignoreNulls works for multiple x-axes.'
     );
@@ -214,8 +216,35 @@ QUnit.test('ignoreNulls', function (assert) {
         'yAxis.maxColumnCount works for multiple y-axes.'
     );
 
+    chart.update({
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        }
+    }, false);
+
+    chart.series[2].update({
+        stack: 1
+    }, false);
+
+    chart.redraw();
+
+    assert.strictEqual(
+        chart.yAxis[0].stacks['column,1,,50%'][1].label.absoluteBox.x <
+            chart.xAxis[0].ticks[1].mark.element.getBBox().x,
+        true,
+        'stackLabels should be in a correct place.'
+    );
+
     const inheritedMethods = [
         'addPoint',
+        'correctStackLabels',
         'crispCol',
         'drawPoints',
         'drawTracker',

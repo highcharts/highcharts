@@ -506,6 +506,25 @@ seriesType('column', 'line',
         Series.prototype.addPoint.apply(series, arguments);
     },
     /**
+     * Correct stackLabels position after the columns are translated when
+     * ignoreNulls option is enabled.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#correctStackLabels
+     * @param {ColumnPoint} point
+     * @param {number} pointXOffset
+     * @return {void}
+     */
+    correctStackLabels: function (point) {
+        var series = this, options = series.options, yAxis = series.yAxis, stack = yAxis.stacks[(series.negStacks &&
+            defined(point.y) &&
+            defined(options.threshold) &&
+            point.y < (options.startFromThreshold ? 0 : options.threshold) ? '-' : '') + series.stackKey], pointStack = defined(point.x) ? stack[point.x] : void 0;
+        if (stack && pointStack && !point.isNull) {
+            pointStack.setOffset(series.pointXOffset || 0, point.pointWidth || 0, void 0, void 0, point.plotX);
+        }
+    },
+    /**
      * Make the columns crisp. The edges are rounded to the nearest full
      * pixel.
      *
@@ -582,7 +601,8 @@ seriesType('column', 'line',
                 series.points) {
                 series.points.forEach(function (point) {
                     colWidth = series
-                        .getColumnMetrics(point).width;
+                        .getColumnMetrics(point)
+                        .width;
                     if (colWidth < minColWidth) {
                         minColWidth = colWidth;
                     }
@@ -827,6 +847,9 @@ seriesType('column', 'line',
                 // on xAxis, not floating in the middle of the chart
                 [barX, translatedThreshold, barW, 0] :
                 [barX, barY, barW, barH]);
+            if (ignoreNulls && series.options.stacking) {
+                series.correctStackLabels(point);
+            }
         });
     },
     getSymbol: noop,

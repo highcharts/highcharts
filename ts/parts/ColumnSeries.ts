@@ -82,6 +82,7 @@ declare global {
             public points: Array<ColumnPoint>;
             public pointXOffset: number;
             public translatedThreshold?: number;
+            public correctStackLabels(point: ColumnPoint): void;
             public crispCol(
                 x: number,
                 y: number,
@@ -91,8 +92,8 @@ declare global {
             public dirtyTheSeries(
                 series: Highcharts.Series, point: any
             ): void;
-            public getColumnCount(point?: Point): number;
-            public getColumnMetrics(point?: Point): ColumnMetricsObject;
+            public getColumnCount(point?: ColumnPoint): number;
+            public getColumnMetrics(point?: ColumnPoint): ColumnMetricsObject;
             public getMaxColumnCount(): number|undefined;
             public getMinColumnWidth(): number;
             public hasValueInX(
@@ -670,6 +671,43 @@ seriesType<Highcharts.ColumnSeries>(
             Series.prototype.addPoint.apply(series, arguments as any);
         },
         /**
+         * Correct stackLabels position after the columns are translated when
+         * ignoreNulls option is enabled.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.column#correctStackLabels
+         * @param {ColumnPoint} point
+         * @param {number} pointXOffset
+         * @return {void}
+         */
+        correctStackLabels: function (
+            this: Highcharts.ColumnSeries,
+            point: Highcharts.ColumnPoint
+        ): void {
+            const series = this,
+                options = series.options,
+                yAxis = series.yAxis,
+                stack = yAxis.stacks[(
+                    series.negStacks &&
+                    defined(point.y) &&
+                    defined(options.threshold) &&
+                    point.y < (
+                        options.startFromThreshold ? 0 : options.threshold
+                    ) ? '-' : ''
+                ) + series.stackKey],
+                pointStack = defined(point.x) ? stack[point.x] : void 0;
+
+            if (stack && pointStack && !point.isNull) {
+                pointStack.setOffset(
+                    series.pointXOffset || 0,
+                    point.pointWidth || 0,
+                    void 0,
+                    void 0,
+                    point.plotX
+                );
+            }
+        },
+        /**
          * Make the columns crisp. The edges are rounded to the nearest full
          * pixel.
          *
@@ -773,7 +811,8 @@ seriesType<Highcharts.ColumnSeries>(
                 ) {
                     series.points.forEach((point): void => {
                         colWidth = (series as Highcharts.ColumnSeries)
-                            .getColumnMetrics(point).width;
+                            .getColumnMetrics(point as Highcharts.ColumnPoint)
+                            .width;
                         if (colWidth < minColWidth) {
                             minColWidth = colWidth;
                         }
@@ -794,7 +833,7 @@ seriesType<Highcharts.ColumnSeries>(
          */
         getColumnCount: function (
             this: Highcharts.ColumnSeries,
-            point: Highcharts.Point
+            point: Highcharts.ColumnPoint
         ): number {
             var series = this,
                 options = series.options,
@@ -858,7 +897,7 @@ seriesType<Highcharts.ColumnSeries>(
          */
         getColumnMetrics: function (
             this: Highcharts.ColumnSeries,
-            point
+            point: Highcharts.ColumnPoint
         ): Highcharts.ColumnMetricsObject {
             var series = this,
                 options = series.options,
@@ -1146,6 +1185,11 @@ seriesType<Highcharts.ColumnSeries>(
                         [barX, translatedThreshold as any, barW, 0] :
                         [barX, barY, barW, barH]
                 );
+
+                if (ignoreNulls && series.options.stacking) {
+                    series.correctStackLabels(point);
+                }
+
             });
 
         },

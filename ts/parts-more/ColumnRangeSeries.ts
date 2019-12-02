@@ -29,6 +29,7 @@ declare global {
         class ColumnRangeSeries extends AreaRangeSeries {
             public addPoint: ColumnSeries['addPoint'];
             public animate: ColumnSeries['animate'];
+            public correctStackLabels: ColumnSeries['correctStackLabels'];
             public crispCol: ColumnSeries['crispCol'];
             public data: Array<ColumnRangePoint>;
             public drawPoints: ColumnSeries['drawPoints'];
@@ -237,6 +238,12 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     ): void {
         return colProto.addPoint.apply(this, arguments as any);
     },
+    correctStackLabels: function (
+        this: Highcharts.ColumnSeries,
+        point: Highcharts.ColumnPoint
+    ): void {
+        return colProto.correctStackLabels.apply(this, arguments as any);
+    },
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.BBoxObject {
@@ -258,7 +265,7 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     },
     getColumnCount: function (
         this: Highcharts.ColumnRangeSeries,
-        point: Highcharts.Point
+        point: Highcharts.ColumnPoint
     ): number {
         return colProto.getColumnCount.apply(this, arguments as any);
     },
