@@ -40,7 +40,8 @@ QUnit.test(
                         y: 4
                     }]
                 }]
-            });
+            }),
+            result;
 
         var controller = new TestController(chart),
             point = chart.series[0].points[0],
@@ -72,5 +73,99 @@ QUnit.test(
             true,
             "Both data labels have point reference within element."
         );
+
+        // dataLabels - other than first are showing outside or zoomed range #12370
+        function checkLabelsVisibility(chart, action) {
+            var res = true;
+
+            if (action === 'hide') {
+                chart.yAxis[0].setExtremes(3.5, 4.5);
+            } else if (action === 'show') {
+                chart.yAxis[0].setExtremes(0, 4.5);
+            }
+
+            chart.series[0].points[0].dataLabels.forEach(function (dl) {
+                if (
+                    (action === 'hide' && dl.y !== -9999) ||
+                    (action === 'show' && dl.y === -9999)
+                ) {
+                    res = false;
+                }
+            });
+
+            return res;
+        }
+
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                animation: false,
+                inverted: false
+            },
+            yAxis: {
+                xreversed: undefined,
+                reversed: false
+            },
+            series: [{
+                dataLabels: [{
+                    enabled: true,
+                    inside: true,
+                    align: 'center',
+                    format: '1st label'
+                }, {
+                    enabled: !false,
+                    format: '2nd'
+                }],
+                name: 'Tokyo',
+                data: [
+                    [0, 3],
+                    [1, 4]
+                ]
+            }]
+        });
+
+        result = checkLabelsVisibility(chart, 'hide');
+        assert.ok(result, 'All data labels should be hidden (#12370).');
+
+        result = checkLabelsVisibility(chart, 'show');
+        assert.ok(result, 'All data labels should be visible (#12370).');
+
+        chart.yAxis[0].update({
+            reversed: true
+        });
+
+        result = checkLabelsVisibility(chart, 'hide');
+        assert.ok(result, 'All data labels should be hidden when yAxis is reversed (#12370).');
+
+        result = checkLabelsVisibility(chart, 'show');
+        assert.ok(result, 'All data labels should be visible when yAxis is reversed (#12370).');
+
+        chart.update({
+            chart: {
+                inverted: true
+            }
+        });
+
+        result = checkLabelsVisibility(chart, 'hide');
+        assert.ok(
+            result,
+            'All data labels should be hidden when chart is inverted and yAxis is reversed (#12370).'
+        );
+
+        result = checkLabelsVisibility(chart, 'show');
+        assert.ok(
+            result,
+            'All data labels should be visible when chart is inverted and yAxis is reversed (#12370).'
+        );
+
+        chart.yAxis[0].update({
+            reversed: false
+        });
+
+        result = checkLabelsVisibility(chart, 'hide');
+        assert.ok(result, 'All data labels should be hidden when chart is inverted (#12370).');
+
+        result = checkLabelsVisibility(chart, 'show');
+        assert.ok(result, 'All data labels should be visible when chart is inverted (#12370).');
     }
 );
