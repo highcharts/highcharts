@@ -174,6 +174,8 @@ seriesType(
         calculateOn: 'render',
         markerAttribs: noop,
         drawGraph: noop,
+        // Below methods always fire the currect method from column
+        // prototype even when we change/wrap them in column prototype.
         getColumnCount: function () {
             return columnPrototype.getColumnCount.apply(this, arguments);
         },

@@ -229,7 +229,9 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawGraph: noop as any,
     getSymbol: noop as any,
 
-    // Overrides from modules that may be loaded after this module
+    // Overrides from modules that may be loaded after this module.
+    // All below methods always fire the currect method from colProto
+    // even when we change/wrap them in colProto.
     addPoint: function (
         this: Highcharts.ColumnRangeSeries
     ): void {

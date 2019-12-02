@@ -125,7 +125,9 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    // Overrides from modules that may be loaded after this module
+    // Overrides from modules that may be loaded after this module.
+    // All below methods always fire the currect method from colProto
+    // even when we change/wrap them in colProto.
     addPoint: function () {
         return colProto.addPoint.apply(this, arguments);
     },

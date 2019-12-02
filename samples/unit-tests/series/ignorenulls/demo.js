@@ -214,4 +214,29 @@ QUnit.test('ignoreNulls', function (assert) {
         'yAxis.maxColumnCount works for multiple y-axes.'
     );
 
+    const inheritedMethods = [
+        'addPoint',
+        'crispCol',
+        'drawPoints',
+        'drawTracker',
+        'getMaxColumnCount',
+        'getMinColumnWidth',
+        'getColumnCount',
+        'getColumnMetrics',
+        'hasValueInX',
+        'pointAttribs',
+        'animate',
+        'polarArc',
+        'translate3dPoints',
+        'translate3dShapes'
+    ];
+
+    inheritedMethods.forEach(methodName => {
+        assert.notEqual(
+            Highcharts.seriesTypes.column.prototype[methodName],
+            Highcharts.seriesTypes.columnrange.prototype[methodName],
+            'Inherited methods should not be the same.'
+        );
+    });
+
 });
