@@ -14,7 +14,8 @@
 
 import H from '../../../parts/Globals.js';
 var merge = H.merge,
-    doc = H.win.document;
+    win = H.win,
+    doc = win.document;
 
 
 /* eslint-disable valid-jsdoc */
@@ -63,6 +64,48 @@ function getElement(
     id: string
 ): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|null) {
     return doc.getElementById(id);
+}
+
+
+/**
+ * Get a fake mouse event of a given type
+ * @param {string} type
+ * @private
+ * @return {global.MouseEvent}
+ */
+function getFakeMouseEvent(type: string): MouseEvent {
+    if (typeof win.MouseEvent === 'function') {
+        return new win.MouseEvent(type);
+    }
+
+    // No MouseEvent support, try using initMouseEvent
+    if (doc.createEvent) {
+        var evt = doc.createEvent('MouseEvent');
+        if (evt.initMouseEvent) {
+            evt.initMouseEvent(
+                type,
+                true, // Bubble
+                true, // Cancel
+                win, // View
+                type === 'click' ? 1 : 0, // Detail
+                // Coords
+                0,
+                0,
+                0,
+                0,
+                // Pressed keys
+                false,
+                false,
+                false,
+                false,
+                0, // button
+                null // related target
+            );
+            return evt;
+        }
+    }
+
+    return { type: type } as any;
 }
 
 
@@ -158,6 +201,7 @@ var HTMLUtilities = {
     addClass: addClass,
     escapeStringForHTML: escapeStringForHTML,
     getElement: getElement,
+    getFakeMouseEvent: getFakeMouseEvent,
     removeElement: removeElement,
     reverseChildNodes: reverseChildNodes,
     setElAttrs: setElAttrs,

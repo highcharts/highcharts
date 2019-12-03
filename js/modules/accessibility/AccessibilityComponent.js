@@ -11,11 +11,11 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var win = H.win, doc = win.document, merge = H.merge;
+var win = H.win, doc = win.document, merge = H.merge, fireEvent = H.fireEvent;
 import U from '../../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend;
 import HTMLUtilities from './utils/htmlUtilities.js';
-var removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 import ChartUtilities from './utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import EventProvider from './utils/EventProvider.js';
@@ -107,15 +107,36 @@ AccessibilityComponent.prototype = {
         return this.domElementProvider.createElement.apply(this.domElementProvider, arguments);
     },
     /**
+     * Fire an event on an element that is either wrapped by Highcharts,
+     * or a DOM element
+     * @private
+     * @param {Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
+     *  Highcharts.SVGDOMElement|Highcharts.SVGElement} el
+     * @param {Event} eventObject
+     */
+    fireEventOnWrappedOrUnwrappedElement: function (el, eventObject) {
+        var type = eventObject.type;
+        if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+            if (el.dispatchEvent) {
+                el.dispatchEvent(eventObject);
+            }
+            else {
+                el.fireEvent(type, eventObject);
+            }
+        }
+        else {
+            fireEvent(el, type, eventObject);
+        }
+    },
+    /**
      * Utility function to attempt to fake a click event on an element.
      * @private
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
      */
     fakeClickEvent: function (element) {
-        if (element && element.onclick && doc.createEvent) {
-            var fakeEvent = doc.createEvent('Event');
-            fakeEvent.initEvent('click', true, false);
-            element.onclick(fakeEvent);
+        if (element) {
+            var fakeEventObject = getFakeMouseEvent('click');
+            this.fireEventOnWrappedOrUnwrappedElement(element, fakeEventObject);
         }
     },
     /**
@@ -222,7 +243,7 @@ AccessibilityComponent.prototype = {
     /**
      * @private
      * @param {Highcharts.HTMLElement} button
-     * @param {Highcharts.BBoxObject|Highcharts.Dictionary<number>} bBox
+     * @param {Highcharts.BBoxObject} bBox
      */
     setProxyButtonStyle: function (button, bBox) {
         merge(true, button.style, {
@@ -241,12 +262,14 @@ AccessibilityComponent.prototype = {
             position: 'absolute',
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
-            left: pick(bBox.x, bBox.left) + 'px',
-            top: pick(bBox.y, bBox.top) + 'px'
+            left: (bBox.x || 0) + 'px',
+            top: (bBox.y || 0) + 'px'
         });
     },
     /**
      * @private
+     * @param {Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
+     *  Highcharts.SVGDOMElement|Highcharts.SVGElement} source
      * @param {Highcharts.HTMLElement} button
      */
     proxyMouseEventsForButton: function (source, button) {
@@ -257,17 +280,7 @@ AccessibilityComponent.prototype = {
             component.addEvent(button, evtType, function (e) {
                 var clonedEvent = component.cloneMouseEvent(e);
                 if (source) {
-                    if (clonedEvent) {
-                        if (source.fireEvent) {
-                            source.fireEvent(clonedEvent);
-                        }
-                        else if (source.dispatchEvent) {
-                            source.dispatchEvent(clonedEvent);
-                        }
-                    }
-                    else if (source['on' + evtType]) {
-                        source['on' + evtType](e);
-                    }
+                    component.fireEventOnWrappedOrUnwrappedElement(source, clonedEvent);
                 }
                 e.stopPropagation();
                 e.preventDefault();
@@ -278,7 +291,7 @@ AccessibilityComponent.prototype = {
      * Utility function to clone a mouse event for re-dispatching.
      * @private
      * @param {global.MouseEvent} e The event to clone.
-     * @return {global.MouseEvent|undefined} The cloned event
+     * @return {global.MouseEvent} The cloned event
      */
     cloneMouseEvent: function (e) {
         if (typeof win.MouseEvent === 'function') {
@@ -289,16 +302,11 @@ AccessibilityComponent.prototype = {
             var evt = doc.createEvent('MouseEvent');
             if (evt.initMouseEvent) {
                 evt.initMouseEvent(e.type, e.bubbles, // #10561, #12161
-                e.cancelable, e.view, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);
-                return evt;
-            }
-            // Fallback to basic Event
-            evt = doc.createEvent('Event');
-            if (evt.initEvent) {
-                evt.initEvent(e.type, true, true);
+                e.cancelable, e.view || win, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);
                 return evt;
             }
         }
+        return getFakeMouseEvent(e.type);
     },
     /**
      * Remove traces of the component.

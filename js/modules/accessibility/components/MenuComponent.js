@@ -18,7 +18,7 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../utils/htmlUtilities.js';
-var removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Show the export menu and focus the first item (if exists).
@@ -28,7 +28,10 @@ var removeElement = HTMLUtilities.removeElement;
  */
 H.Chart.prototype.showExportMenu = function () {
     if (this.exportSVGElements && this.exportSVGElements[0]) {
-        this.exportSVGElements[0].element.onclick();
+        var el = this.exportSVGElements[0].element;
+        if (el.onclick) {
+            el.onclick(getFakeMouseEvent('click'));
+        }
     }
 };
 /**
@@ -41,7 +44,7 @@ H.Chart.prototype.hideExportMenu = function () {
         // Reset hover states etc.
         exportList.forEach(function (el) {
             if (el.className === 'highcharts-menu-item' && el.onmouseout) {
-                el.onmouseout();
+                el.onmouseout(getFakeMouseEvent('mouseout'));
             }
         });
         chart.highlightedExportItemIx = 0;
@@ -59,7 +62,7 @@ H.Chart.prototype.hideExportMenu = function () {
  *
  * @param {number} ix
  *
- * @return {true|undefined}
+ * @return {boolean}
  */
 H.Chart.prototype.highlightExportItem = function (ix) {
     var listItem = this.exportDivElements && this.exportDivElements[ix], curHighlighted = this.exportDivElements &&
@@ -75,14 +78,15 @@ H.Chart.prototype.highlightExportItem = function (ix) {
             listItem.focus();
         }
         if (curHighlighted && curHighlighted.onmouseout) {
-            curHighlighted.onmouseout();
+            curHighlighted.onmouseout(getFakeMouseEvent('mouseout'));
         }
         if (listItem.onmouseover) {
-            listItem.onmouseover();
+            listItem.onmouseover(getFakeMouseEvent('mouseover'));
         }
         this.highlightedExportItemIx = ix;
         return true;
     }
+    return false;
 };
 /**
  * Try to highlight the last valid export menu item.
@@ -109,13 +113,13 @@ H.Chart.prototype.highlightLastExportItem = function () {
  */
 function exportingShouldHaveA11y(chart) {
     var exportingOpts = chart.options.exporting;
-    return exportingOpts &&
+    return !!(exportingOpts &&
         exportingOpts.enabled !== false &&
         exportingOpts.accessibility &&
         exportingOpts.accessibility.enabled &&
         chart.exportSVGElements &&
         chart.exportSVGElements[0] &&
-        chart.exportSVGElements[0].element;
+        chart.exportSVGElements[0].element);
 }
 /**
  * The MenuComponent class
@@ -186,7 +190,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             a11yOptions.landmarkVerbosity === 'all' ? {
                 'aria-label': chart.langFormat('accessibility.exporting.exportRegionLabel', { chart: chart }),
                 'role': 'region'
-            } : null);
+            } : {});
             var button = (this.chart.exportSVGElements[0]);
             this.exportButtonProxy = this.createProxyButton(button, this.exportProxyGroup, {
                 'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', { chart: chart }),

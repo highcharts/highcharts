@@ -23,7 +23,9 @@ import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
-var removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement,
+    getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
+
 
 /**
  * Internal types.
@@ -76,7 +78,10 @@ declare global {
  */
 H.Chart.prototype.showExportMenu = function (): void {
     if (this.exportSVGElements && this.exportSVGElements[0]) {
-        (this.exportSVGElements[0].element.onclick as any)();
+        const el = this.exportSVGElements[0].element;
+        if (el.onclick) {
+            el.onclick(getFakeMouseEvent('click'));
+        }
     }
 };
 
@@ -93,7 +98,7 @@ H.Chart.prototype.hideExportMenu = function (): void {
         // Reset hover states etc.
         exportList.forEach(function (el: Highcharts.ExportingDivElement): void {
             if (el.className === 'highcharts-menu-item' && el.onmouseout) {
-                (el as any).onmouseout();
+                el.onmouseout(getFakeMouseEvent('mouseout'));
             }
         });
         chart.highlightedExportItemIx = 0;
@@ -113,11 +118,11 @@ H.Chart.prototype.hideExportMenu = function (): void {
  *
  * @param {number} ix
  *
- * @return {true|undefined}
+ * @return {boolean}
  */
 H.Chart.prototype.highlightExportItem = function (
     ix: number
-): (boolean|undefined) {
+): boolean {
     var listItem = this.exportDivElements && this.exportDivElements[ix],
         curHighlighted =
             this.exportDivElements &&
@@ -140,14 +145,16 @@ H.Chart.prototype.highlightExportItem = function (
             listItem.focus();
         }
         if (curHighlighted && curHighlighted.onmouseout) {
-            (curHighlighted.onmouseout as any)();
+            curHighlighted.onmouseout(getFakeMouseEvent('mouseout'));
         }
         if (listItem.onmouseover) {
-            (listItem.onmouseover as any)();
+            listItem.onmouseover(getFakeMouseEvent('mouseover'));
         }
         this.highlightedExportItemIx = ix;
         return true;
     }
+
+    return false;
 };
 
 
@@ -180,15 +187,17 @@ H.Chart.prototype.highlightLastExportItem = function (): boolean {
  */
 function exportingShouldHaveA11y(
     chart: Highcharts.Chart
-): (boolean|Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
+): boolean {
     var exportingOpts = chart.options.exporting;
-    return exportingOpts &&
+    return !!(
+        exportingOpts &&
         exportingOpts.enabled !== false &&
         exportingOpts.accessibility &&
         exportingOpts.accessibility.enabled &&
         chart.exportSVGElements &&
         chart.exportSVGElements[0] &&
-        chart.exportSVGElements[0].element;
+        chart.exportSVGElements[0].element
+    );
 }
 
 
@@ -287,7 +296,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                         { chart: chart }
                     ),
                     'role': 'region'
-                } : (null as any)
+                } : {}
             );
 
             var button: Highcharts.SVGElement = (
@@ -295,7 +304,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             );
             this.exportButtonProxy = this.createProxyButton(
                 button,
-                this.exportProxyGroup as any,
+                this.exportProxyGroup,
                 {
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.menuButtonLabel',
