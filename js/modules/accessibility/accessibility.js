@@ -124,7 +124,7 @@ Accessibility.prototype = {
         this.keyboardNavigation.update(a11yOptions.keyboardNavigation.order);
         // Handle high contrast mode
         if (!chart.highContrastModeActive && // Only do this once
-            whcm.isHighContrastModeActive(chart)) {
+            whcm.isHighContrastModeActive()) {
             whcm.setHighContrastTheme(chart);
         }
         fireEvent(chart, 'afterA11yUpdate');
@@ -200,7 +200,7 @@ addEvent(H.Chart, 'render', function (e) {
     var a11y = this.accessibility;
     if (a11y) {
         Object.keys(a11y.components).forEach(function (componentName) {
-            a11y.components[componentName].onChartRender(e);
+            a11y.components[componentName].onChartRender();
         });
     }
 });

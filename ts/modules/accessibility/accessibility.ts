@@ -225,7 +225,7 @@ Accessibility.prototype = {
         // Handle high contrast mode
         if (
             !chart.highContrastModeActive && // Only do this once
-            (whcm.isHighContrastModeActive as any)(chart)
+            whcm.isHighContrastModeActive()
         ) {
             whcm.setHighContrastTheme(chart);
         }
@@ -310,12 +310,12 @@ addEvent(H.Chart, 'render', function (e: Event): void {
         this.updateA11yEnabled();
     }
 
-    var a11y: Highcharts.Accessibility = this.accessibility as any;
+    const a11y = this.accessibility;
     if (a11y) {
         Object.keys(a11y.components).forEach(function (
             componentName: string
         ): void {
-            (a11y.components[componentName].onChartRender as any)(e);
+            a11y.components[componentName].onChartRender();
         });
     }
 });
