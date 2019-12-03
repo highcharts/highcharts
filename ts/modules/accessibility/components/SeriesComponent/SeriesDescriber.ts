@@ -13,7 +13,8 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat;
+var numberFormat = H.numberFormat,
+    find = H.find;
 
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber,
@@ -39,17 +40,17 @@ var getAxisDescription = ChartUtilities.getAxisDescription,
 function findFirstPointWithGraphic(
     point: Highcharts.Point
 ): (Highcharts.Point|null) {
-    if (!point.series || !point.series.data || !defined(point.index)) {
+    const sourcePointIndex = point.index;
+
+    if (!point.series || !point.series.data || !defined(sourcePointIndex)) {
         return null;
     }
 
-    // @todo Array.find is not ES5 compliant:
-    return (point.series.data as any).find(function (
-        p: Highcharts.Point
-    ): (boolean|Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
-        return (
+    return find(point.series.data, function (p: Highcharts.Point): boolean {
+        return !!(
             p &&
-            (p.index as any) > (point.index as any) &&
+            typeof p.index !== 'undefined' &&
+            p.index > sourcePointIndex &&
             p.graphic &&
             p.graphic.element
         );
@@ -89,8 +90,9 @@ function addDummyPointElement(
 ): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
     var series = point.series,
         firstPointWithGraphic = findFirstPointWithGraphic(point),
-        parentGroup = firstPointWithGraphic ?
-            (firstPointWithGraphic.graphic as any).parentGroup :
+        firstGraphic = firstPointWithGraphic && firstPointWithGraphic.graphic,
+        parentGroup = firstGraphic ?
+            firstGraphic.parentGroup :
             series.graph || series.group,
         dummyPos = firstPointWithGraphic ? {
             x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
@@ -109,8 +111,7 @@ function addDummyPointElement(
         // Move to correct pos in DOM
         parentGroup.element.insertBefore(
             dummyElement.element,
-            firstPointWithGraphic ?
-                (firstPointWithGraphic.graphic as any).element : null
+            firstGraphic ? firstGraphic.element : null
         );
 
         return dummyElement.element;
@@ -241,12 +242,12 @@ function getSeriesDescriptionText(
     var seriesA11yOptions = series.options.accessibility || {},
         descOpt = seriesA11yOptions.description;
 
-    return (descOpt as any) && series.chart.langFormat(
+    return descOpt && series.chart.langFormat(
         'accessibility.series.description', {
             description: descOpt,
             series: series
         }
-    );
+    ) || '';
 }
 
 

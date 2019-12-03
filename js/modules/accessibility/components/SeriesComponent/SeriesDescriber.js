@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat;
+var numberFormat = H.numberFormat, find = H.find;
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
@@ -23,13 +23,14 @@ var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointE
  * @private
  */
 function findFirstPointWithGraphic(point) {
-    if (!point.series || !point.series.data || !defined(point.index)) {
+    var sourcePointIndex = point.index;
+    if (!point.series || !point.series.data || !defined(sourcePointIndex)) {
         return null;
     }
-    // @todo Array.find is not ES5 compliant:
-    return point.series.data.find(function (p) {
-        return (p &&
-            p.index > point.index &&
+    return find(point.series.data, function (p) {
+        return !!(p &&
+            typeof p.index !== 'undefined' &&
+            p.index > sourcePointIndex &&
             p.graphic &&
             p.graphic.element);
     }) || null;
@@ -54,8 +55,8 @@ function makeDummyElement(point, pos) {
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  */
 function addDummyPointElement(point) {
-    var series = point.series, firstPointWithGraphic = findFirstPointWithGraphic(point), parentGroup = firstPointWithGraphic ?
-        firstPointWithGraphic.graphic.parentGroup :
+    var series = point.series, firstPointWithGraphic = findFirstPointWithGraphic(point), firstGraphic = firstPointWithGraphic && firstPointWithGraphic.graphic, parentGroup = firstGraphic ?
+        firstGraphic.parentGroup :
         series.graph || series.group, dummyPos = firstPointWithGraphic ? {
         x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
         y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
@@ -67,8 +68,7 @@ function addDummyPointElement(point) {
         point.graphic = dummyElement;
         dummyElement.add(parentGroup);
         // Move to correct pos in DOM
-        parentGroup.element.insertBefore(dummyElement.element, firstPointWithGraphic ?
-            firstPointWithGraphic.graphic.element : null);
+        parentGroup.element.insertBefore(dummyElement.element, firstGraphic ? firstGraphic.element : null);
         return dummyElement.element;
     }
 }
@@ -139,7 +139,7 @@ function getSeriesDescriptionText(series) {
     return descOpt && series.chart.langFormat('accessibility.series.description', {
         description: descOpt,
         series: series
-    });
+    }) || '';
 }
 /**
  * @private
