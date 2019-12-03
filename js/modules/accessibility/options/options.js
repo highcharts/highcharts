@@ -29,7 +29,7 @@
  * This is provided if {@link Highcharts.Series#addPoint} was called, and there
  * is a new point. In that case, this argument is a reference to the new point.
  *
- * @return {boolean|string}
+ * @return {false|string}
  * The function should return a string with the text to announce to the user.
  * Return empty string to not announce anything. Return `false` to use the
  * default announcement format.
