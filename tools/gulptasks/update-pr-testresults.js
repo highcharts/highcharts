@@ -389,7 +389,7 @@ async function commentOnPR() {
     if (!pr || !user) {
         return completeTask('No --pr (pull request number) specified, or missing --user (github username)');
     }
-
+    const prNumber = parseInt(pr, 10);
     const testResults = readTestResultsFile(resultsPath);
     if (!testResults) {
         const errMsg = `Unable to read file ${resultsPath}`;
@@ -402,15 +402,15 @@ async function commentOnPR() {
         return typeof value === 'number' && value > 0;
     });
 
-    const newReview = await createPRReviewFile(testResults, pr);
-    uploadVisualTestFiles(diffingSamples, pr, newReview.samples.length > 0);
-    checkAndUpdateApprovedReviews(diffingSamples, pr);
+    const newReview = await createPRReviewFile(testResults, prNumber);
+    uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
+    checkAndUpdateApprovedReviews(diffingSamples, prNumber);
 
     let commentTemplate = diffingSamples.length === 0 ?
         `${DEFAULT_COMMENT_TITLE} - No difference found` :
         `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
             `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
-                'https://vrevs.highsoft.com/pr/' + pr + '/review',
+                'https://vrevs.highsoft.com/pr/' + prNumber + '/review',
                 'Please review the differences.'
             )}\n`;
 
