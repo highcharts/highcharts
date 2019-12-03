@@ -15,6 +15,9 @@
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 
+import H from '../../../parts/Globals.js';
+const find = H.find;
+
 
 /**
  * Internal types
@@ -91,12 +94,13 @@ function getAxisDescription(axis: Highcharts.Axis): string {
 function getSeriesFirstPointElement(
     series: Highcharts.Series
 ): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
-    return (
+    if (
         series.points &&
-        (series.points.length as any) &&
-        series.points[0].graphic &&
-        series.points[0].graphic.element
-    );
+        series.points.length &&
+        series.points[0].graphic
+    ) {
+        return series.points[0].graphic.element;
+    }
 }
 
 
@@ -210,8 +214,7 @@ function getPointFromXY(
         res;
 
     while (i--) {
-        // @todo switch to ES5 compatible code:
-        res = ((series[i].points || []) as any).find(function (
+        res = find(series[i].points || [], function (
             p: Highcharts.Point
         ): boolean {
             return p.x === x && p.y === y;

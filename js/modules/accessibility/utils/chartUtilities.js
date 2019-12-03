@@ -12,6 +12,8 @@
 'use strict';
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+import H from '../../../parts/Globals.js';
+var find = H.find;
 /* eslint-disable valid-jsdoc */
 /**
  * @return {string}
@@ -42,10 +44,11 @@ function getAxisDescription(axis) {
  * The DOM element for the point.
  */
 function getSeriesFirstPointElement(series) {
-    return (series.points &&
+    if (series.points &&
         series.points.length &&
-        series.points[0].graphic &&
-        series.points[0].graphic.element);
+        series.points[0].graphic) {
+        return series.points[0].graphic.element;
+    }
 }
 /**
  * Get the DOM element for the series that we put accessibility info on.
@@ -123,8 +126,7 @@ function getSeriesFromName(chart, name) {
 function getPointFromXY(series, x, y) {
     var i = series.length, res;
     while (i--) {
-        // @todo switch to ES5 compatible code:
-        res = (series[i].points || []).find(function (p) {
+        res = find(series[i].points || [], function (p) {
             return p.x === x && p.y === y;
         });
         if (res) {
