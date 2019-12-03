@@ -44,10 +44,10 @@ function shouldRunInputNavigation(chart) {
  * @return {boolean}
  */
 H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
-    var buttons = this.rangeSelector.buttons;
+    var buttons = this.rangeSelector.buttons, curSelectedIx = this.highlightedRangeSelectorItemIx;
     // Deselect old
-    if (buttons[this.highlightedRangeSelectorItemIx]) {
-        buttons[this.highlightedRangeSelectorItemIx].setState(this.oldRangeSelectorItemState || 0);
+    if (typeof curSelectedIx !== 'undefined' && buttons[curSelectedIx]) {
+        buttons[curSelectedIx].setState(this.oldRangeSelectorItemState || 0);
     }
     // Select new
     this.highlightedRangeSelectorItemIx = ix;
@@ -176,11 +176,12 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     /**
      * @private
      */
-    onButtonNavKbdClick: function () {
-        var chart = this.chart, wasDisabled = chart.oldRangeSelectorItemState === 3;
+    onButtonNavKbdClick: function (keyboardNavigationHandler) {
+        var response = keyboardNavigationHandler.response, chart = this.chart, wasDisabled = chart.oldRangeSelectorItemState === 3;
         if (!wasDisabled) {
             this.fakeClickEvent(chart.rangeSelector.buttons[chart.highlightedRangeSelectorItemIx].element);
         }
+        return response.success;
     },
     /**
      * Get navigation for the range selector input boxes.

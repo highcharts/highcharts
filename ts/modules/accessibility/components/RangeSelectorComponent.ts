@@ -41,7 +41,7 @@ declare global {
                 keyboardNavigationHandler: KeyboardNavigationHandler,
                 keyCode: number
             ): number;
-            public onButtonNavKbdClick(): void;
+            public onButtonNavKbdClick(keyboardNavigationHandler: KeyboardNavigationHandler): number;
             public onChartUpdate(): void;
             public onInputKbdMove(
                 keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -105,12 +105,12 @@ function shouldRunInputNavigation(chart: Highcharts.Chart): boolean {
 H.Chart.prototype.highlightRangeSelectorButton = function (
     ix: number
 ): boolean {
-    var buttons: Array<Highcharts.SVGElement> =
-        (this.rangeSelector as any).buttons;
+    var buttons: Array<Highcharts.SVGElement> = (this.rangeSelector as any).buttons,
+        curSelectedIx = this.highlightedRangeSelectorItemIx;
 
     // Deselect old
-    if (buttons[this.highlightedRangeSelectorItemIx as any]) {
-        buttons[this.highlightedRangeSelectorItemIx as any].setState(
+    if (typeof curSelectedIx !== 'undefined' && buttons[curSelectedIx]) {
+        buttons[curSelectedIx].setState(
             this.oldRangeSelectorItemState || 0
         );
     }
@@ -250,7 +250,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                     function (
                         this: Highcharts.KeyboardNavigationHandler
                     ): number {
-                        return (component.onButtonNavKbdClick as any)(this);
+                        return component.onButtonNavKbdClick(this);
                     }
                 ]
             ],
@@ -313,9 +313,11 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @private
      */
     onButtonNavKbdClick: function (
-        this: Highcharts.RangeSelectorComponent
-    ): void {
-        var chart = this.chart,
+        this: Highcharts.RangeSelectorComponent,
+        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+    ): number {
+        var response = keyboardNavigationHandler.response,
+            chart = this.chart,
             wasDisabled = chart.oldRangeSelectorItemState === 3;
 
         if (!wasDisabled) {
@@ -325,6 +327,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 ].element
             );
         }
+
+        return response.success;
     },
 
 
