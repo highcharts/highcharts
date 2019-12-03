@@ -24,7 +24,7 @@ Highcharts.chart('container', {
     },
     series: [{
         data: [
-            ['Birchh', 34],
+            ['Birch', 34],
             ['Oak', 20],
             ['Pine', 44],
             ['Elm', 12],
